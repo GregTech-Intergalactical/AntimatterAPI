@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "itech:machineparts/machinebaseitem"
+    },
+    "inventory": {
+      "model": "itech:machineparts/machinebaseitem"
+    }
+  }
+}

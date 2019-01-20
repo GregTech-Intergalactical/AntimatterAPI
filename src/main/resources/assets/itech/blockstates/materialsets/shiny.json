@@ -1,0 +1,85 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "itech:item/generated"
+  },
+  "variants": {
+    "shiny": {
+      "chunk": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/chunk", "layer1": "itech:items/materialsets/shiny/overlays/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/crushed", "layer1": "itech:items/materialsets/shiny/overlays/crushed"}
+      },
+      "crushedcentrifuged": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/crushedcentrifuged"}
+      },
+      "crushedpurified": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/crushedpurified"}
+      },
+      "dust": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/dust"}
+      },
+      "dustsmall": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/dustsmall"}
+      },
+      "dusttiny": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/dusttiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/ingot"}
+      },
+      "ingothot": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/ingothot"}
+      },
+      "plate": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/plate"}
+      },
+      "platedense": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/platedense"}
+      },
+      "foil": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/spring"}
+      },
+      "wirefine": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/wirefine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/gear"}
+      },
+      "gearsmall": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/gearsmall"}
+      },
+      "lens": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/overlays/cell", "layer1": "itech:items/materialsets/shiny/cell"}
+      },
+      "cellplasma": {
+        "textures": {"layer0": "itech:items/materialsets/shiny/overlays/cellplasma", "layer1": "itech:items/materialsets/shiny/cellplasma"}
+      }
+    }
+  }
+}

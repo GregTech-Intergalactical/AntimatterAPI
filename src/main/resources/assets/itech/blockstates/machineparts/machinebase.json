@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "itech:machineparts/machinebase"
+    },
+    "inventory": {
+      "model": "itech:machineparts/machinebase"
+    }
+  }
+}
