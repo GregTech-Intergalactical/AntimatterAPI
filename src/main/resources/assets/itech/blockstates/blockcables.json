@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "itech:smartmodel/blockcables"
+    },
+    "inventory": {
+      "model": "itech:smartmodel/blockcables"
+    }
+  }
+}
