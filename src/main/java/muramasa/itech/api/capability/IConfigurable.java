@@ -4,7 +4,7 @@ import net.minecraft.util.EnumFacing;
 
 public interface IConfigurable {
 
-    void onWrench(EnumFacing side);
+    boolean onWrench(EnumFacing side);
 
-    void onCrowbar(EnumFacing side);
+    boolean onCrowbar(EnumFacing side);
 }

@@ -55,14 +55,16 @@ public class TileEntityCable extends TileEntityTickable {
 
     public void toggleConnection(EnumFacing side) {
         int sideMask = 1 << side.getIndex();
-        if ((disabledConnections & sideMask) != 0) { //Is Disabled, so remove mask
-            disabledConnections &= ~sideMask;
-            System.out.println("Enabled Connection for " + side);
-        } else { //Is not disabled, so add mask
-            disabledConnections |= sideMask;
-            System.out.println("Disabled Connection for " + side);
-        }
-        markDirty();
+//        if ((cableConnections & sideMask) != 0) { //Has a connection to toggle
+            if ((disabledConnections & sideMask) != 0) { //Is Disabled, so remove mask
+                disabledConnections &= ~sideMask;
+                System.out.println("Enabled Connection for " + side);
+            } else { //Is not disabled, so add mask
+                disabledConnections |= sideMask;
+                System.out.println("Disabled Connection for " + side);
+            }
+            markDirty();
+//        }
     }
 
     @Override

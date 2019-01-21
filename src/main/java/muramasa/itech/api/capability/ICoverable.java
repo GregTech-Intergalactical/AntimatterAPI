@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 
 public interface ICoverable {
 
-    void setCover(EnumFacing side, CoverType coverType);
+    boolean setCover(EnumFacing side, CoverType coverType);
 
     CoverType getCover(EnumFacing side);
 

@@ -8,6 +8,7 @@ import muramasa.itech.api.machines.objects.Tier;
 import muramasa.itech.api.machines.types.BasicMachine;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.util.Utils;
+import muramasa.itech.common.blocks.BlockMachines;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -22,18 +23,11 @@ import javax.annotation.Nullable;
 
 public class TileEntityMachine extends TileEntityTickable {
 
-    //Data from NBT-Read
+    /** Data from NBT **/
     private String typeFromNBT = "", tierFromNBT = "";
+    private int facing = 2;
     private NBTTagCompound itemData;
     private FluidStack savedFluidStack1, savedFluidStack2;
-
-    private EnumFacing outputSide = EnumFacing.SOUTH;
-
-    private int storedEnergy = Integer.MAX_VALUE, curProgress, maxProgress;
-    private float clientProgress;
-
-    private Recipe activeRecipe;
-    private boolean shouldCheckRecipe;
 
     /** Capabilities **/
     private MachineStackHandler stackHandler;
@@ -41,6 +35,12 @@ public class TileEntityMachine extends TileEntityTickable {
     private MachineEnergyHandler energyStorage;
     private MachineConfigHandler configHandler;
     private MachineCoverHandler coverHandler;
+
+    /** Logic **/
+    private int curProgress, maxProgress;
+    private float clientProgress;
+    private Recipe activeRecipe;
+    private boolean shouldCheckRecipe;
 
     @Override
     public void onLoad() {
@@ -58,7 +58,8 @@ public class TileEntityMachine extends TileEntityTickable {
         if (itemData != null) stackHandler.deserializeNBT(itemData);
         inputTank = new MachineTankHandler(this, 9999, savedFluidStack1, true, false);
         outputTank = new MachineTankHandler(this, 9999, savedFluidStack2, false, true);
-        energyStorage = new MachineEnergyHandler(1000);
+        energyStorage = new MachineEnergyHandler(99999999);
+        energyStorage.energy = 99999999;
         coverHandler = new MachineCoverHandler(this, CoverType.BLANK, CoverType.ENERGYPORT, CoverType.ITEMPORT, CoverType.FLUIDPORT);
         configHandler = new MachineConfigHandler(this);
     }
@@ -70,6 +71,9 @@ public class TileEntityMachine extends TileEntityTickable {
             tierFromNBT = Tier.LV.getName();
         }
         init(typeFromNBT, tierFromNBT);
+        if (facing > 2) {
+            rotate(EnumFacing.VALUES[facing]);
+        }
     }
 
     @Override
@@ -89,6 +93,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     private void checkRecipe() {
         if (activeRecipe == null) { //No active recipes, see of contents match one
+
             Recipe recipe = MachineList.getBasic(typeFromNBT).findRecipe(stackHandler.getInputStacks(), inputTank.getFluid());
             if (recipe != null && Utils.canStacksFit(recipe.getOutputs(), stackHandler.getOutputStacks())) {
                 if (recipe.getInputs() != null) {
@@ -106,12 +111,13 @@ public class TileEntityMachine extends TileEntityTickable {
 
     private void advanceRecipe() {
         if (activeRecipe != null){ //Found a valid recipe, process it
+            System.out.println(energyStorage.energy);
             if (curProgress == maxProgress) {
                 stackHandler.addOutputs(activeRecipe.getOutputs());
                 curProgress = 0;
                 activeRecipe = null;
-            } else if (storedEnergy >= activeRecipe.getDuration() * activeRecipe.getPower()) {
-                storedEnergy = Math.max(storedEnergy -= activeRecipe.getDuration() * activeRecipe.getPower(), 0);
+            } else if (energyStorage.energy >= activeRecipe.getDuration() * activeRecipe.getPower()) {
+                energyStorage.energy = Math.max(energyStorage.energy -= activeRecipe.getDuration() * activeRecipe.getPower(), 0);
                 curProgress++;
             }
         }
@@ -135,6 +141,12 @@ public class TileEntityMachine extends TileEntityTickable {
         return tierFromNBT;
     }
 
+    public void rotate(EnumFacing side) { //Rotate the front to look in a given direction
+        if (side.getAxis() != EnumFacing.Axis.Y) {
+            setState(getState().withProperty(BlockMachines.FACING, side));
+        }
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
@@ -155,6 +167,9 @@ public class TileEntityMachine extends TileEntityTickable {
                 savedFluidStack2 = new FluidStack(fluid, compound.getInteger(Ref.KEY_FLUID_AMOUNT_2));
             }
         }
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
+            facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
+        }
     }
 
     @Override
@@ -173,6 +188,7 @@ public class TileEntityMachine extends TileEntityTickable {
             compound.setString(Ref.KEY_FLUID_NAME_2, FluidRegistry.getFluidName(outputTank.getFluid()));
             compound.setInteger(Ref.KEY_FLUID_AMOUNT_2, outputTank.getFluid().amount);
         }
+        compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, getState().getValue(BlockMachines.FACING).getIndex());
         return compound;
     }
 
@@ -198,11 +214,11 @@ public class TileEntityMachine extends TileEntityTickable {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(stackHandler);
         } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            if (facing == outputSide) {
-                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(outputTank);
-            } else {
+//            if (facing == outputSide) {
+//                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(outputTank);
+//            } else {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(inputTank);
-            }
+//            }
         } else if (capability == ITechCapabilities.ENERGY) {
             return ITechCapabilities.ENERGY.cast(energyStorage);
         } else if (capability == ITechCapabilities.COVERABLE) {

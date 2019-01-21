@@ -11,14 +11,16 @@ public class CableConfigHandler extends MachineConfigHandler {
     }
 
     @Override
-    public void onWrench(EnumFacing side) {
+    public boolean onWrench(EnumFacing side) {
         if (tile instanceof TileEntityCable) {
             ((TileEntityCable) tile).toggleConnection(side);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void onCrowbar(EnumFacing side) {
-        //NOPP
+    public boolean onCrowbar(EnumFacing side) {
+        return false; //NOOP
     }
 }
