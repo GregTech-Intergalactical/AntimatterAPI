@@ -24,14 +24,16 @@ public class MachineCoverHandler implements ICoverable {
     }
 
     @Override
-    public void setCover(EnumFacing side, CoverType coverType) {
-        if (tile == null) return;
+    public boolean setCover(EnumFacing side, CoverType coverType) {
+        if (tile == null) return false;
         if (coverType == null) coverType = CoverType.NONE;
-        if (isCoverValid(coverType) && side != EnumFacing.NORTH) {
+        if (isCoverValid(coverType) && side != EnumFacing.NORTH && covers[side.getIndex()] != coverType) {
             covers[side.getIndex()] = coverType;
             SoundList.PLACE_METAL.play(tile.getWorld(), tile.getPos());
+            tile.markDirty();
+            return true;
         }
-        tile.markDirty();
+        return false;
     }
 
     @Override

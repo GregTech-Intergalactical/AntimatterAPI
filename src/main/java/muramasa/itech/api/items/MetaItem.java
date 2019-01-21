@@ -126,12 +126,16 @@ public class MetaItem extends Item {
                 if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
                     ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
                     EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
+                    boolean consume = false;
                     if (ItemList.CoverItemPort.isItemEqual(stack)) {
-                        coverHandler.setCover(targetSide, CoverType.ITEMPORT);
+                        consume = coverHandler.setCover(targetSide, CoverType.ITEMPORT);
                     } else if (ItemList.CoverFluidPort.isItemEqual(stack)) {
-                        coverHandler.setCover(targetSide, CoverType.FLUIDPORT);
+                        consume = coverHandler.setCover(targetSide, CoverType.FLUIDPORT);
                     } else if (ItemList.CoverEnergyPort.isItemEqual(stack)) {
-                        coverHandler.setCover(targetSide, CoverType.ENERGYPORT);
+                        consume = coverHandler.setCover(targetSide, CoverType.ENERGYPORT);
+                    }
+                    if (consume) {
+                        stack.shrink(1);
                     }
                 }
                 if (ItemList.DebugScanner.isItemEqual(stack)) {

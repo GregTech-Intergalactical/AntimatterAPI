@@ -69,12 +69,19 @@ public class ModelMachine extends ModelBase {
         for (CoverType coverType : CoverType.values()) {
             if (coverType.getModelLocation() == null) continue;
             IModel coverModel = load(coverType.getModelLocation());
+//            bakedCovers[coverType.ordinal()] = new IBakedModel[] {
+//                    coverModel.bake(SOUTH, format, bakedTextureGetter),
+//                    coverModel.bake(EAST, format, bakedTextureGetter),
+//                    coverModel.bake(WEST, format, bakedTextureGetter),
+//                    coverModel.bake(DOWN, format, bakedTextureGetter),
+//                    coverModel.bake(UP, format, bakedTextureGetter)
+//            };
             bakedCovers[coverType.ordinal()] = new IBakedModel[] {
-                    coverModel.bake(SOUTH, format, bakedTextureGetter),
-                    coverModel.bake(EAST, format, bakedTextureGetter),
-                    coverModel.bake(WEST, format, bakedTextureGetter),
-                    coverModel.bake(DOWN, format, bakedTextureGetter),
-                    coverModel.bake(UP, format, bakedTextureGetter)
+                texAndBake(coverModel, "base", SOUTH, coverTextures.get(coverType.getName())),
+                texAndBake(coverModel, "base", EAST, coverTextures.get(coverType.getName())),
+                texAndBake(coverModel, "base", WEST, coverTextures.get(coverType.getName())),
+                texAndBake(coverModel, "base", DOWN, coverTextures.get(coverType.getName())),
+                texAndBake(coverModel, "base", UP, coverTextures.get(coverType.getName())),
             };
         }
 
