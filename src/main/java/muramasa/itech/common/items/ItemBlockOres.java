@@ -1,6 +1,6 @@
 package muramasa.itech.common.items;
 
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemBlock;
@@ -22,7 +22,7 @@ public class ItemBlockOres extends ItemBlock {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             if (tintIndex == 0) {
-                return Materials.generated[stack.getMetadata()].getRGB();
+                return Material.generated[stack.getMetadata()].getRGB();
             }
             return -1;
         }

@@ -1,6 +1,6 @@
 package muramasa.itech.api.recipe;
 
-import muramasa.itech.api.machines.types.Machine;
+import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;

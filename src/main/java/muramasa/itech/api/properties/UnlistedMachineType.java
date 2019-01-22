@@ -1,6 +1,6 @@
 package muramasa.itech.api.properties;
 
-import muramasa.itech.api.machines.types.Machine;
+import muramasa.itech.api.machines.Machine;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class UnlistedMachineType implements IUnlistedProperty<Machine> {

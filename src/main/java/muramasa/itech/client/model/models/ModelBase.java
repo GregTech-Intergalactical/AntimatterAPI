@@ -1,7 +1,7 @@
 package muramasa.itech.client.model.models;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.itech.api.machines.objects.Tier;
+import muramasa.itech.api.machines.Tier;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

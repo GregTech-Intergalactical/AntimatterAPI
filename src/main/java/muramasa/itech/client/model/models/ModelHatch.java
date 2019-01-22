@@ -1,9 +1,9 @@
 package muramasa.itech.client.model.models;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.objects.Tier;
-import muramasa.itech.api.machines.types.MultiMachine;
+import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.machines.Machine;
+import muramasa.itech.api.machines.Tier;
 import muramasa.itech.client.model.bakedmodels.BakedModelBase;
 import muramasa.itech.client.model.bakedmodels.BakedModelHatch;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,7 +24,7 @@ public class ModelHatch extends ModelBase {
     private static final HashMap<String, ResourceLocation> multiTextures = new HashMap<>();
 
     static {
-        for (MultiMachine type : MachineList.getAllMultiTypes()) {
+        for (Machine type : AbilityFlag.MULTI.getTypes()) {
             multiTextures.put(type.getName(), type.getBaseTexture());
         }
     }
@@ -38,10 +38,10 @@ public class ModelHatch extends ModelBase {
         IModel baseModel = load(HATCH_BASE);
 
         HashMap<String, IBakedModel> bakedModels = new HashMap<>();
-        for (Tier tier : Tier.getElectric()) {
+        for (Tier tier : Tier.getStandard()) {
             bakedModels.put(tier.getName(), new BakedModelBase(texAndBake(baseModel, "0", tier.getBaseTexture())));
         }
-        for (MultiMachine type : MachineList.getAllMultiTypes()) {
+        for (Machine type : AbilityFlag.MULTI.getTypes()) {
             bakedModels.put(type.getName(), new BakedModelBase(texAndBake(baseModel, "0", type.getBaseTexture())));
         }
 

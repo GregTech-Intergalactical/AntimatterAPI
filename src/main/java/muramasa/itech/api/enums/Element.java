@@ -1,6 +1,6 @@
 package muramasa.itech.api.enums;
 
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 
 import java.util.ArrayList;
 
@@ -140,7 +140,7 @@ public enum Element {
     /**
      * Links to every pure Material containing just this Element.
      **/
-    public ArrayList<Materials> mLinkedMaterials = new ArrayList<>();
+    public ArrayList<Material> mLinkedMaterials = new ArrayList<>();
 
     /**
      * @param aProtons         Amount of Protons. Antiprotons if negative.

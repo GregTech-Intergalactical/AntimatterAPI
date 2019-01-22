@@ -1,4 +1,4 @@
-package muramasa.itech.api.machines.objects;
+package muramasa.itech.api.machines;
 
 public class SlotData {
 

@@ -1,7 +1,7 @@
 package muramasa.itech.api.util;
 
 import muramasa.itech.api.enums.ToolType;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,16 +31,16 @@ public class ToolHelper {
         getTag(stack).setInteger(Ref.KEY_TOOL_DATA_QUALITY, newQuality);
     }
 
-    public static Materials getPrimaryMaterial(ItemStack stack) {
-        return Materials.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MAT));
+    public static Material getPrimaryMaterial(ItemStack stack) {
+        return Material.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MAT));
     }
 
     public static void setPrimaryMaterial(ItemStack stack, String name) {
         getTag(stack).setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, name);
     }
 
-    public static Materials getSecondaryMaterial(ItemStack stack) {
-        return Materials.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MAT));
+    public static Material getSecondaryMaterial(ItemStack stack) {
+        return Material.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MAT));
     }
 
     public static void setSecondaryMaterial(ItemStack stack, String name) {
@@ -129,7 +129,7 @@ public class ToolHelper {
         SoundList.BREAK.play(world, pos);
     }
 
-    public static void setup(ItemStack stack, Materials primary, Materials secondary) {
+    public static void setup(ItemStack stack, Material primary, Material secondary) {
         validateTag(stack);
         ToolType type = ToolType.get(stack);
         if (type != null) {

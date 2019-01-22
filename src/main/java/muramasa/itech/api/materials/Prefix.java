@@ -1,6 +1,6 @@
-package muramasa.itech.api.enums;
+package muramasa.itech.api.materials;
 
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.enums.ItemFlag;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.resources.I18n;
 
@@ -54,11 +54,11 @@ public enum Prefix {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
-    public String getNameWithMaterial(Materials material) {
+    public String getNameWithMaterial(Material material) {
         return name() + material.getName();
     }
 
-    public String getDisplayName(Materials material) { //TODO cache?
+    public String getDisplayName(Material material) { //TODO cache, server side crash with local?
         if (!hasLocName) {
             namePre = I18n.format("prefix.pre." + name().toLowerCase() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
@@ -73,7 +73,7 @@ public enum Prefix {
         return showInCreative || Ref.showAllItemsInCreative;
     }
 
-    public boolean allowGeneration(Materials material) {
+    public boolean allowGeneration(Material material) {
         return (material.getItemMask() & generationBits) != 0;
     }
 }

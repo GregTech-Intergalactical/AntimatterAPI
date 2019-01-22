@@ -5,7 +5,7 @@ import muramasa.itech.ITech;
 import muramasa.itech.api.capability.IConfigurable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.ToolType;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.util.ToolHelper;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
@@ -62,14 +62,14 @@ public class MetaTool extends Item {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        Materials material = ToolHelper.getPrimaryMaterial(stack);
+        Material material = ToolHelper.getPrimaryMaterial(stack);
         return (material != null ? material.getDisplayName() + " " + ToolType.values()[stack.getMetadata()].getDisplayName() : ToolType.values()[stack.getMetadata()].getDisplayName());
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltips, ITooltipFlag flagIn) {
-        Materials primary = ToolHelper.getPrimaryMaterial(stack);
-        Materials secondary = ToolHelper.getSecondaryMaterial(stack);
+        Material primary = ToolHelper.getPrimaryMaterial(stack);
+        Material secondary = ToolHelper.getSecondaryMaterial(stack);
         if (primary != null) {
             tooltips.add(TextFormatting.WHITE + primary.getDisplayName() + TextFormatting.YELLOW + "(" + ToolHelper.getQuality(stack) + ")" + TextFormatting.WHITE + " / " + (secondary != null ? secondary.getDisplayName() : "NULL") + TextFormatting.YELLOW + "(" + ToolHelper.getQuality(stack) + ")");
         }
@@ -245,8 +245,8 @@ public class MetaTool extends Item {
     public static class ColorHandler implements IItemColor {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
-            Materials primaryMaterial = ToolHelper.getPrimaryMaterial(stack);
-            Materials secondaryMaterial = ToolHelper.getSecondaryMaterial(stack);
+            Material primaryMaterial = ToolHelper.getPrimaryMaterial(stack);
+            Material secondaryMaterial = ToolHelper.getSecondaryMaterial(stack);
             if (primaryMaterial != null && secondaryMaterial != null) {
                 if (ToolType.PLUNGER.isItemEqual(stack)) {
                     return tintIndex == 0 ? -1 : secondaryMaterial.getRGB();

@@ -2,7 +2,7 @@ package muramasa.itech.common.blocks;
 
 import muramasa.itech.ITech;
 import muramasa.itech.api.enums.ItemFlag;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 import muramasa.itech.common.items.ItemBlockOres;
 import muramasa.itech.common.tileentities.TileEntityOre;
 import net.minecraft.block.Block;
@@ -32,7 +32,7 @@ public class BlockOres extends Block {
 
     public static final PropertyInteger STONETYPE = PropertyInteger.create("stonetype", 0, 6);
 
-    private static Materials[] generatedOres;
+    private static Material[] generatedOres;
 
     public BlockOres() {
         super(net.minecraft.block.material.Material.ROCK);
@@ -60,7 +60,7 @@ public class BlockOres extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (Materials mat : generatedOres) {
+        for (Material mat : generatedOres) {
             items.add(new ItemStack(this, 1, mat.getId()));
         }
     }
@@ -89,7 +89,7 @@ public class BlockOres extends Block {
         if (stack.getItem() instanceof ItemBlockOres) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntityOre) {
-                ((TileEntityOre) tile).init(Materials.generated[stack.getMetadata()].getName());
+                ((TileEntityOre) tile).init(Material.generated[stack.getMetadata()].getName());
             }
         }
     }
@@ -134,7 +134,7 @@ public class BlockOres extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        for (Materials mat : generatedOres) {
+        for (Material mat : generatedOres) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), mat.getId(), new ModelResourceLocation(getRegistryName(), "stonetype=0"));
         }
     }
@@ -145,7 +145,7 @@ public class BlockOres extends Block {
             if (tintIndex == 0) {
                 TileEntity tile = worldIn.getTileEntity(pos);
                 if (tile != null && tile instanceof TileEntityOre) {
-                    Materials material = ((TileEntityOre) tile).getMaterial();
+                    Material material = ((TileEntityOre) tile).getMaterial();
                     return material != null ? material.getRGB() : 0xffffff;
                 }
             }

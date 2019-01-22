@@ -1,7 +1,7 @@
 package muramasa.itech.api.enums;
 
 import muramasa.itech.api.interfaces.IMaterialFlag;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 
 import java.util.ArrayList;
 
@@ -42,8 +42,8 @@ public enum ItemFlag implements IMaterialFlag {
     public static int totalEntries;
 
     private int bit;
-    private ArrayList<Materials> materialsList;
-    private Materials[] materials;
+    private ArrayList<Material> materialsList;
+    private Material[] materials;
 
     ItemFlag() {
         bit = 1 << ordinal();
@@ -52,14 +52,14 @@ public enum ItemFlag implements IMaterialFlag {
 
     public static void finish() {
         for (ItemFlag flag : ItemFlag.values()) {
-            flag.materials = flag.materialsList.toArray(new Materials[0]);
+            flag.materials = flag.materialsList.toArray(new Material[0]);
             flag.materialsList = null;
             totalEntries += flag.materials.length;
         }
     }
 
-    public void add(Materials... mats) {
-        for (Materials material : mats) {
+    public void add(Material... mats) {
+        for (Material material : mats) {
             materialsList.add(material);
         }
     }
@@ -68,7 +68,7 @@ public enum ItemFlag implements IMaterialFlag {
         return this.bit;
     }
 
-    public Materials[] getMats() {
+    public Material[] getMats() {
         return materials;
     }
 }

@@ -1,6 +1,5 @@
-package muramasa.itech.api.machines.objects;
+package muramasa.itech.api.machines;
 
-import muramasa.itech.api.machines.types.Machine;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -13,10 +12,10 @@ public class MachineStack {
     private Tier tier;
     private Block block;
 
-    public MachineStack(Machine type, Tier tier, Block block) {
+    public MachineStack(Machine type, Tier tier) {
         this.type = type;
         this.tier = tier;
-        this.block = block;
+        this.block = type.getBlock();
     }
 
     public Machine getType() {

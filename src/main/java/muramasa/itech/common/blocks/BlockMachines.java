@@ -3,9 +3,9 @@ package muramasa.itech.common.blocks;
 import muramasa.itech.ITech;
 import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
+import muramasa.itech.api.enums.AbilityFlag;
 import muramasa.itech.api.enums.CoverType;
-import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.objects.MachineStack;
+import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.properties.UnlistedBoolean;
 import muramasa.itech.api.properties.UnlistedCoverType;
 import muramasa.itech.api.properties.UnlistedString;
@@ -84,7 +84,7 @@ public class BlockMachines extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (MachineStack stack : MachineList.getAllBasicStacks()) {
+        for (MachineStack stack : AbilityFlag.BASIC.getStacks()) {
             items.add(stack.asItemStack());
         }
     }
@@ -134,25 +134,25 @@ public class BlockMachines extends Block {
 
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        if (state instanceof IExtendedBlockState) {
-//            System.out.println("EX");
-            IExtendedBlockState exState = (IExtendedBlockState) state;
-            MachineStack machineStack = MachineList.getBasicStack(exState.getValue(TYPE), exState.getValue(TIER));
-
-            TileEntity tile = Utils.getTile(world, pos);
-            if (tile instanceof TileEntityMachine) {
-                TileEntityMachine machine = (TileEntityMachine) tile;
-//                System.out.println(machine.getType());
-            }
-
-
-            if (machineStack != null) {
-//                System.out.println("MS VALID");
-                return machineStack.asItemStack();
-            } else {
-//                System.out.println("MS NULL");
-            }
-        }
+//        if (state instanceof IExtendedBlockState) {
+////            System.out.println("EX");
+//            IExtendedBlockState exState = (IExtendedBlockState) state;
+////            MachineStack machineStack = MachineList.get(exState.getValue(TYPE), exState.getValue(TIER));
+//            MachineStack machineStack = new MachineStack(MachineList.INVALID, Tier.NONE);
+//
+//            TileEntity tile = Utils.getTile(world, pos);
+//            if (tile instanceof TileEntityMachine) {
+//                TileEntityMachine machine = (TileEntityMachine) tile;
+////                System.out.println(machine.getType());
+//            }
+//
+//
+//            if (machineStack != null) {
+//
+////                System.out.println("MS VALID");
+//                return machineStack.asItemStack();
+//            }
+//        }
         return new ItemStack(Blocks.DIAMOND_BLOCK);
     }
 

@@ -1,7 +1,7 @@
 package muramasa.itech.api.gui;
 
 import muramasa.itech.api.gui.container.ContainerMachine;
-import muramasa.itech.api.machines.types.Machine;
+import muramasa.itech.api.machines.Machine;
 import muramasa.itech.common.tileentities.TileEntityMachine;
 import muramasa.itech.integration.jei.ITJEIPlugin;
 import net.minecraft.client.gui.GuiButton;

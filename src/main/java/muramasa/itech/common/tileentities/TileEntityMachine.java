@@ -3,9 +3,9 @@ package muramasa.itech.common.tileentities;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.capability.implementations.*;
 import muramasa.itech.api.enums.CoverType;
+import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.objects.Tier;
-import muramasa.itech.api.machines.types.BasicMachine;
+import muramasa.itech.api.machines.Tier;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.blocks.BlockMachines;
@@ -54,7 +54,7 @@ public class TileEntityMachine extends TileEntityTickable {
     public void init(String type, String tier) {
         typeFromNBT = type;
         tierFromNBT = tier;
-        stackHandler = new MachineStackHandler(this, MachineList.getBasic(type));
+        stackHandler = new MachineStackHandler(this, MachineList.get(type));
         if (itemData != null) stackHandler.deserializeNBT(itemData);
         inputTank = new MachineTankHandler(this, 9999, savedFluidStack1, true, false);
         outputTank = new MachineTankHandler(this, 9999, savedFluidStack2, false, true);
@@ -94,7 +94,7 @@ public class TileEntityMachine extends TileEntityTickable {
     private void checkRecipe() {
         if (activeRecipe == null) { //No active recipes, see of contents match one
 
-            Recipe recipe = MachineList.getBasic(typeFromNBT).findRecipe(stackHandler.getInputStacks(), inputTank.getFluid());
+            Recipe recipe = MachineList.get(typeFromNBT).findRecipe(stackHandler.getInputStacks(), inputTank.getFluid());
             if (recipe != null && Utils.canStacksFit(recipe.getOutputs(), stackHandler.getOutputStacks())) {
                 if (recipe.getInputs() != null) {
                     stackHandler.consumeInputs(recipe.getInputs());
@@ -129,8 +129,8 @@ public class TileEntityMachine extends TileEntityTickable {
         }
     }
 
-    public BasicMachine getMachineType() {
-        return MachineList.getBasic(getType());
+    public Machine getMachineType() {
+        return MachineList.get(getType());
     }
 
     public String getType() {
@@ -141,7 +141,7 @@ public class TileEntityMachine extends TileEntityTickable {
         return tierFromNBT;
     }
 
-    public void rotate(EnumFacing side) { //Rotate the front to look in a given direction
+    public void rotate(EnumFacing side) { //Rotate the front to face a given direction
         if (side.getAxis() != EnumFacing.Axis.Y) {
             setState(getState().withProperty(BlockMachines.FACING, side));
         }

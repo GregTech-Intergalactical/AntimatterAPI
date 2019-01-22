@@ -1,8 +1,8 @@
 package muramasa.itech.api.gui;
 
 import muramasa.itech.api.gui.container.ContainerMultiMachine;
-import muramasa.itech.api.machines.types.MultiMachine;
-import muramasa.itech.api.machines.objects.Tier;
+import muramasa.itech.api.machines.Machine;
+import muramasa.itech.api.machines.Tier;
 import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +18,7 @@ public class GuiMultiMachine extends GuiContainer {
         this.tile = tile;
         xSize = 176;
         ySize = 166;
-        MultiMachine type = tile.getMachineType();
+        Machine type = tile.getMachineType();
         displayName = type.getDisplayName(Tier.MULTI.getName());
         bg = type.getGuiTexture(Tier.MULTI.getName());
     }

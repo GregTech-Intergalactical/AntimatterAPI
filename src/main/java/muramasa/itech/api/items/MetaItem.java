@@ -6,8 +6,8 @@ import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.ItemList;
-import muramasa.itech.api.enums.Prefix;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Prefix;
+import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
@@ -49,10 +49,10 @@ public class MetaItem extends Item {
         setCreativeTab(ITech.TAB_MATERIALS);
         generatedPrefixes = Prefix.values();
         for (int p = 0; p < generatedPrefixes.length; p++) {
-            for (int m = 0; m < Materials.generated.length; m++) {
-                if (Materials.generated[m] == null || !generatedPrefixes[p].allowGeneration(Materials.generated[m])) continue;
-                ItemStack stack = new ItemStack(this, 1, (p * 1000) + Materials.generated[m].getId());
-                stringToStack.put(generatedPrefixes[p].getName() + Materials.generated[m].getDisplayName(), stack);
+            for (int m = 0; m < Material.generated.length; m++) {
+                if (Material.generated[m] == null || !generatedPrefixes[p].allowGeneration(Material.generated[m])) continue;
+                ItemStack stack = new ItemStack(this, 1, (p * 1000) + Material.generated[m].getId());
+                stringToStack.put(generatedPrefixes[p].getName() + Material.generated[m].getDisplayName(), stack);
             }
         }
     }
@@ -63,10 +63,10 @@ public class MetaItem extends Item {
             if (((ITechTab) tab).getTabName().equals("materials")) {
                 for (int p = 0; p < generatedPrefixes.length; p++) {
                     if (!generatedPrefixes[p].showInCreative()) continue;
-                    for (int m = 0; m < Materials.generated.length; m++) {
-                        if (Materials.generated[m] != null) {
-                            if (!generatedPrefixes[p].allowGeneration(Materials.generated[m])) continue;
-                            subItems.add(new ItemStack(this, 1, (p * 1000) + Materials.generated[m].getId()));
+                    for (int m = 0; m < Material.generated.length; m++) {
+                        if (Material.generated[m] != null) {
+                            if (!generatedPrefixes[p].allowGeneration(Material.generated[m])) continue;
+                            subItems.add(new ItemStack(this, 1, (p * 1000) + Material.generated[m].getId()));
                         }
                     }
                 }
@@ -86,7 +86,7 @@ public class MetaItem extends Item {
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getMetadata() < standardItemStartIndex) {
             Prefix prefix = getPrefix(stack);
-            Materials material = getMaterial(stack);
+            Material material = getMaterial(stack);
             if (prefix != null && material != null) {
                 return prefix.getDisplayName(material);
             }
@@ -102,7 +102,7 @@ public class MetaItem extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.getMetadata() < standardItemStartIndex) {
-            Materials material = getMaterial(stack);
+            Material material = getMaterial(stack);
             if (material != null && material.getElement() != null) {
                 tooltip.add(material.getElement().name());
             }
@@ -178,7 +178,7 @@ public class MetaItem extends Item {
         return EnumActionResult.SUCCESS;
     }
 
-    public static ItemStack get(Prefix prefix, Materials material, int amount) {
+    public static ItemStack get(Prefix prefix, Material material, int amount) {
         ItemStack stack = stringToStack.get(prefix.getName() + material.getDisplayName());
         if (stack != null) {
             stack.setCount(amount);
@@ -188,15 +188,15 @@ public class MetaItem extends Item {
         return stack;
     }
 
-    public static Materials getMaterial(ItemStack stack) {
-        return stack.getMetadata() < standardItemStartIndex ? Materials.generated[stack.getMetadata() % 1000] : null;
+    public static Material getMaterial(ItemStack stack) {
+        return stack.getMetadata() < standardItemStartIndex ? Material.generated[stack.getMetadata() % 1000] : null;
     }
 
     public static Prefix getPrefix(ItemStack stack) {
         return generatedPrefixes[stack.getMetadata() / 1000];
     }
 
-    public static boolean hasMaterial(ItemStack stack, Materials material) {
+    public static boolean hasMaterial(ItemStack stack, Material material) {
         return getMaterial(stack) == material;
     }
 
@@ -207,9 +207,9 @@ public class MetaItem extends Item {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int p = 0; p < generatedPrefixes.length; p++) {
-            for (int m = 0; m < Materials.generated.length; m++) {
-                if (generatedPrefixes[p] == null || Materials.generated[m] == null) continue;
-                ModelLoader.setCustomModelResourceLocation(this, (p * 1000) + m, new ModelResourceLocation(ITech.MODID + ":materialsets/" + Materials.generated[m].getSet(), Materials.generated[m].getSet() + "=" + generatedPrefixes[p].getName()));
+            for (int m = 0; m < Material.generated.length; m++) {
+                if (generatedPrefixes[p] == null || Material.generated[m] == null) continue;
+                ModelLoader.setCustomModelResourceLocation(this, (p * 1000) + m, new ModelResourceLocation(ITech.MODID + ":materialsets/" + Material.generated[m].getSet(), Material.generated[m].getSet() + "=" + generatedPrefixes[p].getName()));
             }
         }
         for (ItemList item : ItemList.values()) {
@@ -222,7 +222,7 @@ public class MetaItem extends Item {
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             if (stack.getMetadata() < standardItemStartIndex) {
                 if (tintIndex == 0) { //layer0
-                    Materials material = Materials.generated[stack.getMetadata() % 1000];
+                    Material material = Material.generated[stack.getMetadata() % 1000];
                     return material != null ? material.getRGB() : 0xffffff;
                 }
             }

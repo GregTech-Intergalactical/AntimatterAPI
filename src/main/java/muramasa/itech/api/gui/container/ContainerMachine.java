@@ -3,7 +3,7 @@ package muramasa.itech.api.gui.container;
 import muramasa.itech.api.gui.slot.SlotInput;
 import muramasa.itech.api.gui.slot.SlotOutput;
 import muramasa.itech.api.capability.implementations.MachineStackHandler;
-import muramasa.itech.api.machines.objects.SlotData;
+import muramasa.itech.api.machines.SlotData;
 import muramasa.itech.common.tileentities.TileEntityMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
@@ -25,7 +25,7 @@ public class ContainerMachine extends ContainerBase {
     }
 
     private void addSlots() {
-        SlotData[] slots = tile.getMachineType().getSlotData();
+        SlotData[] slots = tile.getMachineType().getSlots();
         for (int i = 0; i < slots.length; i++) {
             if (slots[i].type == 0) { //Input Slot
                 addSlotToContainer(new SlotInput(stackHandler, i, slots[i].x, slots[i].y));

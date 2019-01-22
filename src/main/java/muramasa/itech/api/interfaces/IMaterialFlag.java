@@ -1,12 +1,12 @@
 package muramasa.itech.api.interfaces;
 
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 
 public interface IMaterialFlag { //TODO rename to IMaterialFlag, rename MaterialFlag to ItemFlag
 
-    void add(Materials... mats);
+    void add(Material... mats);
 
     int getMask();
 
-    Materials[] getMats();
+    Material[] getMats();
 }
