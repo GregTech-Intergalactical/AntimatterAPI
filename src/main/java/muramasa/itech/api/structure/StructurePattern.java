@@ -101,8 +101,8 @@ public class StructurePattern {
     private int2 offset = new int2();
 
     public StructurePattern(StructureElement[][][] pattern) {
-        StructureElement element;
         size = new int3(pattern[0].length, pattern.length, pattern[0][0].length);
+        StructureElement element;
         for (int y = 0; y < size.y; y++) {
             for (int x = 0; x < size.x; x++) {
                 for (int z = 0; z < size.z; z++) {

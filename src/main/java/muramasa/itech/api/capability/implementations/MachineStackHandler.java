@@ -1,6 +1,6 @@
 package muramasa.itech.api.capability.implementations;
 
-import muramasa.itech.api.machines.types.BasicMachine;
+import muramasa.itech.api.machines.Machine;
 import muramasa.itech.common.tileentities.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -12,10 +12,10 @@ public class MachineStackHandler extends ItemStackHandler {
     private TileEntityMachine tile;
     private int inputCount, outputCount;
 
-    public MachineStackHandler(TileEntityMachine tile, BasicMachine type) {
+    public MachineStackHandler(TileEntityMachine tile, Machine type) {
         this.tile = tile;
         if (type != null) {
-            setSize(type.getSlotData().length);
+            setSize(type.getSlots().length);
             inputCount = type.getInputCount();
             outputCount = type.getOutputCount();
         } else {

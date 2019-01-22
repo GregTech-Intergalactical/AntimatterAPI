@@ -4,7 +4,7 @@ import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.ItemFlag;
 import muramasa.itech.api.enums.RecipeFlag;
 import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.recipe.RecipeAdder;
 import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.common.events.EventHandler;
@@ -43,10 +43,10 @@ public class ITech {
     public static Logger logger;
 
     static {
-        Materials.init();
+        Material.init();
         ItemFlag.finish();
         RecipeFlag.finish();
-        MachineList.init();
+        MachineList.finish();
     }
 
     public Fluid biomass;
@@ -73,10 +73,10 @@ public class ITech {
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
 //        new MaterialRecipeLoader().run();
-        for (Materials material : ItemFlag.CRUSHED.getMats()) {
+        for (Material material : ItemFlag.CRUSHED.getMats()) {
             RecipeAdder.addPulverizerRecipe(material.getChunk(1), material.getCrushed(2), 40, 1);
             RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);
         }
-        RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Redstone.getDust(4), Materials.RedAlloy.getIngot(1), 10, 1);
+        RecipeAdder.addAlloySmelterRecipe(Material.Copper.getIngot(1), Material.Redstone.getDust(4), Material.RedAlloy.getIngot(1), 10, 1);
     }
 }

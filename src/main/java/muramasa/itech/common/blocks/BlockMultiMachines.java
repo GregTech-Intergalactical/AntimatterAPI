@@ -1,8 +1,8 @@
 package muramasa.itech.common.blocks;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.objects.MachineStack;
+import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.items.ItemBlockMultiMachines;
@@ -63,7 +63,7 @@ public class BlockMultiMachines extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (MachineStack stack : MachineList.getAllMultiStacks()) {
+        for (MachineStack stack : AbilityFlag.MULTI.getStacks()) {
             items.add(stack.asItemStack());
         }
     }

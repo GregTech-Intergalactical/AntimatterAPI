@@ -1,8 +1,8 @@
 package muramasa.itech.common.tileentities.multi;
 
 import muramasa.itech.api.capability.IComponent;
+import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.types.MultiMachine;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.api.structure.StructureResult;
@@ -44,6 +44,9 @@ public class TileEntityMultiMachine extends TileEntityTickable {
 
     @Override
     public void update() {
+
+
+
         super.update();
         if (isServerSide()) {
             if (shouldCheckStructure) {
@@ -107,8 +110,8 @@ public class TileEntityMultiMachine extends TileEntityTickable {
         components.clear();
     }
 
-    public MultiMachine getMachineType() {
-        return MachineList.getMulti(getType());
+    public Machine getMachineType() {
+        return MachineList.get(getType());
     }
 
     public String getType() {

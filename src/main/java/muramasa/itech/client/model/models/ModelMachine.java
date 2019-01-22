@@ -1,10 +1,10 @@
 package muramasa.itech.client.model.models;
 
 import muramasa.itech.ITech;
+import muramasa.itech.api.enums.AbilityFlag;
 import muramasa.itech.api.enums.CoverType;
-import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.objects.MachineStack;
-import muramasa.itech.api.machines.types.Machine;
+import muramasa.itech.api.machines.Machine;
+import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.client.model.bakedmodels.BakedModelBase;
 import muramasa.itech.client.model.bakedmodels.BakedModelBaseMulti;
 import muramasa.itech.client.model.bakedmodels.BakedModelMachine;
@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -31,11 +32,11 @@ public class ModelMachine extends ModelBase {
     public static IBakedModel baseBaked;
 
     static {
-        for (Machine type : MachineList.getAllBasicTypes()) {
+        for (Machine type : AbilityFlag.BASIC.getTypes()) {
             overlayTextures.put(type.getName(), type.getOverlayTexture());
         }
         for (CoverType coverType : CoverType.values()) {
-            coverTextures.put(coverType.getName(), new ResourceLocation(ITech.MODID, "textures/blocks/machines/covers/" + coverType.getName() + ".png"));
+            coverTextures.put(coverType.getName(), new ResourceLocation(ITech.MODID, "blocks/machines/covers/" + coverType.getName()));
             System.out.println("COVER NAME: " + coverType.getName());
         }
     }
@@ -51,7 +52,8 @@ public class ModelMachine extends ModelBase {
 
         HashMap<String, IBakedModel[]> bakedModels = new HashMap<>();
         HashMap<String, IBakedModel> bakedModelsItem = new HashMap<>();
-        for (MachineStack stack : MachineList.getAllBasicStacks()) {
+        Collection<MachineStack> machineStacks = AbilityFlag.BASIC.getStacks();
+        for (MachineStack stack : machineStacks) {
             String tier = stack.getTier().getName(), type = stack.getType().getName();
             IModel overlayModel = load(stack.getType().getOverlayModel());
             bakedModels.put(type + tier, new IBakedModel[] {

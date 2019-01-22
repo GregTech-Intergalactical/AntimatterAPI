@@ -2,10 +2,10 @@ package muramasa.itech.api.materials;
 
 public class MaterialStack {
 
-    public Materials material;
+    public Material material;
     public int amount;
 
-    public MaterialStack(Materials material, int amount) {
+    public MaterialStack(Material material, int amount) {
         this.material = material;
         this.amount = amount;
     }

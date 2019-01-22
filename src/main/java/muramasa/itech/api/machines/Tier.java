@@ -1,4 +1,4 @@
-package muramasa.itech.api.machines.objects;
+package muramasa.itech.api.machines;
 
 import muramasa.itech.ITech;
 import net.minecraft.util.ResourceLocation;
@@ -11,8 +11,8 @@ public class Tier {
 
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
 
-    public static Tier STEAM = new Tier("steam", 1);
-    public static Tier HPSTEAM = new Tier("hpsteam", 2);
+    public static Tier BRONZE = new Tier("bronze", 1);
+    public static Tier STEEL = new Tier("steel", 2);
     public static Tier LV = new Tier("lv", 1);
     public static Tier MV = new Tier("mv", 2);
     public static Tier HV = new Tier("hv", 3);
@@ -27,8 +27,8 @@ public class Tier {
     public Tier(String name, int level) {
         this.name = name;
         this.level = level;
-        baseTexture = new ResourceLocation(ITech.MODID, "blocks/machines/base/" + getName());
-        tierLookup.put(getName(), this);
+        baseTexture = new ResourceLocation(ITech.MODID, "blocks/machines/base/" + name);
+        tierLookup.put(name, this);
     }
 
     public String getName() {
@@ -44,10 +44,10 @@ public class Tier {
     }
 
     public static Tier[] getSteam() {
-        return new Tier[]{STEAM, HPSTEAM};
+        return new Tier[]{BRONZE, STEEL};
     }
 
-    public static Tier[] getElectric() {
+    public static Tier[] getStandard() {
         return new Tier[]{LV, MV, HV, EV, IV};
     }
 
@@ -60,6 +60,6 @@ public class Tier {
     }
 
     public static Collection<Tier> getAllBasic() {
-        return Arrays.asList(STEAM, HPSTEAM, LV, MV, HV, EV, IV);
+        return Arrays.asList(BRONZE, STEEL, LV, MV, HV, EV, IV);
     }
 }

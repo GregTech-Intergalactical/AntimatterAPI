@@ -9,9 +9,9 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import muramasa.itech.ITech;
-import muramasa.itech.api.machines.objects.SlotData;
-import muramasa.itech.api.machines.objects.Tier;
-import muramasa.itech.api.machines.types.BasicMachine;
+import muramasa.itech.api.machines.Machine;
+import muramasa.itech.api.machines.SlotData;
+import muramasa.itech.api.machines.Tier;
 import net.minecraft.client.Minecraft;
 
 import java.util.List;
@@ -20,15 +20,16 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
 
     private static final int SLOT_OFFSET_X = 4, SLOT_OFFSET_Y = 4;
 
-    private final BasicMachine type;
+    private final Machine type;
     private final String title, uid;
     private final IDrawable background/*, icon*/;
     private final IDrawableAnimated progressBar;
 
-    public MachineRecipeCategory(IGuiHelper guiHelper, BasicMachine type) {
+    public MachineRecipeCategory(IGuiHelper guiHelper, Machine type) {
         this.type = type;
         title = type.getJeiCategoryName();
         uid = type.getJeiCategoryID();
+        System.out.println("JEI: " + uid + " - " + title);
         background = guiHelper.drawableBuilder(type.getGuiTexture(Tier.LV.getName()), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
         progressBar = guiHelper.drawableBuilder(type.getGuiTexture(Tier.LV.getName()), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
 //        icon = guiHelper.createDrawableIngredient(MachineStack.get(type, Tier.LV).getStackForm());
@@ -69,7 +70,7 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
     public void setRecipe(IRecipeLayout recipeLayout, MachineRecipeWrapper recipeWrapper, IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 
-        SlotData[] slots = type.getSlotData();
+        SlotData[] slots = type.getSlots();
         List<IIngredients> ingredientList;
         for (int i = 0; i < slots.length; i++) {
             itemStackGroup.init(i, slots[i].type == 0, slots[i].x - SLOT_OFFSET_X, slots[i].y - SLOT_OFFSET_Y);

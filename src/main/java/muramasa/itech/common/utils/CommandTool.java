@@ -1,7 +1,7 @@
 package muramasa.itech.common.utils;
 
 import muramasa.itech.api.items.MetaTool;
-import muramasa.itech.api.materials.Materials;
+import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.util.ToolHelper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -38,7 +38,7 @@ public class CommandTool extends CommandBase {
                 } catch (NumberFormatException e) {
                     if (args.length == 2) {
                         ToolHelper.validateTag(stack);
-                        ToolHelper.setup(stack, Materials.get(args[0]), Materials.get(args[1]));
+                        ToolHelper.setup(stack, Material.get(args[0]), Material.get(args[1]));
                     }
                 }
             }
