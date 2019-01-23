@@ -1,7 +1,7 @@
 package muramasa.itech.common.behaviour;
 
 import muramasa.itech.api.behaviour.BehaviourMultiMachine;
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 
 public class BehaviourElectricBlastFurnace extends BehaviourMultiMachine {
 

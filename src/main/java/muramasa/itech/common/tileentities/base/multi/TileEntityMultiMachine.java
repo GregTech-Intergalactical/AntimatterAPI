@@ -1,4 +1,4 @@
-package muramasa.itech.common.tileentities.multi;
+package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.capability.IComponent;
 import muramasa.itech.api.machines.Machine;
@@ -7,17 +7,18 @@ import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.api.structure.StructureResult;
 import muramasa.itech.common.blocks.BlockMultiMachines;
-import muramasa.itech.common.tileentities.TileEntityTickable;
+import muramasa.itech.common.tileentities.base.TileEntityTickable;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class TileEntityMultiMachine extends TileEntityTickable {
+public class TileEntityMultiMachine extends TileEntityTickable implements IComponent {
 
     private String typeFromNBT = "";
     public boolean shouldCheckRecipe, shouldCheckStructure;
@@ -30,51 +31,42 @@ public class TileEntityMultiMachine extends TileEntityTickable {
     private ArrayList<IComponent> components = new ArrayList<>();
 
     public void init(String type) {
+        if (type.isEmpty()) {
+            type = MachineList.BLASTFURNACE.getName();
+        }
         typeFromNBT = type;
     }
 
     @Override
     public void onFirstTick() {
-        if (typeFromNBT.isEmpty()) {
-            typeFromNBT = MachineList.BLASTFURNACE.getName();
-        }
         init(typeFromNBT);
         shouldCheckStructure = true;
     }
 
     @Override
-    public void update() {
-
-
-
-        super.update();
-        if (isServerSide()) {
-            if (shouldCheckStructure) {
+    public void onServerUpdate() {
+        if (shouldCheckStructure) {
+            clearComponents();
+            if (checkStructure()) {
+                validStructure = true;
+            } else {
+                validStructure = false;
                 clearComponents();
-                if (checkStructure()) {
-                    validStructure = true;
-                } else {
-                    validStructure = false;
-                    clearComponents();
-                }
-//                System.out.println("STRUCTURE: " + validStructure);
-                shouldCheckStructure = false;
             }
+            shouldCheckStructure = false;
         }
         if (shouldCheckRecipe) {
             checkRecipe();
             shouldCheckRecipe = false;
         }
-        getMachineType().getBehaviour().onTick(this);
     }
 
     public void checkRecipe() {
-        getMachineType().getBehaviour().onRecipe(this);
         System.out.println(maxProgress);
     }
 
     public void advanceRecipe() {
-        getMachineType().getBehaviour().onAdvanceRecipe(this);
+
     }
 
     private boolean checkStructure() {
@@ -122,25 +114,30 @@ public class TileEntityMultiMachine extends TileEntityTickable {
         return getState().getValue(BlockMultiMachines.FACING);
     }
 
-//    @Override
-//    public String getId() {
-//        return typeFromNBT;
-//    }
-//
-//    @Override
-//    public BlockPos getPos() {
-//        return pos;
-//    }
-//
-//    @Override
-//    public void linkController(TileEntityMultiMachine tile) {
-//        //NOOP
-//    }
-//
-//    @Override
-//    public void unlinkController(TileEntityMultiMachine tile) {
-//        //NOOP
-//    }
+    @Override
+    public String getId() {
+        return typeFromNBT;
+    }
+
+    @Override
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    @Override
+    public ArrayList<BlockPos> getLinkedControllers() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void linkController(TileEntityMultiMachine tile) {
+        //NOOP
+    }
+
+    @Override
+    public void unlinkController(TileEntityMultiMachine tile) {
+        //NOOP
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {

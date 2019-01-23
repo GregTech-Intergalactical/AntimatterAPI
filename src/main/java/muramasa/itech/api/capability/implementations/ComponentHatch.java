@@ -2,7 +2,7 @@
 //
 //import muramasa.itech.api.enums.HatchTexture;
 //import muramasa.itech.common.blocks.BlockHatches;
-//import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+//import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 //import net.minecraft.util.math.BlockPos;
 //
 //public class ComponentHatch extends Component {

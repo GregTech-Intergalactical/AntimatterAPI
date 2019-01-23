@@ -5,7 +5,7 @@ import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.util.Dir;
 import muramasa.itech.api.util.int2;
 import muramasa.itech.api.util.int3;
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Tuple;
 

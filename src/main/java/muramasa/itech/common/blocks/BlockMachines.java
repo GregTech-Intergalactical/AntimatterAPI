@@ -12,7 +12,7 @@ import muramasa.itech.api.properties.UnlistedCoverType;
 import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.items.ItemBlockMachines;
-import muramasa.itech.common.tileentities.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyDirection;
@@ -66,18 +66,21 @@ public class BlockMachines extends Block {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             exState = exState
                 .withProperty(TYPE, machine.getType())
                 .withProperty(TIER, machine.getTier())
-                .withProperty(ACTIVE, machine.getCurProgress() > 0)
-                .withProperty(COVERS, new CoverType[] {
-                    coverHandler.getCover(EnumFacing.SOUTH),
-                    coverHandler.getCover(EnumFacing.EAST),
-                    coverHandler.getCover(EnumFacing.WEST),
-                    coverHandler.getCover(EnumFacing.DOWN),
-                    coverHandler.getCover(EnumFacing.UP),
-                });
+                .withProperty(ACTIVE, machine.getCurProgress() > 0);
+            ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
+            if (coverHandler != null) {
+                exState = exState
+                    .withProperty(COVERS, new CoverType[] {
+                        coverHandler.getCover(EnumFacing.SOUTH),
+                        coverHandler.getCover(EnumFacing.EAST),
+                        coverHandler.getCover(EnumFacing.WEST),
+                        coverHandler.getCover(EnumFacing.DOWN),
+                        coverHandler.getCover(EnumFacing.UP),
+                    });
+            }
         }
         return exState;
     }

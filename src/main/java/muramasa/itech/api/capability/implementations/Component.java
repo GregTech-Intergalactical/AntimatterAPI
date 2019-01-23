@@ -1,7 +1,7 @@
 package muramasa.itech.api.capability.implementations;
 
 import muramasa.itech.api.capability.IComponent;
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;

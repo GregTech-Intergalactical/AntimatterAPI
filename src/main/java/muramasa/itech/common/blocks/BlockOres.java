@@ -4,7 +4,7 @@ import muramasa.itech.ITech;
 import muramasa.itech.api.enums.ItemFlag;
 import muramasa.itech.api.materials.Material;
 import muramasa.itech.common.items.ItemBlockOres;
-import muramasa.itech.common.tileentities.TileEntityOre;
+import muramasa.itech.common.tileentities.base.TileEntityOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;

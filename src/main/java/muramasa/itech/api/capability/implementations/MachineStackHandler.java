@@ -1,7 +1,7 @@
 package muramasa.itech.api.capability.implementations;
 
 import muramasa.itech.api.machines.Machine;
-import muramasa.itech.common.tileentities.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 

@@ -1,7 +1,7 @@
-package muramasa.itech.common.tileentities.multi;
+package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.capability.IComponent;
-import muramasa.itech.common.tileentities.TileEntityBase;
+import muramasa.itech.common.tileentities.base.TileEntityBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

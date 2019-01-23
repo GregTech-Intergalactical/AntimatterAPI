@@ -2,7 +2,7 @@ package muramasa.itech.common.blocks;
 
 import muramasa.itech.ITech;
 import muramasa.itech.api.enums.CoilType;
-import muramasa.itech.common.tileentities.multi.TileEntityCoil;
+import muramasa.itech.common.tileentities.base.multi.TileEntityCoil;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;

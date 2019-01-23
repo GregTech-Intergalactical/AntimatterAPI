@@ -2,7 +2,7 @@ package muramasa.itech.common.blocks;
 
 import muramasa.itech.ITech;
 import muramasa.itech.api.enums.CasingType;
-import muramasa.itech.common.tileentities.multi.TileEntityCasing;
+import muramasa.itech.common.tileentities.base.multi.TileEntityCasing;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;

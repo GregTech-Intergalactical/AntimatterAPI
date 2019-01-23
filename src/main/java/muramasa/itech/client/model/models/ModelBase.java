@@ -30,7 +30,7 @@ public class ModelBase implements IModel {
 
     public static final HashMap<String, ResourceLocation> baseTextures = new HashMap<>();
 
-    public static IBakedModel error;
+    public static IBakedModel missingModelBaked;
 
     private static IModelState modelState;
     private static VertexFormat vertexFormat;
@@ -62,7 +62,7 @@ public class ModelBase implements IModel {
             modelState = state;
             vertexFormat = format;
             bakedTextureGetter = textureGetter;
-            error = ModelLoaderRegistry.getMissingModel().bake(state, format, bakedTextureGetter);
+            missingModelBaked = ModelLoaderRegistry.getMissingModel().bake(state, format, bakedTextureGetter);
             return bakeModel(state, format, textureGetter);
         } catch (Exception e) {
             System.err.println(name + ".bake() failed due to exception:" + e);

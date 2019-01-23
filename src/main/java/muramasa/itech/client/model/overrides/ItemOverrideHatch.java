@@ -28,6 +28,6 @@ public class ItemOverrideHatch extends ItemOverrideList {
             NBTTagCompound tag = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
             return bakedModelsItem.get(tag.getString(Ref.KEY_MACHINE_STACK_TIER));
         }
-        return ModelBase.error;
+        return ModelBase.missingModelBaked;
     }
 }

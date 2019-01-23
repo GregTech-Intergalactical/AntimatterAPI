@@ -1,4 +1,4 @@
-package muramasa.itech.common.tileentities;
+package muramasa.itech.common.tileentities.base;
 
 import muramasa.itech.api.materials.Material;
 import net.minecraft.nbt.NBTTagCompound;

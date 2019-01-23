@@ -1,14 +1,16 @@
 package muramasa.itech.api.gui.container;
 
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.gui.slot.SlotInput;
 import muramasa.itech.api.gui.slot.SlotOutput;
 import muramasa.itech.api.capability.implementations.MachineStackHandler;
 import muramasa.itech.api.machines.SlotData;
-import muramasa.itech.common.tileentities.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 public class ContainerMachine extends ContainerBase {
 
@@ -18,7 +20,7 @@ public class ContainerMachine extends ContainerBase {
     private int lastProgress = -1;
 
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
-        super(tile.getStackHandler().getSlots(), playerInv);
+        super(tile.hasFlag(MachineFlag.ITEM) ? tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getSlots() : 0, playerInv);
         this.tile = tile;
         this.stackHandler = tile.getStackHandler();
         addSlots();

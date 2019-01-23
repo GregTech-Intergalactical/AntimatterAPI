@@ -1,8 +1,7 @@
 package muramasa.itech.client.model.overrides;
 
 import com.google.common.collect.ImmutableList;
-import muramasa.itech.api.machines.MachineList;
-import muramasa.itech.api.machines.Tier;
+import muramasa.itech.client.model.models.ModelBase;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -27,8 +26,10 @@ public class ItemOverrideMachine extends ItemOverrideList {
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
             NBTTagCompound tag = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-            return bakedModelsItem.get(tag.getString(Ref.KEY_MACHINE_STACK_TYPE) + tag.getString(Ref.KEY_MACHINE_STACK_TIER));
+            IBakedModel bakedModel = bakedModelsItem.get(tag.getString(Ref.KEY_MACHINE_STACK_TYPE) + tag.getString(Ref.KEY_MACHINE_STACK_TIER));
+            if (bakedModel != null) return bakedModel;
         }
-        return bakedModelsItem.get(MachineList.INVALID.getName() + Tier.LV.getName());
+//        return bakedModelsItem.get(MachineList.INVALID.getName() + Tier.LV.getName());
+        return ModelBase.missingModelBaked;
     }
 }
