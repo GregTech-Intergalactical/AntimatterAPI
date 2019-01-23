@@ -7,6 +7,7 @@ import muramasa.itech.common.blocks.*;
 import muramasa.itech.common.items.ItemBlockMachines;
 import muramasa.itech.common.items.ItemBlockMultiMachines;
 import muramasa.itech.common.items.ItemBlockOres;
+import muramasa.itech.common.tileentities.TileEntityBase;
 import muramasa.itech.common.tileentities.TileEntityCable;
 import muramasa.itech.common.tileentities.TileEntityMachine;
 import muramasa.itech.common.tileentities.TileEntityOre;
@@ -43,6 +44,8 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        GameRegistry.registerTileEntity(TileEntityBase.class, new ResourceLocation(ITech.MODID, "tilebase"));
+
         event.getRegistry().register(blockOres);
         GameRegistry.registerTileEntity(TileEntityOre.class, new ResourceLocation(ITech.MODID, "blockores"));
 

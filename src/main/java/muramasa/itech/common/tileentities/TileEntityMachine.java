@@ -2,6 +2,7 @@ package muramasa.itech.common.tileentities;
 
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.capability.implementations.*;
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineList;
@@ -66,6 +67,11 @@ public class TileEntityMachine extends TileEntityTickable {
 
     @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
+        if (isServerSide()) {
+            System.out.println("SERVER FIRST TICK");
+        } else {
+            System.out.println("CLIENT FIRST TICK");
+        }
         if (typeFromNBT.isEmpty() || tierFromNBT.isEmpty()) {
             typeFromNBT = MachineList.ALLOYSMELTER.getName();
             tierFromNBT = Tier.LV.getName();
@@ -110,7 +116,7 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     private void advanceRecipe() {
-        if (activeRecipe != null){ //Found a valid recipe, process it
+        if (activeRecipe != null) { //Found a valid recipe, process it
             System.out.println(energyStorage.energy);
             if (curProgress == maxProgress) {
                 stackHandler.addOutputs(activeRecipe.getOutputs());
@@ -139,6 +145,10 @@ public class TileEntityMachine extends TileEntityTickable {
 
     public String getTier() {
         return tierFromNBT;
+    }
+
+    public boolean hasFlag(MachineFlag flag) {
+        return Utils.hasFlag(getMachineType().getMask(), flag.getBit());
     }
 
     public void rotate(EnumFacing side) { //Rotate the front to face a given direction

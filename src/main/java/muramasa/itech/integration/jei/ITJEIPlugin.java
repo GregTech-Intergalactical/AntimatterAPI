@@ -2,7 +2,7 @@ package muramasa.itech.integration.jei;
 
 import mezz.jei.api.*;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.recipe.RecipeMap;
@@ -23,14 +23,14 @@ public class ITJEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
-        for (Machine type : AbilityFlag.BASIC.getTypes()) {
+        for (Machine type : MachineFlag.BASIC.getTypes()) {
             registry.addRecipeCategories(new MachineRecipeCategory(guiHelper, type));
         }
     }
 
     @Override
     public void register(IModRegistry registry) {
-        for (Machine type : AbilityFlag.BASIC.getTypes()) {
+        for (Machine type : MachineFlag.BASIC.getTypes()) {
             registry.addRecipes(RecipeMap.get(type).getRecipes(), type.getJeiCategoryID());
             registry.handleRecipes(Recipe.class, MachineRecipeWrapper::new, type.getJeiCategoryID());
         }

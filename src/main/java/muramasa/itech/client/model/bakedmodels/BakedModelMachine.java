@@ -36,13 +36,18 @@ public class BakedModelMachine extends BakedModelBase {
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
         int facing = exState.getClean().getValue(BlockMachines.FACING).getIndex() - 2;
+        String type = exState.getValue(BlockMachines.TYPE), tier = exState.getValue(BlockMachines.TIER);
 
-        quadList.addAll(bakedModels.get(exState.getValue(BlockMachines.TYPE) + exState.getValue(BlockMachines.TIER))[facing].getQuads(state, side, rand));
+        if (type != null && !type.isEmpty() && tier != null && !tier.isEmpty()) {
+            quadList.addAll(bakedModels.get(type + tier)[facing].getQuads(state, side, rand));
+        }
 
         CoverType[] covers = exState.getValue(BlockMachines.COVERS);
-        for (int i = 0; i < covers.length; i++) {
-            if (covers[i] != CoverType.NONE) {
-                quadList.addAll(bakedCovers[covers[i].ordinal()][i].getQuads(exState, side, rand));
+        if (covers != null) {
+            for (int i = 0; i < covers.length; i++) {
+                if (covers[i] != CoverType.NONE) {
+                    quadList.addAll(bakedCovers[covers[i].ordinal()][i].getQuads(exState, side, rand));
+                }
             }
         }
 

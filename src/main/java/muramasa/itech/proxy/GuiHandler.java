@@ -1,5 +1,6 @@
 package muramasa.itech.proxy;
 
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.gui.GuiMultiMachine;
 import muramasa.itech.api.gui.container.ContainerMultiMachine;
 import muramasa.itech.common.tileentities.multi.TileEntityHatch;
@@ -21,10 +22,13 @@ public class GuiHandler implements IGuiHandler {
     @Nullable
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (tile instanceof TileEntityMachine && ID == Ref.MACHINE_ID) {
-            return new ContainerMachine((TileEntityMachine) tile, player.inventory);
+            System.out.println("IS MACHINE");
+            if (((TileEntityMachine) tile).hasFlag(MachineFlag.GUI)) {
+                System.out.println("OPENING MACHINE");
+                return new ContainerMachine((TileEntityMachine) tile, player.inventory);
+            }
         } else if (tile instanceof TileEntityMultiMachine && ID == Ref.MULTI_MACHINE_ID) {
             return new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory);
         } else if (tile instanceof TileEntityHatch && ID == Ref.HATCH_ID) {
@@ -36,8 +40,7 @@ public class GuiHandler implements IGuiHandler {
     @Nullable
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (tile instanceof TileEntityMachine && ID == Ref.MACHINE_ID) {
             return new GuiMachine((TileEntityMachine) tile, new ContainerMachine((TileEntityMachine) tile, player.inventory));
         } else if (tile instanceof TileEntityMultiMachine && ID == Ref.MULTI_MACHINE_ID) {

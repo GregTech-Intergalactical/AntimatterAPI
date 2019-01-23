@@ -22,6 +22,8 @@ public class ItemBlockMachines extends ItemBlock {
         setHasSubtypes(true);
     }
 
+
+
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {

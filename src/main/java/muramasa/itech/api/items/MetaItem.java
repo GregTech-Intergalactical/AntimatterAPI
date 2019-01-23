@@ -162,6 +162,11 @@ public class MetaItem extends Item {
                             ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                         }
                     }
+                    if (!world.isRemote) {
+                        player.sendMessage(new TextComponentString("Server: " + tile.toString()));
+                    } else {
+                        player.sendMessage(new TextComponentString("Client: " + tile.toString()));
+                    }
                 }
             }
         } else {

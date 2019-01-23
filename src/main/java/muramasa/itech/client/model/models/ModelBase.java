@@ -79,7 +79,8 @@ public class ModelBase implements IModel {
         try {
             return ModelLoaderRegistry.getModel(loc);
         } catch (Exception e) {
-            System.err.println("ModelBase.load() failed due to exception: " + e);
+            System.err.println("ModelBase.load() failed due to " + e + ":");
+            e.printStackTrace();
             return ModelLoaderRegistry.getMissingModel();
         }
     }

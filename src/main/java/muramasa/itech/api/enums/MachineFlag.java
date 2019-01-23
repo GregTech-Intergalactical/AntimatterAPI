@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public enum AbilityFlag {
+public enum MachineFlag {
 
     BASIC(), //
     MULTI(), //Has structure
@@ -16,12 +16,13 @@ public enum AbilityFlag {
     ITEM(), //Can store items
     FLUID(), //Can store fluids
     POWERED(), //Needs power
-    RECIPE(); //Has a recipe map
+    RECIPE(), //Has a recipe map
+    GUI();
 
     private int bit;
     private ArrayList<Machine> typeList;
 
-    AbilityFlag() {
+    MachineFlag() {
         bit = 1 << ordinal();
         typeList = new ArrayList<>();
     }
