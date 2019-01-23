@@ -1,7 +1,7 @@
 package muramasa.itech.client.model.models;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.client.model.bakedmodels.BakedModelMultiMachine;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -22,7 +22,7 @@ public class ModelMultiMachine extends ModelBase {
     private static HashMap<String, ResourceLocation> baseTextures = new HashMap<>();
 
     static {
-        for (Machine type : AbilityFlag.MULTI.getTypes()) {
+        for (Machine type : MachineFlag.MULTI.getTypes()) {
             baseTextures.put(type.getName(), type.getBaseTexture());
         }
     }
@@ -36,7 +36,7 @@ public class ModelMultiMachine extends ModelBase {
         IModel baseModel = load(MULTIMACHINE_BASE);
 
         HashMap<String, IBakedModel> bakedModels = new HashMap<>();
-        for (Machine type : AbilityFlag.MULTI.getTypes()) {
+        for (Machine type : MachineFlag.MULTI.getTypes()) {
             bakedModels.put(type.getName(), texAndBake(baseModel, new String[]{"base", "overlay"}, new ResourceLocation[]{type.getBaseTexture(), type.getOverlayTexture()}));
         }
 

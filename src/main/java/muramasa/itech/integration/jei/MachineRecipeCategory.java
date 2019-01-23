@@ -74,7 +74,7 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         List<IIngredients> ingredientList;
         for (int i = 0; i < slots.length; i++) {
             itemStackGroup.init(i, slots[i].type == 0, slots[i].x - SLOT_OFFSET_X, slots[i].y - SLOT_OFFSET_Y);
-            int stackIndex = i < type.getInputCount() ? i : i - type.getInputCount(); //TODO add helper?
+            int stackIndex = i < type.getInputCount() ? i : i - type.getInputCount(); //TODO register helper?
             itemStackGroup.set(i, i < type.getInputCount() ? ingredients.getInputs(VanillaTypes.ITEM).get(stackIndex) : ingredients.getOutputs(VanillaTypes.ITEM).get(stackIndex));
         }
     }

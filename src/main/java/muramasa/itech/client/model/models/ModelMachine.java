@@ -1,7 +1,7 @@
 package muramasa.itech.client.model.models;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineStack;
@@ -25,19 +25,16 @@ public class ModelMachine extends ModelBase {
     private static final ModelResourceLocation MACHINE_BASE = new ModelResourceLocation(ITech.MODID + ":machineparts/machinebase");
     private static final ModelResourceLocation MACHINE_BASE_ITEM = new ModelResourceLocation(ITech.MODID + ":machineparts/machinebaseitem");
 
-
-
     private static final HashMap<String, ResourceLocation> overlayTextures = new HashMap<>(), coverTextures = new HashMap<>();
 
     public static IBakedModel baseBaked;
 
     static {
-        for (Machine type : AbilityFlag.BASIC.getTypes()) {
+        for (Machine type : MachineFlag.BASIC.getTypes()) {
             overlayTextures.put(type.getName(), type.getOverlayTexture());
         }
         for (CoverType coverType : CoverType.values()) {
             coverTextures.put(coverType.getName(), new ResourceLocation(ITech.MODID, "blocks/machines/covers/" + coverType.getName()));
-            System.out.println("COVER NAME: " + coverType.getName());
         }
     }
 
@@ -52,7 +49,7 @@ public class ModelMachine extends ModelBase {
 
         HashMap<String, IBakedModel[]> bakedModels = new HashMap<>();
         HashMap<String, IBakedModel> bakedModelsItem = new HashMap<>();
-        Collection<MachineStack> machineStacks = AbilityFlag.BASIC.getStacks();
+        Collection<MachineStack> machineStacks = MachineFlag.BASIC.getStacks();
         for (MachineStack stack : machineStacks) {
             String tier = stack.getTier().getName(), type = stack.getType().getName();
             IModel overlayModel = load(stack.getType().getOverlayModel());
@@ -71,13 +68,6 @@ public class ModelMachine extends ModelBase {
         for (CoverType coverType : CoverType.values()) {
             if (coverType.getModelLocation() == null) continue;
             IModel coverModel = load(coverType.getModelLocation());
-//            bakedCovers[coverType.ordinal()] = new IBakedModel[] {
-//                    coverModel.bake(SOUTH, format, bakedTextureGetter),
-//                    coverModel.bake(EAST, format, bakedTextureGetter),
-//                    coverModel.bake(WEST, format, bakedTextureGetter),
-//                    coverModel.bake(DOWN, format, bakedTextureGetter),
-//                    coverModel.bake(UP, format, bakedTextureGetter)
-//            };
             bakedCovers[coverType.ordinal()] = new IBakedModel[] {
                 texAndBake(coverModel, "base", SOUTH, coverTextures.get(coverType.getName())),
                 texAndBake(coverModel, "base", EAST, coverTextures.get(coverType.getName())),

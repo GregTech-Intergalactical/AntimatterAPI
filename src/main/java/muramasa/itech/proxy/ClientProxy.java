@@ -3,6 +3,10 @@ package muramasa.itech.proxy;
 import muramasa.itech.api.items.MetaItem;
 import muramasa.itech.api.items.MetaTool;
 import muramasa.itech.client.model.ModelLoader;
+import muramasa.itech.client.model.models.ModelCable;
+import muramasa.itech.client.model.models.ModelHatch;
+import muramasa.itech.client.model.models.ModelMachine;
+import muramasa.itech.client.model.models.ModelMultiMachine;
 import muramasa.itech.common.blocks.BlockOres;
 import muramasa.itech.common.items.ItemBlockOres;
 import muramasa.itech.loaders.ContentLoader;
@@ -55,5 +59,10 @@ public class ClientProxy implements IProxy {
         ContentLoader.blockCables.initModel();
         ContentLoader.blockCasings.initModel();
         ContentLoader.blockCoils.initModel();
+
+        ModelLoader.register(ContentLoader.blockMachines, new ModelMachine());
+        ModelLoader.register(ContentLoader.blockMultiMachines, new ModelMultiMachine());
+        ModelLoader.register(ContentLoader.blockHatches, new ModelHatch());
+        ModelLoader.register(ContentLoader.blockCables, new ModelCable());
     }
 }

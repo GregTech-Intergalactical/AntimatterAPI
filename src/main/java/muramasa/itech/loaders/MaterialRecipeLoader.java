@@ -16,7 +16,7 @@
 //
 //public class MaterialRecipeLoader implements Runnable {
 //
-//    //TODO add purified dust processing to centrifuged processing to regain lost benefits
+//    //TODO register purified dust processing to centrifuged processing to regain lost benefits
 //
 //    private static FluidStack aWaterStack = Materials.Water.getFluid(200);
 //    private static FluidStack aDistilledStack = GT_ModHandler.getDistilledWater(200);
@@ -283,11 +283,11 @@
 //                            aFirstFluid = aMatStack.material.getGas(aMatStack.amount * 1000);
 //                        }
 //                    } else {
-//                        aOutputs.add(aMatStack.material.getCell(aMatStack.amount));
+//                        aOutputs.register(aMatStack.material.getCell(aMatStack.amount));
 //                        aInputCellCount += aMatStack.amount;
 //                    }
 //                } else {
-//                    aOutputs.add(aMatStack.material.getDust(aMatStack.amount));
+//                    aOutputs.register(aMatStack.material.getDust(aMatStack.amount));
 //                }
 //                aInputCount += aMatStack.amount;
 //            }

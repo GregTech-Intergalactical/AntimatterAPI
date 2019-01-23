@@ -2,7 +2,7 @@ package muramasa.itech.api.machines;
 
 import muramasa.itech.ITech;
 import muramasa.itech.api.behaviour.BehaviourMultiMachine;
-import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.recipe.RecipeMap;
 import muramasa.itech.api.structure.StructurePattern;
@@ -23,6 +23,7 @@ public class Machine implements IStringSerializable {
 
     /** Basic Members **/
     private Block block;
+    private Class tileClass;
     private String name, displayName, jeiCategoryID, jeiCategoryName;
     private RecipeMap recipeMap;
     private ResourceLocation overlayTexture;
@@ -37,14 +38,16 @@ public class Machine implements IStringSerializable {
     /** GUI Members **/
     private ResourceLocation guiTexture;
     private SlotData[] slots;
-    private int inputCount, outputCount;
+    private int guiId, inputCount, outputCount;
     private boolean isGuiTierSensitive;
 
     /** Powered Members **/
     private ArrayList<Tier> tiers; //TODO not specifically for power tiers?
 
-    public Machine(String name) {
+    public Machine(String name, Block block, Class tileClass) {
         this.name = name;
+        this.block = block;
+        this.tileClass = tileClass;
         guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         overlayTexture = new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
         overlayModel = new ModelResourceLocation(ITech.MODID + ":machineparts/overlays/" + name);
@@ -101,8 +104,8 @@ public class Machine implements IStringSerializable {
     }
 
     /** Type Construction **/
-    public Machine add(AbilityFlag... flags) {
-        for (AbilityFlag flag : flags) {
+    public Machine add(MachineFlag... flags) {
+        for (MachineFlag flag : flags) {
             abilityMask = Utils.addFlag(abilityMask, flag.getBit());
             flag.add(this);
         }
@@ -119,11 +122,13 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine addGUI(Machine machineToCopy) {
-        return addGUI(machineToCopy.slots);
+    public Machine addGUI(int id, boolean isTierSensitive, Machine slotsToCopy) {
+        return addGUI(id, isTierSensitive, slotsToCopy.slots);
     }
 
-    public Machine addGUI(SlotData... slots) {
+    public Machine addGUI(int id, boolean isTierSensitive, SlotData... slots) {
+        guiId = id;
+        isGuiTierSensitive = isTierSensitive;
         guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         this.slots = slots;
         for (SlotData slot : slots) {
@@ -161,6 +166,14 @@ public class Machine implements IStringSerializable {
     /** Getters **/
     public Block getBlock() {
         return block;
+    }
+
+    public Class getTileClass() {
+        return tileClass;
+    }
+
+    public int getMask() {
+        return abilityMask;
     }
 
     public Collection<Tier> getTiers() {

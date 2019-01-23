@@ -1,7 +1,7 @@
 package muramasa.itech.common.blocks;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.enums.AbilityFlag;
+import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.enums.HatchTexture;
 import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.properties.UnlistedString;
@@ -64,7 +64,7 @@ public class BlockHatches extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (MachineStack stack : AbilityFlag.HATCH.getStacks()) {
+        for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
             items.add(stack.asItemStack());
         }
     }

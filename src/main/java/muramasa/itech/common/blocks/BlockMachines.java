@@ -3,8 +3,9 @@ package muramasa.itech.common.blocks;
 import muramasa.itech.ITech;
 import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
-import muramasa.itech.api.enums.AbilityFlag;
 import muramasa.itech.api.enums.CoverType;
+import muramasa.itech.api.enums.MachineFlag;
+import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.properties.UnlistedBoolean;
 import muramasa.itech.api.properties.UnlistedCoverType;
@@ -48,6 +49,7 @@ public class BlockMachines extends Block {
 
     public BlockMachines() {
         super(net.minecraft.block.material.Material.IRON);
+//        setSoundType(SoundType.METAL);
         setUnlocalizedName(ITech.MODID + "blockmachines");
         setRegistryName("blockmachines");
         setCreativeTab(ITech.TAB_MACHINES);
@@ -76,15 +78,13 @@ public class BlockMachines extends Block {
                     coverHandler.getCover(EnumFacing.DOWN),
                     coverHandler.getCover(EnumFacing.UP),
                 });
-        } else {
-            System.err.println("TILE INSTANCE NOT EQUAL: " + tile);
         }
         return exState;
     }
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (MachineStack stack : AbilityFlag.BASIC.getStacks()) {
+        for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
             items.add(stack.asItemStack());
         }
     }
@@ -115,14 +115,25 @@ public class BlockMachines extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityMachine && stack.getItem() instanceof ItemBlockMachines) {
+        if (stack.getItem() instanceof ItemBlockMachines) {
             if (stack.hasTagCompound()) {
                 NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-                TileEntityMachine machine = (TileEntityMachine) tile;
-                machine.init(data.getString(Ref.KEY_MACHINE_STACK_TYPE), data.getString(Ref.KEY_MACHINE_STACK_TIER));
+                String machineType = data.getString(Ref.KEY_MACHINE_STACK_TYPE);
+                String machineTier = data.getString(Ref.KEY_MACHINE_STACK_TIER);
+                try {
+                    TileEntity tile = (TileEntity) MachineList.get(machineType).getTileClass().newInstance();
+                    if (tile instanceof TileEntityMachine) {
+                        world.setTileEntity(pos, tile);
+                        tile = world.getTileEntity(pos);
+                        if (tile instanceof TileEntityMachine) {
+                            ((TileEntityMachine) tile).init(machineType, machineTier);
+                            world.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 3);
+                        }
+                    }
+                } catch (IllegalAccessException | InstantiationException e) {
+                    e.printStackTrace();
+                }
             }
-            world.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
         }
     }
 
