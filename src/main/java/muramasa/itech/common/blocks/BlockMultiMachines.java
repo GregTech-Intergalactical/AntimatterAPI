@@ -6,7 +6,7 @@ import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.items.ItemBlockMultiMachines;
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyDirection;
@@ -66,6 +66,7 @@ public class BlockMultiMachines extends Block {
         for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
             items.add(stack.asItemStack());
         }
+        System.out.println(MachineFlag.MULTI.getStacks());
     }
 
     @Override

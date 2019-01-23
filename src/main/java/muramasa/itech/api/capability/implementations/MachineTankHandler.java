@@ -1,7 +1,7 @@
 package muramasa.itech.api.capability.implementations;
 
 import muramasa.itech.api.machines.objects.MachineTankPropertiesWrapper;
-import muramasa.itech.common.tileentities.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;

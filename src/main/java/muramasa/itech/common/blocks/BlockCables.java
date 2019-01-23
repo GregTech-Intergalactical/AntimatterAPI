@@ -2,7 +2,7 @@ package muramasa.itech.common.blocks;
 
 import muramasa.itech.ITech;
 import muramasa.itech.api.properties.UnlistedInteger;
-import muramasa.itech.common.tileentities.TileEntityCable;
+import muramasa.itech.common.tileentities.base.TileEntityCable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;

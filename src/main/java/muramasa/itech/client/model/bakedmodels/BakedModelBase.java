@@ -86,7 +86,7 @@ public class BakedModelBase implements IBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return ModelBase.error.getParticleTexture();
+        return ModelBase.missingModelBaked.getParticleTexture();
     }
 
     private static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s) {

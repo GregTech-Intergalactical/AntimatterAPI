@@ -6,7 +6,7 @@ import muramasa.itech.api.enums.HatchTexture;
 import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.common.items.ItemBlockMachines;
-import muramasa.itech.common.tileentities.multi.TileEntityHatch;
+import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyDirection;

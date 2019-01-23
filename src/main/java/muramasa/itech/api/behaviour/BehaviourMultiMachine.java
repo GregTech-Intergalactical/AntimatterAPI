@@ -1,6 +1,6 @@
 package muramasa.itech.api.behaviour;
 
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 
 public class BehaviourMultiMachine {
 

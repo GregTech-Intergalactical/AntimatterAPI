@@ -6,7 +6,7 @@ import muramasa.itech.api.enums.CoilType;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.api.util.int3;
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;

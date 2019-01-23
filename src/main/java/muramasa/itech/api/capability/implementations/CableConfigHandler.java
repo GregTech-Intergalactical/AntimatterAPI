@@ -1,6 +1,6 @@
 package muramasa.itech.api.capability.implementations;
 
-import muramasa.itech.common.tileentities.TileEntityCable;
+import muramasa.itech.common.tileentities.base.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 

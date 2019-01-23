@@ -1,7 +1,6 @@
 package muramasa.itech.api.machines;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.behaviour.BehaviourMultiMachine;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.recipe.RecipeMap;
@@ -24,16 +23,14 @@ public class Machine implements IStringSerializable {
     /** Basic Members **/
     private Block block;
     private Class tileClass;
-    private String name, displayName, jeiCategoryID, jeiCategoryName;
-    private RecipeMap recipeMap;
+    private String name, displayName;
     private ResourceLocation overlayTexture;
     private ModelResourceLocation overlayModel;
-    private int abilityMask;
+    private int machineMask;
 
-    /** Multi Members **/
-    private ResourceLocation baseTexture;
-    private StructurePattern structurePattern;
-    private BehaviourMultiMachine multiBehaviour;
+    /** Recipe Members **/
+    private RecipeMap recipeMap;
+    private String jeiCategoryID, jeiCategoryName;
 
     /** GUI Members **/
     private ResourceLocation guiTexture;
@@ -41,8 +38,14 @@ public class Machine implements IStringSerializable {
     private int guiId, inputCount, outputCount;
     private boolean isGuiTierSensitive;
 
+    /** Multi Members **/
+    private ResourceLocation baseTexture;
+    private StructurePattern structurePattern;
+
     /** Powered Members **/
     private ArrayList<Tier> tiers; //TODO not specifically for power tiers?
+
+    //TODO add valid covers
 
     public Machine(String name, Block block, Class tileClass) {
         this.name = name;
@@ -94,21 +97,22 @@ public class Machine implements IStringSerializable {
         return overlayModel;
     }
 
+    //TODO target type specific recipe find
     public Recipe findRecipe(ItemStack[] inputs, FluidStack... fluidInputs) {
         return RecipeMap.findRecipeItem(name, inputs);
     }
 
-    public Machine setGuiTierSensitive() {
-        isGuiTierSensitive = true;
+    public Machine addFlags(MachineFlag... flags) {
+        for (MachineFlag flag : flags) {
+            machineMask = Utils.addFlag(machineMask, flag.getBit());
+            flag.add(this);
+        }
         return this;
     }
 
-    /** Type Construction **/
-    public Machine add(MachineFlag... flags) {
-        for (MachineFlag flag : flags) {
-            abilityMask = Utils.addFlag(abilityMask, flag.getBit());
-            flag.add(this);
-        }
+    public Machine setFlags(MachineFlag... flags) {
+        machineMask = 0;
+        addFlags(flags);
         return this;
     }
 
@@ -122,13 +126,17 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine addGUI(int id, boolean isTierSensitive, Machine slotsToCopy) {
-        return addGUI(id, isTierSensitive, slotsToCopy.slots);
-    }
-
-    public Machine addGUI(int id, boolean isTierSensitive, SlotData... slots) {
+    public Machine addGUI(int id, boolean isTierSensitive) {
         guiId = id;
         isGuiTierSensitive = isTierSensitive;
+        return this;
+    }
+
+    public Machine addSlots(Machine slotsToCopy) {
+        return addSlots(slotsToCopy.slots);
+    }
+
+    public Machine addSlots(SlotData... slots) {
         guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         this.slots = slots;
         for (SlotData slot : slots) {
@@ -138,6 +146,11 @@ public class Machine implements IStringSerializable {
                 outputCount++;
             }
         }
+        return this;
+    }
+
+    public Machine setGuiTierSensitive() {
+        isGuiTierSensitive = true;
         return this;
     }
 
@@ -158,9 +171,8 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine addBehaviour(BehaviourMultiMachine behaviour) {
-        multiBehaviour = behaviour;
-        return this;
+    public boolean hasFlag(MachineFlag flag) {
+        return Utils.hasFlag(machineMask, flag.getBit());
     }
 
     /** Getters **/
@@ -173,7 +185,7 @@ public class Machine implements IStringSerializable {
     }
 
     public int getMask() {
-        return abilityMask;
+        return machineMask;
     }
 
     public Collection<Tier> getTiers() {
@@ -198,9 +210,5 @@ public class Machine implements IStringSerializable {
 
     public StructurePattern getPattern() {
         return structurePattern;
-    }
-
-    public BehaviourMultiMachine getBehaviour() {
-        return multiBehaviour;
     }
 }

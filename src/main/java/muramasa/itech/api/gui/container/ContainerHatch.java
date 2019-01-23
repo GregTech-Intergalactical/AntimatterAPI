@@ -1,6 +1,6 @@
 package muramasa.itech.api.gui.container;
 
-import muramasa.itech.common.tileentities.multi.TileEntityHatch;
+import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
 import net.minecraft.inventory.IInventory;
 
 public class ContainerHatch extends ContainerBase {

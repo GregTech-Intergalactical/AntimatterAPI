@@ -1,4 +1,4 @@
-package muramasa.itech.common.tileentities;
+package muramasa.itech.common.tileentities.base;
 
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.capability.implementations.CableConfigHandler;

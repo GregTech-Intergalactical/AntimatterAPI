@@ -5,7 +5,7 @@ import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.util.SoundList;
-import muramasa.itech.common.tileentities.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 

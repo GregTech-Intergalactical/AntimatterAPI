@@ -1,4 +1,4 @@
-package muramasa.itech.common.tileentities.multi;
+package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.enums.HatchTexture;
 import muramasa.itech.common.blocks.BlockHatches;

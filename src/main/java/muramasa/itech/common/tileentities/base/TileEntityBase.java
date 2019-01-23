@@ -1,4 +1,4 @@
-package muramasa.itech.common.tileentities;
+package muramasa.itech.common.tileentities.base;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

@@ -15,9 +15,11 @@ public enum MachineFlag {
     HATCH(),
     ITEM(), //Can store items
     FLUID(), //Can store fluids
-    POWERED(), //Needs power
+    ENERGY(), //Needs power
     RECIPE(), //Has a recipe map
-    GUI();
+    GUI(),
+    COVERABLE(),
+    CONFIGURABLE();
 
     private int bit;
     private ArrayList<Machine> typeList;

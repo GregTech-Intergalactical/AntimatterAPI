@@ -1,4 +1,4 @@
-package muramasa.itech.common.tileentities;
+package muramasa.itech.common.tileentities.base;
 
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.capability.implementations.*;
@@ -43,18 +43,17 @@ public class TileEntityMachine extends TileEntityTickable {
     private Recipe activeRecipe;
     private boolean shouldCheckRecipe;
 
-    @Override
-    public void onLoad() {
-
-    }
-
-    public TileEntityMachine() {
-//        System.out.println("TYPE: " + typeFromNBT);
-    }
-
     public void init(String type, String tier) {
+        if (type.isEmpty() || type.isEmpty()) {
+            type = MachineList.ALLOYSMELTER.getName();
+            tier = Tier.LV.getName();
+        }
         typeFromNBT = type;
         tierFromNBT = tier;
+        if (facing > 2) {
+            rotate(EnumFacing.VALUES[facing]);
+        }
+
         stackHandler = new MachineStackHandler(this, MachineList.get(type));
         if (itemData != null) stackHandler.deserializeNBT(itemData);
         inputTank = new MachineTankHandler(this, 9999, savedFluidStack1, true, false);
@@ -66,30 +65,22 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     @Override
+    public void onLoad() {
+
+    }
+
+    @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
         if (isServerSide()) {
             System.out.println("SERVER FIRST TICK");
         } else {
             System.out.println("CLIENT FIRST TICK");
         }
-        if (typeFromNBT.isEmpty() || tierFromNBT.isEmpty()) {
-            typeFromNBT = MachineList.ALLOYSMELTER.getName();
-            tierFromNBT = Tier.LV.getName();
-        }
         init(typeFromNBT, tierFromNBT);
-        if (facing > 2) {
-            rotate(EnumFacing.VALUES[facing]);
-        }
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (isClientSide()) {
-//            System.out.println(clientProgress);
-        }
-
-        if (isClientSide()) return;
+    public void onServerUpdate() {
         advanceRecipe();
         if (shouldCheckRecipe) {
             checkRecipe();

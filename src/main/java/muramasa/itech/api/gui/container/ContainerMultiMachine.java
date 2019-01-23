@@ -1,6 +1,6 @@
 package muramasa.itech.api.gui.container;
 
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.inventory.IInventory;
 
 public class ContainerMultiMachine extends ContainerBase {

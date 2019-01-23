@@ -3,7 +3,7 @@ package muramasa.itech.api.gui;
 import muramasa.itech.api.gui.container.ContainerMultiMachine;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.Tier;
-import muramasa.itech.common.tileentities.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 
