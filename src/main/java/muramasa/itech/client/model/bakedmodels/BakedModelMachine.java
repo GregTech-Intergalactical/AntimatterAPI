@@ -1,8 +1,8 @@
 package muramasa.itech.client.model.bakedmodels;
 
 import muramasa.itech.api.enums.CoverType;
+import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.client.model.overrides.ItemOverrideMachine;
-import muramasa.itech.common.blocks.BlockMachines;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -35,14 +35,14 @@ public class BakedModelMachine extends BakedModelBase {
 
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        int facing = exState.getClean().getValue(BlockMachines.FACING).getIndex() - 2;
-        String type = exState.getValue(BlockMachines.TYPE), tier = exState.getValue(BlockMachines.TIER);
+        int facing = exState.getClean().getValue(ITechProperties.FACING).getIndex() - 2;
+        String type = exState.getValue(ITechProperties.TYPE), tier = exState.getValue(ITechProperties.TIER);
 
         if (type != null && !type.isEmpty() && tier != null && !tier.isEmpty()) {
             quadList.addAll(bakedModels.get(type + tier)[facing].getQuads(state, side, rand));
         }
 
-        CoverType[] covers = exState.getValue(BlockMachines.COVERS);
+        CoverType[] covers = exState.getValue(ITechProperties.COVERS);
         if (covers != null) {
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i] != CoverType.NONE) {

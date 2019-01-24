@@ -1,16 +1,16 @@
 package muramasa.itech.api.gui.slot;
 
-import muramasa.itech.api.capability.implementations.MachineStackHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotInput extends SlotItemHandler {
 
-    private MachineStackHandler stackHandler;
+    private IItemHandler stackHandler;
     private int index;
 
-    public SlotInput(MachineStackHandler stackHandler, int index, int xPosition, int yPosition) {
+    public SlotInput(IItemHandler stackHandler, int index, int xPosition, int yPosition) {
         super(stackHandler, index, xPosition, yPosition);
         this.stackHandler = stackHandler;
         this.index = index;

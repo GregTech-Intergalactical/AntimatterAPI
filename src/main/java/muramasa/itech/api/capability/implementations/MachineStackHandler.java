@@ -48,7 +48,6 @@ public class MachineStackHandler extends ItemStackHandler {
     }
 
     public void onInputChanged(int slot) {
-//        onContentsChanged(slot);
         tile.onContentsChanged(slot);
         tile.markDirty();
     }

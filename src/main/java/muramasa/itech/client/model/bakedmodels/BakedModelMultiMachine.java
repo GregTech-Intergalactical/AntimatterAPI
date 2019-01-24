@@ -1,6 +1,6 @@
 package muramasa.itech.client.model.bakedmodels;
 
-import muramasa.itech.common.blocks.BlockMultiMachines;
+import muramasa.itech.api.properties.ITechProperties;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -31,7 +31,7 @@ public class BakedModelMultiMachine extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
         IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
-        IBakedModel bakedModel = bakedModels.get(extendedState.getValue(BlockMultiMachines.TYPE));
+        IBakedModel bakedModel = bakedModels.get(extendedState.getValue(ITechProperties.TYPE));
         if (bakedModel != null) {
             quadList.addAll(bakedModel.getQuads(state, side, rand));
         }

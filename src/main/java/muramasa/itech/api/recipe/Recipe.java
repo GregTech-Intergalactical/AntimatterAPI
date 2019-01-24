@@ -54,6 +54,10 @@ public class Recipe {
         return power;
     }
 
+    public int getTotalPower() {
+        return getDuration() * getPower();
+    }
+
     private static ItemStack[] evaluateChances(ItemStack[] outputs) {
         return outputs;
     }

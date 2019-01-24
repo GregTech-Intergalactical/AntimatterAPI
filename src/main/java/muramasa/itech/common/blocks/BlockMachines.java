@@ -7,17 +7,12 @@ import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.MachineStack;
-import muramasa.itech.api.properties.UnlistedBoolean;
-import muramasa.itech.api.properties.UnlistedCoverType;
-import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.items.ItemBlockMachines;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
-import muramasa.itech.common.tileentities.base.TileEntityTickable;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -41,18 +36,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
+import static muramasa.itech.api.properties.ITechProperties.*;
+
 public class BlockMachines extends Block {
 
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    public static final UnlistedString TYPE = new UnlistedString();
-    public static final UnlistedString TIER = new UnlistedString();
-    public static final UnlistedBoolean ACTIVE = new UnlistedBoolean();
-    public static final UnlistedCoverType COVERS = new UnlistedCoverType();
-
-    public BlockMachines() {
+    public BlockMachines(String name) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName(ITech.MODID + "blockmachines");
-        setRegistryName("blockmachines");
+        setUnlocalizedName(ITech.MODID + name);
+        setRegistryName(name);
         setSoundType(SoundType.METAL);
         setCreativeTab(ITech.TAB_MACHINES);
     }
@@ -74,6 +65,7 @@ public class BlockMachines extends Block {
                 .withProperty(ACTIVE, machine.getCurProgress() > 0);
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
+                System.out.println(getRegistryName().getResourcePath() + " - HAS COVER CAP");
                 exState = exState
                     .withProperty(COVERS, new CoverType[] {
                         coverHandler.getCover(EnumFacing.SOUTH),
@@ -90,6 +82,9 @@ public class BlockMachines extends Block {
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
+            items.add(stack.asItemStack());
+        }
+        for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
             items.add(stack.asItemStack());
         }
     }
@@ -113,7 +108,11 @@ public class BlockMachines extends Block {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (state instanceof IExtendedBlockState) {
-            player.openGui(ITech.INSTANCE, Ref.MACHINE_ID, world, pos.getX(), pos.getY(), pos.getZ());
+            TileEntity tile = Utils.getTile(world, pos);
+            if (tile instanceof TileEntityMachine) {
+                int guiId = ((TileEntityMachine) tile).getMachineType().getGuiId();
+                player.openGui(ITech.INSTANCE, guiId, world, pos.getX(), pos.getY(), pos.getZ());
+            }
         }
         return true;
     }
@@ -179,7 +178,7 @@ public class BlockMachines extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initItemModel() {
-        Item itemBlock = Item.REGISTRY.getObject(new ResourceLocation(ITech.MODID, "blockmachines"));
+        Item itemBlock = Item.REGISTRY.getObject(new ResourceLocation(ITech.MODID, getRegistryName().getResourcePath()));
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(itemBlock, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 }

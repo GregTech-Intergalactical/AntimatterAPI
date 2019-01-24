@@ -5,7 +5,10 @@ import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
-import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.overrides.TileEntityBasicMachine;
+import muramasa.itech.common.tileentities.overrides.TileEntitySteamMachine;
+import muramasa.itech.common.tileentities.overrides.multi.TileEntityElectricBlastFurnace;
+import muramasa.itech.common.tileentities.overrides.multi.TileEntityFusionReactor;
 import muramasa.itech.common.utils.Ref;
 import muramasa.itech.loaders.ContentLoader;
 import net.minecraft.util.ResourceLocation;
@@ -59,8 +62,8 @@ public class MachineList {
 
     public static Machine STEAMPULVERIZER = asSteam("steampulverizer").addSlots(PULVERIZER);
 
-    public static Machine BLASTFURNACE = asMulti("blastfurnace", TileEntityMultiMachine.class, ITEM, FLUID);
-    public static Machine FUSIONREACTOR = asMulti("fusionreactor", TileEntityMultiMachine.class, FLUID);
+    public static Machine BLASTFURNACE = asMulti("blastfurnace", TileEntityElectricBlastFurnace.class, ITEM, FLUID);
+    public static Machine FUSIONREACTOR = asMulti("fusionreactor", TileEntityFusionReactor.class, FLUID);
 
     public static Machine HATCHITEM = asHatch("itemhatch").addSlots(new SlotData(0, 35, 25));
 
@@ -70,7 +73,7 @@ public class MachineList {
     }
     
     public static Machine asBasic(String name, MachineFlag... extraFlags) {
-        Machine basic = new Machine(name, ContentLoader.blockMachines, TileEntityMachine.class);
+        Machine basic = new Machine(name, ContentLoader.blockMachines, TileEntityBasicMachine.class);
         basic.setTiers(Tier.getStandard());
         basic.addFlags(BASIC, ENERGY, GUI, COVERABLE, CONFIGURABLE);
         basic.addFlags(extraFlags);
@@ -80,10 +83,12 @@ public class MachineList {
     }
     
     public static Machine asSteam(String name, MachineFlag... extraFlags) {
-        Machine steam = asBasic(name, FLUID);
-        steam.addFlags(extraFlags);
+        Machine steam = new Machine(name, ContentLoader.blockMachines, TileEntitySteamMachine.class);
         steam.setTiers(Tier.getSteam());
-        steam.setGuiTierSensitive();
+        steam.addFlags(STEAM, FLUID, GUI, COVERABLE, CONFIGURABLE);
+        steam.addFlags(extraFlags);
+        steam.addRecipeMap();
+        steam.addGUI(Ref.MACHINE_ID, true);
         return steam;
     }
 
@@ -93,6 +98,7 @@ public class MachineList {
         multi.addFlags(MULTI, GUI);
         multi.addFlags(extraFlags);
 //        structurePattern = pattern;
+        multi.addGUI(Ref.MULTI_MACHINE_ID, false);
         multi.setBaseTexture(new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + name));
         return multi;
     }

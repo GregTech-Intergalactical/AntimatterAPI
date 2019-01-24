@@ -1,9 +1,7 @@
 package muramasa.itech.api.gui.container;
 
-import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.gui.slot.SlotInput;
 import muramasa.itech.api.gui.slot.SlotOutput;
-import muramasa.itech.api.capability.implementations.MachineStackHandler;
 import muramasa.itech.api.machines.SlotData;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.inventory.IContainerListener;
@@ -11,22 +9,25 @@ import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class ContainerMachine extends ContainerBase {
 
     private TileEntityMachine tile;
-    private MachineStackHandler stackHandler;
+    private IItemHandler stackHandler;
 
     private int lastProgress = -1;
 
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
-        super(tile.hasFlag(MachineFlag.ITEM) ? tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getSlots() : 0, playerInv);
+        //TODO
+        super(tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) == null ? 0 : tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getSlots(), playerInv);
         this.tile = tile;
-        this.stackHandler = tile.getStackHandler();
+        this.stackHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         addSlots();
     }
 
     private void addSlots() {
+        if (stackHandler == null) return; //TODO temp?
         SlotData[] slots = tile.getMachineType().getSlots();
         for (int i = 0; i < slots.length; i++) {
             if (slots[i].type == 0) { //Input Slot

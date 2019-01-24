@@ -29,8 +29,4 @@ public class TileEntityTickable extends TileEntityBase implements ITickable {
     public void onServerUpdate() {
         //NOOP
     }
-
-    public long getElapsedTicks() {
-        return world.getTotalWorldTime();
-    }
 }
