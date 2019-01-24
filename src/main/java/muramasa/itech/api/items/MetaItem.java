@@ -25,6 +25,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -152,9 +153,11 @@ public class MetaItem extends Item {
                         IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
                         player.sendMessage(new TextComponentString(component.getLinkedControllers().toString()));
                     }*/
-                    else if (tile instanceof IComponent) {
-                        IComponent component = (IComponent) tile;
-                        player.sendMessage(new TextComponentString(component.getLinkedControllers().toString()));
+                    else if (tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
+                        IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
+                        if (component != null) {
+                            player.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + component.getId()));
+                        }
                     }
                     else if (tile instanceof TileEntityMultiMachine) {
                         if (((TileEntityMultiMachine) tile).isServerSide() && hand == EnumHand.MAIN_HAND) {

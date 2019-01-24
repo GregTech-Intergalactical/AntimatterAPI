@@ -51,7 +51,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
         super.onFirstTick();
-        init(getType(), getTier());
     }
 
     @Override

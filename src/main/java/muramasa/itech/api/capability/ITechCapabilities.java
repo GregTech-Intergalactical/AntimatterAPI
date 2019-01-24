@@ -1,5 +1,6 @@
 package muramasa.itech.api.capability;
 
+import muramasa.itech.api.capability.implementations.ComponentHandler;
 import muramasa.itech.api.capability.implementations.MachineConfigHandler;
 import muramasa.itech.api.capability.implementations.MachineEnergyHandler;
 import muramasa.itech.api.capability.implementations.MachineCoverHandler;
@@ -23,8 +24,8 @@ public class ITechCapabilities {
     @CapabilityInject(ICoverable.class)
     public static Capability<ICoverable> COVERABLE = null;
 
-//    @CapabilityInject(IComponent.class)
-//    public static Capability<IComponent> COMPONENT = null;
+    @CapabilityInject(IComponent.class)
+    public static Capability<IComponent> COMPONENT = null;
 
     public static void register() {
 
@@ -69,17 +70,17 @@ public class ITechCapabilities {
             }
         }, () -> new MachineCoverHandler(null));
 
-//        CapabilityManager.INSTANCE.register(IComponent.class, new Capability.IStorage<IComponent>() {
-//            @Nullable
-//            @Override
-//            public NBTBase writeNBT(Capability<IComponent> capability, IComponent instance, EnumFacing side) {
-//                return null;
-//            }
-//
-//            @Override
-//            public void readNBT(Capability<IComponent> capability, IComponent instance, EnumFacing side, NBTBase nbt) {
-//
-//            }
-//        }, Component::new);
+        CapabilityManager.INSTANCE.register(IComponent.class, new Capability.IStorage<IComponent>() {
+            @Nullable
+            @Override
+            public NBTBase writeNBT(Capability<IComponent> capability, IComponent instance, EnumFacing side) {
+                return null;
+            }
+
+            @Override
+            public void readNBT(Capability<IComponent> capability, IComponent instance, EnumFacing side, NBTBase nbt) {
+
+            }
+        }, () -> new ComponentHandler("null", null));
     }
 }

@@ -37,7 +37,7 @@ public class ContentLoader {
     public static BlockMachines blockMachines = new BlockMachines("blockmachines");
 
     public static BlockMultiMachines blockMultiMachines = new BlockMultiMachines("blockmultimachines");
-    public static BlockHatches blockHatches = new BlockHatches();
+    public static BlockHatches blockHatches = new BlockHatches("blockhatches");
 
     public static BlockCables blockCables = new BlockCables();
 

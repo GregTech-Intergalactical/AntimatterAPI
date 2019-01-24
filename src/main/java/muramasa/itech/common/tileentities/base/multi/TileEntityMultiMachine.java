@@ -1,28 +1,35 @@
 package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.capability.IComponent;
-import muramasa.itech.api.properties.ITechProperties;
+import muramasa.itech.api.capability.ITechCapabilities;
+import muramasa.itech.api.capability.implementations.ControllerComponentHandler;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.api.structure.StructureResult;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
+public class TileEntityMultiMachine extends TileEntityMachine {
 
     public boolean shouldCheckRecipe, shouldCheckStructure;
     public boolean validStructure;
     public int curProgress, maxProgress;
     private Recipe activeRecipe;
-    private ArrayList<IComponent> components = new ArrayList<>();
+
+    private ArrayList<IComponent> components;
+
+    private ControllerComponentHandler componentHandler;
 
     @Override
     public void init(String type, String tier) {
         super.init(type, tier);
+        components = new ArrayList<>();
+        componentHandler = new ControllerComponentHandler(type, this);
     }
 
     @Override
@@ -90,32 +97,20 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         components.clear();
     }
 
-    public EnumFacing getFacing() {
-        return getState().getValue(ITechProperties.FACING);
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if (capability == ITechCapabilities.COMPONENT) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
     }
 
+    @Nullable
     @Override
-    public String getId() {
-        return getType();
-    }
-
-    @Override
-    public BlockPos getPos() {
-        return pos;
-    }
-
-    @Override
-    public ArrayList<BlockPos> getLinkedControllers() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public void linkController(TileEntityMultiMachine tile) {
-        //NOOP
-    }
-
-    @Override
-    public void unlinkController(TileEntityMultiMachine tile) {
-        //NOOP
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == ITechCapabilities.COMPONENT) {
+            return ITechCapabilities.COMPONENT.cast(componentHandler);
+        }
+        return super.getCapability(capability, facing);
     }
 }
