@@ -1,7 +1,6 @@
 package muramasa.itech.client.model.models;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.itech.api.machines.Tier;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,7 +13,6 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -28,19 +26,11 @@ public class ModelBase implements IModel {
     public static final TRSRTransformation DOWN = TRSRTransformation.from(EnumFacing.UP);
     public static final TRSRTransformation UP = TRSRTransformation.from(EnumFacing.DOWN);
 
-    public static final HashMap<String, ResourceLocation> baseTextures = new HashMap<>();
-
     public static IBakedModel missingModelBaked;
 
     private static IModelState modelState;
     private static VertexFormat vertexFormat;
     private static Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
-
-    static {
-        for (Tier tier : Tier.getAllBasic()) {
-            baseTextures.put(tier.getName(), tier.getBaseTexture());
-        }
-    }
 
     private String name;
     private List<ResourceLocation> textures = new LinkedList<>();
@@ -66,6 +56,7 @@ public class ModelBase implements IModel {
             return bakeModel(state, format, textureGetter);
         } catch (Exception e) {
             System.err.println(name + ".bake() failed due to exception:" + e);
+            e.printStackTrace();
             return ModelLoaderRegistry.getMissingModel().bake(state, format, textureGetter);
         }
     }

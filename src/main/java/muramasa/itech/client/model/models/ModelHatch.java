@@ -30,7 +30,7 @@ public class ModelHatch extends ModelBase {
     }
 
     public ModelHatch() {
-        super("ModelHatch", baseTextures.values(), multiTextures.values());
+        super("ModelHatch", multiTextures.values());
     }
 
     @Override

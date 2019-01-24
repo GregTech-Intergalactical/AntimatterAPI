@@ -44,7 +44,7 @@ public class TileEntityMachine extends TileEntityTickable {
         } else {
             init(typeFromNBT, tierFromNBT);
         }
-        markDirty();
+        markDirty(); //TODO needed?
     }
 
     /** Helpers **/
@@ -96,7 +96,6 @@ public class TileEntityMachine extends TileEntityTickable {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        System.out.println("MACH: NBT READ");
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_TYPE) && compound.hasKey(Ref.KEY_MACHINE_TILE_TIER)) {
             typeFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TYPE);
             tierFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TIER);

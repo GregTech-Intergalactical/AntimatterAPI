@@ -65,7 +65,6 @@ public class BlockMachines extends Block {
                 .withProperty(ACTIVE, machine.getCurProgress() > 0);
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
-                System.out.println(getRegistryName().getResourcePath() + " - HAS COVER CAP");
                 exState = exState
                     .withProperty(COVERS, new CoverType[] {
                         coverHandler.getCover(EnumFacing.SOUTH),
