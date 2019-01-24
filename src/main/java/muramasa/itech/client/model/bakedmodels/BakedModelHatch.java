@@ -1,7 +1,6 @@
 package muramasa.itech.client.model.bakedmodels;
 
 import muramasa.itech.client.model.overrides.ItemOverrideHatch;
-import muramasa.itech.common.blocks.BlockHatches;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -35,7 +34,7 @@ public class BakedModelHatch extends BakedModelBase {
 //        System.out.println(extendedState.getValue(BlockHatches.TEXTURE));
 
 //        quadList.addAll(bakedModels.get(extendedState.getValue(BlockHatches.TEXTURE)).getQuads(state, side, rand));
-        quadList.addAll(bakedModels.get(extendedState.getClean().getValue(BlockHatches.TEXTURE).getName()).getQuads(state, side, rand));
+//        quadList.addAll(bakedModels.get(extendedState.getClean().getValue(BlockHatches.TEXTURE).getName()).getQuads(state, side, rand));
 
         return quadList;
     }

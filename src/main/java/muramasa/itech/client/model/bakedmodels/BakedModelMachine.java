@@ -52,6 +52,11 @@ public class BakedModelMachine extends BakedModelBase {
                 }
             }
         }
+
+        if (hasProperty(exState, ITechProperties.TEXTURE)) {
+
+        }
+
         return quadList;
     }
 

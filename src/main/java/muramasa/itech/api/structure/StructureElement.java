@@ -1,6 +1,7 @@
 package muramasa.itech.api.structure;
 
 import muramasa.itech.api.capability.IComponent;
+import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CasingType;
 import muramasa.itech.api.enums.CoilType;
 import muramasa.itech.api.machines.MachineList;
@@ -27,6 +28,7 @@ public class StructureElement {
     public static StructureElement FUSION_COIL = new StructureElement(CoilType.FUSION);
 
     /** Custom Elements **/
+    public static StructureElement X = new StructureElement("x", false); //Used to skip positions for non-cubic structures
     public static StructureElement AIR = new StructureElement("air") { //Air Block Check
         @Override
         public boolean evaluate(TileEntityMultiMachine machine, int3 pos, StructureResult result) {
@@ -34,7 +36,6 @@ public class StructureElement {
             return state.getBlock().isAir(state, machine.getWorld(), pos.asBlockPos());
         }
     };
-    public static StructureElement X = new StructureElement("x", false); //Used to skip positions for non-cubic structures
 
     private String elementName;
     private String[] elementIds;
@@ -69,10 +70,8 @@ public class StructureElement {
 
     public boolean evaluate(TileEntityMultiMachine machine, int3 pos, StructureResult result) {
         TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBlockPos());
-        if (tile instanceof IComponent) {
-        //if (tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
-//            IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
-            IComponent component = (IComponent) tile;
+        if (tile != null && tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
+            IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
                     result.addSubElement(elementIds[i]);

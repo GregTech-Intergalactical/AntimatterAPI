@@ -58,6 +58,10 @@ public class TileEntityMachine extends TileEntityTickable {
         }
     }
 
+    public EnumFacing getFacing() {
+        return getState().getValue(ITechProperties.FACING);
+    }
+
     /** Events **/
     public void onContentsChanged(int slot) {
         //NOOP
