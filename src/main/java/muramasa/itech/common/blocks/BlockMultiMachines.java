@@ -66,7 +66,6 @@ public class BlockMultiMachines extends Block {
         for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
             items.add(stack.asItemStack());
         }
-        System.out.println(MachineFlag.MULTI.getStacks());
     }
 
     @Override
@@ -77,12 +76,12 @@ public class BlockMultiMachines extends Block {
     @Nullable
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return null;
+        return new TileEntityMultiMachine();
     }
 
     @Override
     public boolean hasTileEntity(IBlockState state) {
-        return false;
+        return true;
     }
 
     @Override

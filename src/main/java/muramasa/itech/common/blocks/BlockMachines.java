@@ -13,8 +13,10 @@ import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.items.ItemBlockMachines;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.TileEntityTickable;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -49,9 +51,9 @@ public class BlockMachines extends Block {
 
     public BlockMachines() {
         super(net.minecraft.block.material.Material.IRON);
-//        setSoundType(SoundType.METAL);
         setUnlocalizedName(ITech.MODID + "blockmachines");
         setRegistryName("blockmachines");
+        setSoundType(SoundType.METAL);
         setCreativeTab(ITech.TAB_MACHINES);
     }
 

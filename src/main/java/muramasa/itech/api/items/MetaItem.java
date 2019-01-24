@@ -6,9 +6,8 @@ import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.ItemList;
-import muramasa.itech.api.enums.MachineFlag;
-import muramasa.itech.api.materials.Prefix;
 import muramasa.itech.api.materials.Material;
+import muramasa.itech.api.materials.Prefix;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
@@ -113,7 +112,7 @@ public class MetaItem extends Item {
                 tooltip.add(item.getTooltip());
             }
             if (ItemList.DebugScanner.isItemEqual(stack)) {
-                tooltip.add("MULTI FLAG: " + MachineFlag.MULTI.getTypes().size());
+
             }
         }
     }
