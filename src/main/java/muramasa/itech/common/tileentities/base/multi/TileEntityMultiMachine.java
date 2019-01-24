@@ -1,45 +1,33 @@
 package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.capability.IComponent;
-import muramasa.itech.api.machines.Machine;
-import muramasa.itech.api.machines.MachineList;
+import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.api.structure.StructureResult;
-import muramasa.itech.common.blocks.BlockMultiMachines;
-import muramasa.itech.common.tileentities.base.TileEntityTickable;
-import muramasa.itech.common.utils.Ref;
-import net.minecraft.nbt.NBTTagCompound;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class TileEntityMultiMachine extends TileEntityTickable implements IComponent {
+public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
-    private String typeFromNBT = "";
     public boolean shouldCheckRecipe, shouldCheckStructure;
     public boolean validStructure;
-
     public int curProgress, maxProgress;
-
     private Recipe activeRecipe;
-
     private ArrayList<IComponent> components = new ArrayList<>();
 
-    public void init(String type) {
-        if (type.isEmpty()) {
-            type = MachineList.BLASTFURNACE.getName();
-        }
-        typeFromNBT = type;
+    @Override
+    public void init(String type, String tier) {
+        super.init(type, tier);
     }
 
     @Override
     public void onFirstTick() {
-        init(typeFromNBT);
+        super.onFirstTick();
         shouldCheckStructure = true;
     }
 
@@ -62,7 +50,7 @@ public class TileEntityMultiMachine extends TileEntityTickable implements ICompo
     }
 
     public void checkRecipe() {
-        System.out.println(maxProgress);
+
     }
 
     public void advanceRecipe() {
@@ -102,21 +90,13 @@ public class TileEntityMultiMachine extends TileEntityTickable implements ICompo
         components.clear();
     }
 
-    public Machine getMachineType() {
-        return MachineList.get(getType());
-    }
-
-    public String getType() {
-        return typeFromNBT;
-    }
-
     public EnumFacing getFacing() {
-        return getState().getValue(BlockMultiMachines.FACING);
+        return getState().getValue(ITechProperties.FACING);
     }
 
     @Override
     public String getId() {
-        return typeFromNBT;
+        return getType();
     }
 
     @Override
@@ -137,35 +117,5 @@ public class TileEntityMultiMachine extends TileEntityTickable implements ICompo
     @Override
     public void unlinkController(TileEntityMultiMachine tile) {
         //NOOP
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey(Ref.TAG_MULTIMACHINE_TILE_DATA)) {
-            if (compound.hasKey(Ref.KEY_MULTIMACHINE_TILE_TYPE)) {
-                typeFromNBT = compound.getString(Ref.KEY_MULTIMACHINE_TILE_TYPE);
-            }
-        }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        NBTTagCompound tileData = new NBTTagCompound();
-        tileData.setString(Ref.KEY_MULTIMACHINE_TILE_TYPE, getType());
-        compound.setTag(Ref.TAG_MULTIMACHINE_TILE_DATA, tileData);
-        return compound;
-    }
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        return super.hasCapability(capability, facing);
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        return super.getCapability(capability, facing);
     }
 }

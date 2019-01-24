@@ -42,6 +42,7 @@ public class ClientProxy implements IProxy {
     @Override
     public void postInit(FMLPostInitializationEvent e) {
         ContentLoader.blockMachines.initItemModel();
+        ContentLoader.blockMultiMachines.initItemModel();
         ContentLoader.blockHatches.initItemModel();
     }
 
@@ -55,7 +56,6 @@ public class ClientProxy implements IProxy {
         ContentLoader.metaItem.initModel();
         ContentLoader.metaTool.initModel();
         ContentLoader.blockOres.initModel();
-        ContentLoader.blockMultiMachines.initModel();
         ContentLoader.blockCables.initModel();
         ContentLoader.blockCasings.initModel();
         ContentLoader.blockCoils.initModel();

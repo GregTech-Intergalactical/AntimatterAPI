@@ -11,6 +11,7 @@ import java.util.Collection;
 public enum MachineFlag {
 
     BASIC(), //
+    STEAM(),
     MULTI(), //Has structure
     HATCH(),
     ITEM(), //Can store items

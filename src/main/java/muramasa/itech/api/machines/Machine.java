@@ -204,6 +204,10 @@ public class Machine implements IStringSerializable {
         return outputCount;
     }
 
+    public int getGuiId() {
+        return guiId;
+    }
+
     public ResourceLocation getBaseTexture() {
         return baseTexture;
     }

@@ -7,7 +7,6 @@ import muramasa.itech.common.blocks.*;
 import muramasa.itech.common.items.ItemBlockMachines;
 import muramasa.itech.common.items.ItemBlockMultiMachines;
 import muramasa.itech.common.items.ItemBlockOres;
-import muramasa.itech.common.tileentities.base.TileEntityBase;
 import muramasa.itech.common.tileentities.base.TileEntityCable;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import muramasa.itech.common.tileentities.base.TileEntityOre;
@@ -15,6 +14,10 @@ import muramasa.itech.common.tileentities.base.multi.TileEntityCasing;
 import muramasa.itech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.overrides.TileEntityBasicMachine;
+import muramasa.itech.common.tileentities.overrides.TileEntitySteamMachine;
+import muramasa.itech.common.tileentities.overrides.multi.TileEntityElectricBlastFurnace;
+import muramasa.itech.common.tileentities.overrides.multi.TileEntityFusionReactor;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -32,9 +35,9 @@ public class ContentLoader {
     public static MetaTool metaTool = new MetaTool();
 
     public static BlockOres blockOres = new BlockOres();
-    public static BlockMachines blockMachines = new BlockMachines();
+    public static BlockMachines blockMachines = new BlockMachines("blockmachines");
 
-    public static BlockMultiMachines blockMultiMachines = new BlockMultiMachines();
+    public static BlockMultiMachines blockMultiMachines = new BlockMultiMachines("blockmultimachines");
     public static BlockHatches blockHatches = new BlockHatches();
 
     public static BlockCables blockCables = new BlockCables();
@@ -44,7 +47,10 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        GameRegistry.registerTileEntity(TileEntityBase.class, new ResourceLocation(ITech.MODID, "tilebase"));
+        GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(ITech.MODID, "tilebasic"));
+        GameRegistry.registerTileEntity(TileEntitySteamMachine.class, new ResourceLocation(ITech.MODID, "tilesteam"));
+        GameRegistry.registerTileEntity(TileEntityElectricBlastFurnace.class, new ResourceLocation(ITech.MODID, "tileebf"));
+        GameRegistry.registerTileEntity(TileEntityFusionReactor.class, new ResourceLocation(ITech.MODID, "tilefr"));
 
         event.getRegistry().register(blockOres);
         GameRegistry.registerTileEntity(TileEntityOre.class, new ResourceLocation(ITech.MODID, "blockores"));
