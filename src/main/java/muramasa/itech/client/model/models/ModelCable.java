@@ -22,7 +22,7 @@ public class ModelCable extends ModelBase {
     private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(ITech.MODID + ":cableparts/cableside");
 
     public ModelCable() {
-        super("ModelCable", baseTextures.values());
+        super("ModelCable");
     }
 
     @Override

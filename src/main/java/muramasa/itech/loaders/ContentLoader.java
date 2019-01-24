@@ -5,7 +5,6 @@ import muramasa.itech.api.items.MetaItem;
 import muramasa.itech.api.items.MetaTool;
 import muramasa.itech.common.blocks.*;
 import muramasa.itech.common.items.ItemBlockMachines;
-import muramasa.itech.common.items.ItemBlockMultiMachines;
 import muramasa.itech.common.items.ItemBlockOres;
 import muramasa.itech.common.tileentities.base.TileEntityCable;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
@@ -78,7 +77,7 @@ public class ContentLoader {
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(new ItemBlockOres(blockOres).setRegistryName(blockOres.getRegistryName()));
         event.getRegistry().register(new ItemBlockMachines(blockMachines).setRegistryName(blockMachines.getRegistryName()));
-        event.getRegistry().register(new ItemBlockMultiMachines(blockMultiMachines).setRegistryName(blockMultiMachines.getRegistryName()));
+        event.getRegistry().register(new ItemBlockMachines(blockMultiMachines).setRegistryName(blockMultiMachines.getRegistryName()));
         event.getRegistry().register(new ItemBlockMachines(blockHatches).setRegistryName(blockHatches.getRegistryName()));
         event.getRegistry().register(new ItemBlock(blockCables).setRegistryName(blockCables.getRegistryName()));
         event.getRegistry().register(new ItemBlock(blockCasings).setRegistryName(blockCasings.getRegistryName()));

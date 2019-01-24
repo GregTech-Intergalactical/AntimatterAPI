@@ -20,7 +20,7 @@ public enum CoverType implements IStringSerializable {
     }
 
     CoverType(boolean canWrenchToggleState) {
-        modelLocation = new ModelResourceLocation(ITech.MODID + ":machineparts/covers/" + name().toLowerCase());
+        modelLocation = new ModelResourceLocation(ITech.MODID + ":machineparts/covers/" + getName());
         this.canWrenchToggleState = canWrenchToggleState;
     }
 

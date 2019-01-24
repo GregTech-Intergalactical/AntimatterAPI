@@ -42,15 +42,16 @@ public class BakedModelMachine extends BakedModelBase {
             quadList.addAll(bakedModels.get(type + tier)[facing].getQuads(state, side, rand));
         }
 
-        CoverType[] covers = exState.getValue(ITechProperties.COVERS);
-        if (covers != null) {
-            for (int i = 0; i < covers.length; i++) {
-                if (covers[i] != CoverType.NONE) {
-                    quadList.addAll(bakedCovers[covers[i].ordinal()][i].getQuads(exState, side, rand));
+        if (hasUnlistedProperty(exState, ITechProperties.COVERS)) {
+            CoverType[] covers = exState.getValue(ITechProperties.COVERS);
+            if (covers != null) {
+                for (int i = 0; i < covers.length; i++) {
+                    if (covers[i] != CoverType.NONE) {
+                        quadList.addAll(bakedCovers[covers[i].ordinal()][i].getQuads(exState, side, rand));
+                    }
                 }
             }
         }
-
         return quadList;
     }
 
