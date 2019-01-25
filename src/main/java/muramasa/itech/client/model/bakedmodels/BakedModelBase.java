@@ -17,6 +17,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,23 +28,25 @@ public class BakedModelBase implements IBakedModel {
     public static Matrix4f matrixFPH = get(0, 0, 0, 0, 45, 0, 0.4f).getMatrix();
     public static Matrix4f matrixIdentity = TRSRTransformation.identity().getMatrix();
 
-    public static List<BakedQuad> emptyQuads = new LinkedList<>();
-
-    private IBakedModel bakedModel;
+    private ArrayList<IBakedModel> bakedModels;
 
     public BakedModelBase() {
 
     }
 
-    public BakedModelBase(IBakedModel bakedModel) {
-        this.bakedModel = bakedModel;
+    public BakedModelBase(IBakedModel... models) {
+        bakedModels = new ArrayList<>(Arrays.asList(models));
     }
 
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        if (bakedModel != null) {
-            return bakedModel.getQuads(state, side, rand);
+        if (bakedModels != null) {
+            List<BakedQuad> quads = new LinkedList<>();
+            for (int i = 0; i < bakedModels.size(); i++) {
+                quads.addAll(bakedModels.get(i).getQuads(state, side, rand));
+            }
+            return quads;
         } else {
-            return emptyQuads;
+            return new LinkedList<>();
         }
     }
 
@@ -53,7 +57,7 @@ public class BakedModelBase implements IBakedModel {
         } catch (Exception e) {
             System.err.println("BakedModelBase.getBakedQuads() failed due to " + e + ":");
             e.printStackTrace();
-            return emptyQuads;
+            return new LinkedList<>();
         }
     }
 

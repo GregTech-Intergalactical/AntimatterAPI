@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 public class ITechProperties {
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    public static final PropertyEnum<HatchTexture> TEXTURE = PropertyEnum.create("texture", HatchTexture.class);
+    public static final PropertyEnum<HatchTexture> HATCH_TEXTURE = PropertyEnum.create("hatch_texture", HatchTexture.class);
 
     public static final UnlistedString TYPE = new UnlistedString();
     public static final UnlistedString TIER = new UnlistedString();

@@ -83,6 +83,7 @@ public class BlockMachines extends Block {
         for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
             items.add(stack.asItemStack());
         }
+
         for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
             items.add(stack.asItemStack());
         }

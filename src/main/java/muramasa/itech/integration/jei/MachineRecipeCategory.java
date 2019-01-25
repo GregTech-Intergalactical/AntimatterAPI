@@ -29,9 +29,8 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         this.type = type;
         title = type.getJeiCategoryName();
         uid = type.getJeiCategoryID();
-        System.out.println("JEI: " + uid + " - " + title);
-        background = guiHelper.drawableBuilder(type.getGuiTexture(Tier.LV.getName()), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
-        progressBar = guiHelper.drawableBuilder(type.getGuiTexture(Tier.LV.getName()), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
+        background = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV.getName()), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
+        progressBar = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV.getName()), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
 //        icon = guiHelper.createDrawableIngredient(MachineStack.get(type, Tier.LV).getStackForm());
     }
 

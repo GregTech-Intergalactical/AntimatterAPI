@@ -45,7 +45,9 @@ public class ITJEIPlugin implements IModPlugin {
         if (runtime != null) {
             List<String> list = new LinkedList<>();
             for (int i = 0; i < type.length; i++) {
-                list.add(type[i].getJeiCategoryID());
+                if (type[i].getJeiCategoryID() != null) {
+                    list.add(type[i].getJeiCategoryID());
+                }
             }
             runtime.getRecipesGui().showCategories(list);
         }

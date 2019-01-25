@@ -60,6 +60,6 @@ public class TileEntityBase extends TileEntity {
     }
 
     public void setState(IBlockState state) {
-        world.setBlockState(pos, state, 3);
+        world.setBlockState(pos, state);
     }
 }

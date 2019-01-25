@@ -12,6 +12,6 @@ public class BlockHatches extends BlockMachines {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(TEXTURE, FACING).add(TYPE, TIER, ACTIVE).build();
+        return new BlockStateContainer.Builder(this).add(HATCH_TEXTURE, FACING).add(TYPE, TIER, ACTIVE).build();
     }
 }

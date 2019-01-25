@@ -20,10 +20,16 @@ import java.util.Collection;
 
 public class Machine implements IStringSerializable {
 
+    /** Global Members **/
+    private static int currentRenderingId = 0;
+
     /** Basic Members **/
+    private int renderingId;
     private Block block;
     private Class tileClass;
     private String name, displayName;
+    private ArrayList<Tier> tiers;
+//    private ArrayList<String> stateTextures;
     private ResourceLocation overlayTexture;
     private ModelResourceLocation overlayModel;
     private int machineMask;
@@ -39,23 +45,24 @@ public class Machine implements IStringSerializable {
     private boolean isGuiTierSensitive;
 
     /** Multi Members **/
-    private ResourceLocation baseTexture;
     private StructurePattern structurePattern;
-
-    /** Powered Members **/
-    private ArrayList<Tier> tiers; //TODO not specifically for power tiers?
 
     //TODO add valid covers
 
     public Machine(String name, Block block, Class tileClass) {
+        renderingId = currentRenderingId++;
         this.name = name;
         this.block = block;
         this.tileClass = tileClass;
-        guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
+        tiers = new ArrayList<>();
+//        stateTextures = new ArrayList<>();
         overlayTexture = new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
         overlayModel = new ModelResourceLocation(ITech.MODID + ":machineparts/overlays/" + name);
-        tiers = new ArrayList<>();
         MachineList.machineTypeLookup.put(name, this);
+    }
+
+    public int getRenderingId() {
+        return renderingId;
     }
 
     public String getName() {
@@ -81,7 +88,7 @@ public class Machine implements IStringSerializable {
         return recipeMap;
     }
 
-    public ResourceLocation getGuiTexture(String tier) {
+    public ResourceLocation getGUITexture(String tier) {
         if (isGuiTierSensitive) {
             return new ResourceLocation(guiTexture.getResourceDomain(), guiTexture.getResourcePath().replace(".png", "").concat(Tier.get(tier).getName()).concat(".png"));
         } else {
@@ -121,6 +128,11 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
+    public Machine setTileClass(Class tileClass) {
+        this.tileClass = tileClass;
+        return this;
+    }
+
     public Machine setTiers(Tier... tiers) {
         this.tiers = new ArrayList<>(Arrays.asList(tiers));
         return this;
@@ -128,7 +140,9 @@ public class Machine implements IStringSerializable {
 
     public Machine addGUI(int id, boolean isTierSensitive) {
         guiId = id;
+        guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         isGuiTierSensitive = isTierSensitive;
+        addFlags(MachineFlag.GUI);
         return this;
     }
 
@@ -137,7 +151,6 @@ public class Machine implements IStringSerializable {
     }
 
     public Machine addSlots(SlotData... slots) {
-        guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         this.slots = slots;
         for (SlotData slot : slots) {
             if (slot.type == 0) {
@@ -161,15 +174,15 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine setBaseTexture(ResourceLocation location) {
-        baseTexture = location;
-        return this;
-    }
-
     public Machine addPattern(StructurePattern pattern) {
         structurePattern = pattern;
         return this;
     }
+
+//    public Machine addStateTextures(String... textures) {
+//        stateTextures.addAll(Arrays.asList(textures));
+//        return this;
+//    }
 
     public boolean hasFlag(MachineFlag flag) {
         return Utils.hasFlag(machineMask, flag.getBit());
@@ -208,11 +221,11 @@ public class Machine implements IStringSerializable {
         return guiId;
     }
 
-    public ResourceLocation getBaseTexture() {
-        return baseTexture;
-    }
-
     public StructurePattern getPattern() {
         return structurePattern;
     }
+
+//    public String[] getStateTextures() {
+//        return stateTextures.toArray(new String[0]);
+//    }
 }

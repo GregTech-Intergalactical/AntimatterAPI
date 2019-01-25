@@ -3,8 +3,6 @@ package muramasa.itech.common.tileentities.base.multi;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.capability.implementations.ComponentHandler;
 import muramasa.itech.api.capability.implementations.HatchComponentHandler;
-import muramasa.itech.api.enums.HatchTexture;
-import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,7 +20,6 @@ public class TileEntityHatch extends TileEntityMachine {
         super.init(type, tier);
         stackHandler = new ItemStackHandler(1);
         componentHandler = new HatchComponentHandler(type, this);
-        setState(getState().withProperty(ITechProperties.TEXTURE, HatchTexture.get(tier)));
     }
 
     @Override
