@@ -1,13 +1,12 @@
 package muramasa.itech.api.machines;
 
 import muramasa.itech.ITech;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 
-public class Tier {
+public class Tier implements IStringSerializable {
 
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
 
@@ -59,7 +58,19 @@ public class Tier {
         return tierLookup.get(tier);
     }
 
-    public static Collection<Tier> getAllBasic() {
-        return Arrays.asList(BRONZE, STEEL, LV, MV, HV, EV, IV);
+    public static Tier[] getBasic() {
+        return new Tier[]{BRONZE, STEEL, LV, MV, HV, EV, IV};
+    }
+
+    public static ResourceLocation[] getTextures(Tier[] tiers) {
+        ResourceLocation[] textures = new ResourceLocation[tiers.length];
+        for (int i = 0; i < tiers.length; i++) {
+            textures[i] = tiers[i].getBaseTexture();
+        }
+        return textures;
+    }
+
+    public static ResourceLocation[] getAllTextures() {
+        return getTextures(tierLookup.values().toArray(new Tier[0]));
     }
 }

@@ -130,7 +130,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        System.out.println("BASIC: NBT READ");
         itemData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
         if (compound.hasKey(Ref.KEY_FLUID_NAME_1)) {
 //            Fluid fluid = FluidRegistry.getFluid(compound.getString(Ref.KEY_FLUID_NAME_1));

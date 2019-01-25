@@ -14,12 +14,14 @@ public class HatchComponentHandler extends ComponentHandler {
     @Override
     public void linkController(TileEntityMultiMachine controllerTile) {
         super.linkController(controllerTile);
-        getTile().setState(getTile().getState().withProperty(ITechProperties.TEXTURE, HatchTexture.get(controllerTile.getType())));
+        getTile().setState(getTile().getState().withProperty(ITechProperties.HATCH_TEXTURE, HatchTexture.get(controllerTile.getType())));
+        getTile().markDirty(); //TODO needed?
     }
 
     @Override
     public void unlinkController(TileEntityMultiMachine controllerTile) {
         super.unlinkController(controllerTile);
-        getTile().setState(getTile().getState().withProperty(ITechProperties.TEXTURE, HatchTexture.get(getComponentId())));
+        getTile().setState(getTile().getState().withProperty(ITechProperties.HATCH_TEXTURE, HatchTexture.NONE));
+        getTile().markDirty(); //TODO needed?
     }
 }

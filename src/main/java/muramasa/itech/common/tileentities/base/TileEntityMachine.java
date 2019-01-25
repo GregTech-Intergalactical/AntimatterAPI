@@ -24,9 +24,6 @@ public class TileEntityMachine extends TileEntityTickable {
         }
         typeFromNBT = type;
         tierFromNBT = tier;
-        if (facing > 2) {
-            rotate(EnumFacing.VALUES[facing]);
-        }
     }
 
     @Override
@@ -44,7 +41,9 @@ public class TileEntityMachine extends TileEntityTickable {
         } else {
             init(typeFromNBT, tierFromNBT);
         }
-        markDirty(); //TODO needed?
+        if (facing > 2) {
+            rotate(EnumFacing.VALUES[facing]);
+        }
     }
 
     /** Helpers **/

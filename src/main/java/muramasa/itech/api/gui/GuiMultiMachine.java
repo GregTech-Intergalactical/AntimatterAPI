@@ -20,7 +20,7 @@ public class GuiMultiMachine extends GuiContainer {
         ySize = 166;
         Machine type = tile.getMachineType();
         displayName = type.getDisplayName(Tier.MULTI.getName());
-        bg = type.getGuiTexture(Tier.MULTI.getName());
+        bg = type.getGUITexture(Tier.MULTI.getName());
     }
 
     @Override

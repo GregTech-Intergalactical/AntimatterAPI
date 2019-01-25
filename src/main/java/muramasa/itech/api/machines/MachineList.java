@@ -1,6 +1,5 @@
 package muramasa.itech.api.machines;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
@@ -11,7 +10,6 @@ import muramasa.itech.common.tileentities.overrides.multi.TileEntityElectricBlas
 import muramasa.itech.common.tileentities.overrides.multi.TileEntityFusionReactor;
 import muramasa.itech.common.utils.Ref;
 import muramasa.itech.loaders.ContentLoader;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
 
@@ -75,7 +73,7 @@ public class MachineList {
     public static Machine asBasic(String name, MachineFlag... extraFlags) {
         Machine basic = new Machine(name, ContentLoader.blockMachines, TileEntityBasicMachine.class);
         basic.setTiers(Tier.getStandard());
-        basic.addFlags(BASIC, ENERGY, GUI, COVERABLE, CONFIGURABLE);
+        basic.addFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
         basic.addFlags(extraFlags);
         basic.addRecipeMap();
         basic.addGUI(Ref.MACHINE_ID, false);
@@ -83,31 +81,31 @@ public class MachineList {
     }
     
     public static Machine asSteam(String name, MachineFlag... extraFlags) {
-        Machine steam = new Machine(name, ContentLoader.blockMachines, TileEntitySteamMachine.class);
+        Machine steam = asBasic(name, STEAM, FLUID);
+        steam.setTileClass(TileEntitySteamMachine.class);
         steam.setTiers(Tier.getSteam());
-        steam.addFlags(STEAM, FLUID, GUI, COVERABLE, CONFIGURABLE);
         steam.addFlags(extraFlags);
-        steam.addRecipeMap();
-        steam.addGUI(Ref.MACHINE_ID, true);
+        steam.setGuiTierSensitive();
         return steam;
     }
 
     public static Machine asMulti(String name, Class tileClass, MachineFlag... extraFlags) {
         Machine multi = new Machine(name, ContentLoader.blockMultiMachines, tileClass);
         multi.setTiers(Tier.getMulti());
-        multi.addFlags(MULTI, GUI);
+        multi.addFlags(MULTI);
         multi.addFlags(extraFlags);
 //        structurePattern = pattern;
         multi.addGUI(Ref.MULTI_MACHINE_ID, false);
-        multi.setBaseTexture(new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + name));
         return multi;
     }
 
     public static Machine asHatch(String name, MachineFlag... extraFlags) {
         Machine hatch = new Machine(name, ContentLoader.blockHatches, TileEntityHatch.class);
         hatch.setTiers(Tier.getStandard());
-        hatch.addFlags(HATCH, GUI);
+        hatch.addFlags(HATCH);
         hatch.addFlags(extraFlags);
+        hatch.addGUI(Ref.MACHINE_ID, true);
+//        hatch.addStateTextures(ITechProperties.hatchTextures.toArray(new String[0]));
         return hatch;
     }
 
@@ -118,5 +116,9 @@ public class MachineList {
 
     public static MachineStack get(String name, String tier) {
         return new MachineStack(get(name), Tier.get(tier));
+    }
+
+    public static int getCount() {
+        return machineTypeLookup.size();
     }
 }

@@ -35,7 +35,7 @@ public class GuiMachine extends GuiContainer {
 
         Machine machineType = tile.getMachineType();
         displayName = machineType.getDisplayName(tile.getTier());
-        bg = machineType.getGuiTexture(tile.getTier());
+        bg = machineType.getGUITexture(tile.getTier());
     }
 
     @Override

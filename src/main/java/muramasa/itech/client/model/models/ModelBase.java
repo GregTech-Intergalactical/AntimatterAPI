@@ -1,11 +1,13 @@
 package muramasa.itech.client.model.models;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.itech.client.model.bakedmodels.BakedModelBase;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -13,8 +15,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.function.Function;
 
 public class ModelBase implements IModel {
@@ -32,18 +33,17 @@ public class ModelBase implements IModel {
     private static VertexFormat vertexFormat;
     private static Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
 
-    private String name;
-    private List<ResourceLocation> textures = new LinkedList<>();
+    private static HashMap<String, IBakedModel[]> bakedModelLookup = new HashMap<>();
+    private static HashMap<String, ResourceLocation> textureLookup = new HashMap<>();
 
-    public ModelBase(String name, Collection<ResourceLocation>... collections) {
+    private String name;
+
+    public ModelBase(String name) {
         this.name = name;
-        for (int i = 0; i < collections.length; i++) {
-            textures.addAll(collections[i]);
-        }
     }
 
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        return ModelLoaderRegistry.getMissingModel().bake(state, format, bakedTextureGetter);
+        return missingModelBaked;
     }
 
     @Override
@@ -63,10 +63,10 @@ public class ModelBase implements IModel {
 
     @Override
     public Collection<ResourceLocation> getTextures() {
-        return textures;
+        return textureLookup.values();
     }
 
-    public IModel load(ModelResourceLocation loc) {
+    public static IModel load(ModelResourceLocation loc) {
         try {
             return ModelLoaderRegistry.getModel(loc);
         } catch (Exception e) {
@@ -76,30 +76,70 @@ public class ModelBase implements IModel {
         }
     }
 
-    public IModel tex(IModel model, String[] elements, ResourceLocation[] textures) {
+    public static IModel tex(IModel model, String[] elements, ResourceLocation[] textures) {
         for (int i = 0; i < elements.length; i++) {
             model = tex(model, elements[i], textures[i]);
         }
         return model;
     }
 
-    public IModel tex(IModel model, String element, ResourceLocation texture) {
-        return model.retexture(ImmutableMap.of(element, texture.toString()));
+    public static IModel tex(IModel model, String element, ResourceLocation texture) {
+        try {
+            return model.retexture(ImmutableMap.of(element, texture.toString()));
+        } catch (Exception e) {
+            System.err.println("ModelBase.tex() failed due to " + e + ":");
+            e.printStackTrace();
+            return ModelLoaderRegistry.getMissingModel();
+        }
     }
 
-    public IBakedModel texAndBake(IModel model, String[] elements, IModelState state, ResourceLocation[] textures) {
-        return tex(model, elements, textures).bake(state, vertexFormat, bakedTextureGetter);
+    public static int temp() {
+        return bakedModelLookup.size();
     }
 
-    public IBakedModel texAndBake(IModel model, String[] elements, ResourceLocation[] textures) {
-        return tex(model, elements, textures).bake(modelState, vertexFormat, bakedTextureGetter);
+    public static IBakedModel texAndBake(IModel model, String[] elements, IModelState state, ResourceLocation[] textures) {
+        return new BakedModelBase(tex(model, elements, textures).bake(state, vertexFormat, bakedTextureGetter));
     }
 
-    public IBakedModel texAndBake(IModel model, String element, IModelState state, ResourceLocation texture) {
-        return tex(model, element, texture).bake(state, vertexFormat, bakedTextureGetter);
+    public static IBakedModel texAndBake(IModel model, String[] elements, ResourceLocation[] textures) {
+        return new BakedModelBase(tex(model, elements, textures).bake(modelState, vertexFormat, bakedTextureGetter));
     }
 
-    public IBakedModel texAndBake(IModel model, String element, ResourceLocation texture) {
-        return tex(model, element, texture).bake(modelState, vertexFormat, bakedTextureGetter);
+    public static IBakedModel texAndBake(IModel model, String element, IModelState state, ResourceLocation texture) {
+        return new BakedModelBase(tex(model, element, texture).bake(state, vertexFormat, bakedTextureGetter));
+    }
+
+    public static IBakedModel texAndBake(IModel model, String element, ResourceLocation texture) {
+        return new BakedModelBase(tex(model, element, texture).bake(modelState, vertexFormat, bakedTextureGetter));
+    }
+
+    public static IBakedModel[] getBaked(String prefix, String modelName) {
+        return bakedModelLookup.get(prefix + modelName);
+    }
+
+    public static void addBaked(String prefix, String modelName, IBakedModel[] models) {
+        bakedModelLookup.put(prefix + modelName, models);
+    }
+
+    public static void addBaked(String prefix, String modelName, IBakedModel model) {
+        bakedModelLookup.put(prefix + modelName, new IBakedModel[]{model});
+    }
+
+    public static ResourceLocation getTexture(String prefix, IStringSerializable serializable) {
+        return getTexture(prefix, serializable.getName());
+    }
+
+    public static ResourceLocation getTexture(String prefix, String textureName) {
+        return textureLookup.get(prefix + textureName);
+    }
+
+    public static void addTexture(String prefix, String textureName, ResourceLocation texture) {
+        textureLookup.put(prefix + textureName, texture);
+    }
+
+    public static void addTextures(String prefix, IStringSerializable[] textureNames, ResourceLocation[] textures) {
+        for (int i = 0; i < textureNames.length; i++) {
+            textureLookup.put(prefix + textureNames[i].getName(), textures[i]);
+        }
     }
 }

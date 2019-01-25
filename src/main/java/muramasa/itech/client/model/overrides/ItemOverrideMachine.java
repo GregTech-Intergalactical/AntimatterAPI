@@ -11,25 +11,26 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 
 public class ItemOverrideMachine extends ItemOverrideList {
 
-    private static HashMap<String, IBakedModel> bakedModelsItem;
-
-    public ItemOverrideMachine(HashMap<String, IBakedModel> bakedModels) {
+    public ItemOverrideMachine() {
         super(ImmutableList.of());
-        bakedModelsItem = bakedModels;
     }
 
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
             NBTTagCompound tag = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-            IBakedModel bakedModel = bakedModelsItem.get(tag.getString(Ref.KEY_MACHINE_STACK_TYPE) + tag.getString(Ref.KEY_MACHINE_STACK_TIER));
-            if (bakedModel != null) return bakedModel;
+            if (tag.getString(Ref.KEY_MACHINE_STACK_TYPE).contains("hatch")) {
+//                System.out.println("item" + tag.getString(Ref.KEY_MACHINE_STACK_TYPE));
+//                System.out.println(ModelBase.getBaked("item", tag.getString(Ref.KEY_MACHINE_STACK_TYPE) + tag.getString(Ref.KEY_MACHINE_STACK_TIER))[0].getQuads(null, null, 0).size());
+            }
+            IBakedModel[] bakedModels = ModelBase.getBaked("item", tag.getString(Ref.KEY_MACHINE_STACK_TYPE) + tag.getString(Ref.KEY_MACHINE_STACK_TIER));
+            if (bakedModels != null && bakedModels.length > 0) {
+                return bakedModels[0];
+            }
         }
-//        return bakedModelsItem.get(MachineList.INVALID.getName() + Tier.LV.getName());
         return ModelBase.missingModelBaked;
     }
 }

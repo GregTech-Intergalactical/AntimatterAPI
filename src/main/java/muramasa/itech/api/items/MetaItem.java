@@ -10,6 +10,7 @@ import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.materials.Prefix;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
+import muramasa.itech.client.model.models.ModelBase;
 import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -113,7 +114,7 @@ public class MetaItem extends Item {
                 tooltip.add(item.getTooltip());
             }
             if (ItemList.DebugScanner.isItemEqual(stack)) {
-
+                tooltip.add("Baked Models: " + ModelBase.temp());
             }
         }
     }

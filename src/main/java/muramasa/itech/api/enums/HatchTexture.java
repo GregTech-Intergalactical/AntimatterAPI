@@ -6,11 +6,7 @@ import java.util.HashMap;
 
 public enum HatchTexture implements IStringSerializable {
 
-    LV("lv"),
-    MV("mv"),
-    HV("hv"),
-    EV("ev"),
-    IV("iv"),
+    NONE("none"),
     BLAST_FURNACE("blastfurnace"),
     FUSION_REACTOR("fusionreactor");
 

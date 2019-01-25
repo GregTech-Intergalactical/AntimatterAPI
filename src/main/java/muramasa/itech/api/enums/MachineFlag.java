@@ -51,4 +51,20 @@ public enum MachineFlag {
         }
         return stacks;
     }
+
+    public static Collection<Machine> getTypes(MachineFlag... flags) {
+        ArrayList<Machine> types = new ArrayList<>();
+        for (MachineFlag flag : flags) {
+            types.addAll(flag.getTypes());
+        }
+        return types;
+    }
+
+    public static Collection<MachineStack> getStacks(MachineFlag... flags) {
+        ArrayList<MachineStack> stacks = new ArrayList<>();
+        for (MachineFlag flag : flags) {
+            stacks.addAll(flag.getStacks());
+        }
+        return stacks;
+    }
 }
