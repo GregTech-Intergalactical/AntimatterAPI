@@ -21,25 +21,21 @@ import java.util.Collection;
 public class Machine implements IStringSerializable {
 
     /** Global Members **/
-    private static int currentRenderingId = 0;
+    private static int lastInternalId = 0;
 
     /** Basic Members **/
-    private int renderingId;
+    private int internalId;
     private Block block;
     private Class tileClass;
     private String name, displayName;
     private ArrayList<Tier> tiers;
 //    private ArrayList<String> stateTextures;
-    private ResourceLocation overlayTexture;
-    private ModelResourceLocation overlayModel;
     private int machineMask;
 
     /** Recipe Members **/
     private RecipeMap recipeMap;
-    private String jeiCategoryID, jeiCategoryName;
 
     /** GUI Members **/
-    private ResourceLocation guiTexture;
     private SlotData[] slots;
     private int guiId, inputCount, outputCount;
     private boolean isGuiTierSensitive;
@@ -50,19 +46,17 @@ public class Machine implements IStringSerializable {
     //TODO add valid covers
 
     public Machine(String name, Block block, Class tileClass) {
-        renderingId = currentRenderingId++;
+        internalId = lastInternalId++;
         this.name = name;
         this.block = block;
         this.tileClass = tileClass;
         tiers = new ArrayList<>();
 //        stateTextures = new ArrayList<>();
-        overlayTexture = new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
-        overlayModel = new ModelResourceLocation(ITech.MODID + ":machineparts/overlays/" + name);
         MachineList.machineTypeLookup.put(name, this);
     }
 
-    public int getRenderingId() {
-        return renderingId;
+    public int getInternalId() {
+        return internalId;
     }
 
     public String getName() {
@@ -77,11 +71,11 @@ public class Machine implements IStringSerializable {
     }
 
     public String getJeiCategoryID() {
-        return jeiCategoryID;
+        return "it.recipemap." + name;
     }
 
     public String getJeiCategoryName() {
-        return jeiCategoryName;
+        return I18n.format("jei.category." + name + ".name");
     }
 
     public RecipeMap getRecipeMap() {
@@ -90,18 +84,18 @@ public class Machine implements IStringSerializable {
 
     public ResourceLocation getGUITexture(String tier) {
         if (isGuiTierSensitive) {
-            return new ResourceLocation(guiTexture.getResourceDomain(), guiTexture.getResourcePath().replace(".png", "").concat(Tier.get(tier).getName()).concat(".png"));
+            return new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + tier + ".png");
         } else {
-            return guiTexture;
+            return new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         }
     }
 
     public ResourceLocation getOverlayTexture() {
-        return overlayTexture;
+        return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
     }
 
     public ModelResourceLocation getOverlayModel() {
-        return overlayModel;
+        return new ModelResourceLocation(ITech.MODID + ":machineparts/overlays/" + name);
     }
 
     //TODO target type specific recipe find
@@ -140,7 +134,6 @@ public class Machine implements IStringSerializable {
 
     public Machine addGUI(int id, boolean isTierSensitive) {
         guiId = id;
-        guiTexture = new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
         isGuiTierSensitive = isTierSensitive;
         addFlags(MachineFlag.GUI);
         return this;
@@ -168,8 +161,6 @@ public class Machine implements IStringSerializable {
     }
 
     public Machine addRecipeMap() {
-        this.jeiCategoryID = "it.recipemap." + name;
-        this.jeiCategoryName = I18n.format("jei.category." + name + ".name");
         recipeMap = new RecipeMap(this);
         return this;
     }
@@ -228,4 +219,8 @@ public class Machine implements IStringSerializable {
 //    public String[] getStateTextures() {
 //        return stateTextures.toArray(new String[0]);
 //    }
+
+    public static int getLastInternalId() {
+        return lastInternalId;
+    }
 }

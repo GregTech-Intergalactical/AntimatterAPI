@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 public class TileEntityHatch extends TileEntityMachine {
 
+    private int textureId = 0;
     private ItemStackHandler stackHandler;
     private ComponentHandler componentHandler;
 
@@ -20,6 +21,15 @@ public class TileEntityHatch extends TileEntityMachine {
         super.init(type, tier);
         stackHandler = new ItemStackHandler(1);
         componentHandler = new HatchComponentHandler(type, this);
+        textureId = getTierId();
+    }
+
+    public int getTextureId() {
+        return textureId;
+    }
+
+    public void setTextureId(int newTextureId) {
+        textureId = newTextureId;
     }
 
     @Override

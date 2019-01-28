@@ -1,6 +1,9 @@
 package muramasa.itech.common.blocks;
 
 import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 import static muramasa.itech.api.properties.ITechProperties.*;
 
@@ -12,7 +15,12 @@ public class BlockMultiMachines extends BlockMachines {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, ACTIVE).build();
+        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, ACTIVE, TINT).build();
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return super.getExtendedState(state, world, pos);
     }
 
     //    @Override

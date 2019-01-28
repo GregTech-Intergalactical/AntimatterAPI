@@ -1,17 +1,17 @@
 package muramasa.itech.api.items;
 
 import muramasa.itech.ITech;
-import muramasa.itech.api.capability.IComponent;
 import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.ItemList;
+import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.materials.Prefix;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
-import muramasa.itech.client.model.models.ModelBase;
-import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.itech.common.tileentities.base.TileEntityMachine;
+import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -25,8 +25,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -114,7 +112,7 @@ public class MetaItem extends Item {
                 tooltip.add(item.getTooltip());
             }
             if (ItemList.DebugScanner.isItemEqual(stack)) {
-                tooltip.add("Baked Models: " + ModelBase.temp());
+
             }
         }
     }
@@ -141,35 +139,45 @@ public class MetaItem extends Item {
                     }
                 }
                 if (ItemList.DebugScanner.isItemEqual(stack)) {
-                    if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
-                        ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
-                        if (coverHandler != null) {
-                            player.sendMessage(new TextComponentString(coverHandler.getCover(facing).name()));
-                        }
-                    }
-                    if (tile.hasCapability(ITechCapabilities.ENERGY, facing)) {
-                        System.out.println("HAS ENERGY CAP");
-                    }
+//                    if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
+//                        ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
+//                        if (coverHandler != null) {
+//                            player.sendMessage(new TextComponentString(coverHandler.getCover(facing).name()));
+//                        }
+//                    }
+//                    if (tile.hasCapability(ITechCapabilities.ENERGY, facing)) {
+//                        System.out.println("HAS ENERGY CAP");
+//                    }
                     /*else if (tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
                         IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
                         player.sendMessage(new TextComponentString(component.getLinkedControllers().toString()));
                     }*/
-                    else if (tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
-                        IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
-                        if (component != null) {
-                            player.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + component.getId()));
+//                    else if (tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
+//                        IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
+//                        if (component != null) {
+//                            player.sendMessage(new TextComponentString(TextFormatting.DARK_AQUA + component.getId()));
+//                        }
+//                    }
+//                    else if (tile instanceof TileEntityMultiMachine) {
+//                        if (((TileEntityMultiMachine) tile).isServerSide() && hand == EnumHand.MAIN_HAND) {
+//                            ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
+//                            ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
+//                        }
+//                    }
+//                    if (!world.isRemote) {
+//                        player.sendMessage(new TextComponentString("Server: " + tile.toString()));
+//                    } else {
+//                        player.sendMessage(new TextComponentString("Client: " + tile.toString()));
+//                    }
+                    if (tile instanceof TileEntityMachine) {
+                        if (tile instanceof TileEntityHatch) {
+                            ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() < 7 ? MachineList.BLASTFURNACE.getInternalId() : ((TileEntityHatch) tile).getTierId());
+                            ((TileEntityHatch) tile).markDirty();
+                        } else {
+                            System.out.println("Setting Tint");
+                            ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Material.Plutonium241.getRGB());
+                            ((TileEntityMachine) tile).markDirty();
                         }
-                    }
-                    else if (tile instanceof TileEntityMultiMachine) {
-                        if (((TileEntityMultiMachine) tile).isServerSide() && hand == EnumHand.MAIN_HAND) {
-                            ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
-                            ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
-                        }
-                    }
-                    if (!world.isRemote) {
-                        player.sendMessage(new TextComponentString("Server: " + tile.toString()));
-                    } else {
-                        player.sendMessage(new TextComponentString("Client: " + tile.toString()));
                     }
                 }
             }

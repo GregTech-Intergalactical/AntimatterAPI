@@ -29,8 +29,8 @@ public class MachineConfigHandler implements IConfigurable {
                 SoundList.WRENCH.play(tile.getWorld(), tile.getPos());
                 return true;
             }
-        } else if (tile instanceof TileEntityMachine) { //Used wrench on side with no cover, rotate.
-            if (side.getAxis() != EnumFacing.Axis.Y) {
+        } else { //Used wrench on side with no cover, rotate.
+            if (tile instanceof TileEntityMachine && side.getAxis() != EnumFacing.Axis.Y) {
                 ((TileEntityMachine) tile).rotate(side);
             }
         }

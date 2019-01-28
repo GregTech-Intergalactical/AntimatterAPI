@@ -158,7 +158,7 @@ public class MetaTool extends Item {
 
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
+        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
         if (slot == EntityEquipmentSlot.MAINHAND) {
             multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", (double) ToolHelper.getAttackDamage(stack), 0));
             multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", (double) ToolHelper.getAttackSpeed(stack), 0));

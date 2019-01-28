@@ -2,9 +2,10 @@ package muramasa.itech.proxy;
 
 import muramasa.itech.api.items.MetaItem;
 import muramasa.itech.api.items.MetaTool;
-import muramasa.itech.client.model.ModelLoader;
-import muramasa.itech.client.model.models.ModelCable;
-import muramasa.itech.client.model.models.ModelMachine;
+import muramasa.itech.client.render.ModelLoader;
+import muramasa.itech.client.render.models.ModelCable;
+import muramasa.itech.client.render.models.ModelMachine;
+import muramasa.itech.common.blocks.BlockMachines;
 import muramasa.itech.common.blocks.BlockOres;
 import muramasa.itech.common.items.ItemBlockOres;
 import muramasa.itech.loaders.ContentLoader;
@@ -35,13 +36,15 @@ public class ClientProxy implements IProxy {
 
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new BlockOres.ColorHandler(), ContentLoader.blockOres);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemBlockOres.ColorHandler(), Item.getItemFromBlock(ContentLoader.blockOres));
+
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new BlockMachines.ColorHandler(), ContentLoader.blockMachines);
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
-        ContentLoader.blockMachines.initItemModel();
-        ContentLoader.blockMultiMachines.initItemModel();
-        ContentLoader.blockHatches.initItemModel();
+//        ContentLoader.blockMachines.initItemModel();
+//        ContentLoader.blockMultiMachines.initItemModel();
+//        ContentLoader.blockHatches.initItemModel();
     }
 
     @Override
@@ -53,15 +56,17 @@ public class ClientProxy implements IProxy {
     public static void registerModels(ModelRegistryEvent event) {
         ContentLoader.metaItem.initModel();
         ContentLoader.metaTool.initModel();
+        ContentLoader.blockMachines.initModel();
         ContentLoader.blockOres.initModel();
         ContentLoader.blockCables.initModel();
         ContentLoader.blockCasings.initModel();
         ContentLoader.blockCoils.initModel();
 
         //TODO avoid multiple instances of ModelMachine, static lists?
-        ModelLoader.register(ContentLoader.blockMachines, new ModelMachine());
-        ModelLoader.register(ContentLoader.blockMultiMachines, new ModelMachine());
-        ModelLoader.register(ContentLoader.blockHatches, new ModelMachine());
+        ModelMachine modelMachine = new ModelMachine();
+        ModelLoader.register(ContentLoader.blockMachines, modelMachine);
+        ModelLoader.register(ContentLoader.blockMultiMachines, modelMachine);
+        ModelLoader.register(ContentLoader.blockHatches, modelMachine);
         ModelLoader.register(ContentLoader.blockCables, new ModelCable());
     }
 }

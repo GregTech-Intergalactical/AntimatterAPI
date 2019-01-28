@@ -1,4 +1,4 @@
-package muramasa.itech.client.model.bakedmodels;
+package muramasa.itech.client.render.bakedmodels;
 
 import muramasa.itech.common.blocks.BlockCables;
 import net.minecraft.block.state.IBlockState;
@@ -82,7 +82,6 @@ public class BakedModelCable extends BakedModelBase {
                 List<BakedQuad> bakedQuads = maskToModelMap.get(connections).getQuads(extendedState, side, rand);
                 maskToQuadCache.put(connections, bakedQuads);
                 quadList.addAll(bakedQuads);
-                System.out.println("got quads from cache");
             }
         } else {
             quadList.addAll(bakedBase.getQuads(extendedState, side, rand));

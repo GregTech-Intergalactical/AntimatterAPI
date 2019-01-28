@@ -15,7 +15,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     /** Data from NBT **/
     private String typeFromNBT = "", tierFromNBT = "";
-    private int facing = 2;
+    private int typeId, tierId, tint = -1/*, facing = 2*/;
 
     public void init(String type, String tier) {
         if (type.isEmpty() || type.isEmpty()) {
@@ -28,7 +28,8 @@ public class TileEntityMachine extends TileEntityTickable {
 
     @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
-        if (!getClass().getName().equals(getMachineType().getTileClass().getName())) {
+        Machine machine = getMachineType();
+        if (!getClass().getName().equals(machine.getTileClass().getName())) {
             try {
                 world.setTileEntity(pos, (TileEntity) MachineList.get(typeFromNBT).getTileClass().newInstance());
                 TileEntity tile = world.getTileEntity(pos);
@@ -41,9 +42,11 @@ public class TileEntityMachine extends TileEntityTickable {
         } else {
             init(typeFromNBT, tierFromNBT);
         }
-        if (facing > 2) {
-            rotate(EnumFacing.VALUES[facing]);
-        }
+//        if (facing > 2) {
+//            rotate(EnumFacing.VALUES[facing]);
+//        }
+        typeId = machine.getInternalId();
+        tierId = Tier.get(tierFromNBT).getId();
     }
 
     /** Helpers **/
@@ -79,6 +82,18 @@ public class TileEntityMachine extends TileEntityTickable {
         return tierFromNBT;
     }
 
+    public int getTypeId() {
+        return typeId;
+    }
+
+    public int getTierId() {
+        return tierId;
+    }
+
+    public int getTint() {
+        return tint;
+    }
+
     public int getCurProgress() {
         return 0;
     }
@@ -92,6 +107,10 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     /** Setters **/
+    public void setTint(int newTint) {
+        tint = newTint;
+    }
+
     public void setClientProgress(float newProgress) {
         //NOOP
     }
@@ -103,9 +122,9 @@ public class TileEntityMachine extends TileEntityTickable {
             typeFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TYPE);
             tierFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TIER);
         }
-        if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
-            facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
-        }
+//        if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
+//            facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
+//        }
     }
 
     @Override
@@ -113,7 +132,7 @@ public class TileEntityMachine extends TileEntityTickable {
         super.writeToNBT(compound); //TODO add tile data tag
         compound.setString(Ref.KEY_MACHINE_TILE_TYPE, getType());
         compound.setString(Ref.KEY_MACHINE_TILE_TIER, getTier());
-        compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, getState().getValue(ITechProperties.FACING).getIndex());
+//        compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, getState().getValue(ITechProperties.FACING).getIndex());
         return compound;
     }
 }

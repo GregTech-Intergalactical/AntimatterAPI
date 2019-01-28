@@ -3,6 +3,7 @@ package muramasa.itech.api.enums;
 import muramasa.itech.ITech;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 
 public enum CoverType implements IStringSerializable {
 
@@ -12,20 +13,27 @@ public enum CoverType implements IStringSerializable {
     FLUIDPORT(true),
     ENERGYPORT(false);
 
-    private ModelResourceLocation modelLocation;
-    private boolean canWrenchToggleState;
+    private boolean canBeRendered, canWrenchToggleState;
 
     CoverType() {
 
     }
 
-    CoverType(boolean canWrenchToggleState) {
-        modelLocation = new ModelResourceLocation(ITech.MODID + ":machineparts/covers/" + getName());
-        this.canWrenchToggleState = canWrenchToggleState;
+    CoverType(boolean wrenchToggle) {
+        canBeRendered = true;
+        canWrenchToggleState = wrenchToggle;
     }
 
-    public ModelResourceLocation getModelLocation() {
-        return modelLocation;
+    public ModelResourceLocation getModelLoc() {
+        return new ModelResourceLocation(ITech.MODID + ":machineparts/covers/" + getName());
+    }
+
+    public ResourceLocation getTextureLoc() {
+        return new ResourceLocation(ITech.MODID, "blocks/machines/covers/" + getName());
+    }
+
+    public boolean canBeRendered() {
+        return canBeRendered;
     }
 
     public boolean canWrenchToggleState() {
