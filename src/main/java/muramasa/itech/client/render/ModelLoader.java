@@ -1,7 +1,6 @@
-package muramasa.itech.client.model;
+package muramasa.itech.client.render;
 
 import muramasa.itech.ITech;
-import muramasa.itech.client.model.models.ModelBase;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -13,11 +12,11 @@ import java.util.HashMap;
 
 public class ModelLoader implements ICustomModelLoader {
 
-    private static HashMap<String, ModelBase> modelLookup = new HashMap<>();
+    private static HashMap<String, IModel> modelLookup = new HashMap<>();
 
     private IResourceManager resourceManager;
 
-    public static void register(Block block, ModelBase model) {
+    public static void register(Block block, IModel model) {
         modelLookup.put(block.getRegistryName().getResourcePath(), model);
     }
 
@@ -33,7 +32,7 @@ public class ModelLoader implements ICustomModelLoader {
 
     @Override
     public IModel loadModel(ResourceLocation modelLoc) throws Exception {
-        ModelBase model = modelLookup.get(modelLoc.getResourcePath());
+        IModel model = modelLookup.get(modelLoc.getResourcePath());
         return model != null ? model : ModelLoaderRegistry.getMissingModel();
     }
 }

@@ -1,7 +1,7 @@
-package muramasa.itech.client.model.models;
+package muramasa.itech.client.render.models;
 
 import muramasa.itech.ITech;
-import muramasa.itech.client.model.bakedmodels.BakedModelCable;
+import muramasa.itech.client.render.bakedmodels.BakedModelCable;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

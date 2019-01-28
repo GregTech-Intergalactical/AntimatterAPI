@@ -34,6 +34,9 @@ public class BlockOres extends Block {
 
     private static Material[] generatedOres;
 
+
+    //TODO Determine texture type via getActualState, use in exState, BakedModel to return re-textured quads based on texture
+
     public BlockOres() {
         super(net.minecraft.block.material.Material.ROCK);
         setUnlocalizedName(ITech.MODID + ".blockores");

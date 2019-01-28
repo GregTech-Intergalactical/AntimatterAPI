@@ -16,7 +16,7 @@ public class Ref {
     public static final int MULTI_MACHINE_ID = 1;
     public static final int HATCH_ID = 2;
 
-    //NBT Keys
+    //NBT Tags & Keys
     public static final String TAG_MACHINE_STACK_DATA = "machinestack";
     public static final String KEY_MACHINE_STACK_TYPE = "st1";
     public static final String KEY_MACHINE_STACK_TIER = "st2";

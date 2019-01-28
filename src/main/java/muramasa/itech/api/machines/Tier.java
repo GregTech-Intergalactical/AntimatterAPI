@@ -4,42 +4,49 @@ import muramasa.itech.ITech;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tier implements IStringSerializable {
 
+    //TODO This entire class needs to be re-thought
+
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
+    private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
 
-    public static Tier BRONZE = new Tier("bronze", 1);
-    public static Tier STEEL = new Tier("steel", 2);
-    public static Tier LV = new Tier("lv", 1);
-    public static Tier MV = new Tier("mv", 2);
-    public static Tier HV = new Tier("hv", 3);
-    public static Tier EV = new Tier("ev", 4);
-    public static Tier IV = new Tier("iv", 5);
-    public static Tier MULTI = new Tier("multi", 1);
+    public static Tier BRONZE = new Tier(0, "bronze");
+    public static Tier STEEL = new Tier(1, "steel");
+    public static Tier LV = new Tier(2, "lv");
+    public static Tier MV = new Tier(3, "mv");
+    public static Tier HV = new Tier(4, "hv");
+    public static Tier EV = new Tier(5, "ev");
+    public static Tier IV = new Tier(6, "iv");
+    public static Tier MULTI = new Tier(7, "multi");
 
+    private int id;
     private String name;
-    private int level;
-    private ResourceLocation baseTexture;
 
-    public Tier(String name, int level) {
+    public Tier(int id, String name) {
+        this.id = id;
         this.name = name;
-        this.level = level;
-        baseTexture = new ResourceLocation(ITech.MODID, "blocks/machines/base/" + name);
         tierLookup.put(name, this);
+        tierLookupArray.add(id, this);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getLevel() {
-        return level;
+    public ResourceLocation getBaseTexture() {
+        return new ResourceLocation(ITech.MODID, "blocks/machines/base/" + name);
     }
 
-    public ResourceLocation getBaseTexture() {
-        return baseTexture;
+    public static int getCount() {
+        return tierLookup.size();
     }
 
     public static Tier[] getSteam() {
@@ -56,6 +63,10 @@ public class Tier implements IStringSerializable {
 
     public static Tier get(String tier) {
         return tierLookup.get(tier);
+    }
+
+    public static Tier get(int id) {
+        return tierLookupArray.get(id);
     }
 
     public static Tier[] getBasic() {

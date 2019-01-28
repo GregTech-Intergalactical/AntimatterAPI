@@ -7,7 +7,9 @@ import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.MachineStack;
+import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.api.util.Utils;
+import muramasa.itech.client.render.bakedmodels.BakedModelBase;
 import muramasa.itech.common.items.ItemBlockMachines;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import muramasa.itech.common.utils.Ref;
@@ -15,8 +17,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,11 +27,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -50,7 +56,7 @@ public class BlockMachines extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, ACTIVE, COVERS).build();
+        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, ACTIVE, COVERS, TINT).build();
     }
 
     @Override
@@ -60,9 +66,10 @@ public class BlockMachines extends Block {
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
             exState = exState
-                .withProperty(TYPE, machine.getType())
-                .withProperty(TIER, machine.getTier())
-                .withProperty(ACTIVE, machine.getCurProgress() > 0);
+                .withProperty(TYPE, machine.getTypeId())
+                .withProperty(TIER, machine.getTierId())
+                .withProperty(ACTIVE, machine.getCurProgress() > 0)
+                .withProperty(TINT, machine.getTint());
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
@@ -79,22 +86,26 @@ public class BlockMachines extends Block {
     }
 
     @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, EnumFacing.HORIZONTALS[meta]);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getIndex() - 2;
+    }
+
+    @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
             items.add(stack.asItemStack());
         }
-
         for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
             items.add(stack.asItemStack());
         }
         for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
             items.add(stack.asItemStack());
         }
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
     }
 
     @Nullable
@@ -180,8 +191,20 @@ public class BlockMachines extends Block {
     }
 
     @SideOnly(Side.CLIENT)
-    public void initItemModel() {
-        Item itemBlock = Item.REGISTRY.getObject(new ResourceLocation(ITech.MODID, getRegistryName().getResourcePath()));
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(itemBlock, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+    public void initModel() {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+    }
+
+    public static class ColorHandler implements IBlockColor {
+        @Override
+        public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
+            if (tintIndex == 0 && state instanceof IExtendedBlockState) {
+                IExtendedBlockState exState = (IExtendedBlockState) state;
+                if (BakedModelBase.hasUnlistedProperty(exState, ITechProperties.TINT)) {
+                    return exState.getValue(ITechProperties.TINT) != null ? exState.getValue(ITechProperties.TINT) : -1;
+                }
+            }
+            return -1;
+        }
     }
 }
