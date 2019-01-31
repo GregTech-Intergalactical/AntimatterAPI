@@ -34,7 +34,7 @@ public class BakedModelBase implements IBakedModel {
 //
 //    };
 
-    private IBakedModel bakedModel;
+    protected IBakedModel bakedModel;
 
     public BakedModelBase() {
 
@@ -101,10 +101,9 @@ public class BakedModelBase implements IBakedModel {
         return quads;
     }
 
-    public List<BakedQuad> retexture(List<BakedQuad> quads, int tintindex, TextureAtlasSprite sprite) {
+    public List<BakedQuad> retexture(List<BakedQuad> quads, int tintIndex, TextureAtlasSprite sprite) {
         for (int i = 0; i < quads.size(); i++) {
-            if (quads.get(i).getTintIndex() != tintindex) continue;
-//            System.out.println(quads.get(i).getTintIndex() + " - " + tintindex);
+            if (quads.get(i).getTintIndex() != tintIndex) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;

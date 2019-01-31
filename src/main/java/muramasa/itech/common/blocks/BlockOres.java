@@ -3,6 +3,7 @@ package muramasa.itech.common.blocks;
 import muramasa.itech.ITech;
 import muramasa.itech.api.enums.ItemFlag;
 import muramasa.itech.api.materials.Material;
+import muramasa.itech.api.properties.UnlistedString;
 import muramasa.itech.common.items.ItemBlockOres;
 import muramasa.itech.common.tileentities.base.TileEntityOre;
 import net.minecraft.block.Block;
@@ -23,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,6 +33,7 @@ import javax.annotation.Nullable;
 public class BlockOres extends Block {
 
     public static final PropertyInteger STONETYPE = PropertyInteger.create("stonetype", 0, 6);
+    public static final UnlistedString TEXTURE = new UnlistedString();
 
     private static Material[] generatedOres;
 
@@ -48,7 +51,16 @@ public class BlockOres extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, STONETYPE);
+        return new BlockStateContainer.Builder(this).add(STONETYPE).add(TEXTURE).build();
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        IExtendedBlockState exState = (IExtendedBlockState) state;
+        String name = world.getBlockState(pos.down()).getBlock().getRegistryName().toString();
+//        System.out.println("EX: " + name);
+        exState = exState.withProperty(TEXTURE, name);
+        return exState;
     }
 
     @Override
@@ -62,7 +74,7 @@ public class BlockOres extends Block {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
         for (Material mat : generatedOres) {
             items.add(new ItemStack(this, 1, mat.getId()));
         }
@@ -145,7 +157,7 @@ public class BlockOres extends Block {
     public static class ColorHandler implements IBlockColor {
         @Override
         public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-            if (tintIndex == 0) {
+            if (tintIndex == 1) {
                 TileEntity tile = worldIn.getTileEntity(pos);
                 if (tile != null && tile instanceof TileEntityOre) {
                     Material material = ((TileEntityOre) tile).getMaterial();
