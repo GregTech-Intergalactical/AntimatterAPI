@@ -1,10 +1,11 @@
-package muramasa.itech.api.capability.implementations;
+package muramasa.itech.api.capability.impl;
 
 import muramasa.itech.api.capability.IComponent;
 import muramasa.itech.common.tileentities.base.TileEntityBase;
 import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class ComponentHandler implements IComponent {
     }
 
     public void notifyOfRemoval() {
+        //TODO
         if (controllers.size() > 0) {
             for (int i = 0; i < controllers.size(); i++) {
                 TileEntity controller = componentTile.getWorld().getTileEntity(controllers.get(i));
@@ -30,26 +32,24 @@ public class ComponentHandler implements IComponent {
         }
     }
 
-    public ArrayList<BlockPos> getLinkedControllers() {
-        return controllers;
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public TileEntityBase getTile() {
-        return componentTile;
-    }
-
     @Override
     public String getId() {
         return componentId;
     }
 
     @Override
-    public BlockPos getPos() {
-        return componentTile.getPos();
+    public TileEntityBase getTile() {
+        return componentTile;
+    }
+
+    @Override
+    public ArrayList<BlockPos> getLinkedControllers() {
+        return controllers;
+    }
+
+    @Override
+    public MachineStackHandler getStackHandler() {
+        return (MachineStackHandler) componentTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
     }
 
     @Override

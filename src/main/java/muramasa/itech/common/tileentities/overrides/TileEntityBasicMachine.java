@@ -1,7 +1,7 @@
 package muramasa.itech.common.tileentities.overrides;
 
 import muramasa.itech.api.capability.ITechCapabilities;
-import muramasa.itech.api.capability.implementations.*;
+import muramasa.itech.api.capability.impl.*;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.util.Utils;
@@ -38,7 +38,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public void init(String type, String tier) {
         super.init(type, tier);
-        stackHandler = new MachineStackHandler(this, getMachineType());
+        stackHandler = new MachineStackHandler(this);
         if (itemData != null) stackHandler.deserializeNBT(itemData);
         inputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), true, false);
         outputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), false, true);
@@ -55,23 +55,18 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     @Override
     public void onServerUpdate() {
-        advanceRecipe();
         if (shouldCheckRecipe) {
             checkRecipe();
             shouldCheckRecipe = false;
         }
+        advanceRecipe();
     }
 
     public void checkRecipe() {
         if (activeRecipe == null) { //No active recipes, see of contents match one
-            Recipe recipe = getMachineType().findRecipe(stackHandler.getInputStacks(), inputTank.getFluid());
-            if (recipe != null && Utils.canStacksFit(recipe.getOutputs(), stackHandler.getOutputStacks())) {
-                if (recipe.getInputs() != null) {
-                    stackHandler.consumeInputs(recipe.getInputs());
-                }
-                if (recipe.getFluidInputs() != null) {
-                    //consume fluids
-                }
+            if (stackHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
+            Recipe recipe = getMachineType().findRecipe(stackHandler.getInputs(), inputTank.getFluid());
+            if (recipe != null) {
                 activeRecipe = recipe;
                 curProgress = 0;
                 maxProgress = recipe.getDuration();
@@ -79,28 +74,50 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         }
     }
 
-    public void advanceRecipe() {
+    public void advanceRecipe() { //TODO do count check here instead of checkRecipe being called on every contents update
         if (activeRecipe != null) { //Found a valid recipe, process it
-            System.out.println(energyStorage.energy);
-            if (curProgress == maxProgress) {
-                stackHandler.addOutputs(activeRecipe.getOutputs());
-                curProgress = 0;
-                activeRecipe = null;
-            } else if (hasResourceForRecipe()) {
-                energyStorage.energy = Math.max(energyStorage.energy -= activeRecipe.getTotalPower(), 0);
-                curProgress++;
+            if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
+                if (Utils.canStacksFit(activeRecipe.getOutputs(), stackHandler.getOutputs())) {
+                    //Add outputs and reset to process next recipe cycle
+                    stackHandler.addOutputs(activeRecipe.getOutputs());
+                    curProgress = 0;
+                } else {
+                    return; //Return and loop until outputs can be added
+                }
+
+                //Check if has enough stack count for next recipe cycle
+                if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputs(), stackHandler.getInputs())) {
+                    activeRecipe = null;
+                }
+            } else {
+                //Calculate per recipe tick so user has risk of losing items
+                if (hasResourceForRecipe()) { //Has enough power to process recipe
+                    consumeResourceForRecipe();
+                    if (curProgress == 0) { //Consume recipe inputs on first recipe tick
+                        stackHandler.consumeInputs(activeRecipe.getInputs());
+                    }
+                    curProgress++;
+                } else {
+                    //TODO machine out of power/steam
+                    //TODO maybe not null recipe, but keep cache for user using hammer to restart?
+                    activeRecipe = null;
+                }
             }
         }
     }
 
-    public boolean hasResourceForRecipe() {
-        return energyStorage != null && activeRecipe != null && energyStorage.energy >= activeRecipe.getTotalPower();
+    public boolean hasResourceForRecipe() { //Return if Machine can process 1 recipe tick
+        return energyStorage != null && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower();
+    }
+
+    public void consumeResourceForRecipe() {
+        energyStorage.energy -= Math.max(energyStorage.energy -= activeRecipe.getPower(), 0);
     }
 
     /** Events **/
     @Override
     public void onContentsChanged(int slot) {
-        if (!stackHandler.isInputEmpty() && !shouldCheckRecipe) {
+        if (/*TODO!stackHandler.isInputEmpty() &&*/ !shouldCheckRecipe) {
             shouldCheckRecipe = true;
         }
     }

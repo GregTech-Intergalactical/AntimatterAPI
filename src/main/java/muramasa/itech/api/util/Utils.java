@@ -83,19 +83,85 @@ public class Utils {
         return true;
     }
 
-    public static boolean doStacksMatch(Recipe recipe, ItemStack... inputs) {
-        for (int i = 0; i < inputs.length; i++) {
-            if (!equals(inputs[i], recipe.getInputs()[i]) || inputs[i].getCount() < recipe.getInputs()[i].getCount()) return false;
+    public static boolean doStacksMatch(ItemStack[] a, ItemStack[] b) {
+        int matchCount = 0;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < b.length; j++) {
+                if (equals(a[i], b[j])) {
+                    matchCount++;
+                    break;
+                }
+            }
         }
-        return true;
+        return matchCount >= a.length;
     }
 
-    public static boolean doStacksMatch(ItemStack[] a, ItemStack[] b) {
+    public static boolean doStacksMatchAndSizeValid(ItemStack[] a, ItemStack[] b) {
+        int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
-            if (!equals(a[i], b[i])) return false;
+            for (int j = 0; j < b.length; j++) {
+                if (equals(a[i], b[j]) && b[j].getCount() >= a[i].getCount()) {
+                    matchCount++;
+                    break;
+                }
+            }
         }
-        return true;
+        return matchCount >= a.length;
     }
+
+    public static boolean canStacksFit(ItemStack[] a, ItemStack[] b) {
+        return getSpaceForStacks(a, b) >= a.length;
+    }
+
+    public static int getSpaceForStacks(ItemStack[] a, ItemStack[] b) {
+        int matchCount = 0;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < b.length; j++) {
+                if (b[j].isEmpty() || (equals(a[i], b[j]) && b[j].getCount() + a[i].getCount() <= b[j].getMaxStackSize())) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        return matchCount;
+    }
+
+//    public static boolean isStacksValidForRecipe(Recipe recipe, ItemStack[] inputs) {
+//        int matchCount = 0;
+//        for (int i = 0; i < recipe.getInputs().length; i++) {
+//            for (int j = 0; j < inputs.length; j++) {
+//                if (equals(recipe.getInputs()[i], inputs[j]) && inputs[j].getCount() >= recipe.getInputs()[i].getCount()) {
+//                    matchCount++;
+//                    break;
+//                }
+//            }
+//        }
+//        return recipe.getInputs().length == matchCount;
+//    }
+
+//    public static boolean isStacksCountMoreOrEqual(Recipe recipe, ItemStack[] inputs) {
+//        int matchCount = 0;
+////        System.out.println(recipe.getInputs().length + " - " + inputs.length);
+////        System.out.println(inputs);
+//        if (recipe.getInputs().length != inputs.length) return false;
+//        for (int i = 0; i < recipe.getInputs().length; i++) {
+//            for (int j = 0; j < inputs.length; j++) {
+//                if (inputs[j].getCount() >= recipe.getInputs()[i].getCount()) {
+//                    matchCount++;
+//                    break;
+//                }
+//            }
+//        }
+//        System.out.println("MC: " + matchCount);
+//        return recipe.getInputs().length == matchCount;
+//    }
+
+//    public static boolean doStacksMatch(ItemStack[] a, ItemStack[] b) {
+//        for (int i = 0; i < a.length; i++) {
+//            if (!equals(a[i], b[i])) return false;
+//        }
+//        return true;
+//    }
 //
 //    public static boolean areStacksEmpty(ItemStack[] a) {
 //        for (int i = 0; i < a.length; i++) {
@@ -109,24 +175,6 @@ public class Utils {
             if (!equals(inputs[i], recipe.getFluidInputs()[i])) return false;
         }
         return true;
-    }
-
-    public static boolean canStacksFit(ItemStack[] a, ItemStack[] b) {
-        //if (doStacksMatch(a, b)) {
-            for (int i = 0; i < a.length; i++) {
-                if (b[i].getCount() + a[i].getCount() > b[i].getMaxStackSize() /*|| !(b[i] == ItemStack.EMPTY)*/) return false;
-            }
-            return true;
-        //}
-        //return false;
-    }
-
-    public static ItemStack[] getEmptyStackArray(int size) {
-        ItemStack[] stacks = new ItemStack[size];
-        for (int i = 0; i < size; i++) {
-            stacks[i] = ItemStack.EMPTY;
-        }
-        return stacks;
     }
 
     public static String formatNumber(int aNumber) {

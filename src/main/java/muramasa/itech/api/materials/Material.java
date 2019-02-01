@@ -14,13 +14,14 @@ import java.util.HashMap;
 
 import static muramasa.itech.api.enums.Element.*;
 import static muramasa.itech.api.enums.ItemFlag.*;
-import static muramasa.itech.api.materials.MaterialSet.*;
 import static muramasa.itech.api.enums.RecipeFlag.METAL;
+import static muramasa.itech.api.materials.MaterialSet.*;
 
 public class Material {
 
     private static HashMap<String, Material> generatedMap = new HashMap<>();
     public static Material[] generated = new Material[1000]; //TODO remove Material IDs
+//    private TIntObjectHashMap<String> generatedLookup = new TIntObjectHashMap<>();
 
     /** Basic Members **/
     private int id, rgb, itemMask, recipeMask, mass;
@@ -464,8 +465,16 @@ public class Material {
         generatedMap.put(name, this);
     }
 
+    public static Material get(int id) {
+        return generated[id];
+    }
+
     public static Material get(String name) {
         return generatedMap.get(name);
+    }
+
+    public static int getCount() {
+        return generatedMap.size();
     }
 
     private Material asDust(int... temps) {

@@ -1,9 +1,9 @@
 package muramasa.itech.api.capability;
 
-import muramasa.itech.api.capability.implementations.ComponentHandler;
-import muramasa.itech.api.capability.implementations.MachineConfigHandler;
-import muramasa.itech.api.capability.implementations.MachineEnergyHandler;
-import muramasa.itech.api.capability.implementations.MachineCoverHandler;
+import muramasa.itech.api.capability.impl.ComponentHandler;
+import muramasa.itech.api.capability.impl.MachineConfigHandler;
+import muramasa.itech.api.capability.impl.MachineEnergyHandler;
+import muramasa.itech.api.capability.impl.MachineCoverHandler;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.EnumFacing;

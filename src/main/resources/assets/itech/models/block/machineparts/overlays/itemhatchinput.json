@@ -1,6 +1,6 @@
 {
   "textures": {
-    "1": "itech:blocks/machines/overlays/itemhatch"
+    "1": "itech:blocks/machines/overlays/itemhatchinput"
   },
   "elements": [
     {
