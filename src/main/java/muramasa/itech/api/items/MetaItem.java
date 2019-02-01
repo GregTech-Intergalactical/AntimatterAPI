@@ -12,6 +12,7 @@ import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
+import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -170,7 +171,10 @@ public class MetaItem extends Item {
 //                        player.sendMessage(new TextComponentString("Client: " + tile.toString()));
 //                    }
                     if (tile instanceof TileEntityMachine) {
-                        if (tile instanceof TileEntityHatch) {
+                        if (tile instanceof TileEntityMultiMachine) {
+                            ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
+                            ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
+                        } else if (tile instanceof TileEntityHatch) {
                             ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() < 7 ? MachineList.BLASTFURNACE.getInternalId() : ((TileEntityHatch) tile).getTierId());
                             ((TileEntityHatch) tile).markDirty();
                         } else {

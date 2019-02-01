@@ -39,14 +39,17 @@ public class RecipeMap {
 
     void add(Recipe recipe) {
         if (recipe.getInputs().length > 0) {
-            String inputString = Utils.getString(recipe.getInputs()[0]);
-            if (recipeLookupStack.containsKey(inputString)) {
-                recipeLookupStack.get(inputString).add(recipe);
-            } else {
-                ArrayList<Recipe> list = new ArrayList<>();
-                list.add(recipe);
-                recipeLookupStack.put(inputString, list);
-                recipes.add(recipe);
+            String inputString;
+            for (int i = 0; i < recipe.getInputs().length; i++) {
+                inputString = Utils.getString(recipe.getInputs()[i]);
+                if (recipeLookupStack.containsKey(inputString)) {
+                    recipeLookupStack.get(inputString).add(recipe);
+                } else {
+                    ArrayList<Recipe> list = new ArrayList<>();
+                    list.add(recipe);
+                    recipeLookupStack.put(inputString, list);
+                    recipes.add(recipe);
+                }
             }
         } else if (recipe.getFluidInputs().length > 0){
             String inputString = Utils.getString(recipe.getFluidInputs()[0]);
@@ -61,8 +64,27 @@ public class RecipeMap {
         }
     }
 
+//    public static Recipe findRecipeItem(String type, ItemStack[] inputs) {
+//        if (Utils.areStacksValid(inputs)) {
+//            RecipeMap map = allRecipeMaps.get(type);
+//            if (map == null) return null;
+//            ArrayList<Recipe> matches;
+//            for (int i = 0; i < inputs.length; i++) {
+//                matches = map.recipeLookupStack.get(Utils.getString(inputs[i]));
+//                if (matches != null) {
+//                    for (int j = 0; j < matches.size(); j++) {
+//                        if (inputs.length == matches.get(j).getInputs().length && Utils.doStacksMatch(matches.get(j), inputs)) {
+//                            return matches.get(j);
+//                        }
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
-
+    //TODO fix assumption inputs is never empty
     public static Recipe findRecipeItem(String type, ItemStack[] inputs) {
         if (Utils.areStacksValid(inputs)) {
             RecipeMap map = allRecipeMaps.get(type);
@@ -70,7 +92,7 @@ public class RecipeMap {
             ArrayList<Recipe> matches = map.recipeLookupStack.get(Utils.getString(inputs[0]));
             if (matches == null) return null;
             for (int i = 0; i < matches.size(); i++) {
-                if (inputs.length == matches.get(i).getInputs().length && Utils.doStacksMatch(matches.get(i), inputs)) {
+                if (inputs.length == matches.get(i).getInputs().length && Utils.doStacksMatchAndSizeValid(matches.get(i).getInputs(), inputs)) {
                     return matches.get(i);
                 }
             }
@@ -95,20 +117,20 @@ public class RecipeMap {
         return null;
     }
 
-    public static Recipe findRecipeBoth(String type, ItemStack[] inputs, FluidStack[] fluidInputs) {
-        if (Utils.areStacksValid(inputs) && Utils.areFluidsValid(fluidInputs)) {
-            String mapString = Utils.getString(inputs[0]);
-            //TODO if a recipe has both inputs, combine unlocalised strings for map key
-            ArrayList<Recipe> recipeMatches = allRecipeMaps.get(type).recipeLookupStack.get(mapString);
-            if (recipeMatches != null) {
-                if (recipeMatches.size() == 1) return recipeMatches.get(0);
-                for (int i = 0; i < recipeMatches.size(); i++) {
-                    if (Utils.doStacksMatch(recipeMatches.get(i), inputs) && Utils.doFluidsMatch(recipeMatches.get(i), fluidInputs)) {
-                        return recipeMatches.get(i);
-                    }
-                }
-            }
-        }
-        return null;
-    }
+//    public static Recipe findRecipeBoth(String type, ItemStack[] inputs, FluidStack[] fluidInputs) {
+//        if (Utils.areStacksValid(inputs) && Utils.areFluidsValid(fluidInputs)) {
+//            String mapString = Utils.getString(inputs[0]);
+//            //TODO if a recipe has both inputs, combine unlocalised strings for map key
+//            ArrayList<Recipe> recipeMatches = allRecipeMaps.get(type).recipeLookupStack.get(mapString);
+//            if (recipeMatches != null) {
+//                if (recipeMatches.size() == 1) return recipeMatches.get(0);
+//                for (int i = 0; i < recipeMatches.size(); i++) {
+//                    if (Utils.doStacksMatch(recipeMatches.get(i), inputs) && Utils.doFluidsMatch(recipeMatches.get(i), fluidInputs)) {
+//                        return recipeMatches.get(i);
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

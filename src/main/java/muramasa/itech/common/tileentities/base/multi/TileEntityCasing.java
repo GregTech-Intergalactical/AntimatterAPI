@@ -1,7 +1,7 @@
 package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.capability.ITechCapabilities;
-import muramasa.itech.api.capability.implementations.ComponentHandler;
+import muramasa.itech.api.capability.impl.ComponentHandler;
 import muramasa.itech.common.blocks.BlockCasings;
 import muramasa.itech.common.tileentities.base.TileEntityBase;
 import net.minecraft.util.EnumFacing;

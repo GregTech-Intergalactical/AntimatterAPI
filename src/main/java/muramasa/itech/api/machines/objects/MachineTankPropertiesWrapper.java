@@ -1,6 +1,6 @@
 package muramasa.itech.api.machines.objects;
 
-import muramasa.itech.api.capability.implementations.MachineTankHandler;
+import muramasa.itech.api.capability.impl.MachineTankHandler;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 

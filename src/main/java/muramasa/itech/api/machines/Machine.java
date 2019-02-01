@@ -200,6 +200,10 @@ public class Machine implements IStringSerializable {
         return slots;
     }
 
+    public int getSlotCount() {
+        return slots == null ? 0 : slots.length;
+    }
+
     public int getInputCount() {
         return inputCount;
     }

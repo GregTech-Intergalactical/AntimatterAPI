@@ -1,8 +1,8 @@
 package muramasa.itech.common.tileentities.base;
 
 import muramasa.itech.api.capability.ITechCapabilities;
-import muramasa.itech.api.capability.implementations.CableConfigHandler;
-import muramasa.itech.api.capability.implementations.MachineCoverHandler;
+import muramasa.itech.api.capability.impl.CableConfigHandler;
+import muramasa.itech.api.capability.impl.MachineCoverHandler;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;

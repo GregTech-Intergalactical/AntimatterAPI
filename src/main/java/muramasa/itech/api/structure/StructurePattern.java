@@ -93,7 +93,7 @@ public class StructurePattern {
             {HATCH_OR_CASING_EBF, HATCH_OR_CASING_EBF, HATCH_OR_CASING_EBF},
             {HATCH_OR_CASING_EBF, HATCH_OR_CASING_EBF, HATCH_OR_CASING_EBF},
         }
-    }).addOffset(2, 0).addExact(MachineList.BLASTFURNACE, 1).addMin(CasingType.HEAT_PROOF, 12);
+    }).addOffset(2, 0).addExact(MachineList.BLASTFURNACE, 1).addMin(CasingType.HEAT_PROOF, 12).addMin(MachineList.HATCHITEMINPUT, 1).addMin(MachineList.HATCHITEMOUTPUT, 1);
 
     private ArrayList<Tuple<int3, StructureElement>> elements = new ArrayList<>();
     private HashMap<String, Tuple<Integer, BiPredicate<Integer, Integer>>> requirements = new HashMap<>();

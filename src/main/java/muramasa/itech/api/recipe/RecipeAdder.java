@@ -189,4 +189,9 @@ public class RecipeAdder {
     public static void addPlasmaArcFurnaceRecipe(ItemStack input1, FluidStack input2, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4, FluidStack output5, int d, int p) {
         addBasicRecipe(WIREMILL, arr(input1), arr(input2), arr(output1, output2, output3, output4), arr(output5), d, p);
     }
+
+    /** MultiMachine Recipes **/
+    public static void addBlastFurnaceRecipe(ItemStack input1, ItemStack output1, int d, int p) {
+        addBasicRecipe(BLASTFURNACE, arr(input1), arr(output1), d, p);
+    }
 }

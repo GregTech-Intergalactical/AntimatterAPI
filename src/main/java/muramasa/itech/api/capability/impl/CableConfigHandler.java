@@ -1,4 +1,4 @@
-package muramasa.itech.api.capability.implementations;
+package muramasa.itech.api.capability.impl;
 
 import muramasa.itech.common.tileentities.base.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;

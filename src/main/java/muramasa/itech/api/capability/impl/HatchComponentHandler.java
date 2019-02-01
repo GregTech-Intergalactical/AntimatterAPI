@@ -1,4 +1,4 @@
-package muramasa.itech.api.capability.implementations;
+package muramasa.itech.api.capability.impl;
 
 import muramasa.itech.api.enums.HatchTexture;
 import muramasa.itech.api.properties.ITechProperties;

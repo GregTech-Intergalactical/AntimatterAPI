@@ -63,7 +63,8 @@ public class MachineList {
     public static Machine BLASTFURNACE = asMulti("blastfurnace", TileEntityElectricBlastFurnace.class, ITEM, FLUID);
     public static Machine FUSIONREACTOR = asMulti("fusionreactor", TileEntityFusionReactor.class, FLUID);
 
-    public static Machine HATCHITEM = asHatch("itemhatch").addSlots(new SlotData(0, 35, 25));
+    public static Machine HATCHITEMINPUT = asHatch("itemhatchinput").addSlots(new SlotData(0, 35, 25));
+    public static Machine HATCHITEMOUTPUT = asHatch("itemhatchoutput").addSlots(new SlotData(1, 35, 25));
 
     public static void finish() {
         BLASTFURNACE.addPattern(StructurePattern.BLAST_FURNACE);
@@ -95,6 +96,7 @@ public class MachineList {
         multi.addFlags(MULTI);
         multi.addFlags(extraFlags);
 //        structurePattern = pattern;
+        multi.addRecipeMap();
         multi.addGUI(Ref.MULTI_MACHINE_ID, false);
         return multi;
     }
@@ -104,7 +106,7 @@ public class MachineList {
         hatch.setTiers(Tier.getStandard());
         hatch.addFlags(HATCH);
         hatch.addFlags(extraFlags);
-        hatch.addGUI(Ref.MACHINE_ID, true);
+        hatch.addGUI(Ref.HATCH_ID, true);
 //        hatch.addStateTextures(ITechProperties.hatchTextures.toArray(new String[0]));
         return hatch;
     }

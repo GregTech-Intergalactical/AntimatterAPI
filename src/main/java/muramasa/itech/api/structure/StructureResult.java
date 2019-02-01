@@ -11,8 +11,7 @@ public class StructureResult {
     private boolean hasError;
     private String error = "";
 
-    private ArrayList<IComponent> components = new ArrayList<>();
-    private HashMap<String, Integer> subElements = new HashMap<>();
+    private HashMap<String, ArrayList<IComponent>> components = new HashMap<>();
 
     public StructureResult(StructurePattern pattern) {
         this.pattern = pattern;
@@ -29,23 +28,20 @@ public class StructureResult {
     }
 
     public void addComponent(IComponent component) {
-        if (!components.contains(component)) {
-            components.add(component);
+        if (!components.containsKey(component.getId())) {
+            components.put(component.getId(), new ArrayList<>());
         }
+        components.get(component.getId()).add(component);
     }
 
-    public void addSubElement(String elementId) {
-        subElements.merge(elementId, 1, Integer::sum);
-    }
-
-    public ArrayList<IComponent> getComponents() {
+    public HashMap<String, ArrayList<IComponent>> getComponents() {
         return components;
     }
 
     public boolean evaluate() {
         if (hasError) return false;
         for (String key : pattern.getRequirements()) {
-            if (!subElements.containsKey(key) || !pattern.testRequirement(key, subElements.get(key))) {
+            if (!components.containsKey(key) || !pattern.testRequirement(key, components.get(key).size())) {
                 withError("Failed Requirement: " + key);
                 return false;
             }
@@ -58,6 +54,6 @@ public class StructureResult {
     }
 
     public static boolean moreOrEqual(int input1, int input2) {
-        return input1 > input2;
+        return input1 >= input2;
     }
 }

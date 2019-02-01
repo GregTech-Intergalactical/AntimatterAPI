@@ -135,7 +135,7 @@ public class BakedModelBase implements IBakedModel {
         return builder.build();
     }
 
-    protected static List<BakedQuad> transform(List<BakedQuad> quads, TRSRTransformation transform) {
+    protected static List<BakedQuad> transform(List<BakedQuad> quads, Matrix4f matrix) {
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
         final IVertexConsumer consumer = new VertexTransformer(builder) {
             @Override
@@ -145,7 +145,7 @@ public class BakedModelBase implements IBakedModel {
                     case POSITION: {
                         float[] newData = new float[4];
                         Vector4f vec = new Vector4f(data);
-                        transform.getMatrix().transform(vec);
+                        matrix.transform(vec);
                         vec.get(newData);
                         parent.put(element, newData);
                         break;

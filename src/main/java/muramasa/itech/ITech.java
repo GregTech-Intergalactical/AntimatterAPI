@@ -78,5 +78,6 @@ public class ITech {
             RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);
         }
         RecipeAdder.addAlloySmelterRecipe(Material.Copper.getIngot(1), Material.Redstone.getDust(4), Material.RedAlloy.getIngot(1), 10, 1);
+        RecipeAdder.addBlastFurnaceRecipe(Material.Silicon.getDust(1), Material.Silicon.getIngot(1), 10, 1);
     }
 }

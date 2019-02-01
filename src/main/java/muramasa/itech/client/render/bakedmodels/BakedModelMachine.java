@@ -88,6 +88,15 @@ public class BakedModelMachine extends BakedModelBase {
             }
         }
 
+
+//        List<BakedQuad> test = new LinkedList<>(quadList);
+//        quadList.clear();
+//
+//
+//        for (BakedQuad quad : test) {
+//            quadList.add(transform(quad, TRSRTransformation.blockCornerToCenter(ModelRotation.X0_Y180.)));
+//        }
+
         return quadList;
     }
 
