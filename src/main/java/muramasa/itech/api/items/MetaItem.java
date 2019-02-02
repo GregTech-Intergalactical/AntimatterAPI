@@ -8,6 +8,7 @@ import muramasa.itech.api.enums.ItemList;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.materials.Prefix;
+import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
@@ -113,7 +114,12 @@ public class MetaItem extends Item {
                 tooltip.add(item.getTooltip());
             }
             if (ItemList.DebugScanner.isItemEqual(stack)) {
-
+                Recipe recipe = MachineList.ALLOYSMELTER.findRecipe(new ItemStack[]{Material.Copper.getIngot(1), Material.Cobalt.getDust(1)});
+                if (recipe != null) {
+                    tooltip.add(recipe.toString());
+                } else {
+                    tooltip.add("No Recipe");
+                }
             }
         }
     }
@@ -176,11 +182,17 @@ public class MetaItem extends Item {
                             ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                         } else if (tile instanceof TileEntityHatch) {
                             ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() < 7 ? MachineList.BLASTFURNACE.getInternalId() : ((TileEntityHatch) tile).getTierId());
-                            ((TileEntityHatch) tile).markDirty();
+                            ((TileEntityHatch) tile).markForRenderUpdate();
                         } else {
+//                            if (((TileEntityMachine) tile).isServerSide()) {
+//                                System.out.println("SERVER FACING: " + ((TileEntityMachine) tile).getFacing());
+//                            } else if (((TileEntityMachine) tile).isClientSide()) {
+//                                System.out.println("CLIENT FACING: " + ((TileEntityMachine) tile).getFacing());
+//                            }
                             System.out.println("Setting Tint");
                             ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Material.Plutonium241.getRGB());
-                            ((TileEntityMachine) tile).markDirty();
+//                            ((TileEntityMachine) tile).markDirty();
+                            ((TileEntityMachine) tile).markForRenderUpdate();
                         }
                     }
                 }
@@ -202,11 +214,12 @@ public class MetaItem extends Item {
     public static ItemStack get(Prefix prefix, Material material, int amount) {
         ItemStack stack = stringToStack.get(prefix.getName() + material.getDisplayName());
         if (stack != null) {
-            stack.setCount(amount);
-        } else {
-            System.err.println("get() NULL: " + prefix.getName() + material.getName());
+            ItemStack copy = stack.copy();
+            copy.setCount(amount);
+            return copy;
         }
-        return stack;
+        System.err.println("get() NULL: " + prefix.getName() + material.getName());
+        return null;
     }
 
     public static Material getMaterial(ItemStack stack) {

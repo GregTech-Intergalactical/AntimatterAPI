@@ -4,6 +4,7 @@ import muramasa.itech.ITech;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.Machine;
+import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.Tier;
 import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.client.render.RenderHelper;
@@ -63,6 +64,7 @@ public class BakedModelMachine extends BakedModelBase {
 
         int type = exState.getValue(ITechProperties.TYPE);
         int tier = exState.getValue(ITechProperties.TIER);
+        int overlay = exState.getValue(ITechProperties.STATE).getOverlayId();
         int facing = state.getValue(ITechProperties.FACING).getIndex() - 2;
 
         TextureAtlasSprite sprite;
@@ -77,7 +79,14 @@ public class BakedModelMachine extends BakedModelBase {
         }
         if (sprite == null) sprite = baseSprites[2];
         quadList.addAll(retexture(bakedBase[facing].getQuads(state, side, rand), sprite)); //TODO optimize base model by adding tintindex 0 to faces that are visible
-        quadList.addAll(retexture(bakedOverlays[type][facing].getQuads(state, side, rand), 0, sprite));
+
+        List<BakedQuad> overlayQuads = retexture(bakedOverlays[type][facing].getQuads(state, side, rand), 0, sprite);
+        if (overlay > 0) {
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOYSMELTER.getOverlayTexture(1)));
+        } else {
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOYSMELTER.getOverlayTexture(0)));
+        }
+        quadList.addAll(overlayQuads);
 
         //Add cover quads
         if (hasUnlistedProperty(exState, ITechProperties.COVERS)) {
@@ -87,6 +96,8 @@ public class BakedModelMachine extends BakedModelBase {
                 quadList.addAll(bakedCovers[covers[i].ordinal()][i].getQuads(exState, side, rand));
             }
         }
+
+        System.out.println("Overlay ID: " + exState.getValue(ITechProperties.STATE));
 
 
 //        List<BakedQuad> test = new LinkedList<>(quadList);

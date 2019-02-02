@@ -1,5 +1,6 @@
 package muramasa.itech.api.gui.container;
 
+import muramasa.itech.api.enums.MachineState;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
@@ -9,6 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ContainerBasicMachine extends ContainerMachine {
 
     private int lastProgress = -1;
+    private int lastState = -1;
 
     public ContainerBasicMachine(TileEntityMachine tile, IInventory playerInv) {
         super(tile, playerInv);
@@ -17,11 +19,17 @@ public class ContainerBasicMachine extends ContainerMachine {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
+        int curProgress = tile.getCurProgress();
+        int curState = tile.getMachineState().getId();
         for (IContainerListener listener : listeners) {
-            if (tile.getCurProgress() != lastProgress) {
-                int progress = (int)(((float)tile.getCurProgress() / (float)tile.getMaxProgress()) * Short.MAX_VALUE);
+            if (curProgress != lastProgress) {
+                int progress = (int)(((float)curProgress / (float)tile.getMaxProgress()) * Short.MAX_VALUE);
                 listener.sendWindowProperty(this, 0, progress);
-                lastProgress = tile.getCurProgress();
+                lastProgress = curProgress;
+            }
+            if (curState != lastState) {
+                listener.sendWindowProperty(this, 1, curState);
+                lastState = curState;
             }
         }
     }
@@ -32,6 +40,8 @@ public class ContainerBasicMachine extends ContainerMachine {
         super.updateProgressBar(id, data);
         if (id == 0) {
             tile.setClientProgress((float)data / (float)Short.MAX_VALUE);
+        } else if (id == 1) {
+            tile.setMachineState(MachineState.VALUES[data]);
         }
     }
 }

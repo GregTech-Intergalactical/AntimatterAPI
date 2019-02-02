@@ -183,6 +183,6 @@ public class MachineTankHandler implements IFluidTank, IFluidHandler {
     }
 
     protected void onContentsChanged() {
-        tile.markDirty();
+//        tile.markDirty();
     }
 }

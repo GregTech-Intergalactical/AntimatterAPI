@@ -22,7 +22,7 @@ public class TileEntityHatch extends TileEntityMachine {
         super.init(type, tier);
         stackHandler = new MachineStackHandler(this);
         componentHandler = new HatchComponentHandler(type, this);
-        textureId = getTierId();
+        textureId = tierId;
     }
 
     public int getTextureId() {

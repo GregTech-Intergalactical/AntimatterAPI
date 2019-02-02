@@ -25,7 +25,10 @@ public class GuiBasicMachine extends GuiMachine {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRenderer.drawString(displayName, xSize / 2 - fontRenderer.getStringWidth(displayName) / 2, 6, 0x404040);
+        fontRenderer.drawString(displayName, getCenteredStringX(displayName), 6, 0x404040);
+
+        String stateName = tile.getMachineState().getName();
+        fontRenderer.drawString(stateName, getCenteredStringX(stateName), 15, 0x404040);
 
 //        fluidHandlerInput = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.NORTH);
 //        fluidHandlerOutput = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, tile.outputSide);

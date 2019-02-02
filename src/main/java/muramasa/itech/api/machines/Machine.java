@@ -90,8 +90,14 @@ public class Machine implements IStringSerializable {
         }
     }
 
-    public ResourceLocation getOverlayTexture() {
-        return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
+    public ResourceLocation getOverlayTexture(int type) {
+        if (type == 0) {
+            return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
+        } else if (type == 1) {
+            return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/active/" + name);
+        } else {
+            return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
+        }
     }
 
     public ModelResourceLocation getOverlayModel() {

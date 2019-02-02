@@ -1,6 +1,7 @@
 package muramasa.itech.common.tileentities.base;
 
 import muramasa.itech.api.enums.MachineFlag;
+import muramasa.itech.api.enums.MachineState;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.Tier;
@@ -14,8 +15,9 @@ import net.minecraft.util.EnumFacing;
 public class TileEntityMachine extends TileEntityTickable {
 
     /** Data from NBT **/
-    private String typeFromNBT = "", tierFromNBT = "";
-    private int typeId, tierId, tint = -1/*, facing = 2*/;
+    protected String typeFromNBT = "", tierFromNBT = "";
+    protected int typeId, tierId, tint = -1/*, facing = 2*/;
+    private MachineState machineState;
 
     public void init(String type, String tier) {
         if (type.isEmpty() || type.isEmpty()) {
@@ -24,6 +26,7 @@ public class TileEntityMachine extends TileEntityTickable {
         }
         typeFromNBT = type;
         tierFromNBT = tier;
+        machineState = MachineState.IDLE;
     }
 
     @Override
@@ -60,10 +63,6 @@ public class TileEntityMachine extends TileEntityTickable {
         }
     }
 
-    public EnumFacing getFacing() {
-        return getState().getValue(ITechProperties.FACING);
-    }
-
     /** Events **/
     public void onContentsChanged(int slot) {
         //NOOP
@@ -71,7 +70,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     /** Getters **/
     public Machine getMachineType() {
-        return MachineList.get(getType());
+        return MachineList.get(typeFromNBT);
     }
 
     public String getType() {
@@ -88,6 +87,14 @@ public class TileEntityMachine extends TileEntityTickable {
 
     public int getTierId() {
         return tierId;
+    }
+
+    public EnumFacing getFacing() {
+        return getState().getValue(ITechProperties.FACING);
+    }
+
+    public MachineState getMachineState() {
+        return machineState;
     }
 
     public int getTint() {
@@ -111,6 +118,10 @@ public class TileEntityMachine extends TileEntityTickable {
         tint = newTint;
     }
 
+    public void setMachineState(MachineState newState) {
+        machineState = newState;
+    }
+
     public void setClientProgress(float newProgress) {
         //NOOP
     }
@@ -130,8 +141,8 @@ public class TileEntityMachine extends TileEntityTickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound); //TODO add tile data tag
-        compound.setString(Ref.KEY_MACHINE_TILE_TYPE, getType());
-        compound.setString(Ref.KEY_MACHINE_TILE_TIER, getTier());
+        compound.setString(Ref.KEY_MACHINE_TILE_TYPE, typeFromNBT);
+        compound.setString(Ref.KEY_MACHINE_TILE_TIER, tierFromNBT);
 //        compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, getState().getValue(ITechProperties.FACING).getIndex());
         return compound;
     }

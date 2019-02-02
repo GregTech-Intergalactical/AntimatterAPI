@@ -27,14 +27,17 @@ public class ModelMachine extends ModelBase {
         super("ModelMachine");
         addTextures(Tier.getTextures(Tier.getBasic()));
         for (Machine type : MachineFlag.BASIC.getTypes()) {
-            addTexture(type.getOverlayTexture());
+            addTexture(type.getOverlayTexture(0));
+            if (type.getName().equals("alloysmelter")) {
+                addTexture(type.getOverlayTexture(1));
+            }
         }
         for (Machine type : MachineFlag.MULTI.getTypes()) {
             addTexture(new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + type.getName()));
-            addTexture(type.getOverlayTexture());
+            addTexture(type.getOverlayTexture(0));
         }
         for (Machine type : MachineFlag.HATCH.getTypes()) {
-            addTexture(type.getOverlayTexture());
+            addTexture(type.getOverlayTexture(0));
         }
         for (CoverType coverType : CoverType.values()) {
             addTexture(coverType.getTextureLoc());
@@ -83,7 +86,7 @@ public class ModelMachine extends ModelBase {
             for (MachineStack stack : MachineFlag.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH)) {
                 texLoc = !stack.getType().hasFlag(MachineFlag.MULTI) ? stack.getTier().getBaseTexture() : new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + stack.getType().getName());
                 bakedItems.put(stack.getType().getName() + stack.getTier().getName(), new BakedModelBase(
-                    texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getType().getOverlayTexture()})
+                    texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getType().getOverlayTexture(0)})
                 ));
             }
 

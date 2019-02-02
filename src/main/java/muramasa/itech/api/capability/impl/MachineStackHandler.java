@@ -94,6 +94,5 @@ public class MachineStackHandler extends StackHandler {
     @Override
     protected void onContentsChanged(int slot) {
         tile.onContentsChanged(slot);
-        tile.markDirty();
     }
 }

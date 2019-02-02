@@ -16,6 +16,10 @@ public class GuiBase extends GuiContainer {
         //NOOP
     }
 
+    public int getCenteredStringX(String s) {
+        return xSize / 2 - fontRenderer.getStringWidth(s) / 2;
+    }
+
     public void drawTooltipInArea(String line, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
         ArrayList<String> list = new ArrayList<>();
         list.add(line);
