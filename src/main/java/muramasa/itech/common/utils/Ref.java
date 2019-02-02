@@ -26,6 +26,7 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TIER = "m2";
     public static final String KEY_MACHINE_TILE_ITEMS = "mi";
     public static final String KEY_MACHINE_TILE_FACING = "mf";
+    public static final String KEY_MACHINE_TILE_STATE = "ms";
 
     public static final String TAG_MULTIMACHINE_TILE_DATA = "multimachinetile";
     public static final String KEY_MULTIMACHINE_TILE_TYPE = "m1";

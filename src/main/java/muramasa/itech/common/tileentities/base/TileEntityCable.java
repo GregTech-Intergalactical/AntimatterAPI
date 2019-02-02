@@ -63,7 +63,7 @@ public class TileEntityCable extends TileEntityTickable {
                 disabledConnections |= sideMask;
                 System.out.println("Disabled Connection for " + side);
             }
-            markDirty();
+            markForRenderUpdate();
 //        }
     }
 

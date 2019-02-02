@@ -56,7 +56,7 @@ public class BlockMachines extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, ACTIVE, COVERS, TINT).build();
+        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, STATE, COVERS, TINT).build();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BlockMachines extends Block {
             exState = exState
                 .withProperty(TYPE, machine.getTypeId())
                 .withProperty(TIER, machine.getTierId())
-                .withProperty(ACTIVE, machine.getCurProgress() > 0)
+                .withProperty(STATE, machine.getMachineState())
                 .withProperty(TINT, machine.getTint());
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {

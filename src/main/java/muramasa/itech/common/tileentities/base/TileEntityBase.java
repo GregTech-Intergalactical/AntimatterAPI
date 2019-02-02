@@ -13,14 +13,6 @@ import javax.annotation.Nullable;
 public class TileEntityBase extends TileEntity {
 
     @Override
-    public void markDirty() {
-        super.markDirty();
-        getWorld().markBlockRangeForRenderUpdate(pos, pos);
-        getWorld().notifyBlockUpdate(pos, getState(), getState(), 3);
-        getWorld().scheduleBlockUpdate(pos, this.getBlockType(), 0, 0);
-    }
-
-    @Override
     public NBTTagCompound getUpdateTag() {
         return writeToNBT(new NBTTagCompound());
     }
@@ -34,17 +26,12 @@ public class TileEntityBase extends TileEntity {
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
-        notifyBlockUpdate();
+        markForNBTSync();
     }
 
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return (oldState.getBlock() != newState.getBlock());
-    }
-
-    private void notifyBlockUpdate() {
-        final IBlockState state = getWorld().getBlockState(getPos());
-        getWorld().notifyBlockUpdate(getPos(), state, state, 3);
     }
 
     public boolean isClientSide() {
@@ -61,5 +48,14 @@ public class TileEntityBase extends TileEntity {
 
     public void setState(IBlockState state) {
         world.setBlockState(pos, state);
+    }
+
+    public void markForNBTSync() { //Syncs NBT between Client&Server
+        world.notifyBlockUpdate(pos, getState(), getState(), 3);
+    }
+
+    public void markForRenderUpdate() { //Triggers the BakedModel to refresh
+        markForNBTSync();
+        world.markBlockRangeForRenderUpdate(pos, pos);
     }
 }

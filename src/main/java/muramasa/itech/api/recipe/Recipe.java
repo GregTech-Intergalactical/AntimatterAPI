@@ -5,14 +5,14 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class Recipe {
 
-    private ItemStack[] inputs, outputs;
+    private final ItemStack[] inputs, outputs;
     private FluidStack[] fluidInputs, fluidOutputs;
     private int duration, power;
     private int[] chances;
 
     public Recipe(ItemStack[] inputs, ItemStack[] outputs, int duration, int power) {
-        this.inputs = inputs;
-        this.outputs = outputs;
+        this.inputs = inputs.clone();
+        this.outputs = outputs.clone();
         this.duration = duration;
         this.power = power;
     }
