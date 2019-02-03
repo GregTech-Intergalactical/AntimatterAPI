@@ -145,7 +145,7 @@ public class StructurePattern {
     public StructureResult evaluate(TileEntityMultiMachine tile) {
         StructureResult result = new StructureResult(this);
         Tuple<int3, StructureElement> element;
-        int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.x / 2).back(offset.x).up(offset.y);
+        int3 corner = new int3(tile.getPos(), tile.getEnumFacing()).left(size.x / 2).back(offset.x).up(offset.y);
         int3 working = new int3();
         for (int i = 0; i < elements.size(); i++) {
             element = elements.get(i);

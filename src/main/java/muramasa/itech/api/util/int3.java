@@ -115,6 +115,7 @@ public class int3 {
     public int3 back(int n) {
         return offset(n, facing.getOpposite());
     }
+
     public int3 up(int n) {
         return offset(n, EnumFacing.UP);
     }

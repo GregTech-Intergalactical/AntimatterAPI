@@ -1,12 +1,12 @@
 package muramasa.itech.api.capability.impl;
 
+import muramasa.itech.common.tileentities.base.TileEntityBase;
 import muramasa.itech.common.tileentities.base.TileEntityCable;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 public class CableConfigHandler extends MachineConfigHandler {
 
-    public CableConfigHandler(TileEntity tile) {
+    public CableConfigHandler(TileEntityBase tile) {
         super(tile);
     }
 

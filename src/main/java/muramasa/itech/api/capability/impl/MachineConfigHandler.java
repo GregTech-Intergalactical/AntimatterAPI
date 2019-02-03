@@ -5,15 +5,15 @@ import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.util.SoundList;
+import muramasa.itech.common.tileentities.base.TileEntityBase;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 public class MachineConfigHandler implements IConfigurable {
 
-    protected TileEntity tile;
+    protected TileEntityBase tile;
 
-    public MachineConfigHandler(TileEntity tile) {
+    public MachineConfigHandler(TileEntityBase tile) {
         this.tile = tile;
     }
 
@@ -30,8 +30,8 @@ public class MachineConfigHandler implements IConfigurable {
                 return true;
             }
         } else { //Used wrench on side with no cover, rotate.
-            if (tile instanceof TileEntityMachine && side.getAxis() != EnumFacing.Axis.Y) {
-                ((TileEntityMachine) tile).rotate(side);
+            if (tile instanceof TileEntityMachine) {
+                ((TileEntityMachine) tile).setFacing(side);
             }
         }
         return true;

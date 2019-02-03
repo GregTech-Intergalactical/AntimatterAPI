@@ -3,7 +3,7 @@ package muramasa.itech.api.capability.impl;
 import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.util.SoundList;
-import net.minecraft.tileentity.TileEntity;
+import muramasa.itech.common.tileentities.base.TileEntityBase;
 import net.minecraft.util.EnumFacing;
 
 import java.util.ArrayList;
@@ -11,14 +11,14 @@ import java.util.Arrays;
 
 public class MachineCoverHandler implements ICoverable {
 
-    private TileEntity tile;
+    private TileEntityBase tile;
     private ArrayList<CoverType> validCovers;
 
     private CoverType[] covers = new CoverType[] {
         CoverType.NONE, CoverType.NONE, CoverType.NONE, CoverType.NONE, CoverType.NONE, CoverType.NONE
     };
 
-    public MachineCoverHandler(TileEntity tile, CoverType... covers) {
+    public MachineCoverHandler(TileEntityBase tile, CoverType... covers) {
         this.tile = tile;
         validCovers = new ArrayList<>(Arrays.asList(covers));
     }
@@ -30,7 +30,7 @@ public class MachineCoverHandler implements ICoverable {
         if (isCoverValid(coverType) && side != EnumFacing.NORTH && covers[side.getIndex()] != coverType) {
             covers[side.getIndex()] = coverType;
             SoundList.PLACE_METAL.play(tile.getWorld(), tile.getPos());
-            tile.markDirty();
+            tile.markForRenderUpdate();
             return true;
         }
         return false;

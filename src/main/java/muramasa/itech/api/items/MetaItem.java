@@ -181,7 +181,8 @@ public class MetaItem extends Item {
                             ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
                             ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                         } else if (tile instanceof TileEntityHatch) {
-                            ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() < 7 ? MachineList.BLASTFURNACE.getInternalId() : ((TileEntityHatch) tile).getTierId());
+                            System.out.println(((TileEntityHatch) tile).getTextureId());
+                            ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() == MachineList.BLASTFURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : MachineList.BLASTFURNACE.getInternalId());
                             ((TileEntityHatch) tile).markForRenderUpdate();
                         } else {
 //                            if (((TileEntityMachine) tile).isServerSide()) {
