@@ -37,8 +37,8 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     private boolean shouldCheckRecipe;
 
     @Override
-    public void init(String type, String tier) {
-        super.init(type, tier);
+    public void init(String type, String tier, int facing) {
+        super.init(type, tier, facing);
         stackHandler = new MachineStackHandler(this);
         if (itemData != null) stackHandler.deserializeNBT(itemData);
         inputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), true, false);
@@ -47,11 +47,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         energyStorage.energy = 99999999;
         coverHandler = new MachineCoverHandler(this, CoverType.BLANK, CoverType.ENERGYPORT, CoverType.ITEMPORT, CoverType.FLUIDPORT);
         configHandler = new MachineConfigHandler(this);
-    }
-
-    @Override
-    public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
-        super.onFirstTick();
     }
 
     @Override
@@ -146,7 +141,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     /** Setters **/
     @Override
     public void setMachineState(MachineState newState) {
-        if (getMachineState().getOverlayId() != newState.getOverlayId() && newState.getOverlayId() == 0 || newState.getOverlayId() == 1) {
+        if (getMachineState().getOverlayId() != newState.getOverlayId() && (newState.getOverlayId() == 0 || newState.getOverlayId() == 1)) {
             markForRenderUpdate();
         }
         super.setMachineState(newState);

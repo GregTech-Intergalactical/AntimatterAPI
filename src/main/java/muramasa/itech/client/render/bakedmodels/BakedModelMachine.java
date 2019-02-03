@@ -64,8 +64,8 @@ public class BakedModelMachine extends BakedModelBase {
 
         int type = exState.getValue(ITechProperties.TYPE);
         int tier = exState.getValue(ITechProperties.TIER);
-        int overlay = exState.getValue(ITechProperties.STATE).getOverlayId();
-        int facing = state.getValue(ITechProperties.FACING).getIndex() - 2;
+        int overlay = exState.getValue(ITechProperties.STATE);
+        int facing = exState.getValue(ITechProperties.FACING);
 
         TextureAtlasSprite sprite;
         if (hasUnlistedProperty(exState, ITechProperties.TEXTURE)) {
@@ -97,7 +97,7 @@ public class BakedModelMachine extends BakedModelBase {
             }
         }
 
-        System.out.println("Overlay ID: " + exState.getValue(ITechProperties.STATE));
+//        System.out.println("Overlay ID: " + exState.getValue(ITechProperties.STATE));
 
 
 //        List<BakedQuad> test = new LinkedList<>(quadList);

@@ -5,7 +5,6 @@ import muramasa.itech.api.enums.MachineState;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.Tier;
-import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,53 +13,46 @@ import net.minecraft.util.EnumFacing;
 
 public class TileEntityMachine extends TileEntityTickable {
 
-    /** Data from NBT **/
-    protected String typeFromNBT = "", tierFromNBT = "";
-    protected int typeId, tierId, tint = -1/*, facing = 2*/;
-    private MachineState machineState;
+    //TODO remove onFirstTick by using markForNBTSync
 
-    public void init(String type, String tier) {
+    /** Data from NBT **/
+    private String typeFromNBT = "", tierFromNBT = "";
+    private int typeId, tierId, facing, tint = -1;
+    private MachineState machineState = MachineState.IDLE;
+
+    public void init(String type, String tier, int facing) {
         if (type.isEmpty() || type.isEmpty()) {
             type = MachineList.ALLOYSMELTER.getName();
             tier = Tier.LV.getName();
         }
         typeFromNBT = type;
         tierFromNBT = tier;
-        machineState = MachineState.IDLE;
+        typeId = getMachineType().getInternalId();
+        tierId = Tier.get(tierFromNBT).getId();
+        this.facing = facing;
     }
 
     @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
-        Machine machine = getMachineType();
-        if (!getClass().getName().equals(machine.getTileClass().getName())) {
+        if (!getClass().getName().equals(getMachineType().getTileClass().getName())) {
             try {
                 world.setTileEntity(pos, (TileEntity) MachineList.get(typeFromNBT).getTileClass().newInstance());
                 TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine) tile).init(typeFromNBT, tierFromNBT);
+                    ((TileEntityMachine) tile).init(typeFromNBT, tierFromNBT, facing);
                 }
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         } else {
-            init(typeFromNBT, tierFromNBT);
+            init(typeFromNBT, tierFromNBT, facing);
         }
-//        if (facing > 2) {
-//            rotate(EnumFacing.VALUES[facing]);
-//        }
-        typeId = machine.getInternalId();
-        tierId = Tier.get(tierFromNBT).getId();
     }
 
     /** Helpers **/
+    //TODO needed?
     public boolean hasFlag(MachineFlag flag) {
         return Utils.hasFlag(getMachineType().getMask(), flag.getBit());
-    }
-
-    public void rotate(EnumFacing side) { //Rotate the front to face a given direction
-        if (side.getAxis() != EnumFacing.Axis.Y) {
-            setState(getState().withProperty(ITechProperties.FACING, side));
-        }
     }
 
     /** Events **/
@@ -89,8 +81,12 @@ public class TileEntityMachine extends TileEntityTickable {
         return tierId;
     }
 
-    public EnumFacing getFacing() {
-        return getState().getValue(ITechProperties.FACING);
+    public int getFacing() {
+        return facing;
+    }
+
+    public EnumFacing getEnumFacing() {
+        return EnumFacing.VALUES[facing + 2];
     }
 
     public MachineState getMachineState() {
@@ -99,6 +95,10 @@ public class TileEntityMachine extends TileEntityTickable {
 
     public int getTint() {
         return tint;
+    }
+
+    public int getTextureId() {
+        return 0;
     }
 
     public int getCurProgress() {
@@ -114,8 +114,23 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     /** Setters **/
+    public void setFacing(EnumFacing side) {
+        if (side.getAxis() != EnumFacing.Axis.Y) {
+            setFacing(side.getIndex() - 2);
+        }
+    }
+
+    public void setFacing(int newFacing) { //Rotate the front to face a given direction
+        facing = newFacing;
+        markForRenderUpdate();
+    }
+
     public void setTint(int newTint) {
         tint = newTint;
+    }
+
+    public void setTextureId(int newId) {
+        //NOOP
     }
 
     public void setMachineState(MachineState newState) {
@@ -133,9 +148,9 @@ public class TileEntityMachine extends TileEntityTickable {
             typeFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TYPE);
             tierFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TIER);
         }
-//        if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
-//            facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
-//        }
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
+            facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
+        }
     }
 
     @Override
@@ -143,7 +158,7 @@ public class TileEntityMachine extends TileEntityTickable {
         super.writeToNBT(compound); //TODO add tile data tag
         compound.setString(Ref.KEY_MACHINE_TILE_TYPE, typeFromNBT);
         compound.setString(Ref.KEY_MACHINE_TILE_TIER, tierFromNBT);
-//        compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, getState().getValue(ITechProperties.FACING).getIndex());
+        compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, facing);
         return compound;
     }
 }

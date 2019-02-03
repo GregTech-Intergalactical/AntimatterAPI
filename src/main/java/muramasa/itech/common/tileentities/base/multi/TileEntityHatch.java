@@ -5,6 +5,8 @@ import muramasa.itech.api.capability.impl.ComponentHandler;
 import muramasa.itech.api.capability.impl.HatchComponentHandler;
 import muramasa.itech.api.capability.impl.MachineStackHandler;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
+import muramasa.itech.common.utils.Ref;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -13,24 +15,26 @@ import javax.annotation.Nullable;
 
 public class TileEntityHatch extends TileEntityMachine {
 
-    private int textureId = 0;
+    private int textureId;
     private MachineStackHandler stackHandler;
     private ComponentHandler componentHandler;
 
     @Override
-    public void init(String type, String tier) {
-        super.init(type, tier);
+    public void init(String type, String tier, int facing) {
+        super.init(type, tier, facing);
         stackHandler = new MachineStackHandler(this);
         componentHandler = new HatchComponentHandler(type, this);
-        textureId = tierId;
+        textureId = getTierId();
     }
 
+    @Override
     public int getTextureId() {
         return textureId;
     }
 
-    public void setTextureId(int newTextureId) {
-        textureId = newTextureId;
+    @Override
+    public void setTextureId(int newId) {
+        textureId = newId;
     }
 
     @Override
@@ -52,5 +56,20 @@ public class TileEntityHatch extends TileEntityMachine {
             return ITechCapabilities.COMPONENT.cast(componentHandler);
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
+            textureId = compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE);
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureId);
+        return compound;
     }
 }

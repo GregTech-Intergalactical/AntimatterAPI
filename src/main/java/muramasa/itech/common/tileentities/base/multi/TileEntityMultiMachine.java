@@ -29,8 +29,8 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     private ControllerComponentHandler componentHandler;
 
     @Override
-    public void init(String type, String tier) {
-        super.init(type, tier);
+    public void init(String type, String tier, int facing) {
+        super.init(type, tier, facing);
         components = new HashMap<>();
         componentHandler = new ControllerComponentHandler(type, this);
     }
@@ -151,8 +151,10 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     //TODO merge equal stacks
     public ArrayList<ItemStack> getHatchItems() {
         ArrayList<ItemStack> stacks = new ArrayList<>();
+        ArrayList<IComponent> hatches = components.get("itemhatchinput");
+        if (hatches == null || hatches.size() == 0) return stacks;
         MachineStackHandler stackHandler;
-        for (IComponent hatch : components.get("itemhatchinput")) {
+        for (IComponent hatch : hatches) {
             stackHandler = hatch.getStackHandler();
             if (stackHandler == null) continue;
             for (ItemStack stack : stackHandler.getInputs()) {

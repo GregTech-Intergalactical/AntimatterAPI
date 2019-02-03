@@ -56,7 +56,7 @@ public class BlockMachines extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, STATE, COVERS, TINT).build();
+        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, STATE, TINT, COVERS).build();
     }
 
     @Override
@@ -68,7 +68,8 @@ public class BlockMachines extends Block {
             exState = exState
                 .withProperty(TYPE, machine.getTypeId())
                 .withProperty(TIER, machine.getTierId())
-                .withProperty(STATE, machine.getMachineState())
+                .withProperty(FACING, machine.getFacing())
+                .withProperty(STATE, machine.getMachineState().getOverlayId())
                 .withProperty(TINT, machine.getTint());
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
@@ -85,14 +86,15 @@ public class BlockMachines extends Block {
         return exState;
     }
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, EnumFacing.HORIZONTALS[meta]);
-    }
+//    @Override
+//    public IBlockState getStateFromMeta(int meta) {
+//        return getDefaultState().withProperty(FACING, EnumFacing.HORIZONTALS[meta]);
+//    }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getIndex() - 2;
+//        return state.getValue(FACING).getIndex() - 2;
+        return 0;
     }
 
     @Override
@@ -144,8 +146,8 @@ public class BlockMachines extends Block {
                         world.setTileEntity(pos, tile);
                         tile = world.getTileEntity(pos);
                         if (tile instanceof TileEntityMachine) {
-                            ((TileEntityMachine) tile).init(machineType, machineTier);
-                            world.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 3);
+                            ((TileEntityMachine) tile).init(machineType, machineTier, placer.getHorizontalFacing().getOpposite().getIndex() - 2);
+//                            ((TileEntityMachine) tile).setFacing();
                         }
                     }
                 } catch (IllegalAccessException | InstantiationException e) {
