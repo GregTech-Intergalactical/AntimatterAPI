@@ -8,10 +8,10 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
-import muramasa.itech.ITech;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.SlotData;
 import muramasa.itech.api.machines.Tier;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.Minecraft;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
 
     @Override
     public String getModName() {
-        return ITech.NAME;
+        return Ref.NAME;
     }
 
     @Override

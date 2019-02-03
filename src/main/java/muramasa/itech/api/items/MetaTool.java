@@ -1,7 +1,6 @@
 package muramasa.itech.api.items;
 
 import com.google.common.collect.Multimap;
-import muramasa.itech.ITech;
 import muramasa.itech.api.capability.IConfigurable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.ToolType;
@@ -9,6 +8,7 @@ import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.util.ToolHelper;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -42,9 +42,9 @@ import java.util.List;
 public class MetaTool extends Item {
 
     public MetaTool() {
-        setRegistryName("metatool");
-        setUnlocalizedName(ITech.MODID + ".metatool");
-        setCreativeTab(ITech.TAB_MATERIALS);
+        setRegistryName("meta_tool");
+        setUnlocalizedName(Ref.MODID + ".meta_tool");
+        setCreativeTab(Ref.TAB_MATERIALS);
         setHasSubtypes(true);
         setMaxStackSize(1);
     }
@@ -238,7 +238,7 @@ public class MetaTool extends Item {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0; i < ToolType.values().length; i++) {
-            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(ITech.MODID + ":metatool", "type=" + i));
+            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName(), "type=" + i));
         }
     }
 

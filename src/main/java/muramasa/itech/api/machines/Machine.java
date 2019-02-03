@@ -1,11 +1,11 @@
 package muramasa.itech.api.machines;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.recipe.RecipeMap;
 import muramasa.itech.api.structure.StructurePattern;
 import muramasa.itech.api.util.Utils;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -71,7 +71,7 @@ public class Machine implements IStringSerializable {
     }
 
     public String getJeiCategoryID() {
-        return "it.recipemap." + name;
+        return "it.recipe_map." + name;
     }
 
     public String getJeiCategoryName() {
@@ -84,24 +84,24 @@ public class Machine implements IStringSerializable {
 
     public ResourceLocation getGUITexture(String tier) {
         if (isGuiTierSensitive) {
-            return new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + tier + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + tier + ".png");
         } else {
-            return new ResourceLocation(ITech.MODID, "textures/gui/machines/" + name + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + ".png");
         }
     }
 
     public ResourceLocation getOverlayTexture(int type) {
         if (type == 0) {
-            return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
+            return new ResourceLocation(Ref.MODID + ":blocks/machines/overlays/" + name);
         } else if (type == 1) {
-            return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/active/" + name);
+            return new ResourceLocation(Ref.MODID + ":blocks/machines/overlays/active/" + name);
         } else {
-            return new ResourceLocation(ITech.MODID + ":blocks/machines/overlays/" + name);
+            return new ResourceLocation(Ref.MODID + ":blocks/machines/overlays/" + name);
         }
     }
 
     public ModelResourceLocation getOverlayModel() {
-        return new ModelResourceLocation(ITech.MODID + ":machineparts/overlays/" + name);
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlays/" + name);
     }
 
     //TODO target type specific recipe find

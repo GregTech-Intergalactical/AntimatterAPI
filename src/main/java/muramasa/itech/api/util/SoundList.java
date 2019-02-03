@@ -1,6 +1,6 @@
 package muramasa.itech.api.util;
 
-import muramasa.itech.ITech;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public enum SoundList {
 
-    WRENCH(ITech.MODID + ":" + "wrench"),
-    DRILL(ITech.MODID + ":" + "drill"),
+    WRENCH(Ref.MODID + ":" + "wrench"),
+    DRILL(Ref.MODID + ":" + "drill"),
     BREAK("entity.item.break"),
     PLACE_METAL("block.metal.place");
 

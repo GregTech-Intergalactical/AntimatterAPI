@@ -47,7 +47,7 @@ public class RecipeAdder {
     }
 
     public static void addAlloySmelterRecipe(ItemStack input1, ItemStack input2, ItemStack output, int d, int p) {
-        addBasicRecipe(ALLOYSMELTER, arr(input1, input2), arr(output), d, p);
+        addBasicRecipe(ALLOY_SMELTER, arr(input1, input2), arr(output), d, p);
     }
 
     public static void addAssemblerRecipe(ItemStack[] inputs, ItemStack output, int d, int p) {
@@ -95,7 +95,7 @@ public class RecipeAdder {
     }
 
     public static void addWiremillRecipe(ItemStack input, ItemStack output, int d, int p) {
-        addBasicRecipe(WIREMILL, arr(input), arr(output), d, p);
+        addBasicRecipe(WIRE_MILL, arr(input), arr(output), d, p);
     }
 
     public static void addCentrifugeRecipe(ItemStack input1, ItemStack input2, FluidStack input3, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4, ItemStack output5, ItemStack output6, FluidStack output7, int d, int p) {
@@ -107,19 +107,19 @@ public class RecipeAdder {
     }
 
     public static void addThermalCentrifugeRecipe(ItemStack input, ItemStack output1, ItemStack output2, ItemStack output3, int d, int p) {
-        addBasicRecipe(THERMALCENTRIFUGE, arr(input), arr(output1, output2, output3), d, p);
+        addBasicRecipe(THERMAL_CENTRIFUGE, arr(input), arr(output1, output2, output3), d, p);
     }
 
     public static void addOreWasherRecipe(ItemStack input1, FluidStack input2, ItemStack output1, ItemStack output2, ItemStack output3, int d, int p) {
-        addBasicRecipe(OREWASHER, arr(input1), arr(input2), arr(output1, output2, output3), d, p);
+        addBasicRecipe(ORE_WASHER, arr(input1), arr(input2), arr(output1, output2, output3), d, p);
     }
 
     public static void addChemicalReactorRecipe(ItemStack input1, ItemStack input2, FluidStack input3, ItemStack output1, ItemStack output2, FluidStack output3, int d, int p) {
-        addBasicRecipe(CHEMICALREACTOR, arr(input1, input2), arr(input3), arr(output1, output2), arr(output3), d, p);
+        addBasicRecipe(CHEMICAL_REACTOR, arr(input1, input2), arr(input3), arr(output1, output2), arr(output3), d, p);
     }
 
     public static void addFluidCannerRecipe(ItemStack input1, FluidStack input2, ItemStack output, int d, int p) {
-        addBasicRecipe(FLUIDCANNER, arr(input1), arr(input2), arr(output), d, p);
+        addBasicRecipe(FLUID_CANNER, arr(input1), arr(input2), arr(output), d, p);
     }
 
     public static void addDisassemblerRecipe(ItemStack input, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4, ItemStack output5, ItemStack output6, ItemStack output7, ItemStack output8, ItemStack output9, int d, int p) {
@@ -127,11 +127,11 @@ public class RecipeAdder {
     }
 
     public static void addMassFabricatorRecipe(ItemStack input1, FluidStack input2, FluidStack output, int d, int p) {
-        addBasicRecipe(MASSFABRICATOR, arr(input1), arr(input2), arr(output), d, p);
+        addBasicRecipe(MASS_FABRICATOR, arr(input1), arr(input2), arr(output), d, p);
     }
 
     public static void addAmplifabricatorRecipe(ItemStack input, ItemStack output1, FluidStack output2, int d, int p) {
-        addBasicRecipe(AMPLIFABRICATOR, arr(input), arr(output1), arr(output2), d, p);
+        addBasicRecipe(AMPLI_FABRICATOR, arr(input), arr(output1), arr(output2), d, p);
     }
 
     public static void addReplicatorRecipe(ItemStack input1, FluidStack input2, FluidStack output, int d, int p) {
@@ -143,11 +143,11 @@ public class RecipeAdder {
     }
 
     public static void addFluidExtractorRecipe(ItemStack input, ItemStack output1, FluidStack output2, int d, int p) {
-        addBasicRecipe(FLUIDEXTRACTOR, arr(input), arr(output1), arr(output2), d, p);
+        addBasicRecipe(FLUID_EXTRACTOR, arr(input), arr(output1), arr(output2), d, p);
     }
 
     public static void addFluidSolidifierRecipe(ItemStack input1, FluidStack input2, ItemStack output, int d, int p) {
-        addBasicRecipe(FLUIDSOLIDIFIER, arr(input1), arr(input2), arr(output), d, p);
+        addBasicRecipe(FLUID_SOLIDIFIER, arr(input1), arr(input2), arr(output), d, p);
     }
 
     public static void addDistilleryRecipe(ItemStack input1, FluidStack input2, ItemStack output1, FluidStack output2, int d, int p) {
@@ -155,7 +155,7 @@ public class RecipeAdder {
     }
 
     public static void addChemicalBathRecipe(ItemStack input1, FluidStack input2, ItemStack output1, ItemStack output2, ItemStack output3, int d, int p) {
-        addBasicRecipe(CHEMICALBATH, arr(input1), arr(input2), arr(output1, output2, output3), d, p);
+        addBasicRecipe(CHEMICAL_BATH, arr(input1), arr(input2), arr(output1, output2, output3), d, p);
     }
 
     public static void addAutoclaveRecipe(ItemStack input1, FluidStack input2, ItemStack output, int d, int p) {
@@ -167,15 +167,11 @@ public class RecipeAdder {
     }
 
     public static void addLaserEngraverRecipe(ItemStack input1, ItemStack input2, ItemStack output, int d, int p) {
-        addBasicRecipe(LASERENGRAVER, arr(input1, input2), arr(output), d, p);
+        addBasicRecipe(LASER_ENGRAVER, arr(input1, input2), arr(output), d, p);
     }
 
     public static void addFormingPressRecipe(ItemStack input1, ItemStack input2, ItemStack output, int d, int p) {
-        addBasicRecipe(FORMINGPRESS, arr(input1, input2), arr(output), d, p);
-    }
-
-    public static void addFluidHeaterRecipe(ItemStack input1, FluidStack input2, ItemStack output1, FluidStack output2, int d, int p) {
-        addBasicRecipe(FLUIDHEATER, arr(input1), arr(input2), arr(output1), arr(output2), d, p);
+        addBasicRecipe(FORMING_PRESS, arr(input1, input2), arr(output), d, p);
     }
 
     public static void addSifterRecipe(ItemStack input, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4, ItemStack output5, ItemStack output6, ItemStack output7, ItemStack output8, ItemStack output9, int d, int p) {
@@ -183,15 +179,15 @@ public class RecipeAdder {
     }
 
     public static void addArcFurnaceRecipe(ItemStack input1, FluidStack input2, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4, int d, int p) {
-        addBasicRecipe(WIREMILL, arr(input1), arr(input2), arr(output1, output2, output3, output4), d, p);
+        addBasicRecipe(ARC_FURNACE, arr(input1), arr(input2), arr(output1, output2, output3, output4), d, p);
     }
 
     public static void addPlasmaArcFurnaceRecipe(ItemStack input1, FluidStack input2, ItemStack output1, ItemStack output2, ItemStack output3, ItemStack output4, FluidStack output5, int d, int p) {
-        addBasicRecipe(WIREMILL, arr(input1), arr(input2), arr(output1, output2, output3, output4), arr(output5), d, p);
+        addBasicRecipe(PLASMA_ARC_FURNACE, arr(input1), arr(input2), arr(output1, output2, output3, output4), arr(output5), d, p);
     }
 
     /** MultiMachine Recipes **/
     public static void addBlastFurnaceRecipe(ItemStack input1, ItemStack output1, int d, int p) {
-        addBasicRecipe(BLASTFURNACE, arr(input1), arr(output1), d, p);
+        addBasicRecipe(BLAST_FURNACE, arr(input1), arr(output1), d, p);
     }
 }

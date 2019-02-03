@@ -1,6 +1,6 @@
 package muramasa.itech.client.render;
 
-import muramasa.itech.ITech;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -27,7 +27,7 @@ public class ModelLoader implements ICustomModelLoader {
 
     @Override
     public boolean accepts(ResourceLocation modelLoc) {
-        return modelLoc.getResourceDomain().equals(ITech.MODID) && modelLookup.containsKey(modelLoc.getResourcePath());
+        return modelLoc.getResourceDomain().equals(Ref.MODID) && modelLookup.containsKey(modelLoc.getResourcePath());
     }
 
     @Override

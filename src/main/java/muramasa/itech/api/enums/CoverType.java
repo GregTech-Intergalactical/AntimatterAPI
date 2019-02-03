@@ -1,17 +1,19 @@
 package muramasa.itech.api.enums;
 
-import muramasa.itech.ITech;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Locale;
 
 public enum CoverType implements IStringSerializable {
 
     NONE(),
     BLANK(false),
-    ITEMPORT(true),
-    FLUIDPORT(true),
-    ENERGYPORT(false);
+    ITEM_PORT(true),
+    FLUID_PORT(true),
+    ENERGY_PORT(false);
 
     private boolean canBeRendered, canWrenchToggleState;
 
@@ -25,11 +27,11 @@ public enum CoverType implements IStringSerializable {
     }
 
     public ModelResourceLocation getModelLoc() {
-        return new ModelResourceLocation(ITech.MODID + ":machineparts/covers/" + getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/covers/" + getName());
     }
 
     public ResourceLocation getTextureLoc() {
-        return new ResourceLocation(ITech.MODID, "blocks/machines/covers/" + getName());
+        return new ResourceLocation(Ref.MODID, "blocks/machines/covers/" + getName());
     }
 
     public boolean canBeRendered() {
@@ -42,6 +44,6 @@ public enum CoverType implements IStringSerializable {
 
     @Override
     public String getName() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ENGLISH);
     }
 }

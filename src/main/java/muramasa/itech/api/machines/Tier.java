@@ -1,6 +1,6 @@
 package muramasa.itech.api.machines;
 
-import muramasa.itech.ITech;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 
@@ -42,7 +42,7 @@ public class Tier implements IStringSerializable {
     }
 
     public ResourceLocation getBaseTexture() {
-        return new ResourceLocation(ITech.MODID, "blocks/machines/base/" + name);
+        return new ResourceLocation(Ref.MODID, "blocks/machines/base/" + name);
     }
 
     public static int getCount() {

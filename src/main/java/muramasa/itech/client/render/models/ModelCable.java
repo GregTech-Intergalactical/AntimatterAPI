@@ -1,7 +1,7 @@
 package muramasa.itech.client.render.models;
 
-import muramasa.itech.ITech;
 import muramasa.itech.client.render.bakedmodels.BakedModelCable;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,12 +14,12 @@ import java.util.function.Function;
 
 public class ModelCable extends ModelBase {
 
-    private static final ModelResourceLocation CABLE_BASE = new ModelResourceLocation(ITech.MODID + ":cableparts/cablebase");
-    private static final ModelResourceLocation CABLE_SINGLE = new ModelResourceLocation(ITech.MODID + ":cableparts/cablesingle");
-    private static final ModelResourceLocation CABLE_LINE = new ModelResourceLocation(ITech.MODID + ":cableparts/cableline");
-    private static final ModelResourceLocation CABLE_CORNER = new ModelResourceLocation(ITech.MODID + ":cableparts/cablecorner");
-    private static final ModelResourceLocation CABLE_CROSS = new ModelResourceLocation(ITech.MODID + ":cableparts/cablecross");
-    private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(ITech.MODID + ":cableparts/cableside");
+    private static final ModelResourceLocation CABLE_BASE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_base");
+    private static final ModelResourceLocation CABLE_SINGLE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_single");
+    private static final ModelResourceLocation CABLE_LINE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_line");
+    private static final ModelResourceLocation CABLE_CORNER = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_corner");
+    private static final ModelResourceLocation CABLE_CROSS = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_cross");
+    private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_side");
 
     public ModelCable() {
         super("ModelCable");

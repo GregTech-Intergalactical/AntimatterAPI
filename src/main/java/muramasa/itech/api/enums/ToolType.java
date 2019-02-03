@@ -22,19 +22,19 @@ public enum ToolType {
     SCREWDRIVER("Screwdriver", "Adjusts Covers and Machines", null, 0, 1.5f, 1.0f, 1.0f, 200, 200, 400),
     CROWBAR("Crowbar", "Removes Covers", null, 0, 2.0f, 1.0f, 1.0f, 50, 200, 100),
     MORTAR("Mortar", "Grinds Ingots into Dust", null, 0, 2.0f, 1.0f, 1.0f, 50, 200, 400),
-    WIRECUTTER("Wire Cutter", "", null, 0, 1.25f, 1.0f, 1.0f, 100, 200, 400),
+    WIRE_CUTTER("Wire Cutter", "", null, 0, 1.25f, 1.0f, 1.0f, 100, 200, 400),
     SCOOP("Scoop", "Harvests Bees from Hives", null, 0, 1.0f, 1.0f, 1.0f, 200, 200, 200),
-    BRANCHCUTTER("Branch Cutter", "", null, 0, 2.5f, 0.25f, 0.25f, 100, 200, 800),
-    UNIVERSALSPADE("Universal Spade", "", null, 0, 3.0f, 0.75f, 1.0f, 50, 100, 400),
+    BRANCH_CUTTER("Branch Cutter", "", null, 0, 2.5f, 0.25f, 0.25f, 100, 200, 800),
+    UNIVERSAL_SPADE("Universal Spade", "", null, 0, 3.0f, 0.75f, 1.0f, 50, 100, 400),
     KNIFE("Knife", "", null, 0, 2.0f, 0.5f, 1.0f, 100, 200, 100),
     SCYTHE("Scythe", "", null, 0, 3.0f, 1.0f, 4.0f, 100, 200, 800),
     PLUNGER("Plunger", "", null, 0, 1.25f, 1.0f, 0.25f, 100, 200, 800),
     DRILL("Electric Drill", "", SoundList.DRILL, 1, 3.0f, 9.0f, 4.0f, 800, 3200, 12800),
     CHAINSAW("Electric Chainsaw", "", null, 1, 4.0f, 4.0f, 4.0f, 800, 3200, 12800),
-    WRENCHP("Electric Wrench", "", null, 1, 2.0f, 4.0f, 4.0f, 800, 3200, 12800),
+    WRENCH_P("Electric Wrench", "", null, 1, 2.0f, 4.0f, 4.0f, 800, 3200, 12800),
     JACKHAMMER("Electric Jackhammer", "", null, 1, 3.0f, 12.0f, 2.0f, 400, 800, 3200),
-    SCREWDRIVERP("Electric Screwdriver", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 200, 200),
-    BUZZSAW("Electric Buzzsaw", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 300, 100),
+    SCREWDRIVER_P("Electric Screwdriver", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 200, 200),
+    BUZZ_SAW("Electric Buzzsaw", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("Turbine Rotor", "", null, 0, 3.0f, 4.0f, 4.0f, 100, 200, 800);
 
     private String displayName, tooltip;
@@ -42,8 +42,8 @@ public enum ToolType {
     private int baseQuality, damageMining, damageEntity, damageCrafting;
     private float baseDamage, speedMulti, duraMulti;
 
-    ToolType(String name, String tooltip, SoundList useSound, int baseQuality, float baseDamage, float speedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
-        this.displayName = name;
+    ToolType(String displayName, String tooltip, SoundList useSound, int baseQuality, float baseDamage, float speedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
+        this.displayName = displayName;
         this.tooltip = tooltip;
         this.useSound = useSound;
         this.baseQuality = baseQuality;
@@ -115,7 +115,7 @@ public enum ToolType {
     }
 
     public static boolean isWrench(ItemStack stack) {
-        return stack.getItem() instanceof MetaTool && (stack.getMetadata() == WRENCH.ordinal() || stack.getMetadata() == WRENCHP.ordinal());
+        return stack.getItem() instanceof MetaTool && (stack.getMetadata() == WRENCH.ordinal() || stack.getMetadata() == WRENCH_P.ordinal());
     }
 
     public static boolean isCrowbar(ItemStack stack) {
@@ -123,11 +123,11 @@ public enum ToolType {
     }
 
     public static boolean isScrewdriver(ItemStack stack) {
-        return stack.getItem() instanceof MetaTool && (stack.getMetadata() == SCREWDRIVER.ordinal() || stack.getMetadata() == SCREWDRIVERP.ordinal());
+        return stack.getItem() instanceof MetaTool && (stack.getMetadata() == SCREWDRIVER.ordinal() || stack.getMetadata() == SCREWDRIVER_P.ordinal());
     }
 
     public static boolean isPowered(ItemStack stack) {
-        return stack.getItem() instanceof MetaTool && (stack.getMetadata() == WRENCHP.ordinal() || stack.getMetadata() == SCREWDRIVERP.ordinal() || stack.getMetadata() == DRILL.ordinal());
+        return stack.getItem() instanceof MetaTool && (stack.getMetadata() == WRENCH_P.ordinal() || stack.getMetadata() == SCREWDRIVER_P.ordinal() || stack.getMetadata() == DRILL.ordinal());
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {

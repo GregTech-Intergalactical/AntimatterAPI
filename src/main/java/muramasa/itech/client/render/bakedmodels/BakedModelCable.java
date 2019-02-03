@@ -1,6 +1,6 @@
 package muramasa.itech.client.render.bakedmodels;
 
-import muramasa.itech.common.blocks.BlockCables;
+import muramasa.itech.common.blocks.BlockCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -71,7 +71,7 @@ public class BakedModelCable extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
 
         IExtendedBlockState extendedState = (IExtendedBlockState) state;
-        int connections = extendedState.getValue(BlockCables.CONNECTIONS);
+        int connections = extendedState.getValue(BlockCable.CONNECTIONS);
 
         IBakedModel bakedModel = maskToModelMap.get(connections);
 

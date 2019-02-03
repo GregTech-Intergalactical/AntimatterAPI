@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "itech:block_coil"
+  },
+  "variants": {
+    "coil_type": {
+      "cupronickel": {
+        "textures": {"all": "itech:blocks/coils/cupronickel"}
+      },
+      "kanthal": {
+        "textures": {"all": "itech:blocks/coils/kanthal"}
+      },
+      "nichrome": {
+        "textures": {"all": "itech:blocks/coils/nichrome"}
+      },
+      "fusion": {
+        "textures": {"all": "itech:blocks/coils/fusion"}
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 package muramasa.itech.api.util;
 
-import muramasa.itech.ITech;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -18,7 +18,7 @@ public class RegistryHelper {
 
     public static void registerBlock(RegistryEvent.Register<Block> event, Block block, Class tileClass, String tileName) {
         registerBlock(event, block);
-        GameRegistry.registerTileEntity(tileClass, new ResourceLocation(ITech.MODID, tileName));
+        GameRegistry.registerTileEntity(tileClass, new ResourceLocation(Ref.MODID, tileName));
     }
 
     public static void registerItem(Item item) {
@@ -30,7 +30,7 @@ public class RegistryHelper {
     }
 
     public static void registerItemRenderer(Item item, int meta, String id) {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ITech.MODID + ":" + id, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(Ref.MODID + ":" + id, "inventory"));
     }
 
     public static void RegisterItemModel(Item item, int meta, String model) {

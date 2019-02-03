@@ -1,6 +1,5 @@
 package muramasa.itech.api.items;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.capability.ICoverable;
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
@@ -8,12 +7,12 @@ import muramasa.itech.api.enums.ItemList;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.materials.Prefix;
-import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
 import muramasa.itech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.itech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -46,9 +45,9 @@ public class MetaItem extends Item {
     public MetaItem() {
         setMaxDamage(0);
         setHasSubtypes(true);
-        setRegistryName("metaitem");
-        setUnlocalizedName(ITech.MODID + ".metaitem");
-        setCreativeTab(ITech.TAB_MATERIALS);
+        setRegistryName("meta_item");
+        setUnlocalizedName(Ref.MODID + ".meta_item");
+        setCreativeTab(Ref.TAB_MATERIALS);
         generatedPrefixes = Prefix.values();
         for (int p = 0; p < generatedPrefixes.length; p++) {
             for (int m = 0; m < Material.generated.length; m++) {
@@ -113,13 +112,12 @@ public class MetaItem extends Item {
             if (item != null && !item.getTooltip().isEmpty()) {
                 tooltip.add(item.getTooltip());
             }
-            if (ItemList.DebugScanner.isItemEqual(stack)) {
-                Recipe recipe = MachineList.ALLOYSMELTER.findRecipe(new ItemStack[]{Material.Copper.getIngot(1), Material.Cobalt.getDust(1)});
-                if (recipe != null) {
-                    tooltip.add(recipe.toString());
-                } else {
-                    tooltip.add("No Recipe");
-                }
+            if (ItemList.Debug_Scanner.isItemEqual(stack)) {
+//                Recipe recipe = MachineList.ALLOY_SMELTER.findRecipe(new ItemStack[]{Material.Copper.getIngot(1), Material.Cobalt.getDust(1)});
+//                if (recipe != null) {
+//                    tooltip.add(recipe.toString());
+//                } else {
+                tooltip.add("No Recipe");
             }
         }
     }
@@ -134,18 +132,18 @@ public class MetaItem extends Item {
                     ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
                     EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
                     boolean consume = false;
-                    if (ItemList.CoverItemPort.isItemEqual(stack)) {
-                        consume = coverHandler.setCover(targetSide, CoverType.ITEMPORT);
-                    } else if (ItemList.CoverFluidPort.isItemEqual(stack)) {
-                        consume = coverHandler.setCover(targetSide, CoverType.FLUIDPORT);
-                    } else if (ItemList.CoverEnergyPort.isItemEqual(stack)) {
-                        consume = coverHandler.setCover(targetSide, CoverType.ENERGYPORT);
+                    if (ItemList.Cover_Item_Port.isItemEqual(stack)) {
+                        consume = coverHandler.setCover(targetSide, CoverType.ITEM_PORT);
+                    } else if (ItemList.Cover_Fluid_Port.isItemEqual(stack)) {
+                        consume = coverHandler.setCover(targetSide, CoverType.FLUID_PORT);
+                    } else if (ItemList.Cover_Energy_Port.isItemEqual(stack)) {
+                        consume = coverHandler.setCover(targetSide, CoverType.ENERGY_PORT);
                     }
                     if (consume) {
                         stack.shrink(1);
                     }
                 }
-                if (ItemList.DebugScanner.isItemEqual(stack)) {
+                if (ItemList.Debug_Scanner.isItemEqual(stack)) {
 //                    if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
 //                        ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
 //                        if (coverHandler != null) {
@@ -182,7 +180,7 @@ public class MetaItem extends Item {
                             ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                         } else if (tile instanceof TileEntityHatch) {
                             System.out.println(((TileEntityHatch) tile).getTextureId());
-                            ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() == MachineList.BLASTFURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : MachineList.BLASTFURNACE.getInternalId());
+                            ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() == MachineList.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : MachineList.BLAST_FURNACE.getInternalId());
                             ((TileEntityHatch) tile).markForRenderUpdate();
                         } else {
 //                            if (((TileEntityMachine) tile).isServerSide()) {
@@ -244,11 +242,11 @@ public class MetaItem extends Item {
         for (int p = 0; p < generatedPrefixes.length; p++) {
             for (int m = 0; m < Material.generated.length; m++) {
                 if (generatedPrefixes[p] == null || Material.generated[m] == null) continue;
-                ModelLoader.setCustomModelResourceLocation(this, (p * 1000) + m, new ModelResourceLocation(ITech.MODID + ":materialsets/" + Material.generated[m].getSet(), Material.generated[m].getSet() + "=" + generatedPrefixes[p].getName()));
+                ModelLoader.setCustomModelResourceLocation(this, (p * 1000) + m, new ModelResourceLocation(Ref.MODID + ":material_set/" + Material.generated[m].getSet(), Material.generated[m].getSet() + "=" + generatedPrefixes[p].getName()));
             }
         }
         for (ItemList item : ItemList.values()) {
-            ModelLoader.setCustomModelResourceLocation(this, standardItemStartIndex + item.ordinal(), new ModelResourceLocation(ITech.MODID + ":metaitem", "standard=" + item.ordinal()));
+            ModelLoader.setCustomModelResourceLocation(this, standardItemStartIndex + item.ordinal(), new ModelResourceLocation(Ref.MODID + ":meta_item", "standard=" + item.ordinal()));
         }
     }
 

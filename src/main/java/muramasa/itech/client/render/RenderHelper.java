@@ -32,7 +32,7 @@ public class RenderHelper {
         GL11.glMultMatrix(glBuf);
     }
 
-    public static TextureAtlasSprite getSpriteForFluid(Fluid fluid) {
+    public static TextureAtlasSprite getSprite(Fluid fluid) {
         return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
     }
 

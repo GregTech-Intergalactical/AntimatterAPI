@@ -1,0 +1,28 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "itech:item/generated"
+  },
+  "variants": {
+    "standard": {
+      "0": {
+        "textures": {"layer0": "itech:items/debug_scanner"}
+      },
+      "1": {
+        "textures": {"layer0": "itech:items/component_pump"}
+      },
+      "2": {
+        "textures": {"layer0": "itech:items/component_conveyor"}
+      },
+      "3": {
+        "textures": {"layer0": "itech:items/cover_item_port"}
+      },
+      "4": {
+        "textures": {"layer0": "itech:items/cover_fluid_port"}
+      },
+      "5": {
+        "textures": {"layer0": "itech:items/cover_energy_port"}
+      }
+    }
+  }
+}

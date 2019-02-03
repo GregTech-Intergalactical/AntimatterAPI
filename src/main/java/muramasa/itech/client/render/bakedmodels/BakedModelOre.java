@@ -1,7 +1,7 @@
 package muramasa.itech.client.render.bakedmodels;
 
 import muramasa.itech.client.render.RenderHelper;
-import muramasa.itech.common.blocks.BlockOres;
+import muramasa.itech.common.blocks.BlockOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -37,7 +37,7 @@ public class BakedModelOre extends BakedModelBase {
         quadList.addAll(bakedModel.getQuads(state, side, rand));
 
 //        System.out.println("BM: " + exState.getValue(BlockOres.TEXTURE));
-        TextureAtlasSprite sprite = spriteLookup.get(exState.getValue(BlockOres.TEXTURE));
+        TextureAtlasSprite sprite = spriteLookup.get(exState.getValue(BlockOre.TEXTURE));
         if (sprite != null) {
             quadList = retexture(quadList, 0, sprite);
         } else {

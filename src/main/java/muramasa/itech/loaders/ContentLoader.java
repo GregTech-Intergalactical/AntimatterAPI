@@ -1,6 +1,5 @@
 package muramasa.itech.loaders;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.items.MetaItem;
 import muramasa.itech.api.items.MetaTool;
 import muramasa.itech.common.blocks.*;
@@ -17,6 +16,7 @@ import muramasa.itech.common.tileentities.overrides.TileEntityBasicMachine;
 import muramasa.itech.common.tileentities.overrides.TileEntitySteamMachine;
 import muramasa.itech.common.tileentities.overrides.multi.TileEntityElectricBlastFurnace;
 import muramasa.itech.common.tileentities.overrides.multi.TileEntityFusionReactor;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -33,55 +33,55 @@ public class ContentLoader {
     public static MetaItem metaItem = new MetaItem();
     public static MetaTool metaTool = new MetaTool();
 
-    public static BlockOres blockOres = new BlockOres();
-    public static BlockMachines blockMachines = new BlockMachines("blockmachines");
+    public static BlockOre blockOre = new BlockOre();
+    public static BlockMachine blockMachines = new BlockMachine("block_machine");
 
-    public static BlockMultiMachines blockMultiMachines = new BlockMultiMachines("blockmultimachines");
-    public static BlockHatches blockHatches = new BlockHatches("blockhatches");
+    public static BlockMultiMachine blockMultiMachine = new BlockMultiMachine("block_multi_machine");
+    public static BlockHatch blockHatch = new BlockHatch("block_hatch");
 
-    public static BlockCables blockCables = new BlockCables();
+    public static BlockCable blockCable = new BlockCable();
 
-    public static BlockCasings blockCasings = new BlockCasings();
-    public static BlockCoils blockCoils = new BlockCoils();
+    public static BlockCasing blockCasing = new BlockCasing();
+    public static BlockCoil blockCoil = new BlockCoil();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(ITech.MODID, "tilebasic"));
-        GameRegistry.registerTileEntity(TileEntitySteamMachine.class, new ResourceLocation(ITech.MODID, "tilesteam"));
-        GameRegistry.registerTileEntity(TileEntityElectricBlastFurnace.class, new ResourceLocation(ITech.MODID, "tileebf"));
-        GameRegistry.registerTileEntity(TileEntityFusionReactor.class, new ResourceLocation(ITech.MODID, "tilefr"));
+        GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(Ref.MODID, "tilebasic"));
+        GameRegistry.registerTileEntity(TileEntitySteamMachine.class, new ResourceLocation(Ref.MODID, "tilesteam"));
+        GameRegistry.registerTileEntity(TileEntityElectricBlastFurnace.class, new ResourceLocation(Ref.MODID, "tileebf"));
+        GameRegistry.registerTileEntity(TileEntityFusionReactor.class, new ResourceLocation(Ref.MODID, "tilefr"));
 
-        event.getRegistry().register(blockOres);
-        GameRegistry.registerTileEntity(TileEntityOre.class, new ResourceLocation(ITech.MODID, "blockores"));
+        event.getRegistry().register(blockOre);
+        GameRegistry.registerTileEntity(TileEntityOre.class, new ResourceLocation(Ref.MODID, "block_ore"));
 
         event.getRegistry().register(blockMachines);
-        GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(ITech.MODID, "blockmachines"));
+        GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "block_machine"));
 
-        event.getRegistry().register(blockMultiMachines);
-        GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(ITech.MODID, "blockmultimachines"));
+        event.getRegistry().register(blockMultiMachine);
+        GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(Ref.MODID, "block_multi_machine"));
 
-        event.getRegistry().register(blockHatches);
-        GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(ITech.MODID, "blockhatches"));
+        event.getRegistry().register(blockHatch);
+        GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "block_hatch"));
 
-        event.getRegistry().register(blockCables);
-        GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(ITech.MODID, "blockcables"));
+        event.getRegistry().register(blockCable);
+        GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(Ref.MODID, "block_cable"));
 
-        event.getRegistry().register(blockCasings);
-        GameRegistry.registerTileEntity(TileEntityCasing.class, new ResourceLocation(ITech.MODID, "blockcasings"));
+        event.getRegistry().register(blockCasing);
+        GameRegistry.registerTileEntity(TileEntityCasing.class, new ResourceLocation(Ref.MODID, "block_casing"));
 
-        event.getRegistry().register(blockCoils);
-        GameRegistry.registerTileEntity(TileEntityCoil.class, new ResourceLocation(ITech.MODID, "blockcoils"));
+        event.getRegistry().register(blockCoil);
+        GameRegistry.registerTileEntity(TileEntityCoil.class, new ResourceLocation(Ref.MODID, "block_coil"));
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(new ItemBlockOres(blockOres).setRegistryName(blockOres.getRegistryName()));
+        event.getRegistry().register(new ItemBlockOres(blockOre).setRegistryName(blockOre.getRegistryName()));
         event.getRegistry().register(new ItemBlockMachines(blockMachines).setRegistryName(blockMachines.getRegistryName()));
-        event.getRegistry().register(new ItemBlockMachines(blockMultiMachines).setRegistryName(blockMultiMachines.getRegistryName()));
-        event.getRegistry().register(new ItemBlockMachines(blockHatches).setRegistryName(blockHatches.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(blockCables).setRegistryName(blockCables.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(blockCasings).setRegistryName(blockCasings.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(blockCoils).setRegistryName(blockCoils.getRegistryName()));
+        event.getRegistry().register(new ItemBlockMachines(blockMultiMachine).setRegistryName(blockMultiMachine.getRegistryName()));
+        event.getRegistry().register(new ItemBlockMachines(blockHatch).setRegistryName(blockHatch.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(blockCasing).setRegistryName(blockCasing.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(blockCoil).setRegistryName(blockCoil.getRegistryName()));
 
         event.getRegistry().register(metaItem);
         event.getRegistry().register(metaTool);

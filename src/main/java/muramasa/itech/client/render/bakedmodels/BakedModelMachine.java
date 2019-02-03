@@ -1,6 +1,5 @@
 package muramasa.itech.client.render.bakedmodels;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.Machine;
@@ -9,6 +8,7 @@ import muramasa.itech.api.machines.Tier;
 import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.client.render.RenderHelper;
 import muramasa.itech.client.render.overrides.ItemOverrideMachine;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -36,7 +36,7 @@ public class BakedModelMachine extends BakedModelBase {
             baseSprites[i] = RenderHelper.getSprite(Tier.get(i).getBaseTexture());
         }
         for (Machine type : MachineFlag.MULTI.getTypes()) {
-            baseSprites[type.getInternalId()] = RenderHelper.getSprite(new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + type.getName()));
+            baseSprites[type.getInternalId()] = RenderHelper.getSprite(new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + type.getName()));
         }
     }
 
@@ -82,9 +82,9 @@ public class BakedModelMachine extends BakedModelBase {
 
         List<BakedQuad> overlayQuads = retexture(bakedOverlays[type][facing].getQuads(state, side, rand), 0, sprite);
         if (overlay > 0) {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOYSMELTER.getOverlayTexture(1)));
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(1)));
         } else {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOYSMELTER.getOverlayTexture(0)));
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(0)));
         }
         quadList.addAll(overlayQuads);
 

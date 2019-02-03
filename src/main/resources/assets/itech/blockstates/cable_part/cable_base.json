@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "itech:cable_part/cable_base"
+    }
+  }
+}
