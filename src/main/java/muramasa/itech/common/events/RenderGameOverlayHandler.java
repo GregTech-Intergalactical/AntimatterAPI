@@ -1,6 +1,5 @@
 package muramasa.itech.common.events;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.enums.ItemList;
 import muramasa.itech.api.enums.ToolType;
 import muramasa.itech.api.util.ToolHelper;
@@ -15,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderGameOverlayHandler extends Gui {
 
-    private static ResourceLocation energyBar = new ResourceLocation(ITech.MODID, "textures/gui/energybar.png");
+    private static ResourceLocation energyBar = new ResourceLocation(Ref.MODID, "textures/gui/energy_bar.png");
 
     @SubscribeEvent(receiveCanceled = true)
     public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
@@ -44,7 +43,7 @@ public class RenderGameOverlayHandler extends Gui {
                 drawModalRectWithCustomSizedTexture(x + 89, y, iconU, 10, 4, 5, 182, 15);
                 GL11.glPopAttrib();
                 GL11.glPopMatrix();
-            } else if (ItemList.DebugScanner.isItemEqual(stack)) {
+            } else if (ItemList.Debug_Scanner.isItemEqual(stack)) {
 
             }
         }

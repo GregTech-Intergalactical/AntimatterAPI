@@ -1,6 +1,10 @@
 package muramasa.itech.common.utils;
 
+import muramasa.itech.client.creativetab.ITechTab;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 import java.util.Random;
 
@@ -10,6 +14,16 @@ public class Ref {
     public static Random rng = new Random();
 
     public static boolean showAllItemsInCreative = true;
+
+    //Mod Data
+    public static final String MODID = "itech"; //TODO move to Ref
+    public static final String NAME = "Intergalactical Tech";
+    public static final String VERSION = "0.1";
+
+    //Creative Tabs
+    public static final ITechTab TAB_MATERIALS = new ITechTab("materials", new ItemStack(Items.IRON_INGOT)); //TODO move to Ref
+    public static final ITechTab TAB_MACHINES = new ITechTab("machines", new ItemStack(Blocks.FURNACE));
+    public static final ITechTab TAB_ORES = new ITechTab("ores", new ItemStack(Blocks.DIAMOND_ORE));
 
     //GUI IDs
     public static final int MACHINE_ID = 0;

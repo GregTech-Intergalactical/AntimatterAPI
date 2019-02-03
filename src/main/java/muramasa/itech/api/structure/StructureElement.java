@@ -19,11 +19,11 @@ public class StructureElement {
     private static HashMap<String, StructureElement> elementLookup = new HashMap<>();
 
     /** Component Elements **/
-    public static StructureElement EBF = new StructureElement(MachineList.BLASTFURNACE);
-    public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", CasingType.HEAT_PROOF, MachineList.HATCHITEMINPUT, MachineList.HATCHITEMOUTPUT);
+    public static StructureElement EBF = new StructureElement(MachineList.BLAST_FURNACE);
+    public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", CasingType.HEAT_PROOF, MachineList.HATCH_ITEM_INPUT, MachineList.HATCH_ITEM_OUTPUT);
     public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", CoilType.values());
 
-    public static StructureElement FR_MACHINE = new StructureElement(MachineList.FUSIONREACTOR);
+    public static StructureElement FR_MACHINE = new StructureElement(MachineList.FUSION_REACTOR);
     public static StructureElement FUSION_CASING = new StructureElement(CasingType.FUSION3);
     public static StructureElement FUSION_COIL = new StructureElement(CoilType.FUSION);
 

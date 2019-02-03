@@ -1,6 +1,5 @@
 package muramasa.itech.client.render.models;
 
-import muramasa.itech.ITech;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.Machine;
@@ -8,6 +7,7 @@ import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.machines.Tier;
 import muramasa.itech.client.render.bakedmodels.BakedModelBase;
 import muramasa.itech.client.render.bakedmodels.BakedModelMachine;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -28,12 +28,12 @@ public class ModelMachine extends ModelBase {
         addTextures(Tier.getTextures(Tier.getBasic()));
         for (Machine type : MachineFlag.BASIC.getTypes()) {
             addTexture(type.getOverlayTexture(0));
-            if (type.getName().equals("alloysmelter")) {
+            if (type.getName().equals("alloy_smelter")) {
                 addTexture(type.getOverlayTexture(1));
             }
         }
         for (Machine type : MachineFlag.MULTI.getTypes()) {
-            addTexture(new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + type.getName()));
+            addTexture(new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + type.getName()));
             addTexture(type.getOverlayTexture(0));
         }
         for (Machine type : MachineFlag.HATCH.getTypes()) {
@@ -47,8 +47,8 @@ public class ModelMachine extends ModelBase {
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
         if (!hasBeenBuilt) {
-            IModel machineBase = load(new ModelResourceLocation(ITech.MODID + ":machineparts/machinebase"));
-            IModel itemBase = load(new ModelResourceLocation(ITech.MODID + ":machineparts/machinebaseitem"));
+            IModel machineBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base"));
+            IModel itemBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base_item"));
             IModel model;
             ResourceLocation texLoc;
 
@@ -61,7 +61,7 @@ public class ModelMachine extends ModelBase {
             };
 
             for (Machine type : MachineFlag.MULTI.getTypes()) {
-                texLoc = new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + type.getName());
+                texLoc = new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + type.getName());
 //                addBaked("base", type.getName(), new IBakedModel[] {
 //                    texAndBake(machineBase, "base", SOUTH, texLoc),
 //                    texAndBake(machineBase, "base", NORTH, texLoc),
@@ -84,7 +84,7 @@ public class ModelMachine extends ModelBase {
 
             HashMap<String, IBakedModel> bakedItems = new HashMap<>();
             for (MachineStack stack : MachineFlag.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH)) {
-                texLoc = !stack.getType().hasFlag(MachineFlag.MULTI) ? stack.getTier().getBaseTexture() : new ResourceLocation(ITech.MODID + ":blocks/machines/base/" + stack.getType().getName());
+                texLoc = !stack.getType().hasFlag(MachineFlag.MULTI) ? stack.getTier().getBaseTexture() : new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + stack.getType().getName());
                 bakedItems.put(stack.getType().getName() + stack.getTier().getName(), new BakedModelBase(
                     texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getType().getOverlayTexture(0)})
                 ));

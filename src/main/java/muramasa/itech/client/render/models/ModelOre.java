@@ -1,7 +1,7 @@
 package muramasa.itech.client.render.models;
 
-import muramasa.itech.ITech;
 import muramasa.itech.client.render.bakedmodels.BakedModelOre;
+import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -31,7 +31,7 @@ public class ModelOre implements IModel {
     @Override
     public IBakedModel bake(IModelState modelState, VertexFormat vertexFormat, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         try {
-            IModel model = ModelLoaderRegistry.getModel(new ModelResourceLocation(ITech.MODID + ":blockoresbase"));
+            IModel model = ModelLoaderRegistry.getModel(new ModelResourceLocation(Ref.MODID + ":block_ore_base"));
             IBakedModel bakedModel = /*ModelBase.tex(model, "base", new ResourceLocation(ITech.MODID, "blocks/stone"))*/model.bake(modelState, vertexFormat, bakedTextureGetter);
             return new BakedModelOre(bakedModel);
         } catch (Exception e) {
@@ -43,8 +43,8 @@ public class ModelOre implements IModel {
     @Override
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> textures = new ArrayList<>();
-        textures.add(new ResourceLocation(ITech.MODID + ":blocks/stone"));
-        textures.add(new ResourceLocation(ITech.MODID + ":blocks/ore"));
+        textures.add(new ResourceLocation(Ref.MODID + ":blocks/stone"));
+        textures.add(new ResourceLocation(Ref.MODID + ":blocks/ore"));
         return textures;
     }
 }

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "itech:machineparts/overlays/item_hatch_output"
+    }
+  }
+}

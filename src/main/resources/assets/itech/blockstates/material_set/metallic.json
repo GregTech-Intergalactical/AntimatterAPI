@@ -1,0 +1,100 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "itech:item/generated"
+  },
+  "variants": {
+    "metallic": {
+      "chunk": {
+        "textures": {"layer0": "itech:items/material_set/metallic/chunk", "layer1": "itech:items/material_set/metallic/overlays/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "itech:items/material_set/metallic/crushed", "layer1": "itech:items/material_set/metallic/overlays/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "itech:items/material_set/metallic/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "itech:items/material_set/metallic/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "itech:items/material_set/metallic/dust"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "itech:items/material_set/metallic/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "itech:items/material_set/metallic/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "itech:items/material_set/metallic/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "itech:items/material_set/metallic/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "itech:items/material_set/metallic/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "itech:items/material_set/metallic/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "itech:items/material_set/metallic/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "itech:items/material_set/metallic/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "itech:items/material_set/metallic/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "itech:items/material_set/metallic/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "itech:items/material_set/metallic/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "itech:items/material_set/metallic/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "itech:items/material_set/metallic/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "itech:items/material_set/metallic/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "itech:items/material_set/metallic/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "itech:items/material_set/metallic/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "itech:items/material_set/metallic/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "itech:items/material_set/metallic/overlays/cell", "layer1": "itech:items/material_set/metallic/cell"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "itech:items/material_set/metallic/overlays/cell_plasma", "layer1": "itech:items/material_set/metallic/cell_plasma"}
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@ package muramasa.itech.common.tileentities.base.multi;
 
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.capability.impl.ComponentHandler;
-import muramasa.itech.common.blocks.BlockCasings;
+import muramasa.itech.common.blocks.BlockCasing;
 import muramasa.itech.common.tileentities.base.TileEntityBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -14,7 +14,7 @@ public class TileEntityCasing extends TileEntityBase {
     private ComponentHandler componentHandler = new ComponentHandler("null", this) {
         @Override
         public String getId() {
-            return getState().getValue(BlockCasings.CASING_TYPE).getName();
+            return getState().getValue(BlockCasing.CASING_TYPE).getName();
         }
     };
 

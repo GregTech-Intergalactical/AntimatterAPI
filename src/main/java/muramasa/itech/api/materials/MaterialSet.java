@@ -11,8 +11,8 @@ public enum MaterialSet {
     DIAMOND,
     RUBY,
     LAPIS,
-    GEMH,
-    GEMV,
+    GEM_H,
+    GEM_V,
     QUARTZ,
     FLINT,
 }

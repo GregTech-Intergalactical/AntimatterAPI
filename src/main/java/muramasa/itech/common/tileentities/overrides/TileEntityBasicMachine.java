@@ -45,7 +45,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         outputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), false, true);
         energyStorage = new MachineEnergyHandler(99999999);
         energyStorage.energy = 99999999;
-        coverHandler = new MachineCoverHandler(this, CoverType.BLANK, CoverType.ENERGYPORT, CoverType.ITEMPORT, CoverType.FLUIDPORT);
+        coverHandler = new MachineCoverHandler(this, CoverType.BLANK, CoverType.ENERGY_PORT, CoverType.ITEM_PORT, CoverType.FLUID_PORT);
         configHandler = new MachineConfigHandler(this);
     }
 
@@ -196,11 +196,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing == null || coverHandler.hasCover(facing, CoverType.ITEMPORT);
+            return facing == null || coverHandler.hasCover(facing, CoverType.ITEM_PORT);
         } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return facing == null || coverHandler.hasCover(facing, CoverType.FLUIDPORT);
+            return facing == null || coverHandler.hasCover(facing, CoverType.FLUID_PORT);
         } else if (capability == ITechCapabilities.ENERGY) {
-            return facing == null || coverHandler.hasCover(facing, CoverType.ENERGYPORT);
+            return facing == null || coverHandler.hasCover(facing, CoverType.ENERGY_PORT);
         } else if (capability == ITechCapabilities.COVERABLE) {
             return facing == null || !coverHandler.hasCover(facing, CoverType.NONE);
         } else if (capability == ITechCapabilities.CONFIGURABLE) {

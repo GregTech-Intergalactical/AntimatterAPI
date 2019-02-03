@@ -12,7 +12,7 @@ public class ITechTab extends CreativeTabs {
     private final ItemStack tabStack;
 
     public ITechTab(String label, ItemStack stack) {
-        super("itech" + label);
+        super("itech_" + label);
         tabName = label;
         tabStack = stack;
     }

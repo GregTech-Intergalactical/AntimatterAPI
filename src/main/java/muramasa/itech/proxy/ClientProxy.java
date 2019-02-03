@@ -6,8 +6,8 @@ import muramasa.itech.client.render.ModelLoader;
 import muramasa.itech.client.render.models.ModelCable;
 import muramasa.itech.client.render.models.ModelMachine;
 import muramasa.itech.client.render.models.ModelOre;
-import muramasa.itech.common.blocks.BlockMachines;
-import muramasa.itech.common.blocks.BlockOres;
+import muramasa.itech.common.blocks.BlockMachine;
+import muramasa.itech.common.blocks.BlockOre;
 import muramasa.itech.common.items.ItemBlockOres;
 import muramasa.itech.loaders.ContentLoader;
 import net.minecraft.client.Minecraft;
@@ -35,17 +35,17 @@ public class ClientProxy implements IProxy {
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new MetaItem.ColorHandler(), ContentLoader.metaItem);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new MetaTool.ColorHandler(), ContentLoader.metaTool);
 
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new BlockOres.ColorHandler(), ContentLoader.blockOres);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemBlockOres.ColorHandler(), Item.getItemFromBlock(ContentLoader.blockOres));
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new BlockOre.ColorHandler(), ContentLoader.blockOre);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemBlockOres.ColorHandler(), Item.getItemFromBlock(ContentLoader.blockOre));
 
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new BlockMachines.ColorHandler(), ContentLoader.blockMachines);
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new BlockMachine.ColorHandler(), ContentLoader.blockMachines);
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
 //        ContentLoader.blockMachines.initItemModel();
-//        ContentLoader.blockMultiMachines.initItemModel();
-//        ContentLoader.blockHatches.initItemModel();
+//        ContentLoader.blockMultiMachine.initItemModel();
+//        ContentLoader.blockHatch.initItemModel();
     }
 
     @Override
@@ -58,17 +58,19 @@ public class ClientProxy implements IProxy {
         ContentLoader.metaItem.initModel();
         ContentLoader.metaTool.initModel();
         ContentLoader.blockMachines.initModel();
-        ContentLoader.blockOres.initModel();
-        ContentLoader.blockCables.initModel();
-        ContentLoader.blockCasings.initModel();
-        ContentLoader.blockCoils.initModel();
+        ContentLoader.blockMultiMachine.initModel();
+        ContentLoader.blockHatch.initModel();
+        ContentLoader.blockOre.initModel();
+        ContentLoader.blockCable.initModel();
+        ContentLoader.blockCasing.initModel();
+        ContentLoader.blockCoil.initModel();
 
         //TODO avoid multiple instances of ModelMachine, static lists?
         ModelMachine modelMachine = new ModelMachine();
         ModelLoader.register(ContentLoader.blockMachines, modelMachine);
-        ModelLoader.register(ContentLoader.blockMultiMachines, modelMachine);
-        ModelLoader.register(ContentLoader.blockHatches, modelMachine);
-        ModelLoader.register(ContentLoader.blockCables, new ModelCable());
-        ModelLoader.register(ContentLoader.blockOres, new ModelOre());
+        ModelLoader.register(ContentLoader.blockMultiMachine, modelMachine);
+        ModelLoader.register(ContentLoader.blockHatch, modelMachine);
+        ModelLoader.register(ContentLoader.blockCable, new ModelCable());
+        ModelLoader.register(ContentLoader.blockOre, new ModelOre());
     }
 }

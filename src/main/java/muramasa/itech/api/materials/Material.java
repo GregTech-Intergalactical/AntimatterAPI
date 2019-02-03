@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static muramasa.itech.api.enums.Element.*;
 import static muramasa.itech.api.enums.ItemFlag.*;
@@ -262,7 +263,7 @@ public class Material {
     public static Material Garnierite = new Material(906, "Garnierite", 0x32c846, METALLIC).asDust().addOre().add(Nickel, 1, Oxygen, 1);
     public static Material Grossular = new Material(831, "Grossular", 0xc86400, ROUGH).asDust().addOre().add(Calcium, 3, Aluminium, 2, Silicon, 3, Oxygen, 12);
     public static Material Ilmenite = new Material(918, "Ilmenite", 0x463732, METALLIC).asDust().addOre().add(Iron, 1, Titanium, 1, Oxygen, 3);
-    public static Material Rutile = new Material(375, "Rutile", 0xd40d5c, GEMH).asDust().add(Titanium, 1, Oxygen, 2);
+    public static Material Rutile = new Material(375, "Rutile", 0xd40d5c, GEM_H).asDust().add(Titanium, 1, Oxygen, 2);
     public static Material Bauxite = new Material(822, "Bauxite", 0xc86400, DULL).asDust().addOre().add(Rutile, 2, Aluminium, 16, Hydrogen, 10, Oxygen, 11);
     public static Material Magnesiumchloride = new Material(377, "Magnesiumchloride", 0xd40d5c, DULL).asDust().add(Magnesium, 1, Chlorine, 2);
     public static Material Magnesite = new Material(908, "Magnesite", 0xfafab4, METALLIC).asDust().addOre().add(Magnesium, 1, Carbon, 1, Oxygen, 3);
@@ -345,20 +346,20 @@ public class Material {
     public static Material Quartzite = new Material(523, "Quartzite", 0xd2e6d2, QUARTZ).asGemBasic(false).addOre().add(Silicon, 1, Oxygen, 2);
 
     //Brittle Gems
-    public static Material BlueTopaz = new Material(513, "Blue Topaz", 0x0000ff, GEMH).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
+    public static Material BlueTopaz = new Material(513, "Blue Topaz", 0x0000ff, GEM_H).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
     public static Material Charcoal = new Material(536, "Charcoal", 0x644646, NONE).asGemBasic(false).add(BLOCK).add(Carbon, 1);
     public static Material Coal = new Material(535, "Coal", 0x464646, ROUGH).asGemBasic(false).addOre().add(BLOCK).add(Carbon, 1);
     public static Material Lignite = new Material(538, "Lignite Coal", 0x644646, ROUGH).asGemBasic(false).addOre().add(BLOCK).add(Carbon, 3, Water, 1);
 
     public static Material Diamond = new Material(500, "Diamond", 0xc8ffff, DIAMOND).asGem(true).addOre().add(GEAR).addTools(8.0F, 1280, 3).add(Carbon, 1);
     public static Material Emerald = new Material(501, "Emerald", 0x50ff50, NONE).asGem(true).addOre().addTools(7.0F, 256, 2).add(Silver, 1, Gold, 1);
-    public static Material GreenSapphire = new Material(504, "Green Sapphire", 0x64c882, GEMH).asGem(true).addOre().addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
+    public static Material GreenSapphire = new Material(504, "Green Sapphire", 0x64c882, GEM_H).asGem(true).addOre().addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
     public static Material Lazurite = new Material(524, "Lazurite", 0x6478ff, LAPIS).asGemBasic(false).addOre().add(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8);
     public static Material Ruby = new Material(502, "Ruby", 0xff6464, RUBY).asGem(true).addOre().addTools(7.0F, 256, 2).add(Chrome, 1, Aluminium, 2, Oxygen, 3);
-    public static Material Sapphire = new Material(503, "Sapphire", 0x6464c8, GEMV).asGem(true).addOre().addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
+    public static Material Sapphire = new Material(503, "Sapphire", 0x6464c8, GEM_V).asGem(true).addOre().addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
     public static Material Sodalite = new Material(525, "Sodalite", 0x1414ff, LAPIS).asGemBasic(false).addOre().add(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1);
-    public static Material Tanzanite = new Material(508, "Tanzanite", 0x4000c8, GEMV).asGem(true).addTools(7.0F, 256, 2).add(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1, Oxygen, 13);
-    public static Material Topaz = new Material(507, "Topaz", 0xff8000, GEMH).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
+    public static Material Tanzanite = new Material(508, "Tanzanite", 0x4000c8, GEM_V).asGem(true).addTools(7.0F, 256, 2).add(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1, Oxygen, 13);
+    public static Material Topaz = new Material(507, "Topaz", 0xff8000, GEM_H).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
     public static Material Glass = new Material(890, "Glass", 0xfafafa, NONE).asGem(true).add(SiliconDioxide, 1);
     public static Material Olivine = new Material(505, "Olivine", 0x96ff96, RUBY).asGem(true).addOre().addTools(7.0F, 256, 2).add(Magnesium, 2, Iron, 1, SiliconDioxide, 2);
     public static Material Opal = new Material(510, "Opal", 0x0000ff, RUBY).asGem(true).addTools(7.0F, 256, 2).add(SiliconDioxide, 1);
@@ -458,7 +459,7 @@ public class Material {
     private Material(int id, String displayName, int rgb, MaterialSet set) {
         this.id = id;
         this.displayName = displayName;
-        this.name = displayName.toLowerCase().replaceAll("-", "").replaceAll(" ", "");
+        this.name = displayName.toLowerCase(Locale.ENGLISH).replaceAll("-", "_").replaceAll(" ", "_");
         this.rgb = rgb;
         this.set = set;
         generated[id] = this;
@@ -700,11 +701,11 @@ public class Material {
     }
 
     public ItemStack getCrushedC(int amount) {
-        return MetaItem.get(Prefix.CRUSHEDCENTRIFUGED, this, amount);
+        return MetaItem.get(Prefix.CRUSHED_CENTRIFUGED, this, amount);
     }
 
     public ItemStack getCrushedP(int amount) {
-        return MetaItem.get(Prefix.CRUSHEDPURIFIED, this, amount);
+        return MetaItem.get(Prefix.CRUSHED_PURIFIED, this, amount);
     }
 
     public ItemStack getDust(int amount) {
@@ -712,11 +713,11 @@ public class Material {
     }
 
     public ItemStack getDustS(int amount) {
-        return MetaItem.get(Prefix.DUSTSMALL, this, amount);
+        return MetaItem.get(Prefix.DUST_SMALL, this, amount);
     }
 
     public ItemStack getDustT(int amount) {
-        return MetaItem.get(Prefix.DUSTTINY, this, amount);
+        return MetaItem.get(Prefix.DUST_TINY, this, amount);
     }
 
     public ItemStack getNugget(int amount) {
@@ -728,7 +729,7 @@ public class Material {
     }
 
     public ItemStack getIngotH(int amount) {
-        return MetaItem.get(Prefix.INGOTHOT, this, amount);
+        return MetaItem.get(Prefix.INGOT_HOT, this, amount);
     }
 
     public ItemStack getPlate(int amount) {
@@ -736,7 +737,7 @@ public class Material {
     }
 
     public ItemStack getPlateD(int amount) {
-        return MetaItem.get(Prefix.PLATEDENSE, this, amount);
+        return MetaItem.get(Prefix.PLATE_DENSE, this, amount);
     }
 
     public ItemStack getGem(int amount) {
@@ -744,19 +745,19 @@ public class Material {
     }
 
     public ItemStack getGemChipped(int amount) {
-        return MetaItem.get(Prefix.GEMCHIPPED, this, amount);
+        return MetaItem.get(Prefix.GEM_CHIPPED, this, amount);
     }
 
     public ItemStack getGemFlawed(int amount) {
-        return MetaItem.get(Prefix.GEMFLAWED, this, amount);
+        return MetaItem.get(Prefix.GEM_FLAWED, this, amount);
     }
 
     public ItemStack getGemFlawless(int amount) {
-        return MetaItem.get(Prefix.GEMFLAWLESS, this, amount);
+        return MetaItem.get(Prefix.GEM_FLAWLESS, this, amount);
     }
 
     public ItemStack getGemExquisite(int amount) {
-        return MetaItem.get(Prefix.GEMEXQUISITE, this, amount);
+        return MetaItem.get(Prefix.GEM_EXQUISITE, this, amount);
     }
 
     public ItemStack getFoil(int amount) {
@@ -784,7 +785,7 @@ public class Material {
     }
 
     public ItemStack getWireF(int amount) {
-        return MetaItem.get(Prefix.WIREFINE, this, amount);
+        return MetaItem.get(Prefix.WIRE_FINE, this, amount);
     }
 
     public ItemStack getRotor(int amount) {
@@ -796,7 +797,7 @@ public class Material {
     }
 
     public ItemStack getGearS(int amount) {
-        return MetaItem.get(Prefix.GEARSMALL, this, amount);
+        return MetaItem.get(Prefix.GEAR_SMALL, this, amount);
     }
 
     public ItemStack getLens(int amount) {
@@ -808,6 +809,6 @@ public class Material {
     }
 
     public ItemStack getCellP(int amount) {
-        return MetaItem.get(Prefix.CELLPLASMA, this, amount);
+        return MetaItem.get(Prefix.CELL_PLASMA, this, amount);
     }
 }

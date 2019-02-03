@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "itech:machine_part/overlays/bender"
+    }
+  }
+}

@@ -2,6 +2,8 @@ package muramasa.itech.api.enums;
 
 import net.minecraft.util.IStringSerializable;
 
+import java.util.Locale;
+
 public enum MachineState implements IStringSerializable {
 
     //OverlayID: 0(Idle), 1(Active), 2(Error)
@@ -50,6 +52,6 @@ public enum MachineState implements IStringSerializable {
 
     @Override
     public String getName() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ENGLISH);
     }
 }

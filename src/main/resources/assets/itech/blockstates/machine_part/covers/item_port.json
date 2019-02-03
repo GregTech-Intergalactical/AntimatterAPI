@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "normal": { "model": "itech:machine_part/covers/item_port" }
+  }
+}

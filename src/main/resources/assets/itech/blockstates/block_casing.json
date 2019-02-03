@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "itech:block_casing"
+  },
+  "variants": {
+    "casing_type": {
+      "heatproof": {
+        "textures": {"all": "itech:blocks/casings/heat_proof"}
+      },
+      "stainlesssteel": {
+        "textures": {"all": "itech:blocks/casings/stainless_steel"}
+      },
+      "fusion3": {
+        "textures": {"all": "itech:blocks/casings/fusion_3"}
+      }
+    }
+  }
+}
