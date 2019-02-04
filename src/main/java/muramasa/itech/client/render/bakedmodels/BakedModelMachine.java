@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,14 @@ public class BakedModelMachine extends BakedModelBase {
     private static TextureAtlasSprite[] baseSprites;
 
     private static ItemOverrideMachine itemOverride;
+
+    private static float[] facingToRadians = new float[] {
+        0f, 3.1416f, 1.5708f, 4.7124f
+    };
+
+    private static float[] coverFacingToRadians = new float[] {
+        0f, 4.7124f, 1.5708f, 1.5708f, 4.7124f
+    };
 
     static {
         //TODO better handling for this...
@@ -40,14 +49,14 @@ public class BakedModelMachine extends BakedModelBase {
         }
     }
 
-    private IBakedModel[] bakedBase;
-    private IBakedModel[][] bakedOverlays, bakedCovers;
+    private IBakedModel bakedBase;
+    private IBakedModel[] bakedOverlays, bakedCovers;
 
     public BakedModelMachine() {
 
-}
+    }
 
-    public BakedModelMachine(IBakedModel[] base, IBakedModel[][] overlays, IBakedModel[][] covers, HashMap<String, IBakedModel> bakedItems) {
+    public BakedModelMachine(IBakedModel base, IBakedModel[] overlays, IBakedModel[] covers, HashMap<String, IBakedModel> bakedItems) {
         bakedBase = base;
         bakedOverlays = overlays;
         bakedCovers = covers;
@@ -67,6 +76,7 @@ public class BakedModelMachine extends BakedModelBase {
         int overlay = exState.getValue(ITechProperties.STATE);
         int facing = exState.getValue(ITechProperties.FACING);
 
+        //Add base quads
         TextureAtlasSprite sprite;
         if (hasUnlistedProperty(exState, ITechProperties.TEXTURE)) {
             sprite = baseSprites[exState.getValue(ITechProperties.TEXTURE)];
@@ -78,13 +88,18 @@ public class BakedModelMachine extends BakedModelBase {
             }
         }
         if (sprite == null) sprite = baseSprites[2];
-        quadList.addAll(retexture(bakedBase[facing].getQuads(state, side, rand), sprite)); //TODO optimize base model by adding tintindex 0 to faces that are visible
+        //TODO optimize base model by adding tintindex 0 to faces that are visible
+        quadList.addAll(retexture(bakedBase.getQuads(state, side, rand), sprite));
 
-        List<BakedQuad> overlayQuads = retexture(bakedOverlays[type][facing].getQuads(state, side, rand), 0, sprite);
+        //Add overlay quads
+        List<BakedQuad> overlayQuads = retexture(bakedOverlays[type].getQuads(state, side, rand), 0, sprite);
         if (overlay > 0) {
             overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(1)));
         } else {
             overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(0)));
+        }
+        if (facing > 0) {
+            overlayQuads = transform(overlayQuads, facingToRadians[facing]);
         }
         quadList.addAll(overlayQuads);
 
@@ -93,20 +108,17 @@ public class BakedModelMachine extends BakedModelBase {
             CoverType[] covers = exState.getValue(ITechProperties.COVERS);
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i] == CoverType.NONE) continue;
-                quadList.addAll(bakedCovers[covers[i].ordinal()][i].getQuads(exState, side, rand));
+                if (i > 0) {
+                    if (i >= 3) {
+                        quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), new Vector3f(1, 0, 0), coverFacingToRadians[i]));
+                    } else {
+                        quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), coverFacingToRadians[i]));
+                    }
+                } else {
+                    quadList.addAll(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand));
+                }
             }
         }
-
-//        System.out.println("Overlay ID: " + exState.getValue(ITechProperties.STATE));
-
-
-//        List<BakedQuad> test = new LinkedList<>(quadList);
-//        quadList.clear();
-//
-//
-//        for (BakedQuad quad : test) {
-//            quadList.add(transform(quad, TRSRTransformation.blockCornerToCenter(ModelRotation.X0_Y180.)));
-//        }
 
         return quadList;
     }

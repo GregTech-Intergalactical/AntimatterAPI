@@ -76,8 +76,8 @@ public class BlockMachine extends Block {
                 exState = exState
                     .withProperty(COVERS, new CoverType[] {
                         coverHandler.getCover(EnumFacing.SOUTH),
-                        coverHandler.getCover(EnumFacing.EAST),
                         coverHandler.getCover(EnumFacing.WEST),
+                        coverHandler.getCover(EnumFacing.EAST),
                         coverHandler.getCover(EnumFacing.DOWN),
                         coverHandler.getCover(EnumFacing.UP),
                     });

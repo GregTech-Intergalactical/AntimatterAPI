@@ -1,26 +1,23 @@
 package muramasa.itech.client.render.bakedmodels;
 
+import muramasa.itech.client.render.MatrixVertexTransformer;
 import muramasa.itech.client.render.models.ModelBase;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
-import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.client.model.pipeline.VertexTransformer;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +39,42 @@ public class BakedModelBase implements IBakedModel {
 
     public BakedModelBase(IBakedModel bakedModel) {
         this.bakedModel = bakedModel;
+    }
+
+    public static List<BakedQuad> transform(List<BakedQuad> quads, float rot) {
+        return transform(quads, new Vector3f(0, 1, 0), rot);
+    }
+
+    public static List<BakedQuad> transform(List<BakedQuad> quads, Vector3f pos, float rotation) {
+        List<BakedQuad> transformedQuads = new LinkedList<>();
+
+        Matrix4f matrix = new Matrix4f();
+        matrix.setIdentity();
+        matrix.setRotation(new AxisAngle4f(pos.x, pos.y, pos.z, rotation));
+
+        MatrixVertexTransformer transformer = new MatrixVertexTransformer(matrix);
+        for (BakedQuad bakedQuad : quads) {
+            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(bakedQuad.getFormat());
+            transformer.setParent(builder);
+            transformer.setVertexFormat(builder.getVertexFormat());
+            bakedQuad.pipe(transformer);
+            builder.setQuadOrientation(null); // After rotation, facing a specific side cannot be guaranteed anymore
+            BakedQuad q = builder.build();
+            transformedQuads.add(q);
+        }
+        return transformedQuads;
+    }
+
+    private static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s) {
+        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
+    }
+
+    public static boolean hasProperty(IBlockState state, IProperty property) {
+        return state.getPropertyKeys().contains(property);
+    }
+
+    public static boolean hasUnlistedProperty(IExtendedBlockState exState, IUnlistedProperty property) {
+        return exState.getUnlistedNames().contains(property);
     }
 
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
@@ -89,6 +122,86 @@ public class BakedModelBase implements IBakedModel {
         return false;
     }
 
+//    protected static BakedQuad transform(BakedQuad quad, Matrix4f mat) {
+//        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
+//        final IVertexConsumer consumer = new VertexTransformer(builder) {
+//            @Override
+//            public void put(int element, float... data) {
+//                VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
+//                switch(formatElement.getUsage()) {
+//                    case POSITION: {
+//                        float[] newData = new float[4];
+//                        Vector4f vec = new Vector4f(data);
+//                        mat.transform(vec);
+//                        vec.get(newData);
+//                        parent.put(element, newData);
+//                        break;
+//                    }
+//                    default: {
+//                        parent.put(element, data);
+//                        break;
+//                    }
+//                }
+//            }
+//        };
+//        quad.pipe(consumer);
+//        return builder.build();
+//    }
+//
+//    protected static List<BakedQuad> transform(List<BakedQuad> quads, Matrix4f matrix) {
+//        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
+//        final IVertexConsumer consumer = new VertexTransformer(builder) {
+//            @Override
+//            public void put(int element, float... data) {
+//                VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
+//                switch(formatElement.getUsage()) {
+//                    case POSITION: {
+//                        float[] newData = new float[4];
+//                        Vector4f vec = new Vector4f(data);
+//                        matrix.transform(vec);
+//                        vec.get(newData);
+//                        parent.put(element, newData);
+//                        break;
+//                    }
+//                    default: {
+//                        parent.put(element, data);
+//                        break;
+//                    }
+//                }
+//            }
+//        };
+//        for (int i = 0; i < quads.size(); i++) {
+//            quads.get(i).pipe(consumer);
+//            quads.set(i, builder.build());
+//        }
+//        return quads;
+//    }
+//
+//    //    public static BakedQuad transform(BakedQuad quad, int facing) {
+////        return quad.pipe(transformationConsumers[facing]);
+////    }
+//
+//    public List<BakedQuad> rotate(List<BakedQuad> quads, int r) {
+//        for (int i = 0; i < quads.size(); i++) {
+//            BakedQuad q = quads.get(i);
+//
+//            int[] v = q.getVertexData().clone();
+//
+//            switch (q.getFace()) {
+//                case UP:
+//                    v[0] = v[0] + 1;
+//                    break;
+//            }
+//            v[0] = v[0] + 1;
+//            v[7] = v[7] + 7;
+//            v[14] = v[14] + 1;
+//            v[21] = v[21] + 1;
+//
+//            quads.set(i, new BakedQuad(v, q.getTintIndex(), q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
+//        }
+//        return quads;
+//    }
+
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return ModelBase.missingBaked.getParticleTexture();
@@ -105,86 +218,6 @@ public class BakedModelBase implements IBakedModel {
         for (int i = 0; i < quads.size(); i++) {
             if (quads.get(i).getTintIndex() != tintIndex) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
-        }
-        return quads;
-    }
-
-    protected static BakedQuad transform(BakedQuad quad, Matrix4f mat) {
-        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
-        final IVertexConsumer consumer = new VertexTransformer(builder) {
-            @Override
-            public void put(int element, float... data) {
-                VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
-                switch(formatElement.getUsage()) {
-                    case POSITION: {
-                        float[] newData = new float[4];
-                        Vector4f vec = new Vector4f(data);
-                        mat.transform(vec);
-                        vec.get(newData);
-                        parent.put(element, newData);
-                        break;
-                    }
-                    default: {
-                        parent.put(element, data);
-                        break;
-                    }
-                }
-            }
-        };
-        quad.pipe(consumer);
-        return builder.build();
-    }
-
-    protected static List<BakedQuad> transform(List<BakedQuad> quads, Matrix4f matrix) {
-        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
-        final IVertexConsumer consumer = new VertexTransformer(builder) {
-            @Override
-            public void put(int element, float... data) {
-                VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
-                switch(formatElement.getUsage()) {
-                    case POSITION: {
-                        float[] newData = new float[4];
-                        Vector4f vec = new Vector4f(data);
-                        matrix.transform(vec);
-                        vec.get(newData);
-                        parent.put(element, newData);
-                        break;
-                    }
-                    default: {
-                        parent.put(element, data);
-                        break;
-                    }
-                }
-            }
-        };
-        for (int i = 0; i < quads.size(); i++) {
-            quads.get(i).pipe(consumer);
-            quads.set(i, builder.build());
-        }
-        return quads;
-    }
-
-    //    public static BakedQuad transform(BakedQuad quad, int facing) {
-//        return quad.pipe(transformationConsumers[facing]);
-//    }
-
-    public List<BakedQuad> rotate(List<BakedQuad> quads, int r) {
-        for (int i = 0; i < quads.size(); i++) {
-            BakedQuad q = quads.get(i);
-
-            int[] v = q.getVertexData().clone();
-
-            switch (q.getFace()) {
-                case UP:
-                    v[0] = v[0] + 1;
-                    break;
-            }
-            v[0] = v[0] + 1;
-            v[7] = v[7] + 7;
-            v[14] = v[14] + 1;
-            v[21] = v[21] + 1;
-
-            quads.set(i, new BakedQuad(v, q.getTintIndex(), q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
         }
         return quads;
     }
@@ -354,17 +387,5 @@ public class BakedModelBase implements IBakedModel {
         float f = Float.intBitsToFloat(i);
         f = (f + t) * s;
         return Float.floatToRawIntBits(f);
-    }
-
-    private static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s) {
-        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
-    }
-
-    public static boolean hasProperty(IBlockState state, IProperty property) {
-        return state.getPropertyKeys().contains(property);
-    }
-
-    public static boolean hasUnlistedProperty(IExtendedBlockState exState, IUnlistedProperty property) {
-        return exState.getUnlistedNames().contains(property);
     }
 }

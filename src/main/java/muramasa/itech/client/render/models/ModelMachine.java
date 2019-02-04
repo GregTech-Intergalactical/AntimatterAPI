@@ -52,34 +52,12 @@ public class ModelMachine extends ModelBase {
             IModel model;
             ResourceLocation texLoc;
 
-            IBakedModel[] bakedBase;
-            bakedBase = new IBakedModel[] {
-                texAndBake(machineBase, "base", SOUTH, Tier.LV.getBaseTexture()),
-                texAndBake(machineBase, "base", NORTH, Tier.LV.getBaseTexture()),
-                texAndBake(machineBase, "base", EAST, Tier.LV.getBaseTexture()),
-                texAndBake(machineBase, "base", WEST, Tier.LV.getBaseTexture()),
-            };
+            IBakedModel bakedBase = texAndBake(machineBase, "base", Tier.LV.getBaseTexture());
 
-            for (Machine type : MachineFlag.MULTI.getTypes()) {
-                texLoc = new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + type.getName());
-//                addBaked("base", type.getName(), new IBakedModel[] {
-//                    texAndBake(machineBase, "base", SOUTH, texLoc),
-//                    texAndBake(machineBase, "base", NORTH, texLoc),
-//                    texAndBake(machineBase, "base", EAST, texLoc),
-//                    texAndBake(machineBase, "base", WEST, texLoc),
-//                });
-            }
-
-            IBakedModel[][] bakedOverlays = new IBakedModel[Machine.getLastInternalId()][4];
-
+            IBakedModel[] bakedOverlays = new IBakedModel[Machine.getLastInternalId()];
             for (Machine type : MachineFlag.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH)) {
                 model = load(type.getOverlayModel());
-                bakedOverlays[type.getInternalId()] = new IBakedModel[] {
-                    texAndBake(model, "0", SOUTH, Tier.LV.getBaseTexture()),
-                    texAndBake(model, "0", NORTH, Tier.LV.getBaseTexture()),
-                    texAndBake(model, "0", EAST, Tier.LV.getBaseTexture()),
-                    texAndBake(model, "0", WEST, Tier.LV.getBaseTexture())
-                };
+                bakedOverlays[type.getInternalId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
             }
 
             HashMap<String, IBakedModel> bakedItems = new HashMap<>();
@@ -90,18 +68,12 @@ public class ModelMachine extends ModelBase {
                 ));
             }
 
-            IBakedModel[][] bakedCovers = new IBakedModel[Machine.getLastInternalId()][4];
+            IBakedModel[] bakedCovers = new IBakedModel[CoverType.values().length];
             for (CoverType coverType : CoverType.values()) {
                 if (!coverType.canBeRendered()) continue;
                 model = load(coverType.getModelLoc());
                 texLoc = coverType.getTextureLoc();
-                bakedCovers[coverType.ordinal()] = new IBakedModel[] {
-                    texAndBake(model, "base", SOUTH, texLoc),
-                    texAndBake(model, "base", EAST, texLoc),
-                    texAndBake(model, "base", WEST, texLoc),
-                    texAndBake(model, "base", DOWN, texLoc),
-                    texAndBake(model, "base", UP, texLoc),
-                };
+                bakedCovers[coverType.ordinal()] = texAndBake(model, "base", texLoc);
             }
 
             hasBeenBuilt = true;
