@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -38,6 +39,7 @@ public class BlockOre extends Block {
         setUnlocalizedName(Ref.MODID + ".block_ore");
         setRegistryName("block_ore");
         setCreativeTab(Ref.TAB_ORES);
+
         generatedOres = ItemFlag.CRUSHED.getMats(); //TODO cache stacks
     }
 
@@ -71,31 +73,24 @@ public class BlockOre extends Block {
         }
     }
 
-//    @Override
-//    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-//        return null;
-//    }
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
 
-//    @Override
-//    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-//        TileEntity tile = world.getTileEntity(pos);
-//        System.out.println(tile == null);
-//        if (tile instanceof TileEntityOre) {
-//            int id = ((TileEntityOre) tile).materialId;
-//            if (id > -1 && Material.generated[id].hasFlag(MaterialFlag.CRUSHED)) {
-//                ItemStack stack = MetaItem.get(Prefix.chunk, Material.generated[id]);
-//                world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
-//            }
-//        }
-//    }
-
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileEntityOre();
+    }
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if (stack.getItem() instanceof ItemBlockOres) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntityOre) {
-                ((TileEntityOre) tile).init(/*stack.getMetadata()*/generatedOres[RANDOM.nextInt(generatedOres.length)].getId(), RANDOM.nextInt(6));
+//                ((TileEntityOre) tile).init(stack.getMetadata(), 0);
+                ((TileEntityOre) tile).init(generatedOres[RANDOM.nextInt(generatedOres.length)].getId(), RANDOM.nextInt(6));
             }
         }
     }
@@ -112,23 +107,27 @@ public class BlockOre extends Block {
 
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        super.getDrops(drops, world, pos, state, fortune);
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityOre) {
+            drops.add(Material.get(((TileEntityOre) tile).getMaterialId()).getChunk(1));
+        }
+    }
+
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        if (willHarvest) return true;
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    @Override
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
+        worldIn.setBlockToAir(pos);
     }
 
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
-    }
-
-    @Override
-    public boolean hasTileEntity(IBlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileEntityOre();
     }
 
     @SideOnly(Side.CLIENT)

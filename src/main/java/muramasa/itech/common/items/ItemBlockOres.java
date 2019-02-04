@@ -11,6 +11,7 @@ public class ItemBlockOres extends ItemBlock {
 
     public ItemBlockOres(Block block) {
         super(block);
+        setHasSubtypes(true);
     }
 
     @Override
