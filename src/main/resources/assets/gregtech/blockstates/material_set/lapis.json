@@ -1,0 +1,100 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:item/generated"
+  },
+  "variants": {
+    "lapis": {
+      "chunk": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/chunk", "layer1": "gregtech:items/material_set/lapis/overlays/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/crushed", "layer1": "gregtech:items/material_set/lapis/overlays/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/dust"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/overlays/cell", "layer1": "gregtech:items/material_set/lapis/cell"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "gregtech:items/material_set/lapis/overlays/cell_plasma", "layer1": "gregtech:items/material_set/lapis/cell_plasma"}
+      }
+    }
+  }
+}

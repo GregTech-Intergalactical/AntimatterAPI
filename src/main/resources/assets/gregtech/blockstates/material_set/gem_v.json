@@ -1,0 +1,100 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:item/generated"
+  },
+  "variants": {
+    "gem_v": {
+      "chunk": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/chunk", "layer1": "gregtech:items/material_set/gem_v/overlays/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/crushed", "layer1": "gregtech:items/material_set/gem_v/overlays/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/dust"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/overlays/cell", "layer1": "gregtech:items/material_set/gem_v/cell"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_v/overlays/cell_plasma", "layer1": "gregtech:items/material_set/gem_v/cell_plasma"}
+      }
+    }
+  }
+}

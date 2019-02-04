@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:smartmodel/block_cable"
+    },
+    "inventory": {
+      "model": "gregtech:smartmodel/block_cable"
+    }
+  }
+}

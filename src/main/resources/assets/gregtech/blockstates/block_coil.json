@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:block_coil"
+  },
+  "variants": {
+    "coil_type": {
+      "cupronickel": {
+        "textures": {"all": "gregtech:blocks/coils/cupronickel"}
+      },
+      "kanthal": {
+        "textures": {"all": "gregtech:blocks/coils/kanthal"}
+      },
+      "nichrome": {
+        "textures": {"all": "gregtech:blocks/coils/nichrome"}
+      },
+      "fusion": {
+        "textures": {"all": "gregtech:blocks/coils/fusion"}
+      }
+    }
+  }
+}

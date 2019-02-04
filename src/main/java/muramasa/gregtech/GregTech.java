@@ -1,0 +1,70 @@
+package muramasa.gregtech;
+
+import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.enums.ItemFlag;
+import muramasa.gregtech.api.machines.MachineList;
+import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.recipe.RecipeAdder;
+import muramasa.gregtech.common.events.EventHandler;
+import muramasa.gregtech.common.fluid.FluidBiomass;
+import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.proxy.GuiHandler;
+import muramasa.gregtech.proxy.IProxy;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.apache.logging.log4j.Logger;
+
+@Mod(modid = Ref.MODID, name = Ref.NAME, version = Ref.VERSION, useMetadata = true)
+public class GregTech {
+
+    @SidedProxy(clientSide = "muramasa.gregtech.proxy.ClientProxy", serverSide = "muramasa.gregtech.proxy.ServerProxy")
+    public static IProxy proxy;
+
+    @Mod.Instance
+    public static GregTech INSTANCE;
+
+    public static Logger logger;
+
+    static {
+        Material.init();
+        MachineList.finish();
+    }
+
+    public Fluid biomass;
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        logger = event.getModLog();
+        proxy.preInit(event);
+
+        new EventHandler().init();
+        ITechCapabilities.register();
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
+
+        biomass = new FluidBiomass();
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e) {
+        proxy.init(e);
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent e) {
+        proxy.postInit(e);
+//        new MaterialRecipeLoader().run();
+        for (Material material : ItemFlag.CRUSHED.getMats()) {
+            RecipeAdder.addPulverizerRecipe(material.getChunk(1), material.getCrushed(2), 40, 1);
+            RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);
+        }
+        RecipeAdder.addAlloySmelterRecipe(Material.Copper.getIngot(1), Material.Redstone.getDust(4), Material.RedAlloy.getIngot(1), 10, 1);
+        RecipeAdder.addAlloySmelterRecipe(Material.Copper.getIngot(1), Material.Cobalt.getDust(1), Material.RedAlloy.getIngot(16), 10, 1);
+        RecipeAdder.addBlastFurnaceRecipe(Material.Silicon.getDust(1), Material.Silicon.getIngot(1), 10, 1);
+    }
+}
