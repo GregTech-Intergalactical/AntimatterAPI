@@ -128,6 +128,7 @@ public class StackHandler implements IItemHandler, IItemHandlerModifiable, INBTS
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        System.out.println("VALID: " + slot);
         return true;
     }
 

@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/mixer"
+      "model": "itech:machine_part/overlays/mixer"
     }
   }
 }

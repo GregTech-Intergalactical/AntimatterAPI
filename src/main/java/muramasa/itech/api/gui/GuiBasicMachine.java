@@ -20,20 +20,22 @@ public class GuiBasicMachine extends GuiMachine {
     @Override
     public void initGui() {
         super.initGui();
-        this.buttonList.add(new GuiButton(1, guiLeft, guiTop, 16, 16, "X"));
+//        this.buttonList.add(new GuiButton(1, guiLeft, guiTop, 16, 16, "X"));
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRenderer.drawString(displayName, getCenteredStringX(displayName), 6, 0x404040);
+        fontRenderer.drawString(displayName, getCenteredStringX(displayName), 4, 0x404040);
 
-        String stateName = tile.getMachineState().getName();
-        fontRenderer.drawString(stateName, getCenteredStringX(stateName), 15, 0x404040);
+//        String stateName = tile.getMachineState().getName();
+//        fontRenderer.drawString(stateName, getCenteredStringX(stateName), 15, 0x404040);
 
 //        fluidHandlerInput = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.NORTH);
 //        fluidHandlerOutput = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, tile.outputSide);
 
-        drawTooltipInArea("Show Recipes", mouseX, mouseY, (xSize / 2) - 10, 24, 20, 18);
+        drawTooltipInArea("Show Recipes", mouseX, mouseY, (xSize / 2) - 10, 24, 20, 14);
+
+        drawTooltipInArea(tile.getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
 
 //        if (fluidHandlerInput.getTankProperties()[0].getContents() != null) {
 //            FluidStack fluidStack = fluidHandlerInput.getTankProperties()[0].getContents();

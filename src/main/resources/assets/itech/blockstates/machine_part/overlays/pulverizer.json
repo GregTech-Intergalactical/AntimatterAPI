@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/pulverizer"
+      "model": "itech:machine_part/overlays/pulverizer"
     }
   }
 }

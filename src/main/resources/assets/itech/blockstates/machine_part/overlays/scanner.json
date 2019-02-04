@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/scanner"
+      "model": "itech:machine_part/overlays/scanner"
     }
   }
 }

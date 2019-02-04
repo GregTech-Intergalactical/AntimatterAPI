@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/laser_engraver"
+      "model": "itech:machine_part/overlays/laser_engraver"
     }
   }
 }

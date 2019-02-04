@@ -3,6 +3,7 @@ package muramasa.itech.api.machines;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,21 +15,23 @@ public class Tier implements IStringSerializable {
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
     private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
 
-    public static Tier BRONZE = new Tier(0, "bronze");
-    public static Tier STEEL = new Tier(1, "steel");
-    public static Tier LV = new Tier(2, "lv");
-    public static Tier MV = new Tier(3, "mv");
-    public static Tier HV = new Tier(4, "hv");
-    public static Tier EV = new Tier(5, "ev");
-    public static Tier IV = new Tier(6, "iv");
-    public static Tier MULTI = new Tier(7, "multi");
+    public static Tier BRONZE = new Tier(0, "bronze", TextFormatting.WHITE);
+    public static Tier STEEL = new Tier(1, "steel", TextFormatting.WHITE);
+    public static Tier LV = new Tier(2, "lv", TextFormatting.WHITE);
+    public static Tier MV = new Tier(3, "mv", TextFormatting.WHITE);
+    public static Tier HV = new Tier(4, "hv", TextFormatting.YELLOW);
+    public static Tier EV = new Tier(5, "ev", TextFormatting.AQUA);
+    public static Tier IV = new Tier(6, "iv", TextFormatting.LIGHT_PURPLE);
+    public static Tier MULTI = new Tier(7, "multi", TextFormatting.AQUA);
 
     private int id;
     private String name;
+    private TextFormatting rarityColor;
 
-    public Tier(int id, String name) {
+    public Tier(int id, String name, TextFormatting rarityColor) {
         this.id = id;
         this.name = name;
+        this.rarityColor = rarityColor;
         tierLookup.put(name, this);
         tierLookupArray.add(id, this);
     }
@@ -39,6 +42,10 @@ public class Tier implements IStringSerializable {
 
     public String getName() {
         return name;
+    }
+
+    public TextFormatting getRarityColor() {
+        return rarityColor;
     }
 
     public ResourceLocation getBaseTexture() {
