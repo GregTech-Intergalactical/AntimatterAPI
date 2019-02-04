@@ -35,7 +35,7 @@ public class BakedModelOre extends BakedModelBase {
         super(bakedModels[0]);
         this.bakedModels = bakedModels;
         if (itemOverride == null) {
-            itemOverride = new ItemOverrideOre(bakedModels[0]);
+            itemOverride = new ItemOverrideOre(bakedModels);
         }
     }
 
