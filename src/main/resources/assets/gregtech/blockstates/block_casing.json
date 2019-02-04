@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:block_casing"
+  },
+  "variants": {
+    "casing_type": {
+      "heatproof": {
+        "textures": {"all": "gregtech:blocks/casings/heat_proof"}
+      },
+      "stainlesssteel": {
+        "textures": {"all": "gregtech:blocks/casings/stainless_steel"}
+      },
+      "fusion3": {
+        "textures": {"all": "gregtech:blocks/casings/fusion_3"}
+      }
+    }
+  }
+}

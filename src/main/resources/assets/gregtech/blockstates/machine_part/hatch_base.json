@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machineparts/hatchbase"
+    },
+    "inventory": {
+      "model": "gregtech:machineparts/hatchbase"
+    }
+  }
+}

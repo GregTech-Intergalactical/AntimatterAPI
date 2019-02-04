@@ -1,0 +1,166 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:item/generated"
+  },
+  "variants": {
+    "type": {
+      "0": {
+        "textures": {
+          "layer0": "gregtech:items/tools/sword",
+          "layer1": "gregtech:items/tools/overlays/sword"
+        }
+      },
+      "1": {
+        "textures": {
+          "layer0": "gregtech:items/tools/pickaxe",
+          "layer1": "gregtech:items/tools/overlays/pickaxe"
+        }
+      },
+      "2": {
+        "textures": {
+          "layer0": "gregtech:items/tools/shovel",
+          "layer1": "gregtech:items/tools/overlays/shovel"
+        }
+      },
+      "3": {
+        "textures": {
+          "layer0": "gregtech:items/tools/axe",
+          "layer1": "gregtech:items/tools/overlays/axe"
+        }
+      },
+      "4": {
+        "textures": {
+          "layer0": "gregtech:items/tools/hoe",
+          "layer1": "gregtech:items/tools/overlays/hoe"
+        }
+      },
+      "5": {
+        "textures": {
+          "layer0": "gregtech:items/tools/saw",
+          "layer1": "gregtech:items/tools/overlays/saw"
+        }
+      },
+      "6": {
+        "textures": {
+          "layer0": "gregtech:items/tools/hammer",
+          "layer1": "gregtech:items/tools/overlays/hammer"
+        }
+      },
+      "7": {
+        "textures": {
+          "layer0": "gregtech:items/tools/wrench"
+        }
+      },
+      "8": {
+        "textures": {
+          "layer0": "gregtech:items/tools/file",
+          "layer1": "gregtech:items/tools/overlays/file"
+        }
+      },
+      "9": {
+        "textures": {
+          "layer0": "gregtech:items/tools/screwdriver",
+          "layer1": "gregtech:items/tools/overlays/screwdriver"
+        }
+      },
+      "10": {
+        "textures": {
+          "layer0": "gregtech:items/tools/crowbar",
+          "layer1": "gregtech:items/tools/overlays/crowbar"
+        }
+      },
+      "11": {
+        "textures": {
+          "layer0": "gregtech:items/tools/mortar",
+          "layer1": "gregtech:items/tools/overlays/mortar"
+        }
+      },
+      "12": {
+        "textures": {
+          "layer0": "gregtech:items/tools/wire_cutter",
+          "layer1": "gregtech:items/tools/overlays/wire_cutter"
+        }
+      },
+      "13": {
+        "textures": {
+          "layer0": "gregtech:items/tools/scoop",
+          "layer1": "gregtech:items/tools/overlays/scoop"
+        }
+      },
+      "14": {
+        "textures": {
+          "layer0": "gregtech:items/tools/branch_cutter",
+          "layer1": "gregtech:items/tools/overlays/branch_cutter"
+        }
+      },
+      "15": {
+        "textures": {
+          "layer0": "gregtech:items/tools/universal_spade",
+          "layer1": "gregtech:items/tools/overlays/universal_spade"
+        }
+      },
+      "16": {
+        "textures": {
+          "layer0": "gregtech:items/tools/knife",
+          "layer1": "gregtech:items/tools/overlays/knife"
+        }
+      },
+      "17": {
+        "textures": {
+          "layer0": "gregtech:items/tools/scythe",
+          "layer1": "gregtech:items/tools/overlays/scythe"
+        }
+      },
+      "18": {
+        "textures": {
+          "layer0": "gregtech:items/tools/plunger",
+          "layer1": "gregtech:items/tools/overlays/plunger"
+        }
+      },
+      "19": {
+        "textures": {
+          "layer0": "gregtech:items/tools/drill",
+          "layer1": "gregtech:items/tools/overlays/unit"
+        }
+      },
+      "20": {
+        "textures": {
+          "layer0": "gregtech:items/tools/chainsaw",
+          "layer1": "gregtech:items/tools/overlays/unit"
+        }
+      },
+      "21": {
+        "textures": {
+          "layer0": "gregtech:items/tools/wrench_p",
+          "layer1": "gregtech:items/tools/overlays/unit"
+        }
+      },
+      "22": {
+        "textures": {
+          "layer0": "gregtech:items/tools/jackhammer",
+          "layer1": "gregtech:items/tools/overlays/jackhammer"
+        }
+      },
+      "23": {
+        "textures": {
+          "layer0": "gregtech:items/tools/screwdriver",
+          "layer1": "gregtech:items/tools/overlays/screwdriver_p_1",
+          "layer2": "gregtech:items/tools/overlays/screwdriver_p_2"
+        }
+      },
+      "24": {
+        "textures": {
+          "layer0": "gregtech:items/tools/buzzsaw",
+          "layer1": "gregtech:items/tools/overlays/buzzsaw_1",
+          "layer2": "gregtech:items/tools/overlays/buzzsaw_2"
+        }
+      },
+      "25": {
+        "textures": {
+          "layer0": "gregtech:items/tools/turbine"
+        }
+      }
+    }
+  }
+}

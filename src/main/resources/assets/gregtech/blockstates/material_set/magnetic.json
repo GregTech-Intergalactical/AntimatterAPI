@@ -1,0 +1,100 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:item/generated"
+  },
+  "variants": {
+    "magnetic": {
+      "chunk": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/chunk", "layer1": "gregtech:items/material_set/magnetic/overlays/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/crushed", "layer1": "gregtech:items/material_set/magnetic/overlays/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/dust"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/overlays/cell", "layer1": "gregtech:items/material_set/magnetic/cell"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "gregtech:items/material_set/magnetic/overlays/cell_plasma", "layer1": "gregtech:items/material_set/magnetic/cell_plasma"}
+      }
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:item/generated"
+  },
+  "variants": {
+    "diamond": {
+      "chunk": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/chunk", "layer1": "gregtech:items/material_set/diamond/overlays/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/crushed", "layer1": "gregtech:items/material_set/diamond/overlays/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/dust"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/overlays/cell", "layer1": "gregtech:items/material_set/diamond/cell"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "gregtech:items/material_set/diamond/overlays/cell_plasma", "layer1": "gregtech:items/material_set/diamond/cell_plasma"}
+      }
+    }
+  }
+}
