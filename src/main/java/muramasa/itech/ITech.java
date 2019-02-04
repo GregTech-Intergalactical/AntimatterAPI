@@ -2,7 +2,6 @@ package muramasa.itech;
 
 import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.ItemFlag;
-import muramasa.itech.api.enums.RecipeFlag;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.recipe.RecipeAdder;
@@ -33,8 +32,6 @@ public class ITech {
 
     static {
         Material.init();
-        ItemFlag.finish();
-        RecipeFlag.finish();
         MachineList.finish();
     }
 

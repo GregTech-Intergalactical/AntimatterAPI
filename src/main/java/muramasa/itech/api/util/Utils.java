@@ -189,9 +189,9 @@ public class Utils {
         RNG.setSeed(seed);
     }
 
-    public static boolean hasFlag(int value, int flag) {
-        return (value & flag) != 0;
-    }
+//    public static boolean hasFlag(long value, long flag) {
+//        return (value & flag) != 0;
+//    }
 
     public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) { //Safe version of world.getTileEntity
         if (blockAccess instanceof ChunkCache) {
@@ -201,12 +201,12 @@ public class Utils {
         }
     }
 
-    public static int addFlag(int value, int flag) {
-        value |= flag;
-        return value;
-    }
+//    public static long addFlag(long value, long flag) {
+//        value |= flag;
+//        return value;
+//    }
 
-    public static int removeFlag(int value, int flag) {
+    public static long removeFlag(long value, long flag) {
         value &= ~flag;
         return value;
     }

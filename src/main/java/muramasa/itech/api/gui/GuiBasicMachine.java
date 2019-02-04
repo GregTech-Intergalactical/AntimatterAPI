@@ -37,6 +37,7 @@ public class GuiBasicMachine extends GuiMachine {
 
         drawTooltipInArea(tile.getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
 
+
 //        if (fluidHandlerInput.getTankProperties()[0].getContents() != null) {
 //            FluidStack fluidStack = fluidHandlerInput.getTankProperties()[0].getContents();
 //
@@ -108,8 +109,13 @@ public class GuiBasicMachine extends GuiMachine {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+
         int progressTime = (int)(20 * tile.getClientProgress());
         drawTexturedModalRect(guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
+
+        if (tile.getMachineState().getOverlayId() == 2) {
+            drawTexturedModalRect(guiLeft + (xSize / 2) - 4, guiTop + 44, xSize, 54, 8, 9);
+        }
     }
 
     @Override

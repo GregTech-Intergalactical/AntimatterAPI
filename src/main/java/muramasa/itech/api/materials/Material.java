@@ -5,7 +5,6 @@ import muramasa.itech.api.enums.ItemFlag;
 import muramasa.itech.api.enums.RecipeFlag;
 import muramasa.itech.api.interfaces.IMaterialFlag;
 import muramasa.itech.api.items.MetaItem;
-import muramasa.itech.api.util.Utils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
@@ -25,7 +24,8 @@ public class Material {
 //    private TIntObjectHashMap<String> generatedLookup = new TIntObjectHashMap<>();
 
     /** Basic Members **/
-    private int id, rgb, itemMask, recipeMask, mass;
+    private int id, rgb, mass;
+    private long itemMask, recipeMask;
     private String name, displayName;
     private MaterialSet set;
     private boolean hasLocName;
@@ -560,9 +560,9 @@ public class Material {
     public boolean hasFlag(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof ItemFlag) {
-                if (!Utils.hasFlag(itemMask, flag.getMask())) return false;
+                return (itemMask & flag.getBit()) != 0;
             } else if (flag instanceof RecipeFlag) {
-                if (!Utils.hasFlag(recipeMask, flag.getMask())) return false;
+                return (recipeMask & flag.getBit()) != 0;
             }
         }
         return true;
@@ -571,9 +571,9 @@ public class Material {
     public Material add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof ItemFlag) {
-                itemMask = Utils.addFlag(itemMask, flag.getMask());
+                itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
-                recipeMask = Utils.addFlag(recipeMask, flag.getMask());
+                recipeMask |= flag.getBit();
             }
             flag.add(this);
         }
@@ -632,11 +632,11 @@ public class Material {
         return set;
     }
 
-    public int getItemMask() {
+    public long getItemMask() {
         return itemMask;
     }
 
-    public int getRecipeMask() {
+    public long getRecipeMask() {
         return recipeMask;
     }
 

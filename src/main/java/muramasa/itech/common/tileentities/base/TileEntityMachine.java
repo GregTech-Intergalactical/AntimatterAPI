@@ -1,11 +1,9 @@
 package muramasa.itech.common.tileentities.base;
 
-import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.enums.MachineState;
 import muramasa.itech.api.machines.Machine;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.Tier;
-import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -47,12 +45,6 @@ public class TileEntityMachine extends TileEntityTickable {
         } else {
             init(typeFromNBT, tierFromNBT, facing);
         }
-    }
-
-    /** Helpers **/
-    //TODO needed?
-    public boolean hasFlag(MachineFlag flag) {
-        return Utils.hasFlag(getMachineType().getMask(), flag.getBit());
     }
 
     /** Events **/
