@@ -4,7 +4,6 @@ import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.recipe.Recipe;
 import muramasa.itech.api.recipe.RecipeMap;
 import muramasa.itech.api.structure.StructurePattern;
-import muramasa.itech.api.util.Utils;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -111,7 +110,7 @@ public class Machine implements IStringSerializable {
 
     public Machine addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
-            machineMask = Utils.addFlag(machineMask, flag.getBit());
+            machineMask |= flag.getBit();
             flag.add(this);
         }
         return this;
@@ -182,7 +181,7 @@ public class Machine implements IStringSerializable {
 //    }
 
     public boolean hasFlag(MachineFlag flag) {
-        return Utils.hasFlag(machineMask, flag.getBit());
+        return (machineMask & flag.getBit()) != 0;
     }
 
     /** Getters **/

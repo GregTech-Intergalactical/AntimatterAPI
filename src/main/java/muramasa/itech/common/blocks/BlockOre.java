@@ -40,7 +40,7 @@ public class BlockOre extends Block {
         setRegistryName("block_ore");
         setCreativeTab(Ref.TAB_ORES);
 
-        generatedOres = ItemFlag.CRUSHED.getMats(); //TODO cache stacks
+        generatedOres = ItemFlag.CRUSHED.getMats();
     }
 
     @Override
@@ -68,8 +68,8 @@ public class BlockOre extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        for (Material mat : generatedOres) {
-            items.add(new ItemStack(this, 1, mat.getId()));
+        for (int i = 0; i < generatedOres.length; i++) {
+            items.add(new ItemStack(this, 1, generatedOres[i].getId()));
         }
     }
 

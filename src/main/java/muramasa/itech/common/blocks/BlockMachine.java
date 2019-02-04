@@ -10,6 +10,7 @@ import muramasa.itech.api.machines.MachineStack;
 import muramasa.itech.api.machines.Tier;
 import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.api.util.Utils;
+import muramasa.itech.client.creativetab.ITechTab;
 import muramasa.itech.client.render.bakedmodels.BakedModelBase;
 import muramasa.itech.common.items.ItemBlockMachines;
 import muramasa.itech.common.tileentities.base.TileEntityMachine;
@@ -93,15 +94,17 @@ public class BlockMachine extends Block {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
-            items.add(stack.asItemStack());
-        }
-        for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
-            items.add(stack.asItemStack());
-        }
-        for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
-            items.add(stack.asItemStack());
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab instanceof ITechTab && ((ITechTab) tab).getTabName().equals("machines")) {
+            for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
+                items.add(stack.asItemStack());
+            }
+//            for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
+//                items.add(stack.asItemStack());
+//            }
+//            for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
+//                items.add(stack.asItemStack());
+//            }
         }
     }
 

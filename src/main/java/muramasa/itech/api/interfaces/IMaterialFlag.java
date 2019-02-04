@@ -6,7 +6,7 @@ public interface IMaterialFlag { //TODO rename to IMaterialFlag, rename Material
 
     void add(Material... mats);
 
-    int getMask();
+    long getBit();
 
     Material[] getMats();
 }

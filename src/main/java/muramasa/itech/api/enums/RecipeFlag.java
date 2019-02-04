@@ -33,33 +33,33 @@ public enum RecipeFlag implements IMaterialFlag {
 
     //TODO add alloy flag for adding mixer and dust crafting recipes automatically
 
-    private int bit;
-    private ArrayList<Material> materialsList;
-    private Material[] materials;
+    private long bit;
+    private ArrayList<Integer> materialIds = new ArrayList<>();
 
     RecipeFlag() {
         bit = 1 << ordinal();
-        materialsList = new ArrayList<>();
-    }
-
-    public static void finish() {
-        for (RecipeFlag flag : RecipeFlag.values()) {
-            flag.materials = flag.materialsList.toArray(new Material[0]);
-            flag.materialsList = null;
-        }
     }
 
     public void add(Material... mats) {
         for (Material material : mats) {
-            materialsList.add(material);
+            materialIds.add(material.getId());
         }
     }
 
-    public int getMask() {
-        return bit;
+    public long getBit() {
+        return this.bit;
     }
 
     public Material[] getMats() {
+        Material[] materials = new Material[materialIds.size()];
+        int size = materials.length;
+        for (int i = 0; i < size; i++) {
+            materials[i] = Material.get(materialIds.get(i));
+        }
         return materials;
+    }
+
+    public ArrayList<Integer> getIds() {
+        return materialIds;
     }
 }

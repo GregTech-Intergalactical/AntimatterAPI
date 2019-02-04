@@ -5,6 +5,7 @@ import muramasa.itech.api.capability.ITechCapabilities;
 import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.ItemList;
 import muramasa.itech.api.machines.MachineList;
+import muramasa.itech.api.materials.GTItemStack;
 import muramasa.itech.api.materials.Material;
 import muramasa.itech.api.materials.Prefix;
 import muramasa.itech.api.util.Utils;
@@ -37,7 +38,7 @@ import java.util.List;
 
 public class MetaItem extends Item {
 
-    private static HashMap<String, ItemStack> stringToStack = new HashMap<>();
+    private static HashMap<String, GTItemStack> stringToStack = new HashMap<>();
     private static Prefix[] generatedPrefixes;
 
     public static final int standardItemStartIndex = 32000;
@@ -53,7 +54,7 @@ public class MetaItem extends Item {
             for (int m = 0; m < Material.generated.length; m++) {
                 if (Material.generated[m] == null || !generatedPrefixes[p].allowGeneration(Material.generated[m])) continue;
                 ItemStack stack = new ItemStack(this, 1, (p * 1000) + Material.generated[m].getId());
-                stringToStack.put(generatedPrefixes[p].getName() + Material.generated[m].getDisplayName(), stack);
+                stringToStack.put(generatedPrefixes[p].getName() + Material.generated[m].getDisplayName(), new GTItemStack(stack, generatedPrefixes[p].showInCreative()));
             }
         }
     }
@@ -71,6 +72,11 @@ public class MetaItem extends Item {
                         }
                     }
                 }
+//                for (GTItemStack stack : stringToStack.values()) {
+//                    if (stack.doesShowInCreative()) {
+//                        subItems.add(stack.getStack());
+//                    }
+//                }
                 for (ItemList item : ItemList.values()) {
                     subItems.add(new ItemStack(this, 1, standardItemStartIndex + item.ordinal()));
                 }
@@ -211,9 +217,9 @@ public class MetaItem extends Item {
     }
 
     public static ItemStack get(Prefix prefix, Material material, int amount) {
-        ItemStack stack = stringToStack.get(prefix.getName() + material.getDisplayName());
+        GTItemStack stack = stringToStack.get(prefix.getName() + material.getDisplayName());
         if (stack != null) {
-            ItemStack copy = stack.copy();
+            ItemStack copy = stack.getStack().copy();
             copy.setCount(amount);
             return copy;
         }
