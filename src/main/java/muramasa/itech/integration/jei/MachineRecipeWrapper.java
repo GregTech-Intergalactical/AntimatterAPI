@@ -5,7 +5,8 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import muramasa.itech.api.recipe.Recipe;
 import net.minecraft.client.Minecraft;
-import scala.actors.threadpool.Arrays;
+
+import java.util.Arrays;
 
 public class MachineRecipeWrapper implements IRecipeWrapper {
 

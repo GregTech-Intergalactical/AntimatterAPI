@@ -56,7 +56,7 @@ public class BlockMachine extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, STATE, TINT, COVERS).build();
+        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, OVERLAY, TINT, COVERS).build();
     }
 
     @Override
@@ -69,31 +69,26 @@ public class BlockMachine extends Block {
                 .withProperty(TYPE, machine.getTypeId())
                 .withProperty(TIER, machine.getTierId())
                 .withProperty(FACING, machine.getFacing())
-                .withProperty(STATE, machine.getMachineState().getOverlayId())
+                .withProperty(OVERLAY, machine.getMachineState().getOverlayId())
                 .withProperty(TINT, machine.getTint());
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
                     .withProperty(COVERS, new CoverType[] {
-                        coverHandler.getCover(EnumFacing.SOUTH),
-                        coverHandler.getCover(EnumFacing.WEST),
-                        coverHandler.getCover(EnumFacing.EAST),
-                        coverHandler.getCover(EnumFacing.DOWN),
                         coverHandler.getCover(EnumFacing.UP),
+                        coverHandler.getCover(EnumFacing.DOWN),
+                        CoverType.NONE,
+                        coverHandler.getCover(EnumFacing.SOUTH),
+                        coverHandler.getCover(EnumFacing.EAST),
+                        coverHandler.getCover(EnumFacing.WEST)
                     });
             }
         }
         return exState;
     }
 
-//    @Override
-//    public IBlockState getStateFromMeta(int meta) {
-//        return getDefaultState().withProperty(FACING, EnumFacing.HORIZONTALS[meta]);
-//    }
-
     @Override
     public int getMetaFromState(IBlockState state) {
-//        return state.getValue(FACING).getIndex() - 2;
         return 0;
     }
 

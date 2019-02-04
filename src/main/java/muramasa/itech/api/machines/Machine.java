@@ -21,7 +21,7 @@ import java.util.Collection;
 public class Machine implements IStringSerializable {
 
     /** Global Members **/
-    private static int lastInternalId = 0;
+    private static int lastInternalId;
 
     /** Basic Members **/
     private int internalId;

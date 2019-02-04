@@ -19,7 +19,7 @@ public class BlockHatch extends BlockMachine {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, STATE, TINT, TEXTURE).build();
+        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, OVERLAY, TINT, TEXTURE).build();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class BlockHatch extends BlockMachine {
                 .withProperty(TYPE, hatch.getTypeId())
                 .withProperty(TIER, hatch.getTierId())
                 .withProperty(FACING, hatch.getFacing())
-                .withProperty(STATE, hatch.getMachineState().getOverlayId())
+                .withProperty(OVERLAY, hatch.getMachineState().getOverlayId())
                 .withProperty(TINT, hatch.getTint())
                 .withProperty(TEXTURE, hatch.getTextureId());
         }

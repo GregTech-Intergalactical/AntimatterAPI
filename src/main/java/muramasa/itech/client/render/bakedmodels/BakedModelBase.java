@@ -122,107 +122,29 @@ public class BakedModelBase implements IBakedModel {
         return false;
     }
 
-//    protected static BakedQuad transform(BakedQuad quad, Matrix4f mat) {
-//        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
-//        final IVertexConsumer consumer = new VertexTransformer(builder) {
-//            @Override
-//            public void put(int element, float... data) {
-//                VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
-//                switch(formatElement.getUsage()) {
-//                    case POSITION: {
-//                        float[] newData = new float[4];
-//                        Vector4f vec = new Vector4f(data);
-//                        mat.transform(vec);
-//                        vec.get(newData);
-//                        parent.put(element, newData);
-//                        break;
-//                    }
-//                    default: {
-//                        parent.put(element, data);
-//                        break;
-//                    }
-//                }
-//            }
-//        };
-//        quad.pipe(consumer);
-//        return builder.build();
-//    }
-//
-//    protected static List<BakedQuad> transform(List<BakedQuad> quads, Matrix4f matrix) {
-//        UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
-//        final IVertexConsumer consumer = new VertexTransformer(builder) {
-//            @Override
-//            public void put(int element, float... data) {
-//                VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
-//                switch(formatElement.getUsage()) {
-//                    case POSITION: {
-//                        float[] newData = new float[4];
-//                        Vector4f vec = new Vector4f(data);
-//                        matrix.transform(vec);
-//                        vec.get(newData);
-//                        parent.put(element, newData);
-//                        break;
-//                    }
-//                    default: {
-//                        parent.put(element, data);
-//                        break;
-//                    }
-//                }
-//            }
-//        };
-//        for (int i = 0; i < quads.size(); i++) {
-//            quads.get(i).pipe(consumer);
-//            quads.set(i, builder.build());
-//        }
-//        return quads;
-//    }
-//
-//    //    public static BakedQuad transform(BakedQuad quad, int facing) {
-////        return quad.pipe(transformationConsumers[facing]);
-////    }
-//
-//    public List<BakedQuad> rotate(List<BakedQuad> quads, int r) {
-//        for (int i = 0; i < quads.size(); i++) {
-//            BakedQuad q = quads.get(i);
-//
-//            int[] v = q.getVertexData().clone();
-//
-//            switch (q.getFace()) {
-//                case UP:
-//                    v[0] = v[0] + 1;
-//                    break;
-//            }
-//            v[0] = v[0] + 1;
-//            v[7] = v[7] + 7;
-//            v[14] = v[14] + 1;
-//            v[21] = v[21] + 1;
-//
-//            quads.set(i, new BakedQuad(v, q.getTintIndex(), q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
-//        }
-//        return quads;
-//    }
-
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return ModelBase.missingBaked.getParticleTexture();
     }
 
     public List<BakedQuad> retexture(List<BakedQuad> quads, TextureAtlasSprite sprite) {
-        for (int i = 0; i < quads.size(); i++) {
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
     }
 
     public List<BakedQuad> retexture(List<BakedQuad> quads, int tintIndex, TextureAtlasSprite sprite) {
-        for (int i = 0; i < quads.size(); i++) {
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
             if (quads.get(i).getTintIndex() != tintIndex) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
     }
 
-    public List<BakedQuad> rotateTranslateScale(List<BakedQuad> quads, Matrix4f r, Vec3i t, float s) {
+    public List<BakedQuad> translateScale(List<BakedQuad> quads, Vec3i t, float s) {
         for (int i = 0; i < quads.size(); i++) {
             BakedQuad q = quads.get(i);
 
