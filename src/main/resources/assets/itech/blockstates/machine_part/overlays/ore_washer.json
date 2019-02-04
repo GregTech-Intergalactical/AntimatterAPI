@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/ore_washer"
+      "model": "itech:machine_part/overlays/ore_washer"
     }
   }
 }

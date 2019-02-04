@@ -1,31 +1,42 @@
 package muramasa.itech.client.render.bakedmodels;
 
+import muramasa.itech.api.materials.Material;
+import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.client.render.RenderHelper;
-import muramasa.itech.common.blocks.BlockOre;
+import muramasa.itech.client.render.overrides.ItemOverrideOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class BakedModelOre extends BakedModelBase {
 
-    private static HashMap<String, TextureAtlasSprite> spriteLookup = new HashMap<>();
+    private static TextureAtlasSprite[] sprites = new TextureAtlasSprite[] {
+        RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/stone")),
+        RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/stone_granite")),
+        RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/stone_diorite")),
+        RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/stone_andesite")),
+        RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/netherrack")),
+        RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/end_stone")),
+    };
 
-    static {
-        spriteLookup.put("minecraft:dirt", RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/dirt")));
-        spriteLookup.put("minecraft:sand", RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/sand")));
-    }
+    private static IBakedModel[] bakedModels;
+    private static ItemOverrideOre itemOverride;
 
-    public BakedModelOre(IBakedModel bakedModel) {
-        super(bakedModel);
+    public BakedModelOre(IBakedModel[] bakedModels) {
+        super(bakedModels[0]);
+        this.bakedModels = bakedModels;
+        if (itemOverride == null) {
+            itemOverride = new ItemOverrideOre(bakedModels[0]);
+        }
     }
 
     @Override
@@ -34,18 +45,19 @@ public class BakedModelOre extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        quadList.addAll(bakedModel.getQuads(state, side, rand));
+        int setId = Material.get(exState.getValue(ITechProperties.MATERIAL)).getSet().ordinal();
+        quadList.addAll(bakedModels[setId].getQuads(state, side, rand));
 
-//        System.out.println("BM: " + exState.getValue(BlockOres.TEXTURE));
-        TextureAtlasSprite sprite = spriteLookup.get(exState.getValue(BlockOre.TEXTURE));
-        if (sprite != null) {
-            quadList = retexture(quadList, 0, sprite);
-        } else {
-//            System.out.println("sprite null");
+        int stoneId = exState.getValue(ITechProperties.STONE);
+        if (stoneId > 0) {
+            retexture(quadList, 0, sprites[stoneId]);
         }
 
-//        quadList = retexture(quadList, 1, RenderHelper.getSprite(new ResourceLocation(ITech.MODID + ":blocks/hazard")));
-
         return quadList;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return itemOverride;
     }
 }

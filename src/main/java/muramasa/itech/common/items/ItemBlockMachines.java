@@ -22,17 +22,14 @@ public class ItemBlockMachines extends ItemBlock {
         setHasSubtypes(true);
     }
 
-
-
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
             NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
             Machine machine = MachineList.get(data.getString(Ref.KEY_MACHINE_STACK_TYPE));
-            if (machine != null) {
-                return I18n.format("machine." + machine.getName() + "." + Tier.get(data.getString(Ref.KEY_MACHINE_STACK_TIER)).getName() + ".name");
-            } else {
-//                System.out.println("list returned null");
+            Tier tier = Tier.get(data.getString(Ref.KEY_MACHINE_STACK_TIER));
+            if (machine != null && tier != null) {
+                return tier.getRarityColor() + I18n.format("machine." + machine.getName() + "." + tier.getName() + ".name");
             }
         }
         return getUnlocalizedName();
@@ -41,7 +38,6 @@ public class ItemBlockMachines extends ItemBlock {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
-            tooltip.add("BLOCK MACHINES");
             NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
             tooltip.add(data.getString(Ref.KEY_MACHINE_STACK_TYPE));
             tooltip.add(data.getString(Ref.KEY_MACHINE_STACK_TIER));

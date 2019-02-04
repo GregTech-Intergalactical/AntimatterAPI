@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/sifter"
+      "model": "itech:machine_part/overlays/sifter"
     }
   }
 }

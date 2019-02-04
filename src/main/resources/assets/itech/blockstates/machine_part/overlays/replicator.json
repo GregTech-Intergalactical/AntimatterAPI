@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "itech:machineparts/overlays/replicator"
+      "model": "itech:machine_part/overlays/replicator"
     }
   }
 }

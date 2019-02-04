@@ -1,6 +1,12 @@
 package muramasa.itech.api.materials;
 
-public enum MaterialSet {
+import muramasa.itech.common.utils.Ref;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.Locale;
+
+public enum MaterialSet implements IStringSerializable {
 
     NONE,
     DULL,
@@ -14,5 +20,14 @@ public enum MaterialSet {
     GEM_H,
     GEM_V,
     QUARTZ,
-    FLINT,
+    FLINT;
+
+    public ResourceLocation getOreLoc() {
+        return new ResourceLocation(Ref.MODID, "items/material_set/" + getName() + "/ore");
+    }
+
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ENGLISH);
+    }
 }

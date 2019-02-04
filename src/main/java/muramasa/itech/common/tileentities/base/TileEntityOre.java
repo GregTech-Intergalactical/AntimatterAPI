@@ -5,26 +5,37 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class TileEntityOre extends TileEntityBase {
 
-    private String material = "NULL";
+    private int materialId, stoneId;
 
-    public void init(String material) {
-        this.material = material;
+    public void init(int materialId, int textureId) {
+        this.materialId = materialId;
+        this.stoneId = textureId;
     }
 
     public Material getMaterial() {
-        return Material.get(material);
+        return Material.get(materialId);
+    }
+
+    public int getMaterialId() {
+        return materialId;
+    }
+
+    public int getStoneId() {
+        return stoneId;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        material = compound.getString("material");
+        materialId = compound.getInteger("material");
+        stoneId = compound.getInteger("stone");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setString("material", material);
+        compound.setInteger("material", materialId);
+        compound.setInteger("stone", stoneId);
         return compound;
     }
 }

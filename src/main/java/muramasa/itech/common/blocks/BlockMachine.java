@@ -7,6 +7,7 @@ import muramasa.itech.api.enums.CoverType;
 import muramasa.itech.api.enums.MachineFlag;
 import muramasa.itech.api.machines.MachineList;
 import muramasa.itech.api.machines.MachineStack;
+import muramasa.itech.api.machines.Tier;
 import muramasa.itech.api.properties.ITechProperties;
 import muramasa.itech.api.util.Utils;
 import muramasa.itech.client.render.bakedmodels.BakedModelBase;
@@ -22,7 +23,6 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -123,12 +123,10 @@ public class BlockMachine extends Block {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (state instanceof IExtendedBlockState) {
-            TileEntity tile = Utils.getTile(world, pos);
-            if (tile instanceof TileEntityMachine) {
-                int guiId = ((TileEntityMachine) tile).getMachineType().getGuiId();
-                player.openGui(ITech.INSTANCE, guiId, world, pos.getX(), pos.getY(), pos.getZ());
-            }
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMachine) {
+            int guiId = ((TileEntityMachine) tile).getMachineType().getGuiId();
+            player.openGui(ITech.INSTANCE, guiId, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
     }
@@ -147,7 +145,6 @@ public class BlockMachine extends Block {
                         tile = world.getTileEntity(pos);
                         if (tile instanceof TileEntityMachine) {
                             ((TileEntityMachine) tile).init(machineType, machineTier, placer.getHorizontalFacing().getOpposite().getIndex() - 2);
-//                            ((TileEntityMachine) tile).setFacing();
                         }
                     }
                 } catch (IllegalAccessException | InstantiationException e) {
@@ -157,34 +154,14 @@ public class BlockMachine extends Block {
         }
     }
 
-    //    @Override
-//    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-//        ItemStack stack = new ItemStack(Item.getItemFromBlock(state.getBlock()), 1, (state.getValue(TYPE) * 10) + state.getValue(VOLTAGE));
-//        world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
-//    }
-
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-//        if (state instanceof IExtendedBlockState) {
-////            System.out.println("EX");
-//            IExtendedBlockState exState = (IExtendedBlockState) state;
-////            MachineStack machineStack = MachineList.get(exState.getValue(TYPE), exState.getValue(TIER));
-//            MachineStack machineStack = new MachineStack(MachineList.INVALID, Tier.NONE);
-//
-//            TileEntity tile = Utils.getTile(world, pos);
-//            if (tile instanceof TileEntityMachine) {
-//                TileEntityMachine machine = (TileEntityMachine) tile;
-////                System.out.println(machine.getType());
-//            }
-//
-//
-//            if (machineStack != null) {
-//
-////                System.out.println("MS VALID");
-//                return machineStack.asItemStack();
-//            }
-//        }
-        return new ItemStack(Blocks.DIAMOND_BLOCK);
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMachine) {
+            TileEntityMachine machine = (TileEntityMachine) tile;
+            return MachineList.get(machine.getType(), machine.getTier()).asItemStack();
+        }
+        return new MachineStack(MachineList.ALLOY_SMELTER, Tier.LV).asItemStack();
     }
 
     @Override

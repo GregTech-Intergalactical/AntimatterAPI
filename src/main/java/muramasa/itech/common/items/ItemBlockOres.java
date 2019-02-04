@@ -3,6 +3,7 @@ package muramasa.itech.common.items;
 import muramasa.itech.api.materials.Material;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
@@ -14,14 +15,17 @@ public class ItemBlockOres extends ItemBlock {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-//        return Prefix.ORE.getDisplayName(Materials.generated[stack.getMetadata()]);
-        return "ORE NAME ERROR";
+        String namePre = I18n.format("prefix.pre.ore.name");
+        namePre = namePre.equals("") ? "" : namePre + " ";
+        String namePost = I18n.format("prefix.post.ore.name");
+        namePost = namePost.equals("") ? "" : " " + namePost;
+        return namePre + Material.get(stack.getMetadata()).getDisplayName() + namePost ;
     }
 
     public static class ColorHandler implements IItemColor {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
-            if (tintIndex == 0) {
+            if (tintIndex == 1) {
                 return Material.generated[stack.getMetadata()].getRGB();
             }
             return -1;

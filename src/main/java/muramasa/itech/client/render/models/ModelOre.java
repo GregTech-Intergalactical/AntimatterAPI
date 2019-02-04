@@ -1,5 +1,7 @@
 package muramasa.itech.client.render.models;
 
+import com.google.common.collect.ImmutableMap;
+import muramasa.itech.api.materials.MaterialSet;
 import muramasa.itech.client.render.bakedmodels.BakedModelOre;
 import muramasa.itech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -32,8 +34,15 @@ public class ModelOre implements IModel {
     public IBakedModel bake(IModelState modelState, VertexFormat vertexFormat, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         try {
             IModel model = ModelLoaderRegistry.getModel(new ModelResourceLocation(Ref.MODID + ":block_ore_base"));
-            IBakedModel bakedModel = /*ModelBase.tex(model, "base", new ResourceLocation(ITech.MODID, "blocks/stone"))*/model.bake(modelState, vertexFormat, bakedTextureGetter);
-            return new BakedModelOre(bakedModel);
+//            IBakedModel bakedModel = /*ModelBase.tex(model, "base", new ResourceLocation(ITech.MODID, "blocks/stone"))*/model.bake(modelState, vertexFormat, bakedTextureGetter);
+
+            IBakedModel[] bakedModels = new IBakedModel[MaterialSet.values().length];
+            for (MaterialSet set : MaterialSet.values()) {
+                bakedModels[set.ordinal()] = model.retexture(ImmutableMap.of("overlay", set.getOreLoc().toString())).bake(modelState, vertexFormat, bakedTextureGetter);
+//                bakedModels[set.ordinal()] = ModelBase.tex(model, "overlay", set.getOreLoc()).bake(modelState, vertexFormat, bakedTextureGetter);
+            }
+
+            return new BakedModelOre(bakedModels);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,6 +52,9 @@ public class ModelOre implements IModel {
     @Override
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> textures = new ArrayList<>();
+        for (MaterialSet set : MaterialSet.values()) {
+            textures.add(set.getOreLoc());
+        }
         textures.add(new ResourceLocation(Ref.MODID + ":blocks/stone"));
         textures.add(new ResourceLocation(Ref.MODID + ":blocks/ore"));
         return textures;

@@ -62,6 +62,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
+            System.out.println("RECIPE CHECK");
             if (stackHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
             Recipe recipe = getMachineType().findRecipe(stackHandler.getInputs(), inputTank.getFluid());
             if (recipe != null) {
@@ -120,6 +121,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             setMachineState(MachineState.FOUND_RECIPE);
         }
         shouldCheckRecipe = true;
+        System.out.println("CONTENT UPDATE");
     }
 
     /** Getters **/
@@ -143,6 +145,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public void setMachineState(MachineState newState) {
         if (getMachineState().getOverlayId() != newState.getOverlayId() && (newState.getOverlayId() == 0 || newState.getOverlayId() == 1)) {
             markForRenderUpdate();
+            System.out.println("RENDER UPDATE");
         }
         super.setMachineState(newState);
     }
