@@ -16,16 +16,16 @@ import javax.annotation.Nullable;
 public class ITechCapabilities {
 
     @CapabilityInject(IEnergyStorage.class)
-    public static Capability<IEnergyStorage> ENERGY = null;
+    public static Capability<IEnergyStorage> ENERGY;
 
     @CapabilityInject(IConfigurable.class)
-    public static Capability<IConfigurable> CONFIGURABLE = null;
+    public static Capability<IConfigurable> CONFIGURABLE;
 
     @CapabilityInject(ICoverable.class)
-    public static Capability<ICoverable> COVERABLE = null;
+    public static Capability<ICoverable> COVERABLE;
 
     @CapabilityInject(IComponent.class)
-    public static Capability<IComponent> COMPONENT = null;
+    public static Capability<IComponent> COMPONENT;
 
     public static void register() {
 

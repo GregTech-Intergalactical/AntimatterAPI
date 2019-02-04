@@ -56,8 +56,6 @@ public class BlockOre extends Block {
                 .withProperty(ITechProperties.MATERIAL, ore.getMaterialId())
                 .withProperty(ITechProperties.STONE, ore.getStoneId());
         }
-//        String name = world.getBlockState(pos.down()).getBlock().getRegistryName().toString();
-//        System.out.println("EX: " + name);
         return exState;
     }
 
@@ -136,7 +134,7 @@ public class BlockOre extends Block {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (Material mat : generatedOres) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), mat.getId(), new ModelResourceLocation(getRegistryName(), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), mat.getId(), new ModelResourceLocation(getRegistryName(), "inventory"));//NOPMD
         }
     }
 

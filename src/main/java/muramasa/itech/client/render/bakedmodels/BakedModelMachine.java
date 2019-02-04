@@ -31,11 +31,7 @@ public class BakedModelMachine extends BakedModelBase {
     private static ItemOverrideMachine itemOverride;
 
     private static float[] facingToRadians = new float[] {
-        0f, 3.1416f, 1.5708f, 4.7124f
-    };
-
-    private static float[] coverFacingToRadians = new float[] {
-        0f, 4.7124f, 1.5708f, 1.5708f, 4.7124f
+        4.7124f, 1.5708f, 0f, 3.1416f, 1.5708f, 4.7124f
     };
 
     static {
@@ -73,11 +69,12 @@ public class BakedModelMachine extends BakedModelBase {
 
         int type = exState.getValue(ITechProperties.TYPE);
         int tier = exState.getValue(ITechProperties.TIER);
-        int overlay = exState.getValue(ITechProperties.STATE);
+        int overlay = exState.getValue(ITechProperties.OVERLAY);
         int facing = exState.getValue(ITechProperties.FACING);
 
         //Add base quads
         TextureAtlasSprite sprite;
+        //TODO improve
         if (hasUnlistedProperty(exState, ITechProperties.TEXTURE)) {
             sprite = baseSprites[exState.getValue(ITechProperties.TEXTURE)];
         } else {
@@ -88,7 +85,7 @@ public class BakedModelMachine extends BakedModelBase {
             }
         }
         if (sprite == null) sprite = baseSprites[2];
-        //TODO optimize base model by adding tintindex 0 to faces that are visible
+        //TODO optimize base model by adding tintindex 0 to faces that are visible only
         quadList.addAll(retexture(bakedBase.getQuads(state, side, rand), sprite));
 
         //Add overlay quads
@@ -99,7 +96,7 @@ public class BakedModelMachine extends BakedModelBase {
             overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(0)));
         }
         if (facing > 0) {
-            overlayQuads = transform(overlayQuads, facingToRadians[facing]);
+            overlayQuads = transform(overlayQuads, facingToRadians[facing + 2]);
         }
         quadList.addAll(overlayQuads);
 
@@ -108,14 +105,10 @@ public class BakedModelMachine extends BakedModelBase {
             CoverType[] covers = exState.getValue(ITechProperties.COVERS);
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i] == CoverType.NONE) continue;
-                if (i > 0) {
-                    if (i >= 3) {
-                        quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), new Vector3f(1, 0, 0), coverFacingToRadians[i]));
-                    } else {
-                        quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), coverFacingToRadians[i]));
-                    }
+                if (i < 2) {
+                    quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), new Vector3f(1, 0, 0), facingToRadians[i]));
                 } else {
-                    quadList.addAll(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand));
+                    quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), facingToRadians[5 - i]));
                 }
             }
         }
