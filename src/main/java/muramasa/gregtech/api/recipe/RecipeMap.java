@@ -85,9 +85,8 @@ public class RecipeMap {
 //    }
 
     //TODO fix assumption inputs is never empty
-    public static Recipe findRecipeItem(String type, ItemStack[] inputs) {
+    public static Recipe findRecipeItem(RecipeMap map, ItemStack[] inputs) {
         if (Utils.areStacksValid(inputs)) {
-            RecipeMap map = allRecipeMaps.get(type);
             if (map == null) return null;
             ArrayList<Recipe> matches = map.recipeLookupStack.get(Utils.getString(inputs[0]));
             if (matches == null) return null;

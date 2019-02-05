@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.capability.impl;
 
+import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 
@@ -12,14 +13,14 @@ public class HatchComponentHandler extends ComponentHandler {
     @Override
     public void linkController(TileEntityMultiMachine controllerTile) {
         super.linkController(controllerTile);
-        ((TileEntityHatch) getTile()).setTextureId(controllerTile.getMachineType().getInternalId());
+        ((TileEntityHatch) getTile()).setTexture(controllerTile.getMachineType().getBaseTexture(Tier.MULTI.getName()));
         getTile().markForRenderUpdate();
     }
 
     @Override
     public void unlinkController(TileEntityMultiMachine controllerTile) {
         super.unlinkController(controllerTile);
-        ((TileEntityHatch) getTile()).setTextureId(((TileEntityHatch) getTile()).getTierId());
+        ((TileEntityHatch) getTile()).setTexture(((TileEntityHatch) getTile()).getMachineType().getBaseTexture(((TileEntityHatch) getTile()).getTier()));
         getTile().markForRenderUpdate();
     }
 }

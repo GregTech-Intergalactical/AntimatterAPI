@@ -5,7 +5,7 @@ import muramasa.gregtech.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import static muramasa.gregtech.api.machines.MachineList.*;
+import static muramasa.gregtech.api.data.Machines.*;
 import static muramasa.gregtech.api.util.Utils.arr;
 
 public class RecipeAdder {

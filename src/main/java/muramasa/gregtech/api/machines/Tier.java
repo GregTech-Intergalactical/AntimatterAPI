@@ -15,22 +15,31 @@ public class Tier implements IStringSerializable {
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
     private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
 
-    public static Tier BRONZE = new Tier(0, "bronze", TextFormatting.WHITE);
-    public static Tier STEEL = new Tier(1, "steel", TextFormatting.WHITE);
-    public static Tier LV = new Tier(2, "lv", TextFormatting.WHITE);
-    public static Tier MV = new Tier(3, "mv", TextFormatting.WHITE);
-    public static Tier HV = new Tier(4, "hv", TextFormatting.YELLOW);
-    public static Tier EV = new Tier(5, "ev", TextFormatting.AQUA);
-    public static Tier IV = new Tier(6, "iv", TextFormatting.LIGHT_PURPLE);
-    public static Tier MULTI = new Tier(7, "multi", TextFormatting.AQUA);
+    public static Tier[] VALUES;
+
+    public static Tier BRONZE = new Tier(0, "bronze", 0, TextFormatting.WHITE);
+    public static Tier STEEL = new Tier(1, "steel", 0, TextFormatting.WHITE);
+
+    public static Tier LV = new Tier(2, "lv", 32, TextFormatting.WHITE);
+    public static Tier MV = new Tier(3, "mv", 128, TextFormatting.WHITE);
+    public static Tier HV = new Tier(4, "hv", 512, TextFormatting.YELLOW);
+    public static Tier EV = new Tier(5, "ev", 2048, TextFormatting.AQUA);
+    public static Tier IV = new Tier(6, "iv", 8192, TextFormatting.LIGHT_PURPLE);
+    public static Tier MULTI = new Tier(7, "multi", 0, TextFormatting.AQUA);
+
+    static {
+
+    }
 
     private int id;
     private String name;
+    private long voltage;
     private TextFormatting rarityColor;
 
-    public Tier(int id, String name, TextFormatting rarityColor) {
+    public Tier(int id, String name, long voltage, TextFormatting rarityColor) {
         this.id = id;
         this.name = name;
+        this.voltage = voltage;
         this.rarityColor = rarityColor;
         tierLookup.put(name, this);
         tierLookupArray.add(id, this);

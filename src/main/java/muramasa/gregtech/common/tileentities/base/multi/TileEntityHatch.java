@@ -8,6 +8,7 @@ import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -15,7 +16,7 @@ import javax.annotation.Nullable;
 
 public class TileEntityHatch extends TileEntityMachine {
 
-    private int textureId;
+    private ResourceLocation texture;
     private MachineStackHandler stackHandler;
     private ComponentHandler componentHandler;
 
@@ -24,17 +25,17 @@ public class TileEntityHatch extends TileEntityMachine {
         super.init(type, tier, facing);
         stackHandler = new MachineStackHandler(this);
         componentHandler = new HatchComponentHandler(type, this);
-        textureId = getTierId();
+        texture = super.getTexture();
     }
 
     @Override
-    public int getTextureId() {
-        return textureId;
+    public ResourceLocation getTexture() {
+        return texture;
     }
 
     @Override
-    public void setTextureId(int newId) {
-        textureId = newId;
+    public void setTexture(ResourceLocation loc) {
+        texture = loc;
     }
 
     @Override
@@ -62,14 +63,14 @@ public class TileEntityHatch extends TileEntityMachine {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
-            textureId = compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE);
+            texture = new ResourceLocation(compound.getString(Ref.KEY_MACHINE_TILE_TEXTURE));
         }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureId);
+        compound.setString(Ref.KEY_MACHINE_TILE_TEXTURE, texture.toString());
         return compound;
     }
 }

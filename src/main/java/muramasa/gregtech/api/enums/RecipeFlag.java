@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.enums;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.materials.Material;
 
@@ -54,7 +55,7 @@ public enum RecipeFlag implements IMaterialFlag {
         Material[] materials = new Material[materialIds.size()];
         int size = materials.length;
         for (int i = 0; i < size; i++) {
-            materials[i] = Material.get(materialIds.get(i));
+            materials[i] = Materials.get(materialIds.get(i));
         }
         return materials;
     }

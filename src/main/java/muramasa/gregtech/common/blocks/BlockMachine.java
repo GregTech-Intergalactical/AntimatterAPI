@@ -3,14 +3,13 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.enums.MachineFlag;
-import muramasa.gregtech.api.machines.MachineList;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
 import muramasa.gregtech.common.items.ItemBlockMachines;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -57,7 +56,7 @@ public class BlockMachine extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, OVERLAY, TINT, COVERS).build();
+        return new BlockStateContainer.Builder(this).add(TYPE, TIER, FACING, OVERLAY, TINT, TEXTURE, COVERS).build();
     }
 
     @Override
@@ -71,15 +70,16 @@ public class BlockMachine extends Block {
                 .withProperty(TIER, machine.getTierId())
                 .withProperty(FACING, machine.getFacing())
                 .withProperty(OVERLAY, machine.getMachineState().getOverlayId())
-                .withProperty(TINT, machine.getTint());
+                .withProperty(TINT, machine.getTint())
+                .withProperty(TEXTURE, machine.getTexture());
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
                     .withProperty(COVERS, new CoverType[] {
                         coverHandler.getCover(EnumFacing.UP),
                         coverHandler.getCover(EnumFacing.DOWN),
-                        CoverType.NONE,
                         coverHandler.getCover(EnumFacing.SOUTH),
+                        CoverType.NONE,
                         coverHandler.getCover(EnumFacing.EAST),
                         coverHandler.getCover(EnumFacing.WEST)
                     });
@@ -95,16 +95,14 @@ public class BlockMachine extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab instanceof GregTechTab && ((GregTechTab) tab).getTabName().equals("machines")) {
-            for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
-                items.add(stack.asItemStack());
-            }
-//            for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
-//                items.add(stack.asItemStack());
-//            }
-//            for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
-//                items.add(stack.asItemStack());
-//            }
+        for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
+            items.add(stack.asItemStack());
+        }
+        for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
+            items.add(stack.asItemStack());
+        }
+        for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
+            items.add(stack.asItemStack());
         }
     }
 
@@ -137,7 +135,7 @@ public class BlockMachine extends Block {
                 String machineType = data.getString(Ref.KEY_MACHINE_STACK_TYPE);
                 String machineTier = data.getString(Ref.KEY_MACHINE_STACK_TIER);
                 try {
-                    TileEntity tile = (TileEntity) MachineList.get(machineType).getTileClass().newInstance();
+                    TileEntity tile = (TileEntity) Machines.get(machineType).getTileClass().newInstance();
                     if (tile instanceof TileEntityMachine) {
                         world.setTileEntity(pos, tile);
                         tile = world.getTileEntity(pos);
@@ -157,9 +155,9 @@ public class BlockMachine extends Block {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            return MachineList.get(machine.getType(), machine.getTier()).asItemStack();
+            return Machines.get(machine.getType(), machine.getTier()).asItemStack();
         }
-        return new MachineStack(MachineList.ALLOY_SMELTER, Tier.LV).asItemStack();
+        return new MachineStack(Machines.ALLOY_SMELTER, Tier.LV).asItemStack();
     }
 
     @Override

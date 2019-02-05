@@ -8,7 +8,7 @@ public class ITechProperties {
     public static final UnlistedInteger FACING = new UnlistedInteger();
     public static final UnlistedInteger OVERLAY = new UnlistedInteger();
     public static final UnlistedInteger TINT = new UnlistedInteger();
-    public static final UnlistedInteger TEXTURE = new UnlistedInteger();
+    public static final UnlistedResourceLocation TEXTURE = new UnlistedResourceLocation();
     public static final UnlistedCoverType COVERS = new UnlistedCoverType();
 
     /** Ore Properties **/

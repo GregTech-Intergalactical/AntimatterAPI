@@ -25,6 +25,7 @@ public class BlockHighlightHandler {
 
     @SubscribeEvent
     public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
+        if (event.getPlayer() == null || event.getPlayer().world == null || event.getTarget().getBlockPos() == null) return;
         TileEntity tile = Utils.getTile(event.getPlayer().world, event.getTarget().getBlockPos());
         if (tile != null && tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
             ItemStack stack = event.getPlayer().getHeldItemMainhand();

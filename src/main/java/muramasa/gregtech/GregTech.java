@@ -1,8 +1,9 @@
 package muramasa.gregtech;
 
 import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemFlag;
-import muramasa.gregtech.api.machines.MachineList;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.RecipeAdder;
 import muramasa.gregtech.common.events.EventHandler;
@@ -32,7 +33,7 @@ public class GregTech {
 
     static {
         Material.init();
-        MachineList.finish();
+        Machines.finish();
     }
 
     public Fluid biomass;
@@ -63,8 +64,8 @@ public class GregTech {
             RecipeAdder.addPulverizerRecipe(material.getChunk(1), material.getCrushed(2), 40, 1);
             RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);
         }
-        RecipeAdder.addAlloySmelterRecipe(Material.Copper.getIngot(1), Material.Redstone.getDust(4), Material.RedAlloy.getIngot(1), 10, 1);
-        RecipeAdder.addAlloySmelterRecipe(Material.Copper.getIngot(1), Material.Cobalt.getDust(1), Material.RedAlloy.getIngot(16), 10, 1);
-        RecipeAdder.addBlastFurnaceRecipe(Material.Silicon.getDust(1), Material.Silicon.getIngot(1), 10, 1);
+        RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Redstone.getDust(4), Materials.RedAlloy.getIngot(1), 10, 1);
+        RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Cobalt.getDust(1), Materials.RedAlloy.getIngot(16), 10, 1);
+        RecipeAdder.addBlastFurnaceRecipe(Materials.Silicon.getDust(1), Materials.Silicon.getIngot(1), 10, 1);
     }
 }

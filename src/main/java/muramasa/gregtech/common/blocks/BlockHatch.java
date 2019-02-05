@@ -34,7 +34,7 @@ public class BlockHatch extends BlockMachine {
                 .withProperty(FACING, hatch.getFacing())
                 .withProperty(OVERLAY, hatch.getMachineState().getOverlayId())
                 .withProperty(TINT, hatch.getTint())
-                .withProperty(TEXTURE, hatch.getTextureId());
+                .withProperty(TEXTURE, hatch.getTexture());
         }
         return exState;
     }

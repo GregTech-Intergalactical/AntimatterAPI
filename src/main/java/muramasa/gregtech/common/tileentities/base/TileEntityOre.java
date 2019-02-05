@@ -1,5 +1,6 @@
 package muramasa.gregtech.common.tileentities.base;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.materials.Material;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -13,7 +14,7 @@ public class TileEntityOre extends TileEntityBase {
     }
 
     public Material getMaterial() {
-        return Material.get(materialId);
+        return Materials.get(materialId);
     }
 
     public int getMaterialId() {

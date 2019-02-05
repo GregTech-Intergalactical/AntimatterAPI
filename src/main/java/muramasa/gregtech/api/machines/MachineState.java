@@ -1,4 +1,4 @@
-package muramasa.gregtech.api.enums;
+package muramasa.gregtech.api.machines;
 
 import net.minecraft.util.IStringSerializable;
 

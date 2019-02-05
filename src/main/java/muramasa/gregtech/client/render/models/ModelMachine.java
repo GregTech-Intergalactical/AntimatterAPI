@@ -57,12 +57,13 @@ public class ModelMachine extends ModelBase {
             IBakedModel[] bakedOverlays = new IBakedModel[Machine.getLastInternalId()];
             for (Machine type : MachineFlag.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH)) {
                 model = load(type.getOverlayModel());
-                bakedOverlays[type.getInternalId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
+                bakedOverlays[type.getId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
             }
 
             HashMap<String, IBakedModel> bakedItems = new HashMap<>();
             for (MachineStack stack : MachineFlag.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH)) {
-                texLoc = !stack.getType().hasFlag(MachineFlag.MULTI) ? stack.getTier().getBaseTexture() : new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + stack.getType().getName());
+//                texLoc = !stack.getType().hasFlag(MachineFlag.MULTI) ? stack.getTier().getBaseTexture() : new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + stack.getType().getName());
+                texLoc = stack.getType().getBaseTexture(stack.getTier().getName());
                 bakedItems.put(stack.getType().getName() + stack.getTier().getName(), new BakedModelBase(
                     texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getType().getOverlayTexture(0)})
                 ));

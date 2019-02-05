@@ -2,9 +2,9 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.enums.ItemList;
-import muramasa.gregtech.api.machines.MachineList;
 import muramasa.gregtech.api.materials.GTItemStack;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
@@ -51,10 +51,10 @@ public class MetaItem extends Item {
         setCreativeTab(Ref.TAB_MATERIALS);
         generatedPrefixes = Prefix.values();
         for (int p = 0; p < generatedPrefixes.length; p++) {
-            for (int m = 0; m < Material.generated.length; m++) {
-                if (Material.generated[m] == null || !generatedPrefixes[p].allowGeneration(Material.generated[m])) continue;
-                ItemStack stack = new ItemStack(this, 1, (p * 1000) + Material.generated[m].getId());
-                stringToStack.put(generatedPrefixes[p].getName() + Material.generated[m].getDisplayName(), new GTItemStack(stack, generatedPrefixes[p].showInCreative()));
+            for (int m = 0; m < Materials.generated.length; m++) {
+                if (Materials.generated[m] == null || !generatedPrefixes[p].allowGeneration(Materials.generated[m])) continue;
+                ItemStack stack = new ItemStack(this, 1, (p * 1000) + Materials.generated[m].getId());
+                stringToStack.put(generatedPrefixes[p].getName() + Materials.generated[m].getDisplayName(), new GTItemStack(stack, generatedPrefixes[p].showInCreative()));
             }
         }
     }
@@ -65,10 +65,10 @@ public class MetaItem extends Item {
             if (((GregTechTab) tab).getTabName().equals("materials")) {
                 for (int p = 0; p < generatedPrefixes.length; p++) {
                     if (!generatedPrefixes[p].showInCreative()) continue;
-                    for (int m = 0; m < Material.generated.length; m++) {
-                        if (Material.generated[m] != null) {
-                            if (!generatedPrefixes[p].allowGeneration(Material.generated[m])) continue;
-                            subItems.add(new ItemStack(this, 1, (p * 1000) + Material.generated[m].getId()));
+                    for (int m = 0; m < Materials.generated.length; m++) {
+                        if (Materials.generated[m] != null) {
+                            if (!generatedPrefixes[p].allowGeneration(Materials.generated[m])) continue;
+                            subItems.add(new ItemStack(this, 1, (p * 1000) + Materials.generated[m].getId()));
                         }
                     }
                 }
@@ -185,9 +185,9 @@ public class MetaItem extends Item {
                             ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
                             ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                         } else if (tile instanceof TileEntityHatch) {
-                            System.out.println(((TileEntityHatch) tile).getTextureId());
-                            ((TileEntityHatch) tile).setTextureId(((TileEntityHatch) tile).getTextureId() == MachineList.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : MachineList.BLAST_FURNACE.getInternalId());
-                            ((TileEntityHatch) tile).markForRenderUpdate();
+//                            System.out.println(((TileEntityHatch) tile).getTexture());
+//                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getId());
+//                            ((TileEntityHatch) tile).markForRenderUpdate();
                         } else {
 //                            if (((TileEntityMachine) tile).isServerSide()) {
 //                                System.out.println("SERVER FACING: " + ((TileEntityMachine) tile).getFacing());
@@ -195,7 +195,7 @@ public class MetaItem extends Item {
 //                                System.out.println("CLIENT FACING: " + ((TileEntityMachine) tile).getFacing());
 //                            }
                             System.out.println("Setting Tint");
-                            ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Material.Plutonium241.getRGB());
+                            ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());
 //                            ((TileEntityMachine) tile).markDirty();
                             ((TileEntityMachine) tile).markForRenderUpdate();
                         }
@@ -228,7 +228,7 @@ public class MetaItem extends Item {
     }
 
     public static Material getMaterial(ItemStack stack) {
-        return stack.getMetadata() < standardItemStartIndex ? Material.generated[stack.getMetadata() % 1000] : null;
+        return stack.getMetadata() < standardItemStartIndex ? Materials.generated[stack.getMetadata() % 1000] : null;
     }
 
     public static Prefix getPrefix(ItemStack stack) {
@@ -246,9 +246,9 @@ public class MetaItem extends Item {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int p = 0; p < generatedPrefixes.length; p++) {
-            for (int m = 0; m < Material.generated.length; m++) {
-                if (generatedPrefixes[p] == null || Material.generated[m] == null) continue;
-                ModelLoader.setCustomModelResourceLocation(this, (p * 1000) + m, new ModelResourceLocation(Ref.MODID + ":material_set/" + Material.generated[m].getSet(), Material.generated[m].getSet() + "=" + generatedPrefixes[p].getName()));
+            for (int m = 0; m < Materials.generated.length; m++) {
+                if (generatedPrefixes[p] == null || Materials.generated[m] == null) continue;
+                ModelLoader.setCustomModelResourceLocation(this, (p * 1000) + m, new ModelResourceLocation(Ref.MODID + ":material_set/" + Materials.generated[m].getSet(), Materials.generated[m].getSet() + "=" + generatedPrefixes[p].getName()));
             }
         }
         for (ItemList item : ItemList.values()) {
@@ -261,7 +261,7 @@ public class MetaItem extends Item {
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             if (stack.getMetadata() < standardItemStartIndex) {
                 if (tintIndex == 0) { //layer0
-                    Material material = Material.generated[stack.getMetadata() % 1000];
+                    Material material = Materials.generated[stack.getMetadata() % 1000];
                     return material != null ? material.getRGB() : 0xffffff;
                 }
             }
