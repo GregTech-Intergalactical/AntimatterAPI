@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.gui.container;
 
-import muramasa.gregtech.api.enums.MachineState;
+import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;

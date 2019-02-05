@@ -41,16 +41,12 @@ public class BakedModelBase implements IBakedModel {
         this.bakedModel = bakedModel;
     }
 
-    public static List<BakedQuad> transform(List<BakedQuad> quads, float rot) {
-        return transform(quads, new Vector3f(0, 1, 0), rot);
-    }
-
-    public static List<BakedQuad> transform(List<BakedQuad> quads, Vector3f pos, float rotation) {
+    public static List<BakedQuad> transform(List<BakedQuad> quads, AxisAngle4f axisAngle) {
         List<BakedQuad> transformedQuads = new LinkedList<>();
 
         Matrix4f matrix = new Matrix4f();
         matrix.setIdentity();
-        matrix.setRotation(new AxisAngle4f(pos.x, pos.y, pos.z, rotation));
+        matrix.setRotation(axisAngle);
 
         MatrixVertexTransformer transformer = new MatrixVertexTransformer(matrix);
         for (BakedQuad bakedQuad : quads) {

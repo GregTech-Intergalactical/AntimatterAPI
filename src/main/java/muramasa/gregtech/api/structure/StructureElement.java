@@ -2,9 +2,9 @@ package muramasa.gregtech.api.structure;
 
 import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CasingType;
 import muramasa.gregtech.api.enums.CoilType;
-import muramasa.gregtech.api.machines.MachineList;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
@@ -19,11 +19,11 @@ public class StructureElement {
     private static HashMap<String, StructureElement> elementLookup = new HashMap<>();
 
     /** Component Elements **/
-    public static StructureElement EBF = new StructureElement(MachineList.BLAST_FURNACE);
-    public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", CasingType.HEAT_PROOF, MachineList.HATCH_ITEM_INPUT, MachineList.HATCH_ITEM_OUTPUT);
+    public static StructureElement EBF = new StructureElement(Machines.BLAST_FURNACE);
+    public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", CasingType.HEAT_PROOF, Machines.HATCH_ITEM_INPUT, Machines.HATCH_ITEM_OUTPUT);
     public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", CoilType.values());
 
-    public static StructureElement FR_MACHINE = new StructureElement(MachineList.FUSION_REACTOR);
+    public static StructureElement FR_MACHINE = new StructureElement(Machines.FUSION_REACTOR);
     public static StructureElement FUSION_CASING = new StructureElement(CasingType.FUSION3);
     public static StructureElement FUSION_COIL = new StructureElement(CoilType.FUSION);
 

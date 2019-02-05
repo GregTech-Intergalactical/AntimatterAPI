@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.util;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.utils.Ref;
@@ -32,7 +33,7 @@ public class ToolHelper {
     }
 
     public static Material getPrimaryMaterial(ItemStack stack) {
-        return Material.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MAT));
+        return Materials.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MAT));
     }
 
     public static void setPrimaryMaterial(ItemStack stack, String name) {
@@ -40,7 +41,7 @@ public class ToolHelper {
     }
 
     public static Material getSecondaryMaterial(ItemStack stack) {
-        return Material.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MAT));
+        return Materials.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MAT));
     }
 
     public static void setSecondaryMaterial(ItemStack stack, String name) {

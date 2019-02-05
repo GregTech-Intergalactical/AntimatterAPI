@@ -1,5 +1,6 @@
 package muramasa.gregtech.common.blocks;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.properties.ITechProperties;
@@ -21,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -106,10 +108,19 @@ public class BlockOre extends Block {
     }
 
     @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityOre) {
+            return new ItemStack(this, 1, ((TileEntityOre) tile).getMaterialId());
+        }
+        return new ItemStack(this, 1, Materials.Aluminium.getId());
+    }
+
+    @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityOre) {
-            drops.add(Material.get(((TileEntityOre) tile).getMaterialId()).getChunk(1));
+            drops.add(Materials.get(((TileEntityOre) tile).getMaterialId()).getChunk(1));
         }
     }
 

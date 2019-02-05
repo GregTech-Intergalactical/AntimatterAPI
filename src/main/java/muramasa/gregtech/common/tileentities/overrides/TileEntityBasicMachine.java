@@ -3,7 +3,7 @@ package muramasa.gregtech.common.tileentities.overrides;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.enums.MachineState;
+import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;

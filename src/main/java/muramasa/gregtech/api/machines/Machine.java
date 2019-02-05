@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.machines;
 
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.MachineFlag;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
@@ -23,24 +24,24 @@ public class Machine implements IStringSerializable {
     private static int lastInternalId;
 
     /** Basic Members **/
-    private int internalId;
-    private Block block;
-    private Class tileClass;
-    private String name, displayName;
-    private ArrayList<Tier> tiers;
-//    private ArrayList<String> stateTextures;
-    private int machineMask;
+    protected int internalId;
+    protected Block block;
+    protected Class tileClass;
+    protected String name, displayName;
+    protected ArrayList<Tier> tiers;
+    protected int machineMask;
 
     /** Recipe Members **/
-    private RecipeMap recipeMap;
+    protected RecipeMap recipeMap;
 
     /** GUI Members **/
-    private SlotData[] slots;
-    private int guiId, inputCount, outputCount;
-    private boolean isGuiTierSensitive;
+    protected Object modInstance;
+    protected int guiId;
+    protected SlotData[] slots;
+    protected int inputCount, outputCount;
 
     /** Multi Members **/
-    private StructurePattern structurePattern;
+    protected StructurePattern structurePattern;
 
     //TODO add valid covers
 
@@ -49,12 +50,10 @@ public class Machine implements IStringSerializable {
         this.name = name;
         this.block = block;
         this.tileClass = tileClass;
-        tiers = new ArrayList<>();
-//        stateTextures = new ArrayList<>();
-        MachineList.machineTypeLookup.put(name, this);
+        Machines.machineTypeLookup.put(name, this);
     }
 
-    public int getInternalId() {
+    public int getId() {
         return internalId;
     }
 
@@ -82,11 +81,11 @@ public class Machine implements IStringSerializable {
     }
 
     public ResourceLocation getGUITexture(String tier) {
-        if (isGuiTierSensitive) {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + tier + ".png");
-        } else {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + ".png");
-        }
+        return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + ".png");
+    }
+
+    public ResourceLocation getBaseTexture(String tier) {
+        return new ResourceLocation(Ref.MODID, "blocks/machines/base/" + tier);
     }
 
     public ResourceLocation getOverlayTexture(int type) {
@@ -101,11 +100,6 @@ public class Machine implements IStringSerializable {
 
     public ModelResourceLocation getOverlayModel() {
         return new ModelResourceLocation(Ref.MODID + ":machine_part/overlays/" + name);
-    }
-
-    //TODO target type specific recipe find
-    public Recipe findRecipe(ItemStack[] inputs, FluidStack... fluidInputs) {
-        return RecipeMap.findRecipeItem(name, inputs);
     }
 
     public Machine addFlags(MachineFlag... flags) {
@@ -137,9 +131,9 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine addGUI(int id, boolean isTierSensitive) {
+    public Machine addGUI(Object instance, int id) {
+        modInstance = instance;
         guiId = id;
-        isGuiTierSensitive = isTierSensitive;
         addFlags(MachineFlag.GUI);
         return this;
     }
@@ -160,25 +154,19 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine setGuiTierSensitive() {
-        isGuiTierSensitive = true;
-        return this;
-    }
-
     public Machine addRecipeMap() {
         recipeMap = new RecipeMap(this);
         return this;
+    }
+
+    public Recipe findRecipe(ItemStack[] inputs, FluidStack... fluidInputs) {
+        return RecipeMap.findRecipeItem(recipeMap, inputs);
     }
 
     public Machine addPattern(StructurePattern pattern) {
         structurePattern = pattern;
         return this;
     }
-
-//    public Machine addStateTextures(String... textures) {
-//        stateTextures.addAll(Arrays.asList(textures));
-//        return this;
-//    }
 
     public boolean hasFlag(MachineFlag flag) {
         return (machineMask & flag.getBit()) != 0;
@@ -225,10 +213,7 @@ public class Machine implements IStringSerializable {
         return structurePattern;
     }
 
-//    public String[] getStateTextures() {
-//        return stateTextures.toArray(new String[0]);
-//    }
-
+    /** Static Methods **/
     public static int getLastInternalId() {
         return lastInternalId;
     }

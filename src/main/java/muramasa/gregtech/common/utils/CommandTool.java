@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.utils;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.items.MetaTool;
-import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.ToolHelper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -38,7 +38,7 @@ public class CommandTool extends CommandBase {
                 } catch (NumberFormatException e) {
                     if (args.length == 2) {
                         ToolHelper.validateTag(stack);
-                        ToolHelper.setup(stack, Material.get(args[0]), Material.get(args[1]));
+                        ToolHelper.setup(stack, Materials.get(args[0]), Materials.get(args[1]));
                     }
                 }
             }

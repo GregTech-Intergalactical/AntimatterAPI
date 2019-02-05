@@ -15,7 +15,7 @@ public class BlockMultiMachine extends BlockMachine {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, OVERLAY, TINT).build();
+        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE, TIER, OVERLAY, TINT, TEXTURE).build();
     }
 
     @Override

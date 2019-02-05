@@ -1,24 +1,20 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.enums.MachineFlag;
-import muramasa.gregtech.api.machines.Machine;
-import muramasa.gregtech.api.machines.MachineList;
-import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.overrides.ItemOverrideMachine;
-import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,24 +22,16 @@ import java.util.List;
 
 public class BakedModelMachine extends BakedModelBase {
 
-    private static TextureAtlasSprite[] baseSprites;
-
     private static ItemOverrideMachine itemOverride;
 
-    private static float[] facingToRadians = new float[] {
-        4.7124f, 1.5708f, 0f, 3.1416f, 1.5708f, 4.7124f
+    private static AxisAngle4f[] facingToAxisAngle = new AxisAngle4f[] {
+        new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f),
+        new AxisAngle4f(new Vector3f(1, 0, 0), 1.5708f),
+        new AxisAngle4f(new Vector3f(0, 1, 0), 0f),
+        new AxisAngle4f(new Vector3f(0, 1, 0), 3.1416f),
+        new AxisAngle4f(new Vector3f(0, 1, 0), 1.5708f),
+        new AxisAngle4f(new Vector3f(0, 1, 0), 4.7124f)
     };
-
-    static {
-        //TODO better handling for this...
-        baseSprites = new TextureAtlasSprite[Machine.getLastInternalId()];
-        for (int i = 0; i < Tier.getBasic().length; i++) {
-            baseSprites[i] = RenderHelper.getSprite(Tier.get(i).getBaseTexture());
-        }
-        for (Machine type : MachineFlag.MULTI.getTypes()) {
-            baseSprites[type.getInternalId()] = RenderHelper.getSprite(new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + type.getName()));
-        }
-    }
 
     private IBakedModel bakedBase;
     private IBakedModel[] bakedOverlays, bakedCovers;
@@ -72,31 +60,19 @@ public class BakedModelMachine extends BakedModelBase {
         int overlay = exState.getValue(ITechProperties.OVERLAY);
         int facing = exState.getValue(ITechProperties.FACING);
 
-        //Add base quads
-        TextureAtlasSprite sprite;
-        //TODO improve
-        if (hasUnlistedProperty(exState, ITechProperties.TEXTURE)) {
-            sprite = baseSprites[exState.getValue(ITechProperties.TEXTURE)];
-        } else {
-            if (tier < 7) {
-                sprite = baseSprites[tier];
-            } else {
-                sprite = baseSprites[type];
-            }
-        }
-        if (sprite == null) sprite = baseSprites[2];
         //TODO optimize base model by adding tintindex 0 to faces that are visible only
-        quadList.addAll(retexture(bakedBase.getQuads(state, side, rand), sprite));
+        TextureAtlasSprite baseSprite = RenderHelper.getSprite(exState.getValue(ITechProperties.TEXTURE));
+        quadList.addAll(retexture(bakedBase.getQuads(state, side, rand), baseSprite));
 
         //Add overlay quads
-        List<BakedQuad> overlayQuads = retexture(bakedOverlays[type].getQuads(state, side, rand), 0, sprite);
+        List<BakedQuad> overlayQuads = retexture(bakedOverlays[type].getQuads(state, side, rand), 0, baseSprite);
         if (overlay > 0) {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(1)));
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(1)));
         } else {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(MachineList.ALLOY_SMELTER.getOverlayTexture(0)));
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(0)));
         }
         if (facing > 0) {
-            overlayQuads = transform(overlayQuads, facingToRadians[facing + 2]);
+            overlayQuads = transform(overlayQuads, facingToAxisAngle[facing + 2]);
         }
         quadList.addAll(overlayQuads);
 
@@ -105,11 +81,7 @@ public class BakedModelMachine extends BakedModelBase {
             CoverType[] covers = exState.getValue(ITechProperties.COVERS);
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i] == CoverType.NONE) continue;
-                if (i < 2) {
-                    quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), new Vector3f(1, 0, 0), facingToRadians[i]));
-                } else {
-                    quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), facingToRadians[5 - i]));
-                }
+                quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), facingToAxisAngle[i]));
             }
         }
 

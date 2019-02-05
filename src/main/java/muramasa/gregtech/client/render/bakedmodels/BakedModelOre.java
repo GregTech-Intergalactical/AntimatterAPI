@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
-import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.overrides.ItemOverrideOre;
@@ -45,7 +45,7 @@ public class BakedModelOre extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        int setId = Material.get(exState.getValue(ITechProperties.MATERIAL)).getSet().ordinal();
+        int setId = Materials.get(exState.getValue(ITechProperties.MATERIAL)).getSet().ordinal();
         quadList.addAll(bakedModels[setId].getQuads(state, side, rand));
 
         int stoneId = exState.getValue(ITechProperties.STONE);

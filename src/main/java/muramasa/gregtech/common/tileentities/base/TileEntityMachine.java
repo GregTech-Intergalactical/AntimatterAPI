@@ -1,13 +1,14 @@
 package muramasa.gregtech.common.tileentities.base;
 
-import muramasa.gregtech.api.enums.MachineState;
+import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Machine;
-import muramasa.gregtech.api.machines.MachineList;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 
 public class TileEntityMachine extends TileEntityTickable {
 
@@ -20,12 +21,12 @@ public class TileEntityMachine extends TileEntityTickable {
 
     public void init(String type, String tier, int facing) {
         if (type.isEmpty() || type.isEmpty()) {
-            type = MachineList.ALLOY_SMELTER.getName();
+            type = Machines.ALLOY_SMELTER.getName();
             tier = Tier.LV.getName();
         }
         typeFromNBT = type;
         tierFromNBT = tier;
-        typeId = getMachineType().getInternalId();
+        typeId = getMachineType().getId();
         tierId = Tier.get(tierFromNBT).getId();
         this.facing = facing;
     }
@@ -34,7 +35,7 @@ public class TileEntityMachine extends TileEntityTickable {
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
         if (!getClass().getName().equals(getMachineType().getTileClass().getName())) {
             try {
-                world.setTileEntity(pos, (TileEntity) MachineList.get(typeFromNBT).getTileClass().newInstance());
+                world.setTileEntity(pos, (TileEntity) Machines.get(typeFromNBT).getTileClass().newInstance());
                 TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileEntityMachine) {
                     ((TileEntityMachine) tile).init(typeFromNBT, tierFromNBT, facing);
@@ -54,7 +55,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     /** Getters **/
     public Machine getMachineType() {
-        return MachineList.get(typeFromNBT);
+        return Machines.get(typeFromNBT);
     }
 
     public String getType() {
@@ -89,8 +90,8 @@ public class TileEntityMachine extends TileEntityTickable {
         return tint;
     }
 
-    public int getTextureId() {
-        return 0;
+    public ResourceLocation getTexture() {
+        return getMachineType().getBaseTexture(getTier());
     }
 
     public int getCurProgress() {
@@ -121,7 +122,7 @@ public class TileEntityMachine extends TileEntityTickable {
         tint = newTint;
     }
 
-    public void setTextureId(int newId) {
+    public void setTexture(ResourceLocation loc) {
         //NOOP
     }
 
