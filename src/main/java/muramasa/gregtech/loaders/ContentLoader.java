@@ -2,6 +2,7 @@ package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.api.items.MetaItem;
 import muramasa.gregtech.api.items.MetaTool;
+import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockMachines;
 import muramasa.gregtech.common.items.ItemBlockOres;
@@ -31,6 +32,8 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ContentLoader {
 
     public static MetaItem metaItem = new MetaItem();
+    public static StandardItem standardItem = new StandardItem();
+
     public static MetaTool metaTool = new MetaTool();
 
     public static BlockOre blockOre = new BlockOre();
@@ -84,6 +87,7 @@ public class ContentLoader {
         event.getRegistry().register(new ItemBlock(blockCoil).setRegistryName(blockCoil.getRegistryName()));
 
         event.getRegistry().register(metaItem);
+        event.getRegistry().register(standardItem);
         event.getRegistry().register(metaTool);
     }
 }

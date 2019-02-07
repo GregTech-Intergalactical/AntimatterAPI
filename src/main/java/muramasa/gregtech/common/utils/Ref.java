@@ -13,7 +13,7 @@ public class Ref {
     public static Minecraft mc = Minecraft.getMinecraft();
     public static Random rng = new Random();
 
-    public static boolean showAllItemsInCreative = true;
+    public static boolean showAllItems = true;
 
     //Mod Data
     public static final String MODID = "gregtech";
@@ -29,6 +29,9 @@ public class Ref {
     public static final int MACHINE_ID = 0;
     public static final int MULTI_MACHINE_ID = 1;
     public static final int HATCH_ID = 2;
+
+    //Config Values //TODO maybe move?
+    public static final boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
 
     //NBT Tags & Keys
     public static final String TAG_MACHINE_STACK_DATA = "machinestack";

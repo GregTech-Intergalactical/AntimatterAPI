@@ -10,6 +10,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -39,8 +40,8 @@ public class ItemBlockMachines extends ItemBlock {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
             NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-            tooltip.add(data.getString(Ref.KEY_MACHINE_STACK_TYPE));
-            tooltip.add(data.getString(Ref.KEY_MACHINE_STACK_TIER));
+            tooltip.add("Voltage IN: " + TextFormatting.GREEN + Tier.get(data.getString(Ref.KEY_MACHINE_STACK_TIER)).getVoltage() + " (" + data.getString(Ref.KEY_MACHINE_STACK_TIER).toUpperCase() + ")");
+            tooltip.add("Capacity: " + TextFormatting.BLUE + (Tier.get(data.getString(Ref.KEY_MACHINE_STACK_TIER)).getVoltage() * 64));
         }
     }
 }

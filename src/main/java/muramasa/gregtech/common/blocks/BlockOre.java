@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.ItemFlag;
+import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.api.util.Utils;
@@ -42,7 +42,7 @@ public class BlockOre extends Block {
         setRegistryName("block_ore");
         setCreativeTab(Ref.TAB_ORES);
 
-        generatedOres = ItemFlag.CRUSHED.getMats();
+        generatedOres = GenerationFlag.CRUSHED.getMats();
     }
 
     @Override

@@ -2,15 +2,15 @@ package muramasa.gregtech.api.data;
 
 import muramasa.gregtech.api.materials.Material;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static muramasa.gregtech.api.enums.Element.*;
-import static muramasa.gregtech.api.enums.ItemFlag.*;
+import static muramasa.gregtech.api.enums.GenerationFlag.*;
 import static muramasa.gregtech.api.materials.MaterialSet.*;
 
 public class Materials {
 
-    public static HashMap<String, Material> generatedMap = new HashMap<>();
+    public static LinkedHashMap<String, Material> generatedMap = new LinkedHashMap<>();
     public static Material[] generated = new Material[1000]; //TODO remove Material IDs
 
     public static Material Aluminium = new Material(0, "Aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700).addOre().addTools(10.0F, 128, 2).add(RING, FOIL, SGEAR, GEAR, FRAME);
@@ -296,8 +296,6 @@ public class Materials {
     public static Material AntimonyTrioxide = new Material(618, "Antimony Trioxide", 0xe6e6f0, DULL).asDust().add(Antimony, 2, Oxygen, 3);
     public static Material CupricOxide = new Material(619, "Cupric Oxide", 0x0f0f0f, DULL).asDust().add(Copper, 1, Oxygen, 1);
     public static Material Ferrosilite = new Material(620, "Ferrosilite", 0x97632a, DULL).asDust().add(Iron, 1, Silicon, 1, Oxygen, 3);
-    public static Material Redstone = new Material(810, "Redstone", 0xc80000, ROUGH).asDust().addOre().add(Silicon, 1, Pyrite, 5, Materials.Ruby, 1, Mercury, 3);
-    public static Material Basalt = new Material(844, "Basalt", 0x1e1414, ROUGH).asDust().add(Materials.Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
 
     /** Gems **/
     public static Material CertusQuartz = new Material(516, "Certus Quartz", 0xd2d2e6, QUARTZ).asGemBasic(false).addOre().addTools(5.0F, 32, 1).add(PLATE);
@@ -395,6 +393,10 @@ public class Materials {
     public static Material PolyvinylChloride = new Material(649, "Polyvinyl Chloride", 0xd7e6e6, NONE).asSolid(295).add(PLATE, FOIL).addTools(3.0F, 32, 1).add(Carbon, 2, Hydrogen, 3, Chlorine, 1);
     public static Material GalliumArsenide = new Material(980, "Gallium Arsenide", 0xa0a0a0, DULL).asSolid(295, 1200).add(Arsenic, 1, Gallium, 1);
     public static Material EpoxidFiberReinforced = new Material(610, "Fiber-Reinforced Epoxy Resin", 0xa07010, DULL).asSolid(400).addTools(3.0F, 64, 1).add(Epoxid, 1);
+
+    /** **/
+    public static Material Redstone = new Material(810, "Redstone", 0xc80000, ROUGH).asDust().addOre().add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
+    public static Material Basalt = new Material(844, "Basalt", 0x1e1414, ROUGH).asDust().add(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
 
     public static Material get(int id) {
         return generated[id];

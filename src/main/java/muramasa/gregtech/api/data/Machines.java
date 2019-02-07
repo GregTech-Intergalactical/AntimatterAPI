@@ -38,7 +38,7 @@ public class Machines {
     public static Machine FLUID_CANNER = new BasicMachine("fluid_canner", ITEM, FLUID).addSlots(COMPRESSOR);
     public static Machine DISASSEMBLER = new BasicMachine("disassembler", ITEM).addSlots(ALLOY_SMELTER); //TODO
     public static Machine MASS_FABRICATOR = new BasicMachine("mass_fabricator", ITEM, FLUID).addSlots(COMPRESSOR);
-    public static Machine AMPLI_FABRICATOR = new BasicMachine("ampli_fabricator", ITEM, FLUID).addSlots(COMPRESSOR);
+    public static Machine AMP_FABRICATOR = new BasicMachine("amp_fabricator", ITEM, FLUID).addSlots(COMPRESSOR);
     public static Machine REPLICATOR = new BasicMachine("replicator", ITEM, FLUID).addSlots(COMPRESSOR);
     public static Machine FERMENTER = new BasicMachine("fermenter", ITEM, FLUID).addSlots(COMPRESSOR);
     public static Machine FLUID_EXTRACTOR = new BasicMachine("fluid_extractor", ITEM, FLUID).addSlots(COMPRESSOR);

@@ -3,7 +3,7 @@ package muramasa.gregtech;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.ItemFlag;
+import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.RecipeAdder;
 import muramasa.gregtech.common.events.EventHandler;
@@ -60,7 +60,7 @@ public class GregTech {
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
 //        new MaterialRecipeLoader().run();
-        for (Material material : ItemFlag.CRUSHED.getMats()) {
+        for (Material material : GenerationFlag.CRUSHED.getMats()) {
             RecipeAdder.addPulverizerRecipe(material.getChunk(1), material.getCrushed(2), 40, 1);
             RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);
         }
