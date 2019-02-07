@@ -40,14 +40,14 @@ public class MaterialRecipeLoader implements Runnable {
 //            ItemStack aDataOrb = ItemList.Tool_DataOrb.get(1);
 //            Behaviour_DataOrb.setDataTitle(aDataOrb, "Elemental-Scan");
 //            Behaviour_DataOrb.setDataName(aDataOrb, mat.mElement.name());
-//            ItemStack aRepOutput = ((mat.hasFlag(FLUID) || mat.hasFlag(GAS)) && !mat.hasFlag(DUST)) ? mat.getCell(1) : mat.getDust(1);
+//            ItemStack aRepOutput = ((mat.hasFlag(LIQUID) || mat.hasFlag(GAS)) && !mat.hasFlag(DUST)) ? mat.getCell(1) : mat.getDust(1);
 //            Fluid aFluid = mat.mFluid != null ? mat.mFluid : mat.mGas;
 //            int aMass = mat.getMass();
 //            GT_Recipe.GT_Recipe_Map.sScannerFakeRecipes.addFakeRecipe(false, new ItemStack[]{aRepOutput}, new ItemStack[]{aDataOrb}, ItemList.Tool_DataOrb.get(1), null, null, aMass * 8192, 32, 0);
 //            GT_Recipe.GT_Recipe_Map.sReplicatorFakeRecipes.addFakeRecipe(false, null, aFluid == null ? new ItemStack[]{aRepOutput} : null, new ItemStack[]{aDataOrb}, new FluidStack[]{Materials.UUMatter.getFluid(aMass)}, aFluid == null ? null : new FluidStack[]{new FluidStack(aFluid, 144)}, aMass * 512, 32, 0);
 //        }
 
-        for (Integer i : FLUID.getIds()) {
+        for (Integer i : LIQUID.getIds()) {
             mat = Materials.get(i);
             //TODO
         }
@@ -261,12 +261,12 @@ public class MaterialRecipeLoader implements Runnable {
             int aInputCellCount = 0;
 
             ArrayList<ItemStack> aOutputs = new ArrayList<>();
-            FluidStack aFirstFluid = null; //The first FLUID MatStack (FLUID & !DUST tag combo) uses the Electrolyzers fluid input tack. The preceding are cells.
+            FluidStack aFirstFluid = null; //The first LIQUID MatStack (LIQUID & !DUST tag combo) uses the Electrolyzers fluid input tack. The preceding are cells.
 
             Material matProcess;
             for (MaterialStack matStack : mat.getProcessInto()) {
                  matProcess = matStack.get();
-                if ((matProcess.hasFlag(FLUID) || matProcess.hasFlag(GAS)) && !matProcess.hasFlag(DUST)) {
+                if ((matProcess.hasFlag(LIQUID) || matProcess.hasFlag(GAS)) && !matProcess.hasFlag(DUST)) {
                     if (aFirstFluid == null) {
                         if (matProcess.mFluid != null) { //If a Material has mFluid & mGas, Prioritise mFluid.
                             aFirstFluid = matProcess.getFluid(matStack.size * 1000);
@@ -284,7 +284,7 @@ public class MaterialRecipeLoader implements Runnable {
             }
             aInputCount = Math.min(aInputCount, 64); //This should not happen. This means mProcess total is over 64 and the recipe should be adjusted
             if (aOutputs.size() > 0) {
-                ItemStack aInput = (mat.hasFlag(FLUID) || mat.hasFlag(GAS)) && !mat.hasFlag(DUST) ? mat.getCell(aInputCount) : mat.getDust(aInputCount), aInputCell = aInputCellCount > 0 ? ItemList.Cell_Empty.get(aInputCellCount) : null;
+                ItemStack aInput = (mat.hasFlag(LIQUID) || mat.hasFlag(GAS)) && !mat.hasFlag(DUST) ? mat.getCell(aInputCount) : mat.getDust(aInputCount), aInputCell = aInputCellCount > 0 ? ItemList.Cell_Empty.get(aInputCellCount) : null;
                 if (mat.hasFlag(ELEC)) {
                     RecipeAdder.addElectrolyzerRecipe(aInput, aInputCell, null, aFirstFluid, aOutputs.size() < 1 ? null : aOutputs.get(0), aOutputs.size() < 2 ? null : aOutputs.get(1), aOutputs.size() < 3 ? null : aOutputs.get(2), aOutputs.size() < 4 ? null : aOutputs.get(3), aOutputs.size() < 5 ? null : aOutputs.get(4), aOutputs.size() < 6 ? null : aOutputs.get(5), null, Math.max(1, Math.abs(mat.getProtons() * 2 * aInputCellCount)), Math.min(4, aOutputs.size()) * 30);
                 } else if (mat.hasFlag(CENT)) {

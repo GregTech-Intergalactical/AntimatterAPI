@@ -40,7 +40,7 @@ public class BlockOre extends Block {
         super(net.minecraft.block.material.Material.ROCK);
         setUnlocalizedName(Ref.MODID + ".block_ore");
         setRegistryName("block_ore");
-        setCreativeTab(Ref.TAB_ORES);
+        setCreativeTab(Ref.TAB_BLOCKS);
 
         generatedOres = GenerationFlag.CRUSHED.getMats();
     }

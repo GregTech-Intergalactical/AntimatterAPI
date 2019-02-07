@@ -8,6 +8,7 @@ import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MetaItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,6 +37,7 @@ public class Material {
     private boolean transparent;
 
     /** Fluid/Gas/Plasma Members **/
+    private Fluid liquid, gas, plasma;
     private int fuelPower;
 
     /** Tool Members **/
@@ -47,22 +49,6 @@ public class Material {
     private int smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<Integer> byProducts = new ArrayList<>();
-
-    public static void init() {
-//        for (Material material : generated) {
-//            if (material == Blaze) {
-//                material.handleMaterial = "blaze";
-//            } /*else if (aMaterial.contains(SubTag.MAGICAL) && aMaterial.contains(SubTag.CRYSTAL) && Loader.isModLoaded(MOD_ID_TC)) {
-//                    aMaterial.mHandleMaterial = Thaumium;
-//                }*/ else if (material.getMass() > Element.Tc.getMass() * 2) {
-//                material.handleMaterial = Tungstensteel.;
-//            } else if (material.getMass() > Element.Tc.getMass()) {
-//                material.handleMaterial = Steel;
-//            } else {
-//                material.handleMaterial = Wood;
-//            }
-//        }
-    }
 
     public Material(int id, String name, int rgb, MaterialSet set, Element element) {
         this(id, name, rgb, set);
@@ -122,7 +108,7 @@ public class Material {
     }
 
     public Material asFluid(int... fuelPower) {
-        add(FLUID);
+        add(LIQUID);
         if (fuelPower.length >= 1) this.fuelPower = fuelPower[0];
         return this;
     }
@@ -195,6 +181,18 @@ public class Material {
             byProducts.add(mat.getId());
         }
         return this;
+    }
+
+    public void setLiquid(Fluid fluid) {
+        liquid = fluid;
+    }
+
+    public void setGas(Fluid fluid) {
+        gas = fluid;
+    }
+
+    public void setPlasma(Fluid fluid) {
+        plasma = fluid;
     }
 
     /** Basic Getters**/
@@ -282,6 +280,18 @@ public class Material {
     }
 
     /** Fluid/Gas/Plasma Getters **/
+    public Fluid getLiquid() {
+        return liquid;
+    }
+
+    public Fluid getGas() {
+        return gas;
+    }
+
+    public Fluid getPlasma() {
+        return plasma;
+    }
+
     public int getFuelPower() {
         return fuelPower;
     }

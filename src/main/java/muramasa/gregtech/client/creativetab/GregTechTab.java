@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GregTechTab extends CreativeTabs {
 
     private final String tabName;
-    private final ItemStack tabStack;
+    private ItemStack tabStack;
 
     public GregTechTab(String label, ItemStack stack) {
         super(Ref.MODID + "." + label);
@@ -32,5 +32,9 @@ public class GregTechTab extends CreativeTabs {
     @Override
     public void displayAllRelevantItems(final NonNullList<ItemStack> items) {
         super.displayAllRelevantItems(items);
+    }
+
+    public void setTabStack(ItemStack stack) {
+        tabStack = stack;
     }
 }

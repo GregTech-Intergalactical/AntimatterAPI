@@ -26,9 +26,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber
 public class ContentLoader {
 
     public static MetaItem metaItem = new MetaItem();
@@ -46,6 +45,13 @@ public class ContentLoader {
 
     public static BlockCasing blockCasing = new BlockCasing();
     public static BlockCoil blockCoil = new BlockCoil();
+
+    static {
+//        Ref.TAB_MATERIALS.setTabStack(Materials.Titanium.getIngot(1));
+//        Ref.TAB_ITEMS.setTabStack(ItemList.Debug_Scanner.get(1));
+//        Ref.TAB_BLOCKS.setTabStack(new ItemStack(blockCasing, 1, CasingType.FUSION3.ordinal()));
+//        Ref.TAB_MACHINES.setTabStack(new MachineStack(Machines.ALLOY_SMELTER, Tier.EV).asItemStack());
+    }
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {

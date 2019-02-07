@@ -5,6 +5,7 @@ import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.materials.Material;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public enum GenerationFlag implements IMaterialFlag {
 
@@ -18,7 +19,7 @@ public enum GenerationFlag implements IMaterialFlag {
     BGEM(), //Add Basic Gem
     GEM(), //Add Gem quality variants
     //    CELL(), //Add Fluid Cells //TODO pointless with fluidStack flag?
-    FLUID(), //Add Standard Fluid
+    LIQUID(), //Add Standard Fluid
     GAS(), //Add Gas Fluid
     PLASMA(), //Add Plasma Fluid
     TOOLS(), //Add Tool Parts
@@ -45,16 +46,26 @@ public enum GenerationFlag implements IMaterialFlag {
         bit = 1 << ordinal();
     }
 
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ENGLISH);
+    }
+
+    @Override
     public void add(Material... mats) {
         for (Material material : mats) {
-            materialIds.add(material.getId());
+            if (!materialIds.contains(material.getId())) {
+                materialIds.add(material.getId());
+            }
         }
     }
 
+    @Override
     public long getBit() {
         return this.bit;
     }
 
+    @Override
     public Material[] getMats() {
         Material[] materials = new Material[materialIds.size()];
         int size = materials.length;
@@ -64,6 +75,7 @@ public enum GenerationFlag implements IMaterialFlag {
         return materials;
     }
 
+    @Override
     public ArrayList<Integer> getIds() {
         return materialIds;
     }

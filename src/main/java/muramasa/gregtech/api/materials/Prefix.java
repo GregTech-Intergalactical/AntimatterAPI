@@ -37,7 +37,7 @@ public enum Prefix {
     GEAR(true, GenerationFlag.GEAR.getBit()),
     GEAR_SMALL(true, GenerationFlag.SGEAR.getBit()),
     LENS(true, GenerationFlag.GEM.getBit()),
-    CELL(true, GenerationFlag.FLUID.getBit() | GenerationFlag.GAS.getBit()),
+    CELL(true, GenerationFlag.LIQUID.getBit() | GenerationFlag.GAS.getBit()),
     CELL_PLASMA(true, GenerationFlag.PLASMA.getBit());
 
     private String namePre, namePost;

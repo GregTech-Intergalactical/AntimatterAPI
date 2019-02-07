@@ -21,9 +21,10 @@ public class Ref {
     public static final String VERSION = "0.1";
 
     //Creative Tabs
-    public static final GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT)); //TODO move to Ref
-    public static final GregTechTab TAB_MACHINES = new GregTechTab("machines", new ItemStack(Blocks.FURNACE));
-    public static final GregTechTab TAB_ORES = new GregTechTab("ores", new ItemStack(Blocks.DIAMOND_ORE));
+    public static GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT));
+    public static GregTechTab TAB_ITEMS = new GregTechTab("items", new ItemStack(Items.BLAZE_ROD));
+    public static GregTechTab TAB_BLOCKS = new GregTechTab("blocks", new ItemStack(Blocks.IRON_BLOCK));
+    public static GregTechTab TAB_MACHINES = new GregTechTab("machines", new ItemStack(Blocks.FURNACE));
 
     //GUI IDs
     public static final int MACHINE_ID = 0;

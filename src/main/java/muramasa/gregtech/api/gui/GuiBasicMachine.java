@@ -1,6 +1,8 @@
 package muramasa.gregtech.api.gui;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.gui.container.ContainerMachine;
+import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import net.minecraft.client.gui.GuiButton;
@@ -37,7 +39,7 @@ public class GuiBasicMachine extends GuiMachine {
 
         drawTooltipInArea(tile.getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
 
-
+        drawTexturedModalRect(guiLeft, guiTop, RenderHelper.getSprite(Materials.Titanium.getLiquid()), 16, 16);
 //        if (fluidHandlerInput.getTankProperties()[0].getContents() != null) {
 //            FluidStack fluidStack = fluidHandlerInput.getTankProperties()[0].getContents();
 //

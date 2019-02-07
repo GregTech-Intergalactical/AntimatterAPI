@@ -7,11 +7,9 @@ import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.RecipeAdder;
 import muramasa.gregtech.common.events.EventHandler;
-import muramasa.gregtech.common.fluid.FluidBiomass;
 import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -32,11 +30,9 @@ public class GregTech {
     public static Logger logger;
 
     static {
-        Material.init();
-        Machines.finish();
+        Materials.init();
+        Machines.init();
     }
-
-    public Fluid biomass;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -46,9 +42,9 @@ public class GregTech {
         new EventHandler().init();
         ITechCapabilities.register();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
+        Materials.initFluids();
 
-        biomass = new FluidBiomass();
+        NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
     }
 
     @Mod.EventHandler
@@ -59,7 +55,7 @@ public class GregTech {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
-//        new MaterialRecipeLoader().run();
+        //TODO new MaterialRecipeLoader().run();
         for (Material material : GenerationFlag.CRUSHED.getMats()) {
             RecipeAdder.addPulverizerRecipe(material.getChunk(1), material.getCrushed(2), 40, 1);
             RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);

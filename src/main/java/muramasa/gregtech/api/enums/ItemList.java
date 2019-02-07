@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.enums;
 
-import muramasa.gregtech.api.items.MetaItem;
+import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.loaders.ContentLoader;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
@@ -68,7 +68,7 @@ public enum ItemList {
     }
 
     public boolean isItemEqual(ItemStack stack) {
-        return stack.getItem() instanceof MetaItem && stack.getMetadata() == ordinal();
+        return stack.getItem() instanceof StandardItem && stack.getMetadata() == ordinal();
     }
 
     public ItemStack get(int size) { //TODO implement 0 size = no recipe consume

@@ -2,10 +2,12 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.enums.ItemList;
 import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
@@ -35,14 +37,18 @@ public class StandardItem extends Item {
     public StandardItem() {
         setRegistryName("standard_item");
         setUnlocalizedName(Ref.MODID + ".standard_item");
-        setCreativeTab(Ref.TAB_MATERIALS);
+        setCreativeTab(Ref.TAB_ITEMS);
         setHasSubtypes(true);
     }
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        for (ItemList item : ItemList.values()) {
-            items.add(new ItemStack(this, 1, item.ordinal()));
+        if (tab instanceof GregTechTab) {
+            if (((GregTechTab) tab).getTabName().equals("items")) {
+                for (ItemList item : ItemList.values()) {
+                    items.add(new ItemStack(this, 1, item.ordinal()));
+                }
+            }
         }
     }
 
@@ -63,7 +69,7 @@ public class StandardItem extends Item {
                 tooltip.add(item.getTooltip());
             }
             if (ItemList.Debug_Scanner.isItemEqual(stack)) {
-                //NOOP
+                tooltip.add("Size: " + Machines.PULVERIZER.getRecipeMap().getRecipes().size());
             }
         }
     }

@@ -1,40 +1,36 @@
 package muramasa.gregtech.api.recipe;
 
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.Machine;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class RecipeMap {
 
-    private static HashMap<String, RecipeMap> allRecipeMaps = new HashMap<>();
-
-    private ArrayList<Recipe> recipes = new ArrayList<>();
-    private HashMap<String, ArrayList<Recipe>> recipeLookupStack = new HashMap<>();
-    private HashMap<String, ArrayList<Recipe>> recipeLookupFluidStack = new HashMap<>();
+    private LinkedHashMap<String, ArrayList<Recipe>> recipeLookup = new LinkedHashMap<>();
 
     public RecipeMap(Machine machineType) {
-        allRecipeMaps.put(machineType.getName(), this);
+        //TODO? need a type reference?
     }
 
     public Collection<Recipe> getRecipes() {
+        ArrayList<Recipe> recipes = new ArrayList<>();
+        for (ArrayList<Recipe> subList : recipeLookup.values()) {
+            for (Recipe recipe : subList) {
+                if (!recipes.contains(recipe)) {
+                    recipes.add(recipe);
+                }
+            }
+        }
         return recipes;
     }
 
     public static RecipeMap get(Machine type) {
-        return get(type.getName());
-    }
-
-    public static RecipeMap get(String name) {
-        return allRecipeMaps.get(name);
-    }
-
-    public static Collection<RecipeMap> getAll() {
-        return allRecipeMaps.values();
+        return Machines.get(type.getName()).getRecipeMap();
     }
 
     void add(Recipe recipe) {
@@ -42,53 +38,35 @@ public class RecipeMap {
             String inputString;
             for (int i = 0; i < recipe.getInputs().length; i++) {
                 inputString = Utils.getString(recipe.getInputs()[i]);
-                if (recipeLookupStack.containsKey(inputString)) {
-                    recipeLookupStack.get(inputString).add(recipe);
+                ArrayList<Recipe> existingList = recipeLookup.get(inputString);
+                if (existingList != null) {
+                    existingList.add(recipe);
                 } else {
                     ArrayList<Recipe> list = new ArrayList<>();
                     list.add(recipe);
-                    recipeLookupStack.put(inputString, list);
-                    recipes.add(recipe);
+                    recipeLookup.put(inputString, list);
                 }
             }
         } else if (recipe.getFluidInputs().length > 0){
-            String inputString = Utils.getString(recipe.getFluidInputs()[0]);
-            if (recipeLookupFluidStack.containsKey(inputString)) {
-                recipeLookupFluidStack.get(inputString).add(recipe);
-            } else {
-                ArrayList<Recipe> list = new ArrayList<>();
-                list.add(recipe);
-                recipeLookupFluidStack.put(inputString, list);
-                recipes.add(recipe);
+            for (int i = 0; i < recipe.getFluidInputs().length; i++) {
+                String inputString = Utils.getString(recipe.getFluidInputs()[0]);
+                ArrayList<Recipe> existingList = recipeLookup.get(inputString);
+                if (existingList != null) {
+                    existingList.add(recipe);
+                } else {
+                    ArrayList<Recipe> list = new ArrayList<>();
+                    list.add(recipe);
+                    recipeLookup.put(inputString, list);
+                }
             }
         }
     }
-
-//    public static Recipe findRecipeItem(String type, ItemStack[] inputs) {
-//        if (Utils.areStacksValid(inputs)) {
-//            RecipeMap map = allRecipeMaps.get(type);
-//            if (map == null) return null;
-//            ArrayList<Recipe> matches;
-//            for (int i = 0; i < inputs.length; i++) {
-//                matches = map.recipeLookupStack.get(Utils.getString(inputs[i]));
-//                if (matches != null) {
-//                    for (int j = 0; j < matches.size(); j++) {
-//                        if (inputs.length == matches.get(j).getInputs().length && Utils.doStacksMatch(matches.get(j), inputs)) {
-//                            return matches.get(j);
-//                        }
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//        return null;
-//    }
 
     //TODO fix assumption inputs is never empty
     public static Recipe findRecipeItem(RecipeMap map, ItemStack[] inputs) {
         if (Utils.areStacksValid(inputs)) {
             if (map == null) return null;
-            ArrayList<Recipe> matches = map.recipeLookupStack.get(Utils.getString(inputs[0]));
+            ArrayList<Recipe> matches = map.recipeLookup.get(Utils.getString(inputs[0]));
             if (matches == null) return null;
             for (int i = 0; i < matches.size(); i++) {
                 if (inputs.length == matches.get(i).getInputs().length && Utils.doStacksMatchAndSizeValid(matches.get(i).getInputs(), inputs)) {
@@ -99,22 +77,23 @@ public class RecipeMap {
         return null;
     }
 
-    //TODO needed? only two machines
-    public static Recipe findRecipeFluid(String type, FluidStack[] fluidInputs) {
-        if (Utils.areFluidsValid(fluidInputs)) {
-            String mapString = Utils.getString(fluidInputs[0]);
-            ArrayList<Recipe> recipeMatches = allRecipeMaps.get(type).recipeLookupFluidStack.get(mapString);
-            if (recipeMatches != null) {
-                if (recipeMatches.size() == 1) return recipeMatches.get(0);
-                for (int i = 0; i < recipeMatches.size(); i++) {
-                    if (Utils.doFluidsMatch(recipeMatches.get(i), fluidInputs)) {
-                        return recipeMatches.get(i);
-                    }
-                }
-            }
-        }
-        return null;
-    }
+//    //TODO needed? only two machines
+//    public static Recipe findRecipeFluid(String type, FluidStack[] fluidInputs) {
+//        //TODO is broken as findRecipeItem has been updated and this has not
+//        if (Utils.areFluidsValid(fluidInputs)) {
+//            String mapString = Utils.getString(fluidInputs[0]);
+//            ArrayList<Recipe> recipeMatches = allRecipeMaps.get(type).recipeLookup.get(mapString);
+//            if (recipeMatches != null) {
+//                if (recipeMatches.size() == 1) return recipeMatches.get(0);
+//                for (int i = 0; i < recipeMatches.size(); i++) {
+//                    if (Utils.doFluidsMatch(recipeMatches.get(i), fluidInputs)) {
+//                        return recipeMatches.get(i);
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
 //    public static Recipe findRecipeBoth(String type, ItemStack[] inputs, FluidStack[] fluidInputs) {
 //        if (Utils.areStacksValid(inputs) && Utils.areFluidsValid(fluidInputs)) {
