@@ -66,6 +66,7 @@ public class BakedModelMachine extends BakedModelBase {
 
         //Add overlay quads
         List<BakedQuad> overlayQuads = retexture(bakedOverlays[type].getQuads(state, side, rand), 0, baseSprite);
+        //TODO fix this
         if (overlay > 0) {
             overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(1)));
         } else {

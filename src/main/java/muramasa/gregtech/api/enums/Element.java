@@ -1,10 +1,12 @@
 package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.api.materials.Material;
+import net.minecraft.util.IStringSerializable;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-public enum Element {
+public enum Element implements IStringSerializable {
 
     H(1, 0, 0, -1, null, "Hydrogen", false),
     D(1, 1, 0, -1, "H", "Deuterium", true),
@@ -157,6 +159,15 @@ public enum Element {
         mDecayTo = aDecayTo;
         mName = aName;
         mIsIsotope = aIsIsotope;
+    }
+
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ENGLISH);
+    }
+
+    public String getDisplayName() {
+        return name();
     }
 
     public int getProtons() {

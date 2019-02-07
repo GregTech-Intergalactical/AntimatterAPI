@@ -6,7 +6,9 @@ import muramasa.gregtech.api.materials.Material;
 
 import java.util.ArrayList;
 
-public enum ItemFlag implements IMaterialFlag {
+public enum GenerationFlag implements IMaterialFlag {
+
+    //TODO rename to generation flag?
 
     DUST(), //Add Dusts
     CRUSHED(),
@@ -19,7 +21,7 @@ public enum ItemFlag implements IMaterialFlag {
     FLUID(), //Add Standard Fluid
     GAS(), //Add Gas Fluid
     PLASMA(), //Add Plasma Fluid
-    TOOL(), //Add Tool Parts
+    TOOLS(), //Add Tool Parts
     PLATE(), //Add Plates
     ROD(), //Add Rods
     RING(), //Add Rings
@@ -39,7 +41,7 @@ public enum ItemFlag implements IMaterialFlag {
     private long bit;
     private ArrayList<Integer> materialIds = new ArrayList<>();
 
-    ItemFlag() {
+    GenerationFlag() {
         bit = 1 << ordinal();
     }
 

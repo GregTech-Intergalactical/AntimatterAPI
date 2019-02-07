@@ -27,6 +27,10 @@ public class MachineStack {
     }
 
     public ItemStack asItemStack() {
+        if (type == null || tier == null)  {
+            System.out.println(type + " - " + tier);
+            return ItemStack.EMPTY;
+        }
         ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, 0);
         stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound data = new NBTTagCompound();

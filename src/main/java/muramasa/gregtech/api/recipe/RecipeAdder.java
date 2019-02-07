@@ -131,7 +131,7 @@ public class RecipeAdder {
     }
 
     public static void addAmplifabricatorRecipe(ItemStack input, ItemStack output1, FluidStack output2, int d, int p) {
-        addBasicRecipe(AMPLI_FABRICATOR, arr(input), arr(output1), arr(output2), d, p);
+        addBasicRecipe(AMP_FABRICATOR, arr(input), arr(output1), arr(output2), d, p);
     }
 
     public static void addReplicatorRecipe(ItemStack input1, FluidStack input2, FluidStack output, int d, int p) {

@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.materials;
 
-import muramasa.gregtech.api.enums.ItemFlag;
+import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.resources.I18n;
 
@@ -9,44 +9,44 @@ import java.util.Locale;
 public enum Prefix {
 
 //    ORE(true, 0), //TODO capitalize and add getJeiCategoryID
-    CHUNK(true, ItemFlag.CRUSHED.getBit()),
-    CRUSHED(false, ItemFlag.CRUSHED.getBit()),
-    CRUSHED_CENTRIFUGED(false, ItemFlag.CRUSHEDC.getBit()),
-    CRUSHED_PURIFIED(false, ItemFlag.CRUSHEDP.getBit()),
-    DUST(true, ItemFlag.DUST.getBit()),
-    DUST_SMALL(false, ItemFlag.DUST.getBit()),
-    DUST_TINY(false, ItemFlag.DUST.getBit()),
-    NUGGET(false, ItemFlag.INGOT.getBit()),
-    INGOT(true, ItemFlag.INGOT.getBit()),
-    INGOT_HOT(false, ItemFlag.HINGOT.getBit()),
-    PLATE(true, ItemFlag.PLATE.getBit()),
-    PLATE_DENSE(true, ItemFlag.DPLATE.getBit()),
-    GEM(true, ItemFlag.BGEM.getBit()),
-    GEM_CHIPPED(true, ItemFlag.GEM.getBit()),
-    GEM_FLAWED(true, ItemFlag.GEM.getBit()),
-    GEM_FLAWLESS(true, ItemFlag.GEM.getBit()),
-    GEM_EXQUISITE(true, ItemFlag.GEM.getBit()),
-    FOIL(true, ItemFlag.FOIL.getBit()),
-    ROD(true, ItemFlag.ROD.getBit()),
-    BOLT(true, ItemFlag.BOLT.getBit()),
-    SCREW(true, ItemFlag.SCREW.getBit()),
-    RING(true, ItemFlag.RING.getBit()),
-    SPRING(true, ItemFlag.SPRING.getBit()),
-    WIRE_FINE(true, ItemFlag.WIREF.getBit()),
-    ROTOR(true, ItemFlag.ROTOR.getBit()),
-    GEAR(true, ItemFlag.GEAR.getBit()),
-    GEAR_SMALL(true, ItemFlag.SGEAR.getBit()),
-    LENS(true, ItemFlag.GEM.getBit()),
-    CELL(true, ItemFlag.FLUID.getBit() | ItemFlag.GAS.getBit()),
-    CELL_PLASMA(true, ItemFlag.PLASMA.getBit());
+    CHUNK(true, GenerationFlag.CRUSHED.getBit()),
+    CRUSHED(false, GenerationFlag.CRUSHED.getBit()),
+    CRUSHED_CENTRIFUGED(false, GenerationFlag.CRUSHEDC.getBit()),
+    CRUSHED_PURIFIED(false, GenerationFlag.CRUSHEDP.getBit()),
+    DUST(true, GenerationFlag.DUST.getBit()),
+    DUST_SMALL(false, GenerationFlag.DUST.getBit()),
+    DUST_TINY(false, GenerationFlag.DUST.getBit()),
+    NUGGET(false, GenerationFlag.INGOT.getBit()),
+    INGOT(true, GenerationFlag.INGOT.getBit()),
+    INGOT_HOT(false, GenerationFlag.HINGOT.getBit()),
+    PLATE(true, GenerationFlag.PLATE.getBit()),
+    PLATE_DENSE(true, GenerationFlag.DPLATE.getBit()),
+    GEM(true, GenerationFlag.BGEM.getBit()),
+    GEM_CHIPPED(true, GenerationFlag.GEM.getBit()),
+    GEM_FLAWED(true, GenerationFlag.GEM.getBit()),
+    GEM_FLAWLESS(true, GenerationFlag.GEM.getBit()),
+    GEM_EXQUISITE(true, GenerationFlag.GEM.getBit()),
+    FOIL(true, GenerationFlag.FOIL.getBit()),
+    ROD(true, GenerationFlag.ROD.getBit()),
+    BOLT(true, GenerationFlag.BOLT.getBit()),
+    SCREW(true, GenerationFlag.SCREW.getBit()),
+    RING(true, GenerationFlag.RING.getBit()),
+    SPRING(true, GenerationFlag.SPRING.getBit()),
+    WIRE_FINE(true, GenerationFlag.WIREF.getBit()),
+    ROTOR(true, GenerationFlag.ROTOR.getBit()),
+    GEAR(true, GenerationFlag.GEAR.getBit()),
+    GEAR_SMALL(true, GenerationFlag.SGEAR.getBit()),
+    LENS(true, GenerationFlag.GEM.getBit()),
+    CELL(true, GenerationFlag.FLUID.getBit() | GenerationFlag.GAS.getBit()),
+    CELL_PLASMA(true, GenerationFlag.PLASMA.getBit());
 
     private String namePre, namePost;
 
-    private boolean hasLocName, showInCreative;
+    private boolean hasLocName, visible;
     private long generationBits;
 
-    Prefix(boolean showInCreative, long generationBits) {
-        this.showInCreative = showInCreative;
+    Prefix(boolean visible, long generationBits) {
+        this.visible = visible;
         this.generationBits = generationBits;
     }
 
@@ -69,11 +69,16 @@ public enum Prefix {
         return namePre + material.getDisplayName() + namePost;
     }
 
-    public boolean showInCreative() {
-        return showInCreative || Ref.showAllItemsInCreative;
+    public boolean isVisible() {
+        return visible || Ref.showAllItems;
     }
 
     public boolean allowGeneration(Material material) {
         return (material.getItemMask() & generationBits) != 0;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

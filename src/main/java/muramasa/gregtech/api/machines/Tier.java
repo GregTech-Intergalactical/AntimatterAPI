@@ -53,6 +53,10 @@ public class Tier implements IStringSerializable {
         return name;
     }
 
+    public long getVoltage() {
+        return voltage;
+    }
+
     public TextFormatting getRarityColor() {
         return rarityColor;
     }

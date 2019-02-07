@@ -30,4 +30,9 @@ public enum MaterialSet implements IStringSerializable {
     public String getName() {
         return name().toLowerCase(Locale.ENGLISH);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

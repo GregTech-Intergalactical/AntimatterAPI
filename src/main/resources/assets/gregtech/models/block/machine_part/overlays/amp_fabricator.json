@@ -1,6 +1,6 @@
 {
   "textures": {
-      "1": "gregtech:blocks/machines/overlays/ampli_fabricator"
+      "1": "gregtech:blocks/machines/overlays/amp_fabricator"
   },
   "elements": [
     {

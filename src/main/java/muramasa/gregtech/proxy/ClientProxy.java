@@ -56,7 +56,9 @@ public class ClientProxy implements IProxy {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         ContentLoader.metaItem.initModel();
+        ContentLoader.standardItem.initModel();
         ContentLoader.metaTool.initModel();
+
         ContentLoader.blockMachines.initModel();
         ContentLoader.blockMultiMachine.initModel();
         ContentLoader.blockHatch.initModel();

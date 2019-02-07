@@ -5,18 +5,18 @@ import net.minecraft.item.ItemStack;
 public class GTItemStack {
 
     private ItemStack stack;
-    private boolean showInCreative;
+    private boolean visible;
 
-    public GTItemStack(ItemStack stack, boolean showInCreative) {
+    public GTItemStack(ItemStack stack, boolean visible) {
         this.stack = stack;
-        this.showInCreative = showInCreative;
+        this.visible = visible;
     }
 
-    public ItemStack getStack() {
+    public ItemStack get() {
         return stack;
     }
 
-    public boolean doesShowInCreative() {
-        return showInCreative;
+    public boolean isVisible() {
+        return visible;
     }
 }

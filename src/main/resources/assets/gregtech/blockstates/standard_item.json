@@ -4,7 +4,7 @@
     "model": "gregtech:item/generated"
   },
   "variants": {
-    "standard": {
+    "id": {
       "0": {
         "textures": {"layer0": "gregtech:items/debug_scanner"}
       },

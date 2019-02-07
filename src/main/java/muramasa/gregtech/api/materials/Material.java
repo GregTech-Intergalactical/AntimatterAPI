@@ -2,7 +2,7 @@ package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
-import muramasa.gregtech.api.enums.ItemFlag;
+import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.enums.RecipeFlag;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MetaItem;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static muramasa.gregtech.api.enums.Element.Tc;
-import static muramasa.gregtech.api.enums.ItemFlag.*;
+import static muramasa.gregtech.api.enums.GenerationFlag.*;
 import static muramasa.gregtech.api.enums.RecipeFlag.METAL;
 
 public class Material {
@@ -44,8 +44,9 @@ public class Material {
     private String handleMaterial;
 
     /** Processing Members **/
+    private int smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
-    private ArrayList<Material> byProducts = new ArrayList<>();
+    private ArrayList<Integer> byProducts = new ArrayList<>();
 
     public static void init() {
 //        for (Material material : generated) {
@@ -69,7 +70,7 @@ public class Material {
     }
 
     public Material(int id, String displayName, int rgb, MaterialSet set) {
-        this.id = id;
+        this.id = smeltInto = directSmeltInto = arcSmeltInto = macerateInto = id;
         this.displayName = displayName;
         this.name = displayName.toLowerCase(Locale.ENGLISH).replaceAll("-", "_").replaceAll(" ", "_");
         this.rgb = rgb;
@@ -145,11 +146,11 @@ public class Material {
 
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
         if (hasFlag(INGOT)) {
-            add(TOOL, PLATE, ROD, BOLT);
+            add(TOOLS, PLATE, ROD, BOLT);
         } else if (hasFlag(BGEM)) {
-            add(TOOL, ROD);
+            add(TOOLS, ROD);
         } /*else if (this == Material.Stone || this == Material.Wood) {
-            add(TOOL);
+            add(TOOLS);
         }*/
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
@@ -159,7 +160,7 @@ public class Material {
 
     public boolean hasFlag(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 return (itemMask & flag.getBit()) != 0;
             } else if (flag instanceof RecipeFlag) {
                 return (recipeMask & flag.getBit()) != 0;
@@ -170,7 +171,7 @@ public class Material {
 
     public Material add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
                 recipeMask |= flag.getBit();
@@ -183,7 +184,7 @@ public class Material {
     public Material add(Object... objects) {
         if (objects.length % 2 == 0) {
             for (int i = 0; i < objects.length; i += 2) {
-                processInto.add(new MaterialStack((Material) objects[i], (int) objects[i + 1]));
+                processInto.add(new MaterialStack(((Material) objects[i]).getId(), (int) objects[i + 1]));
             }
         }
         return this;
@@ -191,21 +192,9 @@ public class Material {
 
     public Material add(Material... mats) {
         for (Material mat : mats) {
-            byProducts.add(mat);
+            byProducts.add(mat.getId());
         }
         return this;
-    }
-
-    public static Material[] getMatsFor(IMaterialFlag... aFlags) {
-        ArrayList<Material> aList = new ArrayList<>();
-        for (IMaterialFlag aFlag : aFlags) {
-            for (Material aMat : aFlag.getMats()) {
-                if (!aList.contains(aMat)) {
-                    aList.add(aMat);
-                }
-            }
-        }
-        return aList.toArray(new Material[0]);
     }
 
     /** Basic Getters**/
@@ -215,6 +204,11 @@ public class Material {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     public String getDisplayName() {
@@ -244,8 +238,8 @@ public class Material {
         if (mass == 0) {
             if (element != null) return element.getMass();
             if (processInto.size() <= 0) return Tc.getMass();
-            for (MaterialStack tMaterial : processInto) {
-                mass += tMaterial.amount * tMaterial.material.getMass();
+            for (MaterialStack stack : processInto) {
+                mass += stack.size * stack.get().getMass();
             }
         }
         return mass;
@@ -270,7 +264,7 @@ public class Material {
     }
 
     /** Gem Getters **/
-    public boolean transparent() {
+    public boolean isTransparent() {
         return transparent;
     }
 
@@ -287,11 +281,62 @@ public class Material {
         return toolQuality;
     }
 
-    /** Processing Getters **/
+    /** Fluid/Gas/Plasma Getters **/
+    public int getFuelPower() {
+        return fuelPower;
+    }
+
+    /** Processing Helpers **/
+    public Material getSmeltInto() {
+        return Materials.get(smeltInto);
+    }
+
+    public Material getDirectSmeltInto() {
+        return Materials.get(directSmeltInto);
+    }
+
+    public Material getArcSmeltInto() {
+        return Materials.get(arcSmeltInto);
+    }
+
+    public Material getMacerateInto() {
+        return Materials.get(macerateInto);
+    }
+
+    public boolean hasSmeltInto() {
+        return id != smeltInto;
+    }
+
+    public boolean hasDirectSmeltInto() {
+        return id != directSmeltInto;
+    }
+
+    public boolean hasArcSmeltInto() {
+        return id != arcSmeltInto;
+    }
+
+    public boolean hasMacerateInto() {
+        return id != macerateInto;
+    }
+
     public ArrayList<MaterialStack> getProcessInto() {
         return processInto;
     }
 
+    public ArrayList<Material> getByProducts() {
+        ArrayList<Material> materials = new ArrayList<>(byProducts.size());
+        int size = byProducts.size();
+        for (int i = 0; i < size; i++) {
+            materials.add(Materials.get(byProducts.get(i)));
+        }
+        return materials;
+    }
+
+    public boolean hasByProducts() {
+        return byProducts.size() > 0;
+    }
+
+    /** Helpful Stack Getters **/
     public ItemStack getChunk(int amount) {
         return MetaItem.get(Prefix.CHUNK, this, amount);
     }
