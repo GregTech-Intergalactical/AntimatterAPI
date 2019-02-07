@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.data;
 
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.common.fluid.GTFluid;
 
 import java.util.LinkedHashMap;
 
@@ -141,7 +142,7 @@ public class Materials {
     public static Material Tetranitromethane = new Material(639, "Tetranitromethane", 0x0f2828, NONE).asFluid().add(Carbon, 1, Nitrogen, 4, Oxygen, 8);
     public static Material Epichlorohydrin = new Material(648, "Epichlorohydrin", 0x501d05, NONE).asFluid().add(Carbon, 3, Hydrogen, 5, Chlorine, 1, Oxygen, 1);
     public static Material NitricAcid = new Material(653, "Nitric Acid", 0xe6e2ab, NONE).asFluid().add(Hydrogen, 1, Nitrogen, 1, Oxygen, 3);
-    public static Material Dimethylhydrazine = new Material(654, "1,1-Dimethylhydrazine", 0x000055, NONE).asFluid().add(Carbon, 2, Hydrogen, 8, Nitrogen, 2);
+    public static Material Dimethylhydrazine = new Material(654, "Dimethylhydrazine", 0x000055, NONE).asFluid().add(Carbon, 2, Hydrogen, 8, Nitrogen, 2);
     public static Material Chloramine = new Material(655, "Chloramine", 0x3f9f80, NONE).asFluid().add(Nitrogen, 1, Hydrogen, 2, Chlorine, 1);
     public static Material Dimethyldichlorosilane = new Material(663, "Dimethyldichlorosilane", 0x441650, NONE).asFluid().add(Carbon, 2, Hydrogen, 6, Chlorine, 2, Silicon, 1);
     public static Material HydrofluoricAcid = new Material(667, "Hydrofluoric Acid", 0x0088aa, NONE).asFluid().add(Hydrogen, 1, Fluorine, 1);
@@ -397,6 +398,36 @@ public class Materials {
     /** **/
     public static Material Redstone = new Material(810, "Redstone", 0xc80000, ROUGH).asDust().addOre().add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
     public static Material Basalt = new Material(844, "Basalt", 0x1e1414, ROUGH).asDust().add(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
+
+    public static void init() {
+//        for (Material material : generated) {
+//            if (material == Blaze) {
+//                material.handleMaterial = "blaze";
+//            } /*else if (aMaterial.contains(SubTag.MAGICAL) && aMaterial.contains(SubTag.CRYSTAL) && Loader.isModLoaded(MOD_ID_TC)) {
+//                    aMaterial.mHandleMaterial = Thaumium;
+//                }*/ else if (material.getMass() > Element.Tc.getMass() * 2) {
+//                material.handleMaterial = Tungstensteel.;
+//            } else if (material.getMass() > Element.Tc.getMass()) {
+//                material.handleMaterial = Steel;
+//            } else {
+//                material.handleMaterial = Wood;
+//            }
+//        }
+    }
+
+    public static void initFluids() {
+        for (Material mat : generatedMap.values()) {
+            if (mat.hasFlag(LIQUID)) {
+                mat.setLiquid(new GTFluid(mat, LIQUID));
+            }
+            if (mat.hasFlag(GAS)) {
+                mat.setGas(new GTFluid(mat, GAS));
+            }
+            if (mat.hasFlag(PLASMA)) {
+                mat.setPlasma(new GTFluid(mat, PLASMA));
+            }
+        }
+    }
 
     public static Material get(int id) {
         return generated[id];

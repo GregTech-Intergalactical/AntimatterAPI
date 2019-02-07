@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public interface IMaterialFlag { //TODO rename to IMaterialFlag, rename MaterialFlag to ItemFlag
 
+    String getName();
+
     void add(Material... mats);
 
     long getBit();

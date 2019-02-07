@@ -44,7 +44,7 @@ public class MetaTool extends Item {
     public MetaTool() {
         setRegistryName("meta_tool");
         setUnlocalizedName(Ref.MODID + ".meta_tool");
-        setCreativeTab(Ref.TAB_MATERIALS);
+        setCreativeTab(Ref.TAB_ITEMS);
         setHasSubtypes(true);
         setMaxStackSize(1);
     }

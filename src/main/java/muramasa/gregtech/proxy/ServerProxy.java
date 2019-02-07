@@ -1,5 +1,6 @@
 package muramasa.gregtech.proxy;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.common.utils.CommandTool;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;

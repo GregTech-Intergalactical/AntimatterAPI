@@ -5,6 +5,7 @@ import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.materials.Material;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public enum RecipeFlag implements IMaterialFlag {
 
@@ -41,16 +42,24 @@ public enum RecipeFlag implements IMaterialFlag {
         bit = 1 << ordinal();
     }
 
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ENGLISH);
+    }
+
+    @Override
     public void add(Material... mats) {
         for (Material material : mats) {
             materialIds.add(material.getId());
         }
     }
 
+    @Override
     public long getBit() {
         return this.bit;
     }
 
+    @Override
     public Material[] getMats() {
         Material[] materials = new Material[materialIds.size()];
         int size = materials.length;
@@ -60,6 +69,7 @@ public enum RecipeFlag implements IMaterialFlag {
         return materials;
     }
 
+    @Override
     public ArrayList<Integer> getIds() {
         return materialIds;
     }

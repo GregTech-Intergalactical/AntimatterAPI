@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.data;
 
+import muramasa.gregtech.api.enums.MachineFlag;
 import muramasa.gregtech.api.machines.*;
 import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -7,6 +8,8 @@ import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityElectricB
 import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityFusionReactor;
 import muramasa.gregtech.loaders.ContentLoader;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import static muramasa.gregtech.api.enums.MachineFlag.*;
@@ -61,7 +64,7 @@ public class Machines {
     public static Machine HATCH_ITEM_INPUT = new HatchMachine("item_hatch_input").addSlots(new SlotData(0, 35, 25));
     public static Machine HATCH_ITEM_OUTPUT = new HatchMachine("item_hatch_output").addSlots(new SlotData(1, 35, 25));
 
-    public static void finish() {
+    public static void init() {
         BLAST_FURNACE.addPattern(StructurePattern.BLAST_FURNACE);
         FUSION_REACTOR.addPattern(StructurePattern.FUSION_REACTOR);
     }
@@ -77,5 +80,21 @@ public class Machines {
 
     public static int getCount() {
         return machineTypeLookup.size();
+    }
+
+    public static Collection<Machine> getTypes(MachineFlag... flags) {
+        ArrayList<Machine> types = new ArrayList<>();
+        for (MachineFlag flag : flags) {
+            types.addAll(flag.getTypes());
+        }
+        return types;
+    }
+
+    public static Collection<MachineStack> getStacks(MachineFlag... flags) {
+        ArrayList<MachineStack> stacks = new ArrayList<>();
+        for (MachineFlag flag : flags) {
+            stacks.addAll(flag.getStacks());
+        }
+        return stacks;
     }
 }

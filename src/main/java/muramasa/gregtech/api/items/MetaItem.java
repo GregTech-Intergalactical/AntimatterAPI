@@ -140,7 +140,9 @@ public class MetaItem extends Item {
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             if (tintIndex == 0) { //layer0
                 Material material = getMaterial(stack);
-                return material != null ? material.getRGB() : -1;
+                if (material != null) {
+                    return material.getRGB();
+                }
             }
             return -1;
         }
