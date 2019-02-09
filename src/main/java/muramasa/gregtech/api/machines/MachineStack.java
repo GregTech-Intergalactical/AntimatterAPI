@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.machines;
 
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

@@ -8,8 +8,8 @@ import javax.annotation.Nonnull;
 
 public class SlotFilter extends SlotItemHandler {
 
-    public SlotFilter(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-        super(itemHandler, index, xPosition, yPosition);
+    public SlotFilter(IItemHandler itemHandler, int index, int x, int y) {
+        super(itemHandler, index, x, y);
     }
 
     @Override

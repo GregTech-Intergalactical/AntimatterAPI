@@ -2,7 +2,6 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.enums.ItemList;
@@ -69,7 +68,18 @@ public class StandardItem extends Item {
                 tooltip.add(item.getTooltip());
             }
             if (ItemList.Debug_Scanner.isItemEqual(stack)) {
-                tooltip.add("Size: " + Machines.PULVERIZER.getRecipeMap().getRecipes().size());
+//                Recipe recipe = RecipeMap.findRecipeItemFluid(Machines.ORE_WASHER.getRecipeMap(), new ItemStack[]{Materials.Aluminium.getCrushed(1)}, new FluidStack[]{new FluidStack(FluidRegistry.WATER, 100)});
+//                if (recipe != null) {
+//                    tooltip.add(recipe.toString());
+//                } else {
+//                    tooltip.add("null recipe");
+//                }
+//                Collection<Recipe> recipes = Machines.ORE_WASHER.getRecipeMap().getRecipes();
+//                if (recipes != null) {
+//                    for (Recipe recipe : recipes) {
+//                        tooltip.add(recipe.toString());
+//                    }
+//                }
             }
         }
     }
@@ -117,7 +127,7 @@ public class StandardItem extends Item {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (ItemList item : ItemList.values()) {
-            ModelLoader.setCustomModelResourceLocation(this, item.ordinal(), new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + item.ordinal()));
+            ModelLoader.setCustomModelResourceLocation(this, item.ordinal(), new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + item.getName()));
         }
     }
 }

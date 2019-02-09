@@ -5,24 +5,27 @@
   },
   "variants": {
     "id": {
-      "0": {
-        "textures": {"layer0": "gregtech:items/debug_scanner"}
-      },
-      "1": {
-        "textures": {"layer0": "gregtech:items/component_pump"}
-      },
-      "2": {
-        "textures": {"layer0": "gregtech:items/component_conveyor"}
-      },
-      "3": {
-        "textures": {"layer0": "gregtech:items/cover_item_port"}
-      },
-      "4": {
-        "textures": {"layer0": "gregtech:items/cover_fluid_port"}
-      },
-      "5": {
-        "textures": {"layer0": "gregtech:items/cover_energy_port"}
-      }
+	  "empty_cell": {
+		"textures": {"layer0": "gregtech:items/empty_cell"}
+	  },
+	  "debug_scanner": {
+		"textures": {"layer0": "gregtech:items/debug_scanner"}
+	  },
+	  "component_pump": {
+		"textures": {"layer0": "gregtech:items/component_pump"}
+	  },
+	  "component_conveyor": {
+		"textures": {"layer0": "gregtech:items/component_conveyor"}
+	  },
+	  "cover_item_port": {
+		"textures": {"layer0": "gregtech:items/cover_item_port"}
+	  },
+	  "cover_fluid_port": {
+		"textures": {"layer0": "gregtech:items/cover_fluid_port"}
+	  },
+	  "cover_energy_port": {
+		"textures": {"layer0": "gregtech:items/cover_energy_port"}
+	  }
     }
   }
 }

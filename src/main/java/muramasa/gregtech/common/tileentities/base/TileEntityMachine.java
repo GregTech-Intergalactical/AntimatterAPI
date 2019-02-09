@@ -2,8 +2,8 @@ package muramasa.gregtech.common.tileentities.base;
 
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineState;
-import muramasa.gregtech.api.machines.Machine;
 import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -49,7 +49,7 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     /** Events **/
-    public void onContentsChanged(int slot) {
+    public void onContentsChanged(int type, int slot) {
         //NOOP
     }
 

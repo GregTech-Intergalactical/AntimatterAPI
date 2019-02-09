@@ -1,7 +1,9 @@
-package muramasa.gregtech.api.machines;
+package muramasa.gregtech.api.machines.types;
 
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.MachineFlag;
+import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.SlotData;
+import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.structure.StructurePattern;
@@ -155,7 +157,7 @@ public class Machine implements IStringSerializable {
     }
 
     public Machine addRecipeMap() {
-        recipeMap = new RecipeMap(this);
+        recipeMap = new RecipeMap(10);
         return this;
     }
 
@@ -194,6 +196,11 @@ public class Machine implements IStringSerializable {
     }
 
     public int getSlotCount() {
+//        int count = slots == null ? 0 : slots.length;
+//        if (hasFlag(MachineFlag.FLUID_INPUT)) {
+//            count++;
+//        }
+//        return count;
         return slots == null ? 0 : slots.length;
     }
 

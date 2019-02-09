@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.items;
 
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;

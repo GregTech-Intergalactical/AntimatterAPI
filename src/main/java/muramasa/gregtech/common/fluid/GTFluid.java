@@ -1,16 +1,21 @@
 package muramasa.gregtech.common.fluid;
 
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 public class GTFluid extends Fluid {
 
+    private int id;
+    private GenerationFlag flag;
+
     public GTFluid(Material mat, GenerationFlag flag) {
-        super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/machines/base/liquid"), new ResourceLocation(Ref.MODID, "blocks/machines/base/liquid"));
+        super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/machines/base/lv"), new ResourceLocation(Ref.MODID, "blocks/machines/base/lv"));
         setColor(mat.getRGB());
         switch (flag) {
             case LIQUID:
@@ -30,6 +35,22 @@ public class GTFluid extends Fluid {
             default:
                 throw new IllegalArgumentException("Cannot create a fluid with the flag: " + flag.getName());
         }
+        id = mat.getId();
+        this.flag = flag;
         FluidRegistry.registerFluid(this);
+    }
+
+    @Override
+    public String getLocalizedName(FluidStack stack) {
+        switch (flag) {
+            case LIQUID:
+                return "Molten " + Materials.get(id).getDisplayName();
+            case GAS:
+                return Materials.get(id).getDisplayName() + " Gas";
+            case PLASMA:
+                return Materials.get(id).getDisplayName() + "Plasma";
+            default:
+                return "FLUID NAME ERROR";
+        }
     }
 }

@@ -23,7 +23,7 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public void init(String type, String tier, int facing) {
         super.init(type, tier, facing);
-        stackHandler = new MachineStackHandler(this);
+        stackHandler = new MachineStackHandler(this, 0);
         componentHandler = new HatchComponentHandler(type, this);
         texture = super.getTexture();
     }

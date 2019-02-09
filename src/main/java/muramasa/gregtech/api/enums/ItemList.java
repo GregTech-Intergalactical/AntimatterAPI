@@ -3,9 +3,14 @@ package muramasa.gregtech.api.enums;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.loaders.ContentLoader;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 
-public enum ItemList {
+import java.util.Locale;
+
+public enum ItemList implements IStringSerializable {
+
+    Empty_Cell("Empty Cell"),
 
     Debug_Scanner("Debug Scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item"),
     Component_Pump("Pump Component", ""),
@@ -59,8 +64,18 @@ public enum ItemList {
         this.tooltip = tooltip;
     }
 
+    ItemList(String displayName) {
+        this.displayName = displayName;
+        this.tooltip = "";
+    }
+
     public String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ENGLISH);
     }
 
     public String getTooltip() {

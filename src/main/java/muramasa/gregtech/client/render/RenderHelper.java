@@ -33,6 +33,7 @@ public class RenderHelper {
     }
 
     public static TextureAtlasSprite getSprite(Fluid fluid) {
+//        ResourceLocation loc = new ResourceLocation(fluid.getStill().getResourceDomain() + ":textures/" + fluid.getStill().getResourcePath() + ".png");
         return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
     }
 

@@ -1,7 +1,8 @@
-package muramasa.gregtech.api.machines;
+package muramasa.gregtech.api.machines.types;
 
 import muramasa.gregtech.GregTech;
-import muramasa.gregtech.api.enums.MachineFlag;
+import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.common.tileentities.overrides.TileEntitySteamMachine;
@@ -11,14 +12,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-import static muramasa.gregtech.api.enums.MachineFlag.*;
+import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class SteamMachine extends Machine {
 
     public SteamMachine(String name, MachineFlag... extraFlags) {
         super(name, ContentLoader.blockMachines, TileEntitySteamMachine.class);
         setTiers(Tier.getSteam());
-        addFlags(BASIC, STEAM, FLUID);
+        addFlags(BASIC, STEAM, ITEM,FLUID_INPUT);
         addFlags(extraFlags);
         addRecipeMap();
         addGUI(GregTech.INSTANCE, Ref.MACHINE_ID);

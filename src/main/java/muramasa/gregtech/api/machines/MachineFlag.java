@@ -1,8 +1,6 @@
-package muramasa.gregtech.api.enums;
+package muramasa.gregtech.api.machines;
 
-import muramasa.gregtech.api.machines.Machine;
-import muramasa.gregtech.api.machines.MachineStack;
-import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.machines.types.Machine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +13,8 @@ public enum MachineFlag {
     MULTI(), //Has structure
     HATCH(),
     ITEM(), //Can store items
-    FLUID(), //Can store fluids
+    FLUID_INPUT(), //Can store fluids
+    FLUID_OUTPUT(),
     ENERGY(), //Needs power
     RECIPE(), //Has a recipe map
     GUI(),

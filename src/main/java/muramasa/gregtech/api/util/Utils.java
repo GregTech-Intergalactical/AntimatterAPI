@@ -22,32 +22,38 @@ public class Utils {
     private static DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
     private static DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
 
+    public static ItemStack[] EMPTY = new ItemStack[]{ItemStack.EMPTY};
+
     static {
         DECIMAL_SYMBOLS.setGroupingSeparator(' ');
     }
 
     public static String getString(ItemStack stack) {
-        return stack.getUnlocalizedName(); //TODO 1.13: also append NBT
+        return !stack.isEmpty() ? stack.getUnlocalizedName() : ""; //TODO 1.13: also append NBT
     }
 
-    public static String getString(FluidStack fluidStack) {
-        return fluidStack.getUnlocalizedName();
+    public static String getString(FluidStack fluid) {
+        return fluid != null ? fluid.getUnlocalizedName() : "";
     }
 
-    public static boolean equals(ItemStack stack1, ItemStack stack2) {
-        return stack1.getItem() == stack2.getItem() && stack1.getMetadata() == stack2.getMetadata();
+    public static String getString(ItemStack stack, FluidStack fluid) {
+        return getString(stack) + getString(fluid);
     }
 
-    public static boolean equals(FluidStack fluidStack1, FluidStack fluidStack2) {
-        return fluidStack1.isFluidEqual(fluidStack2);
+    public static boolean equals(ItemStack a, ItemStack b) {
+        return a.getItem() == b.getItem() && b.getMetadata() == b.getMetadata();
+    }
+
+    public static boolean equals(FluidStack a, FluidStack b) {
+        return a.isFluidEqual(b);
     }
 
     public static ItemStack[] arr(ItemStack... stacks) {
         return stacks;
     }
 
-    public static FluidStack[] arr(FluidStack... fluidStacks) {
-        return fluidStacks;
+    public static FluidStack[] arr(FluidStack... fluids) {
+        return fluids;
     }
 
     public static ItemStack ca(int amount, ItemStack stack) {
@@ -56,8 +62,10 @@ public class Utils {
     }
 
     public static boolean areStacksValid(ItemStack... stacks) {
+        if (stacks == null) return false;
         for (int i = 0; i < stacks.length; i++) {
-            if (stacks[i] == null) return false;
+            //TODO remove null check. Due to RecipeAdder passing stack arrays with null items
+            if (stacks[i] == null || stacks[i].isEmpty()) return false;
         }
         return true;
     }
@@ -69,9 +77,10 @@ public class Utils {
         return true;
     }
 
-    public static boolean areFluidsValid(FluidStack... fluidStacks) {
-        for (int i = 0; i < fluidStacks.length; i++) {
-            if (fluidStacks[i] == null) return false;
+    public static boolean areFluidsValid(FluidStack... fluids) {
+        if (fluids == null) return false;
+        for (int i = 0; i < fluids.length; i++) {
+            if (fluids[i] == null) return false;
         }
         return true;
     }
@@ -109,6 +118,19 @@ public class Utils {
         return matchCount >= a.length;
     }
 
+    public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
+        int matchCount = 0;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < b.length; j++) {
+                if (equals(a[i], b[j]) && b[j].amount >= a[i].amount) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        return matchCount >= a.length;
+    }
+
     public static boolean canStacksFit(ItemStack[] a, ItemStack[] b) {
         return getSpaceForStacks(a, b) >= a.length;
     }
@@ -128,32 +150,32 @@ public class Utils {
 
 //    public static boolean isStacksValidForRecipe(Recipe recipe, ItemStack[] inputs) {
 //        int matchCount = 0;
-//        for (int i = 0; i < recipe.getInputs().length; i++) {
+//        for (int i = 0; i < recipe.getInputStacks().length; i++) {
 //            for (int j = 0; j < inputs.length; j++) {
-//                if (equals(recipe.getInputs()[i], inputs[j]) && inputs[j].getCount() >= recipe.getInputs()[i].getCount()) {
+//                if (equals(recipe.getInputStacks()[i], inputs[j]) && inputs[j].getCount() >= recipe.getInputStacks()[i].getCount()) {
 //                    matchCount++;
 //                    break;
 //                }
 //            }
 //        }
-//        return recipe.getInputs().length == matchCount;
+//        return recipe.getInputStacks().length == matchCount;
 //    }
 
 //    public static boolean isStacksCountMoreOrEqual(Recipe recipe, ItemStack[] inputs) {
 //        int matchCount = 0;
-////        System.out.println(recipe.getInputs().length + " - " + inputs.length);
+////        System.out.println(recipe.getInputStacks().length + " - " + inputs.length);
 ////        System.out.println(inputs);
-//        if (recipe.getInputs().length != inputs.length) return false;
-//        for (int i = 0; i < recipe.getInputs().length; i++) {
+//        if (recipe.getInputStacks().length != inputs.length) return false;
+//        for (int i = 0; i < recipe.getInputStacks().length; i++) {
 //            for (int j = 0; j < inputs.length; j++) {
-//                if (inputs[j].getCount() >= recipe.getInputs()[i].getCount()) {
+//                if (inputs[j].getCount() >= recipe.getInputStacks()[i].getCount()) {
 //                    matchCount++;
 //                    break;
 //                }
 //            }
 //        }
 //        System.out.println("MC: " + matchCount);
-//        return recipe.getInputs().length == matchCount;
+//        return recipe.getInputStacks().length == matchCount;
 //    }
 
 //    public static boolean doStacksMatch(ItemStack[] a, ItemStack[] b) {
@@ -172,7 +194,7 @@ public class Utils {
 
     public static boolean doFluidsMatch(Recipe recipe, FluidStack... inputs) {
         for (int i = 0; i < inputs.length; i++) {
-            if (!equals(inputs[i], recipe.getFluidInputs()[i])) return false;
+            if (!equals(inputs[i], recipe.getInputFluids()[i])) return false;
         }
         return true;
     }

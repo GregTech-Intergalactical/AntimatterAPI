@@ -77,16 +77,16 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     public void advanceRecipe() {
         if (activeRecipe != null) { //Found a valid recipe, process it
             if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
-                if (canOutputsFit(activeRecipe.getOutputs())) {
+                if (canOutputsFit(activeRecipe.getOutputStacks())) {
                     //Add outputs and reset to process next recipe cycle
-                    addOutputs(activeRecipe.getOutputs());
+                    addOutputs(activeRecipe.getOutputStacks());
                     curProgress = 0;
                 } else {
                     return; //Return and loop until outputs can be added
                 }
 
                 //Check if has enough stack count for next recipe cycle
-                if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputs(), getHatchItems().toArray(new ItemStack[0]))) {
+                if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), getHatchItems().toArray(new ItemStack[0]))) {
                     activeRecipe = null;
                 }
             } else {
@@ -94,7 +94,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
                 if (hasResourceForRecipe()) { //Has enough power to process recipe
                     consumeResourceForRecipe();
                     if (curProgress == 0) { //Consume recipe inputs on first recipe tick
-                        consumeInputs(activeRecipe.getInputs());
+                        consumeInputs(activeRecipe.getInputStacks());
                     }
                     curProgress++;
                 } else {
@@ -202,7 +202,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
 
 
 //                if (Utils.getSpaceForStacks())
-//                if (Utils.canStacksFit(new ItemStack[]{outputs[i]}, stackHandler.getOutputs())) {
+//                if (Utils.canStacksFit(new ItemStack[]{outputs[i]}, stackHandler.getOutputStacks())) {
                     System.out.println("addOutput");
                     stackHandler.addOutputs(outputs[i].copy());
 //                }
