@@ -5,22 +5,24 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class Recipe {
 
-    private final ItemStack[] inputs, outputs;
-    private FluidStack[] fluidInputs, fluidOutputs;
+    //TODO split up recipe types (item only, fluid only, mix etc) to optimize memory usage
+
+    private final ItemStack[] stacksInput, stacksOutput;
+    private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, power;
     private int[] chances;
 
-    public Recipe(ItemStack[] inputs, ItemStack[] outputs, int duration, int power) {
-        this.inputs = inputs.clone();
-        this.outputs = outputs.clone();
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, int power) {
+        this.stacksInput = stacksInput;
+        this.stacksOutput = stacksOutput;
         this.duration = duration;
         this.power = power;
     }
 
-    public Recipe(ItemStack[] inputs, ItemStack[] outputs, FluidStack[] fluidInputs, FluidStack[] fluidOutputs, int duration, int power) {
-        this(inputs, outputs, duration, power);
-        this.fluidInputs = fluidInputs;
-        this.fluidOutputs = fluidOutputs;
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, int power) {
+        this(stacksInput, stacksOutput, duration, power);
+        this.fluidsInput = fluidsInput;
+        this.fluidsOutput = fluidsOutput;
     }
 
     public Recipe addChances(int[] chances) {
@@ -29,21 +31,29 @@ public class Recipe {
         return this;
     }
 
-    public ItemStack[] getInputs() {
-        return inputs;
+    public boolean hasInputStacks() {
+        return stacksInput != null && stacksInput.length > 0;
     }
 
-    public ItemStack[] getOutputs() {
+    public boolean hasInputFluids() {
+        return fluidsInput != null && fluidsInput.length > 0;
+    }
+
+    public ItemStack[] getInputStacks() {
+        return stacksInput;
+    }
+
+    public ItemStack[] getOutputStacks() {
 //        return chances == null ? outputs : evaluateChances(outputs);
-        return outputs;
+        return stacksOutput;
     }
 
-    public FluidStack[] getFluidInputs() {
-        return fluidInputs;
+    public FluidStack[] getInputFluids() {
+        return fluidsInput;
     }
 
-    public FluidStack[] getFluidOutputs() {
-        return fluidOutputs;
+    public FluidStack[] getOutputFluids() {
+        return fluidsOutput;
     }
 
     public int getDuration() {
@@ -65,18 +75,38 @@ public class Recipe {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("\nInputs: {");
-        for (int i = 0; i < inputs.length; i++) {
-            builder.append(inputs[i].getDisplayName() + " x" + inputs[i].getCount());
-            if (i != inputs.length - 1) builder.append(", ");
+        if (stacksInput != null) {
+            builder.append("\nInput Stacks: {");
+            for (int i = 0; i < stacksInput.length; i++) {
+                builder.append(stacksInput[i].getDisplayName() + " x" + stacksInput[i].getCount());
+                if (i != stacksInput.length - 1) builder.append(", ");
+            }
+            builder.append("}\n");
         }
-        builder.append("}\n");
-        builder.append("Outputs: {");
-        for (int i = 0; i < outputs.length; i++) {
-            builder.append(outputs[i].getDisplayName() + " x" + outputs[i].getCount());
-            if (i != outputs.length - 1) builder.append(", ");
+        if (stacksOutput != null) {
+            builder.append("Output Stacks: {");
+            for (int i = 0; i < stacksOutput.length; i++) {
+                builder.append(stacksOutput[i].getDisplayName() + " x" + stacksOutput[i].getCount());
+                if (i != stacksOutput.length - 1) builder.append(", ");
+            }
+            builder.append("}\n");
         }
-        builder.append("}\n");
+        if (fluidsInput != null) {
+            builder.append("Input Fluids: {");
+            for (int i = 0; i < fluidsInput.length; i++) {
+                builder.append(fluidsInput[i].getFluid().getName() + " x" + fluidsInput[i].amount);
+                if (i != fluidsInput.length - 1) builder.append(", ");
+            }
+            builder.append("}\n");
+        }
+        if (fluidsOutput != null) {
+            builder.append("Output Fluids: {");
+            for (int i = 0; i < fluidsOutput.length; i++) {
+                builder.append(fluidsOutput[i].getFluid().getName() + " x" + fluidsOutput[i].amount);
+                if (i != fluidsOutput.length - 1) builder.append(", ");
+            }
+            builder.append("}\n");
+        }
         return builder.toString();
     }
 }

@@ -2,10 +2,9 @@ package muramasa.gregtech.integration.jei;
 
 import mezz.jei.api.*;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-import muramasa.gregtech.api.enums.MachineFlag;
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.recipe.Recipe;
-import muramasa.gregtech.api.recipe.RecipeMap;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +30,7 @@ public class GregTechJEIPlugin implements IModPlugin {
     @Override
     public void register(IModRegistry registry) {
         for (Machine type : MachineFlag.BASIC.getTypes()) {
-            registry.addRecipes(RecipeMap.get(type).getRecipes(), type.getJeiCategoryID());
+            registry.addRecipes(type.getRecipeMap().getRecipes(), type.getJeiCategoryID());
             registry.handleRecipes(Recipe.class, MachineRecipeWrapper::new, type.getJeiCategoryID());
         }
 

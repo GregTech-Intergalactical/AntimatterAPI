@@ -118,11 +118,11 @@ public class MetaItem extends Item {
     }
 
     public static boolean hasMaterial(ItemStack stack, Material material) {
-        return getMaterial(stack) == material;
+        return stack.getItem() instanceof MetaItem && getMaterial(stack) == material;
     }
 
     public static boolean hasPrefix(ItemStack stack, Prefix prefix) {
-        return getPrefix(stack) == prefix;
+        return stack.getItem() instanceof MetaItem && getPrefix(stack) == prefix;
     }
 
     @SideOnly(Side.CLIENT)

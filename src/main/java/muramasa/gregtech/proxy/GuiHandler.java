@@ -1,13 +1,13 @@
 package muramasa.gregtech.proxy;
 
-    import muramasa.gregtech.api.enums.MachineFlag;
+    import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.gui.GuiBasicMachine;
 import muramasa.gregtech.api.gui.GuiHatch;
 import muramasa.gregtech.api.gui.GuiMultiMachine;
 import muramasa.gregtech.api.gui.container.ContainerBasicMachine;
 import muramasa.gregtech.api.gui.container.ContainerHatch;
 import muramasa.gregtech.api.gui.container.ContainerMultiMachine;
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.entity.player.EntityPlayer;

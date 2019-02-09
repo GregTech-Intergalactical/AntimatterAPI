@@ -23,6 +23,9 @@ import org.lwjgl.opengl.GL11;
 
 public class BlockHighlightHandler {
 
+    //TODO digest and implement ghost block rendering
+    //https://github.com/aidancbrady/Mekanism/blob/master/src/main/java/mekanism/client/render/RenderResizableCuboid.java
+
     @SubscribeEvent
     public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         if (event.getPlayer() == null || event.getPlayer().world == null || event.getTarget().getBlockPos() == null) return;

@@ -10,6 +10,8 @@ import muramasa.gregtech.common.events.EventHandler;
 import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -63,5 +65,7 @@ public class GregTech {
         RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Redstone.getDust(4), Materials.RedAlloy.getIngot(1), 10, 1);
         RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Cobalt.getDust(1), Materials.RedAlloy.getIngot(16), 10, 1);
         RecipeAdder.addBlastFurnaceRecipe(Materials.Silicon.getDust(1), Materials.Silicon.getIngot(1), 10, 1);
+
+        RecipeAdder.addOreWasherRecipe(Materials.Aluminium.getCrushed(1), new FluidStack(FluidRegistry.WATER, 100), Materials.Aluminium.getCrushedP(1), Materials.Aluminium.getDustT(1), Materials.Stone.getDust(1), 40, 1);
     }
 }

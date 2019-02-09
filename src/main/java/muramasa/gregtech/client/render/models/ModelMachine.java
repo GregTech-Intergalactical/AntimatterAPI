@@ -2,8 +2,8 @@ package muramasa.gregtech.client.render.models;
 
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.enums.MachineFlag;
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;

@@ -29,7 +29,7 @@ public class RenderGameOverlayHandler extends Gui {
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
         EntityPlayerSP entityPlayerSP = Ref.mc.player;
         ItemStack stack = entityPlayerSP.getHeldItemMainhand();
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL ) {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             if (ToolType.isPowered(stack) && !entityPlayerSP.isCreative()) {
                 GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glPushMatrix();

@@ -7,7 +7,7 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.MaterialStack;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.recipe.RecipeAdder;
-import muramasa.gregtech.api.util.RecipeHelper;
+import muramasa.gregtech.api.recipe.RecipeHelper;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;

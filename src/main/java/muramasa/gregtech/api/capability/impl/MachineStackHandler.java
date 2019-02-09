@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.capability.impl;
 
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.item.ItemStack;
@@ -14,18 +14,27 @@ import java.util.List;
 public class MachineStackHandler extends StackHandler {
 
     private TileEntityMachine tile;
-    public int inputCount, outputCount;
+    public int type, inputCount, outputCount;
 
-    public MachineStackHandler(TileEntityMachine tile) {
-        Machine type = tile.getMachineType();
-        if (type != null) {
-            setSize(type.getSlotCount());
+    public MachineStackHandler(TileEntityMachine tile, int type) {
+        Machine machine = tile.getMachineType();
+        if (machine != null) {
+            setSize(machine.getSlotCount());
             this.tile = tile;
-            this.inputCount = type.getInputCount();
-            this.outputCount = type.getOutputCount();
+            this.type = type;
+            this.inputCount = machine.getInputCount();
+            this.outputCount = machine.getOutputCount();
         } else {
             setSize(1);
         }
+    }
+
+    public MachineStackHandler(TileEntityMachine tile, int type, int inputCount, int outputCount) {
+        setSize(inputCount + outputCount);
+        this.tile = tile;
+        this.type = type;
+        this.inputCount = inputCount;
+        this.outputCount = outputCount;
     }
 
     public List<ItemStack> getInputList() {
@@ -93,6 +102,6 @@ public class MachineStackHandler extends StackHandler {
 
     @Override
     protected void onContentsChanged(int slot) {
-        tile.onContentsChanged(slot);
+        tile.onContentsChanged(type, slot);
     }
 }

@@ -5,7 +5,7 @@ import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.enums.MachineFlag;
+import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.properties.ITechProperties;

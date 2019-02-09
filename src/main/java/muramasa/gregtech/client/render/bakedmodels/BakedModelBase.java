@@ -41,6 +41,27 @@ public class BakedModelBase implements IBakedModel {
         this.bakedModel = bakedModel;
     }
 
+    //From Mekanism TODO test
+    public static BakedQuad rotate(BakedQuad quad, int amount)
+    {
+        int[] vertices = new int[quad.getVertexData().length];
+        System.arraycopy(quad.getVertexData(), 0, vertices, 0, vertices.length);
+
+        for(int i = 0; i < 4; i++)
+        {
+            int nextIndex = (i+amount)%4;
+            int quadSize = quad.getFormat().getIntegerSize();
+            int uvIndex = quad.getFormat().getUvOffsetById(0) / 4;
+            if (i + uvIndex + 1 < vertices.length) {
+                vertices[quadSize * i + uvIndex] = quad.getVertexData()[quadSize * nextIndex + uvIndex];
+                vertices[quadSize * i + uvIndex + 1] = quad.getVertexData()[quadSize * nextIndex + uvIndex + 1];
+            }
+        }
+
+        return new BakedQuad(vertices, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
+    }
+
+    //From AE2
     public static List<BakedQuad> transform(List<BakedQuad> quads, AxisAngle4f axisAngle) {
         List<BakedQuad> transformedQuads = new LinkedList<>();
 

@@ -18,8 +18,8 @@ public class MachineRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputs()));
-        ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputs()));
+        ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputStacks()));
+        ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputStacks()));
     }
 
     @Override

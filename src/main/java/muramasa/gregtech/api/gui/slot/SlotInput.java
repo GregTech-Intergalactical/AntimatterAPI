@@ -10,8 +10,8 @@ public class SlotInput extends SlotItemHandler {
     private IItemHandler stackHandler;
     private int index;
 
-    public SlotInput(IItemHandler stackHandler, int index, int xPosition, int yPosition) {
-        super(stackHandler, index, xPosition, yPosition);
+    public SlotInput(IItemHandler stackHandler, int index, int x, int y) {
+        super(stackHandler, index, x, y);
         this.stackHandler = stackHandler;
         this.index = index;
     }

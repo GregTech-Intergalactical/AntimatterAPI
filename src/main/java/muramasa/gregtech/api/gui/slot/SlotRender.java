@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 
 public class SlotRender extends SlotItemHandler {
 
-    public SlotRender(IItemHandler itemHandler, int index, int xPos, int yPos) {
-        super(itemHandler, index, xPos, yPos);
+    public SlotRender(IItemHandler itemHandler, int index, int x, int y) {
+        super(itemHandler, index, x, y);
     }
 
     @Override

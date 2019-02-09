@@ -2,6 +2,8 @@ package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.machines.objects.MachineTankPropertiesWrapper;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -184,5 +186,35 @@ public class MachineTankHandler implements IFluidTank, IFluidHandler {
 
     protected void onContentsChanged() {
 //        tile.markDirty();
+    }
+
+    public NBTTagCompound serializeNBT() {
+        NBTTagList nbtTagList = new NBTTagList();
+//        for (int i = 0; i < stacks.length; i++) {
+//            if (!stacks[i].isEmpty()) {
+//                NBTTagCompound itemTag = new NBTTagCompound();
+//                itemTag.setInteger("Slot", i);
+//                stacks[i].writeToNBT(itemTag);
+//                nbtTagList.appendTag(itemTag);
+//            }
+//        }
+        NBTTagCompound nbt = new NBTTagCompound();
+//        nbt.setTag("Items", nbtTagList);
+//        nbt.setInteger("Size", stacks.length);
+        return nbt;
+    }
+
+    public void deserializeNBT(NBTTagCompound nbt) {
+//        setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.length);
+//        NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+//        for (int i = 0; i < tagList.tagCount(); i++) {
+//            NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
+//            int slot = itemTags.getInteger("Slot");
+//
+//            if (slot >= 0 && slot < stacks.length) {
+//                stacks[slot] = new ItemStack(itemTags);
+//            }
+//        }
+//        onLoad();
     }
 }

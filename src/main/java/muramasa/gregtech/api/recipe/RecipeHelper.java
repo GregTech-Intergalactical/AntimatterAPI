@@ -1,4 +1,4 @@
-package muramasa.gregtech.api.util;
+package muramasa.gregtech.api.recipe;
 
 import net.minecraft.item.ItemStack;
 

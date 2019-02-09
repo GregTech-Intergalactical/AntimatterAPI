@@ -8,7 +8,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.machines.SlotData;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.utils.Ref;

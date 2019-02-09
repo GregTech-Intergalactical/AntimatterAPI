@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.recipe;
 
-import muramasa.gregtech.api.machines.Machine;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -130,7 +130,7 @@ public class RecipeAdder {
         addBasicRecipe(MASS_FABRICATOR, arr(input1), arr(input2), arr(output), d, p);
     }
 
-    public static void addAmplifabricatorRecipe(ItemStack input, ItemStack output1, FluidStack output2, int d, int p) {
+    public static void addAmpFabricatorRecipe(ItemStack input, ItemStack output1, FluidStack output2, int d, int p) {
         addBasicRecipe(AMP_FABRICATOR, arr(input), arr(output1), arr(output2), d, p);
     }
 

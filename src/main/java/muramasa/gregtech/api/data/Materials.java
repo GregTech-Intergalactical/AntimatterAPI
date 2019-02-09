@@ -2,6 +2,7 @@ package muramasa.gregtech.api.data;
 
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.fluid.GTFluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.LinkedHashMap;
 
@@ -416,14 +417,16 @@ public class Materials {
     }
 
     public static void initFluids() {
+        Materials.Water.setLiquid(FluidRegistry.WATER);
+        Materials.Lava.setLiquid(FluidRegistry.LAVA);
         for (Material mat : generatedMap.values()) {
-            if (mat.hasFlag(LIQUID)) {
+            if (mat.hasFlag(LIQUID) && mat.getLiquid() == null) {
                 mat.setLiquid(new GTFluid(mat, LIQUID));
             }
-            if (mat.hasFlag(GAS)) {
+            if (mat.hasFlag(GAS) && mat.getGas() == null) {
                 mat.setGas(new GTFluid(mat, GAS));
             }
-            if (mat.hasFlag(PLASMA)) {
+            if (mat.hasFlag(PLASMA) && mat.getPlasma() == null) {
                 mat.setPlasma(new GTFluid(mat, PLASMA));
             }
         }
