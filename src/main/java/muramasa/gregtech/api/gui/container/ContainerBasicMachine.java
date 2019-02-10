@@ -1,6 +1,8 @@
 package muramasa.gregtech.api.gui.container;
 
+import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineState;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
@@ -17,7 +19,11 @@ public class ContainerBasicMachine extends ContainerMachine {
     public ContainerBasicMachine(TileEntityBasicMachine tile, IInventory playerInv) {
         super(playerInv);
         this.tile = tile;
-        addSlots(tile.getMachineType().getSlots(), tile.getStackHandler());
+        Machine machine = tile.getMachineType();
+        addSlots(machine.getSlots(), tile.getStackHandler());
+        if (machine.hasFlag(MachineFlag.FLUID)) {
+            addCellSlots(machine.getFluidSlots(), tile.getStackHandler());
+        }
     }
 
     @Override

@@ -105,6 +105,7 @@ public class RecipeMap {
     public static Recipe findRecipeItemFluid(RecipeMap map, ItemStack[] stacks, FluidStack[] fluids) {
         if (map == null) return null;
         if (Utils.areStacksValid(stacks) && Utils.areFluidsValid(fluids)) {
+            if (stacks.length == 0 || fluids.length == 0) return null;
             ArrayList<Recipe> matches = map.recipeLookup.get(Utils.getString(stacks[0], fluids[0]));
             if (matches == null) return null;
             System.out.println("PASS MATCHES");

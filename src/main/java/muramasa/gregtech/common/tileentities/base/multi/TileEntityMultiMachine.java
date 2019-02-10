@@ -3,7 +3,7 @@ package muramasa.gregtech.common.tileentities.base.multi;
 import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
-import muramasa.gregtech.api.capability.impl.MachineStackHandlerOld;
+import muramasa.gregtech.api.capability.impl.MachineStackHandler;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.api.structure.StructureResult;
@@ -153,7 +153,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
         ArrayList<ItemStack> stacks = new ArrayList<>();
         ArrayList<IComponent> hatches = components.get("itemhatchinput");
         if (hatches == null || hatches.size() == 0) return stacks;
-        MachineStackHandlerOld stackHandler;
+        MachineStackHandler stackHandler;
         for (IComponent hatch : hatches) {
             stackHandler = hatch.getStackHandler();
             if (stackHandler == null) continue;
@@ -171,7 +171,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
 
     public void consumeInputs(ItemStack... inputs) {
         ItemStack[] toConsume = inputs.clone();
-        MachineStackHandlerOld stackHandler;
+        MachineStackHandler stackHandler;
         for (IComponent hatch : components.get("itemhatchinput")) {
             stackHandler = hatch.getStackHandler();
             if (stackHandler == null) continue;
@@ -181,7 +181,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     }
 
     public boolean canOutputsFit(ItemStack... outputs) {
-        MachineStackHandlerOld stackHandler;
+        MachineStackHandler stackHandler;
         int matchCount = 0;
         for (IComponent hatch : components.get("itemhatchoutput")) {
             stackHandler = hatch.getStackHandler();
@@ -193,7 +193,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
 
 
     public void addOutputs(ItemStack... outputs) {
-        MachineStackHandlerOld stackHandler;
+        MachineStackHandler stackHandler;
         for (IComponent hatch : components.get("itemhatchoutput")) {
             stackHandler = hatch.getStackHandler();
             if (stackHandler == null) continue;

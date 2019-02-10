@@ -48,6 +48,7 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
     public static final String KEY_MACHINE_TILE_ITEMS_INPUT = "miti";
     public static final String KEY_MACHINE_TILE_ITEMS_OUTPUT = "mito";
+    public static final String KEY_MACHINE_TILE_ITEMS_CELL = "mitc";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
 
     public static final String TAG_MULTIMACHINE_TILE_DATA = "multimachinetile";

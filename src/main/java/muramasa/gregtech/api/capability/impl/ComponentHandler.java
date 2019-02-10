@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 public class ComponentHandler implements IComponent {
 
+    //TODO special component handlers for different componentTile types
+
     private String componentId = "null";
     private TileEntityBase componentTile;
     private ArrayList<BlockPos> controllers = new ArrayList<>();
@@ -48,8 +50,8 @@ public class ComponentHandler implements IComponent {
     }
 
     @Override
-    public MachineStackHandlerOld getStackHandler() {
-        return (MachineStackHandlerOld) componentTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    public MachineStackHandler getStackHandler() {
+        return (MachineStackHandler) componentTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
     }
 
     @Override
