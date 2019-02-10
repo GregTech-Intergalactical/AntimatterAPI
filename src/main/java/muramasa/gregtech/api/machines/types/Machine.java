@@ -212,6 +212,10 @@ public class Machine implements IStringSerializable {
         return slots;
     }
 
+    public SlotData[] getFluidSlots() {
+        return fluidSlots;
+    }
+
     public int getSlotCount() {
 //        int count = slots == null ? 0 : slots.length;
 //        if (hasFlag(MachineFlag.FLUID_INPUT)) {

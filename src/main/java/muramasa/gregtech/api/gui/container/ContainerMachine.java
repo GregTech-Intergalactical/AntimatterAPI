@@ -1,11 +1,11 @@
 package muramasa.gregtech.api.gui.container;
 
 import muramasa.gregtech.api.capability.impl.MachineStackHandler;
+import muramasa.gregtech.api.gui.slot.SlotCell;
 import muramasa.gregtech.api.gui.slot.SlotInput;
 import muramasa.gregtech.api.gui.slot.SlotOutput;
 import muramasa.gregtech.api.machines.SlotData;
 import net.minecraft.inventory.IInventory;
-import net.minecraftforge.items.IItemHandler;
 
 public class ContainerMachine extends ContainerBase {
 
@@ -31,9 +31,9 @@ public class ContainerMachine extends ContainerBase {
         }
     }
 
-    public void addCellSlots(IItemHandler stackHandler) {
-//        cellStart = inventorySlots.size();
-//        addSlotToContainer(new SlotCell(stackHandler, 0, 35, 63));
-//        addSlotToContainer(new SlotCell(stackHandler, 1, 125, 63));
+    public void addCellSlots(SlotData[] slots, MachineStackHandler stackHandler) {
+        cellStart = inventorySlots.size();
+        addSlotToContainer(new SlotCell(stackHandler.getCellHandler(), 0, 35, 63));
+        addSlotToContainer(new SlotCell(stackHandler.getCellHandler(), 1, 125, 63));
     }
 }

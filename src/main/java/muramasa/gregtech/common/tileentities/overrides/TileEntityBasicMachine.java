@@ -3,26 +3,32 @@ package muramasa.gregtech.common.tileentities.overrides;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.enums.ItemList;
+import muramasa.gregtech.api.items.MetaItem;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
+import static muramasa.gregtech.api.materials.Prefix.CELL;
 
 public class TileEntityBasicMachine extends TileEntityMachine {
 
     /** Data from NBT **/
-    protected NBTTagCompound itemInputData, itemOutputData, fluidData;
+    protected NBTTagCompound itemInputData, itemOutputData, itemCellData, fluidData;
 
     /** Capabilities **/
     protected MachineStackHandler stackHandler;
@@ -45,6 +51,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             stackHandler = new MachineStackHandler(this, 0);
             if (itemInputData != null) stackHandler.deserializeInput(itemInputData);
             if (itemOutputData != null) stackHandler.deserializeOutput(itemOutputData);
+            if (itemCellData != null) stackHandler.deserializeCell(itemCellData);
         }
         if (machine.hasFlag(FLUID)) {
             tankHandler = new MachineTankHandler(this, machine.getFluidInputCount(), machine.getFluidOutputCount());
@@ -79,7 +86,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
-            System.out.println("RECIPE CHECK");
             if (stackHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
             Recipe recipe = findRecipe();
             if (recipe != null) {
@@ -92,7 +98,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     public Recipe findRecipe() {
-        System.out.println("FIND RECIPE");
         Machine machine = getMachineType();
         if (machine.hasFlag(FLUID)) {
             return machine.findRecipe(stackHandler.getInputs(), tankHandler.getInputs());
@@ -103,7 +108,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public MachineState tickRecipe() { //TODO do count check here instead of checkRecipe being called on every contents update
         if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
-            if (Utils.canStacksFit(activeRecipe.getOutputStacks(), stackHandler.getOutputs())) {
+            if (canOutput()) {
                 //Add outputs and reset to process next recipe cycle
                 stackHandler.addOutputs(activeRecipe.getOutputStacks());
                 curProgress = 0;
@@ -144,15 +149,13 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         return false;
     }
 
-
-
     public boolean canOutput() {
         /*if (!getMachineType().hasFlag(FLUID)) {
             return stackHandler.canStacksFit(activeRecipe.getInputStacks());
         } else {
             return Utils.canStacksFit(activeRecipe.getOutputStacks(), stackHandler.getOutputs()) && tankHandler.canOutput(activeRecipe.getOutputFluids());
         }*/
-        return Utils.canStacksFit(activeRecipe.getInputStacks(), stackHandler.getInputs());
+        return stackHandler.canStacksFit(activeRecipe.getOutputStacks());
     }
 
     /** Events **/
@@ -163,7 +166,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
                 setMachineState(MachineState.FOUND_RECIPE);
             }
             shouldCheckRecipe = true;
-            System.out.println("CONTENT UPDATE");
         } else if (type == 2) {
             handleCellSlotUpdate(slot);
         }
@@ -171,15 +173,15 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public void handleCellSlotUpdate(int slot) {
         if (slot == 0) { //Input slot
-//            ItemStack stack = cellHandler.getStackInSlot(0);
-//            if (MetaItem.hasPrefix(stack, CELL)) {
-//                Material material = MetaItem.getMaterial(stack);
-//                if (material != null && material.getLiquid() != null) {
-//                    tankHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
-//                }
-//            } else if (ItemList.Empty_Cell.isItemEqual(stack)) {
-//                tankHandler.getInput(0).setFluid(null);
-//            }
+            ItemStack stack = stackHandler.getCellInput();
+            if (MetaItem.hasPrefix(stack, CELL)) {
+                Material material = MetaItem.getMaterial(stack);
+                if (material != null && material.getLiquid() != null) {
+                    tankHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
+                }
+            } else if (ItemList.Empty_Cell.isItemEqual(stack)) {
+                tankHandler.getInput(0).setFluid(null);
+            }
         } else if (slot == 1) { //Output slot
 
         }
@@ -237,6 +239,9 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         super.readFromNBT(compound);
         itemInputData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS_INPUT);
         itemOutputData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS_OUTPUT);
+        if (getMachineType().hasFlag(FLUID)) {
+            itemCellData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS_CELL);
+        }
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_STATE)) {
             setMachineState(MachineState.VALUES[compound.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);
         }
@@ -248,6 +253,9 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         if (stackHandler != null) { //this should never happen...
             compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_INPUT, stackHandler.serializeInput());
             compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_OUTPUT, stackHandler.serializeOutput());
+            if (getMachineType().hasFlag(FLUID)) {
+                compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_CELL, stackHandler.serializeCell());
+            }
         }
         if (getMachineState() != null) {
             compound.setInteger(Ref.KEY_MACHINE_TILE_STATE, getMachineState().getId());
