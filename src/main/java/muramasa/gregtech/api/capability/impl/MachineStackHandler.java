@@ -4,104 +4,98 @@ import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+public class MachineStackHandler {
 
-//TODO need a container?
-public class MachineStackHandler extends StackHandler {
+    private GTItemHandler inputHandler, outputHandler;
 
-    private TileEntityMachine tile;
-    public int type, inputCount, outputCount;
-
+    /** Constructor **/
     public MachineStackHandler(TileEntityMachine tile, int type) {
         Machine machine = tile.getMachineType();
         if (machine != null) {
-            setSize(machine.getSlotCount());
-            this.tile = tile;
-            this.type = type;
-            this.inputCount = machine.getInputCount();
-            this.outputCount = machine.getOutputCount();
-        } else {
-            setSize(1);
+            inputHandler = new GTItemHandler(machine.getInputCount()) {
+                @Override
+                protected void onContentsChanged(int slot) {
+                    tile.onContentsChanged(type, slot);
+                }
+            };
+            outputHandler = new GTItemHandler(machine.getOutputCount()) {
+                @Override
+                protected void onContentsChanged(int slot) {
+                    tile.onContentsChanged(type, slot);
+                }
+            };
         }
-    }
-
-    public MachineStackHandler(TileEntityMachine tile, int type, int inputCount, int outputCount) {
-        setSize(inputCount + outputCount);
-        this.tile = tile;
-        this.type = type;
-        this.inputCount = inputCount;
-        this.outputCount = outputCount;
-    }
-
-    public List<ItemStack> getInputList() {
-        ArrayList<ItemStack> inputs = new ArrayList<>();
-        for (int i = 0; i < inputCount; i++) {
-            if (!stacks[i].isEmpty()) {
-                inputs.add(stacks[i]);
-            }
-        }
-        return inputs;
     }
 
     public ItemStack[] getInputs() {
-        return Arrays.copyOfRange(stacks, 0, inputCount);
+        return inputHandler.stacks;
     }
 
     public ItemStack[] getOutputs() {
-        return Arrays.copyOfRange(stacks, inputCount, stacks.length);
+        return outputHandler.stacks;
     }
 
     public void consumeInputs(ItemStack... inputs) {
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < stacks.length; j++) {
-                if (Utils.equals(inputs[i], stacks[j])) {
-                    stacks[j].shrink(inputs[i].getCount());
+            for (int j = 0; j < inputHandler.stacks.length; j++) {
+                if (Utils.equals(inputs[i], inputHandler.stacks[j])) {
+                    inputHandler.stacks[j].shrink(inputs[i].getCount());
                     break;
                 }
             }
         }
     }
 
-    public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
-        ArrayList<ItemStack> notConsumed = new ArrayList<>();
-        for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < stacks.length; j++) {
-                if (Utils.equals(inputs[i], stacks[j])) {
-                    stacks[j].shrink(inputs[i].getCount());
-                } else {
-                    notConsumed.add(inputs[i]);
+    public void addOutputs(ItemStack... outputs) {
+        for (int i = 0; i < outputs.length; i++) {
+            outputHandler.insertItem(i, outputs[i].copy(), false);
+        }
+    }
+
+    /** Helpers **/
+    public boolean canStacksFit(ItemStack[] a, ItemStack[] b) {
+        return getSpaceForStacks(a, b) >= a.length;
+    }
+
+    public int getSpaceForStacks(ItemStack[] a, ItemStack[] b) {
+        int matchCount = 0;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < b.length; j++) {
+                if (b[j].isEmpty() || (Utils.equals(a[i], b[j]) && b[j].getCount() + a[i].getCount() <= b[j].getMaxStackSize())) {
+                    matchCount++;
+                    break;
                 }
             }
         }
-        return notConsumed.toArray(new ItemStack[0]);
+        return matchCount;
     }
 
-    public void addOutputs(ItemStack... outputs) {
-        for (int i = 0; i < outputs.length; i++) {
-            insertItem(inputCount + i, outputs[i].copy(), false);
-        }
+    /** Handler Access **/
+    public IItemHandler getInputHandler() {
+        return inputHandler;
     }
 
-    @Nonnull
-    @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-//        if (slot >= inputCount) return ItemStack.EMPTY;
-        return super.insertItem(slot, stack, simulate);
+    public IItemHandler getOutputHandler() {
+        return outputHandler;
     }
 
-    @Nonnull
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-//        if (slot < inputCount) return ItemStack.EMPTY;
-        return super.extractItem(slot, amount, simulate);
+    /** NBT **/
+    public NBTTagCompound serializeInput() {
+        return inputHandler.serializeNBT();
     }
 
-    @Override
-    protected void onContentsChanged(int slot) {
-        tile.onContentsChanged(type, slot);
+    public NBTTagCompound serializeOutput() {
+        return outputHandler.serializeNBT();
+    }
+
+    public void deserializeInput(NBTTagCompound nbt) {
+        inputHandler.deserializeNBT(nbt);
+    }
+
+    public void deserializeOutput(NBTTagCompound nbt) {
+        outputHandler.deserializeNBT(nbt);
     }
 }

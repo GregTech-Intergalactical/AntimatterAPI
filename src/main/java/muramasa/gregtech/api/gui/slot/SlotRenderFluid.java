@@ -27,8 +27,6 @@ public class SlotRenderFluid extends SlotRender {
         return super.getSlotTexture();
     }
 
-
-
     public void setFluid(Fluid fluid) {
         fluidTexture = fluid != null ? RenderHelper.getSprite(fluid) : null;
     }

@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.gui.container;
 
 import muramasa.gregtech.api.machines.MachineState;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;
@@ -9,11 +9,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ContainerBasicMachine extends ContainerMachine {
 
+    private TileEntityBasicMachine tile;
+
     private int lastProgress = -1;
     private int lastState = -1;
 
-    public ContainerBasicMachine(TileEntityMachine tile, IInventory playerInv) {
-        super(tile, playerInv);
+    public ContainerBasicMachine(TileEntityBasicMachine tile, IInventory playerInv) {
+        super(playerInv);
+        this.tile = tile;
+        addSlots(tile.getMachineType().getSlots(), tile.getStackHandler());
     }
 
     @Override

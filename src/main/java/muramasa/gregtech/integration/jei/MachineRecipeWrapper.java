@@ -18,13 +18,23 @@ public class MachineRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputStacks()));
-        ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputStacks()));
+        if (recipe.hasInputStacks()) {
+            ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputStacks()));
+        }
+        if (recipe.hasOutputStacks()) {
+            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputStacks()));
+        }
+        if (recipe.hasInputFluids()) {
+            ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(recipe.getInputFluids()));
+        }
+        if (recipe.hasOutputFluids()) {
+            ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(recipe.getOutputFluids()));
+        }
     }
 
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        minecraft.fontRenderer.drawString("Total: " + recipe.getDuration() * recipe.getPower() + " EU", 10, 85, 0x000000);
+        minecraft.fontRenderer.drawString("Total: " + recipe.getTotalPower() + " EU", 10, 85, 0x000000);
         minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, 95, 0x000000);
         minecraft.fontRenderer.drawString("Voltage: " + "32 (LV)" + "", 10, 105, 0x000000);
         minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, 115, 0x000000);

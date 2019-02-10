@@ -6,7 +6,7 @@ public class TileEntitySteamMachine extends TileEntityBasicMachine {
 
     @Override
     public Recipe findRecipe() {
-        return getMachineType().findRecipe(stackHandler.getInputs(), inputTank.getFluid());
+        return getMachineType().findRecipe(stackHandler.getInputs(), tankHandler.getInputs());
     }
 
     @Override

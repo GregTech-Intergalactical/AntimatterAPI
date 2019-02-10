@@ -37,7 +37,7 @@ public class Machines {
     public static Machine CENTRIFUGE = new ItemFluidMachine("centrifuge").addSlots(new SlotData(0, 35, 25), new SlotData(0, 53, 25), new SlotData(1, 107, 16), new SlotData(1, 125, 16), new SlotData(1, 143, 16), new SlotData(1, 107, 34), new SlotData(1, 125, 34), new SlotData(1, 143, 34));
     public static Machine ELECTROLYZER = new ItemFluidMachine("electrolyzer").addSlots(CENTRIFUGE);
     public static Machine THERMAL_CENTRIFUGE = new BasicMachine("thermal_centrifuge").addSlots(new SlotData(0, 53, 25), new SlotData(1, 107, 25), new SlotData(1, 125, 25), new SlotData(1, 143, 25));
-    public static Machine ORE_WASHER = new ItemFluidMachine("ore_washer").addSlots(THERMAL_CENTRIFUGE);
+    public static Machine ORE_WASHER = new ItemFluidMachine("ore_washer").addSlots(THERMAL_CENTRIFUGE).addFluidSlots(new SlotData(2, 53, 64));
     public static Machine CHEMICAL_REACTOR = new ItemFluidMachine("chemical_reactor").addSlots(CANNER);
     public static Machine FLUID_CANNER = new ItemFluidMachine("fluid_canner").addSlots(COMPRESSOR);
     public static Machine DISASSEMBLER = new BasicMachine("disassembler").addSlots(ALLOY_SMELTER); //TODO
@@ -59,8 +59,8 @@ public class Machines {
 
     public static Machine STEAM_PULVERIZER = new SteamMachine("steam_pulverizer").addSlots(PULVERIZER);
 
-    public static Machine BLAST_FURNACE = new MultiMachine("blast_furnace", TileEntityElectricBlastFurnace.class, ITEM, FLUID_INPUT, FLUID_OUTPUT);
-    public static Machine FUSION_REACTOR = new MultiMachine("fusion_reactor", TileEntityFusionReactor.class, FLUID_INPUT, FLUID_OUTPUT);
+    public static Machine BLAST_FURNACE = new MultiMachine("blast_furnace", TileEntityElectricBlastFurnace.class, ITEM, FLUID);
+    public static Machine FUSION_REACTOR = new MultiMachine("fusion_reactor", TileEntityFusionReactor.class, FLUID);
 
     public static Machine HATCH_ITEM_INPUT = new HatchMachine("item_hatch_input").addSlots(new SlotData(0, 35, 25));
     public static Machine HATCH_ITEM_OUTPUT = new HatchMachine("item_hatch_output").addSlots(new SlotData(1, 35, 25));

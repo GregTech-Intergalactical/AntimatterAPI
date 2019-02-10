@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.gui;
 
+import muramasa.gregtech.api.capability.impl.MachineTankHandler;
 import muramasa.gregtech.api.gui.container.ContainerMachine;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.client.render.RenderHelper;
@@ -12,7 +13,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,15 +35,15 @@ public class GuiBasicMachine extends GuiMachine {
 
     public void drawContainedFluids(int mouseX, int mouseY) { // mezz.jei.plugins.vanilla.ingredients.FluidStackRenderer
         if (tile instanceof TileEntityBasicMachine) {
-            IFluidHandler fluidHandler = ((TileEntityBasicMachine) tile).getFluidHandler();
-            FluidStack inputStack = fluidHandler.getTankProperties()[0].getContents();
-            FluidStack outputStack = null;//fluidHandler.getTankProperties()[1].getContents();
+            MachineTankHandler fluidHandler = ((TileEntityBasicMachine) tile).getFluidHandler();
+            FluidStack inputStack = fluidHandler.getInput(0).getFluid();
+//            FluidStack outputStack = null;//fluidHandler.getTankProperties()[1].getContents();
             if (inputStack != null) {
                 TextureAtlasSprite sprite = RenderHelper.getSprite(inputStack.getFluid());
                 if (sprite != null) {
                     mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     setGLColorFromInt(inputStack.getFluid().getColor());
-                    GlStateManager.disableBlend();
+                    GlStateManager.enableBlend();
                     GlStateManager.disableLighting();
                     drawTexturedModalRect(53, 63, sprite, 16, 16);
                 }
@@ -55,23 +55,23 @@ public class GuiBasicMachine extends GuiMachine {
                 tooltipLines.add(TextFormatting.GREEN + "State: Liquid");
                 drawTooltipInArea(tooltipLines, mouseX, mouseY, 53, 63, 16, 16);
             }
-            if (outputStack != null) {
-                TextureAtlasSprite sprite = RenderHelper.getSprite(outputStack.getFluid());
-                if (sprite != null) {
-                    mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    setGLColorFromInt(outputStack.getFluid().getColor());
-                    GlStateManager.disableBlend();
-                    GlStateManager.disableLighting();
-                    drawTexturedModalRect(53, 63, sprite, 16, 16);
-                }
-
-                ArrayList<String> tooltipLines = new ArrayList<>();
-                tooltipLines.add(outputStack.getLocalizedName());
-                tooltipLines.add(TextFormatting.BLUE + "Amount: " + outputStack.amount);
-                tooltipLines.add(TextFormatting.RED + "Temperature: 295 K");
-                tooltipLines.add(TextFormatting.GREEN + "State: Liquid");
-                drawTooltipInArea(tooltipLines, mouseX, mouseY, 53, 63, 16, 16);
-            }
+//            if (outputStack != null) {
+//                TextureAtlasSprite sprite = RenderHelper.getSprite(outputStack.getFluid());
+//                if (sprite != null) {
+//                    mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+//                    setGLColorFromInt(outputStack.getFluid().getColor());
+//                    GlStateManager.disableBlend();
+//                    GlStateManager.disableLighting();
+//                    drawTexturedModalRect(107, 63, sprite, 16, 16);
+//                }
+//
+//                ArrayList<String> tooltipLines = new ArrayList<>();
+//                tooltipLines.add(outputStack.getLocalizedName());
+//                tooltipLines.add(TextFormatting.BLUE + "Amount: " + outputStack.amount);
+//                tooltipLines.add(TextFormatting.RED + "Temperature: 295 K");
+//                tooltipLines.add(TextFormatting.GREEN + "State: Liquid");
+//                drawTooltipInArea(tooltipLines, mouseX, mouseY, 107, 63, 16, 16);
+//            }
         }
     }
 
@@ -83,7 +83,7 @@ public class GuiBasicMachine extends GuiMachine {
 
         drawTooltipInArea(tile.getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
 
-        if (tile.getMachineType().hasFlag(MachineFlag.FLUID_INPUT)) {
+        if (tile.getMachineType().hasFlag(MachineFlag.FLUID)) {
             drawContainedFluids(mouseX, mouseY);
         }
     }

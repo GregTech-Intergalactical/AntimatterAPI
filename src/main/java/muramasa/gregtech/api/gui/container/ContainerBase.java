@@ -8,17 +8,10 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerBase extends Container {
 
-    public int size;
-
-    public ContainerBase(int size, IInventory playerInv) {
-        this.size = size;
+    public ContainerBase(IInventory playerInv) {
         if (playerInv != null) {
             addPlayerSlots(playerInv);
         }
-    }
-
-    public ContainerBase(int size) {
-        this(size, null);
     }
 
     private void addPlayerSlots(IInventory playerInv) {
@@ -45,11 +38,11 @@ public class ContainerBase extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (index < size) {
-                if (!this.mergeItemStack(itemstack1, size, this.inventorySlots.size(), true)) {
+            if (index < inventorySlots.size()) {
+                if (!this.mergeItemStack(itemstack1, inventorySlots.size(), this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 0, size, false)) {
+            } else if (!this.mergeItemStack(itemstack1, 0, inventorySlots.size(), false)) {
                 return ItemStack.EMPTY;
             }
 

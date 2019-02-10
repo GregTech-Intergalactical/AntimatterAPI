@@ -19,7 +19,7 @@ public class SteamMachine extends Machine {
     public SteamMachine(String name, MachineFlag... extraFlags) {
         super(name, ContentLoader.blockMachines, TileEntitySteamMachine.class);
         setTiers(Tier.getSteam());
-        addFlags(BASIC, STEAM, ITEM,FLUID_INPUT);
+        addFlags(BASIC, STEAM, ITEM, FLUID);
         addFlags(extraFlags);
         addRecipeMap();
         addGUI(GregTech.INSTANCE, Ref.MACHINE_ID);

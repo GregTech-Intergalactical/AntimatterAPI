@@ -13,8 +13,7 @@ public enum MachineFlag {
     MULTI(), //Has structure
     HATCH(),
     ITEM(), //Can store items
-    FLUID_INPUT(), //Can store fluids
-    FLUID_OUTPUT(),
+    FLUID(),
     ENERGY(), //Needs power
     RECIPE(), //Has a recipe map
     GUI(),

@@ -1,220 +1,116 @@
 package muramasa.gregtech.api.capability.impl;
 
-import muramasa.gregtech.api.machines.objects.MachineTankPropertiesWrapper;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nullable;
+import java.util.ArrayList;
 
-public class MachineTankHandler implements IFluidTank, IFluidHandler {
+public class MachineTankHandler {
 
-    @Nullable
-    public FluidStack fluidStack;
-    public int capacity;
-    public boolean canFill = true, canDrain = true;
+    private static final int TANK_CAPACITY = 99999;
 
-    protected TileEntityMachine tile;
-    protected IFluidTankProperties[] tankProperties;
+    private TileEntityMachine tile;
+    private GTFluidTank[] inputTanks, outputTanks;
 
-    public MachineTankHandler(TileEntityMachine tile, int capacity, FluidStack fluidStack, boolean canFill, boolean canDrain) {
+    public MachineTankHandler(TileEntityMachine tile, int inputCount, int outputCount) {
         this.tile = tile;
-        this.capacity = capacity;
-        this.fluidStack = fluidStack;
-        this.canFill = canFill;
-        this.canDrain = canDrain;
-    }
-
-    /* IFluidTank */
-    @Override
-    @Nullable
-    public FluidStack getFluid() {
-        return fluidStack;
-    }
-
-    @Override
-    public int getFluidAmount() {
-        if (fluidStack == null) return 0;
-        return fluidStack.amount;
-    }
-
-    @Override
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
-    public FluidTankInfo getInfo() {
-        return new FluidTankInfo(this);
-    }
-
-    @Override
-    public IFluidTankProperties[] getTankProperties() {
-        if (this.tankProperties == null) {
-            this.tankProperties = new IFluidTankProperties[] { new MachineTankPropertiesWrapper(this) };
+        inputTanks = new GTFluidTank[inputCount];
+        outputTanks = new GTFluidTank[outputCount];
+        for (int i = 0; i < inputCount; i++) {
+            inputTanks[i] = new GTFluidTank(TANK_CAPACITY, true, false);
         }
-        return this.tankProperties;
-    }
-
-    @Override
-    public int fill(FluidStack resource, boolean doFill) {
-        if (!canFillFluidType(resource)) return 0;
-        return fillInternal(resource, doFill);
-    }
-
-    public int fillInternal(FluidStack resource, boolean doFill) {
-        if (resource == null || resource.amount <= 0) {
-            return 0;
+        for (int i = 0; i < outputCount; i++) {
+            outputTanks[i] = new GTFluidTank(TANK_CAPACITY, false, true);
         }
-
-        if (!doFill) {
-            if (fluidStack == null) {
-                return Math.min(capacity, resource.amount);
-            }
-
-            if (!fluidStack.isFluidEqual(resource)) {
-                return 0;
-            }
-
-            return Math.min(capacity - fluidStack.amount, resource.amount);
-        }
-
-        if (fluidStack == null) {
-            fluidStack = new FluidStack(resource, Math.min(capacity, resource.amount));
-
-            if (tile != null) {
-                FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluidStack, tile.getWorld(), tile.getPos(), this, fluidStack.amount));
-            }
-
-            onContentsChanged();
-            return fluidStack.amount;
-        }
-
-        if (!fluidStack.isFluidEqual(resource)) {
-            return 0;
-        }
-        int filled = capacity - fluidStack.amount;
-
-        if (resource.amount < filled) {
-            fluidStack.amount += resource.amount;
-            filled = resource.amount;
-        } else {
-            fluidStack.amount = capacity;
-        }
-
-        if (tile != null) {
-            FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(fluidStack, tile.getWorld(), tile.getPos(), this, filled));
-        }
-
-        onContentsChanged();
-        return filled;
     }
 
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        if (!canDrainFluidType(getFluid())) return null;
-        return drainInternal(resource, doDrain);
+    public GTFluidTank getInput(int i) {
+        return inputTanks[i];
     }
 
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        if (!canDrainFluidType(fluidStack)) return null;
-        return drainInternal(maxDrain, doDrain);
-    }
-
-    @Nullable
-    public FluidStack drainInternal(FluidStack resource, boolean doDrain) {
-        if (resource == null || !resource.isFluidEqual(getFluid())) return null;
-        return drainInternal(resource.amount, doDrain);
-    }
-
-    @Nullable
-    public FluidStack drainInternal(int maxDrain, boolean doDrain) {
-        if (fluidStack == null || maxDrain <= 0) {
-            return null;
-        }
-
-        int drained = maxDrain;
-        if (fluidStack.amount < drained) {
-            drained = fluidStack.amount;
-        }
-
-        FluidStack stack = new FluidStack(fluidStack, drained);
-        if (doDrain) {
-            fluidStack.amount -= drained;
-            if (fluidStack.amount <= 0) {
-                fluidStack = null;
-            }
-
-            if (tile != null) {
-                FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(fluidStack, tile.getWorld(), tile.getPos(), this, drained));
-            }
-            onContentsChanged();
-        }
-        return stack;
-    }
-
-    /**
-     * Returns true if the tank can be filled with this type of fluidStack.
-     * Used as a filter for fluidStack types.
-     * Does not consider the current contents or capacity of the tank,
-     * only whether it could ever fill with this type of fluidStack.
-     *
-     * @see IFluidTankProperties#canFillFluidType(FluidStack)
-     */
-    public boolean canFillFluidType(FluidStack fluid) {
-        return canFill;
-    }
-
-    /**
-     * Returns true if the tank can drain out this type of fluidStack.
-     * Used as a filter for fluidStack types.
-     * Does not consider the current contents or capacity of the tank,
-     * only whether it could ever drain out this type of fluidStack.
-     *
-     * @see IFluidTankProperties#canDrainFluidType(FluidStack)
-     */
-    public boolean canDrainFluidType(@Nullable FluidStack fluid) {
-        return fluid != null && canDrain;
-    }
-
-    protected void onContentsChanged() {
-//        tile.markDirty();
-    }
-
-    public NBTTagCompound serializeNBT() {
-        NBTTagList nbtTagList = new NBTTagList();
-//        for (int i = 0; i < stacks.length; i++) {
-//            if (!stacks[i].isEmpty()) {
-//                NBTTagCompound itemTag = new NBTTagCompound();
-//                itemTag.setInteger("Slot", i);
-//                stacks[i].writeToNBT(itemTag);
-//                nbtTagList.appendTag(itemTag);
-//            }
-//        }
-        NBTTagCompound nbt = new NBTTagCompound();
-//        nbt.setTag("Items", nbtTagList);
-//        nbt.setInteger("Size", stacks.length);
-        return nbt;
-    }
-
-    public void deserializeNBT(NBTTagCompound nbt) {
-//        setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.length);
-//        NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-//        for (int i = 0; i < tagList.tagCount(); i++) {
-//            NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
-//            int slot = itemTags.getInteger("Slot");
+//    public FluidStack getFirstInput() {
+//        for (int i = 0; i < inputTanks.length; i++) {
 //
-//            if (slot >= 0 && slot < stacks.length) {
-//                stacks[slot] = new ItemStack(itemTags);
-//            }
 //        }
-//        onLoad();
+//    }
+
+    public GTFluidTank getOutput(int i) {
+        return outputTanks[i];
     }
+
+    public FluidStack[] getInputs() {
+        ArrayList<FluidStack> stacks = new ArrayList<>();
+        for (int i = 0; i < inputTanks.length; i++) {
+            if (inputTanks[i].getFluid() != null) {
+                stacks.add(inputTanks[i].getFluid());
+            }
+        }
+        return stacks.toArray(new FluidStack[0]);
+    }
+
+    public FluidStack[] getOutputs() {
+        ArrayList<FluidStack> stacks = new ArrayList<>();
+        for (int i = 0; i < outputTanks.length; i++) {
+            if (outputTanks[i].getFluid() != null) {
+                stacks.add(outputTanks[i].getFluid());
+            }
+        }
+        return stacks.toArray(new FluidStack[0]);
+    }
+
+    public boolean canInput(FluidStack... fluids) {
+        int matchCount = 0;
+        for (int i = 0; i < fluids.length; i++) {
+            for (int j = 0; j < inputTanks.length; j++) {
+                if (inputTanks[j].fill(fluids[i], false) == fluids[i].amount) {
+                    matchCount++;
+                }
+            }
+        }
+        return matchCount >= fluids.length;
+    }
+
+    public boolean canOutput(FluidStack... fluids) {
+        int matchCount = 0;
+        for (int i = 0; i < fluids.length; i++) {
+            for (int j = 0; j < outputTanks.length; j++) {
+                if (outputTanks[j].fill(fluids[i], false) == fluids[i].amount) {
+                    matchCount++;
+                }
+            }
+        }
+        return matchCount >= fluids.length;
+    }
+
+    public void addInputs(FluidStack... fluids) {
+        for (int i = 0; i < fluids.length; i++) {
+            for (int j = 0; j < inputTanks.length; j++) {
+                inputTanks[j].fill(fluids[i], true);
+            }
+        }
+    }
+
+    public void addOutputs(FluidStack... fluids) {
+        for (int i = 0; i < fluids.length; i++) {
+            for (int j = 0; j < outputTanks.length; j++) {
+                outputTanks[j].fill(fluids[i], true);
+            }
+        }
+    }
+
+    public void consumeInputs() {
+
+    }
+
+    public void consumeOutputs() {
+
+    }
+
+//    public FluidStack findAndConsumeNextInput() {
+//
+//    }
+//
+//    public FluidStack findAndConsumeNextOutput() {
+//
+//    }
 }

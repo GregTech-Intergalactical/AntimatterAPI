@@ -52,7 +52,7 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(stackHandler);
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(stackHandler.getOutputHandler());
         } else if (capability == ITechCapabilities.COMPONENT) {
             return ITechCapabilities.COMPONENT.cast(componentHandler);
         }

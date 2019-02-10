@@ -11,22 +11,19 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
-public class StackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+public class GTItemHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
 
     public ItemStack[] stacks;
 
-    public StackHandler() {
+    public GTItemHandler() {
         this(1);
     }
 
-    public StackHandler(int size) {
-        stacks = new ItemStack[size];
-        for (int i = 0; i < size; i++) {
-            stacks[i] = ItemStack.EMPTY;
-        }
+    public GTItemHandler(int size) {
+        setSize(size);
     }
 
-    public StackHandler(ItemStack... stacks) {
+    public GTItemHandler(ItemStack... stacks) {
         this.stacks = stacks;
     }
 

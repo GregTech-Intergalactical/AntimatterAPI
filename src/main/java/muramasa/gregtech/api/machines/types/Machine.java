@@ -42,6 +42,10 @@ public class Machine implements IStringSerializable {
     protected SlotData[] slots;
     protected int inputCount, outputCount;
 
+    /** Fluid Members **/
+    protected SlotData[] fluidSlots;
+    protected int inputTankCount, outputTankCount;
+
     /** Multi Members **/
     protected StructurePattern structurePattern;
 
@@ -156,6 +160,19 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
+    public Machine addFluidSlots(SlotData... slots) {
+        this.fluidSlots = slots;
+        addFlags(MachineFlag.FLUID);
+        for (SlotData slot : slots) {
+            if (slot.type == 2) {
+                inputTankCount++;
+            } else if (slot.type == 3) {
+                outputTankCount++;
+            }
+        }
+        return this;
+    }
+
     public Machine addRecipeMap() {
         recipeMap = new RecipeMap(10);
         return this;
@@ -210,6 +227,14 @@ public class Machine implements IStringSerializable {
 
     public int getOutputCount() {
         return outputCount;
+    }
+
+    public int getFluidInputCount() {
+        return inputTankCount;
+    }
+
+    public int getFluidOutputCount() {
+        return outputTankCount;
     }
 
     public int getGuiId() {
