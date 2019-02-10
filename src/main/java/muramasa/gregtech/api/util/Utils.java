@@ -41,7 +41,7 @@ public class Utils {
     }
 
     public static boolean equals(ItemStack a, ItemStack b) {
-        return a.getItem() == b.getItem() && b.getMetadata() == b.getMetadata();
+        return a.getItem() == b.getItem() && a.getMetadata() == b.getMetadata();
     }
 
     public static boolean equals(FluidStack a, FluidStack b) {
