@@ -83,11 +83,10 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             if (stackHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
             Recipe recipe = findRecipe();
             if (recipe != null) {
-                System.out.println(recipe.toString());
-//                activeRecipe = recipe;
-//                curProgress = 0;
-//                maxProgress = recipe.getDuration();
-//                setMachineState(MachineState.FOUND_RECIPE);
+                activeRecipe = recipe;
+                curProgress = 0;
+                maxProgress = recipe.getDuration();
+                setMachineState(MachineState.FOUND_RECIPE);
             }
         }
     }
