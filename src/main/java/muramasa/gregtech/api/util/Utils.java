@@ -130,7 +130,7 @@ public class Utils {
         }
         return matchCount >= a.length;
     }
-
+//
     public static boolean canStacksFit(ItemStack[] a, ItemStack[] b) {
         return getSpaceForStacks(a, b) >= a.length;
     }
@@ -147,6 +147,23 @@ public class Utils {
         }
         return matchCount;
     }
+
+//    public static boolean canFluidsFit(FluidStack[] a, FluidStack[] b) {
+//        return getSpaceForFluids(a, b) >= a.length;
+//    }
+//
+//    public static int getSpaceForFluids(FluidStack[] a, FluidStack[] b) {
+//        int matchCount = 0;
+//        for (int i = 0; i < a.length; i++) {
+//            for (int j = 0; j < b.length; j++) {
+//                if ((equals(a[i], b[j]) && b[j].amount + a[i].amount <= b[j].getMaxStackSize())) {
+//                    matchCount++;
+//                    break;
+//                }
+//            }
+//        }
+//        return matchCount;
+//    }
 
 //    public static boolean isStacksValidForRecipe(Recipe recipe, ItemStack[] inputs) {
 //        int matchCount = 0;

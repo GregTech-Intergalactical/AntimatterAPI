@@ -10,8 +10,8 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "1.0"
-group = "com.muramasa.itech" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "itech"
+group = "com.muramasa.gregtech" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "gregtech"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {

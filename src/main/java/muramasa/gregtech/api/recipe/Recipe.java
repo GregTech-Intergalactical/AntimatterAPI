@@ -35,8 +35,16 @@ public class Recipe {
         return stacksInput != null && stacksInput.length > 0;
     }
 
+    public boolean hasOutputStacks() {
+        return stacksOutput != null && stacksOutput.length > 0;
+    }
+
     public boolean hasInputFluids() {
         return fluidsInput != null && fluidsInput.length > 0;
+    }
+
+    public boolean hasOutputFluids() {
+        return fluidsOutput != null && fluidsOutput.length > 0;
     }
 
     public ItemStack[] getInputStacks() {

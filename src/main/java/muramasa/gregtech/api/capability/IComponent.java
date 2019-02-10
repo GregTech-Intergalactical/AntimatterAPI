@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.capability;
 
-import muramasa.gregtech.api.capability.impl.MachineStackHandler;
+import muramasa.gregtech.api.capability.impl.MachineStackHandlerOld;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +15,7 @@ public interface IComponent {
 
     ArrayList<BlockPos> getLinkedControllers();
 
-    MachineStackHandler getStackHandler();
+    MachineStackHandlerOld getStackHandler();
 
     void linkController(TileEntityMultiMachine tile);
 

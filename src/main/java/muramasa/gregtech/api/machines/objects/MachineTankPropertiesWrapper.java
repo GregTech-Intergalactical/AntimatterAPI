@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.machines.objects;
 
-import muramasa.gregtech.api.capability.impl.MachineTankHandler;
+import muramasa.gregtech.api.capability.impl.MachineTankHandlerOld;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 
 public class MachineTankPropertiesWrapper implements IFluidTankProperties {
 
-    protected final MachineTankHandler tank;
+    protected final MachineTankHandlerOld tank;
 
-    public MachineTankPropertiesWrapper(MachineTankHandler tank) {
+    public MachineTankPropertiesWrapper(MachineTankHandlerOld tank) {
         this.tank = tank;
     }
 

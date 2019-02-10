@@ -48,8 +48,8 @@ public class ComponentHandler implements IComponent {
     }
 
     @Override
-    public MachineStackHandler getStackHandler() {
-        return (MachineStackHandler) componentTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    public MachineStackHandlerOld getStackHandler() {
+        return (MachineStackHandlerOld) componentTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
     }
 
     @Override

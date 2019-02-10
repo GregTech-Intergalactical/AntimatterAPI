@@ -6,13 +6,11 @@ import muramasa.gregtech.api.recipe.RecipeMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import static muramasa.gregtech.api.machines.MachineFlag.*;
-
 public class ItemFluidMachine extends BasicMachine {
 
     public ItemFluidMachine(String name, MachineFlag... extraFlags) {
         super(name, extraFlags);
-        addFlags(FLUID_INPUT);
+//        addFlags(FLUID);
     }
 
     @Override
