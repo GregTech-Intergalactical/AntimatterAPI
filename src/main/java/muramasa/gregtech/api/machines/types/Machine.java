@@ -1,5 +1,7 @@
 package muramasa.gregtech.api.machines.types;
 
+import muramasa.gregtech.api.capability.impl.MachineStackHandler;
+import muramasa.gregtech.api.capability.impl.MachineTankHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.SlotData;
@@ -7,14 +9,12 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.structure.StructurePattern;
+import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.utils.Ref;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class Machine implements IStringSerializable {
 
     /** Basic Members **/
     protected int internalId;
-    protected Block block;
+    protected BlockMachine block;
     protected Class tileClass;
     protected String name, displayName;
     protected ArrayList<Tier> tiers;
@@ -51,7 +51,7 @@ public class Machine implements IStringSerializable {
 
     //TODO add valid covers
 
-    public Machine(String name, Block block, Class tileClass) {
+    public Machine(String name, BlockMachine block, Class tileClass) {
         internalId = lastInternalId++;
         this.name = name;
         this.block = block;
@@ -108,6 +108,9 @@ public class Machine implements IStringSerializable {
         return new ModelResourceLocation(Ref.MODID + ":machine_part/overlays/" + name);
     }
 
+
+    //TODO remove builder methods
+
     public Machine addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
             machineMask |= flag.getBit();
@@ -122,7 +125,7 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Machine setBlock(Block block) {
+    public Machine setBlock(BlockMachine block) {
         this.block = block;
         return this;
     }
@@ -178,8 +181,8 @@ public class Machine implements IStringSerializable {
         return this;
     }
 
-    public Recipe findRecipe(ItemStack[] inputs, FluidStack... fluidInputs) {
-        return RecipeMap.findRecipeItem(recipeMap, inputs);
+    public Recipe findRecipe(MachineStackHandler stackHandler, MachineTankHandler tankHandler) {
+        return RecipeMap.findRecipeItem(recipeMap, stackHandler.getInputs());
     }
 
     public Machine addPattern(StructurePattern pattern) {
@@ -192,7 +195,7 @@ public class Machine implements IStringSerializable {
     }
 
     /** Getters **/
-    public Block getBlock() {
+    public BlockMachine getBlock() {
         return block;
     }
 

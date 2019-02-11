@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.events;
 
-import muramasa.gregtech.api.enums.ItemList;
+import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.util.ToolHelper;
 import muramasa.gregtech.common.utils.Ref;
@@ -43,7 +43,7 @@ public class RenderGameOverlayHandler extends Gui {
                 drawModalRectWithCustomSizedTexture(x + 89, y, iconU, 10, 4, 5, 182, 15);
                 GL11.glPopAttrib();
                 GL11.glPopMatrix();
-            } else if (ItemList.Debug_Scanner.isItemEqual(stack)) {
+            } else if (ItemType.DebugScanner.isItemEqual(stack)) {
 
             }
         }

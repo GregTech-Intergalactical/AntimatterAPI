@@ -9,8 +9,8 @@ import static muramasa.gregtech.api.properties.ITechProperties.*;
 
 public class BlockMultiMachine extends BlockMachine {
 
-    public BlockMultiMachine(String name) {
-        super(name);
+    public BlockMultiMachine(String type) {
+        super(type);
     }
 
     @Override

@@ -40,7 +40,7 @@
 ////            ItemStack aDataOrb = ItemList.Tool_DataOrb.get(1);
 ////            Behaviour_DataOrb.setDataTitle(aDataOrb, "Elemental-Scan");
 ////            Behaviour_DataOrb.setDataName(aDataOrb, mat.mElement.name());
-////            ItemStack aRepOutput = ((mat.hasFlag(LIQUID) || mat.hasFlag(GAS)) && !mat.hasFlag(DUST)) ? mat.getCell(1) : mat.getDust(1);
+////            ItemStack aRepOutput = ((mat.hasFlag(LIQUID) || mat.hasFlag(GAS)) && !mat.hasFlag(Dust)) ? mat.getCell(1) : mat.getDust(1);
 ////            Fluid aFluid = mat.mFluid != null ? mat.mFluid : mat.mGas;
 ////            int aMass = mat.getMass();
 ////            GT_Recipe.GT_Recipe_Map.sScannerFakeRecipes.addFakeRecipe(false, new ItemStack[]{aRepOutput}, new ItemStack[]{aDataOrb}, ItemList.Tool_DataOrb.get(1), null, null, aMass * 8192, 32, 0);
@@ -69,7 +69,7 @@
 //            RecipeAdder.addVacuumFreezerRecipe(mat.getIngotH(1), mat.getIngot(1), Math.max(mat.getMass() * 3, 1));
 //        }
 //
-//        for (Integer i : SPRING.getIds()) {
+//        for (Integer i : Spring.getIds()) {
 //            mat = Materials.get(i);
 //            RecipeAdder.addBenderRecipe(mat.getRod(1), mat.getSpring(1), 200, 16);
 //        }
@@ -86,7 +86,7 @@
 //            //GregTech_API.registerCover(aDenseStack, new GT_RenderedTexture(material.mIconSet.mTextures[76], material.mRGBa, false), null);
 //        }
 //
-//        for (Integer i : ROTOR.getIds()) {
+//        for (Integer i : Rotor.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aRotor = mat.getRotor(1), aRing = mat.getRing(1), aPlate = mat.getPlate(1);
 //            RecipeHelper.addShapedToolRecipe(aRotor, "PhP", "SRf", "PdP", 'P', aPlate, 'R', aRing, 'S', mat.getScrew(1));
@@ -112,7 +112,7 @@
 //            RecipeHelper.addShapedToolRecipe(aGearS, "P  ", (mat == Materials.Wood || mat == Materials.WoodSealed) ? " s " : " h ", "   ", 'P', mat.getPlate(1));
 //        }
 //
-//        for (Integer i : GEAR.getIds()) {
+//        for (Integer i : Gear.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aGear = mat.getGear(1);
 //            GT_ModHandler.removeRecipeByOutput(aGear);
@@ -127,14 +127,14 @@
 //            //Unifier.registerOre(Prefix.gear, aGearStack);
 //        }
 //
-//        for (Integer i : SCREW.getIds()) {
+//        for (Integer i : Screw.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aBolt = mat.getBolt(1), aScrew = mat.getScrew(1);
 //            RecipeAdder.addLatheRecipe(aBolt, aScrew, null, Math.max(mat.getMass() / 8, 1), 4);
 //            RecipeHelper.addShapedToolRecipe(aScrew, "fX ", "X  ", "   ", 'X', aBolt);
 //        }
 //
-//        for (Integer i : FOIL.getIds()) {
+//        for (Integer i : Foil.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aPlate = mat.getPlate(1), aFoil = mat.getFoil(2);
 //            RecipeAdder.addBenderRecipe(aPlate, aFoil, Math.max(mat.getMass(), 1), 24);
@@ -142,7 +142,7 @@
 //            //GregTech_API.registerCover(aFoilStack, new GT_RenderedTexture(material.mIconSet.mTextures[70], material.mRGBa, false), null);
 //        }
 //
-//        for (Integer i : BOLT.getIds()) {
+//        for (Integer i : Bolt.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aBolt = mat.getBolt(1), aRod = mat.getRod(1);
 //            RecipeAdder.addCutterRecipe(aRod, mat.getBolt(4), null, Math.max(mat.getMass() * 2, 1), 4);
@@ -152,7 +152,7 @@
 //            }
 //        }
 //
-//        for (Integer i : RING.getIds()) {
+//        for (Integer i : Ring.getIds()) {
 //            mat = Materials.get(i);
 //            if (!mat.hasFlag(NOSMASH)) {
 //                RecipeHelper.addShapedToolRecipe(mat.getRing(1), "h  ", " X ", "   ", 'X', mat.getRod(1));
@@ -162,11 +162,11 @@
 //            }
 //        }
 //
-//        for (Integer i : ROD.getIds()) {
+//        for (Integer i : Rod.getIds()) {
 //            mat = Materials.get(i);
 //            if (mat.hasFlag(BGEM) && mat.hasFlag(BRITTLEG)) {
 //                RecipeAdder.addLatheRecipe(mat.getGem(1), mat.getRod(1), mat.mMacerateInto.getDustS(2), Math.max(mat.getMass() * 5, 1), 16);
-//            } else if (mat.hasFlag(INGOT)) {
+//            } else if (mat.hasFlag(Ingot)) {
 //                RecipeAdder.addLatheRecipe(mat.getIngot(1), mat.getRod(1), mat.mMacerateInto.getDustS(2), Math.max(mat.getMass() * 5, 1), 16);
 //                RecipeHelper.addShapedToolRecipe(mat.getRod(1), "f  ", " X ", "   ", 'X', mat.getIngot(1));
 //            }
@@ -178,7 +178,7 @@
 //            }
 //        }
 //
-//        for (Integer i : PLATE.getIds()) {
+//        for (Integer i : Plate.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aPlate = mat.getPlate(1), aIngot = mat.getIngot(1);
 //            RecipeAdder.addFluidSolidifierRecipe(ItemList.Mold_Plate.get(0), mat.getFluid(144), aPlate, 32, 8);
@@ -221,7 +221,7 @@
 //            }
 //        }
 //
-//        for (Integer i : DUST.getIds()) {
+//        for (Integer i : Dust.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aDust = mat.getDust(1), aDustS = mat.getDustS(1), aDustT = mat.getDustT(1);
 //            RecipeHelper.addBasicShapedRecipe(Utils.ca(4, aDustS), " X", "  ", 'X', aDust);
@@ -261,12 +261,12 @@
 //            int aInputCellCount = 0;
 //
 //            ArrayList<ItemStack> aOutputs = new ArrayList<>();
-//            FluidStack aFirstFluid = null; //The first LIQUID MatStack (LIQUID & !DUST tag combo) uses the Electrolyzers fluid input tack. The preceding are cells.
+//            FluidStack aFirstFluid = null; //The first LIQUID MatStack (LIQUID & !Dust tag combo) uses the Electrolyzers fluid input tack. The preceding are cells.
 //
 //            Material matProcess;
 //            for (MaterialStack matStack : mat.getProcessInto()) {
 //                 matProcess = matStack.get();
-//                if ((matProcess.hasFlag(LIQUID) || matProcess.hasFlag(GAS)) && !matProcess.hasFlag(DUST)) {
+//                if ((matProcess.hasFlag(LIQUID) || matProcess.hasFlag(GAS)) && !matProcess.hasFlag(Dust)) {
 //                    if (aFirstFluid == null) {
 //                        if (matProcess.mFluid != null) { //If a Material has mFluid & mGas, Prioritise mFluid.
 //                            aFirstFluid = matProcess.getFluid(matStack.size * 1000);
@@ -284,7 +284,7 @@
 //            }
 //            aInputCount = Math.min(aInputCount, 64); //This should not happen. This means mProcess total is over 64 and the recipe should be adjusted
 //            if (aOutputs.size() > 0) {
-//                ItemStack aInput = (mat.hasFlag(LIQUID) || mat.hasFlag(GAS)) && !mat.hasFlag(DUST) ? mat.getCell(aInputCount) : mat.getDust(aInputCount), aInputCell = aInputCellCount > 0 ? ItemList.Cell_Empty.get(aInputCellCount) : null;
+//                ItemStack aInput = (mat.hasFlag(LIQUID) || mat.hasFlag(GAS)) && !mat.hasFlag(Dust) ? mat.getCell(aInputCount) : mat.getDust(aInputCount), aInputCell = aInputCellCount > 0 ? ItemList.Cell_Empty.get(aInputCellCount) : null;
 //                if (mat.hasFlag(ELEC)) {
 //                    RecipeAdder.addElectrolyzerRecipe(aInput, aInputCell, null, aFirstFluid, aOutputs.size() < 1 ? null : aOutputs.get(0), aOutputs.size() < 2 ? null : aOutputs.get(1), aOutputs.size() < 3 ? null : aOutputs.get(2), aOutputs.size() < 4 ? null : aOutputs.get(3), aOutputs.size() < 5 ? null : aOutputs.get(4), aOutputs.size() < 6 ? null : aOutputs.get(5), null, Math.max(1, Math.abs(mat.getProtons() * 2 * aInputCellCount)), Math.min(4, aOutputs.size()) * 30);
 //                } else if (mat.hasFlag(CENT)) {
@@ -293,7 +293,7 @@
 //            }
 //        }
 //
-//        for (Integer i : INGOT.getIds()) {
+//        for (Integer i : Ingot.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aIngot = mat.getIngot(1), aNugget = mat.getNugget(1), aDust = mat.getDust(1);
 //            if (mat.getFuelPower() > 0) {
@@ -302,12 +302,12 @@
 //            RecipeAdder.addFluidSolidifierRecipe(ItemList.Mold_Nugget.get(0), mat.getFluid(16), aNugget, 16, 4);
 //            RecipeAdder.addFluidSolidifierRecipe(ItemList.Mold_Ingot.get(0), mat.getFluid(144), aIngot, 32, 8);
 //            RecipeAdder.addFluidSolidifierRecipe(ItemList.Mold_Block.get(0), mat.getFluid(1296), mat.getBlock(1), 288, 8);
-//            GT_RecipeRegistrator.registerReverseFluidSmelting(aIngot, mat, Prefix.INGOT.mMaterialAmount, null);
-//            GT_RecipeRegistrator.registerReverseMacerating(aIngot, mat, Prefix.INGOT.mMaterialAmount, null, null, null, false);
-//            GT_RecipeRegistrator.registerReverseFluidSmelting(aNugget, mat, Prefix.INGOT.mMaterialAmount, null);
-//            GT_RecipeRegistrator.registerReverseMacerating(aNugget, mat, Prefix.INGOT.mMaterialAmount, null, null, null, false);
+//            GT_RecipeRegistrator.registerReverseFluidSmelting(aIngot, mat, Prefix.Ingot.mMaterialAmount, null);
+//            GT_RecipeRegistrator.registerReverseMacerating(aIngot, mat, Prefix.Ingot.mMaterialAmount, null, null, null, false);
+//            GT_RecipeRegistrator.registerReverseFluidSmelting(aNugget, mat, Prefix.Ingot.mMaterialAmount, null);
+//            GT_RecipeRegistrator.registerReverseMacerating(aNugget, mat, Prefix.Ingot.mMaterialAmount, null, null, null, false);
 //            if (mat.mSmeltInto.mArcSmeltInto != mat) {
-//                GT_RecipeRegistrator.registerReverseArcSmelting(aIngot, mat, Prefix.INGOT.mMaterialAmount, null, null, null);
+//                GT_RecipeRegistrator.registerReverseArcSmelting(aIngot, mat, Prefix.Ingot.mMaterialAmount, null, null, null);
 //            }
 //            ItemStack aMacInto = mat.mMacerateInto.getDust(1);
 //            if (aMacInto != null && (mat.needsBlastFurnace() || mat.hasFlag(NOSMELT))) {
@@ -357,7 +357,7 @@
 //
 //        for (Integer i : BGEM.getIds()) {
 //            mat = Materials.get(i);
-//            if (mat.isTransparent()) { //TODO PLATE > LENS BROKEN
+//            if (mat.isTransparent()) { //TODO Plate > Lens BROKEN
 //                RecipeAdder.addLatheRecipe(mat.getPlate(1), mat.getLens(1), mat.getDustS(1), Math.max(mat.getMass() / 2, 1), 480);
 //                //GregTech_API.registerCover(aLensStack, new GT_MultiTexture(Textures.BlockIcons.MACHINE_CASINGS[2][0], new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_LENS, material.mRGBa, false)), new GT_Cover_Lens(material.mColor.mIndex));
 //            }
@@ -371,7 +371,7 @@
 //            }
 //        }
 //
-//        for (Integer i : GEM.getIds()) {
+//        for (Integer i : Gem.getIds()) {
 //            mat = Materials.get(i);
 //            ItemStack aGem = mat.getGem(1), aChipped = mat.getGemChipped(1), aFlawed = mat.getGemFlawed(1), aFlawless = mat.getGemFlawless(1), aExquisite = mat.getGemExquisite(1);
 //            if (mat.getFuelPower() > 0) {
@@ -403,7 +403,7 @@
 //            //TODO NPE GT_RecipeRegistrator.registerUsagesForMaterials(aGemStack, aPlateStack.toString(), !aNoSmashing);
 //        }
 //
-//        for (Integer i : CRUSHED.getIds()) {
+//        for (Integer i : Crushed.getIds()) {
 //            mat = Materials.get(i);
 //
 //            if (mat.hasByProducts()) {
@@ -426,7 +426,7 @@
 //            RecipeAdder.addPulverizerRecipe(aCrushed, mat.mMacerateInto.getDust(1), aOreByProduct1.getDust(1), 10, false);
 //            RecipeAdder.addHammerRecipe(aChunk, mat.hasFlag(BRITTLEG) ? mat.getGem(1) : aCrushed, 16, 10);
 //            RecipeAdder.addHammerRecipe(aCrushed, aDust, 10, 16);
-//            if (mat.hasFlag(INGOT) || mat.hasFlag(BGEM)) {
+//            if (mat.hasFlag(Ingot) || mat.hasFlag(BGEM)) {
 //                ItemStack aIngotOrGemStack = mat == mat.mDirectSmelting ? mat.hasFlag(BGEM) ? mat.getGem(1) : mat.getIngot(1) : mat.hasFlag(BRITTLEG) ? mat.mDirectSmelting.getGem(1) : mat.mDirectSmelting.getIngot(1);
 //                if (!aNeedsBlastFurnace) {
 //                    ItemStack aNonDirectSmeltingOutput = GT_Mod.gregtechproxy.mMixedOreOnlyYieldsTwoThirdsOfPureOre ? mat.getNugget(6) : Unifier.getComponent(mat.hasFlag(BGEM) ? Prefix.gem : Prefix.ingot, mat.mDirectSmelting, 1);
@@ -443,12 +443,12 @@
 //                }
 //                if (mat.hasFlag(BGEM)) { //Gem Specific Recipes
 //                    RecipeHelper.addSmeltingRecipe(aChunk, Utils.ca(aMultiplier * mat.mSmeltingMultiplier, aIngotOrGemStack));
-//                    if (mat.hasFlag(GEM)) {
+//                    if (mat.hasFlag(Gem)) {
 //                        RecipeAdder.addSifterRecipe(aCrushed, new ItemStack[]{mat.getGemExquisite(1), mat.getGemFlawless(1), aIngotOrGemStack, mat.getGemFlawed(1), mat.getGemChipped(1), aDust}, new int[]{300, 1200, 4500, 1400, 2800, 3500}, 800, 16);
 //                    } else {
 //                        RecipeAdder.addSifterRecipe(aCrushed, new ItemStack[]{aIngotOrGemStack, aIngotOrGemStack, aIngotOrGemStack, aIngotOrGemStack, aIngotOrGemStack, aDust}, new int[]{100, 400, 1500, 2000, 4000, 5000}, 800, 16);
 //                    }
-//                } else if (mat.hasFlag(INGOT)) { //Solid Specific Recipes
+//                } else if (mat.hasFlag(Ingot)) { //Solid Specific Recipes
 //                    if (aNeedsBlastFurnace) {
 //                        ItemStack aIngotSmeltInto = mat == mat.mSmeltInto ? aIngotOrGemStack : mat.mSmeltInto.getIngot(1);
 //                        int aBlastDuration = Math.max(mat.getMass() / 4, 1) * mat.getBlastFurnaceTemp();
@@ -484,7 +484,7 @@
 //            Materials aOreByProduct2 = mat.mByProducts.size() >= 2 ? mat.mByProducts.get(1) : aOreByProduct1;
 //            Materials aOreByProduct3 = mat.mByProducts.size() >= 3 ? mat.mByProducts.get(2) : aOreByProduct2;
 //            RecipeAdder.addPulverizerRecipe(aCrushedC, mat.mMacerateInto.getDust(1), aOreByProduct3.getDust(1), 10, false);
-//            if (mat.hasFlag(INGOT) || mat.hasFlag(BGEM)) {
+//            if (mat.hasFlag(Ingot) || mat.hasFlag(BGEM)) {
 //                if (!(mat.needsBlastFurnace() || mat.mDirectSmelting.isBlastFurnaceRequired())) {
 //                    ItemStack aNonDirectSmeltingOutput = GT_Mod.gregtechproxy.mMixedOreOnlyYieldsTwoThirdsOfPureOre ? mat.getNugget(6) : Unifier.getComponent(mat.hasFlag(BGEM) ? Prefix.gem : Prefix.ingot, mat.mDirectSmelting, 1);
 //                    if (!mat.hasDirectSmeltInto()) {
@@ -510,7 +510,7 @@
 //            RecipeAdder.addHammerRecipe(aCrushedP, mat.mMacerateInto.getDust(1), 10, 16);
 //            RecipeAdder.addPulverizerRecipe(aCrushedP, aDust, aOreByProduct2.getDust(1), 10, false);
 //            RecipeAdder.addThermalCentrifugeRecipe(aCrushedP, mat.mMacerateInto.getCrushedC(1), aOreByProduct2.getDustT(1));
-//            if ((mat.hasFlag(INGOT) || mat.hasFlag(BGEM)) && (mat.needsBlastFurnace() || mat.mDirectSmelting.isBlastFurnaceRequired())) {
+//            if ((mat.hasFlag(Ingot) || mat.hasFlag(BGEM)) && (mat.needsBlastFurnace() || mat.mDirectSmelting.isBlastFurnaceRequired())) {
 //                ItemStack aIngotOrGemStack = (mat == mat.mDirectSmelting ? mat.hasFlag(BGEM) ? mat.getGem(1) : mat.getIngot(1) : mat.hasFlag(BRITTLEG) ? mat.mDirectSmelting.getGem(1) : mat.mDirectSmelting.getIngot(1));
 //                ItemStack aBlastStack = mat.getBlastFurnaceTemp() > 1750 && mat.mSmeltInto.hasFlag(HINGOT) ? mat.mSmeltInto.getIngotH(1) : (mat == mat.mSmeltInto ? aIngotOrGemStack : mat.mSmeltInto.getIngot(1));
 //                RecipeAdder.addBlastFurnaceRecipe(aCrushedP, null, null, null, aBlastStack, null, Math.max(mat.getMass() / 4, 1) * mat.getBlastFurnaceTemp(), 120, mat.getBlastFurnaceTemp());
@@ -525,7 +525,7 @@
 //
 //        for (Integer i : TOOLS.getIds()) {
 //            mat = Materials.get(i);
-//            if (mat.hasFlag(INGOT) && mat.hasFlag(PLATE) && !mat.hasFlag(RUBBERTOOLS) && mat == mat.mMacerateInto) {
+//            if (mat.hasFlag(Ingot) && mat.hasFlag(Plate) && !mat.hasFlag(RUBBERTOOLS) && mat == mat.mMacerateInto) {
 //                ItemStack aStainlessScrew = Materials.StainlessSteel.getScrew(1), aTitaniumScrew = Materials.Titanium.getScrew(1), aTungstensteelScrew = Materials.TungstenSteel.getScrew(1), aStainlessPlate = Materials.StainlessSteel.getPlate(1), aTitaniumPlate = Materials.Titanium.getPlate(1), aTungstensteelPlate = Materials.TungstenSteel.getPlate(1), aStainlessSmallGear = Materials.StainlessSteel.getGearS(1), aTitaniumSmallGear = Materials.Titanium.getGearS(1), aTungstensteelSmallGear = Materials.TungstenSteel.getGearS(1), aTitaniumSpring = Materials.Titanium.getSpring(1);
 //                ItemStack aTempStack, aSteelPlate = Materials.Steel.getPlate(1), aSteelRing = Materials.Steel.getRing(1);
 //                ItemStack aDust = mat.getDust(1), aIngot = mat.getIngot(1), aPlate = mat.getPlate(1), aRod = mat.getRod(1), aBolt = mat.getBolt(1), aHandle = mat.mHandleMaterial.getRod(1);

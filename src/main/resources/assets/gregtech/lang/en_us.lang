@@ -57,8 +57,10 @@ prefix.pre.lens.name=
 prefix.post.lens.name=Lens
 prefix.pre.cell.name=
 prefix.post.cell.name=Cell
-prefix.pre.plasma_cell.name=
-prefix.post.plasma_cell.name=Plasma Cell
+prefix.pre.cell_gas.name=
+prefix.post.cell_gas.name=Gas Cell
+prefix.pre.cell_plasma.name=
+prefix.post.cell_plasma.name=Plasma Cell
 
 material.aluminium.name=Aluminium
 material.titanium.name=Titanium

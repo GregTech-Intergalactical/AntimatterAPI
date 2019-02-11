@@ -92,6 +92,9 @@
       "cell": {
         "textures": {"layer0": "gregtech:items/material_set/metallic/overlays/cell", "layer1": "gregtech:items/material_set/metallic/cell"}
       },
+	  "cell_gas": {
+        "textures": {"layer0": "gregtech:items/material_set/metallic/overlays/cell_gas", "layer1": "gregtech:items/material_set/metallic/cell_gas"}
+      },
       "cell_plasma": {
         "textures": {"layer0": "gregtech:items/material_set/metallic/overlays/cell_plasma", "layer1": "gregtech:items/material_set/metallic/cell_plasma"}
       }

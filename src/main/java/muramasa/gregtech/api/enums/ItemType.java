@@ -1,23 +1,25 @@
 package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.api.items.StandardItem;
-import muramasa.gregtech.loaders.ContentLoader;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
-public enum ItemList implements IStringSerializable {
+public class ItemType implements IStringSerializable {
 
-    Empty_Cell("Empty Cell"),
+    private static LinkedHashMap<String, ItemType> TYPE_LOOKUP = new LinkedHashMap<>();
 
-    Debug_Scanner("Debug Scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item"),
-    Component_Pump("Pump Component", ""),
-    Component_Conveyor("Conveyor Component", ""),
-    Cover_Item_Port("Item Port", "Can be placed on machines as a cover"),
-    Cover_Fluid_Port("Fluid Port", "Can be placed on machines as a cover"),
-    Cover_Energy_Port("Energy Port", "Can be placed on machines as a cover");
+    public static ItemType EmptyCell = new ItemType("Empty Cell");
+    public static ItemType DebugScanner = new ItemType("Debug Scanner",TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
+    public static ItemType PumpComponent = new ItemType("Pump Component", "");
+    public static ItemType ConveyorComponent = new ItemType("Conveyor Component", "");
+    public static ItemType ItemPort = new ItemType("Item Port", "Can be placed on machines as a cover");
+    public static ItemType FluidPort = new ItemType("Fluid Port", "Can be placed on machines as a cover");
+    public static ItemType EnergyPort = new ItemType("Energy Port", "Can be placed on machines as a cover");
 
 //    Empty_Shape("Empty Shape Plate", "Raw plate to make Molds and Extruder Shapes"),
 //    Mold_Plate("Mold (Plate)", "Mold for making Plates"),
@@ -56,26 +58,26 @@ public enum ItemList implements IStringSerializable {
 //    Shape_Bottle("Extruder Shape (Bottle)", "Shape for making Bottles"); //TODO needed?
 
 
-    private String displayName;
-    private String tooltip;
+    private String name, displayName, tooltip;
 
-    ItemList(String displayName, String tooltip) {
+    public ItemType(String displayName, String tooltip) {
+        this.name = displayName.toLowerCase(Locale.ENGLISH).replace(" ", "_");
         this.displayName = displayName;
         this.tooltip = tooltip;
+        TYPE_LOOKUP.put(name, this);
     }
 
-    ItemList(String displayName) {
-        this.displayName = displayName;
-        this.tooltip = "";
-    }
-
-    public String getDisplayName() {
-        return displayName;
+    public ItemType(String displayName) {
+        this(displayName, "");
     }
 
     @Override
     public String getName() {
-        return name().toLowerCase(Locale.ENGLISH);
+        return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getTooltip() {
@@ -83,25 +85,29 @@ public enum ItemList implements IStringSerializable {
     }
 
     public boolean isItemEqual(ItemStack stack) {
-        return stack.getItem() instanceof StandardItem && stack.getMetadata() == ordinal();
+        return stack.getItem() instanceof StandardItem && ((StandardItem) stack.getItem()).getType() == this;
     }
 
-    public ItemStack get(int size) { //TODO implement 0 size = no recipe consume
-        return new ItemStack(ContentLoader.metaItem, size, ordinal());
-    }
-
-    public static ItemList get(ItemStack stack) {
-        return ItemList.values()[stack.getMetadata()];
-    }
-
-    public static boolean isAnyItemEqual(ItemStack stack, ItemList... items) {
-        for (ItemList item : items) {
+    public static boolean isAnyItemEqual(ItemStack stack, ItemType... items) {
+        for (ItemType item : items) {
             if (item.isItemEqual(stack)) return true;
         }
         return false;
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return isAnyItemEqual(stack, Cover_Item_Port, Cover_Fluid_Port, Cover_Energy_Port);
+        return isAnyItemEqual(stack, ItemPort, FluidPort, EnergyPort);
+    }
+
+    public ItemStack get(int count) { //TODO implement 0 size = no recipe consume
+        return StandardItem.get(name, count);
+    }
+
+    public static ItemType get(String type) {
+        return TYPE_LOOKUP.get(type);
+    }
+
+    public static Collection<ItemType> getAll() {
+        return TYPE_LOOKUP.values();
     }
 }

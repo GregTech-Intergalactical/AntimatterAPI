@@ -92,6 +92,9 @@
       "cell": {
         "textures": {"layer0": "gregtech:items/material_set/shiny/overlays/cell", "layer1": "gregtech:items/material_set/shiny/cell"}
       },
+	  "cell_gas": {
+        "textures": {"layer0": "gregtech:items/material_set/shiny/overlays/cell_gas", "layer1": "gregtech:items/material_set/shiny/cell_gas"}
+      },
       "cell_plasma": {
         "textures": {"layer0": "gregtech:items/material_set/shiny/overlays/cell_plasma", "layer1": "gregtech:items/material_set/shiny/cell_plasma"}
       }

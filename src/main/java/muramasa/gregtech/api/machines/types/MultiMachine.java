@@ -3,8 +3,8 @@ package muramasa.gregtech.api.machines.types;
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.common.blocks.BlockMultiMachine;
 import muramasa.gregtech.common.utils.Ref;
-import muramasa.gregtech.loaders.ContentLoader;
 import net.minecraft.util.ResourceLocation;
 
 import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
@@ -12,7 +12,7 @@ import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
 public class MultiMachine extends Machine {
 
     public MultiMachine(String name, Class tileClass, MachineFlag... extraFlags) {
-        super(name, ContentLoader.blockMultiMachine, tileClass);
+        super(name, new BlockMultiMachine(name), tileClass);
         setTiers(Tier.getMulti());
         addFlags(MULTI);
         addFlags(extraFlags);

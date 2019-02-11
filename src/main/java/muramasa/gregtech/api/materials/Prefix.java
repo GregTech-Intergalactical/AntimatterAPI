@@ -3,59 +3,63 @@ package muramasa.gregtech.api.materials;
 import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.IStringSerializable;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
-public enum Prefix {
+public class Prefix implements IStringSerializable {
+
+    private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
 
 //    ORE(true, 0), //TODO capitalize and add getJeiCategoryID
-    CHUNK(true, GenerationFlag.CRUSHED.getBit()),
-    CRUSHED(false, GenerationFlag.CRUSHED.getBit()),
-    CRUSHED_CENTRIFUGED(false, GenerationFlag.CRUSHEDC.getBit()),
-    CRUSHED_PURIFIED(false, GenerationFlag.CRUSHEDP.getBit()),
-    DUST(true, GenerationFlag.DUST.getBit()),
-    DUST_SMALL(false, GenerationFlag.DUST.getBit()),
-    DUST_TINY(false, GenerationFlag.DUST.getBit()),
-    NUGGET(false, GenerationFlag.INGOT.getBit()),
-    INGOT(true, GenerationFlag.INGOT.getBit()),
-    INGOT_HOT(false, GenerationFlag.HINGOT.getBit()),
-    PLATE(true, GenerationFlag.PLATE.getBit()),
-    PLATE_DENSE(true, GenerationFlag.DPLATE.getBit()),
-    GEM(true, GenerationFlag.BGEM.getBit()),
-    GEM_CHIPPED(true, GenerationFlag.GEM.getBit()),
-    GEM_FLAWED(true, GenerationFlag.GEM.getBit()),
-    GEM_FLAWLESS(true, GenerationFlag.GEM.getBit()),
-    GEM_EXQUISITE(true, GenerationFlag.GEM.getBit()),
-    FOIL(true, GenerationFlag.FOIL.getBit()),
-    ROD(true, GenerationFlag.ROD.getBit()),
-    BOLT(true, GenerationFlag.BOLT.getBit()),
-    SCREW(true, GenerationFlag.SCREW.getBit()),
-    RING(true, GenerationFlag.RING.getBit()),
-    SPRING(true, GenerationFlag.SPRING.getBit()),
-    WIRE_FINE(true, GenerationFlag.WIREF.getBit()),
-    ROTOR(true, GenerationFlag.ROTOR.getBit()),
-    GEAR(true, GenerationFlag.GEAR.getBit()),
-    GEAR_SMALL(true, GenerationFlag.SGEAR.getBit()),
-    LENS(true, GenerationFlag.GEM.getBit()),
-    CELL(true, GenerationFlag.LIQUID.getBit() | GenerationFlag.GAS.getBit()),
-    CELL_PLASMA(true, GenerationFlag.PLASMA.getBit());
+    public static Prefix Chunk = new Prefix("chunk", true, GenerationFlag.CRUSHED.getBit());
+    public static Prefix Crushed = new Prefix("crushed", false, GenerationFlag.CRUSHED.getBit());
+    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, GenerationFlag.CRUSHEDC.getBit());
+    public static Prefix CrushedPurified = new Prefix("crushed_purified", false, GenerationFlag.CRUSHEDP.getBit());
+    public static Prefix Dust = new Prefix("dust", true, GenerationFlag.DUST.getBit());
+    public static Prefix DustSmall = new Prefix("dust_small", false, GenerationFlag.DUST.getBit());
+    public static Prefix DustTiny = new Prefix("dust_tiny", false, GenerationFlag.DUST.getBit());
+    public static Prefix Nugget = new Prefix("nugget", false, GenerationFlag.INGOT.getBit());
+    public static Prefix Ingot = new Prefix("ingot", true, GenerationFlag.INGOT.getBit());
+    public static Prefix IngotHot = new Prefix("ingot_hot", false, GenerationFlag.HINGOT.getBit());
+    public static Prefix Plate = new Prefix("plate", true, GenerationFlag.PLATE.getBit());
+    public static Prefix PlateDense = new Prefix("plate_dense", true, GenerationFlag.DPLATE.getBit());
+    public static Prefix Gem = new Prefix("gem", true, GenerationFlag.BGEM.getBit());
+    public static Prefix GemChipped = new Prefix("gem_chipped", true, GenerationFlag.GEM.getBit());
+    public static Prefix GemFlawed = new Prefix("gem_flawed", true, GenerationFlag.GEM.getBit());
+    public static Prefix GemFlawless = new Prefix("gem_flawless", true, GenerationFlag.GEM.getBit());
+    public static Prefix GemExquisite = new Prefix("gem_exquisite", true, GenerationFlag.GEM.getBit());
+    public static Prefix Foil = new Prefix("foil", true, GenerationFlag.FOIL.getBit());
+    public static Prefix Rod = new Prefix("rod", true, GenerationFlag.ROD.getBit());
+    public static Prefix Bolt = new Prefix("bolt", true, GenerationFlag.BOLT.getBit());
+    public static Prefix Screw = new Prefix("screw", true, GenerationFlag.SCREW.getBit());
+    public static Prefix Ring = new Prefix("ring", true, GenerationFlag.RING.getBit());
+    public static Prefix Spring = new Prefix("spring", true, GenerationFlag.SPRING.getBit());
+    public static Prefix WireFine = new Prefix("wire_fine", true, GenerationFlag.WIREF.getBit());
+    public static Prefix Rotor = new Prefix("rotor", true, GenerationFlag.ROTOR.getBit());
+    public static Prefix Gear = new Prefix("gear", true, GenerationFlag.GEAR.getBit());
+    public static Prefix GearSmall = new Prefix("gear_small", true, GenerationFlag.SGEAR.getBit());
+    public static Prefix Lens = new Prefix("lens", true, GenerationFlag.GEM.getBit());
+    public static Prefix Cell = new Prefix("cell", true, GenerationFlag.LIQUID.getBit());
+    public static Prefix CellGas = new Prefix("cell_gas", true, GenerationFlag.GAS.getBit());
+    public static Prefix CellPlasma = new Prefix("cell_plasma", true, GenerationFlag.PLASMA.getBit());
 
-    private String namePre, namePost;
+    private String name, namePre, namePost;
 
     private boolean hasLocName, visible;
     private long generationBits;
 
-    Prefix(boolean visible, long generationBits) {
+    public Prefix(String name, boolean visible, long generationBits) {
+        this.name = name;
         this.visible = visible;
         this.generationBits = generationBits;
+        PREFIX_LOOKUP.put(name, this);
     }
 
     public String getName() {
-        return name().toLowerCase(Locale.ENGLISH);
-    }
-
-    public String getNameWithMaterial(Material material) {
-        return name() + material.getName();
+        return name.toLowerCase(Locale.ENGLISH);
     }
 
     public String getDisplayName(Material material) { //TODO cache, server side crash with local?
@@ -80,5 +84,13 @@ public enum Prefix {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public static Prefix get(String name) {
+        return PREFIX_LOOKUP.get(name);
+    }
+
+    public static Collection<Prefix> getAll() {
+        return PREFIX_LOOKUP.values();
     }
 }

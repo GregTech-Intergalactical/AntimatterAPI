@@ -1,12 +1,7 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.GenerationFlag;
-import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.properties.ITechProperties;
-import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.items.ItemBlockOres;
-import muramasa.gregtech.common.tileentities.base.TileEntityOre;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
@@ -18,7 +13,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -31,70 +25,48 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 public class BlockOre extends Block {
 
-    private static Material[] generatedOres;
+    private static LinkedHashMap<String, BlockOre> blockLookup = new LinkedHashMap<>();
 
-    public BlockOre() {
+    private String type;
+
+    public BlockOre(String type) {
         super(net.minecraft.block.material.Material.ROCK);
-        setUnlocalizedName(Ref.MODID + ".block_ore");
-        setRegistryName("block_ore");
+        setUnlocalizedName(Ref.MODID + "_ore_" + type);
+        setRegistryName("ore_" + type);
         setCreativeTab(Ref.TAB_BLOCKS);
-
-        generatedOres = GenerationFlag.CRUSHED.getMats();
+        this.type = type;
+        blockLookup.put(type, this);
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(ITechProperties.MATERIAL, ITechProperties.STONE).build();
+        return new BlockStateContainer.Builder(this).add(ITechProperties.MATERIAL).add(ITechProperties.STONE).build();
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            TileEntityOre ore = (TileEntityOre) tile;
-            exState = exState
-                .withProperty(ITechProperties.MATERIAL, ore.getMaterialId())
-                .withProperty(ITechProperties.STONE, ore.getStoneId());
-        }
-        return exState;
+        return exState.withProperty(ITechProperties.MATERIAL, Materials.get(type).getId());
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return 0;
+        return state.getValue(ITechProperties.STONE);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(ITechProperties.STONE, meta);
     }
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        for (int i = 0; i < generatedOres.length; i++) {
-            items.add(new ItemStack(this, 1, generatedOres[i].getId()));
-        }
-    }
-
-    @Override
-    public boolean hasTileEntity(IBlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileEntityOre();
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.getItem() instanceof ItemBlockOres) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntityOre) {
-//                ((TileEntityOre) tile).init(stack.getMetadata(), 0);
-                ((TileEntityOre) tile).init(generatedOres[RANDOM.nextInt(generatedOres.length)].getId(), RANDOM.nextInt(6));
-            }
-        }
+        items.add(new ItemStack(this, 1, Materials.get(type).getId()));
     }
 
     @Override
@@ -107,33 +79,20 @@ public class BlockOre extends Block {
         return 1;
     }
 
+    //TODO used for testing only
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        world.setBlockState(pos, state.withProperty(ITechProperties.STONE, RANDOM.nextInt(6)));
+    }
+
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            return new ItemStack(this, 1, ((TileEntityOre) tile).getMaterialId());
-        }
-        return new ItemStack(this, 1, Materials.Aluminium.getId());
+        return new ItemStack(this, 1, Materials.get(type).getId());
     }
 
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            drops.add(Materials.get(((TileEntityOre) tile).getMaterialId()).getChunk(1));
-        }
-    }
-
-    @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-        if (willHarvest) return true;
-        return super.removedByPlayer(state, world, pos, player, willHarvest);
-    }
-
-    @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
-        super.harvestBlock(worldIn, player, pos, state, te, stack);
-        worldIn.setBlockToAir(pos);
+        drops.add(Materials.get(type).getChunk(1));
     }
 
     @Override
@@ -143,20 +102,27 @@ public class BlockOre extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        for (Material mat : generatedOres) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), mat.getId(), new ModelResourceLocation(getRegistryName(), "inventory"));//NOPMD
-        }
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), Materials.get(type).getId(), new ModelResourceLocation(getRegistryName(), "inventory"));
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public static BlockOre get(String type) {
+        return blockLookup.get(type);
+    }
+
+    public static Collection<BlockOre> getAll() {
+        return blockLookup.values();
     }
 
     public static class ColorHandler implements IBlockColor {
         @Override
         public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
             if (tintIndex == 1) {
-                TileEntity tile = Utils.getTile(worldIn, pos);
-                if (tile instanceof TileEntityOre) {
-                    Material material = ((TileEntityOre) tile).getMaterial();
-                    return material != null ? material.getRGB() : 0xffffff;
-                }
+                BlockOre block = (BlockOre) state.getBlock();
+                return Materials.get(block.getType()).getRGB();
             }
             return -1;
         }
