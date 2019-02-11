@@ -4,7 +4,6 @@ import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.materials.GTItemStack;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -35,7 +34,7 @@ import java.util.List;
 
 public class StandardItem extends Item {
 
-    private static LinkedHashMap<String, GTItemStack> STACK_LOOKUP = new LinkedHashMap<>();
+    private static LinkedHashMap<String, StandardItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
     private String type;
 
@@ -44,7 +43,7 @@ public class StandardItem extends Item {
         setRegistryName("item_" + type.getName());
         setCreativeTab(Ref.TAB_ITEMS);
         this.type = type.getName();
-        STACK_LOOKUP.put(type.getName(), new GTItemStack(new ItemStack(this), true));
+        TYPE_LOOKUP.put(type.getName(), this);
     }
 
     public ItemType getType() {
@@ -55,10 +54,7 @@ public class StandardItem extends Item {
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab) {
             if (((GregTechTab) tab).getTabName().equals("items")) {
-                GTItemStack gtStack = STACK_LOOKUP.get(type);
-                if (gtStack.isVisible()) {
-                    items.add(gtStack.get());
-                }
+                items.add(new ItemStack(this));
             }
         }
     }
@@ -120,12 +116,10 @@ public class StandardItem extends Item {
     }
 
     public static ItemStack get(String name, int count) {
-        ItemStack stack = STACK_LOOKUP.get(name).get().copy();
-        stack.setCount(count);
-        return stack;
+        return new ItemStack(TYPE_LOOKUP.get(name), count);
     }
 
-    public static Collection<GTItemStack> getAll() {
-        return STACK_LOOKUP.values();
+    public static Collection<StandardItem> getAll() {
+        return TYPE_LOOKUP.values();
     }
 }

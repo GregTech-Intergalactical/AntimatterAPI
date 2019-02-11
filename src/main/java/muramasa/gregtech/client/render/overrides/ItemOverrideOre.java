@@ -1,7 +1,9 @@
 package muramasa.gregtech.client.render.overrides;
 
 import com.google.common.collect.ImmutableList;
-import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.common.blocks.BlockOre;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,6 +23,10 @@ public class ItemOverrideOre extends ItemOverrideList {
 
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
-        return bakedModels[Materials.get(stack.getMetadata()).getSet().ordinal()];
+        Material material = ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial();
+        if (material != null) {
+            return bakedModels[material.getSet().ordinal()];
+        }
+        return bakedModels[0];
     }
 }

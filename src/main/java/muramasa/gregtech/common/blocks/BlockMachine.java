@@ -10,6 +10,7 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
 import muramasa.gregtech.common.items.ItemBlockMachines;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -27,10 +28,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -45,6 +43,8 @@ import javax.annotation.Nullable;
 import static muramasa.gregtech.api.properties.ITechProperties.*;
 
 public class BlockMachine extends Block {
+
+    private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine"));
 
     private String type;
 
@@ -163,7 +163,8 @@ public class BlockMachine extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_machine", "inventory"));
+        ModelLoader.setCustomStateMapper(this, stateMapRedirect);
     }
 
     public static class ColorHandler implements IBlockColor {

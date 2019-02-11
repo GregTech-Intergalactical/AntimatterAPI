@@ -13,7 +13,9 @@ public class Prefix implements IStringSerializable {
 
     private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
 
-//    ORE(true, 0), //TODO capitalize and add getJeiCategoryID
+    public static Prefix Ore = new Prefix("ore", true, false, GenerationFlag.CRUSHED.getBit());
+    public static Prefix Block = new Prefix("block", true, false, GenerationFlag.CRUSHED.getBit());
+
     public static Prefix Chunk = new Prefix("chunk", true, GenerationFlag.CRUSHED.getBit());
     public static Prefix Crushed = new Prefix("crushed", false, GenerationFlag.CRUSHED.getBit());
     public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, GenerationFlag.CRUSHEDC.getBit());
@@ -48,14 +50,20 @@ public class Prefix implements IStringSerializable {
 
     private String name, namePre, namePost;
 
-    private boolean hasLocName, visible;
+    private boolean generatesItems, hasLocName, visible;
     private long generationBits;
 
     public Prefix(String name, boolean visible, long generationBits) {
         this.name = name;
         this.visible = visible;
         this.generationBits = generationBits;
+        this.generatesItems = true;
         PREFIX_LOOKUP.put(name, this);
+    }
+
+    public Prefix(String name, boolean visible, boolean generatesItems, long generationBits) {
+        this(name, visible, generationBits);
+        this.generatesItems = generatesItems;
     }
 
     public String getName() {
@@ -78,7 +86,7 @@ public class Prefix implements IStringSerializable {
     }
 
     public boolean allowGeneration(Material material) {
-        return (material.getItemMask() & generationBits) != 0;
+        return generatesItems && (material.getItemMask() & generationBits) != 0;
     }
 
     @Override

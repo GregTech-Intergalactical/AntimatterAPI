@@ -19,24 +19,20 @@ import java.util.function.Function;
 
 public class ModelOre implements IModel {
 
+    private static IBakedModel[] bakedModels;
+
     public ModelOre() {
 
     }
 
-//    @Override
-//    public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-//        IModel model = load(new ModelResourceLocation(ITech.MODID + ":blockores"));
-//        IBakedModel bakedModel = model.bake(state, format, getter);
-//        return new BakedModelOre(bakedModel);
-//    }
-
     @Override
     public IBakedModel bake(IModelState modelState, VertexFormat vertexFormat, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+        if (bakedModels != null) return new BakedModelOre();
         try {
             IModel model = ModelLoaderRegistry.getModel(new ModelResourceLocation(Ref.MODID + ":block_ore_base"));
 //            IBakedModel bakedModel = /*ModelBase.tex(model, "base", new ResourceLocation(ITech.MODID, "blocks/stone"))*/model.bake(modelState, vertexFormat, bakedTextureGetter);
 
-            IBakedModel[] bakedModels = new IBakedModel[MaterialSet.values().length];
+            bakedModels = new IBakedModel[MaterialSet.values().length];
             for (MaterialSet set : MaterialSet.values()) {
                 bakedModels[set.ordinal()] = model.retexture(ImmutableMap.of("overlay", set.getOreLoc().toString())).bake(modelState, vertexFormat, bakedTextureGetter);
 //                bakedModels[set.ordinal()] = ModelBase.tex(model, "overlay", set.getOreLoc()).bake(modelState, vertexFormat, bakedTextureGetter);
