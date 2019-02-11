@@ -11,19 +11,19 @@
 	  "debug_scanner": {
 		"textures": {"layer0": "gregtech:items/debug_scanner"}
 	  },
-	  "component_pump": {
+	  "pump_component": {
 		"textures": {"layer0": "gregtech:items/component_pump"}
 	  },
-	  "component_conveyor": {
+	  "conveyor_component": {
 		"textures": {"layer0": "gregtech:items/component_conveyor"}
 	  },
-	  "cover_item_port": {
+	  "item_port": {
 		"textures": {"layer0": "gregtech:items/cover_item_port"}
 	  },
-	  "cover_fluid_port": {
+	  "fluid_port": {
 		"textures": {"layer0": "gregtech:items/cover_fluid_port"}
 	  },
-	  "cover_energy_port": {
+	  "energy_port": {
 		"textures": {"layer0": "gregtech:items/cover_energy_port"}
 	  }
     }

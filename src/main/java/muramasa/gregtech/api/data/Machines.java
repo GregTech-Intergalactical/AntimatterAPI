@@ -1,25 +1,28 @@
 package muramasa.gregtech.api.data;
 
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.api.machines.*;
+import muramasa.gregtech.api.machines.MachineStack;
+import muramasa.gregtech.api.machines.SlotData;
+import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.*;
 import muramasa.gregtech.api.structure.StructurePattern;
+import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityElectricBlastFurnace;
 import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityFusionReactor;
-import muramasa.gregtech.loaders.ContentLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-import static muramasa.gregtech.api.machines.MachineFlag.*;
+import static muramasa.gregtech.api.machines.MachineFlag.FLUID;
+import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
 
 public class Machines {
 
-    public static HashMap<String, Machine> machineTypeLookup = new HashMap<>();
+    public static LinkedHashMap<String, Machine> machineTypeLookup = new LinkedHashMap<>();
 
-    public static Machine INVALID = new Machine("invalid", ContentLoader.blockMachines, TileEntityMachine.class).setTiers(Tier.LV).setBlock(ContentLoader.blockMachines);
+    public static Machine INVALID = new Machine("invalid", new BlockMachine("invalid"), TileEntityMachine.class).setTiers(Tier.LV);
 
     public static Machine ALLOY_SMELTER = new BasicMachine("alloy_smelter").addSlots(new SlotData(0, 35, 25), new SlotData(0, 53, 25), new SlotData(1, 107, 25));
     public static Machine ASSEMBLER = new BasicMachine("assembler").addSlots(new SlotData(0, 17, 16), new SlotData(0, 35, 16), new SlotData(0, 53, 16), new SlotData(0, 17, 34), new SlotData(0, 35, 34), new SlotData(0, 53, 34), new SlotData(1, 107, 25));
@@ -77,6 +80,10 @@ public class Machines {
 
     public static MachineStack get(String name, String tier) {
         return new MachineStack(get(name), Tier.get(tier));
+    }
+
+    public static Collection<Machine> getAll() {
+        return machineTypeLookup.values();
     }
 
     public static int getCount() {

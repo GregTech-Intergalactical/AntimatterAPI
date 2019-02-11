@@ -5,9 +5,9 @@ import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
@@ -46,12 +46,15 @@ import static muramasa.gregtech.api.properties.ITechProperties.*;
 
 public class BlockMachine extends Block {
 
-    public BlockMachine(String name) {
+    private String type;
+
+    public BlockMachine(String type) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName(Ref.MODID + name);
-        setRegistryName(name);
+        setUnlocalizedName(Ref.MODID + "_machine_" + type);
+        setRegistryName("machine_" + type);
         setSoundType(SoundType.METAL);
         setCreativeTab(Ref.TAB_MACHINES);
+        this.type = type;
     }
 
     @Override
@@ -95,21 +98,21 @@ public class BlockMachine extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        for (MachineStack stack : MachineFlag.BASIC.getStacks()) {
-            items.add(stack.asItemStack());
-        }
-        for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
-            items.add(stack.asItemStack());
-        }
-        for (MachineStack stack : MachineFlag.HATCH.getStacks()) {
-            items.add(stack.asItemStack());
+        Machine machine = Machines.get(type);
+        for (Tier tier : machine.getTiers()) {
+            items.add(Machines.get(type, tier.getName()).asItemStack());
         }
     }
 
     @Nullable
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileEntityMachine();
+        try {
+            return (TileEntityMachine) Machines.get(type).getTileClass().newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -134,17 +137,10 @@ public class BlockMachine extends Block {
                 NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
                 String machineType = data.getString(Ref.KEY_MACHINE_STACK_TYPE);
                 String machineTier = data.getString(Ref.KEY_MACHINE_STACK_TIER);
-                try {
-                    TileEntity tile = (TileEntity) Machines.get(machineType).getTileClass().newInstance();
-                    if (tile instanceof TileEntityMachine) {
-                        world.setTileEntity(pos, tile);
-                        tile = world.getTileEntity(pos);
-                        if (tile instanceof TileEntityMachine) {
-                            ((TileEntityMachine) tile).init(machineType, machineTier, placer.getHorizontalFacing().getOpposite().getIndex() - 2);
-                        }
-                    }
-                } catch (IllegalAccessException | InstantiationException e) {
-                    e.printStackTrace();
+
+                TileEntity tile = Utils.getTile(world, pos);
+                if (tile instanceof TileEntityMachine) {
+                    ((TileEntityMachine) tile).init(machineType, machineTier, placer.getHorizontalFacing().getOpposite().getIndex() - 2);
                 }
             }
         }

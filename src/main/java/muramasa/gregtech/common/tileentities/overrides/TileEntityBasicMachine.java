@@ -3,8 +3,8 @@ package muramasa.gregtech.common.tileentities.overrides;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.enums.ItemList;
-import muramasa.gregtech.api.items.MetaItem;
+import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
@@ -23,7 +23,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import javax.annotation.Nullable;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
-import static muramasa.gregtech.api.materials.Prefix.CELL;
 
 public class TileEntityBasicMachine extends TileEntityMachine {
 
@@ -87,7 +86,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
             if (stackHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
-            Recipe recipe = findRecipe();
+            Recipe recipe = getMachineType().findRecipe(stackHandler, tankHandler);
             if (recipe != null) {
                 activeRecipe = recipe;
                 curProgress = 0;
@@ -97,30 +96,21 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         }
     }
 
-    public Recipe findRecipe() {
-        Machine machine = getMachineType();
-        if (machine.hasFlag(FLUID)) {
-            return machine.findRecipe(stackHandler.getInputs(), tankHandler.getInputs());
-        } else {
-            return machine.findRecipe(stackHandler.getInputs());
-        }
-    }
-
     public MachineState tickRecipe() { //TODO do count check here instead of checkRecipe being called on every contents update
         if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
-            if (canOutput()) {
-                //Add outputs and reset to process next recipe cycle
-                stackHandler.addOutputs(activeRecipe.getOutputStacks());
-                curProgress = 0;
-
-                //Check if has enough stack count for next recipe cycle
-                if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), stackHandler.getInputs())) {
-                    return MachineState.IDLE;
-                } else {
-                    return MachineState.FOUND_RECIPE;
-                }
-            } else {
+            if (!canOutput()) {
                 return MachineState.OUTPUT_FULL; //Return and loop until outputs can be added
+            }
+
+            //Add outputs and reset to process next recipe cycle
+            stackHandler.addOutputs(activeRecipe.getOutputStacks());
+            curProgress = 0;
+
+            //Check if has enough stack count for next recipe cycle
+            if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), stackHandler.getInputs())) {
+                return MachineState.IDLE;
+            } else {
+                return MachineState.FOUND_RECIPE;
             }
         } else {
             //Calculate per recipe tick so user has risk of losing items
@@ -134,8 +124,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
                 curProgress++;
                 return MachineState.FOUND_RECIPE;
             } else {
-                //TODO machine out of power/steam
-                //TODO maybe not null recipe, but keep cache for user using hammer to restart?
                 return curProgress == 0 ? MachineState.NO_POWER : MachineState.POWER_LOSS;
             }
         }
@@ -174,12 +162,12 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public void handleCellSlotUpdate(int slot) {
         if (slot == 0) { //Input slot
             ItemStack stack = stackHandler.getCellInput();
-            if (MetaItem.hasPrefix(stack, CELL)) {
-                Material material = MetaItem.getMaterial(stack);
+            if (stack.getItem() instanceof MaterialItem) {
+                Material material = ((MaterialItem) stack.getItem()).getMaterial();
                 if (material != null && material.getLiquid() != null) {
                     tankHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
                 }
-            } else if (ItemList.Empty_Cell.isItemEqual(stack)) {
+            } else if (ItemType.EmptyCell.isItemEqual(stack)) {
                 tankHandler.getInput(0).setFluid(null);
             }
         } else if (slot == 1) { //Output slot
@@ -250,7 +238,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (stackHandler != null) { //this should never happen...
+        if (stackHandler != null) {
             compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_INPUT, stackHandler.serializeInput());
             compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_OUTPUT, stackHandler.serializeOutput());
             if (getMachineType().hasFlag(FLUID)) {

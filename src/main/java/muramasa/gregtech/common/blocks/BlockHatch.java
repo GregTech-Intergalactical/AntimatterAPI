@@ -13,8 +13,8 @@ import static muramasa.gregtech.api.properties.ITechProperties.*;
 
 public class BlockHatch extends BlockMachine {
 
-    public BlockHatch(String name) {
-        super(name);
+    public BlockHatch(String type) {
+        super(type);
     }
 
     @Override

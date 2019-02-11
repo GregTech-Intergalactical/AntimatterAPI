@@ -48,7 +48,7 @@ public class BakedModelOre extends BakedModelBase {
         int setId = Materials.get(exState.getValue(ITechProperties.MATERIAL)).getSet().ordinal();
         quadList.addAll(bakedModels[setId].getQuads(state, side, rand));
 
-        int stoneId = exState.getValue(ITechProperties.STONE);
+        int stoneId = state.getValue(ITechProperties.STONE);
         if (stoneId > 0) {
             retexture(quadList, 0, sprites[stoneId]);
         }

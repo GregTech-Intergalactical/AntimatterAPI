@@ -6,7 +6,6 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
@@ -33,19 +32,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
-        if (!getClass().getName().equals(getMachineType().getTileClass().getName())) {
-            try {
-                world.setTileEntity(pos, (TileEntity) Machines.get(typeFromNBT).getTileClass().newInstance());
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine) tile).init(typeFromNBT, tierFromNBT, facing);
-                }
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        } else {
-            init(typeFromNBT, tierFromNBT, facing);
-        }
+        init(typeFromNBT, tierFromNBT, facing);
     }
 
     /** Events **/

@@ -1,10 +1,10 @@
 package muramasa.gregtech.api.machines.types;
 
+import muramasa.gregtech.api.capability.impl.MachineStackHandler;
+import muramasa.gregtech.api.capability.impl.MachineTankHandler;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 public class ItemFluidMachine extends BasicMachine {
 
@@ -14,7 +14,7 @@ public class ItemFluidMachine extends BasicMachine {
     }
 
     @Override
-    public Recipe findRecipe(ItemStack[] inputs, FluidStack... fluidInputs) {
-        return RecipeMap.findRecipeItemFluid(recipeMap, inputs, fluidInputs);
+    public Recipe findRecipe(MachineStackHandler stackHandler, MachineTankHandler tankHandler) {
+        return RecipeMap.findRecipeItemFluid(recipeMap, stackHandler.getInputs(), tankHandler.getInputs());
     }
 }

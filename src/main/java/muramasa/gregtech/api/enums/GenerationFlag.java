@@ -18,7 +18,7 @@ public enum GenerationFlag implements IMaterialFlag {
     INGOT(), //Add Ingots and Nuggets (Can't have Nuggets without Ingots)
     BGEM(), //Add Basic Gem
     GEM(), //Add Gem quality variants
-    //    CELL(), //Add Fluid Cells //TODO pointless with fluidStack flag?
+    //    Cell(), //Add Fluid Cells //TODO pointless with fluidStack flag?
     LIQUID(), //Add Standard Fluid
     GAS(), //Add Gas Fluid
     PLASMA(), //Add Plasma Fluid

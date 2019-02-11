@@ -2,9 +2,9 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.CoverType;
-import muramasa.gregtech.api.enums.ItemList;
+import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.materials.GTItemStack;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -29,23 +29,35 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class StandardItem extends Item {
 
-    public StandardItem() {
-        setRegistryName("standard_item");
-        setUnlocalizedName(Ref.MODID + ".standard_item");
+    private static LinkedHashMap<String, GTItemStack> STACK_LOOKUP = new LinkedHashMap<>();
+
+    private String type;
+
+    public StandardItem(ItemType type) {
+        setUnlocalizedName(Ref.MODID + "_item_" + type.getName());
+        setRegistryName("item_" + type.getName());
         setCreativeTab(Ref.TAB_ITEMS);
-        setHasSubtypes(true);
+        this.type = type.getName();
+        STACK_LOOKUP.put(type.getName(), new GTItemStack(new ItemStack(this), true));
+    }
+
+    public ItemType getType() {
+        return ItemType.get(type);
     }
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab) {
             if (((GregTechTab) tab).getTabName().equals("items")) {
-                for (ItemList item : ItemList.values()) {
-                    items.add(new ItemStack(this, 1, item.ordinal()));
+                GTItemStack gtStack = STACK_LOOKUP.get(type);
+                if (gtStack.isVisible()) {
+                    items.add(gtStack.get());
                 }
             }
         }
@@ -53,35 +65,12 @@ public class StandardItem extends Item {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        ItemList item = ItemList.get(stack);
-        if (item != null) {
-            return item.getDisplayName();
-        }
-        return "DISPLAY NAME ERROR";
+        return ((StandardItem) stack.getItem()).getType().getDisplayName();
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        ItemList item = ItemList.get(stack);
-        if (item != null) {
-            if (!item.getTooltip().isEmpty()) {
-                tooltip.add(item.getTooltip());
-            }
-            if (ItemList.Debug_Scanner.isItemEqual(stack)) {
-//                Recipe recipe = RecipeMap.findRecipeItemFluid(Machines.ORE_WASHER.getRecipeMap(), new ItemStack[]{Materials.Aluminium.getCrushed(1)}, new FluidStack[]{new FluidStack(FluidRegistry.WATER, 100)});
-//                if (recipe != null) {
-//                    tooltip.add(recipe.toString());
-//                } else {
-//                    tooltip.add("null recipe");
-//                }
-//                Collection<Recipe> recipes = Machines.ORE_WASHER.getRecipeMap().getRecipes();
-//                if (recipes != null) {
-//                    for (Recipe recipe : recipes) {
-//                        tooltip.add(recipe.toString());
-//                    }
-//                }
-            }
-        }
+        tooltip.add(((StandardItem) stack.getItem()).getType().getTooltip());
     }
 
     @Override
@@ -93,18 +82,18 @@ public class StandardItem extends Item {
                 ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
                 EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
                 boolean consume = false;
-                if (ItemList.Cover_Item_Port.isItemEqual(stack)) {
+                if (ItemType.ItemPort.isItemEqual(stack)) {
                     consume = coverHandler.setCover(targetSide, CoverType.ITEM_PORT);
-                } else if (ItemList.Cover_Fluid_Port.isItemEqual(stack)) {
+                } else if (ItemType.FluidPort.isItemEqual(stack)) {
                     consume = coverHandler.setCover(targetSide, CoverType.FLUID_PORT);
-                } else if (ItemList.Cover_Energy_Port.isItemEqual(stack)) {
+                } else if (ItemType.EnergyPort.isItemEqual(stack)) {
                     consume = coverHandler.setCover(targetSide, CoverType.ENERGY_PORT);
                 }
                 if (consume) {
                     stack.shrink(1);
                 }
             }
-            if (ItemList.Debug_Scanner.isItemEqual(stack)) {
+            if (ItemType.DebugScanner.isItemEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
                         ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
@@ -114,9 +103,10 @@ public class StandardItem extends Item {
 //                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getId());
 //                            ((TileEntityHatch) tile).markForRenderUpdate();
                     } else {
-                        System.out.println("Setting Tint");
-                        ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());
-                        ((TileEntityMachine) tile).markForRenderUpdate();
+//                        System.out.println("Setting Tint");
+//                        ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());
+//                        ((TileEntityMachine) tile).markForRenderUpdate();
+                        System.out.println(tile);
                     }
                 }
             }
@@ -126,8 +116,16 @@ public class StandardItem extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        for (ItemList item : ItemList.values()) {
-            ModelLoader.setCustomModelResourceLocation(this, item.ordinal(), new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + item.getName()));
-        }
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getName()));
+    }
+
+    public static ItemStack get(String name, int count) {
+        ItemStack stack = STACK_LOOKUP.get(name).get().copy();
+        stack.setCount(count);
+        return stack;
+    }
+
+    public static Collection<GTItemStack> getAll() {
+        return STACK_LOOKUP.values();
     }
 }

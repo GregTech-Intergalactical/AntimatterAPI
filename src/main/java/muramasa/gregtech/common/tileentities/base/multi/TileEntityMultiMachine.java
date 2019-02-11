@@ -65,7 +65,8 @@ public class TileEntityMultiMachine extends TileEntityMachine {
         if (activeRecipe == null) { //No active recipes, see of contents match one
             ArrayList<ItemStack> hatchStacks = getHatchItems();
             if (hatchStacks.size() == 0) return; //Escape if machine inputs are empty
-            Recipe recipe = getMachineType().findRecipe(hatchStacks.toArray(new ItemStack[0]));
+//            Recipe recipe = getMachineType().findRecipe(hatchStacks.toArray(new ItemStack[0]));
+            Recipe recipe = null;
             if (recipe != null) {
                 activeRecipe = recipe;
                 curProgress = 0;

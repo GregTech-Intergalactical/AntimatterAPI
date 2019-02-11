@@ -5,7 +5,7 @@ import muramasa.gregtech.api.enums.Element;
 import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.enums.RecipeFlag;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
-import muramasa.gregtech.api.items.MetaItem;
+import muramasa.gregtech.api.items.MaterialItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -62,7 +62,7 @@ public class Material {
         this.rgb = rgb;
         this.set = set;
         Materials.generated[id] = this;
-        Materials.generatedMap.put(name, this);
+        Materials.MATERIAL_LOOKUP.put(name, this);
     }
 
     public Material asDust(int... temps) {
@@ -348,122 +348,126 @@ public class Material {
 
     /** Helpful Stack Getters **/
     public ItemStack getChunk(int amount) {
-        return MetaItem.get(Prefix.CHUNK, this, amount);
+        return MaterialItem.get(Prefix.Chunk, this, amount);
     }
 
     public ItemStack getCrushed(int amount) {
-        return MetaItem.get(Prefix.CRUSHED, this, amount);
+        return MaterialItem.get(Prefix.Crushed, this, amount);
     }
 
     public ItemStack getCrushedC(int amount) {
-        return MetaItem.get(Prefix.CRUSHED_CENTRIFUGED, this, amount);
+        return MaterialItem.get(Prefix.CrushedCentrifuged, this, amount);
     }
 
     public ItemStack getCrushedP(int amount) {
-        return MetaItem.get(Prefix.CRUSHED_PURIFIED, this, amount);
+        return MaterialItem.get(Prefix.CrushedPurified, this, amount);
     }
 
     public ItemStack getDust(int amount) {
-        return MetaItem.get(Prefix.DUST, this, amount);
+        return MaterialItem.get(Prefix.Dust, this, amount);
     }
 
     public ItemStack getDustS(int amount) {
-        return MetaItem.get(Prefix.DUST_SMALL, this, amount);
+        return MaterialItem.get(Prefix.DustSmall, this, amount);
     }
 
     public ItemStack getDustT(int amount) {
-        return MetaItem.get(Prefix.DUST_TINY, this, amount);
+        return MaterialItem.get(Prefix.DustTiny, this, amount);
     }
 
     public ItemStack getNugget(int amount) {
-        return MetaItem.get(Prefix.NUGGET, this, amount);
+        return MaterialItem.get(Prefix.Nugget, this, amount);
     }
 
     public ItemStack getIngot(int amount) {
-        return MetaItem.get(Prefix.INGOT, this, amount);
+        return MaterialItem.get(Prefix.Ingot, this, amount);
     }
 
     public ItemStack getIngotH(int amount) {
-        return MetaItem.get(Prefix.INGOT_HOT, this, amount);
+        return MaterialItem.get(Prefix.IngotHot, this, amount);
     }
 
     public ItemStack getPlate(int amount) {
-        return MetaItem.get(Prefix.PLATE, this, amount);
+        return MaterialItem.get(Prefix.Plate, this, amount);
     }
 
     public ItemStack getPlateD(int amount) {
-        return MetaItem.get(Prefix.PLATE_DENSE, this, amount);
+        return MaterialItem.get(Prefix.PlateDense, this, amount);
     }
 
     public ItemStack getGem(int amount) {
-        return MetaItem.get(Prefix.GEM, this, amount);
+        return MaterialItem.get(Prefix.Gem, this, amount);
     }
 
     public ItemStack getGemChipped(int amount) {
-        return MetaItem.get(Prefix.GEM_CHIPPED, this, amount);
+        return MaterialItem.get(Prefix.GemChipped, this, amount);
     }
 
     public ItemStack getGemFlawed(int amount) {
-        return MetaItem.get(Prefix.GEM_FLAWED, this, amount);
+        return MaterialItem.get(Prefix.GemFlawed, this, amount);
     }
 
     public ItemStack getGemFlawless(int amount) {
-        return MetaItem.get(Prefix.GEM_FLAWLESS, this, amount);
+        return MaterialItem.get(Prefix.GemFlawless, this, amount);
     }
 
     public ItemStack getGemExquisite(int amount) {
-        return MetaItem.get(Prefix.GEM_EXQUISITE, this, amount);
+        return MaterialItem.get(Prefix.GemExquisite, this, amount);
     }
 
     public ItemStack getFoil(int amount) {
-        return MetaItem.get(Prefix.FOIL, this, amount);
+        return MaterialItem.get(Prefix.Foil, this, amount);
     }
 
     public ItemStack getRod(int amount) {
-        return MetaItem.get(Prefix.ROD, this, amount);
+        return MaterialItem.get(Prefix.Rod, this, amount);
     }
 
     public ItemStack getBolt(int amount) {
-        return MetaItem.get(Prefix.BOLT, this, amount);
+        return MaterialItem.get(Prefix.Bolt, this, amount);
     }
 
     public ItemStack getScrew(int amount) {
-        return MetaItem.get(Prefix.SCREW, this, amount);
+        return MaterialItem.get(Prefix.Screw, this, amount);
     }
 
     public ItemStack getRing(int amount) {
-        return MetaItem.get(Prefix.RING, this, amount);
+        return MaterialItem.get(Prefix.Ring, this, amount);
     }
 
     public ItemStack getSpring(int amount) {
-        return MetaItem.get(Prefix.SPRING, this, amount);
+        return MaterialItem.get(Prefix.Spring, this, amount);
     }
 
     public ItemStack getWireF(int amount) {
-        return MetaItem.get(Prefix.WIRE_FINE, this, amount);
+        return MaterialItem.get(Prefix.WireFine, this, amount);
     }
 
     public ItemStack getRotor(int amount) {
-        return MetaItem.get(Prefix.ROTOR, this, amount);
+        return MaterialItem.get(Prefix.Rotor, this, amount);
     }
 
     public ItemStack getGear(int amount) {
-        return MetaItem.get(Prefix.GEAR, this, amount);
+        return MaterialItem.get(Prefix.Gear, this, amount);
     }
 
     public ItemStack getGearS(int amount) {
-        return MetaItem.get(Prefix.GEAR_SMALL, this, amount);
+        return MaterialItem.get(Prefix.GearSmall, this, amount);
     }
 
     public ItemStack getLens(int amount) {
-        return MetaItem.get(Prefix.LENS, this, amount);
+        return MaterialItem.get(Prefix.Lens, this, amount);
     }
 
     public ItemStack getCell(int amount) {
-        return MetaItem.get(Prefix.CELL, this, amount);
+        return MaterialItem.get(Prefix.Cell, this, amount);
+    }
+
+    public ItemStack getCellG(int amount) {
+        return MaterialItem.get(Prefix.CellGas, this, amount);
     }
 
     public ItemStack getCellP(int amount) {
-        return MetaItem.get(Prefix.CELL_PLASMA, this, amount);
+        return MaterialItem.get(Prefix.CellPlasma, this, amount);
     }
 }

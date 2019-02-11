@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.events;
 
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.enums.ItemList;
+import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.RenderHelper;
@@ -32,7 +32,7 @@ public class BlockHighlightHandler {
         TileEntity tile = Utils.getTile(event.getPlayer().world, event.getTarget().getBlockPos());
         if (tile != null && tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
             ItemStack stack = event.getPlayer().getHeldItemMainhand();
-            if (ToolType.doesShowExtendedHighlight(stack) || ItemList.doesShowExtendedHighlight(stack)) {
+            if (ToolType.doesShowExtendedHighlight(stack) || ItemType.doesShowExtendedHighlight(stack)) {
                 drawGrid(event);
             }
         }

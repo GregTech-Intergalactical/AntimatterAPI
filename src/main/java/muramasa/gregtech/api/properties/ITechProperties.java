@@ -1,5 +1,7 @@
 package muramasa.gregtech.api.properties;
 
+import net.minecraft.block.properties.PropertyInteger;
+
 public class ITechProperties {
 
     /** Machine Properties **/
@@ -13,5 +15,5 @@ public class ITechProperties {
 
     /** Ore Properties **/
     public static final UnlistedInteger MATERIAL = new UnlistedInteger();
-    public static final UnlistedInteger STONE = new UnlistedInteger();
+    public static final PropertyInteger STONE = PropertyInteger.create("stone", 0, 6);
 }

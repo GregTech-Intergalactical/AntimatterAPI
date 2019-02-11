@@ -4,6 +4,7 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.fluid.GTFluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import static muramasa.gregtech.api.enums.Element.*;
@@ -12,9 +13,10 @@ import static muramasa.gregtech.api.materials.MaterialSet.*;
 
 public class Materials {
 
-    public static LinkedHashMap<String, Material> generatedMap = new LinkedHashMap<>();
+    public static LinkedHashMap<String, Material> MATERIAL_LOOKUP = new LinkedHashMap<>();
     public static Material[] generated = new Material[1000]; //TODO remove Material IDs
 
+    //TODO add flags to constructor
     public static Material Aluminium = new Material(0, "Aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700).addOre().addTools(10.0F, 128, 2).add(RING, FOIL, SGEAR, GEAR, FRAME);
     public static Material Beryllium = new Material(1, "Beryllium", 0x64b464, METALLIC, Be).asMetal(1560).addTools(14.0F, 64, 2).addOre();
     public static Material Bismuth = new Material(2, "Bismuth", 0x64a0a0, METALLIC, Bi).asMetal(544).addTools(6.0F, 64, 1);
@@ -419,7 +421,7 @@ public class Materials {
     public static void initFluids() {
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
-        for (Material mat : generatedMap.values()) {
+        for (Material mat : MATERIAL_LOOKUP.values()) {
             if (mat.hasFlag(LIQUID) && mat.getLiquid() == null) {
                 mat.setLiquid(new GTFluid(mat, LIQUID));
             }
@@ -437,10 +439,14 @@ public class Materials {
     }
 
     public static Material get(String name) {
-        return generatedMap.get(name);
+        return MATERIAL_LOOKUP.get(name);
     }
 
     public static int getCount() {
-        return generatedMap.size();
+        return MATERIAL_LOOKUP.size();
+    }
+
+    public static Collection<Material> getAll() {
+        return MATERIAL_LOOKUP.values();
     }
 }

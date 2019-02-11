@@ -1,14 +1,23 @@
 package muramasa.gregtech.loaders;
 
-import muramasa.gregtech.api.items.MetaItem;
+import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.enums.GenerationFlag;
+import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
-import muramasa.gregtech.common.blocks.*;
+import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.common.blocks.BlockCable;
+import muramasa.gregtech.common.blocks.BlockCasing;
+import muramasa.gregtech.common.blocks.BlockCoil;
+import muramasa.gregtech.common.blocks.BlockOre;
 import muramasa.gregtech.common.items.ItemBlockMachines;
 import muramasa.gregtech.common.items.ItemBlockOres;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.tileentities.base.TileEntityOre;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
@@ -30,16 +39,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 @Mod.EventBusSubscriber
 public class ContentLoader {
 
-    public static MetaItem metaItem = new MetaItem();
-    public static StandardItem standardItem = new StandardItem();
-
     public static MetaTool metaTool = new MetaTool();
-
-    public static BlockOre blockOre = new BlockOre();
-    public static BlockMachine blockMachines = new BlockMachine("block_machine");
-
-    public static BlockMultiMachine blockMultiMachine = new BlockMultiMachine("block_multi_machine");
-    public static BlockHatch blockHatch = new BlockHatch("block_hatch");
 
     public static BlockCable blockCable = new BlockCable();
 
@@ -60,17 +60,17 @@ public class ContentLoader {
         GameRegistry.registerTileEntity(TileEntityElectricBlastFurnace.class, new ResourceLocation(Ref.MODID, "tileebf"));
         GameRegistry.registerTileEntity(TileEntityFusionReactor.class, new ResourceLocation(Ref.MODID, "tilefr"));
 
-        event.getRegistry().register(blockOre);
-        GameRegistry.registerTileEntity(TileEntityOre.class, new ResourceLocation(Ref.MODID, "block_ore"));
 
-        event.getRegistry().register(blockMachines);
         GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "block_machine"));
-
-        event.getRegistry().register(blockMultiMachine);
         GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(Ref.MODID, "block_multi_machine"));
-
-        event.getRegistry().register(blockHatch);
         GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "block_hatch"));
+        for (Machine type : Machines.getAll()) {
+            event.getRegistry().register(type.getBlock());
+        }
+
+        for (int id : GenerationFlag.CRUSHED.getIds()) {
+            event.getRegistry().register(new BlockOre(Materials.get(id).getName()));
+        }
 
         event.getRegistry().register(blockCable);
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(Ref.MODID, "block_cable"));
@@ -84,16 +84,32 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(new ItemBlockOres(blockOre).setRegistryName(blockOre.getRegistryName()));
-        event.getRegistry().register(new ItemBlockMachines(blockMachines).setRegistryName(blockMachines.getRegistryName()));
-        event.getRegistry().register(new ItemBlockMachines(blockMultiMachine).setRegistryName(blockMultiMachine.getRegistryName()));
-        event.getRegistry().register(new ItemBlockMachines(blockHatch).setRegistryName(blockHatch.getRegistryName()));
+        for (Prefix prefix : Prefix.getAll()) {
+            for (Material material : Materials.getAll()) {
+                if (!prefix.allowGeneration(material)) continue;
+                MaterialItem item = new MaterialItem(prefix, material);
+                event.getRegistry().register(item);
+            }
+        }
+
+        for (ItemType type : ItemType.getAll()) {
+            StandardItem item = new StandardItem(type);
+            event.getRegistry().register(item);
+        }
+
+        for (Machine type : Machines.getAll()) {
+            event.getRegistry().register(new ItemBlockMachines(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));
+        }
+
+        for (BlockOre block : BlockOre.getAll()) {
+            event.getRegistry().register(new ItemBlockOres(block).setRegistryName(block.getRegistryName()));
+        }
+
+
         event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
         event.getRegistry().register(new ItemBlock(blockCasing).setRegistryName(blockCasing.getRegistryName()));
         event.getRegistry().register(new ItemBlock(blockCoil).setRegistryName(blockCoil.getRegistryName()));
 
-        event.getRegistry().register(metaItem);
-        event.getRegistry().register(standardItem);
         event.getRegistry().register(metaTool);
     }
 }
