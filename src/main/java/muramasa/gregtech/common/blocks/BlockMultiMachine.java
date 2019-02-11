@@ -34,7 +34,7 @@ public class BlockMultiMachine extends BlockMachine {
 //        TileEntity tile = Utils.getTile(world, pos);
 //        if (tile instanceof TileEntityMultiMachine) {
 //            TileEntityMultiMachine machine = (TileEntityMultiMachine) tile;
-//            exState = exState.withProperty(TYPE, machine.getType());
+//            exState = exState.withProperty(TYPE, machine.getMaterial());
 //        } else {
 //            System.err.println("TILE INSTANCE NOT EQUAL: " + tile);
 //        }

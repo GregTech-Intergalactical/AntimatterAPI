@@ -31,6 +31,10 @@ public class BakedModelOre extends BakedModelBase {
     private static IBakedModel[] bakedModels;
     private static ItemOverrideOre itemOverride;
 
+    public BakedModelOre() {
+
+    }
+
     public BakedModelOre(IBakedModel[] bakedModels) {
         super(bakedModels[0]);
         this.bakedModels = bakedModels;
@@ -48,6 +52,7 @@ public class BakedModelOre extends BakedModelBase {
         int setId = Materials.get(exState.getValue(ITechProperties.MATERIAL)).getSet().ordinal();
         quadList.addAll(bakedModels[setId].getQuads(state, side, rand));
 
+        //TODO use normal state json for ore
         int stoneId = state.getValue(ITechProperties.STONE);
         if (stoneId > 0) {
             retexture(quadList, 0, sprites[stoneId]);

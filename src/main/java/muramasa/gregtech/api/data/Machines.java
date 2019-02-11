@@ -15,12 +15,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import static muramasa.gregtech.api.machines.MachineFlag.FLUID;
-import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
+import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class Machines {
 
-    public static LinkedHashMap<String, Machine> machineTypeLookup = new LinkedHashMap<>();
+    public static LinkedHashMap<String, Machine> TYPE_LOOKUP = new LinkedHashMap<>();
 
     public static Machine INVALID = new Machine("invalid", new BlockMachine("invalid"), TileEntityMachine.class).setTiers(Tier.LV);
 
@@ -74,7 +73,7 @@ public class Machines {
     }
 
     public static Machine get(String name) {
-        Machine machine = machineTypeLookup.get(name);
+        Machine machine = TYPE_LOOKUP.get(name);
         return machine != null ? machine : INVALID;
     }
 
@@ -83,11 +82,11 @@ public class Machines {
     }
 
     public static Collection<Machine> getAll() {
-        return machineTypeLookup.values();
+        return TYPE_LOOKUP.values();
     }
 
     public static int getCount() {
-        return machineTypeLookup.size();
+        return TYPE_LOOKUP.size();
     }
 
     public static Collection<Machine> getTypes(MachineFlag... flags) {

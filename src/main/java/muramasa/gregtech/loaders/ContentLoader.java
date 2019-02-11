@@ -10,12 +10,10 @@ import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
-import muramasa.gregtech.common.blocks.BlockCable;
-import muramasa.gregtech.common.blocks.BlockCasing;
-import muramasa.gregtech.common.blocks.BlockCoil;
-import muramasa.gregtech.common.blocks.BlockOre;
+import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockMachines;
 import muramasa.gregtech.common.items.ItemBlockOres;
+import muramasa.gregtech.common.items.ItemBlockStorage;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
@@ -67,9 +65,13 @@ public class ContentLoader {
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(type.getBlock());
         }
-
-        for (int id : GenerationFlag.CRUSHED.getIds()) {
-            event.getRegistry().register(new BlockOre(Materials.get(id).getName()));
+        for (Material material : Materials.getAll()) {
+            if (material.hasFlag(GenerationFlag.CRUSHED)) {
+                event.getRegistry().register(new BlockOre(material));
+            }
+            if (material.hasFlag(GenerationFlag.BLOCK)) {
+                event.getRegistry().register(new BlockStorage(material));
+            }
         }
 
         event.getRegistry().register(blockCable);
@@ -91,20 +93,19 @@ public class ContentLoader {
                 event.getRegistry().register(item);
             }
         }
-
         for (ItemType type : ItemType.getAll()) {
             StandardItem item = new StandardItem(type);
             event.getRegistry().register(item);
         }
-
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(new ItemBlockMachines(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));
         }
-
         for (BlockOre block : BlockOre.getAll()) {
             event.getRegistry().register(new ItemBlockOres(block).setRegistryName(block.getRegistryName()));
         }
-
+        for (BlockStorage block : BlockStorage.getAll()) {
+            event.getRegistry().register(new ItemBlockStorage(block).setRegistryName(block.getRegistryName()));
+        }
 
         event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
         event.getRegistry().register(new ItemBlock(blockCasing).setRegistryName(blockCasing.getRegistryName()));

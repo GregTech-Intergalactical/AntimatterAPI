@@ -5,6 +5,12 @@
   },
   "variants": {
     "shiny": {
+	  "ore": {
+        "textures": {"layer0": "gregtech:items/material_set/shiny/ore"}
+      },
+	  "block": {
+        "textures": {"layer0": "gregtech:items/material_set/shiny/block"}
+      },
       "chunk": {
         "textures": {"layer0": "gregtech:items/material_set/shiny/chunk", "layer1": "gregtech:items/material_set/shiny/overlays/chunk"}
       },

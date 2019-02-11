@@ -16,8 +16,12 @@ public class ModelLoader implements ICustomModelLoader {
 
     private IResourceManager resourceManager;
 
+    public static void register(ResourceLocation loc, IModel model) {
+        modelLookup.put(loc.getResourcePath(), model);
+    }
+
     public static void register(Block block, IModel model) {
-        modelLookup.put(block.getRegistryName().getResourcePath(), model);
+        register(block.getRegistryName(), model);
     }
 
     @Override

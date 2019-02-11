@@ -2,7 +2,6 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
-import muramasa.gregtech.api.materials.GTItemStack;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.client.creativetab.GregTechTab;
@@ -26,7 +25,7 @@ import java.util.List;
 
 public class MaterialItem extends Item {
 
-    private static LinkedHashMap<String, GTItemStack> STACK_LOOKUP = new LinkedHashMap<>();
+    private static LinkedHashMap<String, MaterialItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
     private String material, prefix;
 
@@ -36,16 +35,15 @@ public class MaterialItem extends Item {
         setCreativeTab(Ref.TAB_MATERIALS);
         this.material = material.getName();
         this.prefix = prefix.getName();
-        STACK_LOOKUP.put(prefix.getName() + material.getName(), new GTItemStack(new ItemStack(this), prefix.isVisible()));
+        TYPE_LOOKUP.put(prefix.getName() + material.getName(), this);
     }
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab) {
             if (((GregTechTab) tab).getTabName().equals("materials")) {
-                GTItemStack gtStack = STACK_LOOKUP.get(prefix + material);
-                if (gtStack.isVisible()) {
-                    items.add(gtStack.get());
+                if (getPrefix().isVisible()) {
+                    items.add(new ItemStack(this));
                 }
             }
         }
@@ -53,7 +51,8 @@ public class MaterialItem extends Item {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return ((MaterialItem) stack.getItem()).getMaterial().getDisplayName();
+        MaterialItem item = (MaterialItem) stack.getItem();
+        return item.getPrefix().getDisplayName(item.getMaterial());
     }
 
     @Override
@@ -64,10 +63,25 @@ public class MaterialItem extends Item {
         }
     }
 
+//    @Override
+//    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+//        ItemStack stack = player.getHeldItem(hand);
+//        TileEntity tile = Utils.getTile(world, pos);
+//        if (tile != null) {
+//            if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
+//                if (hasPrefix(stack, Prefix.Plate)) {
+//                    ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
+//                    coverHandler.setCover(facing, CoverType.BLANK);
+//                }
+//            }
+//        }
+//        return EnumActionResult.SUCCESS;
+//    }
+
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        String set = Materials.get(material).getSet().getName();
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set/" + set, set + "=" + prefix));
+        String set = getMaterial().getSet().getName();
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
     }
 
     public Prefix getPrefix() {
@@ -87,19 +101,17 @@ public class MaterialItem extends Item {
     }
 
     public static ItemStack get(Prefix prefix, Material material, int count) {
-        ItemStack stack = STACK_LOOKUP.get(prefix.getName() + material.getName()).get().copy();
-        stack.setCount(count);
-        return stack;
+        return new ItemStack(TYPE_LOOKUP.get(prefix.getName() + material.getName()), count);
     }
 
-    public static Collection<GTItemStack> getAll() {
-        return STACK_LOOKUP.values();
+    public static Collection<MaterialItem> getAll() {
+        return TYPE_LOOKUP.values();
     }
 
     public static class ColorHandler implements IItemColor {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
-            if (tintIndex == 0) { //layer0
+            if (tintIndex == 0) {
                 if (stack.getItem() instanceof MaterialItem) {
                     Material material = ((MaterialItem) stack.getItem()).getMaterial();
                     if (material != null) {

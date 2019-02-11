@@ -2,23 +2,23 @@ package muramasa.gregtech.common.items;
 
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
-import muramasa.gregtech.common.blocks.BlockOre;
+import muramasa.gregtech.common.blocks.BlockStorage;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class ItemBlockOres extends ItemBlock {
+public class ItemBlockStorage extends ItemBlock {
 
-    public ItemBlockOres(Block block) {
+    public ItemBlockStorage(Block block) {
         super(block);
     }
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        Material material = ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial();
+        Material material = ((BlockStorage) Block.getBlockFromItem(stack.getItem())).getMaterial();
         if (material != null) {
-            return Prefix.Ore.getDisplayName(material);
+            return Prefix.Block.getDisplayName(material);
         }
         return getUnlocalizedName();
     }
@@ -26,8 +26,8 @@ public class ItemBlockOres extends ItemBlock {
     public static class ColorHandler implements IItemColor {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
-            if (tintIndex == 1) {
-                Material material = ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial();
+            if (tintIndex == 0) {
+                Material material = ((BlockStorage) Block.getBlockFromItem(stack.getItem())).getMaterial();
                 if (material != null) {
                     return material.getRGB();
                 }

@@ -1,7 +1,9 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.properties.ITechProperties;
+import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
@@ -10,13 +12,12 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -30,17 +31,18 @@ import java.util.LinkedHashMap;
 
 public class BlockOre extends Block {
 
-    private static LinkedHashMap<String, BlockOre> blockLookup = new LinkedHashMap<>();
+    private static LinkedHashMap<String, BlockOre> BLOCK_LOOKUP = new LinkedHashMap<>();
+    private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
 
-    private String type;
+    private String material;
 
-    public BlockOre(String type) {
+    public BlockOre(Material material) {
         super(net.minecraft.block.material.Material.ROCK);
-        setUnlocalizedName(Ref.MODID + "_ore_" + type);
-        setRegistryName("ore_" + type);
+        setUnlocalizedName("ore_" + material.getName());
+        setRegistryName("ore_" + material.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
-        this.type = type;
-        blockLookup.put(type, this);
+        this.material = material.getName();
+        BLOCK_LOOKUP.put(material.getName(), this);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class BlockOre extends Block {
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(ITechProperties.MATERIAL, Materials.get(type).getId());
+        return exState.withProperty(ITechProperties.MATERIAL, Materials.get(material).getId());
     }
 
     @Override
@@ -66,14 +68,16 @@ public class BlockOre extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        items.add(new ItemStack(this, 1, Materials.get(type).getId()));
+        items.add(new ItemStack(this));
     }
 
+    //TODO
     @Override
     public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
         return 1.0f + (getHarvestLevel(blockState) * 1.0f);
     }
 
+    //TODO
     @Override
     public int getHarvestLevel(IBlockState state) {
         return 1;
@@ -86,13 +90,8 @@ public class BlockOre extends Block {
     }
 
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        return new ItemStack(this, 1, Materials.get(type).getId());
-    }
-
-    @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        drops.add(Materials.get(type).getChunk(1));
+        drops.add(Materials.get(material).getChunk(1));
     }
 
     @Override
@@ -102,19 +101,20 @@ public class BlockOre extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), Materials.get(type).getId(), new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_ore", "inventory"));
+        ModelLoader.setCustomStateMapper(this, stateMapRedirect);
     }
 
-    public String getType() {
-        return type;
+    public Material getMaterial() {
+        return Materials.get(material);
     }
 
-    public static BlockOre get(String type) {
-        return blockLookup.get(type);
+    public static BlockOre get(String material) {
+        return BLOCK_LOOKUP.get(material);
     }
 
     public static Collection<BlockOre> getAll() {
-        return blockLookup.values();
+        return BLOCK_LOOKUP.values();
     }
 
     public static class ColorHandler implements IBlockColor {
@@ -122,7 +122,7 @@ public class BlockOre extends Block {
         public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
             if (tintIndex == 1) {
                 BlockOre block = (BlockOre) state.getBlock();
-                return Materials.get(block.getType()).getRGB();
+                return block.getMaterial().getRGB();
             }
             return -1;
         }

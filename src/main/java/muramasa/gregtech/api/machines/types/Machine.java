@@ -56,7 +56,7 @@ public class Machine implements IStringSerializable {
         this.name = name;
         this.block = block;
         this.tileClass = tileClass;
-        Machines.machineTypeLookup.put(name, this);
+        Machines.TYPE_LOOKUP.put(name, this);
     }
 
     public int getId() {

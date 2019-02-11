@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:generated"
+  },
+  "variants": {
+    "metallic": {
+      "block": {
+        "textures": {"all": "gregtech:blocks/material_set/metallic/block"}
+      }
+    }
+  }
+}
