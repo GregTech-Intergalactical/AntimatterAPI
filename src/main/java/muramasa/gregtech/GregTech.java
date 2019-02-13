@@ -7,6 +7,7 @@ import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.RecipeAdder;
 import muramasa.gregtech.common.events.EventHandler;
+import muramasa.gregtech.common.utils.CommandTool;
 import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
@@ -17,6 +18,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Logger;
 
@@ -37,9 +39,9 @@ public class GregTech {
     }
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-        proxy.preInit(event);
+    public void preInit(FMLPreInitializationEvent e) {
+        logger = e.getModLog();
+        proxy.preInit(e);
 
         new EventHandler().init();
         ITechCapabilities.register();
@@ -67,5 +69,12 @@ public class GregTech {
         RecipeAdder.addBlastFurnaceRecipe(Materials.Silicon.getDust(1), Materials.Silicon.getIngot(1), 10, 1);
 
         RecipeAdder.addOreWasherRecipe(Materials.Aluminium.getCrushed(1), new FluidStack(FluidRegistry.WATER, 100), Materials.Aluminium.getCrushedP(1), Materials.Aluminium.getDustT(1), Materials.Stone.getDust(1), 40, 1);
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent e) {
+        System.out.println("SERVER STARTING");
+        proxy.serverStarting(e);
+        e.registerServerCommand(new CommandTool());
     }
 }

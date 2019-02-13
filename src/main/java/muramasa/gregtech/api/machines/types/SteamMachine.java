@@ -1,28 +1,23 @@
 package muramasa.gregtech.api.machines.types;
 
-import muramasa.gregtech.GregTech;
-import muramasa.gregtech.api.capability.impl.MachineStackHandler;
-import muramasa.gregtech.api.capability.impl.MachineTankHandler;
-import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
+import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
-import muramasa.gregtech.common.blocks.BlockMachine;
-import muramasa.gregtech.common.tileentities.overrides.TileEntitySteamMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.util.ResourceLocation;
 
-import static muramasa.gregtech.api.machines.MachineFlag.*;
+public class SteamMachine extends ItemFluidMachine {
 
-public class SteamMachine extends Machine {
+    public SteamMachine(String name, Machine machine, Slot... slots) {
+        super(name, machine, slots);
+    }
 
-    public SteamMachine(String name, MachineFlag... extraFlags) {
-        super(name, new BlockMachine(name), TileEntitySteamMachine.class);
+    public SteamMachine(String name, Slot... slots) {
+        super(name, slots);
         setTiers(Tier.getSteam());
-        addFlags(BASIC, STEAM, ITEM, FLUID);
-        addFlags(extraFlags);
-        addRecipeMap();
-        addGUI(GregTech.INSTANCE, Ref.MACHINE_ID);
     }
 
     @Override
@@ -31,7 +26,7 @@ public class SteamMachine extends Machine {
     }
 
     @Override
-    public Recipe findRecipe(MachineStackHandler stackHandler, MachineTankHandler tankHandler) {
+    public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
         return RecipeMap.findRecipeItemFluid(recipeMap, stackHandler.getInputs(), tankHandler.getInputs());
     }
 }

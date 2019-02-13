@@ -20,9 +20,9 @@ public class ContainerBasicMachine extends ContainerMachine {
         super(playerInv);
         this.tile = tile;
         Machine machine = tile.getMachineType();
-        addSlots(machine.getSlots(), tile.getStackHandler());
+        addSlots(machine.getSlots(), tile.getItemHandler());
         if (machine.hasFlag(MachineFlag.FLUID)) {
-            addCellSlots(machine.getFluidSlots(), tile.getStackHandler());
+            addCellSlots(tile.getItemHandler());
         }
     }
 

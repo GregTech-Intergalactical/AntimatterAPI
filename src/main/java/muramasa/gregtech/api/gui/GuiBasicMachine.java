@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.gui;
 
-import muramasa.gregtech.api.capability.impl.MachineTankHandler;
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.gui.container.ContainerMachine;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.client.render.RenderHelper;
@@ -35,7 +35,7 @@ public class GuiBasicMachine extends GuiMachine {
 
     public void drawContainedFluids(int mouseX, int mouseY) { // mezz.jei.plugins.vanilla.ingredients.FluidStackRenderer
         if (tile instanceof TileEntityBasicMachine) {
-            MachineTankHandler fluidHandler = ((TileEntityBasicMachine) tile).getFluidHandler();
+            MachineFluidHandler fluidHandler = ((TileEntityBasicMachine) tile).getFluidHandler();
             FluidStack inputStack = fluidHandler.getInput(0).getFluid();
 //            FluidStack outputStack = null;//fluidHandler.getTankProperties()[1].getContents();
             if (inputStack != null) {

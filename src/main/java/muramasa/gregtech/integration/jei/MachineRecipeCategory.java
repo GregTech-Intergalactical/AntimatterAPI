@@ -6,13 +6,14 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import muramasa.gregtech.api.machines.MachineStack;
-import muramasa.gregtech.api.machines.SlotData;
+import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapper> {
 
@@ -69,9 +70,10 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
-        SlotData[] slots = type.getSlots();
-        for (int i = 0; i < slots.length; i++) {
-            itemStackGroup.init(i, slots[i].type == 0, slots[i].x - SLOT_OFFSET_X, slots[i].y - SLOT_OFFSET_Y);
+        ArrayList<Slot> slots = type.getSlots();
+        for (int i = 0; i < slots.size(); i++) {
+            if (slots.get(i).type > 1) continue;
+            itemStackGroup.init(i, slots.get(i).type == 0, slots.get(i).x - SLOT_OFFSET_X, slots.get(i).y - SLOT_OFFSET_Y);
             int stackIndex = i < type.getInputCount() ? i : i - type.getInputCount(); //TODO register helper?
             itemStackGroup.set(i, i < type.getInputCount() ? ingredients.getInputs(VanillaTypes.ITEM).get(stackIndex) : ingredients.getOutputs(VanillaTypes.ITEM).get(stackIndex));
         }

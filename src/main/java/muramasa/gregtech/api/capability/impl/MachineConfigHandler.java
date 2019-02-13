@@ -3,7 +3,8 @@ package muramasa.gregtech.api.capability.impl;
 import muramasa.gregtech.api.capability.IConfigurable;
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.CoverStack;
 import muramasa.gregtech.api.util.SoundList;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -23,8 +24,8 @@ public class MachineConfigHandler implements IConfigurable {
         if (tile.hasCapability(ITechCapabilities.COVERABLE, side)) { //Side has cover, configure.
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
             if (coverHandler == null) return false;
-            CoverType coverType = coverHandler.getCover(side);
-            if (coverType.canWrenchToggleState() && coverType != CoverType.NONE) {
+            CoverStack stack = coverHandler.get(side);
+            if (stack.getCover().canWrenchToggleState()) {
                 //TODO toggle state
                 SoundList.WRENCH.play(tile.getWorld(), tile.getPos());
                 return true;
@@ -42,8 +43,8 @@ public class MachineConfigHandler implements IConfigurable {
         if (tile == null) return false;
         if (tile.hasCapability(ITechCapabilities.COVERABLE, side)) { //Side has cover
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
-            if (coverHandler != null && coverHandler.getCover(side) != CoverType.NONE) {
-                coverHandler.setCover(side, CoverType.NONE);
+            if (coverHandler != null && !coverHandler.get(side).isEqual(Cover.NONE)) {
+                coverHandler.setCover(side, new CoverStack(Cover.NONE));
                 SoundList.BREAK.play(tile.getWorld(), tile.getPos());
                 return true;
             }

@@ -19,6 +19,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -41,6 +42,8 @@ import java.util.List;
 
 public class MetaTool extends Item {
 
+    //TODO flatten
+
     public MetaTool() {
         setRegistryName("meta_tool");
         setUnlocalizedName(Ref.MODID + ".meta_tool");
@@ -52,7 +55,7 @@ public class MetaTool extends Item {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab) {
-            if (((GregTechTab) tab).getTabName().equals("materials")) {
+            if (((GregTechTab) tab).getTabName().equals("items")) {
                 for (int i = 0; i < ToolType.values().length; i++) {
                     items.add(new ItemStack(this, 1, i));
                 }
@@ -89,18 +92,6 @@ public class MetaTool extends Item {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
-//        if (tile != null && tile.hasCapability(ITechCapabilities.COVERABLE, facing)) {
-//            System.out.println("COVERABLE");
-//            ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
-//            if (coverHandler != null) {
-//                EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
-//                if (ToolType.WRENCH.isItemEqual(stack)) {
-//
-//                } else if (ToolType.CROWBAR.isItemEqual(stack)) {
-//
-//                }
-//            }
-//        }
         if (tile != null && tile.hasCapability(ITechCapabilities.CONFIGURABLE, facing)) {
             EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
             IConfigurable configHandler = tile.getCapability(ITechCapabilities.CONFIGURABLE, targetSide);
@@ -135,25 +126,27 @@ public class MetaTool extends Item {
 
     @Override
     public boolean canHarvestBlock(IBlockState state, ItemStack stack) {
+        System.out.println("harvest");
 //        System.out.println("ad[oadk[apkwd");
 //        String tool = state.getBlock().getHarvestTool(state);
 //        System.out.println("TYPE: " + tool);
-//        if (ToolType.PICKAXE.isItemEqual(stack)) {
+//        if (ToolType.PICKAXE.isEqual(stack)) {
 //            return tool.equals("pickaxe");
-//        } else if (ToolType.SHOVEL.isItemEqual(stack)) {
+//        } else if (ToolType.SHOVEL.isEqual(stack)) {
 //            return tool.equals("shovel");
 //        }
-        return false;
+        return super.canHarvestBlock(state, stack);
     }
 
     @Override
     public float getDestroySpeed(ItemStack stack, IBlockState state) {
-        if (ToolType.isPowered(stack) && ToolHelper.getDurability(stack) > 0 && ToolHelper.getEnergy(stack) > 0) {
-            return ToolHelper.getMiningSpeed(stack);
-        } else if (ToolHelper.getDurability(stack) > 0) {
-            return ToolHelper.getMiningSpeed(stack);
-        }
-        return 0f;
+//        if (ToolType.isPowered(stack) && ToolHelper.getDurability(stack) > 0 && ToolHelper.getEnergy(stack) > 0) {
+//            return ToolHelper.getMiningSpeed(stack);
+//        } else if (ToolHelper.getDurability(stack) > 0) {
+//            return ToolHelper.getMiningSpeed(stack);
+//        }
+        return Items.DIAMOND_SWORD.getDestroySpeed(stack, state);
+//        return 1f;
     }
 
     @Override
@@ -168,23 +161,24 @@ public class MetaTool extends Item {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        ToolHelper.damageForEntity(stack, 1);
-        return true;
+//        ToolHelper.damageForEntity(stack, 1);
+//        return true;
+        return super.onLeftClickEntity(stack, player, entity);
     }
 
     @Override
     public boolean onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
-        ToolHelper.damageForMining(stack, 1);
-        ToolType.playDigSound(world, pos, stack);
-        if (ToolHelper.getDurability(stack) <= 0) {
-            ToolHelper.remove(stack, world, pos);
-        }
+//        ToolHelper.damageForMining(stack, 1);
+//        ToolType.playDigSound(world, pos, stack);
+//        if (ToolHelper.getDurability(stack) <= 0) {
+//            ToolHelper.remove(stack, world, pos);
+//        }
         return super.onBlockDestroyed(stack, world, state, pos, entityLiving);
     }
 
 //    @Override
 //    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-////        if (ToolType.SWORD.isItemEqual(player.getHeldItem(hand))) {
+////        if (ToolType.SWORD.isEqual(player.getHeldItem(hand))) {
 //            player.setActiveHand(hand);
 //            return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
 ////        }

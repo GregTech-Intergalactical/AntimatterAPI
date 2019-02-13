@@ -5,14 +5,14 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 
-public class MachineTankHandler {
+public class MachineFluidHandler {
 
     private static final int TANK_CAPACITY = 99999;
 
     private TileEntityMachine tile;
     private GTFluidTank[] inputTanks, outputTanks;
 
-    public MachineTankHandler(TileEntityMachine tile, int inputCount, int outputCount) {
+    public MachineFluidHandler(TileEntityMachine tile, int inputCount, int outputCount) {
         this.tile = tile;
         inputTanks = new GTFluidTank[inputCount];
         outputTanks = new GTFluidTank[outputCount];

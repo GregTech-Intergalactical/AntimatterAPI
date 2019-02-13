@@ -20,7 +20,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     public void init(String type, String tier, int facing) {
         if (type.isEmpty() || type.isEmpty()) {
-            type = Machines.ALLOY_SMELTER.getName();
+            type = Machines.INVALID.getName();
             tier = Tier.LV.getName();
         }
         typeFromNBT = type;

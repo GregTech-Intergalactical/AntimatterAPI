@@ -1,10 +1,10 @@
 package muramasa.gregtech.api.machines.types;
 
-import muramasa.gregtech.api.capability.impl.MachineStackHandler;
-import muramasa.gregtech.api.capability.impl.MachineTankHandler;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.api.machines.SlotData;
+import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
@@ -39,11 +39,10 @@ public class Machine implements IStringSerializable {
     /** GUI Members **/
     protected Object modInstance;
     protected int guiId;
-    protected SlotData[] slots;
+    protected ArrayList<Slot> slots;
     protected int inputCount, outputCount;
 
     /** Fluid Members **/
-    protected SlotData[] fluidSlots;
     protected int inputTankCount, outputTankCount;
 
     /** Multi Members **/
@@ -56,6 +55,7 @@ public class Machine implements IStringSerializable {
         this.name = name;
         this.block = block;
         this.tileClass = tileClass;
+        setTiers(Tier.LV);
         Machines.TYPE_LOOKUP.put(name, this);
     }
 
@@ -108,86 +108,62 @@ public class Machine implements IStringSerializable {
         return new ModelResourceLocation(Ref.MODID + ":machine_part/overlays/" + name);
     }
 
-
-    //TODO remove builder methods
-
-    public Machine addFlags(MachineFlag... flags) {
+    public void addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
             machineMask |= flag.getBit();
             flag.add(this);
         }
-        return this;
     }
 
-    public Machine setFlags(MachineFlag... flags) {
+    public void setFlags(MachineFlag... flags) {
         machineMask = 0;
         addFlags(flags);
-        return this;
     }
 
-    public Machine setBlock(BlockMachine block) {
+    public void setBlock(BlockMachine block) {
         this.block = block;
-        return this;
     }
 
-    public Machine setTileClass(Class tileClass) {
+    public void setTileClass(Class tileClass) {
         this.tileClass = tileClass;
-        return this;
     }
 
-    public Machine setTiers(Tier... tiers) {
+    public void setTiers(Tier... tiers) {
         this.tiers = new ArrayList<>(Arrays.asList(tiers));
-        return this;
     }
 
-    public Machine addGUI(Object instance, int id) {
+    public void addGUI(Object instance, int id) {
         modInstance = instance;
         guiId = id;
         addFlags(MachineFlag.GUI);
-        return this;
     }
 
-    public Machine addSlots(Machine slotsToCopy) {
-        return addSlots(slotsToCopy.slots);
-    }
-
-    public Machine addSlots(SlotData... slots) {
-        this.slots = slots;
-        for (SlotData slot : slots) {
+    public void addSlots(Slot... slots) {
+        if (this.slots == null) this.slots = new ArrayList<>();
+        for (Slot slot : slots) {
+            this.slots.add(slot);
             if (slot.type == 0) {
                 inputCount++;
             } else if (slot.type == 1) {
                 outputCount++;
-            }
-        }
-        return this;
-    }
-
-    public Machine addFluidSlots(SlotData... slots) {
-        this.fluidSlots = slots;
-        addFlags(MachineFlag.FLUID);
-        for (SlotData slot : slots) {
-            if (slot.type == 2) {
+            } else if (slot.type == 2) {
                 inputTankCount++;
             } else if (slot.type == 3) {
                 outputTankCount++;
             }
         }
-        return this;
     }
 
-    public Machine addRecipeMap() {
+    public void addRecipeMap() {
         recipeMap = new RecipeMap(10);
-        return this;
     }
 
-    public Recipe findRecipe(MachineStackHandler stackHandler, MachineTankHandler tankHandler) {
-        return RecipeMap.findRecipeItem(recipeMap, stackHandler.getInputs());
-    }
-
-    public Machine addPattern(StructurePattern pattern) {
+    public void addPattern(StructurePattern pattern) {
         structurePattern = pattern;
-        return this;
+    }
+
+    public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
+        return RecipeMap.findRecipeItem(recipeMap, stackHandler.getInputs());
     }
 
     public boolean hasFlag(MachineFlag flag) {
@@ -211,21 +187,8 @@ public class Machine implements IStringSerializable {
         return tiers;
     }
 
-    public SlotData[] getSlots() {
+    public ArrayList<Slot> getSlots() {
         return slots;
-    }
-
-    public SlotData[] getFluidSlots() {
-        return fluidSlots;
-    }
-
-    public int getSlotCount() {
-//        int count = slots == null ? 0 : slots.length;
-//        if (hasFlag(MachineFlag.FLUID_INPUT)) {
-//            count++;
-//        }
-//        return count;
-        return slots == null ? 0 : slots.length;
     }
 
     public int getInputCount() {

@@ -84,13 +84,13 @@ public class ItemType implements IStringSerializable {
         return tooltip;
     }
 
-    public boolean isItemEqual(ItemStack stack) {
+    public boolean isEqual(ItemStack stack) {
         return stack.getItem() instanceof StandardItem && ((StandardItem) stack.getItem()).getType() == this;
     }
 
     public static boolean isAnyItemEqual(ItemStack stack, ItemType... items) {
         for (ItemType item : items) {
-            if (item.isItemEqual(stack)) return true;
+            if (item.isEqual(stack)) return true;
         }
         return false;
     }

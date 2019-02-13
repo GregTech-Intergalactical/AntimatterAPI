@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MachineStackHandler {
+public class MachineItemHandler {
 
     private GTItemHandler inputHandler, outputHandler, cellHandler;
 
     /** Constructor **/
-    public MachineStackHandler(TileEntityMachine tile, int type) {
+    public MachineItemHandler(TileEntityMachine tile, int type) {
         Machine machine = tile.getMachineType();
         if (machine != null) {
             inputHandler = new GTItemHandler(machine.getInputCount()) {

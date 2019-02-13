@@ -2,6 +2,7 @@ package muramasa.gregtech.client.render.models;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.gregtech.api.materials.MaterialSet;
+import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelOre;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -34,7 +35,7 @@ public class ModelOre implements IModel {
 
             bakedModels = new IBakedModel[MaterialSet.values().length];
             for (MaterialSet set : MaterialSet.values()) {
-                bakedModels[set.ordinal()] = model.retexture(ImmutableMap.of("overlay", set.getOreLoc().toString())).bake(modelState, vertexFormat, bakedTextureGetter);
+                bakedModels[set.ordinal()] = model.retexture(ImmutableMap.of("overlay", set.getBlockLoc(Prefix.Ore).toString())).bake(modelState, vertexFormat, bakedTextureGetter);
 //                bakedModels[set.ordinal()] = ModelBase.tex(model, "overlay", set.getOreLoc()).bake(modelState, vertexFormat, bakedTextureGetter);
             }
 
@@ -49,7 +50,7 @@ public class ModelOre implements IModel {
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> textures = new ArrayList<>();
         for (MaterialSet set : MaterialSet.values()) {
-            textures.add(set.getOreLoc());
+            textures.add(set.getBlockLoc(Prefix.Ore));
         }
         textures.add(new ResourceLocation(Ref.MODID + ":blocks/stone"));
         textures.add(new ResourceLocation(Ref.MODID + ":blocks/ore"));

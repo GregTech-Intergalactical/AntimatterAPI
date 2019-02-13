@@ -65,7 +65,7 @@ public class BlockCable extends Block {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 //        TileEntityCable tile = (TileEntityCable) world.getTileEntity(pos);
 //        if (tile != null) {
-//            if (ItemList.DebugScanner.isItemEqual(player.getHeldItem(hand))) {
+//            if (ItemList.DebugScanner.isEqual(player.getHeldItem(hand))) {
 //                player.sendMessage(new TextComponentString(tile.cableConnections + ""));
 //                tile.toggleShouldConnect(facing);
 //            }
