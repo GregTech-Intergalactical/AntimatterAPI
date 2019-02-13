@@ -96,7 +96,7 @@ public class BlockOre extends Block {
 
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @SideOnly(Side.CLIENT)

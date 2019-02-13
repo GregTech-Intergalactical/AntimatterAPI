@@ -43,7 +43,7 @@ public class RenderGameOverlayHandler extends Gui {
                 drawModalRectWithCustomSizedTexture(x + 89, y, iconU, 10, 4, 5, 182, 15);
                 GL11.glPopAttrib();
                 GL11.glPopMatrix();
-            } else if (ItemType.DebugScanner.isItemEqual(stack)) {
+            } else if (ItemType.DebugScanner.isEqual(stack)) {
 
             }
         }

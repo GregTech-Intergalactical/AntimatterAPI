@@ -3,7 +3,7 @@ package muramasa.gregtech.common.tileentities.base;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.CableConfigHandler;
 import muramasa.gregtech.api.capability.impl.MachineCoverHandler;
-import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 
 public class TileEntityCable extends TileEntityTickable {
 
-    public CoverType[] covers = new CoverType[6];
     public int cableConnections, machineConnections, disabledConnections;
 
     private TileEntity tileBeingChecked;
@@ -23,7 +22,7 @@ public class TileEntityCable extends TileEntityTickable {
     private CableConfigHandler configHandler;
 
     public TileEntityCable() {
-        coverHandler = new MachineCoverHandler(this, CoverType.BLANK);
+        coverHandler = new MachineCoverHandler(this, Cover.BLANK);
         configHandler = new CableConfigHandler(this);
     }
 
@@ -44,7 +43,7 @@ public class TileEntityCable extends TileEntityTickable {
                     machineConnections |= sideMask;
                 }
                 /*else if (tileBeingChecked instanceof TileEntityMachine) {
-                    if (((TileEntityMachine) tileBeingChecked).getCover(cachedFacing[side].getOpposite()) == CoverType.ENERGYPORT) {
+                    if (((TileEntityMachine) tileBeingChecked).get(cachedFacing[side].getOpposite()) == CoverType.ENERGYPORT) {
                         cableConnections |= sideMask;
                         machineConnections |= sideMask;
                     }
@@ -96,7 +95,7 @@ public class TileEntityCable extends TileEntityTickable {
 //    }
 //
 //    @Override
-//    public CoverType getCover(EnumFacing side) {
+//    public CoverType get(EnumFacing side) {
 //        return covers[side.getIndex()];
 //    }
 //

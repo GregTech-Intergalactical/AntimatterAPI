@@ -13,9 +13,8 @@ import net.minecraftforge.fluids.Fluid;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static muramasa.gregtech.api.enums.Element.Tc;
 import static muramasa.gregtech.api.enums.GenerationFlag.*;
-import static muramasa.gregtech.api.enums.RecipeFlag.METAL;
+import static muramasa.gregtech.api.enums.RecipeFlag.*;
 
 public class Material {
 
@@ -235,7 +234,7 @@ public class Material {
     public int getMass() {
         if (mass == 0) {
             if (element != null) return element.getMass();
-            if (processInto.size() <= 0) return Tc.getMass();
+            if (processInto.size() <= 0) return Element.Tc.getMass();
             for (MaterialStack stack : processInto) {
                 mass += stack.size * stack.get().getMass();
             }

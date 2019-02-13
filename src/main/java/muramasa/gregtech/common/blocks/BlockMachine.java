@@ -3,8 +3,8 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
@@ -78,13 +78,13 @@ public class BlockMachine extends Block {
             ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
-                    .withProperty(COVERS, new CoverType[] {
-                        coverHandler.getCover(EnumFacing.UP),
-                        coverHandler.getCover(EnumFacing.DOWN),
-                        coverHandler.getCover(EnumFacing.SOUTH),
-                        CoverType.NONE,
-                        coverHandler.getCover(EnumFacing.EAST),
-                        coverHandler.getCover(EnumFacing.WEST)
+                    .withProperty(COVERS, new Cover[] {
+                        coverHandler.get(EnumFacing.UP).getCover(),
+                        coverHandler.get(EnumFacing.DOWN).getCover(),
+                        coverHandler.get(EnumFacing.SOUTH).getCover(),
+                        Cover.NONE,
+                        coverHandler.get(EnumFacing.EAST).getCover(),
+                        coverHandler.get(EnumFacing.WEST).getCover()
                     });
             }
         }
@@ -98,6 +98,7 @@ public class BlockMachine extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (Machines.INVALID.getName().equals(type)) return;
         Machine machine = Machines.get(type);
         for (Tier tier : machine.getTiers()) {
             items.add(Machines.get(type, tier.getName()).asItemStack());
@@ -153,7 +154,7 @@ public class BlockMachine extends Block {
             TileEntityMachine machine = (TileEntityMachine) tile;
             return Machines.get(machine.getType(), machine.getTier()).asItemStack();
         }
-        return new MachineStack(Machines.ALLOY_SMELTER, Tier.LV).asItemStack();
+        return new MachineStack(Machines.INVALID, Tier.LV).asItemStack();
     }
 
     @Override

@@ -2,7 +2,8 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.capability.ICoverable;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.CoverStack;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
@@ -78,18 +79,20 @@ public class StandardItem extends Item {
                 ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
                 EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
                 boolean consume = false;
-                if (ItemType.ItemPort.isItemEqual(stack)) {
-                    consume = coverHandler.setCover(targetSide, CoverType.ITEM_PORT);
-                } else if (ItemType.FluidPort.isItemEqual(stack)) {
-                    consume = coverHandler.setCover(targetSide, CoverType.FLUID_PORT);
-                } else if (ItemType.EnergyPort.isItemEqual(stack)) {
-                    consume = coverHandler.setCover(targetSide, CoverType.ENERGY_PORT);
+
+                //TODO new instance of covers
+                if (ItemType.ItemPort.isEqual(stack)) {
+                    consume = coverHandler.setCover(targetSide, new CoverStack(Cover.ITEM_PORT));
+                } else if (ItemType.FluidPort.isEqual(stack)) {
+                    consume = coverHandler.setCover(targetSide, new CoverStack(Cover.FLUID_PORT));
+                } else if (ItemType.EnergyPort.isEqual(stack)) {
+                    consume = coverHandler.setCover(targetSide, new CoverStack(Cover.ENERGY_PORT));
                 }
                 if (consume) {
                     stack.shrink(1);
                 }
             }
-            if (ItemType.DebugScanner.isItemEqual(stack)) {
+            if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
                         ((TileEntityMultiMachine) tile).shouldCheckStructure = true;

@@ -17,6 +17,6 @@ public class SlotCell extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return ItemType.EmptyCell.isItemEqual(stack) || MaterialItem.hasPrefix(stack, Prefix.Cell);
+        return ItemType.EmptyCell.isEqual(stack) || MaterialItem.hasPrefix(stack, Prefix.Cell);
     }
 }

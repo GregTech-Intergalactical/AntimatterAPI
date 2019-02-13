@@ -3,7 +3,7 @@ package muramasa.gregtech.common.tileentities.base.multi;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.HatchComponentHandler;
-import muramasa.gregtech.api.capability.impl.MachineStackHandler;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,13 +17,13 @@ import javax.annotation.Nullable;
 public class TileEntityHatch extends TileEntityMachine {
 
     private ResourceLocation texture;
-    private MachineStackHandler stackHandler;
+    private MachineItemHandler stackHandler;
     private ComponentHandler componentHandler;
 
     @Override
     public void init(String type, String tier, int facing) {
         super.init(type, tier, facing);
-        stackHandler = new MachineStackHandler(this, 0);
+        stackHandler = new MachineItemHandler(this, 0);
         componentHandler = new HatchComponentHandler(type, this);
         texture = super.getTexture();
     }

@@ -22,8 +22,12 @@ public enum MaterialSet implements IStringSerializable {
     QUARTZ,
     FLINT;
 
-    public ResourceLocation getOreLoc() {
-        return new ResourceLocation(Ref.MODID, "items/material_set/" + getName() + "/ore");
+    public ResourceLocation getBlockLoc(Prefix prefix) {
+        return new ResourceLocation(Ref.MODID, "blocks/material_set/" + getName() + "/" + prefix.getName());
+    }
+
+    public ResourceLocation getItemLoc(Prefix prefix) {
+        return new ResourceLocation(Ref.MODID, "items/material_set/" + getName() + "/" + prefix.getName());
     }
 
     @Override

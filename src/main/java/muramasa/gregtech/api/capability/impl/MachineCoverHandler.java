@@ -1,34 +1,42 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.ICoverable;
-import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.CoverStack;
 import muramasa.gregtech.api.util.SoundList;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import net.minecraft.util.EnumFacing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MachineCoverHandler implements ICoverable {
 
     private TileEntityBase tile;
-    private ArrayList<CoverType> validCovers;
+    private ArrayList<String> validCovers;
 
-    private CoverType[] covers = new CoverType[] {
-        CoverType.NONE, CoverType.NONE, CoverType.NONE, CoverType.NONE, CoverType.NONE, CoverType.NONE
+    private CoverStack[] covers = new CoverStack[] {
+        new CoverStack(Cover.NONE),
+        new CoverStack(Cover.NONE),
+        new CoverStack(Cover.NONE),
+        new CoverStack(Cover.NONE),
+        new CoverStack(Cover.NONE),
+        new CoverStack(Cover.NONE)
     };
 
-    public MachineCoverHandler(TileEntityBase tile, CoverType... covers) {
+    public MachineCoverHandler(TileEntityBase tile, Cover... covers) {
         this.tile = tile;
-        validCovers = new ArrayList<>(Arrays.asList(covers));
+        validCovers = new ArrayList<>();
+        for (Cover cover : covers) {
+            validCovers.add(cover.getName());
+        }
     }
 
     @Override
-    public boolean setCover(EnumFacing side, CoverType coverType) {
+    public boolean setCover(EnumFacing side, CoverStack stack) {
         if (tile == null) return false;
-        if (coverType == null) coverType = CoverType.NONE;
-        if (isCoverValid(coverType) && side != EnumFacing.NORTH && covers[side.getIndex()] != coverType) {
-            covers[side.getIndex()] = coverType;
+        if (stack == null) stack = new CoverStack(Cover.NONE);
+        if (isCoverValid(stack) && side != EnumFacing.NORTH && covers[side.getIndex()] != stack) {
+            covers[side.getIndex()] = stack;
             SoundList.PLACE_METAL.play(tile.getWorld(), tile.getPos());
             tile.markForRenderUpdate();
             return true;
@@ -37,21 +45,22 @@ public class MachineCoverHandler implements ICoverable {
     }
 
     @Override
-    public CoverType getCover(EnumFacing side) {
-        if (side == null || side == EnumFacing.NORTH) {
-            return CoverType.NONE;
-        } else {
-            return covers[side.ordinal()];
-        }
+    public CoverStack get(EnumFacing side) {
+        return covers[side.ordinal()];
     }
 
     @Override
-    public boolean hasCover(EnumFacing side, CoverType coverType) {
-        return getCover(side) == coverType;
+    public CoverStack[] getCovers() {
+        return covers;
     }
 
     @Override
-    public boolean isCoverValid(CoverType coverType) {
-        return coverType == CoverType.NONE || validCovers.contains(coverType);
+    public boolean hasCover(EnumFacing side, Cover cover) {
+        return get(side).isEqual(cover);
+    }
+
+    @Override
+    public boolean isCoverValid(CoverStack stack) {
+        return stack.isEqual(Cover.NONE) || validCovers.contains(stack.getCover().getName());
     }
 }

@@ -104,25 +104,23 @@ public class ToolHelper {
         getTag(stack).setFloat(Ref.KEY_TOOL_DATA_MINING_SPEED, newMiningSpeed);
     }
 
-    public static void damageForMining(ItemStack stack, int multi) {
-        setDurability(stack, getDurability(stack) - (ToolType.get(stack).getDamageMining() * multi));
+    public static void damage(ItemStack stack, int damage) {
+        setDurability(stack, getDurability(stack) - damage);
         if (ToolType.isPowered(stack)) {
-            setEnergy(stack, getEnergy(stack) - (ToolType.get(stack).getDamageMining() * multi));
+            setEnergy(stack, getEnergy(stack) - damage);
         }
+    }
+
+    public static void damageForMining(ItemStack stack, int multi) {
+        damage(stack, ToolType.get(stack).getDamageMining() * multi);
     }
 
     public static void damageForEntity(ItemStack stack, int multi) {
-        setDurability(stack, getDurability(stack) - (ToolType.get(stack).getDamageEntity() * multi));
-        if (ToolType.isPowered(stack)) {
-            setEnergy(stack, getEnergy(stack) - (ToolType.get(stack).getDamageEntity() * multi));
-        }
+        damage(stack, ToolType.get(stack).getDamageEntity() * multi);
     }
 
     public static void damageForCrafting(ItemStack stack, int multi) {
-        setDurability(stack, getDurability(stack) - (ToolType.get(stack).getDamageCrafting() * multi));
-        if (ToolType.isPowered(stack)) {
-            setEnergy(stack, getEnergy(stack) - (ToolType.get(stack).getDamageCrafting() * multi));
-        }
+        damage(stack, ToolType.get(stack).getDamageCrafting() * multi);
     }
 
     public static void remove(ItemStack stack, World world, BlockPos pos) {
@@ -142,7 +140,7 @@ public class ToolHelper {
             setMaxDurability(stack, getDurability(stack));
             setAttackDamage(stack, type.getBaseDamage() + primary.getToolQuality());
             setAttackSpeed(stack, 0);
-            setMiningSpeed(stack, primary.getToolSpeed() * type.getSpeedMulti());
+            setMiningSpeed(stack, type.getSpeedMulti() * primary.getToolSpeed());
             setEnergy(stack, 1600000); //TODO
             setMaxEnergy(stack, 1600000);
         }

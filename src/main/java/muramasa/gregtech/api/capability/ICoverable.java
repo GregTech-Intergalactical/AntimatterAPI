@@ -1,15 +1,18 @@
 package muramasa.gregtech.api.capability;
 
-import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.CoverStack;
 import net.minecraft.util.EnumFacing;
 
 public interface ICoverable {
 
-    boolean setCover(EnumFacing side, CoverType coverType);
+    boolean setCover(EnumFacing side, CoverStack stack);
 
-    CoverType getCover(EnumFacing side);
+    CoverStack get(EnumFacing side);
 
-    boolean hasCover(EnumFacing side, CoverType coverType);
+    CoverStack[] getCovers();
 
-    boolean isCoverValid(CoverType coverType);
+    boolean hasCover(EnumFacing side, Cover cover);
+
+    boolean isCoverValid(CoverStack stack);
 }

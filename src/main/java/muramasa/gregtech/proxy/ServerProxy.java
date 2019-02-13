@@ -1,6 +1,5 @@
 package muramasa.gregtech.proxy;
 
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.common.utils.CommandTool;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -11,12 +10,12 @@ public class ServerProxy implements IProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
-
+        //NOOP
     }
 
     @Override
     public void init(FMLInitializationEvent e) {
-
+        //NOOP
     }
 
     @Override
@@ -26,6 +25,7 @@ public class ServerProxy implements IProxy {
 
     @Override
     public void serverStarting(FMLServerStartingEvent e) {
+        System.out.println("SERVER STARTING");
         e.registerServerCommand(new CommandTool());
     }
 }

@@ -1,7 +1,7 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.CoverType;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.overrides.ItemOverrideMachine;
@@ -79,10 +79,11 @@ public class BakedModelMachine extends BakedModelBase {
 
         //Add cover quads
         if (hasUnlistedProperty(exState, ITechProperties.COVERS)) {
-            CoverType[] covers = exState.getValue(ITechProperties.COVERS);
+            Cover[] covers = exState.getValue(ITechProperties.COVERS);
+            if (covers == null) return quadList;
             for (int i = 0; i < covers.length; i++) {
-                if (covers[i] == CoverType.NONE) continue;
-                quadList.addAll(transform(bakedCovers[covers[i].ordinal()].getQuads(exState, side, rand), facingToAxisAngle[i]));
+                if (covers[i] == Cover.NONE) continue;
+                quadList.addAll(transform(bakedCovers[covers[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i]));
             }
         }
 

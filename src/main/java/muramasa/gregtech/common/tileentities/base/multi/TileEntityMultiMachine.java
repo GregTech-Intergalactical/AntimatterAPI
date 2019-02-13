@@ -3,7 +3,7 @@ package muramasa.gregtech.common.tileentities.base.multi;
 import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
-import muramasa.gregtech.api.capability.impl.MachineStackHandler;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.api.structure.StructureResult;
@@ -154,58 +154,58 @@ public class TileEntityMultiMachine extends TileEntityMachine {
         ArrayList<ItemStack> stacks = new ArrayList<>();
         ArrayList<IComponent> hatches = components.get("itemhatchinput");
         if (hatches == null || hatches.size() == 0) return stacks;
-        MachineStackHandler stackHandler;
+        MachineItemHandler itemHandler;
         for (IComponent hatch : hatches) {
-            stackHandler = hatch.getStackHandler();
-            if (stackHandler == null) continue;
-            for (ItemStack stack : stackHandler.getInputs()) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            for (ItemStack stack : itemHandler.getInputs()) {
                 if (stacks.contains(stack)) {
 
                 } else {
                     stacks.add(stack);
                 }
             }
-            stacks.addAll(stackHandler.getInputList());
+            stacks.addAll(itemHandler.getInputList());
         }
         return stacks;
     }
 
     public void consumeInputs(ItemStack... inputs) {
         ItemStack[] toConsume = inputs.clone();
-        MachineStackHandler stackHandler;
+        MachineItemHandler itemHandler;
         for (IComponent hatch : components.get("itemhatchinput")) {
-            stackHandler = hatch.getStackHandler();
-            if (stackHandler == null) continue;
-            toConsume = stackHandler.consumeAndReturnInputs(toConsume);
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            toConsume = itemHandler.consumeAndReturnInputs(toConsume);
             if (toConsume.length == 0) break;
         }
     }
 
     public boolean canOutputsFit(ItemStack... outputs) {
-        MachineStackHandler stackHandler;
+        MachineItemHandler itemHandler;
         int matchCount = 0;
         for (IComponent hatch : components.get("itemhatchoutput")) {
-            stackHandler = hatch.getStackHandler();
-            if (stackHandler == null) continue;
-            matchCount += stackHandler.getSpaceForStacks(outputs);
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            matchCount += itemHandler.getSpaceForStacks(outputs);
         }
         return matchCount >= outputs.length;
     }
 
 
     public void addOutputs(ItemStack... outputs) {
-        MachineStackHandler stackHandler;
+        MachineItemHandler itemHandler;
         for (IComponent hatch : components.get("itemhatchoutput")) {
-            stackHandler = hatch.getStackHandler();
-            if (stackHandler == null) continue;
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
             for (int i = 0; i < outputs.length; i++) {
 
 
 
 //                if (Utils.getSpaceForStacks())
-//                if (Utils.canStacksFit(new ItemStack[]{outputs[i]}, stackHandler.getOutputStacks())) {
+//                if (Utils.canStacksFit(new ItemStack[]{outputs[i]}, itemHandler.getOutputStacks())) {
                     System.out.println("addOutput");
-                    stackHandler.addOutputs(outputs[i].copy());
+                    itemHandler.addOutputs(outputs[i].copy());
 //                }
             }
 
@@ -213,19 +213,19 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     }
 
 //    public boolean consume(ItemStack... stacks) {
-////        IItemHandler stackHandler;
+////        IItemHandler itemHandler;
 ////        for (IComponent hatch : components.get("itemhatch")) {
-////            stackHandler = hatch.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-////            if (stackHandler == null) continue;
+////            itemHandler = hatch.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+////            if (itemHandler == null) continue;
 ////            for (ItemStack stack : stacks) {
-////                if (stackHandler.)
+////                if (itemHandler.)
 ////            }
 ////        }
 //
-//        MachineStackHandler stackHandler;
+//        MachineStackHandler itemHandler;
 //        for (IComponent hatch : components.get("itemhatch")) {
-//            stackHandler = hatch.getStackHandler();
-//            if (stackHandler == null) continue;
+//            itemHandler = hatch.getItemHandler();
+//            if (itemHandler == null) continue;
 //            for (ItemStack stack : stacks) {
 //
 //            }

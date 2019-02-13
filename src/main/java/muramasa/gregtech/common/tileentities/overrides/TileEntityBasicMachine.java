@@ -2,7 +2,7 @@ package muramasa.gregtech.common.tileentities.overrides;
 
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
-import muramasa.gregtech.api.enums.CoverType;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.MachineState;
@@ -30,8 +30,8 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     protected NBTTagCompound itemInputData, itemOutputData, itemCellData, fluidData;
 
     /** Capabilities **/
-    protected MachineStackHandler stackHandler;
-    protected MachineTankHandler tankHandler;
+    protected MachineItemHandler itemHandler;
+    protected MachineFluidHandler fluidHandler;
     protected MachineEnergyHandler energyStorage;
     protected MachineConfigHandler configHandler;
     protected MachineCoverHandler coverHandler;
@@ -47,13 +47,13 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         super.init(type, tier, facing);
         Machine machine = getMachineType();
         if (machine.hasFlag(ITEM)) {
-            stackHandler = new MachineStackHandler(this, 0);
-            if (itemInputData != null) stackHandler.deserializeInput(itemInputData);
-            if (itemOutputData != null) stackHandler.deserializeOutput(itemOutputData);
-            if (itemCellData != null) stackHandler.deserializeCell(itemCellData);
+            itemHandler = new MachineItemHandler(this, 0);
+            if (itemInputData != null) itemHandler.deserializeInput(itemInputData);
+            if (itemOutputData != null) itemHandler.deserializeOutput(itemOutputData);
+            if (itemCellData != null) itemHandler.deserializeCell(itemCellData);
         }
         if (machine.hasFlag(FLUID)) {
-            tankHandler = new MachineTankHandler(this, machine.getFluidInputCount(), machine.getFluidOutputCount());
+            fluidHandler = new MachineFluidHandler(this, machine.getFluidInputCount(), machine.getFluidOutputCount());
 //            inputTank = new MachineTankHandler(this, 9999, null, true, false);
 //            if (fluidData != null) inputTank.deserializeNBT(fluidData);
 //            cellHandler = new MachineStackHandlerOld(this, 2, 2, 2);
@@ -65,7 +65,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             energyStorage.energy = 99999999; //Temporary
         }
         if (machine.hasFlag(COVERABLE)) {
-            coverHandler = new MachineCoverHandler(this, CoverType.BLANK, CoverType.ENERGY_PORT, CoverType.ITEM_PORT, CoverType.FLUID_PORT);
+            coverHandler = new MachineCoverHandler(this, Cover.BLANK, Cover.ENERGY_PORT, Cover.ITEM_PORT, Cover.FLUID_PORT);
         }
         if (machine.hasFlag(CONFIGURABLE)) {
             configHandler = new MachineConfigHandler(this);
@@ -85,8 +85,8 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
-            if (stackHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
-            Recipe recipe = getMachineType().findRecipe(stackHandler, tankHandler);
+            if (itemHandler.getInputs().length == 0) return; //Escape if machine inputs are empty
+            Recipe recipe = getMachineType().findRecipe(itemHandler, fluidHandler);
             if (recipe != null) {
                 activeRecipe = recipe;
                 curProgress = 0;
@@ -103,11 +103,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             }
 
             //Add outputs and reset to process next recipe cycle
-            stackHandler.addOutputs(activeRecipe.getOutputStacks());
+            itemHandler.addOutputs(activeRecipe.getOutputStacks());
             curProgress = 0;
 
             //Check if has enough stack count for next recipe cycle
-            if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), stackHandler.getInputs())) {
+            if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), itemHandler.getInputs())) {
                 return MachineState.IDLE;
             } else {
                 return MachineState.FOUND_RECIPE;
@@ -116,7 +116,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             //Calculate per recipe tick so user has risk of losing items
             if (consumeResourceForRecipe()) { //Has enough power to process recipe
                 if (curProgress == 0) { //Consume recipe inputs on first recipe tick
-                    stackHandler.consumeInputs(activeRecipe.getInputStacks());
+                    itemHandler.consumeInputs(activeRecipe.getInputStacks());
                     if (activeRecipe.hasInputFluids()) {
 
                     }
@@ -139,11 +139,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public boolean canOutput() {
         /*if (!getMachineType().hasFlag(FLUID)) {
-            return stackHandler.canStacksFit(activeRecipe.getInputStacks());
+            return itemHandler.canStacksFit(activeRecipe.getInputStacks());
         } else {
-            return Utils.canStacksFit(activeRecipe.getOutputStacks(), stackHandler.getOutputs()) && tankHandler.canOutput(activeRecipe.getOutputFluids());
+            return Utils.canStacksFit(activeRecipe.getOutputStacks(), itemHandler.getOutputs()) && fluidHandler.canOutput(activeRecipe.getOutputFluids());
         }*/
-        return stackHandler.canStacksFit(activeRecipe.getOutputStacks());
+        return itemHandler.canStacksFit(activeRecipe.getOutputStacks());
     }
 
     /** Events **/
@@ -161,14 +161,14 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     public void handleCellSlotUpdate(int slot) {
         if (slot == 0) { //Input slot
-            ItemStack stack = stackHandler.getCellInput();
+            ItemStack stack = itemHandler.getCellInput();
             if (stack.getItem() instanceof MaterialItem) {
                 Material material = ((MaterialItem) stack.getItem()).getMaterial();
                 if (material != null && material.getLiquid() != null) {
-                    tankHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
+                    fluidHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
                 }
-            } else if (ItemType.EmptyCell.isItemEqual(stack)) {
-                tankHandler.getInput(0).setFluid(null);
+            } else if (ItemType.EmptyCell.isEqual(stack)) {
+                fluidHandler.getInput(0).setFluid(null);
             }
         } else if (slot == 1) { //Output slot
 
@@ -191,20 +191,12 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         return maxProgress;
     }
 
-//    public IItemHandler getStackHandler() {
-//        return stackHandler;
-//    }
-
-//    public IItemHandler getCellHandler() {
-//        return cellHandler;
-//    }
-
-    public MachineStackHandler getStackHandler() {
-        return stackHandler;
+    public MachineItemHandler getItemHandler() {
+        return itemHandler;
     }
 
-    public MachineTankHandler getFluidHandler() {
-        return tankHandler;
+    public MachineFluidHandler getFluidHandler() {
+        return fluidHandler;
     }
 
     /** Setters **/
@@ -238,11 +230,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (stackHandler != null) {
-            compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_INPUT, stackHandler.serializeInput());
-            compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_OUTPUT, stackHandler.serializeOutput());
+        if (itemHandler != null) {
+            compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_INPUT, itemHandler.serializeInput());
+            compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_OUTPUT, itemHandler.serializeOutput());
             if (getMachineType().hasFlag(FLUID)) {
-                compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_CELL, stackHandler.serializeCell());
+                compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS_CELL, itemHandler.serializeCell());
             }
         }
         if (getMachineState() != null) {
@@ -255,11 +247,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         Machine machine = getMachineType();
         if (machine.hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing == null || coverHandler.hasCover(facing, CoverType.ITEM_PORT);
+            return facing == null || coverHandler.hasCover(facing, Cover.ITEM_PORT);
         } else if (machine.hasFlag(ENERGY) && capability == ITechCapabilities.ENERGY) {
-            return facing == null || coverHandler.hasCover(facing, CoverType.ENERGY_PORT);
+            return facing == null || coverHandler.hasCover(facing, Cover.ENERGY_PORT);
         } else if (machine.hasFlag(COVERABLE) && capability == ITechCapabilities.COVERABLE) {
-            return facing == null || !coverHandler.hasCover(facing, CoverType.NONE);
+            return facing == null || !coverHandler.hasCover(facing, Cover.NONE);
         } else if (machine.hasFlag(CONFIGURABLE) && capability == ITechCapabilities.CONFIGURABLE) {
             return true;
         }
@@ -270,7 +262,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(stackHandler.getOutputHandler());
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
         } else if (capability == ITechCapabilities.ENERGY) {
             return ITechCapabilities.ENERGY.cast(energyStorage);
         } else if (capability == ITechCapabilities.COVERABLE) {
