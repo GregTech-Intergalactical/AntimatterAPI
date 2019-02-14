@@ -4,15 +4,15 @@ import muramasa.gregtech.api.data.Materials;
 
 public class MaterialStack {
 
-    public int id;
+    public String name;
     public int size;
 
-    public MaterialStack(int id, int size) {
-        this.id = id;
+    public MaterialStack(String name, int size) {
+        this.name = name;
         this.size = size;
     }
 
     public Material get() {
-        return Materials.get(id);
+        return Materials.get(name);
     }
 }

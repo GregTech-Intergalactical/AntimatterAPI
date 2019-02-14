@@ -36,7 +36,7 @@ public enum RecipeFlag implements IMaterialFlag {
     //TODO add alloy flag for adding mixer and dust crafting recipes automatically
 
     private long bit;
-    private ArrayList<Integer> materialIds = new ArrayList<>();
+    private ArrayList<String> materialNames = new ArrayList<>();
 
     RecipeFlag() {
         bit = 1 << ordinal();
@@ -50,7 +50,9 @@ public enum RecipeFlag implements IMaterialFlag {
     @Override
     public void add(Material... mats) {
         for (Material material : mats) {
-            materialIds.add(material.getId());
+            if (!materialNames.contains(material.getName())) {
+                materialNames.add(material.getName());
+            }
         }
     }
 
@@ -61,16 +63,16 @@ public enum RecipeFlag implements IMaterialFlag {
 
     @Override
     public Material[] getMats() {
-        Material[] materials = new Material[materialIds.size()];
+        Material[] materials = new Material[materialNames.size()];
         int size = materials.length;
         for (int i = 0; i < size; i++) {
-            materials[i] = Materials.get(materialIds.get(i));
+            materials[i] = Materials.get(materialNames.get(i));
         }
         return materials;
     }
 
     @Override
-    public ArrayList<Integer> getIds() {
-        return materialIds;
+    public ArrayList<String> getMatNames() {
+        return materialNames;
     }
 }

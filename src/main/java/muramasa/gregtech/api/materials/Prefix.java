@@ -9,44 +9,46 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import static muramasa.gregtech.api.enums.GenerationFlag.*;
+
 public class Prefix implements IStringSerializable {
 
     private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
 
-    public static Prefix Ore = new Prefix("ore", true, false, GenerationFlag.CRUSHED);
-    public static Prefix Block = new Prefix("block", true, false, GenerationFlag.CRUSHED);
+    public static Prefix Ore = new Prefix("ore", true, false, ORE);
+    public static Prefix Block = new Prefix("block", true, false, BLOCK);
 
-    public static Prefix Chunk = new Prefix("chunk", true, GenerationFlag.CRUSHED);
-    public static Prefix Crushed = new Prefix("crushed", false, GenerationFlag.CRUSHED);
-    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, GenerationFlag.CRUSHEDC);
-    public static Prefix CrushedPurified = new Prefix("crushed_purified", false, GenerationFlag.CRUSHEDP);
-    public static Prefix Dust = new Prefix("dust", true, GenerationFlag.DUST);
-    public static Prefix DustSmall = new Prefix("dust_small", false, GenerationFlag.DUST);
-    public static Prefix DustTiny = new Prefix("dust_tiny", false, GenerationFlag.DUST);
-    public static Prefix Nugget = new Prefix("nugget", false, GenerationFlag.INGOT);
-    public static Prefix Ingot = new Prefix("ingot", true, GenerationFlag.INGOT);
-    public static Prefix IngotHot = new Prefix("ingot_hot", false, GenerationFlag.HINGOT);
-    public static Prefix Plate = new Prefix("plate", true, GenerationFlag.PLATE);
-    public static Prefix PlateDense = new Prefix("plate_dense", true, GenerationFlag.DPLATE);
-    public static Prefix Gem = new Prefix("gem", true, GenerationFlag.BGEM);
-    public static Prefix GemChipped = new Prefix("gem_chipped", true, GenerationFlag.GEM);
-    public static Prefix GemFlawed = new Prefix("gem_flawed", true, GenerationFlag.GEM);
-    public static Prefix GemFlawless = new Prefix("gem_flawless", true, GenerationFlag.GEM);
-    public static Prefix GemExquisite = new Prefix("gem_exquisite", true, GenerationFlag.GEM);
-    public static Prefix Foil = new Prefix("foil", true, GenerationFlag.FOIL);
-    public static Prefix Rod = new Prefix("rod", true, GenerationFlag.ROD);
-    public static Prefix Bolt = new Prefix("bolt", true, GenerationFlag.BOLT);
-    public static Prefix Screw = new Prefix("screw", true, GenerationFlag.SCREW);
-    public static Prefix Ring = new Prefix("ring", true, GenerationFlag.RING);
-    public static Prefix Spring = new Prefix("spring", true, GenerationFlag.SPRING);
-    public static Prefix WireFine = new Prefix("wire_fine", true, GenerationFlag.WIREF);
-    public static Prefix Rotor = new Prefix("rotor", true, GenerationFlag.ROTOR);
-    public static Prefix Gear = new Prefix("gear", true, GenerationFlag.GEAR);
-    public static Prefix GearSmall = new Prefix("gear_small", true, GenerationFlag.SGEAR);
-    public static Prefix Lens = new Prefix("lens", true, GenerationFlag.GEM);
-    public static Prefix Cell = new Prefix("cell", true, GenerationFlag.LIQUID);
-    public static Prefix CellGas = new Prefix("cell_gas", true, GenerationFlag.GAS);
-    public static Prefix CellPlasma = new Prefix("cell_plasma", true, GenerationFlag.PLASMA);
+    public static Prefix Chunk = new Prefix("chunk", true, ORE);
+    public static Prefix Crushed = new Prefix("crushed", false, CRUSHED, ORE);
+    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDC, ORE);
+    public static Prefix CrushedPurified = new Prefix("crushed_purified", false, CRUSHEDP, ORE);
+    public static Prefix Dust = new Prefix("dust", true, DUST);
+    public static Prefix DustSmall = new Prefix("dust_small", false, DUST);
+    public static Prefix DustTiny = new Prefix("dust_tiny", false, DUST);
+    public static Prefix Nugget = new Prefix("nugget", false, INGOT);
+    public static Prefix Ingot = new Prefix("ingot", true, INGOT);
+    public static Prefix IngotHot = new Prefix("ingot_hot", false, HINGOT);
+    public static Prefix Plate = new Prefix("plate", true, PLATE);
+    public static Prefix PlateDense = new Prefix("plate_dense", true, DPLATE);
+    public static Prefix Gem = new Prefix("gem", true, BGEM);
+    public static Prefix GemChipped = new Prefix("gem_chipped", true, GEM);
+    public static Prefix GemFlawed = new Prefix("gem_flawed", true, GEM);
+    public static Prefix GemFlawless = new Prefix("gem_flawless", true, GEM);
+    public static Prefix GemExquisite = new Prefix("gem_exquisite", true, GEM);
+    public static Prefix Foil = new Prefix("foil", true, FOIL);
+    public static Prefix Rod = new Prefix("rod", true, ROD);
+    public static Prefix Bolt = new Prefix("bolt", true, BOLT);
+    public static Prefix Screw = new Prefix("screw", true, SCREW);
+    public static Prefix Ring = new Prefix("ring", true, RING);
+    public static Prefix Spring = new Prefix("spring", true, SPRING);
+    public static Prefix WireFine = new Prefix("wire_fine", true, WIREF);
+    public static Prefix Rotor = new Prefix("rotor", true, ROTOR);
+    public static Prefix Gear = new Prefix("gear", true, GEAR);
+    public static Prefix GearSmall = new Prefix("gear_small", true, SGEAR);
+    public static Prefix Lens = new Prefix("lens", true, GEM);
+    public static Prefix Cell = new Prefix("cell", true, LIQUID);
+    public static Prefix CellGas = new Prefix("cell_gas", true, GAS);
+    public static Prefix CellPlasma = new Prefix("cell_plasma", true, PLASMA);
 
     private String name, namePre, namePost;
 

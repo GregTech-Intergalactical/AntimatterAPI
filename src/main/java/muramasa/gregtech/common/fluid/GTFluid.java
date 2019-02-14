@@ -11,7 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class GTFluid extends Fluid {
 
-    private int id;
+    private String name;
     private GenerationFlag flag;
 
     public GTFluid(Material mat, GenerationFlag flag) {
@@ -35,7 +35,7 @@ public class GTFluid extends Fluid {
             default:
                 throw new IllegalArgumentException("Cannot create a fluid with the flag: " + flag.getName());
         }
-        id = mat.getId();
+        name = mat.getName();
         this.flag = flag;
         FluidRegistry.registerFluid(this);
     }
@@ -44,11 +44,11 @@ public class GTFluid extends Fluid {
     public String getLocalizedName(FluidStack stack) {
         switch (flag) {
             case LIQUID:
-                return "Molten " + Materials.get(id).getDisplayName();
+                return "Molten " + Materials.get(name).getDisplayName();
             case GAS:
-                return Materials.get(id).getDisplayName() + " Gas";
+                return Materials.get(name).getDisplayName() + " Gas";
             case PLASMA:
-                return Materials.get(id).getDisplayName() + " Plasma";
+                return Materials.get(name).getDisplayName() + " Plasma";
             default:
                 return "FLUID NAME ERROR";
         }

@@ -65,8 +65,8 @@ public class ItemType implements IStringSerializable {
         GregTechAPI.CoverBehaviourNone = new CoverBehaviourNone();
         //TODO avoid creating "dummy" instance due to requiring name string
         GregTechAPI.CoverBehaviourPlate = new CoverBehaviourPlate(-1);
-        for (int id : GenerationFlag.PLATE.getIds()) {
-            Material mat = Materials.get(id);
+        for (String name : GenerationFlag.PLATE.getMatNames()) {
+            Material mat = Materials.get(name);
             GregTechAPI.registerCoverBehaviour(mat.getPlate(1), new CoverBehaviourPlate(mat.getRGB()));
         }
         GregTechAPI.CoverBehaviourItem = new CoverBehaviourItem();

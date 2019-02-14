@@ -64,7 +64,7 @@ public class ContentLoader {
             event.getRegistry().register(type.getBlock());
         }
         for (Material material : Materials.getAll()) {
-            if (material.hasFlag(GenerationFlag.CRUSHED)) {
+            if (material.hasFlag(GenerationFlag.ORE)) {
                 event.getRegistry().register(new BlockOre(material));
             }
             if (material.hasFlag(GenerationFlag.BLOCK)) {
