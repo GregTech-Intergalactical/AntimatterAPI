@@ -14,6 +14,6 @@ public class ITechProperties {
     public static final UnlistedCovers COVERS = new UnlistedCovers();
 
     /** Ore Properties **/
-    public static final UnlistedInteger MATERIAL = new UnlistedInteger();
+    public static final UnlistedString MATERIAL = new UnlistedString();
     public static final PropertyInteger STONE = PropertyInteger.create("stone", 0, 6);
 }

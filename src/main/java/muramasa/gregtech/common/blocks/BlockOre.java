@@ -53,7 +53,7 @@ public class BlockOre extends Block {
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(ITechProperties.MATERIAL, Materials.get(material).getId());
+        return exState.withProperty(ITechProperties.MATERIAL, material);
     }
 
     @Override

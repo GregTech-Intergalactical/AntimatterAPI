@@ -19,7 +19,7 @@ import static muramasa.gregtech.api.enums.RecipeFlag.*;
 public class Material {
 
     /** Basic Members **/
-    private int id, rgb, mass;
+    private int rgb, mass;
     private long itemMask, recipeMask;
     private String name, displayName;
     private MaterialSet set;
@@ -45,53 +45,65 @@ public class Material {
     private String handleMaterial;
 
     /** Processing Members **/
-    private int smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
+    private String smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
-    private ArrayList<Integer> byProducts = new ArrayList<>();
+    private ArrayList<String> byProducts = new ArrayList<>();
 
-    public Material(int id, String name, int rgb, MaterialSet set, Element element) {
-        this(id, name, rgb, set);
+    public Material(String name, int rgb, MaterialSet set, Element element) {
+        this(name, rgb, set);
         this.element = element;
     }
 
-    public Material(int id, String displayName, int rgb, MaterialSet set) {
-        this.id = smeltInto = directSmeltInto = arcSmeltInto = macerateInto = id;
-        this.displayName = displayName;
+    public Material(String displayName, int rgb, MaterialSet set) {
         this.name = displayName.toLowerCase(Locale.ENGLISH).replaceAll("-", "_").replaceAll(" ", "_");
+        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = name;
+        this.displayName = displayName;
         this.rgb = rgb;
         this.set = set;
-        Materials.generated[id] = this;
         Materials.MATERIAL_LOOKUP.put(name, this);
     }
 
-    public Material asDust(int... temps) {
+    public Material asDust(int meltingPoint, IMaterialFlag... flags) {
         add(DUST);
-        if (temps.length >= 1 && temps[0] > 0) {
-            meltingPoint = temps[0];
+        add(flags);
+        this.meltingPoint = meltingPoint;
+        if (meltingPoint > 0) {
             asFluid();
         }
         return this;
     }
 
-    public Material asSolid(int... temps) {
-        asDust(temps);
+    public Material asDust(IMaterialFlag... flags) {
+        return asDust(0, flags);
+    }
+
+    public Material asSolid(IMaterialFlag... flags) {
+        return asSolid(0, 0, flags);
+    }
+
+    public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
+        asDust(meltingPoint, flags);
         add(INGOT);
-        if (temps.length >= 2 && temps[1] > 0) {
-            needsBlastFurnace = temps[1] >= 1000;
-            blastFurnaceTemp = temps[1];
-            if (temps[1] > 1750) add(HINGOT);
+        this.blastFurnaceTemp = blastFurnaceTemp;
+        this.needsBlastFurnace = blastFurnaceTemp >= 1000;
+        if (blastFurnaceTemp > 1750) {
+            add(HINGOT);
         }
         return this;
     }
 
-    public Material asMetal(int... temps) {
-        asSolid(temps);
+    public Material asMetal(IMaterialFlag... flags) {
+        return asMetal(0, 0, flags);
+    }
+
+    public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
+        asSolid(meltingPoint, blastFurnaceTemp, flags);
         add(METAL);
         return this;
     }
 
-    public Material asGemBasic(boolean transparent) {
-        asDust();
+    public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
+        asDust(flags);
         add(BGEM);
         if (transparent) {
             this.transparent = true;
@@ -100,32 +112,39 @@ public class Material {
         return this;
     }
 
-    public Material asGem(boolean transparent) {
-        asGemBasic(transparent);
+    public Material asGem(boolean transparent, IMaterialFlag... flags) {
+        asGemBasic(transparent, flags);
         add(GEM);
         return this;
     }
 
-    public Material asFluid(int... fuelPower) {
+    public Material asFluid() {
+        return asFluid(0);
+    }
+
+    public Material asFluid(int fuelPower) {
         add(LIQUID);
-        if (fuelPower.length >= 1) this.fuelPower = fuelPower[0];
+        this.fuelPower = fuelPower;
         return this;
     }
 
-    public Material asGas(int... fuelPower) {
-        asFluid(fuelPower);
+    public Material asGas() {
+        return asGas(0);
+    }
+
+    public Material asGas(int fuelPower) {
         add(GAS);
+        this.fuelPower = fuelPower;
         return this;
     }
 
-    public Material asPlasma(int... fuelPower) {
-        asFluid(fuelPower);
-        add(GAS, PLASMA);
-        return this;
+    public Material asPlasma() {
+        return asPlasma(0);
     }
 
-    public Material addOre() {
-        add(CRUSHED, CRUSHEDC, CRUSHEDP);
+    public Material asPlasma(int fuelPower) {
+        asGas(fuelPower);
+        add(PLASMA);
         return this;
     }
 
@@ -154,7 +173,7 @@ public class Material {
         return true;
     }
 
-    public Material add(IMaterialFlag... flags) {
+    public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof GenerationFlag) {
                 itemMask |= flag.getBit();
@@ -163,13 +182,12 @@ public class Material {
             }
             flag.add(this);
         }
-        return this;
     }
 
     public Material add(Object... objects) {
         if (objects.length % 2 == 0) {
             for (int i = 0; i < objects.length; i += 2) {
-                processInto.add(new MaterialStack(((Material) objects[i]).getId(), (int) objects[i + 1]));
+                processInto.add(new MaterialStack(((Material) objects[i]).getName(), (int) objects[i + 1]));
             }
         }
         return this;
@@ -177,7 +195,7 @@ public class Material {
 
     public Material add(Material... mats) {
         for (Material mat : mats) {
-            byProducts.add(mat.getId());
+            byProducts.add(mat.getName());
         }
         return this;
     }
@@ -195,10 +213,6 @@ public class Material {
     }
 
     /** Basic Getters**/
-    public int getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
@@ -313,19 +327,19 @@ public class Material {
     }
 
     public boolean hasSmeltInto() {
-        return id != smeltInto;
+        return !name.equals(smeltInto);
     }
 
     public boolean hasDirectSmeltInto() {
-        return id != directSmeltInto;
+        return !name.equals(directSmeltInto);
     }
 
     public boolean hasArcSmeltInto() {
-        return id != arcSmeltInto;
+        return !name.equals(arcSmeltInto);
     }
 
     public boolean hasMacerateInto() {
-        return id != macerateInto;
+        return !name.equals(macerateInto);
     }
 
     public ArrayList<MaterialStack> getProcessInto() {

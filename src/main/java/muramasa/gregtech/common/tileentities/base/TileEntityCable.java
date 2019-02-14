@@ -86,32 +86,4 @@ public class TileEntityCable extends TileEntityTickable {
         }
         return super.getCapability(capability, facing);
     }
-
-//    @Override
-//    public boolean setCover(EnumFacing side, CoverType coverType) {
-//        covers[side.getIndex()] = coverType;
-//        markDirty();
-//        return true;
-//    }
-//
-//    @Override
-//    public CoverType get(EnumFacing side) {
-//        return covers[side.getIndex()];
-//    }
-//
-//    @Override
-//    public boolean isBehaviourValid(CoverType coverType) {
-//        return false;
-//    }
-
-//    @Override
-//    public boolean onWrench(EnumFacing side) {
-//        toggleConnection(side);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onCrowbar(EnumFacing side) {
-//        return false;
-//    }
 }
