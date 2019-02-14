@@ -14,7 +14,7 @@ public class TileEntityCasing extends TileEntityBase {
     private ComponentHandler componentHandler = new ComponentHandler("null", this) {
         @Override
         public String getId() {
-            return getState().getValue(BlockCasing.CASING_TYPE).getName();
+            return ((BlockCasing) getState().getBlock()).getType().getName();
         }
     };
 

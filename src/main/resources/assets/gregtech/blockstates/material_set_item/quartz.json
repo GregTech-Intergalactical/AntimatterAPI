@@ -6,10 +6,10 @@
   "variants": {
     "quartz": {
       "chunk": {
-        "textures": {"layer0": "gregtech:items/material_set/quartz/chunk", "layer1": "gregtech:items/material_set/quartz/overlays/chunk"}
+        "textures": {"layer0": "gregtech:items/material_set/quartz/chunk", "layer1": "gregtech:items/material_set/quartz/overlay/chunk"}
       },
       "crushed": {
-        "textures": {"layer0": "gregtech:items/material_set/quartz/crushed", "layer1": "gregtech:items/material_set/quartz/overlays/crushed"}
+        "textures": {"layer0": "gregtech:items/material_set/quartz/crushed", "layer1": "gregtech:items/material_set/quartz/overlay/crushed"}
       },
       "crushed_centrifuged": {
         "textures": {"layer0": "gregtech:items/material_set/quartz/crushed_centrifuged"}
@@ -90,13 +90,13 @@
         "textures": {"layer0": "gregtech:items/material_set/quartz/lens"}
       },
       "cell": {
-        "textures": {"layer0": "gregtech:items/material_set/quartz/overlays/cell", "layer1": "gregtech:items/material_set/quartz/cell"}
+        "textures": {"layer0": "gregtech:items/material_set/quartz/overlay/cell", "layer1": "gregtech:items/material_set/quartz/cell"}
       },
 	  "cell_gas": {
-        "textures": {"layer0": "gregtech:items/material_set/quartz/overlays/cell_gas", "layer1": "gregtech:items/material_set/quartz/cell_gas"}
+        "textures": {"layer0": "gregtech:items/material_set/quartz/overlay/cell_gas", "layer1": "gregtech:items/material_set/quartz/cell_gas"}
       },
       "cell_plasma": {
-        "textures": {"layer0": "gregtech:items/material_set/quartz/overlays/cell_plasma", "layer1": "gregtech:items/material_set/quartz/cell_plasma"}
+        "textures": {"layer0": "gregtech:items/material_set/quartz/overlay/cell_plasma", "layer1": "gregtech:items/material_set/quartz/cell_plasma"}
       }
     }
   }

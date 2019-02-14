@@ -45,7 +45,7 @@ public class Material {
     private String handleMaterial;
 
     /** Processing Members **/
-    private String smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
+    private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<String> byProducts = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class Material {
 
     public Material(String displayName, int rgb, MaterialSet set) {
         this.name = displayName.toLowerCase(Locale.ENGLISH).replaceAll("-", "_").replaceAll(" ", "_");
-        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = name;
+        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.displayName = displayName;
         this.rgb = rgb;
         this.set = set;
@@ -311,19 +311,19 @@ public class Material {
 
     /** Processing Helpers **/
     public Material getSmeltInto() {
-        return Materials.get(smeltInto);
+        return smeltInto;
     }
 
     public Material getDirectSmeltInto() {
-        return Materials.get(directSmeltInto);
+        return directSmeltInto;
     }
 
     public Material getArcSmeltInto() {
-        return Materials.get(arcSmeltInto);
+        return arcSmeltInto;
     }
 
     public Material getMacerateInto() {
-        return Materials.get(macerateInto);
+        return macerateInto;
     }
 
     public boolean hasSmeltInto() {

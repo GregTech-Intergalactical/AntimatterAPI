@@ -3,12 +3,13 @@ package muramasa.gregtech.api.enums;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.util.SoundList;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Locale;
 
-public enum ToolType {
+public enum ToolType implements IStringSerializable {
 
     SWORD("Sword", "", null, 0, 4.0f, 1.0f, 1.0f, 200, 100, 100),
     PICKAXE("Pickaxe" , "", null, 0, 1.5f, 1.0f, 1.0f, 50, 200, 100),
@@ -34,7 +35,7 @@ public enum ToolType {
     WRENCH_P("Electric Wrench", "", null, 1, 2.0f, 4.0f, 4.0f, 800, 3200, 12800),
     JACKHAMMER("Electric Jackhammer", "", null, 1, 3.0f, 12.0f, 2.0f, 400, 800, 3200),
     SCREWDRIVER_P("Electric Screwdriver", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 200, 200),
-    BUZZ_SAW("Electric Buzzsaw", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 300, 100),
+    BUZZSAW("Electric Buzzsaw", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("Turbine Rotor", "", null, 0, 3.0f, 4.0f, 4.0f, 100, 200, 800);
 
     private String displayName, tooltip;
@@ -55,6 +56,7 @@ public enum ToolType {
         this.damageCrafting = damageCrafting;
     }
 
+    @Override
     public String getName() {
         return name().toLowerCase(Locale.ENGLISH);
     }

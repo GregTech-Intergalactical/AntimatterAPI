@@ -232,7 +232,7 @@ public class MetaTool extends Item {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         for (int i = 0; i < ToolType.values().length; i++) {
-            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName(), "type=" + i));
+            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName(), "tool_type=" + ToolType.values()[i].getName()));
         }
     }
 

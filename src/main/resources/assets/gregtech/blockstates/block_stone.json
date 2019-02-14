@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:generated"
+  },
+  "variants": {
+    "stone_type": {
+      "granite_red": {
+        "textures": {"all": "gregtech:blocks/stone/granite_red"}
+      },
+      "granite_black": {
+        "textures": {"all": "gregtech:blocks/stone/granite_black"}
+      },
+      "marble": {
+        "textures": {"all": "gregtech:blocks/stone/marble"}
+      },
+	  "basalt": {
+        "textures": {"all": "gregtech:blocks/stone/basalt"}
+      }
+    }
+  }
+}

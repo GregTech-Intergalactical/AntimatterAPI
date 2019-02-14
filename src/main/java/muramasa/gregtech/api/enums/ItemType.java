@@ -2,7 +2,6 @@ package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.cover.behaviour.*;
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.Material;
 import net.minecraft.item.ItemStack;
@@ -65,8 +64,7 @@ public class ItemType implements IStringSerializable {
         GregTechAPI.CoverBehaviourNone = new CoverBehaviourNone();
         //TODO avoid creating "dummy" instance due to requiring name string
         GregTechAPI.CoverBehaviourPlate = new CoverBehaviourPlate(-1);
-        for (String name : GenerationFlag.PLATE.getMatNames()) {
-            Material mat = Materials.get(name);
+        for (Material mat : GenerationFlag.PLATE.getMats()) {
             GregTechAPI.registerCoverBehaviour(mat.getPlate(1), new CoverBehaviourPlate(mat.getRGB()));
         }
         GregTechAPI.CoverBehaviourItem = new CoverBehaviourItem();

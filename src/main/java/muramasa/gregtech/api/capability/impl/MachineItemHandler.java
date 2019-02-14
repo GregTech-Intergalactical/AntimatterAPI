@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MachineItemHandler {
@@ -44,7 +43,13 @@ public class MachineItemHandler {
     }
 
     public List<ItemStack> getInputList() {
-        return Arrays.asList(getOutputs());
+        ArrayList<ItemStack> list = new ArrayList<>();
+        for (int i = 0; i < inputHandler.stacks.length; i++) {
+            if (!inputHandler.stacks[i].isEmpty()) {
+                list.add(inputHandler.stacks[i].copy());
+            }
+        }
+        return list;
     }
 
     public ItemStack[] getInputs() {

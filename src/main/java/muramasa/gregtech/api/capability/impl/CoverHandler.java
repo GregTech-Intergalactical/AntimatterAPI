@@ -26,6 +26,7 @@ public class CoverHandler implements ICoverHandler {
     public CoverHandler(TileEntityBase tile, CoverBehaviour... behaviours) {
         this.tile = tile;
         validCovers = new ArrayList<>();
+        validCovers.add(GregTechAPI.CoverBehaviourNone.getName());
         for (CoverBehaviour behaviour : behaviours) {
             validCovers.add(behaviour.getName());
         }
@@ -42,7 +43,7 @@ public class CoverHandler implements ICoverHandler {
     @Override
     public boolean setCover(EnumFacing side, CoverBehaviour behaviour) {
         if (tile == null) return false;
-        if ((isBehaviourValid(behaviour) && behaviours[side.getIndex()] != behaviour) || behaviour.isEmpty()) {
+        if (isBehaviourValid(behaviour) && behaviours[side.getIndex()] != behaviour && side != EnumFacing.NORTH) {
             behaviours[side.getIndex()] = behaviour;
             SoundList.PLACE_METAL.play(tile.getWorld(), tile.getPos());
             tile.markForRenderUpdate();

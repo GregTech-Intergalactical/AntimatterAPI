@@ -52,11 +52,11 @@ public abstract class CoverBehaviour {
     }
 
     public ModelResourceLocation getModelLoc() {
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/covers/" + getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/cover/" + getName());
     }
 
     public ResourceLocation getTextureLoc() {
-        return new ResourceLocation(Ref.MODID, "blocks/machines/covers/" + getName());
+        return new ResourceLocation(Ref.MODID, "blocks/machine/cover/" + getName());
     }
 
     public boolean retextureToMachineTier() {

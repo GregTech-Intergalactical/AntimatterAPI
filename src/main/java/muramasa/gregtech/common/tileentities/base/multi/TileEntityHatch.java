@@ -17,13 +17,13 @@ import javax.annotation.Nullable;
 public class TileEntityHatch extends TileEntityMachine {
 
     private ResourceLocation texture;
-    private MachineItemHandler stackHandler;
+    private MachineItemHandler itemHandler;
     private ComponentHandler componentHandler;
 
     @Override
     public void init(String type, String tier, int facing) {
         super.init(type, tier, facing);
-        stackHandler = new MachineItemHandler(this, 0);
+        itemHandler = new MachineItemHandler(this, 0);
         componentHandler = new HatchComponentHandler(type, this);
         texture = super.getTexture();
     }
@@ -36,6 +36,11 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public void setTexture(ResourceLocation loc) {
         texture = loc;
+    }
+
+    @Override
+    public MachineItemHandler getItemHandler() {
+        return itemHandler;
     }
 
     @Override
@@ -52,7 +57,7 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(stackHandler.getOutputHandler());
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
         } else if (capability == ITechCapabilities.COMPONENT) {
             return ITechCapabilities.COMPONENT.cast(componentHandler);
         }

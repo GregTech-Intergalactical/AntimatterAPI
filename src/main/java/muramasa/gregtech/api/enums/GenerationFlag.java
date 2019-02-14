@@ -1,6 +1,5 @@
 package muramasa.gregtech.api.enums;
 
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.materials.Material;
 
@@ -41,7 +40,7 @@ public enum GenerationFlag implements IMaterialFlag {
     FRAME(); //Add Frame Blocks
 
     private long bit;
-    private ArrayList<String> materialNames = new ArrayList<>();
+    private ArrayList<Material> materials = new ArrayList<>();
 
     GenerationFlag() {
         bit = 1 << ordinal();
@@ -55,8 +54,8 @@ public enum GenerationFlag implements IMaterialFlag {
     @Override
     public void add(Material... mats) {
         for (Material material : mats) {
-            if (!materialNames.contains(material.getName())) {
-                materialNames.add(material.getName());
+            if (!materials.contains(material)) {
+                materials.add(material);
             }
         }
     }
@@ -67,17 +66,7 @@ public enum GenerationFlag implements IMaterialFlag {
     }
 
     @Override
-    public Material[] getMats() {
-        Material[] materials = new Material[materialNames.size()];
-        int size = materials.length;
-        for (int i = 0; i < size; i++) {
-            materials[i] = Materials.get(materialNames.get(i));
-        }
+    public ArrayList<Material> getMats() {
         return materials;
-    }
-
-    @Override
-    public ArrayList<String> getMatNames() {
-        return materialNames;
     }
 }

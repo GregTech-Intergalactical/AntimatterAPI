@@ -1,5 +1,7 @@
 package muramasa.gregtech.common.tileentities.base;
 
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
@@ -91,6 +93,14 @@ public class TileEntityMachine extends TileEntityTickable {
 
     public float getClientProgress() {
         return 0;
+    }
+
+    public MachineItemHandler getItemHandler() {
+        return null;
+    }
+
+    public MachineFluidHandler getFluidHandler() {
+        return null;
     }
 
     /** Setters **/

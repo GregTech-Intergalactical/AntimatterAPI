@@ -194,10 +194,12 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         return maxProgress;
     }
 
+    @Override
     public MachineItemHandler getItemHandler() {
         return itemHandler;
     }
 
+    @Override
     public MachineFluidHandler getFluidHandler() {
         return fluidHandler;
     }

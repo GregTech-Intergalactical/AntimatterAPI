@@ -1,6 +1,5 @@
 package muramasa.gregtech.common.blocks;
 
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.client.render.StateMapperRedirect;
@@ -28,14 +27,14 @@ public class BlockStorage extends Block {
 
     private static LinkedHashMap<String, BlockStorage> BLOCK_LOOKUP = new LinkedHashMap<>();
 
-    private String material;
+    private Material material;
 
     public BlockStorage(Material material) {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("block_" + material.getName());
         setRegistryName("block_" + material.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
-        this.material = material.getName();
+        this.material = material;
         BLOCK_LOOKUP.put(material.getName(), this);
     }
 
@@ -58,13 +57,13 @@ public class BlockStorage extends Block {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        String set = getMaterial().getSet().getName();
+        String set = material.getSet().getName();
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName())));
     }
 
     public Material getMaterial() {
-        return Materials.get(material);
+        return material;
     }
 
     public static BlockStorage get(String material) {

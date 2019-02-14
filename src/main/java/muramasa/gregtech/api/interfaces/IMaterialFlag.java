@@ -12,21 +12,7 @@ public interface IMaterialFlag { //TODO rename to IMaterialFlag, rename Material
 
     long getBit();
 
-    ArrayList<String> getMatNames();
-
-    Material[] getMats();
-
-    static ArrayList<String> getNamesFor(IMaterialFlag... flags) {
-        ArrayList<String> names = new ArrayList<>();
-        for (IMaterialFlag flag : flags) {
-            for (String name : flag.getMatNames()) {
-                if (!names.contains(name)) {
-                    names.add(name);
-                }
-            }
-        }
-        return names;
-    }
+    ArrayList<Material> getMats();
 
     static ArrayList<Material> getMatsFor(IMaterialFlag... flags) {
         ArrayList<Material> materials = new ArrayList<>();

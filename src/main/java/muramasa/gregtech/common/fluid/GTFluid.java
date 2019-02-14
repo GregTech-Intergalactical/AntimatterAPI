@@ -15,7 +15,7 @@ public class GTFluid extends Fluid {
     private GenerationFlag flag;
 
     public GTFluid(Material mat, GenerationFlag flag) {
-        super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/machines/base/liquid"), new ResourceLocation(Ref.MODID, "blocks/machines/base/lv"));
+        super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/machine/base/liquid"), new ResourceLocation(Ref.MODID, "blocks/machine/base/lv"));
         setColor(mat.getRGB());
         switch (flag) {
             case LIQUID:

@@ -1,65 +1,44 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.enums.CoilType;
+import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 public class BlockCoil extends Block {
 
-    public static final PropertyEnum<CoilType> COIL_TYPE = PropertyEnum.create("coil_type", CoilType.class);
+    private static LinkedHashMap<String, BlockCoil> BLOCK_LOOKUP = new LinkedHashMap<>();
 
-    public BlockCoil() {
+    private CoilType type;
+
+    public BlockCoil(CoilType type) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName(Ref.MODID + "block_coil");
-        setRegistryName("block_coil");
+        setUnlocalizedName("coil_" + type.getName());
+        setRegistryName("coil_" + type.getName());
         setCreativeTab(Ref.TAB_MACHINES);
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(COIL_TYPE).build();
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(COIL_TYPE, CoilType.values()[meta]);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(COIL_TYPE).ordinal();
+        this.type = type;
+        BLOCK_LOOKUP.put(type.getName(), this);
     }
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (CoilType type : CoilType.values()) {
-            items.add(new ItemStack(this, 1, type.ordinal()));
-        }
-    }
-
-    @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return getDefaultState().withProperty(COIL_TYPE, CoilType.values()[placer.getHeldItem(hand).getMetadata()]);
+        items.add(new ItemStack(this));
     }
 
     @Nullable
@@ -73,20 +52,21 @@ public class BlockCoil extends Block {
         return true;
     }
 
-//    @Override
-//    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-////        TileEntity tile = world.getTileEntity(pos);
-////        super.breakBlock(world, pos, state);
-////        if (tile != null && tile instanceof TileEntityComponent) {
-////            ((TileEntityComponent) tile).notifyOfRemoval();
-////        }
-//        world.removeTileEntity(pos);
-//    }
-
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        for (CoilType type : CoilType.values()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.ordinal(), new ModelResourceLocation(getRegistryName(), "coil_type=" + type.getName()));
-        }
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName())));
+    }
+
+    public CoilType getType() {
+        return type;
+    }
+
+    public static BlockCoil get(String type) {
+        return BLOCK_LOOKUP.get(type);
+    }
+
+    public static Collection<BlockCoil> getAll() {
+        return BLOCK_LOOKUP.values();
     }
 }

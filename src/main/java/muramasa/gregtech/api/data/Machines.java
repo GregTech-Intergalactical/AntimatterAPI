@@ -6,8 +6,6 @@ import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.*;
 import muramasa.gregtech.api.structure.StructurePattern;
-import muramasa.gregtech.common.blocks.BlockMachine;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityElectricBlastFurnace;
 import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityFusionReactor;
 
@@ -15,13 +13,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import static muramasa.gregtech.api.machines.MachineFlag.*;
+import static muramasa.gregtech.api.machines.MachineFlag.FLUID;
+import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
 
 public class Machines {
 
     public static LinkedHashMap<String, Machine> TYPE_LOOKUP = new LinkedHashMap<>();
 
-    public static Machine INVALID = new Machine("invalid", new BlockMachine("invalid"), TileEntityMachine.class);
+    public static Machine INVALID = new Machine("invalid");
 
     public static Machine ALLOY_SMELTER = new BasicMachine("alloy_smelter", new Slot(0, 35, 25), new Slot(0, 53, 25), new Slot(1, 107, 25));
     public static Machine ASSEMBLER = new BasicMachine("assembler", new Slot(0, 17, 16), new Slot(0, 35, 16), new Slot(0, 53, 16), new Slot(0, 17, 34), new Slot(0, 35, 34), new Slot(0, 53, 34), new Slot(1, 107, 25));

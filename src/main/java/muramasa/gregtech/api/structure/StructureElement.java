@@ -24,7 +24,7 @@ public class StructureElement {
     public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", CoilType.values());
 
     public static StructureElement FR_MACHINE = new StructureElement(Machines.FUSION_REACTOR);
-    public static StructureElement FUSION_CASING = new StructureElement(CasingType.FUSION3);
+    public static StructureElement FUSION_CASING = new StructureElement(CasingType.FUSION_3);
     public static StructureElement FUSION_COIL = new StructureElement(CoilType.FUSION);
 
     /** Custom Elements **/

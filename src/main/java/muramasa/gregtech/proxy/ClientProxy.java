@@ -9,9 +9,7 @@ import muramasa.gregtech.client.render.ModelLoader;
 import muramasa.gregtech.client.render.models.ModelCable;
 import muramasa.gregtech.client.render.models.ModelMachine;
 import muramasa.gregtech.client.render.models.ModelOre;
-import muramasa.gregtech.common.blocks.BlockMachine;
-import muramasa.gregtech.common.blocks.BlockOre;
-import muramasa.gregtech.common.blocks.BlockStorage;
+import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockOres;
 import muramasa.gregtech.common.items.ItemBlockStorage;
 import muramasa.gregtech.common.utils.Ref;
@@ -85,8 +83,6 @@ public class ClientProxy implements IProxy {
         ContentLoader.metaTool.initModel();
 
         ContentLoader.blockCable.initModel();
-        ContentLoader.blockCasing.initModel();
-        ContentLoader.blockCoil.initModel();
 
         for (MaterialItem item : MaterialItem.getAll()) {
             item.initModel();
@@ -101,6 +97,15 @@ public class ClientProxy implements IProxy {
             block.initModel();
         }
         for (BlockStorage block : BlockStorage.getAll()) {
+            block.initModel();
+        }
+        for (BlockCasing block : BlockCasing.getAll()) {
+            block.initModel();
+        }
+        for (BlockCoil block : BlockCoil.getAll()) {
+            block.initModel();
+        }
+        for (BlockStone block : BlockStone.getAll()) {
             block.initModel();
         }
 

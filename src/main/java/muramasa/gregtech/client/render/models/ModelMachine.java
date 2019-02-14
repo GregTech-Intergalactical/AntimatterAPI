@@ -24,8 +24,6 @@ import java.util.function.Function;
 
 public class ModelMachine extends ModelBase {
 
-    public static boolean hasBeenBuilt;
-
     public ModelMachine() {
         super("ModelMachine");
         addTextures(Tier.getTextures(Tier.getBasic()));
@@ -36,7 +34,7 @@ public class ModelMachine extends ModelBase {
             }
         }
         for (Machine type : MachineFlag.MULTI.getTypes()) {
-            addTexture(new ResourceLocation(Ref.MODID + ":blocks/machines/base/" + type.getName()));
+            addTexture(new ResourceLocation(Ref.MODID + ":blocks/machine/base/" + type.getName()));
             addTexture(type.getOverlayTexture(0));
         }
         for (Machine type : MachineFlag.HATCH.getTypes()) {

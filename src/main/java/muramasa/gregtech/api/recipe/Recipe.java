@@ -48,20 +48,19 @@ public class Recipe {
     }
 
     public ItemStack[] getInputStacks() {
-        return stacksInput;
+        return stacksInput.clone();
     }
 
     public ItemStack[] getOutputStacks() {
-//        return chances == null ? outputs : evaluateChances(outputs);
-        return stacksOutput;
+        return stacksOutput.clone();
     }
 
     public FluidStack[] getInputFluids() {
-        return fluidsInput;
+        return fluidsInput.clone();
     }
 
     public FluidStack[] getOutputFluids() {
-        return fluidsOutput;
+        return fluidsOutput.clone();
     }
 
     public int getDuration() {

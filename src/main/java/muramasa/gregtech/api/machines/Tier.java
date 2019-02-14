@@ -62,7 +62,7 @@ public class Tier implements IStringSerializable {
     }
 
     public ResourceLocation getBaseTexture() {
-        return new ResourceLocation(Ref.MODID, "blocks/machines/base/" + name);
+        return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + name);
     }
 
     public static int getCount() {

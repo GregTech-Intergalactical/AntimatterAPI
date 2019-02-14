@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "normal": { "model": "gregtech:machine_part/cover/cover_fluid" }
+  }
+}

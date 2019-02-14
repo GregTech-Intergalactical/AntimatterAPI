@@ -37,13 +37,13 @@ public class StandardItem extends Item {
 
     private static LinkedHashMap<String, StandardItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
-    private String type;
+    private ItemType type;
 
     public StandardItem(ItemType type) {
-        setUnlocalizedName(Ref.MODID + "_item_" + type.getName());
-        setRegistryName("item_" + type.getName());
+        setUnlocalizedName(type.getName());
+        setRegistryName(type.getName());
         setCreativeTab(Ref.TAB_ITEMS);
-        this.type = type.getName();
+        this.type = type;
         TYPE_LOOKUP.put(type.getName(), this);
     }
 
@@ -89,6 +89,7 @@ public class StandardItem extends Item {
                 if (coverHandler.setCover(targetSide, behaviour)) {
                     stack.shrink(1);
                 }
+                return EnumActionResult.SUCCESS;
             }
             if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
@@ -112,7 +113,7 @@ public class StandardItem extends Item {
     }
 
     public ItemType getType() {
-        return ItemType.get(type);
+        return type;
     }
 
     @SideOnly(Side.CLIENT)

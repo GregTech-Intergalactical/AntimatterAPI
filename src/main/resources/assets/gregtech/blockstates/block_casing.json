@@ -5,14 +5,20 @@
   },
   "variants": {
     "casing_type": {
-      "heatproof": {
-        "textures": {"all": "gregtech:blocks/casings/heat_proof"}
+      "heat_proof": {
+        "textures": {"all": "gregtech:blocks/casing/heat_proof"}
       },
-      "stainlesssteel": {
-        "textures": {"all": "gregtech:blocks/casings/stainless_steel"}
+      "stainless_steel": {
+        "textures": {"all": "gregtech:blocks/casing/stainless_steel"}
       },
-      "fusion3": {
-        "textures": {"all": "gregtech:blocks/casings/fusion_3"}
+	  "fusion_1": {
+        "textures": {"all": "gregtech:blocks/casing/fusion_1"}
+      },
+	  "fusion_2": {
+        "textures": {"all": "gregtech:blocks/casing/fusion_2"}
+      },
+      "fusion_3": {
+        "textures": {"all": "gregtech:blocks/casing/fusion_3"}
       }
     }
   }

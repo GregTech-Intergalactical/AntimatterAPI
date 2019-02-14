@@ -14,7 +14,7 @@ public class TileEntityCoil extends TileEntityBase {
     private ComponentHandler componentHandler = new ComponentHandler("null", this) {
         @Override
         public String getId() {
-            return getState().getValue(BlockCoil.COIL_TYPE).getName();
+            return ((BlockCoil) getState().getBlock()).getType().getName();
         }
     };
 
