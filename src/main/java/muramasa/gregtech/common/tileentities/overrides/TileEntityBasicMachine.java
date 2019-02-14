@@ -1,8 +1,8 @@
 package muramasa.gregtech.common.tileentities.overrides;
 
+import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
-import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.MachineState;
@@ -33,8 +33,8 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     protected MachineItemHandler itemHandler;
     protected MachineFluidHandler fluidHandler;
     protected MachineEnergyHandler energyStorage;
-    protected MachineConfigHandler configHandler;
-    protected MachineCoverHandler coverHandler;
+    protected ConfigHandler configHandler;
+    protected CoverHandler coverHandler;
 
     /** Logic **/
     protected int curProgress, maxProgress;
@@ -65,10 +65,10 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             energyStorage.energy = 99999999; //Temporary
         }
         if (machine.hasFlag(COVERABLE)) {
-            coverHandler = new MachineCoverHandler(this, Cover.BLANK, Cover.ENERGY_PORT, Cover.ITEM_PORT, Cover.FLUID_PORT);
+            coverHandler = new CoverHandler(this, GregTechAPI.CoverBehaviourPlate, GregTechAPI.CoverBehaviourItem, GregTechAPI.CoverBehaviourFluid, GregTechAPI.CoverBehaviourEnergy);
         }
         if (machine.hasFlag(CONFIGURABLE)) {
-            configHandler = new MachineConfigHandler(this);
+            configHandler = new ConfigHandler(this);
         }
     }
 
@@ -80,6 +80,9 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         }
         if (getMachineState() == MachineState.FOUND_RECIPE) {
             setMachineState(tickRecipe());
+        }
+        if (coverHandler != null) {
+            coverHandler.update();
         }
     }
 
@@ -247,11 +250,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         Machine machine = getMachineType();
         if (machine.hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing == null || coverHandler.hasCover(facing, Cover.ITEM_PORT);
+            return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourItem);
         } else if (machine.hasFlag(ENERGY) && capability == ITechCapabilities.ENERGY) {
-            return facing == null || coverHandler.hasCover(facing, Cover.ENERGY_PORT);
+            return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourEnergy);
         } else if (machine.hasFlag(COVERABLE) && capability == ITechCapabilities.COVERABLE) {
-            return facing == null || !coverHandler.hasCover(facing, Cover.NONE);
+            return true;
         } else if (machine.hasFlag(CONFIGURABLE) && capability == ITechCapabilities.CONFIGURABLE) {
             return true;
         }

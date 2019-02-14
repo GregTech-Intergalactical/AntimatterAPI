@@ -4,6 +4,9 @@ import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.GenerationFlag;
+import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.items.MaterialItem;
+import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.RecipeAdder;
 import muramasa.gregtech.common.events.EventHandler;
@@ -33,11 +36,6 @@ public class GregTech {
 
     public static Logger logger;
 
-    static {
-        Materials.init();
-        Machines.init();
-    }
-
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         logger = e.getModLog();
@@ -46,9 +44,15 @@ public class GregTech {
         new EventHandler().init();
         ITechCapabilities.register();
 
-        Materials.initFluids();
-
         NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
+
+        //Init GT Data
+        Materials.init();
+        Machines.init();
+        MaterialItem.init();
+        StandardItem.init();
+        ItemType.init();
+        //TODO call methods to init addon data
     }
 
     @Mod.EventHandler
@@ -73,7 +77,6 @@ public class GregTech {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent e) {
-        System.out.println("SERVER STARTING");
         proxy.serverStarting(e);
         e.registerServerCommand(new CommandTool());
     }

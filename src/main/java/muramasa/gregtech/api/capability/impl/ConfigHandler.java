@@ -1,20 +1,20 @@
 package muramasa.gregtech.api.capability.impl;
 
-import muramasa.gregtech.api.capability.IConfigurable;
-import muramasa.gregtech.api.capability.ICoverable;
+import muramasa.gregtech.api.GregTechAPI;
+import muramasa.gregtech.api.capability.IConfigHandler;
+import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.cover.CoverStack;
+import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.util.SoundList;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.util.EnumFacing;
 
-public class MachineConfigHandler implements IConfigurable {
+public class ConfigHandler implements IConfigHandler {
 
     protected TileEntityBase tile;
 
-    public MachineConfigHandler(TileEntityBase tile) {
+    public ConfigHandler(TileEntityBase tile) {
         this.tile = tile;
     }
 
@@ -22,10 +22,10 @@ public class MachineConfigHandler implements IConfigurable {
     public boolean onWrench(EnumFacing side) {
         if (tile == null) return false;
         if (tile.hasCapability(ITechCapabilities.COVERABLE, side)) { //Side has cover, configure.
-            ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
+            ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
             if (coverHandler == null) return false;
-            CoverStack stack = coverHandler.get(side);
-            if (stack.getCover().canWrenchToggleState()) {
+            CoverBehaviour behaviour = coverHandler.get(side);
+            if (!behaviour.isEmpty()) {
                 //TODO toggle state
                 SoundList.WRENCH.play(tile.getWorld(), tile.getPos());
                 return true;
@@ -42,15 +42,20 @@ public class MachineConfigHandler implements IConfigurable {
     public boolean onCrowbar(EnumFacing side) {
         if (tile == null) return false;
         if (tile.hasCapability(ITechCapabilities.COVERABLE, side)) { //Side has cover
-            ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
-            if (coverHandler != null && !coverHandler.get(side).isEqual(Cover.NONE)) {
-                coverHandler.setCover(side, new CoverStack(Cover.NONE));
+            ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
+            if (coverHandler != null && !coverHandler.get(side).isEmpty()) {
+                coverHandler.setCover(side, GregTechAPI.CoverBehaviourNone);
                 SoundList.BREAK.play(tile.getWorld(), tile.getPos());
                 return true;
             }
         } else { //Used crowbar on side with no cover
             //TODO
         }
+        return false;
+    }
+
+    @Override
+    public boolean onScrewdriver(EnumFacing side) {
         return false;
     }
 }

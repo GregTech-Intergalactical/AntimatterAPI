@@ -1,9 +1,11 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.GregTech;
-import muramasa.gregtech.api.capability.ICoverable;
+import muramasa.gregtech.api.GregTechAPI;
+import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.behaviour.CoverBehaviourTintable;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
@@ -75,16 +77,16 @@ public class BlockMachine extends Block {
                 .withProperty(OVERLAY, machine.getMachineState().getOverlayId())
                 .withProperty(TINT, machine.getTint())
                 .withProperty(TEXTURE, machine.getTexture());
-            ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
+            ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
-                    .withProperty(COVERS, new Cover[] {
-                        coverHandler.get(EnumFacing.UP).getCover(),
-                        coverHandler.get(EnumFacing.DOWN).getCover(),
-                        coverHandler.get(EnumFacing.SOUTH).getCover(),
-                        Cover.NONE,
-                        coverHandler.get(EnumFacing.EAST).getCover(),
-                        coverHandler.get(EnumFacing.WEST).getCover()
+                    .withProperty(COVERS, new CoverBehaviour[] {
+                        coverHandler.get(EnumFacing.UP),
+                        coverHandler.get(EnumFacing.DOWN),
+                        coverHandler.get(EnumFacing.SOUTH),
+                        GregTechAPI.CoverBehaviourNone,
+                        coverHandler.get(EnumFacing.EAST),
+                        coverHandler.get(EnumFacing.WEST)
                     });
             }
         }
@@ -171,10 +173,19 @@ public class BlockMachine extends Block {
     public static class ColorHandler implements IBlockColor {
         @Override
         public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-            if (tintIndex == 0 && state instanceof IExtendedBlockState) {
+            if (tintIndex == 0) {
                 IExtendedBlockState exState = (IExtendedBlockState) state;
                 if (BakedModelBase.hasUnlistedProperty(exState, ITechProperties.TINT)) {
                     return exState.getValue(ITechProperties.TINT) != null ? exState.getValue(ITechProperties.TINT) : -1;
+                }
+            } else if (tintIndex == CoverBehaviourTintable.coverTintIndex) {
+                IExtendedBlockState exState = (IExtendedBlockState) state;
+                if (BakedModelBase.hasUnlistedProperty(exState, ITechProperties.COVERS)) {
+                    for (CoverBehaviour behaviour : exState.getValue(ITechProperties.COVERS)) {
+                        if (behaviour instanceof CoverBehaviourTintable) {
+                            return ((CoverBehaviourTintable) behaviour).getRGB();
+                        }
+                    }
                 }
             }
             return -1;

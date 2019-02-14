@@ -14,7 +14,7 @@ import static muramasa.gregtech.api.materials.MaterialSet.*;
 public class Materials {
 
     public static LinkedHashMap<String, Material> MATERIAL_LOOKUP = new LinkedHashMap<>();
-    public static Material[] generated = new Material[1000]; //TODO remove Material IDs
+    public static Material[] generated = new Material[1000]; //TODO remove
 
     //TODO add flags to constructor
     public static Material Aluminium = new Material(0, "Aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700).addOre().addTools(10.0F, 128, 2).add(RING, FOIL, SGEAR, GEAR, FRAME);
@@ -402,7 +402,7 @@ public class Materials {
     public static Material Redstone = new Material(810, "Redstone", 0xc80000, ROUGH).asDust().addOre().add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
     public static Material Basalt = new Material(844, "Basalt", 0x1e1414, ROUGH).asDust().add(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
 
-    public static void init() {
+//    public static void init() {
 //        for (Material material : generated) {
 //            if (material == Blaze) {
 //                material.handleMaterial = "blaze";
@@ -416,9 +416,9 @@ public class Materials {
 //                material.handleMaterial = Wood;
 //            }
 //        }
-    }
+//    }
 
-    public static void initFluids() {
+    public static void init() {
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
         for (Material mat : MATERIAL_LOOKUP.values()) {
