@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
-import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.client.render.RenderHelper;
@@ -79,11 +79,17 @@ public class BakedModelMachine extends BakedModelBase {
 
         //Add cover quads
         if (hasUnlistedProperty(exState, ITechProperties.COVERS)) {
-            Cover[] covers = exState.getValue(ITechProperties.COVERS);
-            if (covers == null) return quadList;
-            for (int i = 0; i < covers.length; i++) {
-                if (covers[i] == Cover.NONE) continue;
-                quadList.addAll(transform(bakedCovers[covers[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i]));
+            List<BakedQuad> coverQuads = new LinkedList<>();
+            CoverBehaviour[] behaviours = exState.getValue(ITechProperties.COVERS);
+            if (behaviours == null) return quadList;
+            for (int i = 0; i < behaviours.length; i++) {
+                if (behaviours[i].isEmpty()) continue;
+                coverQuads.clear();
+                coverQuads.addAll(behaviours[i].onRender(transform(bakedCovers[behaviours[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i])));
+                if (behaviours[i].retextureToMachineTier()) {
+                    //TODO
+                }
+                quadList.addAll(coverQuads);
             }
         }
 

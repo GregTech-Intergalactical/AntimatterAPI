@@ -90,6 +90,7 @@ public class BakedModelBase implements IBakedModel {
         return state.getPropertyKeys().contains(property);
     }
 
+    //TODO move to utils
     public static boolean hasUnlistedProperty(IExtendedBlockState exState, IUnlistedProperty property) {
         return exState.getUnlistedNames().contains(property);
     }

@@ -1,9 +1,9 @@
 package muramasa.gregtech.common.tileentities.base;
 
+import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.CableConfigHandler;
-import muramasa.gregtech.api.capability.impl.MachineCoverHandler;
-import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.capability.impl.CoverHandler;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -18,11 +18,11 @@ public class TileEntityCable extends TileEntityTickable {
     private TileEntity tileBeingChecked;
 
     /** Capabilities **/
-    private MachineCoverHandler coverHandler;
+    private CoverHandler coverHandler;
     private CableConfigHandler configHandler;
 
     public TileEntityCable() {
-        coverHandler = new MachineCoverHandler(this, Cover.BLANK);
+        coverHandler = new CoverHandler(this, GregTechAPI.CoverBehaviourPlate);
         configHandler = new CableConfigHandler(this);
     }
 
@@ -100,7 +100,7 @@ public class TileEntityCable extends TileEntityTickable {
 //    }
 //
 //    @Override
-//    public boolean isCoverValid(CoverType coverType) {
+//    public boolean isBehaviourValid(CoverType coverType) {
 //        return false;
 //    }
 

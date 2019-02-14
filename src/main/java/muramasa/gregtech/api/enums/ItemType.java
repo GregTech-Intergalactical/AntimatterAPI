@@ -1,6 +1,10 @@
 package muramasa.gregtech.api.enums;
 
+import muramasa.gregtech.api.GregTechAPI;
+import muramasa.gregtech.api.cover.behaviour.*;
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.items.StandardItem;
+import muramasa.gregtech.api.materials.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
@@ -57,6 +61,23 @@ public class ItemType implements IStringSerializable {
 //    Shape_Gear_Small("Extruder Shape (Small Gear)", "Shape for making Small Gears"),
 //    Shape_Bottle("Extruder Shape (Bottle)", "Shape for making Bottles"); //TODO needed?
 
+    public static void init() {
+        GregTechAPI.CoverBehaviourNone = new CoverBehaviourNone();
+        //TODO avoid creating "dummy" instance due to requiring name string
+        GregTechAPI.CoverBehaviourPlate = new CoverBehaviourPlate(-1);
+        for (int id : GenerationFlag.PLATE.getIds()) {
+            Material mat = Materials.get(id);
+            GregTechAPI.registerCoverBehaviour(mat.getPlate(1), new CoverBehaviourPlate(mat.getRGB()));
+        }
+        GregTechAPI.CoverBehaviourItem = new CoverBehaviourItem();
+        GregTechAPI.CoverBehaviourFluid = new CoverBehaviourFluid();
+        GregTechAPI.CoverBehaviourEnergy = new CoverBehaviourEnergy();
+
+
+        GregTechAPI.registerCoverBehaviour(ItemPort.get(1), GregTechAPI.CoverBehaviourItem);
+        GregTechAPI.registerCoverBehaviour(FluidPort.get(1), GregTechAPI.CoverBehaviourFluid);
+        GregTechAPI.registerCoverBehaviour(EnergyPort.get(1), GregTechAPI.CoverBehaviourEnergy);
+    }
 
     private String name, displayName, tooltip;
 

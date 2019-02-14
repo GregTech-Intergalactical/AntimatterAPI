@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.items;
 
 import com.google.common.collect.Multimap;
-import muramasa.gregtech.api.capability.IConfigurable;
+import muramasa.gregtech.api.capability.IConfigHandler;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.materials.Material;
@@ -94,7 +94,7 @@ public class MetaTool extends Item {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null && tile.hasCapability(ITechCapabilities.CONFIGURABLE, facing)) {
             EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
-            IConfigurable configHandler = tile.getCapability(ITechCapabilities.CONFIGURABLE, targetSide);
+            IConfigHandler configHandler = tile.getCapability(ITechCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
                 if (ToolType.WRENCH.isItemEqual(stack)) {
                     configHandler.onWrench(targetSide);

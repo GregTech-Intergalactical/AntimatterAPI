@@ -1,9 +1,9 @@
 package muramasa.gregtech.api.capability;
 
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
-import muramasa.gregtech.api.capability.impl.MachineConfigHandler;
+import muramasa.gregtech.api.capability.impl.ConfigHandler;
 import muramasa.gregtech.api.capability.impl.MachineEnergyHandler;
-import muramasa.gregtech.api.capability.impl.MachineCoverHandler;
+import muramasa.gregtech.api.capability.impl.CoverHandler;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.EnumFacing;
@@ -18,11 +18,11 @@ public class ITechCapabilities {
     @CapabilityInject(IEnergyStorage.class)
     public static Capability<IEnergyStorage> ENERGY;
 
-    @CapabilityInject(IConfigurable.class)
-    public static Capability<IConfigurable> CONFIGURABLE;
+    @CapabilityInject(IConfigHandler.class)
+    public static Capability<IConfigHandler> CONFIGURABLE;
 
-    @CapabilityInject(ICoverable.class)
-    public static Capability<ICoverable> COVERABLE;
+    @CapabilityInject(ICoverHandler.class)
+    public static Capability<ICoverHandler> COVERABLE;
 
     @CapabilityInject(IComponent.class)
     public static Capability<IComponent> COMPONENT;
@@ -44,31 +44,31 @@ public class ITechCapabilities {
             }
         }, () -> new MachineEnergyHandler(1000));
 
-        CapabilityManager.INSTANCE.register(IConfigurable.class, new Capability.IStorage<IConfigurable>() {
+        CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
             @Nullable
             @Override
-            public NBTBase writeNBT(Capability<IConfigurable> capability, IConfigurable instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<IConfigHandler> capability, IConfigHandler instance, EnumFacing side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<IConfigurable> capability, IConfigurable instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IConfigHandler> capability, IConfigHandler instance, EnumFacing side, NBTBase nbt) {
 
             }
-        }, () -> new MachineConfigHandler(null));
+        }, () -> new ConfigHandler(null));
 
-        CapabilityManager.INSTANCE.register(ICoverable.class, new Capability.IStorage<ICoverable>() {
+        CapabilityManager.INSTANCE.register(ICoverHandler.class, new Capability.IStorage<ICoverHandler>() {
             @Nullable
             @Override
-            public NBTBase writeNBT(Capability<ICoverable> capability, ICoverable instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<ICoverHandler> capability, ICoverHandler instance, EnumFacing side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<ICoverable> capability, ICoverable instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<ICoverHandler> capability, ICoverHandler instance, EnumFacing side, NBTBase nbt) {
 
             }
-        }, () -> new MachineCoverHandler(null));
+        }, () -> new CoverHandler(null));
 
         CapabilityManager.INSTANCE.register(IComponent.class, new Capability.IStorage<IComponent>() {
             @Nullable

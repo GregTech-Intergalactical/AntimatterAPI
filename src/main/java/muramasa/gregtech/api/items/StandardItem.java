@@ -1,9 +1,9 @@
 package muramasa.gregtech.api.items;
 
-import muramasa.gregtech.api.capability.ICoverable;
+import muramasa.gregtech.api.GregTechAPI;
+import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.cover.CoverStack;
+import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
@@ -47,8 +47,10 @@ public class StandardItem extends Item {
         TYPE_LOOKUP.put(type.getName(), this);
     }
 
-    public ItemType getType() {
-        return ItemType.get(type);
+    public static void init() {
+        for (ItemType type : ItemType.getAll()) {
+            new StandardItem(type);
+        }
     }
 
     @Override
@@ -76,19 +78,15 @@ public class StandardItem extends Item {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null) {
             if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
-                ICoverable coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
+                ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
+                if (coverHandler == null) return EnumActionResult.FAIL;
+                CoverBehaviour behaviour = GregTechAPI.getCoverBehaviour(stack);
+                if (behaviour == null) return EnumActionResult.FAIL;
                 EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
-                boolean consume = false;
-
-                //TODO new instance of covers
-                if (ItemType.ItemPort.isEqual(stack)) {
-                    consume = coverHandler.setCover(targetSide, new CoverStack(Cover.ITEM_PORT));
-                } else if (ItemType.FluidPort.isEqual(stack)) {
-                    consume = coverHandler.setCover(targetSide, new CoverStack(Cover.FLUID_PORT));
-                } else if (ItemType.EnergyPort.isEqual(stack)) {
-                    consume = coverHandler.setCover(targetSide, new CoverStack(Cover.ENERGY_PORT));
+                if (behaviour.needsNewInstance()) {
+                    behaviour = behaviour.getNewInstance(stack);
                 }
-                if (consume) {
+                if (coverHandler.setCover(targetSide, behaviour)) {
                     stack.shrink(1);
                 }
             }
@@ -110,7 +108,11 @@ public class StandardItem extends Item {
                 }
             }
         }
-        return EnumActionResult.SUCCESS; //TODO FAIL?
+        return EnumActionResult.FAIL; //TODO FAIL?
+    }
+
+    public ItemType getType() {
+        return ItemType.get(type);
     }
 
     @SideOnly(Side.CLIENT)

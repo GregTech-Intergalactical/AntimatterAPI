@@ -3,13 +3,11 @@ package muramasa.gregtech.loaders;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.GenerationFlag;
-import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockMachines;
 import muramasa.gregtech.common.items.ItemBlockOres;
@@ -86,15 +84,10 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        for (Prefix prefix : Prefix.getAll()) {
-            for (Material material : Materials.getAll()) {
-                if (!prefix.allowGeneration(material)) continue;
-                MaterialItem item = new MaterialItem(prefix, material);
-                event.getRegistry().register(item);
-            }
+        for (MaterialItem item : MaterialItem.getAll()) {
+            event.getRegistry().register(item);
         }
-        for (ItemType type : ItemType.getAll()) {
-            StandardItem item = new StandardItem(type);
+        for (StandardItem item : StandardItem.getAll()) {
             event.getRegistry().register(item);
         }
         for (Machine type : Machines.getAll()) {

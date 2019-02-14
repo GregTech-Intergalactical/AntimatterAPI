@@ -22,14 +22,12 @@ public class Utils {
     private static DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
     private static DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
 
-    public static ItemStack[] EMPTY = new ItemStack[]{ItemStack.EMPTY};
-
     static {
         DECIMAL_SYMBOLS.setGroupingSeparator(' ');
     }
 
     public static String getString(ItemStack stack) {
-        return !stack.isEmpty() ? stack.getUnlocalizedName() : ""; //TODO 1.13: also append NBT
+        return !stack.isEmpty() ? stack.getUnlocalizedName() : "";
     }
 
     public static String getString(FluidStack fluid) {

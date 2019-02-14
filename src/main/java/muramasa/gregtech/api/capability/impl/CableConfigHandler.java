@@ -4,7 +4,7 @@ import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
 import net.minecraft.util.EnumFacing;
 
-public class CableConfigHandler extends MachineConfigHandler {
+public class CableConfigHandler extends ConfigHandler {
 
     public CableConfigHandler(TileEntityBase tile) {
         super(tile);
@@ -17,10 +17,5 @@ public class CableConfigHandler extends MachineConfigHandler {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean onCrowbar(EnumFacing side) {
-        return false; //NOOP
     }
 }

@@ -1,6 +1,7 @@
 package muramasa.gregtech.client.render.models;
 
-import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.GregTechAPI;
+import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
@@ -41,53 +42,48 @@ public class ModelMachine extends ModelBase {
         for (Machine type : MachineFlag.HATCH.getTypes()) {
             addTexture(type.getOverlayTexture(0));
         }
-        for (Cover cover : Cover.getAll()) {
-            if (cover == Cover.NONE) continue;
-            addTexture(cover.getTextureLoc());
+        for (CoverBehaviour behaviour : GregTechAPI.getRegisteredBehaviours()) {
+            if (behaviour.isEmpty()) continue;
+            addTexture(behaviour.getTextureLoc());
         }
     }
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        if (!hasBeenBuilt) {
-            IModel machineBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base"));
-            IModel itemBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base_item"));
-            IModel model;
-            ResourceLocation texLoc;
+        System.out.println("GT MODEL MACHINE");
+        IModel machineBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base"));
+        IModel itemBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base_item"));
+        IModel model;
+        ResourceLocation texLoc;
 
-            IBakedModel bakedBase = texAndBake(machineBase, "base", Tier.LV.getBaseTexture());
+        IBakedModel bakedBase = texAndBake(machineBase, "base", Tier.LV.getBaseTexture());
 
-            IBakedModel[] bakedOverlays = new IBakedModel[Machine.getLastInternalId()];
+        IBakedModel[] bakedOverlays = new IBakedModel[Machine.getLastInternalId()];
 
-            Collection<Machine> machines = Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
-            machines.add(Machines.INVALID);
-            for (Machine type : machines) {
-                model = load(type.getOverlayModel());
-                bakedOverlays[type.getId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
-            }
-
-            HashMap<String, IBakedModel> bakedItems = new HashMap<>();
-            Collection<MachineStack> machineStacks = Machines.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
-            machineStacks.add(Machines.get(Machines.INVALID, Tier.LV));
-            for (MachineStack stack : machineStacks) {
-                texLoc = stack.getMachineType().getBaseTexture(stack.getTier());
-                bakedItems.put(stack.getType() + stack.getTier(), new BakedModelBase(
-                    texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getMachineType().getOverlayTexture(0)})
-                ));
-            }
-
-            IBakedModel[] bakedCovers = new IBakedModel[Cover.getLastInternalId()];
-            for (Cover cover : Cover.getAll()) {
-                if (cover == Cover.NONE) continue;
-                model = load(cover.getModelLoc());
-                texLoc = cover.getTextureLoc();
-                bakedCovers[cover.getInternalId()] = texAndBake(model, "base", texLoc);
-            }
-
-            hasBeenBuilt = true;
-            return new BakedModelMachine(bakedBase, bakedOverlays, bakedCovers, bakedItems);
+        Collection<Machine> machines = Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
+        machines.add(Machines.INVALID);
+        for (Machine type : machines) {
+            model = load(type.getOverlayModel());
+            bakedOverlays[type.getId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
         }
 
-        return new BakedModelMachine();
+        HashMap<String, IBakedModel> bakedItems = new HashMap<>();
+        Collection<MachineStack> machineStacks = Machines.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
+        machineStacks.add(Machines.get(Machines.INVALID, Tier.LV));
+        for (MachineStack stack : machineStacks) {
+            texLoc = stack.getMachineType().getBaseTexture(stack.getTier());
+            bakedItems.put(stack.getType() + stack.getTier(), new BakedModelBase(
+                texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getMachineType().getOverlayTexture(0)})
+            ));
+        }
+
+        IBakedModel[] bakedCovers = new IBakedModel[CoverBehaviour.getLastInternalId()];
+        for (CoverBehaviour behaviour : GregTechAPI.getRegisteredBehaviours()) {
+            if (behaviour.isEmpty()) continue;
+            model = load(behaviour.getModelLoc());
+            bakedCovers[behaviour.getInternalId()] = model.bake(state, format, getter);
+        }
+
+        return new BakedModelMachine(bakedBase, bakedOverlays, bakedCovers, bakedItems);
     }
 }
