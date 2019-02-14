@@ -2,17 +2,16 @@ package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.api.data.Materials;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 
-public enum StoneType {
+import java.util.Locale;
 
-    //TODO update dust
-    STONE(Materials.Osmium.getDust(1)),
-    NETHERRACK(Materials.Osmium.getDust(1)),
-    ENDSTONE(Materials.Osmium.getDust(1)),
-    REDGRANITE(Materials.Osmium.getDust(1)),
-    BLACKGRANITE(Materials.Osmium.getDust(1)),
-    MARBLE(Materials.Osmium.getDust(1)),
-    BASALT(Materials.Osmium.getDust(1));
+public enum StoneType implements IStringSerializable {
+
+    GRANITE_RED(Materials.GraniteRed.getDust(1)),
+    GRANITE_BLACK(Materials.GraniteBlack.getDust(1)),
+    MARBLE(Materials.Marble.getDust(1)),
+    BASALT(Materials.Basalt.getDust(1));
 
     private ItemStack droppedDust;
 
@@ -21,6 +20,11 @@ public enum StoneType {
     }
 
     public ItemStack getDroppedDust() {
-        return droppedDust;
+        return droppedDust.copy();
+    }
+
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ENGLISH);
     }
 }

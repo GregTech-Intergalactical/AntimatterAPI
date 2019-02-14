@@ -6,25 +6,25 @@
   "variants": {
     "id": {
 	  "empty_cell": {
-		"textures": {"layer0": "gregtech:items/empty_cell"}
+		"textures": {"layer0": "gregtech:items/standard/empty_cell"}
 	  },
 	  "debug_scanner": {
-		"textures": {"layer0": "gregtech:items/debug_scanner"}
+		"textures": {"layer0": "gregtech:items/standard/debug_scanner"}
 	  },
 	  "pump_component": {
-		"textures": {"layer0": "gregtech:items/component_pump"}
+		"textures": {"layer0": "gregtech:items/standard/component_pump"}
 	  },
 	  "conveyor_component": {
-		"textures": {"layer0": "gregtech:items/component_conveyor"}
+		"textures": {"layer0": "gregtech:items/standard/component_conveyor"}
 	  },
 	  "item_port": {
-		"textures": {"layer0": "gregtech:items/cover_item_port"}
+		"textures": {"layer0": "gregtech:items/standard/cover_item_port"}
 	  },
 	  "fluid_port": {
-		"textures": {"layer0": "gregtech:items/cover_fluid_port"}
+		"textures": {"layer0": "gregtech:items/standard/cover_fluid_port"}
 	  },
 	  "energy_port": {
-		"textures": {"layer0": "gregtech:items/cover_energy_port"}
+		"textures": {"layer0": "gregtech:items/standard/cover_energy_port"}
 	  }
     }
   }

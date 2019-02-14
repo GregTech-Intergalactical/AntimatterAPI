@@ -2,20 +2,18 @@ package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
+import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.ArrayList;
 
 public class ComponentHandler implements IComponent {
 
-    //TODO special component handlers for different componentTile types
-
-    private String componentId = "null";
-    private TileEntityBase componentTile;
-    private ArrayList<BlockPos> controllers = new ArrayList<>();
+    protected String componentId = "null";
+    protected TileEntityBase componentTile;
+    protected ArrayList<BlockPos> controllers = new ArrayList<>();
 
     public ComponentHandler(String componentId, TileEntityBase componentTile) {
         this.componentId = componentId;
@@ -51,7 +49,10 @@ public class ComponentHandler implements IComponent {
 
     @Override
     public MachineItemHandler getItemHandler() {
-        return (MachineItemHandler) componentTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (componentTile instanceof TileEntityMachine) {
+            return ((TileEntityMachine) componentTile).getItemHandler();
+        }
+        return null;
     }
 
     @Override

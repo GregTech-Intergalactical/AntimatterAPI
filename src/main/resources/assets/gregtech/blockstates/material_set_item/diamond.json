@@ -6,10 +6,10 @@
   "variants": {
     "diamond": {
       "chunk": {
-        "textures": {"layer0": "gregtech:items/material_set/diamond/chunk", "layer1": "gregtech:items/material_set/diamond/overlays/chunk"}
+        "textures": {"layer0": "gregtech:items/material_set/diamond/chunk", "layer1": "gregtech:items/material_set/diamond/overlay/chunk"}
       },
       "crushed": {
-        "textures": {"layer0": "gregtech:items/material_set/diamond/crushed", "layer1": "gregtech:items/material_set/diamond/overlays/crushed"}
+        "textures": {"layer0": "gregtech:items/material_set/diamond/crushed", "layer1": "gregtech:items/material_set/diamond/overlay/crushed"}
       },
       "crushed_centrifuged": {
         "textures": {"layer0": "gregtech:items/material_set/diamond/crushed_centrifuged"}
@@ -90,13 +90,13 @@
         "textures": {"layer0": "gregtech:items/material_set/diamond/lens"}
       },
       "cell": {
-        "textures": {"layer0": "gregtech:items/material_set/diamond/overlays/cell", "layer1": "gregtech:items/material_set/diamond/cell"}
+        "textures": {"layer0": "gregtech:items/material_set/diamond/overlay/cell", "layer1": "gregtech:items/material_set/diamond/cell"}
       },
 	  "cell_gas": {
-        "textures": {"layer0": "gregtech:items/material_set/diamond/overlays/cell_gas", "layer1": "gregtech:items/material_set/diamond/cell_gas"}
+        "textures": {"layer0": "gregtech:items/material_set/diamond/overlay/cell_gas", "layer1": "gregtech:items/material_set/diamond/cell_gas"}
       },
       "cell_plasma": {
-        "textures": {"layer0": "gregtech:items/material_set/diamond/overlays/cell_plasma", "layer1": "gregtech:items/material_set/diamond/cell_plasma"}
+        "textures": {"layer0": "gregtech:items/material_set/diamond/overlay/cell_plasma", "layer1": "gregtech:items/material_set/diamond/cell_plasma"}
       }
     }
   }

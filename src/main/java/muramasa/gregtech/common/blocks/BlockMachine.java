@@ -1,7 +1,6 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.GregTech;
-import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.cover.CoverBehaviour;
@@ -52,8 +51,8 @@ public class BlockMachine extends Block {
 
     public BlockMachine(String type) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName(Ref.MODID + "_machine_" + type);
-        setRegistryName("machine_" + type);
+        setUnlocalizedName(type);
+        setRegistryName(type);
         setSoundType(SoundType.METAL);
         setCreativeTab(Ref.TAB_MACHINES);
         this.type = type;
@@ -84,7 +83,7 @@ public class BlockMachine extends Block {
                         coverHandler.get(EnumFacing.UP),
                         coverHandler.get(EnumFacing.DOWN),
                         coverHandler.get(EnumFacing.SOUTH),
-                        GregTechAPI.CoverBehaviourNone,
+                        coverHandler.get(EnumFacing.NORTH),
                         coverHandler.get(EnumFacing.EAST),
                         coverHandler.get(EnumFacing.WEST)
                     });
@@ -100,10 +99,10 @@ public class BlockMachine extends Block {
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (Machines.INVALID.getName().equals(type)) return;
-        Machine machine = Machines.get(type);
-        for (Tier tier : machine.getTiers()) {
-            items.add(Machines.get(type, tier.getName()).asItemStack());
+        Machine type = getType();
+        if (type.getName().equals(Machines.INVALID.getName())) return;
+        for (Tier tier : type.getTiers()) {
+            items.add(Machines.get(type, tier).asItemStack());
         }
     }
 
@@ -111,7 +110,7 @@ public class BlockMachine extends Block {
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
         try {
-            return (TileEntityMachine) Machines.get(type).getTileClass().newInstance();
+            return (TileEntityMachine) getType().getTileClass().newInstance();
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
@@ -162,6 +161,10 @@ public class BlockMachine extends Block {
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
+    }
+
+    public Machine getType() {
+        return Machines.get(type);
     }
 
     @SideOnly(Side.CLIENT)

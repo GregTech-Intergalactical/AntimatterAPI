@@ -6,10 +6,10 @@
   "variants": {
     "flint": {
       "chunk": {
-        "textures": {"layer0": "gregtech:items/material_set/flint/chunk", "layer1": "gregtech:items/material_set/flint/overlays/chunk"}
+        "textures": {"layer0": "gregtech:items/material_set/flint/chunk", "layer1": "gregtech:items/material_set/flint/overlay/chunk"}
       },
       "crushed": {
-        "textures": {"layer0": "gregtech:items/material_set/flint/crushed", "layer1": "gregtech:items/material_set/flint/overlays/crushed"}
+        "textures": {"layer0": "gregtech:items/material_set/flint/crushed", "layer1": "gregtech:items/material_set/flint/overlay/crushed"}
       },
       "crushed_centrifuged": {
         "textures": {"layer0": "gregtech:items/material_set/flint/crushed_centrifuged"}
@@ -90,13 +90,13 @@
         "textures": {"layer0": "gregtech:items/material_set/flint/lens"}
       },
       "cell": {
-        "textures": {"layer0": "gregtech:items/material_set/flint/overlays/cell", "layer1": "gregtech:items/material_set/flint/cell"}
+        "textures": {"layer0": "gregtech:items/material_set/flint/overlay/cell", "layer1": "gregtech:items/material_set/flint/cell"}
       },
 	  "cell_gas": {
-        "textures": {"layer0": "gregtech:items/material_set/flint/overlays/cell_gas", "layer1": "gregtech:items/material_set/flint/cell_gas"}
+        "textures": {"layer0": "gregtech:items/material_set/flint/overlay/cell_gas", "layer1": "gregtech:items/material_set/flint/cell_gas"}
       },
       "cell_plasma": {
-        "textures": {"layer0": "gregtech:items/material_set/flint/overlays/cell_plasma", "layer1": "gregtech:items/material_set/flint/cell_plasma"}
+        "textures": {"layer0": "gregtech:items/material_set/flint/overlay/cell_plasma", "layer1": "gregtech:items/material_set/flint/cell_plasma"}
       }
     }
   }

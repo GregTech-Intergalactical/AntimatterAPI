@@ -38,15 +38,16 @@ public class MaterialItem extends Item {
 
     private static LinkedHashMap<String, MaterialItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
-    private String material, prefix;
+    private Material material;
+    private Prefix prefix;
 
     public MaterialItem(Prefix prefix, Material material) {
-        setUnlocalizedName(Ref.MODID + "_item_" + prefix.getName() + "_" + material.getName());
-        setRegistryName("item_" + prefix.getName() + "_" + material.getName());
+        setUnlocalizedName(prefix.getName() + "_" + material.getName());
+        setRegistryName(prefix.getName() + "_" + material.getName());
         setCreativeTab(Ref.TAB_MATERIALS);
-        this.material = material.getName();
-        this.prefix = prefix.getName();
         TYPE_LOOKUP.put(prefix.getName() + material.getName(), this);
+        this.material = material;
+        this.prefix = prefix;
     }
 
     public static void init() {
@@ -113,11 +114,11 @@ public class MaterialItem extends Item {
     }
 
     public Prefix getPrefix() {
-        return Prefix.get(prefix);
+        return prefix;
     }
 
     public Material getMaterial() {
-        return Materials.get(material);
+        return material;
     }
 
     public static boolean hasPrefix(ItemStack stack, Prefix prefix) {

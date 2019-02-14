@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.machines.types;
 
-import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.Slot;
@@ -10,6 +10,7 @@ import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.common.blocks.BlockMachine;
+import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -50,6 +51,12 @@ public class Machine implements IStringSerializable {
 
     //TODO add valid covers
 
+    public Machine(String name) {
+        this.name = name;
+        this.block = new BlockMachine(name);
+        this.tileClass = TileEntityMachine.class;
+    }
+
     public Machine(String name, BlockMachine block, Class tileClass) {
         internalId = lastInternalId++;
         this.name = name;
@@ -87,25 +94,25 @@ public class Machine implements IStringSerializable {
     }
 
     public ResourceLocation getGUITexture(String tier) {
-        return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + ".png");
+        return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
     }
 
     public ResourceLocation getBaseTexture(String tier) {
-        return new ResourceLocation(Ref.MODID, "blocks/machines/base/" + tier);
+        return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + tier);
     }
 
     public ResourceLocation getOverlayTexture(int type) {
         if (type == 0) {
-            return new ResourceLocation(Ref.MODID + ":blocks/machines/overlays/" + name);
+            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name);
         } else if (type == 1) {
-            return new ResourceLocation(Ref.MODID + ":blocks/machines/overlays/active/" + name);
+            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/active/" + name);
         } else {
-            return new ResourceLocation(Ref.MODID + ":blocks/machines/overlays/" + name);
+            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name);
         }
     }
 
     public ModelResourceLocation getOverlayModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlays/" + name);
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name);
     }
 
     public void addFlags(MachineFlag... flags) {

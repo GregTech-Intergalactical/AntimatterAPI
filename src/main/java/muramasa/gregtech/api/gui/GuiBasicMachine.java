@@ -19,10 +19,6 @@ import java.util.ArrayList;
 
 public class GuiBasicMachine extends GuiMachine {
 
-//    private IFluidHandler fluidHandlerInput, fluidHandlerOutput;
-//    private TextureAtlasSprite sprite;
-//    private GuiButton button;
-
     public GuiBasicMachine(TileEntityMachine tile, ContainerMachine container) {
         super(tile, container);
     }

@@ -6,16 +6,16 @@
   "variants": {
     "coil_type": {
       "cupronickel": {
-        "textures": {"all": "gregtech:blocks/coils/cupronickel"}
+        "textures": {"all": "gregtech:blocks/coil/cupronickel"}
       },
       "kanthal": {
-        "textures": {"all": "gregtech:blocks/coils/kanthal"}
+        "textures": {"all": "gregtech:blocks/coil/kanthal"}
       },
       "nichrome": {
-        "textures": {"all": "gregtech:blocks/coils/nichrome"}
+        "textures": {"all": "gregtech:blocks/coil/nichrome"}
       },
       "fusion": {
-        "textures": {"all": "gregtech:blocks/coils/fusion"}
+        "textures": {"all": "gregtech:blocks/coil/fusion"}
       }
     }
   }

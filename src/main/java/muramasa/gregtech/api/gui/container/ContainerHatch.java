@@ -6,6 +6,6 @@ import net.minecraft.inventory.IInventory;
 public class ContainerHatch extends ContainerMachine {
 
     public ContainerHatch(TileEntityMachine tile, IInventory playerInv) {
-        super(playerInv);
+        super(tile, playerInv);
     }
 }

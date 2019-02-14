@@ -2,22 +2,22 @@ package muramasa.gregtech.api.enums;
 
 import net.minecraft.util.IStringSerializable;
 
+import java.util.Locale;
+
 public enum CasingType implements IStringSerializable {
 
-    HEAT_PROOF("heatproof"),
-    STAINLESS_STEEL("stainlesssteel"),
-//    FUSION1("fusion1"),
-//    FUSION2("fusion2"),
-    FUSION3("fusion3");
+    HEAT_PROOF(),
+    STAINLESS_STEEL(),
+    FUSION_1(),
+    FUSION_2(),
+    FUSION_3();
 
-    private String name;
+    CasingType() {
 
-    CasingType(String name) {
-        this.name = name;
     }
 
     @Override
     public String getName() {
-        return name;
+        return name().toLowerCase(Locale.ENGLISH);
     }
 }

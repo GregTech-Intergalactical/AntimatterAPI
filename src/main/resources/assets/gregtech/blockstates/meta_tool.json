@@ -4,161 +4,161 @@
     "model": "gregtech:item/generated"
   },
   "variants": {
-    "type": {
-      "0": {
+    "tool_type": {
+      "sword": {
         "textures": {
-          "layer0": "gregtech:items/tools/sword",
-          "layer1": "gregtech:items/tools/overlays/sword"
+          "layer0": "gregtech:items/tool/sword",
+          "layer1": "gregtech:items/tool/overlay/sword"
         }
       },
-      "1": {
+      "pickaxe": {
         "textures": {
-          "layer0": "gregtech:items/tools/pickaxe",
-          "layer1": "gregtech:items/tools/overlays/pickaxe"
+          "layer0": "gregtech:items/tool/pickaxe",
+          "layer1": "gregtech:items/tool/overlay/pickaxe"
         }
       },
-      "2": {
+      "shovel": {
         "textures": {
-          "layer0": "gregtech:items/tools/shovel",
-          "layer1": "gregtech:items/tools/overlays/shovel"
+          "layer0": "gregtech:items/tool/shovel",
+          "layer1": "gregtech:items/tool/overlay/shovel"
         }
       },
-      "3": {
+      "axe": {
         "textures": {
-          "layer0": "gregtech:items/tools/axe",
-          "layer1": "gregtech:items/tools/overlays/axe"
+          "layer0": "gregtech:items/tool/axe",
+          "layer1": "gregtech:items/tool/overlay/axe"
         }
       },
-      "4": {
+      "hoe": {
         "textures": {
-          "layer0": "gregtech:items/tools/hoe",
-          "layer1": "gregtech:items/tools/overlays/hoe"
+          "layer0": "gregtech:items/tool/hoe",
+          "layer1": "gregtech:items/tool/overlay/hoe"
         }
       },
-      "5": {
+      "saw": {
         "textures": {
-          "layer0": "gregtech:items/tools/saw",
-          "layer1": "gregtech:items/tools/overlays/saw"
+          "layer0": "gregtech:items/tool/saw",
+          "layer1": "gregtech:items/tool/overlay/saw"
         }
       },
-      "6": {
+      "hammer": {
         "textures": {
-          "layer0": "gregtech:items/tools/hammer",
-          "layer1": "gregtech:items/tools/overlays/hammer"
+          "layer0": "gregtech:items/tool/hammer",
+          "layer1": "gregtech:items/tool/overlay/hammer"
         }
       },
-      "7": {
+      "wrench": {
         "textures": {
-          "layer0": "gregtech:items/tools/wrench"
+          "layer0": "gregtech:items/tool/wrench"
         }
       },
-      "8": {
+      "file": {
         "textures": {
-          "layer0": "gregtech:items/tools/file",
-          "layer1": "gregtech:items/tools/overlays/file"
+          "layer0": "gregtech:items/tool/file",
+          "layer1": "gregtech:items/tool/overlay/file"
         }
       },
-      "9": {
+      "screwdriver": {
         "textures": {
-          "layer0": "gregtech:items/tools/screwdriver",
-          "layer1": "gregtech:items/tools/overlays/screwdriver"
+          "layer0": "gregtech:items/tool/screwdriver",
+          "layer1": "gregtech:items/tool/overlay/screwdriver"
         }
       },
-      "10": {
+      "crowbar": {
         "textures": {
-          "layer0": "gregtech:items/tools/crowbar",
-          "layer1": "gregtech:items/tools/overlays/crowbar"
+          "layer0": "gregtech:items/tool/crowbar",
+          "layer1": "gregtech:items/tool/overlay/crowbar"
         }
       },
-      "11": {
+      "mortar": {
         "textures": {
-          "layer0": "gregtech:items/tools/mortar",
-          "layer1": "gregtech:items/tools/overlays/mortar"
+          "layer0": "gregtech:items/tool/mortar",
+          "layer1": "gregtech:items/tool/overlay/mortar"
         }
       },
-      "12": {
+      "wire_cutter": {
         "textures": {
-          "layer0": "gregtech:items/tools/wire_cutter",
-          "layer1": "gregtech:items/tools/overlays/wire_cutter"
+          "layer0": "gregtech:items/tool/wire_cutter",
+          "layer1": "gregtech:items/tool/overlay/wire_cutter"
         }
       },
-      "13": {
+      "scoop": {
         "textures": {
-          "layer0": "gregtech:items/tools/scoop",
-          "layer1": "gregtech:items/tools/overlays/scoop"
+          "layer0": "gregtech:items/tool/scoop",
+          "layer1": "gregtech:items/tool/overlay/scoop"
         }
       },
-      "14": {
+      "branch_cutter": {
         "textures": {
-          "layer0": "gregtech:items/tools/branch_cutter",
-          "layer1": "gregtech:items/tools/overlays/branch_cutter"
+          "layer0": "gregtech:items/tool/branch_cutter",
+          "layer1": "gregtech:items/tool/overlay/branch_cutter"
         }
       },
-      "15": {
+      "universal_spade": {
         "textures": {
-          "layer0": "gregtech:items/tools/universal_spade",
-          "layer1": "gregtech:items/tools/overlays/universal_spade"
+          "layer0": "gregtech:items/tool/universal_spade",
+          "layer1": "gregtech:items/tool/overlay/universal_spade"
         }
       },
-      "16": {
+      "knife": {
         "textures": {
-          "layer0": "gregtech:items/tools/knife",
-          "layer1": "gregtech:items/tools/overlays/knife"
+          "layer0": "gregtech:items/tool/knife",
+          "layer1": "gregtech:items/tool/overlay/knife"
         }
       },
-      "17": {
+      "scythe": {
         "textures": {
-          "layer0": "gregtech:items/tools/scythe",
-          "layer1": "gregtech:items/tools/overlays/scythe"
+          "layer0": "gregtech:items/tool/scythe",
+          "layer1": "gregtech:items/tool/overlay/scythe"
         }
       },
-      "18": {
+      "plunger": {
         "textures": {
-          "layer0": "gregtech:items/tools/plunger",
-          "layer1": "gregtech:items/tools/overlays/plunger"
+          "layer0": "gregtech:items/tool/plunger",
+          "layer1": "gregtech:items/tool/overlay/plunger"
         }
       },
-      "19": {
+      "drill": {
         "textures": {
-          "layer0": "gregtech:items/tools/drill",
-          "layer1": "gregtech:items/tools/overlays/unit"
+          "layer0": "gregtech:items/tool/drill",
+          "layer1": "gregtech:items/tool/overlay/unit"
         }
       },
-      "20": {
+      "chainsaw": {
         "textures": {
-          "layer0": "gregtech:items/tools/chainsaw",
-          "layer1": "gregtech:items/tools/overlays/unit"
+          "layer0": "gregtech:items/tool/chainsaw",
+          "layer1": "gregtech:items/tool/overlay/unit"
         }
       },
-      "21": {
+      "wrench_p": {
         "textures": {
-          "layer0": "gregtech:items/tools/wrench_p",
-          "layer1": "gregtech:items/tools/overlays/unit"
+          "layer0": "gregtech:items/tool/wrench_p",
+          "layer1": "gregtech:items/tool/overlay/unit"
         }
       },
-      "22": {
+      "jackhammer": {
         "textures": {
-          "layer0": "gregtech:items/tools/jackhammer",
-          "layer1": "gregtech:items/tools/overlays/jackhammer"
+          "layer0": "gregtech:items/tool/jackhammer",
+          "layer1": "gregtech:items/tool/overlay/jackhammer"
         }
       },
-      "23": {
+      "screwdriver_p": {
         "textures": {
-          "layer0": "gregtech:items/tools/screwdriver",
-          "layer1": "gregtech:items/tools/overlays/screwdriver_p_1",
-          "layer2": "gregtech:items/tools/overlays/screwdriver_p_2"
+          "layer0": "gregtech:items/tool/screwdriver",
+          "layer1": "gregtech:items/tool/overlay/screwdriver_p_1",
+          "layer2": "gregtech:items/tool/overlay/screwdriver_p_2"
         }
       },
-      "24": {
+      "buzzsaw": {
         "textures": {
-          "layer0": "gregtech:items/tools/buzzsaw",
-          "layer1": "gregtech:items/tools/overlays/buzzsaw_1",
-          "layer2": "gregtech:items/tools/overlays/buzzsaw_2"
+          "layer0": "gregtech:items/tool/buzzsaw",
+          "layer1": "gregtech:items/tool/overlay/buzzsaw_1",
+          "layer2": "gregtech:items/tool/overlay/buzzsaw_2"
         }
       },
-      "25": {
+      "turbine": {
         "textures": {
-          "layer0": "gregtech:items/tools/turbine"
+          "layer0": "gregtech:items/tool/turbine"
         }
       }
     }

@@ -2,7 +2,10 @@ package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.enums.CasingType;
+import muramasa.gregtech.api.enums.CoilType;
 import muramasa.gregtech.api.enums.GenerationFlag;
+import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
@@ -39,9 +42,6 @@ public class ContentLoader {
 
     public static BlockCable blockCable = new BlockCable();
 
-    public static BlockCasing blockCasing = new BlockCasing();
-    public static BlockCoil blockCoil = new BlockCoil();
-
     static {
 //        Ref.TAB_MATERIALS.setTabStack(Materials.Titanium.getIngot(1));
 //        Ref.TAB_ITEMS.setTabStack(ItemList.Debug_Scanner.get(1));
@@ -71,14 +71,21 @@ public class ContentLoader {
                 event.getRegistry().register(new BlockStorage(material));
             }
         }
+        for (CasingType type : CasingType.values()) {
+            event.getRegistry().register(new BlockCasing(type));
+        }
+        for (CoilType type : CoilType.values()) {
+            event.getRegistry().register(new BlockCoil(type));
+        }
+        for (StoneType type : StoneType.values()) {
+            event.getRegistry().register(new BlockStone(type));
+        }
 
         event.getRegistry().register(blockCable);
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(Ref.MODID, "block_cable"));
 
-        event.getRegistry().register(blockCasing);
         GameRegistry.registerTileEntity(TileEntityCasing.class, new ResourceLocation(Ref.MODID, "block_casing"));
 
-        event.getRegistry().register(blockCoil);
         GameRegistry.registerTileEntity(TileEntityCoil.class, new ResourceLocation(Ref.MODID, "block_coil"));
     }
 
@@ -99,10 +106,17 @@ public class ContentLoader {
         for (BlockStorage block : BlockStorage.getAll()) {
             event.getRegistry().register(new ItemBlockStorage(block).setRegistryName(block.getRegistryName()));
         }
+        for (BlockCasing block : BlockCasing.getAll()) {
+            event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        }
+        for (BlockCoil block : BlockCoil.getAll()) {
+            event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        }
+        for (BlockStone block : BlockStone.getAll()) {
+            event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+        }
 
         event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(blockCasing).setRegistryName(blockCasing.getRegistryName()));
-        event.getRegistry().register(new ItemBlock(blockCoil).setRegistryName(blockCoil.getRegistryName()));
 
         event.getRegistry().register(metaTool);
     }

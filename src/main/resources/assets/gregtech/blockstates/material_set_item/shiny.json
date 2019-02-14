@@ -12,10 +12,10 @@
         "textures": {"layer0": "gregtech:items/material_set/shiny/block"}
       },
       "chunk": {
-        "textures": {"layer0": "gregtech:items/material_set/shiny/chunk", "layer1": "gregtech:items/material_set/shiny/overlays/chunk"}
+        "textures": {"layer0": "gregtech:items/material_set/shiny/chunk", "layer1": "gregtech:items/material_set/shiny/overlay/chunk"}
       },
       "crushed": {
-        "textures": {"layer0": "gregtech:items/material_set/shiny/crushed", "layer1": "gregtech:items/material_set/shiny/overlays/crushed"}
+        "textures": {"layer0": "gregtech:items/material_set/shiny/crushed", "layer1": "gregtech:items/material_set/shiny/overlay/crushed"}
       },
       "crushed_centrifuged": {
         "textures": {"layer0": "gregtech:items/material_set/shiny/crushed_centrifuged"}
@@ -96,13 +96,13 @@
         "textures": {"layer0": "gregtech:items/material_set/shiny/lens"}
       },
       "cell": {
-        "textures": {"layer0": "gregtech:items/material_set/shiny/overlays/cell", "layer1": "gregtech:items/material_set/shiny/cell"}
+        "textures": {"layer0": "gregtech:items/material_set/shiny/overlay/cell", "layer1": "gregtech:items/material_set/shiny/cell"}
       },
 	  "cell_gas": {
-        "textures": {"layer0": "gregtech:items/material_set/shiny/overlays/cell_gas", "layer1": "gregtech:items/material_set/shiny/cell_gas"}
+        "textures": {"layer0": "gregtech:items/material_set/shiny/overlay/cell_gas", "layer1": "gregtech:items/material_set/shiny/cell_gas"}
       },
       "cell_plasma": {
-        "textures": {"layer0": "gregtech:items/material_set/shiny/overlays/cell_plasma", "layer1": "gregtech:items/material_set/shiny/cell_plasma"}
+        "textures": {"layer0": "gregtech:items/material_set/shiny/overlay/cell_plasma", "layer1": "gregtech:items/material_set/shiny/cell_plasma"}
       }
     }
   }

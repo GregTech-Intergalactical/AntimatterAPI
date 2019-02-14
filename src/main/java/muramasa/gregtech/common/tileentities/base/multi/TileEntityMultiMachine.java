@@ -4,13 +4,16 @@ import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.capability.ITechCapabilities;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.recipe.Recipe;
+import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.api.structure.StructureResult;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
@@ -66,7 +69,8 @@ public class TileEntityMultiMachine extends TileEntityMachine {
             ArrayList<ItemStack> hatchStacks = getHatchItems();
             if (hatchStacks.size() == 0) return; //Escape if machine inputs are empty
 //            Recipe recipe = getMachineType().findRecipe(hatchStacks.toArray(new ItemStack[0]));
-            Recipe recipe = null;
+            Recipe recipe = RecipeMap.findRecipeItem(getMachineType().getRecipeMap(), hatchStacks.toArray(new ItemStack[0]));
+//            Recipe recipe = null;
             if (recipe != null) {
                 activeRecipe = recipe;
                 curProgress = 0;
@@ -149,31 +153,29 @@ public class TileEntityMultiMachine extends TileEntityMachine {
         components.clear();
     }
 
-    //TODO merge equal stacks
+    /** Returns list of stacks across all input hatches. Merges equal stacks and filters empty **/
     public ArrayList<ItemStack> getHatchItems() {
-        ArrayList<ItemStack> stacks = new ArrayList<>();
-        ArrayList<IComponent> hatches = components.get("itemhatchinput");
-        if (hatches == null || hatches.size() == 0) return stacks;
+        ArrayList<ItemStack> all = new ArrayList<>();
+        ArrayList<IComponent> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
+        if (hatches == null || hatches.size() == 0) return all;
         MachineItemHandler itemHandler;
         for (IComponent hatch : hatches) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
-            for (ItemStack stack : itemHandler.getInputs()) {
-                if (stacks.contains(stack)) {
-
-                } else {
-                    stacks.add(stack);
-                }
+            if (all.isEmpty()) {
+                all.addAll(itemHandler.getInputList());
+            } else {
+                Utils.merge(all, itemHandler.getInputList());
             }
-            stacks.addAll(itemHandler.getInputList());
         }
-        return stacks;
+        return all;
     }
 
+    /** Consumes inputs from all input hatches. Assumes doStacksMatchAndSizeValid has been used **/
     public void consumeInputs(ItemStack... inputs) {
         ItemStack[] toConsume = inputs.clone();
         MachineItemHandler itemHandler;
-        for (IComponent hatch : components.get("itemhatchinput")) {
+        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             toConsume = itemHandler.consumeAndReturnInputs(toConsume);
@@ -181,10 +183,11 @@ public class TileEntityMultiMachine extends TileEntityMachine {
         }
     }
 
+    /** Tests if outputs can fit across all output hatches **/
     public boolean canOutputsFit(ItemStack... outputs) {
         MachineItemHandler itemHandler;
         int matchCount = 0;
-        for (IComponent hatch : components.get("itemhatchoutput")) {
+        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             matchCount += itemHandler.getSpaceForStacks(outputs);
@@ -193,44 +196,23 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     }
 
 
+    /** Export stacks to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void addOutputs(ItemStack... outputs) {
         MachineItemHandler itemHandler;
-        for (IComponent hatch : components.get("itemhatchoutput")) {
+        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             for (int i = 0; i < outputs.length; i++) {
-
-
-
-//                if (Utils.getSpaceForStacks())
-//                if (Utils.canStacksFit(new ItemStack[]{outputs[i]}, itemHandler.getOutputStacks())) {
-                    System.out.println("addOutput");
-                    itemHandler.addOutputs(outputs[i].copy());
-//                }
+                System.out.println("Adding output...");
+                itemHandler.addOutputs(outputs[i]);
             }
-
         }
     }
 
-//    public boolean consume(ItemStack... stacks) {
-////        IItemHandler itemHandler;
-////        for (IComponent hatch : components.get("itemhatch")) {
-////            itemHandler = hatch.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-////            if (itemHandler == null) continue;
-////            for (ItemStack stack : stacks) {
-////                if (itemHandler.)
-////            }
-////        }
-//
-//        MachineStackHandler itemHandler;
-//        for (IComponent hatch : components.get("itemhatch")) {
-//            itemHandler = hatch.getItemHandler();
-//            if (itemHandler == null) continue;
-//            for (ItemStack stack : stacks) {
-//
-//            }
-//        }
-//    }
+    /** Returns a list of Components **/
+    public ArrayList<IComponent> getComponents(IStringSerializable serializable) {
+        return components.get(serializable.getName());
+    }
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {

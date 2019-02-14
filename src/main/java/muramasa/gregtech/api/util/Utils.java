@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -44,6 +45,24 @@ public class Utils {
 
     public static boolean equals(FluidStack a, FluidStack b) {
         return a.isFluidEqual(b);
+    }
+
+    public static int contains(List<ItemStack> list, ItemStack stack) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).isItemEqual(stack)) return i;
+        }
+        return -1;
+    }
+
+    public static List<ItemStack> merge(List<ItemStack> a, List<ItemStack> b) {
+        int position;
+        for (int i = 0; i < a.size(); i++) {
+            position = contains(b, a.get(i));
+            if (position != -1) {
+                a.get(i).grow(b.get(position).getCount());
+            }
+        }
+        return a;
     }
 
     public static ItemStack[] arr(ItemStack... stacks) {
