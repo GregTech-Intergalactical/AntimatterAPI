@@ -11,10 +11,10 @@ import java.util.ArrayList;
 
 public class CoverHandler implements ICoverHandler {
 
-    private TileEntityBase tile;
-    private ArrayList<String> validCovers;
+    protected TileEntityBase tile;
+    protected ArrayList<String> validCovers;
 
-    private CoverBehaviour[] behaviours = new CoverBehaviour[] {
+    private CoverBehaviour[] covers = new CoverBehaviour[] {
         GregTechAPI.CoverBehaviourNone,
         GregTechAPI.CoverBehaviourNone,
         GregTechAPI.CoverBehaviourNone,
@@ -23,28 +23,28 @@ public class CoverHandler implements ICoverHandler {
         GregTechAPI.CoverBehaviourNone
     };
 
-    public CoverHandler(TileEntityBase tile, CoverBehaviour... behaviours) {
+    public CoverHandler(TileEntityBase tile, CoverBehaviour... covers) {
         this.tile = tile;
         validCovers = new ArrayList<>();
         validCovers.add(GregTechAPI.CoverBehaviourNone.getName());
-        for (CoverBehaviour behaviour : behaviours) {
-            validCovers.add(behaviour.getName());
+        for (CoverBehaviour cover : covers) {
+            validCovers.add(cover.getName());
         }
     }
 
     @Override
     public void update() {
-        for (int i = 0; i < behaviours.length; i++) {
-            if (behaviours[i].isEmpty()) continue;
-            behaviours[i].onUpdate(tile);
+        for (int i = 0; i < covers.length; i++) {
+            if (covers[i].isEmpty()) continue;
+            covers[i].onUpdate(tile);
         }
     }
 
     @Override
-    public boolean setCover(EnumFacing side, CoverBehaviour behaviour) {
+    public boolean setCover(EnumFacing side, CoverBehaviour cover) {
         if (tile == null) return false;
-        if (isBehaviourValid(behaviour) && behaviours[side.getIndex()] != behaviour && side != EnumFacing.NORTH) {
-            behaviours[side.getIndex()] = behaviour;
+        if (isCoverValid(side, cover) && covers[side.getIndex()] != cover) {
+            covers[side.getIndex()] = cover;
             SoundList.PLACE_METAL.play(tile.getWorld(), tile.getPos());
             tile.markForRenderUpdate();
             return true;
@@ -54,20 +54,20 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public CoverBehaviour get(EnumFacing side) {
-        return behaviours[side.ordinal()];
+        return covers[side.ordinal()];
     }
 
-    public CoverBehaviour[] getBehaviours() {
-        return behaviours;
-    }
-
-    @Override
-    public boolean hasCover(EnumFacing side, CoverBehaviour behaviour) {
-        return get(side).isEqual(behaviour);
+    public CoverBehaviour[] getCovers() {
+        return covers;
     }
 
     @Override
-    public boolean isBehaviourValid(CoverBehaviour behaviour) {
-        return validCovers.contains(behaviour.getName());
+    public boolean hasCover(EnumFacing side, CoverBehaviour cover) {
+        return get(side).isEqual(cover);
+    }
+
+    @Override
+    public boolean isCoverValid(EnumFacing side, CoverBehaviour cover) {
+        return validCovers.contains(cover.getName());
     }
 }

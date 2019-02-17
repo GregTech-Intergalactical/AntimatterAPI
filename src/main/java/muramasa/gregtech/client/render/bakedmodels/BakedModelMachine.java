@@ -80,13 +80,13 @@ public class BakedModelMachine extends BakedModelBase {
         //Add cover quads
         if (hasUnlistedProperty(exState, ITechProperties.COVERS)) {
             List<BakedQuad> coverQuads = new LinkedList<>();
-            CoverBehaviour[] behaviours = exState.getValue(ITechProperties.COVERS);
-            if (behaviours == null) return quadList;
-            for (int i = 0; i < behaviours.length; i++) {
-                if (behaviours[i].isEmpty()) continue;
+            CoverBehaviour[] covers = exState.getValue(ITechProperties.COVERS);
+            if (covers == null) return quadList;
+            for (int i = 0; i < covers.length; i++) {
+                if (covers[i].isEmpty()) continue;
                 coverQuads.clear();
-                coverQuads.addAll(behaviours[i].onRender(transform(bakedCovers[behaviours[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i])));
-                if (behaviours[i].retextureToMachineTier()) {
+                coverQuads.addAll(covers[i].onRender(transform(bakedCovers[covers[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i])));
+                if (covers[i].retextureToMachineTier()) {
                     //TODO
                 }
                 quadList.addAll(coverQuads);

@@ -22,16 +22,16 @@ public class GregTechAPI {
     /**
      * Registers a cover behaviour. This must be done during preInit.
      * @param stack The stack used to place the cover on a machine.
-     * @param behaviour The behaviour instance to be attached.
+     * @param cover The behaviour instance to be attached.
      */
-    public static void registerCoverBehaviour(ItemStack stack, CoverBehaviour behaviour) {
+    public static void registerCover(ItemStack stack, CoverBehaviour cover) {
         ResourceLocation registryName = stack.getItem().getRegistryName();
         if (registryName != null) {
-            COVER_REGISTRY.put(registryName.toString(), behaviour);
+            COVER_REGISTRY.put(registryName.toString(), cover);
         }
     }
 
-    public static CoverBehaviour getCoverBehaviour(ItemStack stack) {
+    public static CoverBehaviour getCover(ItemStack stack) {
         ResourceLocation registryName = stack.getItem().getRegistryName();
         if (registryName != null) {
             return COVER_REGISTRY.get(registryName.toString());
@@ -39,7 +39,7 @@ public class GregTechAPI {
         return null;
     }
 
-    public static Collection<CoverBehaviour> getRegisteredBehaviours() {
+    public static Collection<CoverBehaviour> getRegisteredCovers() {
         return COVER_REGISTRY.values();
     }
 }

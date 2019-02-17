@@ -24,8 +24,8 @@ public class ConfigHandler implements IConfigHandler {
         if (tile.hasCapability(ITechCapabilities.COVERABLE, side)) { //Side has cover, configure.
             ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
             if (coverHandler == null) return false;
-            CoverBehaviour behaviour = coverHandler.get(side);
-            if (!behaviour.isEmpty()) {
+            CoverBehaviour cover = coverHandler.get(side);
+            if (!cover.isEmpty()) {
                 //TODO toggle state
                 SoundList.WRENCH.play(tile.getWorld(), tile.getPos());
                 return true;

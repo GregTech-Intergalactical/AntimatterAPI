@@ -184,9 +184,9 @@ public class BlockMachine extends Block {
             } else if (tintIndex == CoverBehaviourTintable.coverTintIndex) {
                 IExtendedBlockState exState = (IExtendedBlockState) state;
                 if (BakedModelBase.hasUnlistedProperty(exState, ITechProperties.COVERS)) {
-                    for (CoverBehaviour behaviour : exState.getValue(ITechProperties.COVERS)) {
-                        if (behaviour instanceof CoverBehaviourTintable) {
-                            return ((CoverBehaviourTintable) behaviour).getRGB();
+                    for (CoverBehaviour cover : exState.getValue(ITechProperties.COVERS)) {
+                        if (cover instanceof CoverBehaviourTintable) {
+                            return ((CoverBehaviourTintable) cover).getRGB();
                         }
                     }
                 }

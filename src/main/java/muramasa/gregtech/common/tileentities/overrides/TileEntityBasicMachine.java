@@ -34,7 +34,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     protected MachineFluidHandler fluidHandler;
     protected MachineEnergyHandler energyStorage;
     protected ConfigHandler configHandler;
-    protected CoverHandler coverHandler;
+    protected MachineCoverHandler coverHandler;
 
     /** Logic **/
     protected int curProgress, maxProgress;
@@ -65,7 +65,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             energyStorage.energy = 99999999; //Temporary
         }
         if (machine.hasFlag(COVERABLE)) {
-            coverHandler = new CoverHandler(this, GregTechAPI.CoverBehaviourPlate, GregTechAPI.CoverBehaviourItem, GregTechAPI.CoverBehaviourFluid, GregTechAPI.CoverBehaviourEnergy);
+            coverHandler = new MachineCoverHandler(this, GregTechAPI.CoverBehaviourPlate, GregTechAPI.CoverBehaviourItem, GregTechAPI.CoverBehaviourFluid, GregTechAPI.CoverBehaviourEnergy);
         }
         if (machine.hasFlag(CONFIGURABLE)) {
             configHandler = new ConfigHandler(this);
@@ -256,7 +256,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         } else if (machine.hasFlag(ENERGY) && capability == ITechCapabilities.ENERGY) {
             return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourEnergy);
         } else if (machine.hasFlag(COVERABLE) && capability == ITechCapabilities.COVERABLE) {
-            return true;
+            return facing == null || (!coverHandler.get(facing).isEmpty());
         } else if (machine.hasFlag(CONFIGURABLE) && capability == ITechCapabilities.CONFIGURABLE) {
             return true;
         }
