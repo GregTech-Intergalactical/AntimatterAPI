@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.tileentities.base;
 
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.CableConfigHandler;
 import muramasa.gregtech.api.capability.impl.CoverHandler;
 import muramasa.gregtech.api.util.Utils;
@@ -37,7 +37,7 @@ public class TileEntityCable extends TileEntityTickable {
             if ((disabledConnections & sideMask) == 0) { //Connection side has not been disabled
                 if (tileBeingChecked instanceof TileEntityCable) {
                     cableConnections |=  sideMask;
-                } else if (tileBeingChecked.hasCapability(ITechCapabilities.ENERGY, EnumFacing.VALUES[side].getOpposite())) {
+                } else if (tileBeingChecked.hasCapability(GTCapabilities.ENERGY, EnumFacing.VALUES[side].getOpposite())) {
                     System.out.println(EnumFacing.VALUES[side].getOpposite());
                     cableConnections |= sideMask;
                     machineConnections |= sideMask;
@@ -68,9 +68,9 @@ public class TileEntityCable extends TileEntityTickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == ITechCapabilities.COVERABLE) {
+        if (capability == GTCapabilities.COVERABLE) {
             return true;
-        } else if (capability == ITechCapabilities.CONFIGURABLE) {
+        } else if (capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -79,10 +79,10 @@ public class TileEntityCable extends TileEntityTickable {
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == ITechCapabilities.COVERABLE) {
-            return ITechCapabilities.COVERABLE.cast(coverHandler);
-        } else if (capability == ITechCapabilities.CONFIGURABLE) {
-            return ITechCapabilities.CONFIGURABLE.cast(configHandler);
+        if (capability == GTCapabilities.COVERABLE) {
+            return GTCapabilities.COVERABLE.cast(coverHandler);
+        } else if (capability == GTCapabilities.CONFIGURABLE) {
+            return GTCapabilities.CONFIGURABLE.cast(configHandler);
         }
         return super.getCapability(capability, facing);
     }

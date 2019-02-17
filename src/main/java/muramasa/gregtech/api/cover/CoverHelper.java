@@ -2,7 +2,7 @@ package muramasa.gregtech.api.cover;
 
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ICoverHandler;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -11,8 +11,8 @@ import net.minecraft.util.EnumFacing;
 public class CoverHelper {
 
     public static boolean placeCover(TileEntity tile, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
-            ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, side);
+        if (tile.hasCapability(GTCapabilities.COVERABLE, null)) {
+            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
             if (coverHandler == null) return false;
             CoverBehaviour cover = GregTechAPI.getCover(stack);
             if (cover == null) return false;

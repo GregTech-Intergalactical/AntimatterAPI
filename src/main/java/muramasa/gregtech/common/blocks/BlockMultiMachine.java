@@ -5,7 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import static muramasa.gregtech.api.properties.ITechProperties.*;
+import static muramasa.gregtech.api.properties.GTProperties.*;
 
 public class BlockMultiMachine extends BlockMachine {
 

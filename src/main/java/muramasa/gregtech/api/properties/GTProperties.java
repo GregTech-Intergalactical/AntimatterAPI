@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.properties;
 
-public class ITechProperties {
+public class GTProperties {
 
     /** Machine Properties **/
     public static final UnlistedInteger TYPE = new UnlistedInteger();

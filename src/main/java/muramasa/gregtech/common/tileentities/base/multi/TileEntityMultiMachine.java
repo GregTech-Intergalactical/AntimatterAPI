@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
 import muramasa.gregtech.api.capability.IComponent;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
@@ -216,7 +216,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == ITechCapabilities.COMPONENT) {
+        if (capability == GTCapabilities.COMPONENT) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -225,8 +225,8 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == ITechCapabilities.COMPONENT) {
-            return ITechCapabilities.COMPONENT.cast(componentHandler);
+        if (capability == GTCapabilities.COMPONENT) {
+            return GTCapabilities.COMPONENT.cast(componentHandler);
         }
         return super.getCapability(capability, facing);
     }

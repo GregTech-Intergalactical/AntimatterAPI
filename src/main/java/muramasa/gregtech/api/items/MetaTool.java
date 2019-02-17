@@ -2,7 +2,7 @@ package muramasa.gregtech.api.items;
 
 import com.google.common.collect.Multimap;
 import muramasa.gregtech.api.capability.IConfigHandler;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.ToolHelper;
@@ -92,15 +92,18 @@ public class MetaTool extends Item {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile != null && tile.hasCapability(ITechCapabilities.CONFIGURABLE, facing)) {
+        if (tile != null && tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
             EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
-            IConfigHandler configHandler = tile.getCapability(ITechCapabilities.CONFIGURABLE, targetSide);
+            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
                 if (ToolType.WRENCH.isItemEqual(stack)) {
                     configHandler.onWrench(targetSide);
                     return EnumActionResult.SUCCESS;
                 } else if (ToolType.CROWBAR.isItemEqual(stack)) {
                     configHandler.onCrowbar(targetSide);
+                    return EnumActionResult.SUCCESS;
+                } else if (ToolType.SCREWDRIVER.isItemEqual(stack)) {
+                    configHandler.onScrewdriver(targetSide);
                     return EnumActionResult.SUCCESS;
                 }
             }

@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-import static muramasa.gregtech.api.properties.ITechProperties.*;
+import static muramasa.gregtech.api.properties.GTProperties.*;
 
 public class BlockHatch extends BlockMachine {
 

@@ -18,7 +18,8 @@ import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
 
 public class Machines {
 
-    public static LinkedHashMap<String, Machine> TYPE_LOOKUP = new LinkedHashMap<>();
+    private static LinkedHashMap<String, Machine> TYPE_LOOKUP = new LinkedHashMap<>();
+    private static ArrayList<Machine> ID_LOOKUP = new ArrayList<>();
 
     public static Machine INVALID = new Machine("invalid");
 
@@ -71,8 +72,18 @@ public class Machines {
         FUSION_REACTOR.addPattern(StructurePattern.FUSION_REACTOR);
     }
 
+    public static void add(Machine machine) {
+        TYPE_LOOKUP.put(machine.getName(), machine);
+        ID_LOOKUP.add(machine.getInternalId(), machine);
+    }
+
     public static Machine get(String name) {
         Machine machine = TYPE_LOOKUP.get(name);
+        return machine != null ? machine : INVALID;
+    }
+
+    public static Machine get(int id) {
+        Machine machine = ID_LOOKUP.get(id);
         return machine != null ? machine : INVALID;
     }
 

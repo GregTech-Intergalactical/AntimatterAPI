@@ -65,16 +65,16 @@ public class ItemType implements IStringSerializable {
         //TODO avoid creating "dummy" instance due to requiring name string
         GregTechAPI.CoverBehaviourPlate = new CoverBehaviourPlate(-1);
         for (Material mat : GenerationFlag.PLATE.getMats()) {
-            GregTechAPI.registerCoverBehaviour(mat.getPlate(1), new CoverBehaviourPlate(mat.getRGB()));
+            GregTechAPI.registerCover(mat.getPlate(1), new CoverBehaviourPlate(mat.getRGB()));
         }
         GregTechAPI.CoverBehaviourItem = new CoverBehaviourItem();
         GregTechAPI.CoverBehaviourFluid = new CoverBehaviourFluid();
         GregTechAPI.CoverBehaviourEnergy = new CoverBehaviourEnergy();
 
 
-        GregTechAPI.registerCoverBehaviour(ItemPort.get(1), GregTechAPI.CoverBehaviourItem);
-        GregTechAPI.registerCoverBehaviour(FluidPort.get(1), GregTechAPI.CoverBehaviourFluid);
-        GregTechAPI.registerCoverBehaviour(EnergyPort.get(1), GregTechAPI.CoverBehaviourEnergy);
+        GregTechAPI.registerCover(ItemPort.get(1), GregTechAPI.CoverBehaviourItem);
+        GregTechAPI.registerCover(FluidPort.get(1), GregTechAPI.CoverBehaviourFluid);
+        GregTechAPI.registerCover(EnergyPort.get(1), GregTechAPI.CoverBehaviourEnergy);
     }
 
     private String name, displayName, tooltip;

@@ -1,7 +1,7 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.api.enums.StoneType;
-import muramasa.gregtech.api.properties.ITechProperties;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.overrides.ItemOverrideOre;
 import net.minecraft.block.state.IBlockState;
@@ -53,10 +53,10 @@ public class BakedModelOre extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        int setId = exState.getValue(ITechProperties.SET);
+        int setId = exState.getValue(GTProperties.SET);
         quadList.addAll(bakedModels[setId].getQuads(state, side, rand));
 
-        int stoneId = exState.getValue(ITechProperties.STONE);
+        int stoneId = exState.getValue(GTProperties.STONE);
         if (stoneId > 0) {
             retexture(quadList, 0, sprites[stoneId]);
         }

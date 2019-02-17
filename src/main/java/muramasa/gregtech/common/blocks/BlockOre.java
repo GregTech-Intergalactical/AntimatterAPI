@@ -2,7 +2,7 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.api.properties.ITechProperties;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
@@ -48,13 +48,13 @@ public class BlockOre extends Block {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(ITechProperties.SET, ITechProperties.STONE).build();
+        return new BlockStateContainer.Builder(this).add(GTProperties.SET, GTProperties.STONE).build();
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(ITechProperties.STONE, type.getInternalId()).withProperty(ITechProperties.SET, material.getSet().ordinal());
+        return exState.withProperty(GTProperties.STONE, type.getInternalId()).withProperty(GTProperties.SET, material.getSet().ordinal());
     }
 
     @Override

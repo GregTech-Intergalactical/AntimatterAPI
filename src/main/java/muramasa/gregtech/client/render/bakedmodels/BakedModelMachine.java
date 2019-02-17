@@ -2,7 +2,7 @@ package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.properties.ITechProperties;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.overrides.ItemOverrideMachine;
 import net.minecraft.block.state.IBlockState;
@@ -55,32 +55,36 @@ public class BakedModelMachine extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        int type = exState.getValue(ITechProperties.TYPE);
-        int tier = exState.getValue(ITechProperties.TIER);
-        int overlay = exState.getValue(ITechProperties.OVERLAY);
-        int facing = exState.getValue(ITechProperties.FACING);
+        int type = exState.getValue(GTProperties.TYPE);
+        int tier = exState.getValue(GTProperties.TIER);
+        int overlay = exState.getValue(GTProperties.OVERLAY);
+        int facing = exState.getValue(GTProperties.FACING);
 
         //TODO optimize base model by adding tintindex 0 to faces that are visible only
-        TextureAtlasSprite baseSprite = RenderHelper.getSprite(exState.getValue(ITechProperties.TEXTURE));
+        TextureAtlasSprite baseSprite = RenderHelper.getSprite(exState.getValue(GTProperties.TEXTURE));
         quadList.addAll(retexture(bakedBase.getQuads(state, side, rand), baseSprite));
 
         //Add overlay quads
-        List<BakedQuad> overlayQuads = retexture(bakedOverlays[type].getQuads(state, side, rand), 0, baseSprite);
-        //TODO fix this
+        List<BakedQuad> overlayQuads = /*retexture(*/bakedOverlays[type].getQuads(state, side, rand)/*, 0, baseSprite)*/;
+//        //TODO fix this
+//        if (overlay > 0) {
+//            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(1)));
+//        } else {
+//            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(0)));
+//        }
         if (overlay > 0) {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(1)));
-        } else {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(0)));
+            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay)));
         }
+//        if (type == Machines.ALLOY_SMELTER.getInternalId()) overlayQuads.clear();
         if (facing > 0) {
             overlayQuads = transform(overlayQuads, facingToAxisAngle[facing + 2]);
         }
         quadList.addAll(overlayQuads);
 
         //Add cover quads
-        if (hasUnlistedProperty(exState, ITechProperties.COVERS)) {
+        if (hasUnlistedProperty(exState, GTProperties.COVERS)) {
             List<BakedQuad> coverQuads = new LinkedList<>();
-            CoverBehaviour[] covers = exState.getValue(ITechProperties.COVERS);
+            CoverBehaviour[] covers = exState.getValue(GTProperties.COVERS);
             if (covers == null) return quadList;
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i].isEmpty()) continue;

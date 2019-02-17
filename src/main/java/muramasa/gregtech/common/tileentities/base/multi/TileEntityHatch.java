@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.HatchComponentHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
@@ -47,7 +47,7 @@ public class TileEntityHatch extends TileEntityMachine {
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
-        } else if (capability == ITechCapabilities.COMPONENT) {
+        } else if (capability == GTCapabilities.COMPONENT) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -58,8 +58,8 @@ public class TileEntityHatch extends TileEntityMachine {
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
-        } else if (capability == ITechCapabilities.COMPONENT) {
-            return ITechCapabilities.COMPONENT.cast(componentHandler);
+        } else if (capability == GTCapabilities.COMPONENT) {
+            return GTCapabilities.COMPONENT.cast(componentHandler);
         }
         return super.getCapability(capability, facing);
     }

@@ -26,6 +26,18 @@ public abstract class CoverBehaviour {
         return internalId;
     }
 
+    public void onWrench(TileEntityBase tile) {
+        //NOOP
+    }
+
+    public void onCrowbar(TileEntityBase tile) {
+        //NOOP
+    }
+
+    public void onScrewdriver(TileEntityBase tile) {
+        //NOOP
+    }
+
     public void onUpdate(TileEntityBase tile) {
         //NOOP
     }

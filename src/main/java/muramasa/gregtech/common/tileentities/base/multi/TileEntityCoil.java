@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.common.blocks.BlockCoil;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
@@ -20,7 +20,7 @@ public class TileEntityCoil extends TileEntityBase {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == ITechCapabilities.COMPONENT) {
+        if (capability == GTCapabilities.COMPONENT) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -29,8 +29,8 @@ public class TileEntityCoil extends TileEntityBase {
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == ITechCapabilities.COMPONENT) {
-            return ITechCapabilities.COMPONENT.cast(componentHandler);
+        if (capability == GTCapabilities.COMPONENT) {
+            return GTCapabilities.COMPONENT.cast(componentHandler);
         }
         return super.getCapability(capability, facing);
     }

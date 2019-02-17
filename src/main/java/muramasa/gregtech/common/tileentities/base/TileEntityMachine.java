@@ -27,7 +27,7 @@ public class TileEntityMachine extends TileEntityTickable {
         }
         typeFromNBT = type;
         tierFromNBT = tier;
-        typeId = getMachineType().getId();
+        typeId = getMachineType().getInternalId();
         tierId = Tier.get(tierFromNBT).getId();
         this.facing = facing;
     }
