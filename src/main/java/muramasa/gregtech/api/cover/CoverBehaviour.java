@@ -43,8 +43,8 @@ public abstract class CoverBehaviour {
         return this;
     }
 
-    public boolean isEqual(CoverBehaviour otherBehaviour) {
-        return internalId == otherBehaviour.internalId;
+    public boolean isEqual(CoverBehaviour otherCover) {
+        return internalId == otherCover.internalId;
     }
 
     public boolean isEmpty() {

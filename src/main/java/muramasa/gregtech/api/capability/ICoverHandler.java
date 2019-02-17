@@ -7,13 +7,13 @@ public interface ICoverHandler {
 
     void update();
 
-    boolean setCover(EnumFacing side, CoverBehaviour stack);
+    boolean setCover(EnumFacing side, CoverBehaviour cover);
 
     CoverBehaviour get(EnumFacing side);
 
-    CoverBehaviour[] getBehaviours();
+    CoverBehaviour[] getCovers();
 
     boolean hasCover(EnumFacing side, CoverBehaviour cover);
 
-    boolean isBehaviourValid(CoverBehaviour stack);
+    boolean isCoverValid(EnumFacing side, CoverBehaviour cover);
 }

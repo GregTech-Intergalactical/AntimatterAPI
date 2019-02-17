@@ -1,9 +1,6 @@
 package muramasa.gregtech.api.items;
 
-import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.capability.ICoverHandler;
-import muramasa.gregtech.api.capability.ITechCapabilities;
-import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.CoverHelper;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
 import muramasa.gregtech.api.materials.Material;
@@ -85,24 +82,11 @@ public class MaterialItem extends Item {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null) {
-            if (tile.hasCapability(ITechCapabilities.COVERABLE, null)) {
-                ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, facing);
-                if (coverHandler == null) return EnumActionResult.FAIL;
-                CoverBehaviour behaviour = GregTechAPI.getCoverBehaviour(stack);
-                if (behaviour == null) return EnumActionResult.FAIL;
-                EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
-                if (behaviour.needsNewInstance()) {
-                    behaviour = behaviour.getNewInstance(stack);
-                }
-                if (coverHandler.setCover(targetSide, behaviour)) {
-                    stack.shrink(1);
-                }
-                return EnumActionResult.SUCCESS;
-            }
+            return CoverHelper.placeCover(tile, stack, side, hitX, hitY, hitZ) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
         return EnumActionResult.FAIL;
     }
