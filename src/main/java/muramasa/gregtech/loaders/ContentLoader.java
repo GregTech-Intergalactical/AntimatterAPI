@@ -65,7 +65,9 @@ public class ContentLoader {
         }
         for (Material material : Materials.getAll()) {
             if (material.hasFlag(GenerationFlag.ORE)) {
-                event.getRegistry().register(new BlockOre(material));
+                for (StoneType type : StoneType.getAll()) {
+                    event.getRegistry().register(new BlockOre(type, material));
+                }
             }
             if (material.hasFlag(GenerationFlag.BLOCK)) {
                 event.getRegistry().register(new BlockStorage(material));
@@ -77,7 +79,7 @@ public class ContentLoader {
         for (CoilType type : CoilType.values()) {
             event.getRegistry().register(new BlockCoil(type));
         }
-        for (StoneType type : StoneType.values()) {
+        for (StoneType type : StoneType.getGenerating()) {
             event.getRegistry().register(new BlockStone(type));
         }
 

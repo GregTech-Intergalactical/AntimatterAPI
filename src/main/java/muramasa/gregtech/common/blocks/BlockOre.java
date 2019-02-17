@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.blocks;
 
-import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.client.render.StateMapperRedirect;
@@ -11,7 +11,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -34,41 +33,35 @@ public class BlockOre extends Block {
     private static LinkedHashMap<String, BlockOre> BLOCK_LOOKUP = new LinkedHashMap<>();
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
 
-    private String material;
+    private Material material;
+    private StoneType type;
 
-    public BlockOre(Material material) {
+    public BlockOre(StoneType type, Material material) {
         super(net.minecraft.block.material.Material.ROCK);
-        setUnlocalizedName("ore_" + material.getName());
-        setRegistryName("ore_" + material.getName());
+        setUnlocalizedName("ore_" + type.getName() + "_" + material.getName());
+        setRegistryName("ore_" + type.getName() + "_" + material.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
-        this.material = material.getName();
-        BLOCK_LOOKUP.put(material.getName(), this);
+        this.material = material;
+        this.type = type;
+        BLOCK_LOOKUP.put(type.getName() + "_" + material.getName(), this);
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(ITechProperties.MATERIAL).add(ITechProperties.STONE).build();
+        return new BlockStateContainer.Builder(this).add(ITechProperties.SET, ITechProperties.STONE).build();
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(ITechProperties.MATERIAL, material);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(ITechProperties.STONE);
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(ITechProperties.STONE, meta);
+        return exState.withProperty(ITechProperties.STONE, type.getInternalId()).withProperty(ITechProperties.SET, material.getSet().ordinal());
     }
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        items.add(new ItemStack(this));
+        if (type == StoneType.STONE) {
+            items.add(new ItemStack(this));
+        }
     }
 
     //TODO
@@ -83,15 +76,9 @@ public class BlockOre extends Block {
         return 1;
     }
 
-    //TODO used for testing only
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        world.setBlockState(pos, state.withProperty(ITechProperties.STONE, RANDOM.nextInt(6)));
-    }
-
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        drops.add(Materials.get(material).getChunk(1));
+        drops.add(material.getChunk(1));
     }
 
     @Override
@@ -106,7 +93,11 @@ public class BlockOre extends Block {
     }
 
     public Material getMaterial() {
-        return Materials.get(material);
+        return material;
+    }
+
+    public String getMapString() {
+        return type.getName() + material.getSet().getName();
     }
 
     public static BlockOre get(String material) {
