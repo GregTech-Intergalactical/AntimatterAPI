@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
-import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.properties.ITechProperties;
 import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.overrides.ItemOverrideOre;
@@ -26,6 +26,10 @@ public class BakedModelOre extends BakedModelBase {
         RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/stone_andesite")),
         RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/netherrack")),
         RenderHelper.getSprite(new ResourceLocation("minecraft", "blocks/end_stone")),
+        RenderHelper.getSprite(StoneType.GRANITE_RED.getLoc()),
+        RenderHelper.getSprite(StoneType.GRANITE_BLACK.getLoc()),
+        RenderHelper.getSprite(StoneType.MARBLE.getLoc()),
+        RenderHelper.getSprite(StoneType.BASALT.getLoc()),
     };
 
     private static IBakedModel[] bakedModels;
@@ -49,11 +53,10 @@ public class BakedModelOre extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState)) return quadList;
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        int setId = Materials.get(exState.getValue(ITechProperties.MATERIAL)).getSet().ordinal();
+        int setId = exState.getValue(ITechProperties.SET);
         quadList.addAll(bakedModels[setId].getQuads(state, side, rand));
 
-        //TODO use normal state json for ore
-        int stoneId = state.getValue(ITechProperties.STONE);
+        int stoneId = exState.getValue(ITechProperties.STONE);
         if (stoneId > 0) {
             retexture(quadList, 0, sprites[stoneId]);
         }
