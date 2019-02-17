@@ -2,14 +2,14 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.capability.ICoverHandler;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.cover.behaviour.CoverBehaviourTintable;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
-import muramasa.gregtech.api.properties.ITechProperties;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
@@ -41,7 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gregtech.api.properties.ITechProperties.*;
+import static muramasa.gregtech.api.properties.GTProperties.*;
 
 public class BlockMachine extends Block {
 
@@ -76,7 +76,7 @@ public class BlockMachine extends Block {
                 .withProperty(OVERLAY, machine.getMachineState().getOverlayId())
                 .withProperty(TINT, machine.getTint())
                 .withProperty(TEXTURE, machine.getTexture());
-            ICoverHandler coverHandler = tile.getCapability(ITechCapabilities.COVERABLE, null);
+            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
                     .withProperty(COVERS, new CoverBehaviour[] {
@@ -178,13 +178,13 @@ public class BlockMachine extends Block {
         public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
             if (tintIndex == 0) {
                 IExtendedBlockState exState = (IExtendedBlockState) state;
-                if (BakedModelBase.hasUnlistedProperty(exState, ITechProperties.TINT)) {
-                    return exState.getValue(ITechProperties.TINT) != null ? exState.getValue(ITechProperties.TINT) : -1;
+                if (BakedModelBase.hasUnlistedProperty(exState, GTProperties.TINT)) {
+                    return exState.getValue(GTProperties.TINT) != null ? exState.getValue(GTProperties.TINT) : -1;
                 }
             } else if (tintIndex == CoverBehaviourTintable.coverTintIndex) {
                 IExtendedBlockState exState = (IExtendedBlockState) state;
-                if (BakedModelBase.hasUnlistedProperty(exState, ITechProperties.COVERS)) {
-                    for (CoverBehaviour cover : exState.getValue(ITechProperties.COVERS)) {
+                if (BakedModelBase.hasUnlistedProperty(exState, GTProperties.COVERS)) {
+                    for (CoverBehaviour cover : exState.getValue(GTProperties.COVERS)) {
                         if (cover instanceof CoverBehaviourTintable) {
                             return ((CoverBehaviourTintable) cover).getRGB();
                         }

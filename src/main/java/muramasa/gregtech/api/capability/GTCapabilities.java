@@ -13,7 +13,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import javax.annotation.Nullable;
 
-public class ITechCapabilities {
+public class GTCapabilities {
 
     @CapabilityInject(IEnergyStorage.class)
     public static Capability<IEnergyStorage> ENERGY;

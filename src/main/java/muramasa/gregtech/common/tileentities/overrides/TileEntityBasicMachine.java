@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.tileentities.overrides;
 
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
@@ -253,11 +253,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         Machine machine = getMachineType();
         if (machine.hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourItem);
-        } else if (machine.hasFlag(ENERGY) && capability == ITechCapabilities.ENERGY) {
+        } else if (machine.hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
             return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourEnergy);
-        } else if (machine.hasFlag(COVERABLE) && capability == ITechCapabilities.COVERABLE) {
+        } else if (machine.hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
             return facing == null || (!coverHandler.get(facing).isEmpty());
-        } else if (machine.hasFlag(CONFIGURABLE) && capability == ITechCapabilities.CONFIGURABLE) {
+        } else if (machine.hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -268,12 +268,12 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
-        } else if (capability == ITechCapabilities.ENERGY) {
-            return ITechCapabilities.ENERGY.cast(energyStorage);
-        } else if (capability == ITechCapabilities.COVERABLE) {
-            return ITechCapabilities.COVERABLE.cast(coverHandler);
-        } else if (capability == ITechCapabilities.CONFIGURABLE) {
-            return ITechCapabilities.CONFIGURABLE.cast(configHandler);
+        } else if (capability == GTCapabilities.ENERGY) {
+            return GTCapabilities.ENERGY.cast(energyStorage);
+        } else if (capability == GTCapabilities.COVERABLE) {
+            return GTCapabilities.COVERABLE.cast(coverHandler);
+        } else if (capability == GTCapabilities.CONFIGURABLE) {
+            return GTCapabilities.CONFIGURABLE.cast(configHandler);
         }
         return super.getCapability(capability, facing);
     }

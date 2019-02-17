@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.structure;
 
 import muramasa.gregtech.api.capability.IComponent;
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.CasingType;
 import muramasa.gregtech.api.enums.CoilType;
@@ -70,8 +70,8 @@ public class StructureElement {
 
     public boolean evaluate(TileEntityMultiMachine machine, int3 pos, StructureResult result) {
         TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBlockPos());
-        if (tile != null && tile.hasCapability(ITechCapabilities.COMPONENT, null)) {
-            IComponent component = tile.getCapability(ITechCapabilities.COMPONENT, null);
+        if (tile != null && tile.hasCapability(GTCapabilities.COMPONENT, null)) {
+            IComponent component = tile.getCapability(GTCapabilities.COMPONENT, null);
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
                     result.addComponent(component);

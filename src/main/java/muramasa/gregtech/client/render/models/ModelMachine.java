@@ -40,7 +40,7 @@ public class ModelMachine extends ModelBase {
         for (Machine type : MachineFlag.HATCH.getTypes()) {
             addTexture(type.getOverlayTexture(0));
         }
-        for (CoverBehaviour cover : GregTechAPI.getRegisteredBehaviours()) {
+        for (CoverBehaviour cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             addTexture(cover.getTextureLoc());
         }
@@ -62,7 +62,8 @@ public class ModelMachine extends ModelBase {
         machines.add(Machines.INVALID);
         for (Machine type : machines) {
             model = load(type.getOverlayModel());
-            bakedOverlays[type.getId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
+//            bakedOverlays[type.getInternalId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
+            bakedOverlays[type.getInternalId()] = model.bake(state, format, getter);
         }
 
         HashMap<String, IBakedModel> bakedItems = new HashMap<>();
@@ -76,7 +77,7 @@ public class ModelMachine extends ModelBase {
         }
 
         IBakedModel[] bakedCovers = new IBakedModel[CoverBehaviour.getLastInternalId()];
-        for (CoverBehaviour cover : GregTechAPI.getRegisteredBehaviours()) {
+        for (CoverBehaviour cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             model = load(cover.getModelLoc());
             bakedCovers[cover.getInternalId()] = model.bake(state, format, getter);

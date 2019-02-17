@@ -63,10 +63,10 @@ public class Machine implements IStringSerializable {
         this.block = block;
         this.tileClass = tileClass;
         setTiers(Tier.LV);
-        Machines.TYPE_LOOKUP.put(name, this);
+        Machines.add(this);
     }
 
-    public int getId() {
+    public int getInternalId() {
         return internalId;
     }
 
@@ -102,13 +102,10 @@ public class Machine implements IStringSerializable {
     }
 
     public ResourceLocation getOverlayTexture(int type) {
-        if (type == 0) {
-            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name);
-        } else if (type == 1) {
+        if (type == 1) {
             return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/active/" + name);
-        } else {
-            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name);
         }
+        return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name);
     }
 
     public ModelResourceLocation getOverlayModel() {

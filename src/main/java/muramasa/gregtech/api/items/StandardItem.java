@@ -83,7 +83,7 @@ public class StandardItem extends Item {
                         ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                     } else if (tile instanceof TileEntityHatch) {
 //                            System.out.println(((TileEntityHatch) tile).getTexture());
-//                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getId());
+//                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());
 //                            ((TileEntityHatch) tile).markForRenderUpdate();
                     } else {
 //                        System.out.println("Setting Tint");

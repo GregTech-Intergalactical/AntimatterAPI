@@ -1,6 +1,6 @@
 package muramasa.gregtech;
 
-import muramasa.gregtech.api.capability.ITechCapabilities;
+import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.GenerationFlag;
@@ -42,7 +42,7 @@ public class GregTech {
         proxy.preInit(e);
 
         new EventHandler().init();
-        ITechCapabilities.register();
+        GTCapabilities.register();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
 

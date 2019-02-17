@@ -9,6 +9,16 @@ import java.util.HashMap;
 
 public class GregTechAPI {
 
+    /** Block Registry Section **/
+
+    public static void addCasingBlock() {
+
+    }
+
+    public static void addCoilBlock() {
+
+    }
+
     /** Cover Registry Section **/
 
     private static HashMap<String, CoverBehaviour> COVER_REGISTRY = new HashMap<>();
