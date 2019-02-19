@@ -64,7 +64,7 @@ public class GregTech {
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
         //TODO new MaterialRecipeLoader().run();
-        for (Material material : GenerationFlag.CRUSHED.getMats()) {
+        for (Material material : GenerationFlag.ORE.getMats()) {
             RecipeAdder.addPulverizerRecipe(material.getChunk(1), material.getCrushed(2), 40, 1);
             RecipeAdder.addThermalCentrifugeRecipe(material.getCrushed(1), material.getCrushedC(1), material.getDust(1), material.getDustT(4), 40, 1);
         }

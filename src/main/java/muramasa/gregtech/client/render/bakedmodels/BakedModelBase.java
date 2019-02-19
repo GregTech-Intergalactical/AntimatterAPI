@@ -42,23 +42,24 @@ public class BakedModelBase implements IBakedModel {
     }
 
     //From Mekanism TODO test
-    public static BakedQuad rotate(BakedQuad quad, int amount)
-    {
-        int[] vertices = new int[quad.getVertexData().length];
-        System.arraycopy(quad.getVertexData(), 0, vertices, 0, vertices.length);
-
-        for(int i = 0; i < 4; i++)
-        {
-            int nextIndex = (i+amount)%4;
-            int quadSize = quad.getFormat().getIntegerSize();
-            int uvIndex = quad.getFormat().getUvOffsetById(0) / 4;
-            if (i + uvIndex + 1 < vertices.length) {
-                vertices[quadSize * i + uvIndex] = quad.getVertexData()[quadSize * nextIndex + uvIndex];
-                vertices[quadSize * i + uvIndex + 1] = quad.getVertexData()[quadSize * nextIndex + uvIndex + 1];
+    public static List<BakedQuad> rotate(List<BakedQuad> quads, int amount) {
+        BakedQuad quad;
+        for (int q = 0; q < quads.size(); q++) {
+            quad = quads.get(q);
+            int[] vertices = new int[quad.getVertexData().length];
+            System.arraycopy(quad.getVertexData(), 0, vertices, 0, vertices.length);
+            for(int i = 0; i < 4; i++) {
+                int nextIndex = (i+amount)%4;
+                int quadSize = quad.getFormat().getIntegerSize();
+                int uvIndex = quad.getFormat().getUvOffsetById(0) / 4;
+                if (i + uvIndex + 1 < vertices.length) {
+                    vertices[quadSize * i + uvIndex] = quad.getVertexData()[quadSize * nextIndex + uvIndex];
+                    vertices[quadSize * i + uvIndex + 1] = quad.getVertexData()[quadSize * nextIndex + uvIndex + 1];
+                }
             }
+            quads.set(q, new BakedQuad(vertices, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
         }
-
-        return new BakedQuad(vertices, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
+        return quads;
     }
 
     //From AE2
@@ -145,9 +146,39 @@ public class BakedModelBase implements IBakedModel {
         return ModelBase.missingBaked.getParticleTexture();
     }
 
+    public List<BakedQuad> copy(List<BakedQuad> quads) {
+        List<BakedQuad> newQuads = new LinkedList<>();
+        for (BakedQuad quad : quads) {
+            newQuads.add(new BakedQuad(quad.getVertexData(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
+        }
+        return newQuads;
+    }
+
+    public List<BakedQuad> filter(List<BakedQuad> quads, int tintIndex) {
+        List<BakedQuad> newQuads = new LinkedList<>();
+        for (BakedQuad quad : quads) {
+            if (quad.getTintIndex() == tintIndex) {
+                newQuads.add(new BakedQuad(quad.getVertexData(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
+            }
+        }
+        return newQuads;
+    }
+
     public List<BakedQuad> retexture(List<BakedQuad> quads, TextureAtlasSprite sprite) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
+            quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
+        }
+        return quads;
+    }
+
+    public List<BakedQuad> retexAndFilter(List<BakedQuad> quads, int tintIndex, TextureAtlasSprite sprite) {
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
+            if (quads.get(i).getTintIndex() != tintIndex) {
+                quads.remove(i);
+                continue;
+            }
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
