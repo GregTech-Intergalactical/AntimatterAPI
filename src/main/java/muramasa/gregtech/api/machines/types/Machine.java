@@ -101,15 +101,19 @@ public class Machine implements IStringSerializable {
         return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + tier);
     }
 
-    public ResourceLocation getOverlayTexture(int type) {
-        if (type == 1) {
-            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/active/" + name);
+    public ResourceLocation getOverlayTexture(int state, String type) {
+        if (state == 0) {
+            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name + "/" + type);
+        } else if (state == 1) {
+            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name + "/active/" + type);
+        } else {
+            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name + "/" + type);
         }
-        return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name);
     }
 
-    public ModelResourceLocation getOverlayModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name);
+    public ModelResourceLocation getOverlayModel(String type) {
+//        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name);
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name + "/" + type);
     }
 
     public void addFlags(MachineFlag... flags) {

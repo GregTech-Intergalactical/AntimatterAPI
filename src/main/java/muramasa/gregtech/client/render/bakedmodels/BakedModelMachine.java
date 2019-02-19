@@ -34,13 +34,14 @@ public class BakedModelMachine extends BakedModelBase {
     };
 
     private IBakedModel bakedBase;
-    private IBakedModel[] bakedOverlays, bakedCovers;
+    private IBakedModel[][] bakedOverlays;
+    private IBakedModel[] bakedCovers;
 
     public BakedModelMachine() {
 
     }
 
-    public BakedModelMachine(IBakedModel base, IBakedModel[] overlays, IBakedModel[] covers, HashMap<String, IBakedModel> bakedItems) {
+    public BakedModelMachine(IBakedModel base, IBakedModel[][] overlays, IBakedModel[] covers, HashMap<String, IBakedModel> bakedItems) {
         bakedBase = base;
         bakedOverlays = overlays;
         bakedCovers = covers;
@@ -65,35 +66,72 @@ public class BakedModelMachine extends BakedModelBase {
         quadList.addAll(retexture(bakedBase.getQuads(state, side, rand), baseSprite));
 
         //Add overlay quads
-        List<BakedQuad> overlayQuads = /*retexture(*/bakedOverlays[type].getQuads(state, side, rand)/*, 0, baseSprite)*/;
-//        //TODO fix this
+        //F:0, B:1, T:2, B:3, S:4
+
+        List<BakedQuad> overlayQuads = new LinkedList<>();
 //        if (overlay > 0) {
-//            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(1)));
+            overlayQuads.addAll(retexture(bakedOverlays[type][0].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "top"))));
+            overlayQuads.addAll(retexture(bakedOverlays[type][1].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "bottom"))));
+            overlayQuads.addAll(retexture(bakedOverlays[type][2].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "front"))));
+            overlayQuads.addAll(retexture(bakedOverlays[type][3].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "back"))));
+            overlayQuads.addAll(retexture(bakedOverlays[type][4].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "side"))));
 //        } else {
-//            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.ALLOY_SMELTER.getOverlayTexture(0)));
+//            overlayQuads.addAll(bakedOverlays[type][0].getQuads(state, side, rand));
+//            overlayQuads.addAll(bakedOverlays[type][1].getQuads(state, side, rand));
+//            overlayQuads.addAll(bakedOverlays[type][2].getQuads(state, side, rand));
+//            overlayQuads.addAll(bakedOverlays[type][3].getQuads(state, side, rand));
+//            overlayQuads.addAll(bakedOverlays[type][4].getQuads(state, side, rand));
 //        }
-        if (overlay > 0) {
-            overlayQuads = retexture(overlayQuads, 1, RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay)));
-        }
-//        if (type == Machines.ALLOY_SMELTER.getInternalId()) overlayQuads.clear();
         if (facing > 0) {
             overlayQuads = transform(overlayQuads, facingToAxisAngle[facing + 2]);
         }
+
         quadList.addAll(overlayQuads);
 
-        //Add cover quads
+
+//        if (hasUnlistedProperty(exState, GTProperties.COVERS)) {
+//            CoverBehaviour[] covers = exState.getValue(GTProperties.COVERS);
+//            for (int i = 0; i < covers.length; i++) {
+//                if (covers[i].isEmpty()) {
+//                    quadList.addAll(filter(overlayQuads, i));
+//                } else {
+//                    quadList.addAll(covers[i].onRender(transform(bakedCovers[covers[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i])));
+//                    if (covers[i].retextureToMachineTier()) {
+//                        //TODO
+//                    }
+//                }
+//            }
+//        } else {
+//            List<BakedQuad> overlayQuads = new LinkedList<>();
+//            if (overlay > 0) {
+//                overlayQuads.addAll(retexture(bakedOverlays[type][0].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "top"))));
+//                overlayQuads.addAll(retexture(bakedOverlays[type][1].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "bottom"))));
+//                overlayQuads.addAll(retexture(bakedOverlays[type][2].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "front"))));
+//                overlayQuads.addAll(retexture(bakedOverlays[type][3].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "back"))));
+//                overlayQuads.addAll(retexture(bakedOverlays[type][4].getQuads(state, side, rand), RenderHelper.getSprite(Machines.get(type).getOverlayTexture(overlay, "side"))));
+//            } else {
+//                overlayQuads.addAll(bakedOverlays[type][0].getQuads(state, side, rand));
+//                overlayQuads.addAll(bakedOverlays[type][1].getQuads(state, side, rand));
+//                overlayQuads.addAll(bakedOverlays[type][2].getQuads(state, side, rand));
+//                overlayQuads.addAll(bakedOverlays[type][3].getQuads(state, side, rand));
+//                overlayQuads.addAll(bakedOverlays[type][4].getQuads(state, side, rand));
+//            }
+//            if (facing > 0) {
+//                overlayQuads = transform(overlayQuads, facingToAxisAngle[facing + 2]);
+//            }
+//            quadList.addAll(overlayQuads);
+//        }
+
+//        //Add cover quads
         if (hasUnlistedProperty(exState, GTProperties.COVERS)) {
-            List<BakedQuad> coverQuads = new LinkedList<>();
             CoverBehaviour[] covers = exState.getValue(GTProperties.COVERS);
             if (covers == null) return quadList;
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i].isEmpty()) continue;
-                coverQuads.clear();
-                coverQuads.addAll(covers[i].onRender(transform(bakedCovers[covers[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i])));
+                quadList.addAll(covers[i].onRender(transform(bakedCovers[covers[i].getInternalId()].getQuads(exState, side, rand), facingToAxisAngle[i])));
                 if (covers[i].retextureToMachineTier()) {
                     //TODO
                 }
-                quadList.addAll(coverQuads);
             }
         }
 

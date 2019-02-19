@@ -28,17 +28,44 @@ public class ModelMachine extends ModelBase {
         super("ModelMachine");
         addTextures(Tier.getTextures(Tier.getBasic()));
         for (Machine type : MachineFlag.BASIC.getTypes()) {
-            addTexture(type.getOverlayTexture(0));
-            if (type.getName().equals("alloy_smelter")) {
-                addTexture(type.getOverlayTexture(1));
-            }
+            addTexture(type.getOverlayTexture(0, "front"));
+            addTexture(type.getOverlayTexture(0, "back"));
+            addTexture(type.getOverlayTexture(0, "top"));
+            addTexture(type.getOverlayTexture(0, "bottom"));
+            addTexture(type.getOverlayTexture(0, "side"));
+
+            addTexture(type.getOverlayTexture(1, "front"));
+            addTexture(type.getOverlayTexture(1, "back"));
+            addTexture(type.getOverlayTexture(1, "top"));
+            addTexture(type.getOverlayTexture(1, "bottom"));
+            addTexture(type.getOverlayTexture(1, "side"));
         }
         for (Machine type : MachineFlag.MULTI.getTypes()) {
-            addTexture(new ResourceLocation(Ref.MODID + ":blocks/machine/base/" + type.getName()));
-            addTexture(type.getOverlayTexture(0));
+            addTexture(type.getBaseTexture("multi"));
+            addTexture(type.getOverlayTexture(0, "front"));
+            addTexture(type.getOverlayTexture(0, "back"));
+            addTexture(type.getOverlayTexture(0, "top"));
+            addTexture(type.getOverlayTexture(0, "bottom"));
+            addTexture(type.getOverlayTexture(0, "side"));
+
+            addTexture(type.getOverlayTexture(1, "front"));
+            addTexture(type.getOverlayTexture(1, "back"));
+            addTexture(type.getOverlayTexture(1, "top"));
+            addTexture(type.getOverlayTexture(1, "bottom"));
+            addTexture(type.getOverlayTexture(1, "side"));
         }
         for (Machine type : MachineFlag.HATCH.getTypes()) {
-            addTexture(type.getOverlayTexture(0));
+            addTexture(type.getOverlayTexture(0, "front"));
+            addTexture(type.getOverlayTexture(0, "back"));
+            addTexture(type.getOverlayTexture(0, "top"));
+            addTexture(type.getOverlayTexture(0, "bottom"));
+            addTexture(type.getOverlayTexture(0, "side"));
+
+            addTexture(type.getOverlayTexture(1, "front"));
+            addTexture(type.getOverlayTexture(1, "back"));
+            addTexture(type.getOverlayTexture(1, "top"));
+            addTexture(type.getOverlayTexture(1, "bottom"));
+            addTexture(type.getOverlayTexture(1, "side"));
         }
         for (CoverBehaviour cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
@@ -48,31 +75,37 @@ public class ModelMachine extends ModelBase {
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        System.out.println("GT MODEL MACHINE");
         IModel machineBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base"));
-        IModel itemBase = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base_item"));
+        IModel machineBaseBasic = load(new ModelResourceLocation(Ref.MODID + ":machine_part/machine_base_basic"));
         IModel model;
-        ResourceLocation texLoc;
 
-        IBakedModel bakedBase = texAndBake(machineBase, "base", Tier.LV.getBaseTexture());
-
-        IBakedModel[] bakedOverlays = new IBakedModel[Machine.getLastInternalId()];
+        IBakedModel bakedBase = machineBase.bake(state, format, getter);
+        IBakedModel[][] bakedOverlays = new IBakedModel[Machine.getLastInternalId()][5];
 
         Collection<Machine> machines = Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
         machines.add(Machines.INVALID);
         for (Machine type : machines) {
-            model = load(type.getOverlayModel());
-//            bakedOverlays[type.getInternalId()] = texAndBake(model, "0", Tier.LV.getBaseTexture());
-            bakedOverlays[type.getInternalId()] = model.bake(state, format, getter);
+//            bakedOverlays[type.getInternalId()] = load(type.getOverlayModel()).bake(state, format, getter);
+            bakedOverlays[type.getInternalId()][0] = load(type.getOverlayModel("top")).bake(state, format, getter);
+            bakedOverlays[type.getInternalId()][1] = load(type.getOverlayModel("bottom")).bake(state, format, getter);
+            bakedOverlays[type.getInternalId()][2] = load(type.getOverlayModel("front")).bake(state, format, getter);
+            bakedOverlays[type.getInternalId()][3] = load(type.getOverlayModel("back")).bake(state, format, getter);
+            bakedOverlays[type.getInternalId()][4] = load(type.getOverlayModel("side")).bake(state, format, getter);
         }
 
         HashMap<String, IBakedModel> bakedItems = new HashMap<>();
         Collection<MachineStack> machineStacks = Machines.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
         machineStacks.add(Machines.get(Machines.INVALID, Tier.LV));
         for (MachineStack stack : machineStacks) {
-            texLoc = stack.getMachineType().getBaseTexture(stack.getTier());
             bakedItems.put(stack.getType() + stack.getTier(), new BakedModelBase(
-                texAndBake(itemBase, new String[]{"base", "overlay"}, new ResourceLocation[]{texLoc, stack.getMachineType().getOverlayTexture(0)})
+                texAndBake(machineBaseBasic, new String[]{"base", "front", "back", "top", "bottom", "side"}, new ResourceLocation[]{
+                    stack.getMachineType().getBaseTexture(stack.getTier()),
+                    stack.getMachineType().getOverlayTexture(1, "front"),
+                    stack.getMachineType().getOverlayTexture(1, "back"),
+                    stack.getMachineType().getOverlayTexture(1, "top"),
+                    stack.getMachineType().getOverlayTexture(1, "bottom"),
+                    stack.getMachineType().getOverlayTexture(1, "side")
+                })
             ));
         }
 

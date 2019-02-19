@@ -100,7 +100,7 @@ public class BlockMachine extends Block {
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
         Machine type = getType();
-        if (type.getName().equals(Machines.INVALID.getName())) return;
+//        if (type.getName().equals(Machines.INVALID.getName())) return;
         for (Tier tier : type.getTiers()) {
             items.add(Machines.get(type, tier).asItemStack());
         }
