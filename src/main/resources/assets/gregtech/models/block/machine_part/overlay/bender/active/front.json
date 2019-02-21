@@ -1,6 +1,6 @@
 {
 	"textures": {
-		"1": "gregtech:blocks/machine/overlay/bender/front"
+		"1": "gregtech:blocks/machine/overlay/bender/active/front"
 	},
 	"elements": [
 		{
