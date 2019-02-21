@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "gregtech:machine_part/overlay/alloy_smelter/front"
+      "model": "gregtech:machine_part/overlay/plasma_arc_furnace/front"
     }
   }
 }
