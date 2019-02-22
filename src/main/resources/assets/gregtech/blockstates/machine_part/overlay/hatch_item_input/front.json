@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine_part/overlay/hatch_item_input/front"
+    }
+  }
+}

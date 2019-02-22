@@ -136,8 +136,9 @@ public class Machine implements IStringSerializable {
         this.tileClass = tileClass;
     }
 
-    public void setTiers(Tier... tiers) {
+    public Machine setTiers(Tier... tiers) {
         this.tiers = new ArrayList<>(Arrays.asList(tiers));
+        return this;
     }
 
     public void addGUI(Object instance, int id) {
