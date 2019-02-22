@@ -207,7 +207,7 @@ public class Materials {
     public static Material Graphene = new Material("Graphene", 0x808080, DULL).asDust();
     public static Material Oilsands = new Material("Oilsands", 0x0a0a0a, NONE).asDust(ORE);
     //    public static Materials Paper = new Materials(879, "Paper", 0xfafafa, PAPER).asDust(); //TODO needed?
-    public static Material RareEarth = new Material("Rare Earth", 0x808064, NONE).asDust();
+    public static Material RareEarth = new Material("Rare Earth", 0x808064, FINE).asDust();
     public static Material Endstone = new Material("Endstone", 0xffffff, DULL).asDust();
     public static Material Netherrack = new Material("Netherrack", 0xc80000, DULL).asDust();
     public static Material Almandine = new Material("Almandine", 0xff0000, ROUGH).asDust(ORE).add(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12);
@@ -239,10 +239,10 @@ public class Materials {
     public static Material Pyrite = new Material("Pyrite", 0x967828, ROUGH).asDust(ORE).add(Iron, 1, Sulfur, 2);
     public static Material Pyrolusite = new Material("Pyrolusite", 0x9696aa, DULL).asDust(ORE).add(Manganese, 1, Oxygen, 2);
     public static Material Pyrope = new Material("Pyrope", 0x783264, METALLIC).asDust(ORE).add(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12);
-    public static Material RockSalt = new Material("Rock Salt", 0xf0c8c8, NONE).asDust(ORE).add(Potassium, 1, Chlorine, 1);
+    public static Material RockSalt = new Material("Rock Salt", 0xf0c8c8, FINE).asDust(ORE).add(Potassium, 1, Chlorine, 1);
     public static Material RawRubber = new Material("Raw Rubber", 0xccc789, DULL).asDust().add(Carbon, 5, Hydrogen, 8);
-    public static Material Salt = new Material("Salt", 0xfafafa, NONE).asDust(ORE).add(Sodium, 1, Chlorine, 1);
-    public static Material Saltpeter = new Material("Saltpeter", 0xe6e6e6, NONE).asDust().add(Potassium, 1, Nitrogen, 1, Oxygen, 3);
+    public static Material Salt = new Material("Salt", 0xfafafa, FINE).asDust(ORE).add(Sodium, 1, Chlorine, 1);
+    public static Material Saltpeter = new Material("Saltpeter", 0xe6e6e6, FINE).asDust().add(Potassium, 1, Nitrogen, 1, Oxygen, 3);
     public static Material Scheelite = new Material("Scheelite", 0xc88c14, DULL).asDust(2500, ORE).add(Tungsten, 1, Calcium, 2, Oxygen, 4);
     public static Material SiliconDioxide = new Material("Silicon Dioxide", 0xc8c8c8, QUARTZ).asDust().add(Silicon, 1, Oxygen, 2);
     public static Material Pyrochlore = new Material("Pyrochlore", 0x2b1100, METALLIC).asDust(ORE).add(Calcium, 2, Niobium, 2, Oxygen, 7);
@@ -277,16 +277,16 @@ public class Materials {
     public static Material Blaze = new Material("Blaze", 0xffc800, NONE).asDust().add(DarkAsh, 1, Sulfur, 1/*, Magic, 1*/);
     public static Material Flint = new Material("Flint", 0x002040, FLINT).asDust().addTools(2.5F, 64, 1).add(SiliconDioxide, 1);
     public static Material Marble = new Material("Marble", 0xc8c8c8, NONE).asDust().add(Magnesium, 1, Calcite, 7);
-    public static Material PotassiumFeldspar = new Material("Potassium Feldspar", 0x782828, NONE).asDust().add(Potassium, 1, Aluminium, 1, Silicon, 3, Oxygen, 8);
+    public static Material PotassiumFeldspar = new Material("Potassium Feldspar", 0x782828, FINE).asDust().add(Potassium, 1, Aluminium, 1, Silicon, 3, Oxygen, 8);
     public static Material Biotite = new Material("Biotite", 0x141e14, METALLIC).asDust().add(Potassium, 1, Magnesium, 3, Aluminium, 3, Fluorine, 2, Silicon, 3, Oxygen, 10);
     public static Material GraniteBlack = new Material("Black Granite", 0x0a0a0a, ROUGH).asDust().addTools(4.0F, 64, 3).add(SiliconDioxide, 4, Biotite, 1);
     public static Material GraniteRed = new Material("Red Granite", 0xff0080, ROUGH).asDust().addTools(4.0F, 64, 3).add(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3);
     public static Material VanadiumMagnetite = new Material("Vanadium Magnetite", 0x23233c, METALLIC).asDust(ORE).add(Magnetite, 1, Vanadium, 1);
-    public static Material Bastnasite = new Material("Bastnasite", 0xc86e2d, NONE).asDust(ORE).add(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3);
+    public static Material Bastnasite = new Material("Bastnasite", 0xc86e2d, FINE).asDust(ORE).add(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3);
     public static Material Pentlandite = new Material("Pentlandite", 0xa59605, DULL).asDust(ORE).add(Nickel, 9, Sulfur, 8);
     public static Material Spodumene = new Material("Spodumene", 0xbeaaaa, DULL).asDust(ORE).add(Lithium, 1, Aluminium, 1, Silicon, 2, Oxygen, 6);
     public static Material Tantalite = new Material("Tantalite", 0x915028, METALLIC).asDust(ORE).add(Manganese, 1, Tantalum, 2, Oxygen, 6);
-    public static Material Lepidolite = new Material("Lepidolite", 0xf0328c, NONE).asDust(ORE).add(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10);
+    public static Material Lepidolite = new Material("Lepidolite", 0xf0328c, FINE).asDust(ORE).add(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10);
     public static Material Glauconite = new Material("Glauconite", 0x82b43c, DULL).asDust(ORE).add(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12);
     public static Material Bentonite = new Material("Bentonite", 0xf5d7d2, ROUGH).asDust(ORE).add(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 6, Water, 5, Oxygen, 36);
     public static Material Pitchblende = new Material("Pitchblende", 0xc8d200, DULL).asDust(ORE).add(Uraninite, 3, Thorium, 1, Lead, 1);
@@ -308,7 +308,7 @@ public class Materials {
 
     //Brittle Gems
     public static Material BlueTopaz = new Material("Blue Topaz", 0x0000ff, GEM_H).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
-    public static Material Charcoal = new Material("Charcoal", 0x644646, NONE).asGemBasic(false, BLOCK).add(Carbon, 1);
+    public static Material Charcoal = new Material("Charcoal", 0x644646, FINE).asGemBasic(false, BLOCK).add(Carbon, 1);
     public static Material Coal = new Material("Coal", 0x464646, ROUGH).asGemBasic(false, BLOCK, ORE).add(Carbon, 1);
     public static Material Lignite = new Material("Lignite Coal", 0x644646, ROUGH).asGemBasic(false, BLOCK, ORE).add(Carbon, 3, Water, 1);
 

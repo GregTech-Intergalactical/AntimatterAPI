@@ -20,6 +20,7 @@ public enum MaterialSet implements IStringSerializable {
     GEM_H,
     GEM_V,
     QUARTZ,
+    FINE,
     FLINT;
 
     public ResourceLocation getBlockLoc(Prefix prefix) {

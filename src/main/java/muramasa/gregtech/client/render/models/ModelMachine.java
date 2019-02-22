@@ -26,7 +26,8 @@ public class ModelMachine extends ModelBase {
 
     public ModelMachine() {
         super("ModelMachine");
-        addTextures(Tier.getTextures(Tier.getBasic()));
+        addTextures(Tier.getTextures(Tier.getAllElectric()));
+        addTextures(Tier.getTextures(Tier.getSteam()));
         for (Machine type : MachineFlag.BASIC.getTypes()) {
             addTexture(type.getOverlayTexture(0, "front"));
             addTexture(type.getOverlayTexture(0, "back"));

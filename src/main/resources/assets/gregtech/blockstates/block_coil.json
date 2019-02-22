@@ -11,11 +11,26 @@
       "kanthal": {
         "textures": {"all": "gregtech:blocks/coil/kanthal"}
       },
-      "nichrome": {
+	  "nichrome": {
         "textures": {"all": "gregtech:blocks/coil/nichrome"}
+      },
+	  "tungstensteel": {
+        "textures": {"all": "gregtech:blocks/coil/tungstensteel"}
+      },
+	  "hssg": {
+        "textures": {"all": "gregtech:blocks/coil/hssg"}
+      },
+	  "naquadah": {
+        "textures": {"all": "gregtech:blocks/coil/naquadah"}
+      },
+	  "naquadah_alloy": {
+        "textures": {"all": "gregtech:blocks/coil/naquadah_alloy"}
       },
       "fusion": {
         "textures": {"all": "gregtech:blocks/coil/fusion"}
+      },
+	  "superconductor": {
+        "textures": {"all": "gregtech:blocks/coil/superconductor"}
       }
     }
   }

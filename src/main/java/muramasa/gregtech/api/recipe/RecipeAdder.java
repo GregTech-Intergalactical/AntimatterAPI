@@ -188,6 +188,6 @@ public class RecipeAdder {
 
     /** MultiMachine Recipes **/
     public static void addBlastFurnaceRecipe(ItemStack input1, ItemStack output1, int d, int p) {
-        addBasicRecipe(BLAST_FURNACE, arr(input1), arr(output1), d, p);
+        addBasicRecipe(ELECTRIC_BLAST_FURNACE, arr(input1), arr(output1), d, p);
     }
 }

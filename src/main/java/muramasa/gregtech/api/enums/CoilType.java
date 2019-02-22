@@ -7,7 +7,12 @@ public enum CoilType implements IStringSerializable {
     CUPRONICKEL("cupronickel"),
     KANTHAL("kanthal"),
     NICHROME("nichrome"),
-    FUSION("fusion");
+    TUNGSTENSTEEL("tungstensteel"),
+    HSSG("hssg"),
+    NAQUADAH("naquadah"),
+    NAQUADAH_ALLOY("naquadah_alloy"),
+    FUSION("fusion"),
+    SUPERCONDUCTOR("superconductor");
 
     private String name;
 

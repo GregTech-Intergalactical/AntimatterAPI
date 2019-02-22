@@ -7,6 +7,9 @@
     "shiny": {
       "block": {
         "textures": {"all": "gregtech:blocks/material_set/shiny/block"}
+      },
+	  "ore": {
+        "textures": {"all": "gregtech:blocks/material_set/shiny/ore"}
       }
     }
   }

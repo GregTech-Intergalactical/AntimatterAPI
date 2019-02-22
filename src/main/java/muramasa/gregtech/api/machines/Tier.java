@@ -10,43 +10,44 @@ import java.util.HashMap;
 
 public class Tier implements IStringSerializable {
 
-    //TODO This entire class needs to be re-thought
-
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
     private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
 
-    public static Tier[] VALUES;
+    public static int lastInternalId = 0;
 
-    public static Tier BRONZE = new Tier(0, "bronze", 0, TextFormatting.WHITE);
-    public static Tier STEEL = new Tier(1, "steel", 0, TextFormatting.WHITE);
+    /** Special Tiers **/
+    public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
+    public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
+    public static Tier MULTI = new Tier("multi", 0, TextFormatting.AQUA);
 
-    public static Tier LV = new Tier(2, "lv", 32, TextFormatting.WHITE);
-    public static Tier MV = new Tier(3, "mv", 128, TextFormatting.WHITE);
-    public static Tier HV = new Tier(4, "hv", 512, TextFormatting.YELLOW);
-    public static Tier EV = new Tier(5, "ev", 2048, TextFormatting.AQUA);
-    public static Tier IV = new Tier(6, "iv", 8192, TextFormatting.LIGHT_PURPLE);
-    public static Tier MULTI = new Tier(7, "multi", 0, TextFormatting.AQUA);
+    /** Electricity Tiers **/
+    public static Tier ULV = new Tier("ulv", 8, TextFormatting.WHITE);
+    public static Tier LV = new Tier("lv", 32, TextFormatting.WHITE);
+    public static Tier MV = new Tier("mv", 128, TextFormatting.WHITE);
+    public static Tier HV = new Tier("hv", 512, TextFormatting.YELLOW);
+    public static Tier EV = new Tier("ev", 2048, TextFormatting.AQUA);
+    public static Tier IV = new Tier("iv", 8192, TextFormatting.LIGHT_PURPLE);
+    public static Tier LUV = new Tier("luv", 32768, TextFormatting.LIGHT_PURPLE);
+    public static Tier ZPM = new Tier("zpm", 131072, TextFormatting.LIGHT_PURPLE);
+    public static Tier UV = new Tier("uv", 524288, TextFormatting.LIGHT_PURPLE);
+    public static Tier MAX = new Tier("max", 2147483647, TextFormatting.LIGHT_PURPLE);
 
-    static {
-
-    }
-
-    private int id;
+    private int internalId;
     private String name;
     private long voltage;
     private TextFormatting rarityColor;
 
-    public Tier(int id, String name, long voltage, TextFormatting rarityColor) {
-        this.id = id;
+    public Tier(String name, long voltage, TextFormatting rarityColor) {
+        internalId = lastInternalId++;
         this.name = name;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         tierLookup.put(name, this);
-        tierLookupArray.add(id, this);
+        tierLookupArray.add(internalId, this);
     }
 
-    public int getId() {
-        return id;
+    public int getInternalId() {
+        return internalId;
     }
 
     public String getName() {
@@ -77,6 +78,10 @@ public class Tier implements IStringSerializable {
         return new Tier[]{LV, MV, HV, EV, IV};
     }
 
+    public static Tier[] getAllElectric() {
+        return new Tier[]{ULV, LV, MV, HV, EV, IV, LUV, ZPM, MAX};
+    }
+
     public static Tier[] getMulti() {
         return new Tier[]{MULTI};
     }
@@ -93,7 +98,7 @@ public class Tier implements IStringSerializable {
         return new Tier[]{BRONZE, STEEL, LV, MV, HV, EV, IV};
     }
 
-    public static ResourceLocation[] getTextures(Tier[] tiers) {
+    public static ResourceLocation[] getTextures(Tier... tiers) {
         ResourceLocation[] textures = new ResourceLocation[tiers.length];
         for (int i = 0; i < tiers.length; i++) {
             textures[i] = tiers[i].getBaseTexture();

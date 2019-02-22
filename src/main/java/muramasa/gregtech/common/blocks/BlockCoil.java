@@ -5,6 +5,7 @@ import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,6 +33,7 @@ public class BlockCoil extends Block {
         setUnlocalizedName("coil_" + type.getName());
         setRegistryName("coil_" + type.getName());
         setCreativeTab(Ref.TAB_MACHINES);
+        setSoundType(SoundType.METAL);
         this.type = type;
         BLOCK_LOOKUP.put(type.getName(), this);
     }
