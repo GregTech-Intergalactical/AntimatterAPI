@@ -22,5 +22,4 @@ eclipse
 run
 gradlew.bat
 gradle/
-gradlew
 *.db
