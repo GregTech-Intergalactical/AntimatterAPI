@@ -187,7 +187,15 @@ public class RecipeAdder {
     }
 
     /** MultiMachine Recipes **/
-    public static void addBlastFurnaceRecipe(ItemStack input1, ItemStack output1, int d, int p) {
+    public static void addPrimitiveBlastFurnaceRecipe(ItemStack input1, ItemStack input2, ItemStack output1, int d, int p) {
+        addBasicRecipe(PRIMITIVE_BLAST_FURNACE, arr(input1, input2), arr(output1), d, p);
+    }
+
+    public static void addBronzeBlastFurnaceRecipe(ItemStack input1, ItemStack input2, ItemStack output1, int d, int p) {
+        addBasicRecipe(BRONZE_BLAST_FURNACE, arr(input1, input2), arr(output1), d, p);
+    }
+
+    public static void addElectricBlastFurnaceRecipe(ItemStack input1, ItemStack output1, int d, int p) {
         addBasicRecipe(ELECTRIC_BLAST_FURNACE, arr(input1), arr(output1), d, p);
     }
 }

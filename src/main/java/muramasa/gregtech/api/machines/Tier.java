@@ -79,15 +79,15 @@ public class Tier implements IStringSerializable {
     }
 
     public static Tier[] getAllElectric() {
-        return new Tier[]{ULV, LV, MV, HV, EV, IV, LUV, ZPM, MAX};
+        return new Tier[]{ULV, LV, MV, HV, EV, IV, LUV, ZPM, UV, MAX};
     }
 
     public static Tier[] getMulti() {
         return new Tier[]{MULTI};
     }
 
-    public static Tier get(String tier) {
-        return tierLookup.get(tier);
+    public static Tier get(String name) {
+        return tierLookup.get(name);
     }
 
     public static Tier get(int id) {

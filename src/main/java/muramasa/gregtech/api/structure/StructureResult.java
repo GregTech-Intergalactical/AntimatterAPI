@@ -27,11 +27,16 @@ public class StructureResult {
         return "[Structure Debug] " + error;
     }
 
-    public void addComponent(IComponent component) {
+    public void addComponent(String elementName, IComponent component) {
         if (!components.containsKey(component.getId())) {
             components.put(component.getId(), new ArrayList<>());
         }
         components.get(component.getId()).add(component);
+
+//        if (!components.containsKey(elementName)) {
+//            components.put(elementName, new ArrayList<>());
+//        }
+//        components.get(elementName).add(component);
     }
 
     public HashMap<String, ArrayList<IComponent>> getComponents() {

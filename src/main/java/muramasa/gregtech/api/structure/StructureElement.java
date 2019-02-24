@@ -9,6 +9,7 @@ import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 
@@ -19,9 +20,24 @@ public class StructureElement {
     private static HashMap<String, StructureElement> elementLookup = new HashMap<>();
 
     /** Component Elements **/
+    public static StructureElement PBF = new StructureElement(Machines.PRIMITIVE_BLAST_FURNACE);
+    public static StructureElement PBF_CASING = new StructureElement(CasingType.FIRE_BRICK);
+    public static StructureElement BBF = new StructureElement(Machines.BRONZE_BLAST_FURNACE);
+    public static StructureElement BBF_CASING = new StructureElement(CasingType.BRONZE_PLATED_BRICK);
+    public static StructureElement BF_AIR_OR_LAVA = new StructureElement("airorlava") {
+        @Override
+        public boolean evaluate(TileEntityMultiMachine machine, int3 pos, StructureResult result) {
+            IBlockState state = machine.getWorld().getBlockState(pos.asBlockPos());
+            return AIR.evaluate(machine, pos, result) || state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA;
+        }
+    };
+
     public static StructureElement EBF = new StructureElement(Machines.ELECTRIC_BLAST_FURNACE);
     public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", CasingType.HEAT_PROOF, Machines.HATCH_ITEM_INPUT, Machines.HATCH_ITEM_OUTPUT);
     public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", CoilType.values());
+
+    public static StructureElement VF_MACHINE = new StructureElement(Machines.VACUUM_FREEZER);
+    public static StructureElement VF_HATCH_OR_CASING = new StructureElement("hatchorcasingvf", CasingType.FROST_PROOF, Machines.HATCH_ITEM_INPUT, Machines.HATCH_ITEM_OUTPUT, Machines.HATCH_ENERGY);
 
     public static StructureElement FR_MACHINE = new StructureElement(Machines.FUSION_REACTOR_1);
     public static StructureElement FUSION_CASING = new StructureElement(CasingType.FUSION_3);
@@ -74,7 +90,7 @@ public class StructureElement {
             IComponent component = tile.getCapability(GTCapabilities.COMPONENT, null);
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
-                    result.addComponent(component);
+                    result.addComponent(elementName, component);
                     return true;
                 }
             }

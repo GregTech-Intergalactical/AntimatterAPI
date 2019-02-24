@@ -11,6 +11,7 @@ public class Recipe {
     private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, power;
     private int[] chances;
+    private int specialValue;
 
     public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, int power) {
         this.stacksInput = stacksInput;
@@ -73,6 +74,10 @@ public class Recipe {
 
     public int getTotalPower() {
         return getDuration() * getPower();
+    }
+
+    public int getSpecialValue() {
+        return specialValue;
     }
 
     private static ItemStack[] evaluateChances(ItemStack[] outputs) {

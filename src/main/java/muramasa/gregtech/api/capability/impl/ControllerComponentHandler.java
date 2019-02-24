@@ -1,11 +1,12 @@
 package muramasa.gregtech.api.capability.impl;
 
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 
 public class ControllerComponentHandler extends ComponentHandler {
 
-    public ControllerComponentHandler(String componentId, TileEntityMultiMachine componentTile) {
-        super(componentId, componentTile);
+    public ControllerComponentHandler(Machine type, TileEntityMultiMachine componentTile) {
+        super(type.getName(), componentTile);
     }
 
     @Override

@@ -70,9 +70,12 @@ public class GregTech {
         }
         RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Redstone.getDust(4), Materials.RedAlloy.getIngot(1), 10, 1);
         RecipeAdder.addAlloySmelterRecipe(Materials.Copper.getIngot(1), Materials.Cobalt.getDust(1), Materials.RedAlloy.getIngot(16), 10, 1);
-        RecipeAdder.addBlastFurnaceRecipe(Materials.Silicon.getDust(1), Materials.Silicon.getIngot(1), 10, 1);
+        RecipeAdder.addElectricBlastFurnaceRecipe(Materials.Silicon.getDust(1), Materials.Silicon.getIngot(1), 10, 1);
 
         RecipeAdder.addOreWasherRecipe(Materials.Aluminium.getCrushed(1), new FluidStack(FluidRegistry.WATER, 100), Materials.Aluminium.getCrushedP(1), Materials.Aluminium.getDustT(1), Materials.Stone.getDust(1), 40, 1);
+
+        RecipeAdder.addBronzeBlastFurnaceRecipe(Materials.Coal.getGem(4), Materials.Iron.getIngot(1), Materials.Steel.getIngot(1), 7200, 0);
+        RecipeAdder.addPrimitiveBlastFurnaceRecipe(Materials.Coal.getGem(4), Materials.Iron.getIngot(1), Materials.Steel.getIngot(1), 7200, 0);
     }
 
     @Mod.EventHandler

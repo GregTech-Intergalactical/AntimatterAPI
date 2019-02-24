@@ -13,6 +13,7 @@ public class SteamMachine extends ItemFluidMachine {
 
     public SteamMachine(String name, Machine machine, Slot... slots) {
         super(name, machine, slots);
+        setTiers(Tier.getSteam());
     }
 
     public SteamMachine(String name, Slot... slots) {
@@ -21,8 +22,8 @@ public class SteamMachine extends ItemFluidMachine {
     }
 
     @Override
-    public ResourceLocation getGUITexture(String tier) {
-        return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + tier + ".png");
+    public ResourceLocation getGUITexture(Tier tier) {
+        return new ResourceLocation(Ref.MODID, "textures/gui/machines/" + name + tier.getName() + ".png");
     }
 
     @Override

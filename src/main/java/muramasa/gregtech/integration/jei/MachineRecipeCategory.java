@@ -5,7 +5,7 @@ import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
-import muramasa.gregtech.api.machines.MachineStack;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
@@ -28,9 +28,9 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         this.type = type;
         title = type.getJeiCategoryName();
         uid = type.getJeiCategoryID();
-        background = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV.getName()), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
-        icon = guiHelper.createDrawableIngredient(new MachineStack(type, Tier.LV).asItemStack());
-        progressBar = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV.getName()), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
+        background = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
+        icon = guiHelper.createDrawableIngredient(Machines.get(type, Tier.LV).asItemStack());
+        progressBar = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
 //        icon = guiHelper.createDrawableIngredient(MachineStack.get(type, Tier.LV).getStackForm());
     }
 
@@ -70,12 +70,30 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
+        if (type == Machines.BRONZE_BLAST_FURNACE) {
+//            System.out.println(ingredients.getInputs(VanillaTypes.ITEM).toString());
+//            System.out.println(ingredients.getOutputs(VanillaTypes.ITEM).toString());
+//            return;
+        }
+
         ArrayList<Slot> slots = type.getSlots();
         for (int i = 0; i < slots.size(); i++) {
             if (slots.get(i).type > 1) continue;
             itemStackGroup.init(i, slots.get(i).type == 0, slots.get(i).x - SLOT_OFFSET_X, slots.get(i).y - SLOT_OFFSET_Y);
             int stackIndex = i < type.getInputCount() ? i : i - type.getInputCount(); //TODO register helper?
-            itemStackGroup.set(i, i < type.getInputCount() ? ingredients.getInputs(VanillaTypes.ITEM).get(stackIndex) : ingredients.getOutputs(VanillaTypes.ITEM).get(stackIndex));
+
+            if (i < type.getInputCount()) {
+                if (stackIndex < ingredients.getInputs(VanillaTypes.ITEM).size()) {
+                    itemStackGroup.set(i, ingredients.getInputs(VanillaTypes.ITEM).get(stackIndex));
+                }
+                System.out.println(ingredients.getInputs(VanillaTypes.ITEM).size());
+            } else {
+                if (stackIndex < ingredients.getOutputs(VanillaTypes.ITEM).size()) {
+                    itemStackGroup.set(i, ingredients.getOutputs(VanillaTypes.ITEM).get(stackIndex));
+                }
+                System.out.println(ingredients.getOutputs(VanillaTypes.ITEM).size());
+            }
+//            itemStackGroup.set(i, i < type.getInputCount() ? ingredients.getInputs(VanillaTypes.ITEM).get(stackIndex) : ingredients.getOutputs(VanillaTypes.ITEM).get(stackIndex));
         }
 
         if (type.getFluidInputCount() > 0) {

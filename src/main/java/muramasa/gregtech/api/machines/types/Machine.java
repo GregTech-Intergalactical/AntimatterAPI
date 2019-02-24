@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static muramasa.gregtech.api.machines.MachineFlag.*;
+
 public class Machine implements IStringSerializable {
 
     /** Global Members **/
@@ -52,9 +54,7 @@ public class Machine implements IStringSerializable {
     //TODO add valid covers
 
     public Machine(String name) {
-        this.name = name;
-        this.block = new BlockMachine(name);
-        this.tileClass = TileEntityMachine.class;
+        this(name, new BlockMachine(name), TileEntityMachine.class);
     }
 
     public Machine(String name, BlockMachine block, Class tileClass) {
@@ -74,9 +74,9 @@ public class Machine implements IStringSerializable {
         return name;
     }
 
-    public String getDisplayName(String tier) {
+    public String getDisplayName(Tier tier) {
         if (displayName == null) {
-            displayName = I18n.format("machine." + name + "." + tier + ".name");
+            displayName = I18n.format("machine." + name + "." + tier.getName() + ".name");
         }
         return displayName;
     }
@@ -93,12 +93,12 @@ public class Machine implements IStringSerializable {
         return recipeMap;
     }
 
-    public ResourceLocation getGUITexture(String tier) {
+    public ResourceLocation getGUITexture(Tier tier) {
         return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
     }
 
-    public ResourceLocation getBaseTexture(String tier) {
-        return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + tier);
+    public ResourceLocation getBaseTexture(Tier tier) {
+        return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + tier.getName());
     }
 
     public ResourceLocation getOverlayTexture(int state, String type) {
@@ -147,7 +147,7 @@ public class Machine implements IStringSerializable {
         addFlags(MachineFlag.GUI);
     }
 
-    public void addSlots(Slot... slots) {
+    public Machine addSlots(Slot... slots) {
         if (this.slots == null) this.slots = new ArrayList<>();
         for (Slot slot : slots) {
             this.slots.add(slot);
@@ -161,10 +161,12 @@ public class Machine implements IStringSerializable {
                 outputTankCount++;
             }
         }
+        return this;
     }
 
     public void addRecipeMap() {
         recipeMap = new RecipeMap(10);
+        addFlags(RECIPE);
     }
 
     public void addPattern(StructurePattern pattern) {
@@ -172,6 +174,7 @@ public class Machine implements IStringSerializable {
     }
 
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
+        if (stackHandler == null) return null;
         return RecipeMap.findRecipeItem(recipeMap, stackHandler.getInputs());
     }
 

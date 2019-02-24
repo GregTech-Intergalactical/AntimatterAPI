@@ -73,7 +73,7 @@ public class RecipeMap {
     }
 
     public static Recipe findRecipeItem(RecipeMap map, ItemStack[] stacks) {
-        if (map == null) return null;
+        if (map == null || stacks == null || stacks.length == 0) return null;
         if (Utils.areStacksValid(stacks)) {
             ArrayList<Recipe> matches = map.recipeLookup.get(Utils.getString(stacks[0]));
             if (matches == null) return null;

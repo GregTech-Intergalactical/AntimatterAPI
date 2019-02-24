@@ -16,8 +16,8 @@ public class GuiMachine extends GuiBase {
         super(container);
         this.tile = tile;
         this.container = container;
-        background = tile.getMachineType().getGUITexture(tile.getTier());
-        displayName = tile.getMachineType().getDisplayName(tile.getTier());
+        background = tile.getMachineType().getGUITexture(tile.getTierType());
+        displayName = tile.getMachineType().getDisplayName(tile.getTierType());
         xSize = 176;
         ySize = 166;
     }

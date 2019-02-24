@@ -1,12 +1,11 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.GregTech;
-import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.cover.behaviour.CoverBehaviourTintable;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.properties.GTProperties;
@@ -137,6 +136,8 @@ public class BlockMachine extends Block {
         if (stack.getItem() instanceof ItemBlockMachines) {
             if (stack.hasTagCompound()) {
                 NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
+
+                //TODO itemMachine needs Type NBT?
                 String machineType = data.getString(Ref.KEY_MACHINE_STACK_TYPE);
                 String machineTier = data.getString(Ref.KEY_MACHINE_STACK_TIER);
 
@@ -153,9 +154,9 @@ public class BlockMachine extends Block {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            return Machines.get(machine.getType(), machine.getTier()).asItemStack();
+            return Machines.get(machine.getMachineType(), machine.getTierType()).asItemStack();
         }
-        return new MachineStack(Machines.INVALID, Tier.LV).asItemStack();
+        return Machines.get(Machines.INVALID, Tier.LV).asItemStack();
     }
 
     @Override

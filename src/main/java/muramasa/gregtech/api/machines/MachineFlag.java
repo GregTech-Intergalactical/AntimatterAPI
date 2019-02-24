@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.machines;
 
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.types.Machine;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public enum MachineFlag {
         ArrayList<MachineStack> stacks = new ArrayList<>();
         for (Machine machine : typeList) {
             for (Tier tier : machine.getTiers()) {
-                stacks.add(new MachineStack(machine, tier));
+                stacks.add(Machines.get(machine, tier));
             }
         }
         return stacks;

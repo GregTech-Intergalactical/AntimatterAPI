@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 
 public interface ICoverHandler {
 
-    void update();
+    void tick();
 
     boolean setCover(EnumFacing side, CoverBehaviour cover);
 

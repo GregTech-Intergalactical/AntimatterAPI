@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class TileEntityMachine extends TileEntityTickable {
 
-    //TODO remove onFirstTick by using markForNBTSync
+    //TODO remove onFirstTick by using markForNBTSync; in onFirstTick?
 
     /** Data from NBT **/
     private String typeFromNBT = "", tierFromNBT = "";
@@ -21,7 +21,7 @@ public class TileEntityMachine extends TileEntityTickable {
     private MachineState machineState = MachineState.IDLE;
 
     public void init(String type, String tier, int facing) {
-        if (type.isEmpty() || type.isEmpty()) {
+        if (type.isEmpty() || tier.isEmpty()) {
             type = Machines.INVALID.getName();
             tier = Tier.LV.getName();
         }
@@ -44,7 +44,13 @@ public class TileEntityMachine extends TileEntityTickable {
 
     /** Getters **/
     public Machine getMachineType() {
-        return Machines.get(typeFromNBT);
+        Machine m = Machines.get(typeFromNBT);
+        return m != null ? m : Machines.INVALID;
+    }
+
+    public Tier getTierType() {
+        Tier t = Tier.get(getTier());
+        return t != null ? t : Tier.LV;
     }
 
     public String getType() {
@@ -80,7 +86,7 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     public ResourceLocation getTexture() {
-        return getMachineType().getBaseTexture(getTier());
+        return getMachineType().getBaseTexture(getTierType());
     }
 
     public int getCurProgress() {

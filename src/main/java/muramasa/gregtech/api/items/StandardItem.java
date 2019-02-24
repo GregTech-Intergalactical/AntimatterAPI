@@ -80,7 +80,8 @@ public class StandardItem extends Item {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
                         ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
-                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
+                        System.out.println("Forced Structure Check");
+//                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                     } else if (tile instanceof TileEntityHatch) {
 //                            System.out.println(((TileEntityHatch) tile).getTexture());
 //                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());

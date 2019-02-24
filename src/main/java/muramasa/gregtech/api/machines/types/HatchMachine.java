@@ -8,7 +8,7 @@ import muramasa.gregtech.common.blocks.BlockHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.utils.Ref;
 
-import static muramasa.gregtech.api.machines.MachineFlag.*;
+import static muramasa.gregtech.api.machines.MachineFlag.HATCH;
 
 public class HatchMachine extends Machine {
 
@@ -19,13 +19,13 @@ public class HatchMachine extends Machine {
 
     public HatchMachine(String name, MachineFlag flag, Slot... slots) {
         this(name, flag);
-        setTiers(Tier.getAllElectric());
         addSlots(slots);
         addGUI(GregTech.INSTANCE, Ref.HATCH_ID);
     }
 
     public HatchMachine(String name, MachineFlag flag) {
         super(name, new BlockHatch(name), TileEntityHatch.class);
+        setTiers(Tier.getAllElectric());
         addFlags(HATCH, flag);
     }
 }

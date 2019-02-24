@@ -4,7 +4,7 @@ import net.minecraft.util.ITickable;
 
 public class TileEntityTickable extends TileEntityBase implements ITickable {
 
-    private boolean hadFirstTick;
+    protected boolean hadFirstTick;
 
     @Override
     public void update() {

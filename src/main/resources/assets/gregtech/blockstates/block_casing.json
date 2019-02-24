@@ -41,6 +41,12 @@
 	  "bricked_bronze": {
         "textures": {"all": "gregtech:blocks/casing/bricked_bronze"}
       },
+	  "bronze_plated_brick": {
+        "textures": {"all": "gregtech:blocks/casing/bronze_plated_brick"}
+      },
+	  "fire_brick": {
+        "textures": {"all": "gregtech:blocks/casing/fire_brick"}
+      },
 	  "steel": {
         "textures": {"all": "gregtech:blocks/casing/steel"}
       },
