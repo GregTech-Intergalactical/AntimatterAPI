@@ -33,7 +33,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     public void onFirstTick() {
         super.onFirstTick();
         components = new HashMap<>();
-        componentHandler = new ControllerComponentHandler(getMachineType(), this);
+        componentHandler = new ControllerComponentHandler(getType(), this);
         shouldCheckStructure = true;
         shouldCheckRecipe = true;
     }
@@ -55,7 +55,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
 
     @Override
     public Recipe findRecipe() {
-        return RecipeMap.findRecipeItem(getMachineType().getRecipeMap(), getStoredInputs());
+        return RecipeMap.findRecipeItem(getType().getRecipeMap(), getStoredInputs());
     }
 
     /** Consumes inputs from all input hatches. Assumes doStacksMatchAndSizeValid has been used **/
@@ -115,7 +115,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     }
 
     private boolean checkStructure() {
-        StructurePattern pattern = getMachineType().getPattern();
+        StructurePattern pattern = getType().getPattern();
         if (pattern == null) return false;
         StructureResult result = pattern.evaluate(this);
         if (result.evaluate()) {

@@ -27,7 +27,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (tile instanceof TileEntityMachine) {
-            Machine machine = ((TileEntityMachine) tile).getMachineType();
+            Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
             if (machine.getGuiId() == Ref.MACHINE_ID) {
                 return new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory);
@@ -45,7 +45,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (tile instanceof TileEntityMachine) {
-            Machine machine = ((TileEntityMachine) tile).getMachineType();
+            Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
             if (machine.getGuiId() == Ref.MACHINE_ID) {
                 return new GuiBasicMachine((TileEntityBasicMachine) tile, new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory));

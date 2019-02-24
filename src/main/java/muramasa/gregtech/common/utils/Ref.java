@@ -36,11 +36,9 @@ public class Ref {
 
     //NBT Tags & Keys
     public static final String TAG_MACHINE_STACK_DATA = "machinestack";
-    public static final String KEY_MACHINE_STACK_TYPE = "st1";
+//    public static final String KEY_MACHINE_STACK_TYPE = "st1";
     public static final String KEY_MACHINE_STACK_TIER = "st2";
 
-    public static final String TAG_MACHINE_TILE_DATA = "machinetile";
-    public static final String KEY_MACHINE_TILE_TYPE = "m1";
     public static final String KEY_MACHINE_TILE_TIER = "m2";
     public static final String KEY_MACHINE_TILE_FACING = "mf";
     public static final String KEY_MACHINE_TILE_STATE = "ms";
@@ -48,17 +46,6 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
-
-    public static final String TAG_MULTIMACHINE_TILE_DATA = "multimachinetile";
-    public static final String KEY_MULTIMACHINE_TILE_TYPE = "m1";
-
-    public static final String TAG_COMPONENT_TILE_DATA = "componenttile";
-    public static final String KEY_COMPONENT_TILE_TYPE = "c1";
-
-    public static final String KEY_FLUID_NAME_1 = "fn1";
-    public static final String KEY_FLUID_NAME_2 = "fn2";
-    public static final String KEY_FLUID_AMOUNT_1 = "fa1";
-    public static final String KEY_FLUID_AMOUNT_2 = "fa2";
 
     public static final String TAG_TOOL_DATA = "toolstats";
     public static final String KEY_TOOL_DATA_TYPE = "t";

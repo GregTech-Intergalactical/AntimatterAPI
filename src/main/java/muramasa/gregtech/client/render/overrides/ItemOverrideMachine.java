@@ -2,7 +2,9 @@ package muramasa.gregtech.client.render.overrides;
 
 import com.google.common.collect.ImmutableList;
 import muramasa.gregtech.client.render.models.ModelBase;
+import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.utils.Ref;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,7 +28,8 @@ public class ItemOverrideMachine extends ItemOverrideList {
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
             NBTTagCompound tag = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-            IBakedModel bakedModel = bakedItems.get(tag.getString(Ref.KEY_MACHINE_STACK_TYPE) + tag.getString(Ref.KEY_MACHINE_STACK_TIER));
+            String type = ((BlockMachine) Block.getBlockFromItem(stack.getItem())).getType().getName();
+            IBakedModel bakedModel = bakedItems.get(type + tag.getString(Ref.KEY_MACHINE_STACK_TIER));
             if (bakedModel != null) {
                 return bakedModel;
             }

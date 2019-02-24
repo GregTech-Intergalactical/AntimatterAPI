@@ -21,10 +21,10 @@ public class TileEntityHatch extends TileEntityMachine {
     private ComponentHandler componentHandler;
 
     @Override
-    public void init(String type, String tier, int facing) {
-        super.init(type, tier, facing);
+    public void onFirstTick() {
+        super.onFirstTick();
         itemHandler = new MachineItemHandler(this, 0);
-        componentHandler = new HatchComponentHandler(getMachineType(), this);
+        componentHandler = new HatchComponentHandler(getType(), this);
         texture = super.getTexture();
     }
 
@@ -75,7 +75,9 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setString(Ref.KEY_MACHINE_TILE_TEXTURE, texture.toString());
+        if (texture != null) {
+            compound.setString(Ref.KEY_MACHINE_TILE_TEXTURE, texture.toString());
+        }
         return compound;
     }
 }
