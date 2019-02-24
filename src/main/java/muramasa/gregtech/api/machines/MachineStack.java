@@ -32,7 +32,6 @@ public class MachineStack {
         ItemStack stack = new ItemStack(Item.getItemFromBlock(type.getBlock()), 1, 0);
         stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound data = new NBTTagCompound();
-        data.setString(Ref.KEY_MACHINE_STACK_TYPE, type.getName());
         data.setString(Ref.KEY_MACHINE_STACK_TIER, tier.getName());
         stack.getTagCompound().setTag(Ref.TAG_MACHINE_STACK_DATA, data);
         return stack;

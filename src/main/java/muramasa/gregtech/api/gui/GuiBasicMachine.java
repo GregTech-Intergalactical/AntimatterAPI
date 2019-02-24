@@ -79,7 +79,7 @@ public class GuiBasicMachine extends GuiMachine {
 
         drawTooltipInArea(tile.getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
 
-        if (tile.getMachineType().hasFlag(MachineFlag.FLUID)) {
+        if (tile.getType().hasFlag(MachineFlag.FLUID)) {
             drawContainedFluids(mouseX, mouseY);
         }
     }
@@ -96,7 +96,7 @@ public class GuiBasicMachine extends GuiMachine {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         //if (Loader.isModLoaded("JEI")) { //TODO
         if (isInGui((xSize / 2) - 10, 24, 20, 18, mouseX, mouseY)) {
-            GregTechJEIPlugin.showCategory(tile.getMachineType());
+            GregTechJEIPlugin.showCategory(tile.getType());
         }
         //}
     }

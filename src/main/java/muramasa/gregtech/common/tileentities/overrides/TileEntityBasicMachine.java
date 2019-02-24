@@ -42,9 +42,9 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     protected boolean shouldCheckRecipe;
 
     @Override
-    public void init(String type, String tier, int facing) {
-        super.init(type, tier, facing);
-        Machine machine = getMachineType();
+    public void onFirstTick() {
+        super.onFirstTick();
+        Machine machine = getType();
         if (machine.hasFlag(ITEM)) {
             itemHandler = new MachineItemHandler(this, 0);
             if (itemData != null) itemHandler.deserialize(itemData);
@@ -58,7 +58,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 //        inputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), true, false);
 //        outputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), false, true);
         if (machine.hasFlag(ENERGY)) {
-            energyStorage = new MachineEnergyHandler(getTierType().getVoltage() * 64);
+            energyStorage = new MachineEnergyHandler(getTier().getVoltage() * 64);
             energyStorage.energy = 99999999; //Temporary
         }
         if (machine.hasFlag(COVERABLE)) {
@@ -98,7 +98,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     public Recipe findRecipe() {
-        return getMachineType().findRecipe(itemHandler, fluidHandler);
+        return getType().findRecipe(itemHandler, fluidHandler);
     }
 
     public MachineState tickRecipe() { //TODO do count check here instead of checkRecipe being called on every contents tick
@@ -268,13 +268,13 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (getMachineType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourItem);
-        } else if (getMachineType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
+        } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
             return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourEnergy);
-        } else if (getMachineType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
+        } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
             return facing == null || (!coverHandler.get(facing).isEmpty());
-        } else if (getMachineType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
+        } else if (getType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }
         return super.hasCapability(capability, facing);

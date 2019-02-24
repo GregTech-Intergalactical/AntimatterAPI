@@ -16,7 +16,7 @@ public class ContainerMachine extends ContainerBase {
 
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
         super(playerInv);
-        Machine machine = tile.getMachineType();
+        Machine machine = tile.getType();
         MachineItemHandler itemHandler = tile.getItemHandler();
         if (itemHandler == null) return;
 

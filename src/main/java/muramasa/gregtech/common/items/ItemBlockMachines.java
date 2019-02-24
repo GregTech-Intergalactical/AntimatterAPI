@@ -1,8 +1,8 @@
 package muramasa.gregtech.common.items;
 
-import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
@@ -27,10 +27,10 @@ public class ItemBlockMachines extends ItemBlock {
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.TAG_MACHINE_STACK_DATA)) {
             NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-            Machine machine = Machines.get(data.getString(Ref.KEY_MACHINE_STACK_TYPE));
+            Machine type = ((BlockMachine) getBlock()).getType();
             Tier tier = Tier.get(data.getString(Ref.KEY_MACHINE_STACK_TIER));
-            if (machine != null && tier != null) {
-                return tier.getRarityColor() + I18n.format("machine." + machine.getName() + "." + tier.getName() + ".name");
+            if (type != null && tier != null) {
+                return tier.getRarityColor() + I18n.format("machine." + type.getName() + "." + tier.getName() + ".name");
             }
         }
         return getUnlocalizedName();

@@ -6,6 +6,7 @@ import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -13,28 +14,20 @@ import net.minecraft.util.ResourceLocation;
 
 public class TileEntityMachine extends TileEntityTickable {
 
-    //TODO remove onFirstTick by using markForNBTSync; in onFirstTick?
-
-    /** Data from NBT **/
-    private String typeFromNBT = "", tierFromNBT = "";
-    private int typeId, tierId, facing, tint = -1;
+    private Machine type;
+    private Tier tier;
+    private int facing, tint = -1;
     private MachineState machineState = MachineState.IDLE;
 
-    public void init(String type, String tier, int facing) {
-        if (type.isEmpty() || tier.isEmpty()) {
-            type = Machines.INVALID.getName();
-            tier = Tier.LV.getName();
-        }
-        typeFromNBT = type;
-        tierFromNBT = tier;
-        typeId = getMachineType().getInternalId();
-        tierId = Tier.get(tierFromNBT).getInternalId();
+    public final void init(Tier tier, int facing) {
+        this.type = ((BlockMachine) getBlockType()).getType();
+        this.tier = tier;
         this.facing = facing;
     }
 
     @Override
     public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
-        init(typeFromNBT, tierFromNBT, facing);
+        type = ((BlockMachine) getBlockType()).getType();
     }
 
     /** Events **/
@@ -43,30 +36,20 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     /** Getters **/
-    public Machine getMachineType() {
-        Machine m = Machines.get(typeFromNBT);
-        return m != null ? m : Machines.INVALID;
+    public Machine getType() {
+        return type != null ? type : Machines.INVALID;
     }
 
-    public Tier getTierType() {
-        Tier t = Tier.get(getTier());
-        return t != null ? t : Tier.LV;
-    }
-
-    public String getType() {
-        return typeFromNBT;
-    }
-
-    public String getTier() {
-        return tierFromNBT;
+    public Tier getTier() {
+        return tier != null ? tier : Tier.LV;
     }
 
     public int getTypeId() {
-        return typeId;
+        return getType().getInternalId();
     }
 
     public int getTierId() {
-        return tierId;
+        return getTier().getInternalId();
     }
 
     public int getFacing() {
@@ -86,7 +69,7 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     public ResourceLocation getTexture() {
-        return getMachineType().getBaseTexture(getTierType());
+        return getType().getBaseTexture(getTier());
     }
 
     public int getCurProgress() {
@@ -140,9 +123,8 @@ public class TileEntityMachine extends TileEntityTickable {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TYPE) && compound.hasKey(Ref.KEY_MACHINE_TILE_TIER)) {
-            typeFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TYPE);
-            tierFromNBT = compound.getString(Ref.KEY_MACHINE_TILE_TIER);
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TIER)) {
+            tier = Tier.get(compound.getString(Ref.KEY_MACHINE_TILE_TIER));
         }
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
             facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
@@ -152,8 +134,7 @@ public class TileEntityMachine extends TileEntityTickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound); //TODO add tile data tag
-        compound.setString(Ref.KEY_MACHINE_TILE_TYPE, typeFromNBT);
-        compound.setString(Ref.KEY_MACHINE_TILE_TIER, tierFromNBT);
+        compound.setString(Ref.KEY_MACHINE_TILE_TIER, getTier().getName());
         compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, facing);
         return compound;
     }

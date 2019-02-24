@@ -19,7 +19,7 @@ public class MachineItemHandler {
 
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile, int type) {
-        Machine machine = tile.getMachineType();
+        Machine machine = tile.getType();
         if (machine != null) {
             inputHandler = new GTItemHandler(machine.getInputCount()) {
                 @Override

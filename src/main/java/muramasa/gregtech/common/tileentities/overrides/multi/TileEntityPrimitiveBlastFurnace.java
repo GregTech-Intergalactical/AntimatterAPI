@@ -10,7 +10,7 @@ public class TileEntityPrimitiveBlastFurnace extends TileEntityMultiMachine {
 
     @Override
     public Recipe findRecipe() {
-        return getMachineType().findRecipe(itemHandler, fluidHandler);
+        return getType().findRecipe(itemHandler, fluidHandler);
     }
 
     public void consumeInputs() {

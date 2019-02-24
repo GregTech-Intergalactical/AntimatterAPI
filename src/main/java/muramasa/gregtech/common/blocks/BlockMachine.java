@@ -125,7 +125,7 @@ public class BlockMachine extends Block {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
-            int guiId = ((TileEntityMachine) tile).getMachineType().getGuiId();
+            int guiId = ((TileEntityMachine) tile).getType().getGuiId();
             player.openGui(GregTech.INSTANCE, guiId, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
@@ -136,14 +136,10 @@ public class BlockMachine extends Block {
         if (stack.getItem() instanceof ItemBlockMachines) {
             if (stack.hasTagCompound()) {
                 NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-
-                //TODO itemMachine needs Type NBT?
-                String machineType = data.getString(Ref.KEY_MACHINE_STACK_TYPE);
                 String machineTier = data.getString(Ref.KEY_MACHINE_STACK_TIER);
-
                 TileEntity tile = Utils.getTile(world, pos);
                 if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine) tile).init(machineType, machineTier, placer.getHorizontalFacing().getOpposite().getIndex() - 2);
+                    ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite().getIndex() - 2);
                 }
             }
         }
@@ -154,7 +150,7 @@ public class BlockMachine extends Block {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            return Machines.get(machine.getMachineType(), machine.getTierType()).asItemStack();
+            return Machines.get(machine.getType(), machine.getTier()).asItemStack();
         }
         return Machines.get(Machines.INVALID, Tier.LV).asItemStack();
     }
