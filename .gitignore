@@ -20,6 +20,4 @@ build
 # other
 eclipse
 run
-gradlew.bat
-gradle/
 *.db
