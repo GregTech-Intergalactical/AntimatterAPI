@@ -18,6 +18,10 @@ public class TileEntityCoil extends TileEntityBase {
         }
     };
 
+    public int getHeatingCapacity() {
+        return ((BlockCoil) getState().getBlock()).getType().getHeatingCapacity();
+    }
+
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == GTCapabilities.COMPONENT) {

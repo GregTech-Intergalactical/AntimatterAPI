@@ -22,22 +22,21 @@ public class GregTechJEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
-        for (Machine type : MachineFlag.BASIC.getTypes()) {
-            registry.addRecipeCategories(new MachineRecipeCategory(guiHelper, type));
+        for (Machine type : MachineFlag.RECIPE.getTypes()) {
+            if (type.getSlots() != null) {
+                registry.addRecipeCategories(new MachineRecipeCategory(guiHelper, type));
+            }
         }
     }
 
     @Override
     public void register(IModRegistry registry) {
-        for (Machine type : MachineFlag.BASIC.getTypes()) {
-            registry.addRecipes(type.getRecipeMap().getRecipes(), type.getJeiCategoryID());
-            registry.handleRecipes(Recipe.class, MachineRecipeWrapper::new, type.getJeiCategoryID());
+        for (Machine type : MachineFlag.RECIPE.getTypes()) {
+            if (type.getSlots() != null) {
+                registry.addRecipes(type.getRecipeMap().getRecipes(), type.getJeiCategoryID());
+                registry.handleRecipes(Recipe.class, MachineRecipeWrapper::new, type.getJeiCategoryID());
+            }
         }
-
-
-//        for (MachineStack stack : MachineList.getAllStacks()) {
-//            registry.addRecipeCatalyst(stack.getStackForm(), stack.getTypeFromNBT().getJeiCategoryID());
-//        }
     }
 
     public static void showCategory(Machine... type) {

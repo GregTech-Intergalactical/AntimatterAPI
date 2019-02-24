@@ -9,6 +9,7 @@ import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
+import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.blocks.*;
@@ -23,8 +24,6 @@ import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntitySteamMachine;
-import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityElectricBlastFurnace;
-import muramasa.gregtech.common.tileentities.overrides.multi.TileEntityFusionReactor;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -34,6 +33,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @Mod.EventBusSubscriber
 public class ContentLoader {
@@ -51,17 +53,18 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(Ref.MODID, "tilebasic"));
-        GameRegistry.registerTileEntity(TileEntitySteamMachine.class, new ResourceLocation(Ref.MODID, "tilesteam"));
-        GameRegistry.registerTileEntity(TileEntityElectricBlastFurnace.class, new ResourceLocation(Ref.MODID, "tileebf"));
-        GameRegistry.registerTileEntity(TileEntityFusionReactor.class, new ResourceLocation(Ref.MODID, "tilefr"));
-
-
-        GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "block_machine"));
-        GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(Ref.MODID, "block_multi_machine"));
-        GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "block_hatch"));
+        GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "tile_machine"));
+        GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(Ref.MODID, "tile_basic_machine"));
+        GameRegistry.registerTileEntity(TileEntitySteamMachine.class, new ResourceLocation(Ref.MODID, "tile_steam_machine"));
+        GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(Ref.MODID, "tile_multi_machine"));
+        GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "tile_hatch"));
+        List<String> registeredTiles = new LinkedList<>();
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(type.getBlock());
+            if (type.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(type.getTileClass().getName())) {
+                GameRegistry.registerTileEntity(type.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + type.getName()));
+                registeredTiles.add(type.getTileClass().getName());
+            }
         }
         for (Material material : Materials.getAll()) {
             if (material.hasFlag(GenerationFlag.ORE)) {

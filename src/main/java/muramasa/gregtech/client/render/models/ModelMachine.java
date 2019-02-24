@@ -42,7 +42,7 @@ public class ModelMachine extends ModelBase {
             addTexture(type.getOverlayTexture(1, "side"));
         }
         for (Machine type : MachineFlag.MULTI.getTypes()) {
-            addTexture(type.getBaseTexture("multi"));
+            addTexture(type.getBaseTexture(Tier.MULTI));
             addTexture(type.getOverlayTexture(0, "front"));
             addTexture(type.getOverlayTexture(0, "back"));
             addTexture(type.getOverlayTexture(0, "top"));
@@ -98,14 +98,14 @@ public class ModelMachine extends ModelBase {
         Collection<MachineStack> machineStacks = Machines.getStacks(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH);
         machineStacks.add(Machines.get(Machines.INVALID, Tier.LV));
         for (MachineStack stack : machineStacks) {
-            bakedItems.put(stack.getType() + stack.getTier(), new BakedModelBase(
+            bakedItems.put(stack.getType().getName() + stack.getTier().getName(), new BakedModelBase(
                 texAndBake(machineBaseBasic, new String[]{"base", "front", "back", "top", "bottom", "side"}, new ResourceLocation[]{
-                    stack.getMachineType().getBaseTexture(stack.getTier()),
-                    stack.getMachineType().getOverlayTexture(1, "front"),
-                    stack.getMachineType().getOverlayTexture(1, "back"),
-                    stack.getMachineType().getOverlayTexture(1, "top"),
-                    stack.getMachineType().getOverlayTexture(1, "bottom"),
-                    stack.getMachineType().getOverlayTexture(1, "side")
+                    stack.getType().getBaseTexture(stack.getTier()),
+                    stack.getType().getOverlayTexture(1, "front"),
+                    stack.getType().getOverlayTexture(1, "back"),
+                    stack.getType().getOverlayTexture(1, "top"),
+                    stack.getType().getOverlayTexture(1, "bottom"),
+                    stack.getType().getOverlayTexture(1, "side")
                 })
             ));
         }

@@ -9,6 +9,7 @@ import muramasa.gregtech.api.gui.container.ContainerMultiMachine;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,7 +32,7 @@ public class GuiHandler implements IGuiHandler {
             if (machine.getGuiId() == Ref.MACHINE_ID) {
                 return new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory);
             } else if (machine.getGuiId() == Ref.MULTI_MACHINE_ID) {
-                return new ContainerMultiMachine((TileEntityMachine) tile, player.inventory);
+                return new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory);
             } else if (machine.getGuiId() == Ref.HATCH_ID) {
                 return new ContainerHatch((TileEntityMachine) tile, player.inventory);
             }
@@ -49,7 +50,7 @@ public class GuiHandler implements IGuiHandler {
             if (machine.getGuiId() == Ref.MACHINE_ID) {
                 return new GuiBasicMachine((TileEntityBasicMachine) tile, new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory));
             } else if (machine.getGuiId() == Ref.MULTI_MACHINE_ID) {
-                return new GuiMultiMachine((TileEntityMachine) tile, new ContainerMultiMachine((TileEntityMachine) tile, player.inventory));
+                return new GuiMultiMachine((TileEntityMultiMachine) tile, new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory));
             } else if (machine.getGuiId() == Ref.HATCH_ID) {
                 return new GuiHatch((TileEntityMachine) tile, new ContainerHatch((TileEntityMachine) tile, player.inventory));
             }

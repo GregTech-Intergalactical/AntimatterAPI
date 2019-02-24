@@ -33,7 +33,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public void update() {
+    public void tick() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
             covers[i].onUpdate(tile);

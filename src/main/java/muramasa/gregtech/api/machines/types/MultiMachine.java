@@ -22,7 +22,7 @@ public class MultiMachine extends Machine {
     }
 
     @Override
-    public ResourceLocation getBaseTexture(String tier) {
+    public ResourceLocation getBaseTexture(Tier tier) {
         return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + name);
     }
 }

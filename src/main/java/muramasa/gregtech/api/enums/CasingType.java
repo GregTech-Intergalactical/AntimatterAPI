@@ -18,6 +18,8 @@ public enum CasingType implements IStringSerializable {
     MAX(),
     BRONZE(),
     BRICKED_BRONZE(),
+    BRONZE_PLATED_BRICK(),
+    FIRE_BRICK(),
     STEEL(),
     BRICKED_STEEL(),
     SOLID_STEEL(),

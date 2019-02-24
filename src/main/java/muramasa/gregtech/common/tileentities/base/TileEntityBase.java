@@ -50,7 +50,7 @@ public class TileEntityBase extends TileEntity {
         world.setBlockState(pos, state);
     }
 
-    public void markForNBTSync() { //Syncs NBT between Client&Server
+    public void markForNBTSync() { //Syncs NBT between Client & Server
         world.notifyBlockUpdate(pos, getState(), getState(), 3);
     }
 

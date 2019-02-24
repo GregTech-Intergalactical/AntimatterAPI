@@ -55,7 +55,7 @@ public class Material {
     }
 
     public Material(String displayName, int rgb, MaterialSet set) {
-        this.name = displayName.toLowerCase(Locale.ENGLISH).replaceAll("-", "_").replaceAll(" ", "_");
+        this.name = displayName.toLowerCase(Locale.ENGLISH).replace("-", "_").replace(" ", "_");
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.displayName = displayName;
         this.rgb = rgb;

@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
-import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
@@ -10,7 +10,7 @@ import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.api.structure.StructureResult;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
@@ -21,26 +21,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TileEntityMultiMachine extends TileEntityMachine {
+public class TileEntityMultiMachine extends TileEntityBasicMachine {
 
-    public boolean shouldCheckRecipe, shouldCheckStructure, validStructure;
-    public int curProgress, maxProgress;
-    private Recipe activeRecipe;
-
-    private HashMap<String, ArrayList<IComponent>> components;
-
-    private ControllerComponentHandler componentHandler;
-
-    @Override
-    public void init(String type, String tier, int facing) {
-        super.init(type, tier, facing);
-        components = new HashMap<>();
-        componentHandler = new ControllerComponentHandler(type, this);
-    }
+    //TODO set protected
+    public boolean shouldCheckStructure, validStructure;
+    protected int curEfficiency, maxEfficiency;
+    protected HashMap<String, ArrayList<IComponent>> components;
+    protected ControllerComponentHandler componentHandler;
 
     @Override
     public void onFirstTick() {
         super.onFirstTick();
+        components = new HashMap<>();
+        componentHandler = new ControllerComponentHandler(getMachineType(), this);
         shouldCheckStructure = true;
         shouldCheckRecipe = true;
     }
@@ -57,71 +50,73 @@ public class TileEntityMultiMachine extends TileEntityMachine {
             }
             shouldCheckStructure = false;
         }
-        if (shouldCheckRecipe) {
-            checkRecipe();
-            shouldCheckRecipe = false;
-        }
-        advanceRecipe();
+        super.onServerUpdate();
     }
 
-    public void checkRecipe() {
-        if (activeRecipe == null) { //No active recipes, see of contents match one
-            ArrayList<ItemStack> hatchStacks = getHatchItems();
-            if (hatchStacks.size() == 0) return; //Escape if machine inputs are empty
-//            Recipe recipe = getMachineType().findRecipe(hatchStacks.toArray(new ItemStack[0]));
-            Recipe recipe = RecipeMap.findRecipeItem(getMachineType().getRecipeMap(), hatchStacks.toArray(new ItemStack[0]));
-//            Recipe recipe = null;
-            if (recipe != null) {
-                activeRecipe = recipe;
-                curProgress = 0;
-                maxProgress = recipe.getDuration();
+    @Override
+    public Recipe findRecipe() {
+        return RecipeMap.findRecipeItem(getMachineType().getRecipeMap(), getStoredInputs());
+    }
+
+    /** Consumes inputs from all input hatches. Assumes doStacksMatchAndSizeValid has been used **/
+    @Override
+    public void consumeInputs() {
+        ItemStack[] toConsume = activeRecipe.getInputStacks().clone();
+        MachineItemHandler itemHandler;
+        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            toConsume = itemHandler.consumeAndReturnInputs(toConsume);
+            if (toConsume.length == 0) break;
+        }
+    }
+
+    /** Tests if outputs can fit across all output hatches **/
+    @Override
+    public boolean canOutput() {
+        ItemStack[] toOutput = activeRecipe.getOutputStacks().clone();
+        MachineItemHandler itemHandler;
+        int matchCount = 0;
+        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            matchCount += itemHandler.getSpaceForStacks(toOutput);
+        }
+        return matchCount >= toOutput.length;
+    }
+
+    /** Export stacks to hatches regardless of space. Assumes canOutputsFit has been used **/
+    @Override
+    public void addOutputs() {
+        ItemStack[] toOutput = activeRecipe.getOutputStacks().clone();
+        MachineItemHandler itemHandler;
+        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            for (int i = 0; i < toOutput.length; i++) {
+                System.out.println("Adding output...");
+                itemHandler.addOutputs(toOutput[i]);
             }
         }
     }
 
-    public void advanceRecipe() {
-        if (activeRecipe != null) { //Found a valid recipe, process it
-            if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
-                if (canOutputsFit(activeRecipe.getOutputStacks())) {
-                    //Add outputs and reset to process next recipe cycle
-                    addOutputs(activeRecipe.getOutputStacks());
-                    curProgress = 0;
-                } else {
-                    return; //Return and loop until outputs can be added
-                }
+    @Override
+    public boolean canRecipeContinue() {
+        return Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), getStoredInputs());
+    }
 
-                //Check if has enough stack count for next recipe cycle
-                if (!Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), getHatchItems().toArray(new ItemStack[0]))) {
-                    activeRecipe = null;
-                }
-            } else {
-                //Calculate per recipe tick so user has risk of losing items
-                if (hasResourceForRecipe()) { //Has enough power to process recipe
-                    consumeResourceForRecipe();
-                    if (curProgress == 0) { //Consume recipe inputs on first recipe tick
-                        consumeInputs(activeRecipe.getInputStacks());
-                    }
-                    curProgress++;
-                } else {
-                    //TODO machine out of power/steam
-                    //TODO maybe not null recipe, but keep cache for user using hammer to restart?
-                    activeRecipe = null;
-                }
-            }
+    @Override
+    public boolean consumeResourceForRecipe() {
+        if (energyStorage != null && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower()) {
+            energyStorage.energy -= Math.max(energyStorage.energy -= activeRecipe.getPower(), 0);
+            return true;
         }
-    }
-
-    public boolean hasResourceForRecipe() { //Return if Machine can process 1 recipe tick
-//        return energyStorage != null && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower();
-        return true;
-    }
-
-    public void consumeResourceForRecipe() {
-//        energyStorage.energy -= Math.max(energyStorage.energy -= activeRecipe.getPower(), 0);
+        return false;
     }
 
     private boolean checkStructure() {
         StructurePattern pattern = getMachineType().getPattern();
+        if (pattern == null) return false;
         StructureResult result = pattern.evaluate(this);
         if (result.evaluate()) {
             components = result.getComponents();
@@ -131,11 +126,17 @@ public class TileEntityMultiMachine extends TileEntityMachine {
                 }
             }
             System.out.println("[Structure Debug] Valid Structure");
-            System.out.println(getHatchItems());
+            System.out.println(getStoredInputs());
+            onValidStructure();
             return true;
         }
         System.out.println(result.getError());
         return false;
+    }
+
+    /** Events **/
+    public void onValidStructure() {
+        //NOOP
     }
 
     public void onComponentRemoved() {
@@ -154,10 +155,11 @@ public class TileEntityMultiMachine extends TileEntityMachine {
     }
 
     /** Returns list of stacks across all input hatches. Merges equal stacks and filters empty **/
-    public ArrayList<ItemStack> getHatchItems() {
+    @Override
+    public ItemStack[] getStoredInputs() {
         ArrayList<ItemStack> all = new ArrayList<>();
         ArrayList<IComponent> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
-        if (hatches == null || hatches.size() == 0) return all;
+        if (hatches == null || hatches.size() == 0) return all.toArray(new ItemStack[0]);
         MachineItemHandler itemHandler;
         for (IComponent hatch : hatches) {
             itemHandler = hatch.getItemHandler();
@@ -168,45 +170,7 @@ public class TileEntityMultiMachine extends TileEntityMachine {
                 Utils.merge(all, itemHandler.getInputList());
             }
         }
-        return all;
-    }
-
-    /** Consumes inputs from all input hatches. Assumes doStacksMatchAndSizeValid has been used **/
-    public void consumeInputs(ItemStack... inputs) {
-        ItemStack[] toConsume = inputs.clone();
-        MachineItemHandler itemHandler;
-        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            toConsume = itemHandler.consumeAndReturnInputs(toConsume);
-            if (toConsume.length == 0) break;
-        }
-    }
-
-    /** Tests if outputs can fit across all output hatches **/
-    public boolean canOutputsFit(ItemStack... outputs) {
-        MachineItemHandler itemHandler;
-        int matchCount = 0;
-        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            matchCount += itemHandler.getSpaceForStacks(outputs);
-        }
-        return matchCount >= outputs.length;
-    }
-
-
-    /** Export stacks to hatches regardless of space. Assumes canOutputsFit has been used **/
-    public void addOutputs(ItemStack... outputs) {
-        MachineItemHandler itemHandler;
-        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            for (int i = 0; i < outputs.length; i++) {
-                System.out.println("Adding output...");
-                itemHandler.addOutputs(outputs[i]);
-            }
-        }
+        return all.toArray(new ItemStack[0]);
     }
 
     /** Returns a list of Components **/

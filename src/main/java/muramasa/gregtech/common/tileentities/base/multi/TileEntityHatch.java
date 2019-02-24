@@ -24,7 +24,7 @@ public class TileEntityHatch extends TileEntityMachine {
     public void init(String type, String tier, int facing) {
         super.init(type, tier, facing);
         itemHandler = new MachineItemHandler(this, 0);
-        componentHandler = new HatchComponentHandler(type, this);
+        componentHandler = new HatchComponentHandler(getMachineType(), this);
         texture = super.getTexture();
     }
 
