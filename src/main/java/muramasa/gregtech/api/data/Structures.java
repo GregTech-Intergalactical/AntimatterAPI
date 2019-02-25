@@ -1,10 +1,9 @@
 package muramasa.gregtech.api.data;
 
-import muramasa.gregtech.api.enums.CasingType;
-import muramasa.gregtech.api.enums.CoilType;
-import muramasa.gregtech.api.structure.PatternBuilder;
+import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.structure.StructureBuilder;
 import muramasa.gregtech.api.structure.StructureElement;
-import muramasa.gregtech.api.structure.StructurePattern;
+import muramasa.gregtech.api.structure.Structure;
 import muramasa.gregtech.api.structure.StructureResult;
 import muramasa.gregtech.api.util.int3;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
@@ -13,7 +12,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 
 import static muramasa.gregtech.api.data.Machines.*;
-import static muramasa.gregtech.api.enums.CasingType.*;
+import static muramasa.gregtech.api.enums.Casing.*;
+import static muramasa.gregtech.api.enums.Coil.FUSION;
 
 public class Structures {
 
@@ -38,10 +38,6 @@ public class Structures {
     };
 
     /** Primitive/Bronze Furnace Elements **/
-    public static StructureElement PBF = new StructureElement(Machines.PRIMITIVE_BLAST_FURNACE);
-    public static StructureElement PBF_CASING = new StructureElement(CasingType.FIRE_BRICK);
-    public static StructureElement BBF = new StructureElement(Machines.BRONZE_BLAST_FURNACE);
-    public static StructureElement BBF_CASING = new StructureElement(CasingType.BRONZE_PLATED_BRICK);
     public static StructureElement BF_AIR_OR_LAVA = new StructureElement("airorlava") {
         @Override
         public boolean evaluate(TileEntityMultiMachine machine, int3 pos, StructureResult result) {
@@ -51,41 +47,34 @@ public class Structures {
     };
 
     /** Electric Blast Furnace Elements **/
-    public static StructureElement EBF = new StructureElement(Machines.ELECTRIC_BLAST_FURNACE);
-    public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", CasingType.HEAT_PROOF, Machines.HATCH_ITEM_INPUT, Machines.HATCH_ITEM_OUTPUT);
-    public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", CoilType.values());
+    public static StructureElement HATCH_OR_CASING_EBF = new StructureElement("hatchorcasingebf", HEAT_PROOF, HATCH_ITEM_INPUT, HATCH_ITEM_OUTPUT);
+    public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", Coil.getAll().toArray(new Coil[0]));
 
     /** Vacuum Freezer Elements **/
-    public static StructureElement VF_MACHINE = new StructureElement(Machines.VACUUM_FREEZER);
-    public static StructureElement VF_HATCH_OR_CASING = new StructureElement("hatchorcasingvf", CasingType.FROST_PROOF, Machines.HATCH_ITEM_INPUT, Machines.HATCH_ITEM_OUTPUT, Machines.HATCH_ENERGY);
-
-    /** Fusion Reactor Elements **/
-    public static StructureElement FR_MACHINE = new StructureElement(Machines.FUSION_REACTOR_1);
-    public static StructureElement FUSION_CASING = new StructureElement(FUSION_3);
-    public static StructureElement FUSION_COIL = new StructureElement(CoilType.FUSION);
+    public static StructureElement VF_HATCH_OR_CASING = new StructureElement("hatchorcasingvf", FROST_PROOF, HATCH_ITEM_INPUT, HATCH_ITEM_OUTPUT, HATCH_ENERGY);
 
     /** Structure Patterns **/
-    public static StructurePattern PATTERN_PRIMITIVE_BLAST_FURNAVE = PatternBuilder.start()
+    public static Structure STRUCTURE_PRIMITIVE_BLAST_FURNAVE = StructureBuilder.start()
         .of("CCC", "CCC", "CCC").of("CCC", "CBM", "CCC").of("CCC", "CBC", "CCC").of("CCC", "CAC", "CCC")
-        .at("C", PBF_CASING).at("B", BF_AIR_OR_LAVA).at("M", PBF).build()
+        .at("C", FIRE_BRICK).at("B", BF_AIR_OR_LAVA).at("M", PRIMITIVE_BLAST_FURNACE).build()
         .offset(2, -1).exact(PRIMITIVE_BLAST_FURNACE, 1).min(FIRE_BRICK, 32);
 
-    public static StructurePattern PATTERN_BRONZE_BLAST_FURNACE = PatternBuilder.start()
+    public static Structure STRUCTURE_BRONZE_BLAST_FURNACE = StructureBuilder.start()
         .of("CCC", "CCC", "CCC").of("CCC", "CBM", "CCC").of("CCC", "CBC", "CCC").of("CCC", "CAC", "CCC")
-        .at("C", BBF_CASING).at("B", BF_AIR_OR_LAVA).at("M", BBF).build()
+        .at("C", BRONZE_PLATED_BRICK).at("B", BF_AIR_OR_LAVA).at("M", BRONZE_BLAST_FURNACE).build()
         .offset(2, -1).exact(BRONZE_BLAST_FURNACE, 1).min(BRONZE_PLATED_BRICK, 32);
 
-    public static StructurePattern PATTERN_BLAST_FURNACE = PatternBuilder.start()
+    public static Structure STRUCTURE_BLAST_FURNACE = StructureBuilder.start()
         .of("CCC", "CCM", "CCC").of("BBB", "BAB", "BBB").of(1).of("CCC", "CCC", "CCC")
-        .at("C", HATCH_OR_CASING_EBF).at("B", ANY_COIL_EBF).at("M", EBF).build()
+        .at("C", HATCH_OR_CASING_EBF).at("B", ANY_COIL_EBF).at("M", ELECTRIC_BLAST_FURNACE).build()
         .offset(2, 0).exact(ELECTRIC_BLAST_FURNACE, 1).min(HEAT_PROOF, 12).min(HATCH_ITEM_INPUT, 1).min(HATCH_ITEM_OUTPUT, 1);
 
-    public static StructurePattern PATTERN_VACUUM_FREEZER = PatternBuilder.start()
+    public static Structure STRUCTURE_VACUUM_FREEZER = StructureBuilder.start()
         .of("CCC", "CCC", "CCC").of("CCC", "CAM", "CCC").of(0)
-        .at("C", VF_HATCH_OR_CASING).at("M", VF_MACHINE).build()
+        .at("C", VF_HATCH_OR_CASING).at("M", VACUUM_FREEZER).build()
         .offset(2, -1).exact(VACUUM_FREEZER, 1).min(FROST_PROOF, 22).min(HATCH_ITEM_INPUT, 1).min(HATCH_ITEM_OUTPUT, 1).min(HATCH_ENERGY, 1);
 
-    public static StructurePattern PATTERN_FUSION_REACTOR = PatternBuilder.start()
+    public static Structure PATTERN_FUSION_REACTOR = StructureBuilder.start()
         .of(
             "XXXXXXXXXXXXXXX",
             "XXXXXXOOOXXXXXX",
@@ -121,6 +110,6 @@ public class Structures {
             "XXXXXXOOOXXXXXX"
         )
         .of(0)
-        .at("O", FUSION_CASING).at("C", FUSION_COIL).at("M", FR_MACHINE).build()
+        .at("O", FUSION_3).at("C", FUSION).at("M", FUSION_REACTOR_1).build()
         .offset(2, -1);
 }

@@ -7,7 +7,7 @@ import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
-import muramasa.gregtech.api.structure.StructurePattern;
+import muramasa.gregtech.api.structure.Structure;
 import muramasa.gregtech.api.structure.StructureResult;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
@@ -115,9 +115,9 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     }
 
     private boolean checkStructure() {
-        StructurePattern pattern = getType().getPattern();
-        if (pattern == null) return false;
-        StructureResult result = pattern.evaluate(this);
+        Structure structure = getType().getStructure();
+        if (structure == null) return false;
+        StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             components = result.getComponents();
             for (Map.Entry<String, ArrayList<IComponent>> entry : components.entrySet()) {

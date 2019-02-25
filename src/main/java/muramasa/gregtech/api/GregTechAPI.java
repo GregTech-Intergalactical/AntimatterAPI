@@ -1,6 +1,8 @@
 package muramasa.gregtech.api;
 
 import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.enums.Casing;
+import muramasa.gregtech.api.enums.Coil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -11,12 +13,12 @@ public class GregTechAPI {
 
     /** Block Registry Section **/
 
-    public static void addCasingBlock() {
-
+    public static void addCasing(String name) {
+        new Casing(name);
     }
 
-    public static void addCoilBlock() {
-
+    public static void addCoil(String name, int heatingCapacity) {
+        new Coil(name, heatingCapacity);
     }
 
     /** Cover Registry Section **/

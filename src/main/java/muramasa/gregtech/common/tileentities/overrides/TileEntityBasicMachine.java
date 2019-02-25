@@ -182,7 +182,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public void onContentsChanged(int type, int slot) {
         if (type == 0) {
             if (getMachineState().allowRecipeTickOnContentUpdate()) {
-                //TODO avoid using FOUND, change to use
+                //TODO maybe avoid using FOUND, change?
                 setMachineState(MachineState.FOUND_RECIPE);
             }
             shouldCheckRecipe = true;

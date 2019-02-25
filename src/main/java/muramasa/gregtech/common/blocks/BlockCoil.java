@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.blocks;
 
-import muramasa.gregtech.api.enums.CoilType;
+import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.utils.Ref;
@@ -26,9 +26,9 @@ public class BlockCoil extends Block {
 
     private static LinkedHashMap<String, BlockCoil> BLOCK_LOOKUP = new LinkedHashMap<>();
 
-    private CoilType type;
+    private Coil type;
 
-    public BlockCoil(CoilType type) {
+    public BlockCoil(Coil type) {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("coil_" + type.getName());
         setRegistryName("coil_" + type.getName());
@@ -60,7 +60,7 @@ public class BlockCoil extends Block {
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName())));
     }
 
-    public CoilType getType() {
+    public Coil getType() {
         return type;
     }
 
