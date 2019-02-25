@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static muramasa.gregtech.api.machines.MachineFlag.*;
+import static muramasa.gregtech.api.machines.MachineFlag.RECIPE;
 
 public class Machine implements IStringSerializable {
 

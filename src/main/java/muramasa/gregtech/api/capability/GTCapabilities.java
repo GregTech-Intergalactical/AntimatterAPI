@@ -2,8 +2,9 @@ package muramasa.gregtech.api.capability;
 
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.ConfigHandler;
-import muramasa.gregtech.api.capability.impl.MachineEnergyHandler;
 import muramasa.gregtech.api.capability.impl.CoverHandler;
+import muramasa.gregtech.api.capability.impl.MachineEnergyHandler;
+import muramasa.gregtech.api.machines.Tier;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.EnumFacing;
@@ -42,7 +43,7 @@ public class GTCapabilities {
                 }
                 ((MachineEnergyHandler)instance).energy = ((NBTTagLong)nbt).getLong();
             }
-        }, () -> new MachineEnergyHandler(1000));
+        }, () -> new MachineEnergyHandler(Tier.LV));
 
         CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
             @Nullable

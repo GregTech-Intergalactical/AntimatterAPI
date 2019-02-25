@@ -5,7 +5,6 @@ import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.*;
-import muramasa.gregtech.api.structure.StructurePattern;
 import muramasa.gregtech.common.tileentities.overrides.multi.*;
 
 import java.util.ArrayList;
@@ -103,11 +102,11 @@ public class Machines {
     public static Machine HATCH_MUFFLER = new HatchMachine("hatch_muffler", ITEM, new Slot(0, 35, 25));
 
     public static void init() {
-        PRIMITIVE_BLAST_FURNACE.addPattern(StructurePattern.PATTERN_PRIMITIVE_BLAST_FURNAVE);
-        BRONZE_BLAST_FURNACE.addPattern(StructurePattern.PATTERN_BRONZE_BLAST_FURNACE);
-        ELECTRIC_BLAST_FURNACE.addPattern(StructurePattern.PATTERN_BLAST_FURNACE);
-        VACUUM_FREEZER.addPattern(StructurePattern.PATTERN_VACUUM_FREEZER);
-        FUSION_REACTOR_1.addPattern(StructurePattern.PATTERN_FUSION_REACTOR);
+        PRIMITIVE_BLAST_FURNACE.addPattern(Structures.PATTERN_PRIMITIVE_BLAST_FURNAVE);
+        BRONZE_BLAST_FURNACE.addPattern(Structures.PATTERN_BRONZE_BLAST_FURNACE);
+        ELECTRIC_BLAST_FURNACE.addPattern(Structures.PATTERN_BLAST_FURNACE);
+        VACUUM_FREEZER.addPattern(Structures.PATTERN_VACUUM_FREEZER);
+        FUSION_REACTOR_1.addPattern(Structures.PATTERN_FUSION_REACTOR);
     }
 
     public static void add(Machine machine) {

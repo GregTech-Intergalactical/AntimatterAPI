@@ -23,7 +23,7 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        itemHandler = new MachineItemHandler(this, 0);
+        itemHandler = new MachineItemHandler(this);
         componentHandler = new HatchComponentHandler(getType(), this);
         texture = super.getTexture();
     }

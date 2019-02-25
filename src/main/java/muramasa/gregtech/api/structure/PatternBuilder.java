@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.structure;
 
+import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.util.Pair;
 import muramasa.gregtech.api.util.int3;
 
@@ -40,8 +41,8 @@ public class PatternBuilder {
     }
 
     public StructurePattern build() {
-        elementLookup.put("A", StructureElement.AIR);
-        elementLookup.put("X", StructureElement.X);
+        elementLookup.put("A", Structures.AIR);
+        elementLookup.put("X", Structures.X);
         ArrayList<Pair<int3, StructureElement>> elements = new ArrayList<>();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;

@@ -32,7 +32,7 @@ public enum GenerationFlag implements IMaterialFlag {
     GEAR(), //Add Gears
     SGEAR(), //Add Small Gear
     WIREF(), //Add Fine Wire
-    ROTOR(), //Add Rotors //TODO deprecate? only 1 rotor
+    ROTOR(), //Add Rotors
     DPLATE(), //Add Dense Plates
     SPRING(), //Add Springs
     HINGOT(), //Hot Ingots

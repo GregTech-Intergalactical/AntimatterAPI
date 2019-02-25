@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IEnergyStorage;
+import muramasa.gregtech.api.machines.Tier;
 
 public class MachineEnergyHandler implements IEnergyStorage {
 
@@ -9,22 +10,10 @@ public class MachineEnergyHandler implements IEnergyStorage {
     private long maxReceive;
     private long maxExtract;
 
-    public MachineEnergyHandler(long capacity) {
-        this(capacity, capacity, capacity, 0);
-    }
-
-    public MachineEnergyHandler(long capacity, long maxTransfer) {
-        this(capacity, maxTransfer, maxTransfer, 0);
-    }
-
-    public MachineEnergyHandler(long capacity, long maxReceive, long maxExtract) {
-        this(capacity, maxReceive, maxExtract, 0);
-    }
-
-    public MachineEnergyHandler(long capacity, long maxReceive, long maxExtract, long energy) {
-        this.capacity = capacity;
-        this.maxReceive = maxReceive;
-        this.maxExtract = maxExtract;
+    public MachineEnergyHandler(Tier tier) {
+        this.capacity = tier.getVoltage() * 64;
+        this.maxReceive = tier.getVoltage();
+        this.maxExtract = tier.getVoltage();
         this.energy = Math.max(0 , Math.min(capacity, energy));
     }
 

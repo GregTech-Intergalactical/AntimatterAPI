@@ -1,7 +1,6 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.item.ItemStack;
@@ -18,29 +17,27 @@ public class MachineItemHandler {
     private GTItemHandler inputHandler, outputHandler, cellHandler;
 
     /** Constructor **/
-    public MachineItemHandler(TileEntityMachine tile, int type) {
-        Machine machine = tile.getType();
-        if (machine != null) {
-            inputHandler = new GTItemHandler(machine.getInputCount()) {
-                @Override
-                protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(type, slot);
-                }
-            };
-            outputHandler = new GTItemHandler(machine.getOutputCount()) {
-                @Override
-                protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(type, slot);
-                }
-            };
-            if (machine.hasFlag(MachineFlag.FLUID)) {
-                cellHandler = new GTItemHandler(2) {
-                    @Override
-                    protected void onContentsChanged(int slot) {
-                        tile.onContentsChanged(2, slot);
-                    }
-                };
+    public MachineItemHandler(TileEntityMachine tile) {
+        inputHandler = new GTItemHandler(tile.getType().getInputCount()) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                tile.onContentsChanged(0, slot);
             }
+        };
+        outputHandler = new GTItemHandler(tile.getType().getOutputCount()) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                //TODO maybe differentiate a input/output slot update?
+                tile.onContentsChanged(0, slot);
+            }
+        };
+        if (tile.getType().hasFlag(MachineFlag.FLUID)) {
+            cellHandler = new GTItemHandler(2) {
+                @Override
+                protected void onContentsChanged(int slot) {
+                    tile.onContentsChanged(2, slot);
+                }
+            };
         }
     }
 
