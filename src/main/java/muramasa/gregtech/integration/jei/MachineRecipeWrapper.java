@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class MachineRecipeWrapper implements IRecipeWrapper {
 
-    private Recipe recipe;
+    public Recipe recipe;
 
     public MachineRecipeWrapper(Recipe recipe) {
         this.recipe = recipe;
@@ -38,6 +38,6 @@ public class MachineRecipeWrapper implements IRecipeWrapper {
         minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, 95, 0x000000);
         minecraft.fontRenderer.drawString("Voltage: " + "32 (LV)" + "", 10, 105, 0x000000);
         minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, 115, 0x000000);
-        minecraft.fontRenderer.drawString("Time: " + (float)(recipe.getDuration() / 20) + "s", 10, 125, 0x000000);
+        minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s", 10, 125, 0x000000);
     }
 }

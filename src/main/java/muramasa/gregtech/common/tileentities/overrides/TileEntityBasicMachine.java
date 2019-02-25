@@ -46,7 +46,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         super.onFirstTick();
         Machine machine = getType();
         if (machine.hasFlag(ITEM)) {
-            itemHandler = new MachineItemHandler(this, 0);
+            itemHandler = new MachineItemHandler(this);
             if (itemData != null) itemHandler.deserialize(itemData);
         }
         if (machine.hasFlag(FLUID)) {
@@ -58,7 +58,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
 //        inputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), true, false);
 //        outputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), false, true);
         if (machine.hasFlag(ENERGY)) {
-            energyStorage = new MachineEnergyHandler(getTier().getVoltage() * 64);
+            energyStorage = new MachineEnergyHandler(getTier());
             energyStorage.energy = 99999999; //Temporary
         }
         if (machine.hasFlag(COVERABLE)) {
@@ -102,6 +102,8 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     public MachineState tickRecipe() { //TODO do count check here instead of checkRecipe being called on every contents tick
+        //TODO this null check added if saved state triggers tickRecipe, but there is no recipe to process
+        if (activeRecipe == null) return MachineState.IDLE;
         if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
             if (!canOutput()) {
                 return MachineState.OUTPUT_FULL; //Return and loop until outputs can be added
@@ -180,6 +182,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     public void onContentsChanged(int type, int slot) {
         if (type == 0) {
             if (getMachineState().allowRecipeTickOnContentUpdate()) {
+                //TODO avoid using FOUND, change to use
                 setMachineState(MachineState.FOUND_RECIPE);
             }
             shouldCheckRecipe = true;
@@ -250,6 +253,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         super.readFromNBT(compound);
         itemData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_STATE)) {
+            //TODO saving state needed? if recipe is saved, serverUpdate should handle it.
             super.setMachineState(MachineState.VALUES[compound.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);
         }
     }

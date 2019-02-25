@@ -7,7 +7,7 @@ public class Recipe {
 
     //TODO split up recipe types (item only, fluid only, mix etc) to optimize memory usage
 
-    private final ItemStack[] stacksInput, stacksOutput;
+    private ItemStack[] stacksInput, stacksOutput;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, power;
     private int[] chances;
