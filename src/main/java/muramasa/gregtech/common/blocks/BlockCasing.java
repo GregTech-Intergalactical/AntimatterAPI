@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.blocks;
 
-import muramasa.gregtech.api.enums.CasingType;
+import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import muramasa.gregtech.common.utils.Ref;
@@ -26,9 +26,9 @@ public class BlockCasing extends Block {
 
     private static LinkedHashMap<String, BlockCasing> BLOCK_LOOKUP = new LinkedHashMap<>();
 
-    private CasingType type;
+    private Casing type;
 
-    public BlockCasing(CasingType type) {
+    public BlockCasing(Casing type) {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("casing_" + type.getName());
         setRegistryName("casing_" + type.getName());
@@ -60,7 +60,7 @@ public class BlockCasing extends Block {
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
     }
 
-    public CasingType getType() {
+    public Casing getType() {
         return type;
     }
 

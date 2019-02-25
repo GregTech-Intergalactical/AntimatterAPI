@@ -1,31 +1,74 @@
 {
-  "textures": {
-    "overlay": "gregtech:blocks/machine/cover/cover_item"
-  },
-  "elements": [
-    {
-      "from": [ 1.0, 1.0, 15.0 ],
-      "to": [ 15.0, 15.0, 16.0 ],
-      "faces": {
-        "north": { "texture": "#base", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-        "east": { "texture": "#base", "uv": [ 0.0, 1.0, 1.0, 15.0 ] },
-        "south": { "texture": "#base", "uv": [ 0.0, 0.0, 16.0, 15.0 ] },
-        "west": { "texture": "#base", "uv": [ 0.0, 1.0, 1.0, 15.0 ] },
-        "up": { "texture": "#base", "uv": [ 1.0, 0.0, 15.0, 1.0 ] },
-        "down": { "texture": "#base", "uv": [ 1.0, 0.0, 15.0, 1.0 ] }
-      }
-    },
-	{
-      "from": [ 1.0, 1.0, 15.0 ],
-      "to": [ 15.0, 15.0, 16.0 ],
-      "faces": {
-        "north": { "texture": "#overlay", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-        "east": { "texture": "#overlay", "uv": [ 0.0, 1.0, 1.0, 15.0 ] },
-        "south": { "texture": "#overlay", "uv": [ 0.0, 0.0, 16.0, 15.0 ] },
-        "west": { "texture": "#overlay", "uv": [ 0.0, 1.0, 1.0, 15.0 ] },
-        "up": { "texture": "#overlay", "uv": [ 1.0, 0.0, 15.0, 1.0 ] },
-        "down": { "texture": "#overlay", "uv": [ 1.0, 0.0, 15.0, 1.0 ] }
-      }
-    }
-  ]
+	"textures": {
+		"0": "gregtech:blocks/machine/cover/cover_item",
+		"particle": "gregtech:blocks/machine/cover/cover_item"
+	},
+	"elements": [
+		{
+			"from": [5, 5, 0.5],
+			"to": [11, 11, 1],
+			"faces": {
+				"north": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"east": {"uv": [0, 0, 0.5, 6], "texture": "#missing"},
+				"south": {"uv": [0, 0, 0, 0], "texture": "#missing"},
+				"west": {"uv": [0, 0, 0.5, 6], "texture": "#missing"},
+				"up": {"uv": [0, 0, 0, 0], "rotation": 180, "texture": "#missing"},
+				"down": {"uv": [0, 0, 6, 0.5], "rotation": 180, "texture": "#missing"}
+			}
+		},
+		{
+			"from": [1, 11, 0],
+			"to": [15, 15, 1],
+			"faces": {
+				"north": {"uv": [1, 1, 15, 5], "texture": "#0"},
+				"east": {"uv": [0, 0, 1, 14], "texture": "#missing"},
+				"south": {"uv": [0, 0, 0, 0], "texture": "#missing"},
+				"west": {"uv": [0, 0, 1, 14], "texture": "#missing"},
+				"up": {"uv": [0, 0, 0, 0], "rotation": 180, "texture": "#missing"},
+				"down": {"uv": [0, 4, 16, 5], "rotation": 180, "texture": "#0"}
+			}
+		},
+		{
+			"from": [1, 1, 0],
+			"to": [15, 5, 1],
+			"faces": {
+				"north": {"uv": [1, 11, 15, 15], "texture": "#0"},
+				"east": {"uv": [0, 0, 1, 14], "texture": "#missing"},
+				"south": {"uv": [0, 0, 0, 0], "texture": "#missing"},
+				"west": {"uv": [0, 0, 1, 14], "texture": "#missing"},
+				"up": {"uv": [0, 11, 16, 12], "rotation": 180, "texture": "#0"},
+				"down": {"uv": [0, 0, 14, 1], "rotation": 180, "texture": "#missing"}
+			}
+		},
+		{
+			"from": [11, 5, 0],
+			"to": [15, 11, 1],
+			"faces": {
+				"north": {"uv": [1, 5, 5, 11], "texture": "#0"},
+				"east": {"uv": [0, 0, 1, 14], "texture": "#missing"},
+				"south": {"uv": [0, 0, 0, 0], "texture": "#missing"},
+				"west": {"uv": [4, 5, 5, 11], "texture": "#0"},
+				"up": {"uv": [0, 0, 0, 0], "rotation": 180, "texture": "#missing"},
+				"down": {"uv": [0, 0, 14, 1], "rotation": 180, "texture": "#missing"}
+			}
+		},
+		{
+			"from": [1, 5, 0],
+			"to": [5, 11, 1],
+			"faces": {
+				"north": {"uv": [11, 5, 15, 11], "texture": "#0"},
+				"east": {"uv": [11, 5, 12, 11], "texture": "#0"},
+				"south": {"uv": [0, 0, 0, 0], "texture": "#missing"},
+				"west": {"uv": [0, 0, 1, 14], "texture": "#missing"},
+				"up": {"uv": [0, 0, 0, 0], "rotation": 180, "texture": "#missing"},
+				"down": {"uv": [0, 0, 14, 1], "rotation": 180, "texture": "#missing"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "cover_item",
+			"children": [0, 1, 2, 3, 4]
+		}
+	]
 }

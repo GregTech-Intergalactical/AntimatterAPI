@@ -8,7 +8,7 @@ import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
-import muramasa.gregtech.api.structure.StructurePattern;
+import muramasa.gregtech.api.structure.Structure;
 import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
@@ -49,7 +49,7 @@ public class Machine implements IStringSerializable {
     protected int inputTankCount, outputTankCount;
 
     /** Multi Members **/
-    protected StructurePattern structurePattern;
+    protected Structure structure;
 
     //TODO add valid covers
 
@@ -169,8 +169,8 @@ public class Machine implements IStringSerializable {
         addFlags(RECIPE);
     }
 
-    public void addPattern(StructurePattern pattern) {
-        structurePattern = pattern;
+    public void addPattern(Structure pattern) {
+        structure = pattern;
     }
 
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
@@ -223,8 +223,8 @@ public class Machine implements IStringSerializable {
         return guiId;
     }
 
-    public StructurePattern getPattern() {
-        return structurePattern;
+    public Structure getStructure() {
+        return structure;
     }
 
     /** Static Methods **/

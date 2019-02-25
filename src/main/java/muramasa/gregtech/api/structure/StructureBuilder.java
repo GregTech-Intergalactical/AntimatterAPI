@@ -3,30 +3,42 @@ package muramasa.gregtech.api.structure;
 import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.util.Pair;
 import muramasa.gregtech.api.util.int3;
+import net.minecraft.util.IStringSerializable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PatternBuilder {
+public class StructureBuilder {
+
+    private static HashMap<String, StructureElement> globalElementLookup = new HashMap<>();
 
     private ArrayList<String[]> slices = new ArrayList<>();
     private HashMap<String, StructureElement> elementLookup = new HashMap<>();
 
-    public static PatternBuilder start() {
-        return new PatternBuilder();
+    static {
+        globalElementLookup.put("A", Structures.AIR);
+        globalElementLookup.put("X", Structures.X);
     }
 
-    public PatternBuilder of(String... slices) {
+    public static StructureBuilder start() {
+        return new StructureBuilder();
+    }
+
+    public static void addGlobalElement(String key, StructureElement element) {
+        globalElementLookup.put(key, element);
+    }
+
+    public StructureBuilder of(String... slices) {
         this.slices.add(slices);
         return this;
     }
 
-    public PatternBuilder of(int i) {
+    public StructureBuilder of(int i) {
         slices.add(slices.get(i));
         return this;
     }
 
-    public PatternBuilder rep(String s, int count) {
+    public StructureBuilder rep(String s, int count) {
         String[] slices = new String[count];
         for (int i = 0; i < count; i++) {
             slices[i] = s;
@@ -35,14 +47,17 @@ public class PatternBuilder {
         return this;
     }
 
-    public PatternBuilder at(String key, StructureElement element) {
+    public StructureBuilder at(String key, StructureElement element) {
         elementLookup.put(key, element);
         return this;
     }
 
-    public StructurePattern build() {
-        elementLookup.put("A", Structures.AIR);
-        elementLookup.put("X", Structures.X);
+    public StructureBuilder at(String key, IStringSerializable serializable) {
+        elementLookup.put(key, new StructureElement(serializable));
+        return this;
+    }
+
+    public Structure build() {
         ArrayList<Pair<int3, StructureElement>> elements = new ArrayList<>();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
@@ -50,6 +65,7 @@ public class PatternBuilder {
             for (int x = 0; x < size.x; x++) {
                 for (int z = 0; z < size.z; z++) {
                     e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
+                    if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e != null) {
                         if (!e.shouldAddToList()) continue;
                         elements.add(new Pair<>(new int3(x, y, z), e));
@@ -59,6 +75,6 @@ public class PatternBuilder {
                 }
             }
         }
-        return new StructurePattern(size, elements);
+        return new Structure(size, elements);
     }
 }

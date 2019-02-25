@@ -12,32 +12,32 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.BiPredicate;
 
-public class StructurePattern {
+public class Structure {
 
     private ArrayList<Pair<int3, StructureElement>> elements = new ArrayList<>();
     private HashMap<String, Pair<Integer, BiPredicate<Integer, Integer>>> requirements = new HashMap<>();
     private int3 size = new int3();
     private int2 offset = new int2();
 
-    public StructurePattern(int3 size, ArrayList<Pair<int3, StructureElement>> elements) {
+    public Structure(int3 size, ArrayList<Pair<int3, StructureElement>> elements) {
         this.size = size;
         this.elements = elements;
     }
 
-    public StructurePattern offset(int x, int y) {
+    public Structure offset(int x, int y) {
         offset.set(x, y);
         return this;
     }
 
-    public StructurePattern exact(IStringSerializable serializable, int value) {
+    public Structure exact(IStringSerializable serializable, int value) {
         return addReq(serializable, value, StructureResult::equal);
     }
 
-    public StructurePattern min(IStringSerializable serializable, int value) {
+    public Structure min(IStringSerializable serializable, int value) {
         return addReq(serializable, value, StructureResult::moreOrEqual);
     }
 
-    public StructurePattern addReq(IStringSerializable serializable, int value, BiPredicate<Integer, Integer> method) {
+    public Structure addReq(IStringSerializable serializable, int value, BiPredicate<Integer, Integer> method) {
         requirements.put(serializable.getName(), new Pair<>(value, method));
         return this;
     }

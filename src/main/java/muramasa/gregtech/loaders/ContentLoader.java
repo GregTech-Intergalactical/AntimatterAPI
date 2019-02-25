@@ -2,8 +2,8 @@ package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.CasingType;
-import muramasa.gregtech.api.enums.CoilType;
+import muramasa.gregtech.api.enums.Casing;
+import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
@@ -76,10 +76,10 @@ public class ContentLoader {
                 event.getRegistry().register(new BlockStorage(material));
             }
         }
-        for (CasingType type : CasingType.values()) {
+        for (Casing type : Casing.getAll()) {
             event.getRegistry().register(new BlockCasing(type));
         }
-        for (CoilType type : CoilType.values()) {
+        for (Coil type : Coil.getAll()) {
             event.getRegistry().register(new BlockCoil(type));
         }
         for (StoneType type : StoneType.getGenerating()) {

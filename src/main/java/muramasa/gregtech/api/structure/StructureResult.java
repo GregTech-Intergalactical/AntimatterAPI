@@ -7,14 +7,14 @@ import java.util.HashMap;
 
 public class StructureResult {
 
-    private StructurePattern pattern;
+    private Structure structure;
     private boolean hasError;
     private String error = "";
 
     private HashMap<String, ArrayList<IComponent>> components = new HashMap<>();
 
-    public StructureResult(StructurePattern pattern) {
-        this.pattern = pattern;
+    public StructureResult(Structure structure) {
+        this.structure = structure;
     }
 
     public StructureResult withError(String error) {
@@ -45,8 +45,8 @@ public class StructureResult {
 
     public boolean evaluate() {
         if (hasError) return false;
-        for (String key : pattern.getRequirements()) {
-            if (!components.containsKey(key) || !pattern.testRequirement(key, components.get(key).size())) {
+        for (String key : structure.getRequirements()) {
+            if (!components.containsKey(key) || !structure.testRequirement(key, components.get(key).size())) {
                 withError("Failed Requirement: " + key);
                 return false;
             }
