@@ -41,6 +41,13 @@ public class MachineItemHandler {
         }
     }
 
+    public MachineItemHandler(TileEntityMachine tile, NBTTagCompound itemData) {
+        this(tile);
+        if (itemData != null) {
+            deserialize(itemData);
+        }
+    }
+
     public int getInputCount() {
         return inputHandler.stacks.length;
     }

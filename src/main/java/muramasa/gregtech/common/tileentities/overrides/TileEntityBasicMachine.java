@@ -25,9 +25,6 @@ import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class TileEntityBasicMachine extends TileEntityMachine {
 
-    /** Data from NBT **/
-    protected NBTTagCompound itemData, fluidData;
-
     /** Capabilities **/
     protected MachineItemHandler itemHandler;
     protected MachineFluidHandler fluidHandler;
@@ -46,11 +43,10 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         super.onFirstTick();
         Machine machine = getType();
         if (machine.hasFlag(ITEM)) {
-            itemHandler = new MachineItemHandler(this);
-            if (itemData != null) itemHandler.deserialize(itemData);
+            itemHandler = new MachineItemHandler(this, itemData);
         }
         if (machine.hasFlag(FLUID)) {
-            fluidHandler = new MachineFluidHandler(this);
+            fluidHandler = new MachineFluidHandler(this, fluidData);
 //            inputTank = new MachineTankHandler(this, 9999, null, true, false);
 //            if (fluidData != null) inputTank.deserializeNBT(fluidData);
 //            cellHandler = new MachineStackHandlerOld(this, 2, 2, 2);
@@ -251,7 +247,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        itemData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_STATE)) {
             //TODO saving state needed? if recipe is saved, serverUpdate should handle it.
             super.setMachineState(MachineState.VALUES[compound.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);
@@ -261,9 +256,6 @@ public class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (itemHandler != null) {
-            compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS, itemHandler.serialize());
-        }
         if (getMachineState() != null) {
             compound.setInteger(Ref.KEY_MACHINE_TILE_STATE, getMachineState().getId());
         }
