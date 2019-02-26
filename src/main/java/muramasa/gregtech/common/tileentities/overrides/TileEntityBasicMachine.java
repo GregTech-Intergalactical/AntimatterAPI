@@ -50,7 +50,7 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             if (itemData != null) itemHandler.deserialize(itemData);
         }
         if (machine.hasFlag(FLUID)) {
-            fluidHandler = new MachineFluidHandler(this, machine.getFluidInputCount(), machine.getFluidOutputCount());
+            fluidHandler = new MachineFluidHandler(this);
 //            inputTank = new MachineTankHandler(this, 9999, null, true, false);
 //            if (fluidData != null) inputTank.deserializeNBT(fluidData);
 //            cellHandler = new MachineStackHandlerOld(this, 2, 2, 2);

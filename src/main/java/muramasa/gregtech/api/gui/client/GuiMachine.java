@@ -1,6 +1,6 @@
-package muramasa.gregtech.api.gui;
+package muramasa.gregtech.api.gui.client;
 
-import muramasa.gregtech.api.gui.container.ContainerMachine;
+import muramasa.gregtech.api.gui.server.ContainerMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.util.ResourceLocation;
 

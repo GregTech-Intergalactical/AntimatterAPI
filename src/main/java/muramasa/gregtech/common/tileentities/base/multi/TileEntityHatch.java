@@ -3,6 +3,7 @@ package muramasa.gregtech.common.tileentities.base.multi;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.HatchComponentHandler;
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
@@ -14,16 +15,25 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
+import static muramasa.gregtech.api.machines.MachineFlag.FLUID;
+import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
+
 public class TileEntityHatch extends TileEntityMachine {
 
     private ResourceLocation texture;
     private MachineItemHandler itemHandler;
+    private MachineFluidHandler fluidHandler;
     private ComponentHandler componentHandler;
 
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        itemHandler = new MachineItemHandler(this);
+        if (getType().hasFlag(ITEM)) {
+            itemHandler = new MachineItemHandler(this);
+        }
+        if (getType().hasFlag(FLUID)) {
+            fluidHandler = new MachineFluidHandler(this, 8000 * getTierId());
+        }
         componentHandler = new HatchComponentHandler(getType(), this);
         texture = super.getTexture();
     }

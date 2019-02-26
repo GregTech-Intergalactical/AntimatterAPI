@@ -86,6 +86,9 @@ public class StandardItem extends Item {
 //                            System.out.println(((TileEntityHatch) tile).getTexture());
 //                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());
 //                            ((TileEntityHatch) tile).markForRenderUpdate();
+//                        MachineFluidHandler fluidHandler = ((TileEntityHatch) tile).getFluidHandler();
+//                        System.out.println("Input Tanks: " + fluidHandler.getInputCount());
+//                        System.out.println("Output Tanks: " + fluidHandler.getOutputCount());
                     } else {
 //                        System.out.println("Setting Tint");
 //                        ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());

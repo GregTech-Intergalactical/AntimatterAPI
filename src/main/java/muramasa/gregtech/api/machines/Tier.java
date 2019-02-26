@@ -15,11 +15,6 @@ public class Tier implements IStringSerializable {
 
     public static int lastInternalId = 0;
 
-    /** Special Tiers **/
-    public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
-    public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
-    public static Tier MULTI = new Tier("multi", 0, TextFormatting.AQUA);
-
     /** Electricity Tiers **/
     public static Tier ULV = new Tier("ulv", 8, TextFormatting.WHITE);
     public static Tier LV = new Tier("lv", 32, TextFormatting.WHITE);
@@ -31,6 +26,11 @@ public class Tier implements IStringSerializable {
     public static Tier ZPM = new Tier("zpm", 131072, TextFormatting.LIGHT_PURPLE);
     public static Tier UV = new Tier("uv", 524288, TextFormatting.LIGHT_PURPLE);
     public static Tier MAX = new Tier("max", 2147483647, TextFormatting.LIGHT_PURPLE);
+
+    /** Special Tiers **/
+    public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
+    public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
+    public static Tier MULTI = new Tier("multi", 0, TextFormatting.AQUA);
 
     private int internalId;
     private String name;

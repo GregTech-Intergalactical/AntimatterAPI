@@ -9,6 +9,7 @@ import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.integration.jei.MachineRecipeWrapper;
+import muramasa.gregtech.integration.jei.renderer.FluidStackRenderer;
 
 public class MultiMachineRecipeCategory extends MachineRecipeCategory {
 
@@ -20,7 +21,7 @@ public class MultiMachineRecipeCategory extends MachineRecipeCategory {
 
     @Override
     public void setRecipe(IRecipeLayout layout, MachineRecipeWrapper wrapper, IIngredients ingredients) {
-        if (type.getSlots() != null) {
+        if (type.getGui().hasSlots()) {
             super.setRecipe(layout, wrapper, ingredients);
         } else {
             IGuiItemStackGroup itemGroup = layout.getItemStacks();
@@ -45,7 +46,7 @@ public class MultiMachineRecipeCategory extends MachineRecipeCategory {
                 for (int i = 0; i < wrapper.recipe.getOutputStacks().length; i++) {
                     int xStart, yStart;
                     if (wrapper.recipe.getOutputStacks().length <= 3) {
-                        xStart = 121 - 9 * (wrapper.recipe.getInputStacks().length - 1);
+                        xStart = 121 - 9 * (wrapper.recipe.getOutputStacks().length - 1);
                         yStart = 22;
                     } else {
                         xStart = i >= 3 ? 49 : 103;
@@ -53,6 +54,21 @@ public class MultiMachineRecipeCategory extends MachineRecipeCategory {
                     }
                     itemGroup.init(index, false, xStart + (i * 18), yStart);
                     itemGroup.set(index++, wrapper.recipe.getOutputStacks()[i]);
+                }
+            }
+            index = 0;
+            if (wrapper.recipe.hasInputFluids()) {
+                for (int i = 0; i < wrapper.recipe.getInputFluids().length; i++) {
+                    int xStart = wrapper.recipe.getInputFluids().length <= 1 ? 50 : 50 - (18 * index);
+                    fluidGroup.init(index, true, new FluidStackRenderer(), xStart, 60, 16, 16, 0, 0);
+                    fluidGroup.set(index++, wrapper.recipe.getInputFluids()[i]);
+                }
+            }
+            if (wrapper.recipe.hasOutputFluids()) {
+                for (int i = 0; i < wrapper.recipe.getOutputFluids().length; i++) {
+                    int xStart = 104 + (i * 18);
+                    fluidGroup.init(index, false, new FluidStackRenderer(), xStart, 60, 16, 16, 0, 0);
+                    fluidGroup.set(index++, wrapper.recipe.getOutputFluids()[i]);
                 }
             }
         }

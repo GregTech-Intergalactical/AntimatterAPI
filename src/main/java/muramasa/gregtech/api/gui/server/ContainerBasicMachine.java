@@ -1,4 +1,4 @@
-package muramasa.gregtech.api.gui.container;
+package muramasa.gregtech.api.gui.server;
 
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;

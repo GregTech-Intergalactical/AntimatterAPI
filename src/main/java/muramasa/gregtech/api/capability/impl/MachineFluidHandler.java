@@ -7,21 +7,34 @@ import java.util.ArrayList;
 
 public class MachineFluidHandler {
 
-    private static final int TANK_CAPACITY = 99999;
+    private static final int DEFAULT_CAPACITY = 99999;
 
     private TileEntityMachine tile;
-    private GTFluidTank[] inputTanks, outputTanks;
+    public GTFluidTank[] inputTanks, outputTanks;
+    private int capacity;
 
-    public MachineFluidHandler(TileEntityMachine tile, int inputCount, int outputCount) {
+    public MachineFluidHandler(TileEntityMachine tile) {
+        this(tile, DEFAULT_CAPACITY);
+    }
+
+    public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
-        inputTanks = new GTFluidTank[inputCount];
-        outputTanks = new GTFluidTank[outputCount];
-        for (int i = 0; i < inputCount; i++) {
-            inputTanks[i] = new GTFluidTank(TANK_CAPACITY, true, false);
+        inputTanks = new GTFluidTank[tile.getType().getGui().getFluidInputs()];
+        outputTanks = new GTFluidTank[tile.getType().getGui().getFluidOutputs()];
+        for (int i = 0; i < tile.getType().getGui().getFluidInputs(); i++) {
+            inputTanks[i] = new GTFluidTank(capacity, true, false);
         }
-        for (int i = 0; i < outputCount; i++) {
-            outputTanks[i] = new GTFluidTank(TANK_CAPACITY, false, true);
+        for (int i = 0; i < tile.getType().getGui().getFluidOutputs(); i++) {
+            outputTanks[i] = new GTFluidTank(capacity, false, true);
         }
+    }
+
+    public int getInputCount() {
+        return inputTanks.length;
+    }
+
+    public int getOutputCount() {
+        return outputTanks.length;
     }
 
     public GTFluidTank getInput(int i) {

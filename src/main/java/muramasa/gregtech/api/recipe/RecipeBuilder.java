@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.recipe;
 
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -9,7 +10,6 @@ public class RecipeBuilder {
     private RecipeMap recipeMap;
     private ItemStack[] stacksInput, stacksOutput;
     private FluidStack[] fluidsInput, fluidsOutput;
-    private int duration = 1, power = 1;
 
     public RecipeBuilder(RecipeMap recipeMap) {
         this.recipeMap = recipeMap;
@@ -19,11 +19,11 @@ public class RecipeBuilder {
         return new RecipeBuilder(type.getRecipeMap());
     }
 
-    public void build() {
-//        if (stacksInput != null && !Utils.areStacksValid(stacksInput)) return;
-//        if (stacksOutput != null && !Utils.areStacksValid(stacksOutput)) return;
-//        if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) return;
-//        if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) return;
+    public void build(int duration, int power) {
+        if (stacksInput != null && !Utils.areStacksValid(stacksInput)) return;
+        if (stacksOutput != null && !Utils.areStacksValid(stacksOutput)) return;
+        if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) return;
+        if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) return;
         recipeMap.add(new Recipe(stacksInput, stacksOutput, fluidsInput, fluidsOutput, duration, power));
     }
 
@@ -44,12 +44,6 @@ public class RecipeBuilder {
 
     public RecipeBuilder fo(FluidStack... stacks) {
         fluidsOutput = stacks;
-        return this;
-    }
-
-    public RecipeBuilder t(int d, int p) {
-        duration = d;
-        power = p;
         return this;
     }
 }
