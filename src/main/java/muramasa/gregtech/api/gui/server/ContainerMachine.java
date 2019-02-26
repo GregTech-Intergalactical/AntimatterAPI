@@ -1,11 +1,12 @@
-package muramasa.gregtech.api.gui.container;
+package muramasa.gregtech.api.gui.server;
 
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
+import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.gui.slot.SlotCell;
 import muramasa.gregtech.api.gui.slot.SlotInput;
 import muramasa.gregtech.api.gui.slot.SlotOutput;
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.api.machines.Slot;
+import muramasa.gregtech.api.gui.SlotData;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.inventory.IInventory;
@@ -20,18 +21,18 @@ public class ContainerMachine extends ContainerBase {
         MachineItemHandler itemHandler = tile.getItemHandler();
         if (itemHandler == null) return;
 
-        addSlots(machine.getSlots(), tile.getItemHandler());
+        addSlots(machine.getGui().getSlots(), tile.getItemHandler());
         if (machine.hasFlag(MachineFlag.FLUID)) {
             addCellSlots(tile.getItemHandler());
         }
     }
 
-    public void addSlots(ArrayList<Slot> slots, MachineItemHandler itemHandler) {
+    public void addSlots(ArrayList<SlotData> slots, MachineItemHandler itemHandler) {
         int inputIndex = 0, outputIndex = 0;
-        for (Slot slot : slots) {
-            if (slot.type == 0) { //Input Slot
+        for (SlotData slot : slots) {
+            if (slot.type == SlotType.IT_IN) { //Input Slot
                 addSlotToContainer(new SlotInput(itemHandler.getInputHandler(), inputIndex++, slot.x, slot.y));
-            } else if (slot.type == 1) { //Output Slot
+            } else if (slot.type == SlotType.IT_OUT) { //Output Slot
                 addSlotToContainer(new SlotOutput(itemHandler.getOutputHandler(), outputIndex++, slot.x, slot.y));
             }
         }

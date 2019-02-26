@@ -9,6 +9,7 @@ import muramasa.gregtech.api.items.MaterialItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -482,5 +483,17 @@ public class Material {
 
     public ItemStack getCellP(int amount) {
         return MaterialItem.get(Prefix.CellPlasma, this, amount);
+    }
+
+    public FluidStack getLiquidStack(int amount) {
+        return new FluidStack(getLiquid(), amount);
+    }
+
+    public FluidStack getGasStack(int amount) {
+        return new FluidStack(getGas(), amount);
+    }
+
+    public FluidStack getPlasmaStack(int amount) {
+        return new FluidStack(getPlasma(), amount);
     }
 }

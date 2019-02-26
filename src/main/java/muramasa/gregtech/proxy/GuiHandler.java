@@ -1,11 +1,11 @@
 package muramasa.gregtech.proxy;
 
-import muramasa.gregtech.api.gui.GuiBasicMachine;
-import muramasa.gregtech.api.gui.GuiHatch;
-import muramasa.gregtech.api.gui.GuiMultiMachine;
-import muramasa.gregtech.api.gui.container.ContainerBasicMachine;
-import muramasa.gregtech.api.gui.container.ContainerHatch;
-import muramasa.gregtech.api.gui.container.ContainerMultiMachine;
+import muramasa.gregtech.api.gui.client.GuiBasicMachine;
+import muramasa.gregtech.api.gui.client.GuiHatch;
+import muramasa.gregtech.api.gui.client.GuiMultiMachine;
+import muramasa.gregtech.api.gui.server.ContainerBasicMachine;
+import muramasa.gregtech.api.gui.server.ContainerHatch;
+import muramasa.gregtech.api.gui.server.ContainerMultiMachine;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -29,11 +29,11 @@ public class GuiHandler implements IGuiHandler {
         if (tile instanceof TileEntityMachine) {
             Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
-            if (machine.getGuiId() == Ref.MACHINE_ID) {
+            if (machine.getGui().getId() == Ref.MACHINE_ID) {
                 return new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory);
-            } else if (machine.getGuiId() == Ref.MULTI_MACHINE_ID) {
+            } else if (machine.getGui().getId() == Ref.MULTI_MACHINE_ID) {
                 return new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory);
-            } else if (machine.getGuiId() == Ref.HATCH_ID) {
+            } else if (machine.getGui().getId() == Ref.HATCH_ID) {
                 return new ContainerHatch((TileEntityMachine) tile, player.inventory);
             }
         }
@@ -47,11 +47,11 @@ public class GuiHandler implements IGuiHandler {
         if (tile instanceof TileEntityMachine) {
             Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
-            if (machine.getGuiId() == Ref.MACHINE_ID) {
+            if (machine.getGui().getId() == Ref.MACHINE_ID) {
                 return new GuiBasicMachine((TileEntityBasicMachine) tile, new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory));
-            } else if (machine.getGuiId() == Ref.MULTI_MACHINE_ID) {
+            } else if (machine.getGui().getId() == Ref.MULTI_MACHINE_ID) {
                 return new GuiMultiMachine((TileEntityMultiMachine) tile, new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory));
-            } else if (machine.getGuiId() == Ref.HATCH_ID) {
+            } else if (machine.getGui().getId() == Ref.HATCH_ID) {
                 return new GuiHatch((TileEntityMachine) tile, new ContainerHatch((TileEntityMachine) tile, player.inventory));
             }
         }

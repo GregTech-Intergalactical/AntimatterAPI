@@ -18,13 +18,13 @@ public class MachineItemHandler {
 
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
-        inputHandler = new GTItemHandler(tile.getType().getInputCount()) {
+        inputHandler = new GTItemHandler(tile.getType().getGui().getItemInputs()) {
             @Override
             protected void onContentsChanged(int slot) {
                 tile.onContentsChanged(0, slot);
             }
         };
-        outputHandler = new GTItemHandler(tile.getType().getOutputCount()) {
+        outputHandler = new GTItemHandler(tile.getType().getGui().getItemInputs()) {
             @Override
             protected void onContentsChanged(int slot) {
                 //TODO maybe differentiate a input/output slot update?
@@ -41,14 +41,16 @@ public class MachineItemHandler {
         }
     }
 
-    public List<ItemStack> getInputList() {
-        ArrayList<ItemStack> list = new ArrayList<>();
-        for (int i = 0; i < inputHandler.stacks.length; i++) {
-            if (!inputHandler.stacks[i].isEmpty()) {
-                list.add(inputHandler.stacks[i].copy());
-            }
-        }
-        return list;
+    public int getInputCount() {
+        return inputHandler.stacks.length;
+    }
+
+    public int getOutputCount() {
+        return outputHandler.stacks.length;
+    }
+
+    public int getCellCount() {
+        return cellHandler.stacks.length;
     }
 
     public ItemStack[] getInputs() {
@@ -65,6 +67,16 @@ public class MachineItemHandler {
 
     public ItemStack getCellOutput() {
         return cellHandler.getStackInSlot(1);
+    }
+
+    public List<ItemStack> getInputList() {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        for (int i = 0; i < inputHandler.stacks.length; i++) {
+            if (!inputHandler.stacks[i].isEmpty()) {
+                list.add(inputHandler.stacks[i].copy());
+            }
+        }
+        return list;
     }
 
     public void consumeInputs(ItemStack... inputs) {

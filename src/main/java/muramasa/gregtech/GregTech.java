@@ -1,8 +1,10 @@
 package muramasa.gregtech;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.api.data.Guis;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
@@ -45,6 +47,8 @@ public class GregTech {
         //Init GT Data
         Materials.init();
         Machines.init();
+        Guis.init();
+        Structures.init();
         MaterialItem.init();
         StandardItem.init();
         ItemType.init();

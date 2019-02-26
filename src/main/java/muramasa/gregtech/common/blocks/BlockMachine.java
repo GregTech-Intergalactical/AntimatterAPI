@@ -125,7 +125,7 @@ public class BlockMachine extends Block {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
-            int guiId = ((TileEntityMachine) tile).getType().getGuiId();
+            int guiId = ((TileEntityMachine) tile).getType().getGui().getId();
             player.openGui(GregTech.INSTANCE, guiId, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;

@@ -5,13 +5,14 @@ import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.machines.Slot;
+import muramasa.gregtech.api.gui.SlotData;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.integration.jei.MachineRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         IGuiFluidStackGroup fluidGroup = layout.getFluidStacks();
 
         int i = 0;
-        ArrayList<Slot> slots = type.getSlots();
+        ArrayList<SlotData> slots = type.getGui().getSlots();
         if (wrapper.recipe.hasInputStacks()) {
             for (ItemStack stack : wrapper.recipe.getInputStacks()) {
                 itemGroup.init(i, true, slots.get(i).x - SLOT_OFFSET_X, slots.get(i).y - SLOT_OFFSET_Y);
@@ -82,6 +83,13 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
             for (ItemStack stack : wrapper.recipe.getOutputStacks()) {
                 itemGroup.init(i, false, slots.get(i).x - SLOT_OFFSET_X, slots.get(i).y - SLOT_OFFSET_Y);
                 itemGroup.set(i++, stack);
+            }
+        }
+
+        i = 0;
+        if (wrapper.recipe.hasInputFluids()) {
+            for (FluidStack stack : wrapper.recipe.getInputFluids()) {
+//                fluidGroup.init(i, true, );
             }
         }
 //

@@ -1,4 +1,4 @@
-package muramasa.gregtech.api.gui.container;
+package muramasa.gregtech.api.gui.server;
 
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.inventory.IInventory;

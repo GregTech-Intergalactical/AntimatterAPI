@@ -3,10 +3,14 @@ package muramasa.gregtech.api.util;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
+/**
+ * Created By Muramasa -  https://github.com/Muramasa-
+ * Allows easily stepping in directions given a EnumFacing
+ */
 public class int3 {
 
     public int x, y, z;
-    public EnumFacing facing; //Used for moving in a direction
+    public EnumFacing facing = EnumFacing.NORTH; //Used for moving in a direction
 
     public int3() {
         this.x = 0;

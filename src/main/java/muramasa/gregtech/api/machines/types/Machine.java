@@ -3,8 +3,8 @@ package muramasa.gregtech.api.machines.types;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.api.machines.Slot;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
@@ -40,13 +40,14 @@ public class Machine implements IStringSerializable {
     protected RecipeMap recipeMap;
 
     /** GUI Members **/
-    protected Object modInstance;
-    protected int guiId;
-    protected ArrayList<Slot> slots;
-    protected int inputCount, outputCount;
+//    protected Object modInstance;
+//    protected int guiId;
+//    protected ArrayList<SlotData> slots;
+//    protected int inputCount, outputCount;
+    protected GuiData guiData;
 
     /** Fluid Members **/
-    protected int inputTankCount, outputTankCount;
+//    protected int inputTankCount, outputTankCount;
 
     /** Multi Members **/
     protected Structure structure;
@@ -142,26 +143,8 @@ public class Machine implements IStringSerializable {
     }
 
     public void addGUI(Object instance, int id) {
-        modInstance = instance;
-        guiId = id;
+        guiData = new GuiData(instance, id);
         addFlags(MachineFlag.GUI);
-    }
-
-    public Machine addSlots(Slot... slots) {
-        if (this.slots == null) this.slots = new ArrayList<>();
-        for (Slot slot : slots) {
-            this.slots.add(slot);
-            if (slot.type == 0) {
-                inputCount++;
-            } else if (slot.type == 1) {
-                outputCount++;
-            } else if (slot.type == 2) {
-                inputTankCount++;
-            } else if (slot.type == 3) {
-                outputTankCount++;
-            }
-        }
-        return this;
     }
 
     public void addRecipeMap() {
@@ -169,8 +152,8 @@ public class Machine implements IStringSerializable {
         addFlags(RECIPE);
     }
 
-    public void addPattern(Structure pattern) {
-        structure = pattern;
+    public void addStructure(Structure structure) {
+        this.structure = structure;
     }
 
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
@@ -199,28 +182,8 @@ public class Machine implements IStringSerializable {
         return tiers;
     }
 
-    public ArrayList<Slot> getSlots() {
-        return slots;
-    }
-
-    public int getInputCount() {
-        return inputCount;
-    }
-
-    public int getOutputCount() {
-        return outputCount;
-    }
-
-    public int getFluidInputCount() {
-        return inputTankCount;
-    }
-
-    public int getFluidOutputCount() {
-        return outputTankCount;
-    }
-
-    public int getGuiId() {
-        return guiId;
+    public GuiData getGui() {
+        return guiData;
     }
 
     public Structure getStructure() {

@@ -1,8 +1,7 @@
 package muramasa.gregtech.api.machines.types;
 
-import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
-import muramasa.gregtech.api.machines.Slot;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
@@ -11,14 +10,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class SteamMachine extends ItemFluidMachine {
 
-    public SteamMachine(String name, Machine machine, Slot... slots) {
-        super(name, machine, slots);
+    public SteamMachine(String name) {
+        super(name);
         setTiers(Tier.getSteam());
     }
 
-    public SteamMachine(String name, Slot... slots) {
-        super(name, slots);
-        setTiers(Tier.getSteam());
+    public SteamMachine(String name, Tier tier) {
+        this(name);
+        setTiers(tier);
     }
 
     @Override

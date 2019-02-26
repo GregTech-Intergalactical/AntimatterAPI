@@ -55,7 +55,7 @@ public class Materials {
     public static Material Cerium = new Material("Cerium", 0xffffff, METALLIC, Ce).asSolid(1068, 1068);
     public static Material Chlorine = new Material("Chlorine", 0xffffff, NONE, Cr).asGas();
     public static Material Copper = new Material("Copper", 0xff6400, SHINY, Cu).asMetal(1357, 0, PLATE, DPLATE, ROD, FOIL, WIREF, GEAR, ORE);
-    public static Material Deuterium = new Material("Deuterium", 0xffff00, NONE, D).asFluid();
+    public static Material Deuterium = new Material("Deuterium", 0xffff00, NONE, D).asGas();
     public static Material Dysprosium = new Material("Dysprosium", 0xffffff, METALLIC, D).asMetal(1680, 1680);
     public static Material Europium = new Material("Europium", 0xffffff, METALLIC, Eu).asMetal(1099, 1099, PLATE, ROD);
     public static Material Fluorine = new Material("Fluorine", 0xffffff, NONE, F).asFluid();

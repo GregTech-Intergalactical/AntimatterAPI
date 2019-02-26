@@ -1,6 +1,6 @@
-package muramasa.gregtech.api.gui;
+package muramasa.gregtech.api.gui.client;
 
-import muramasa.gregtech.api.gui.container.ContainerBase;
+import muramasa.gregtech.api.gui.server.ContainerBase;
 import net.minecraft.client.gui.inventory.GuiContainer;
 
 import java.util.ArrayList;
