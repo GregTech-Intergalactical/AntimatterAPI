@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -13,10 +14,6 @@ public class MachineFluidHandler {
     public GTFluidTank[] inputTanks, outputTanks;
     private int capacity;
 
-    public MachineFluidHandler(TileEntityMachine tile) {
-        this(tile, DEFAULT_CAPACITY);
-    }
-
     public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
         inputTanks = new GTFluidTank[tile.getType().getGui().getFluidInputs()];
@@ -27,6 +24,21 @@ public class MachineFluidHandler {
         for (int i = 0; i < tile.getType().getGui().getFluidOutputs(); i++) {
             outputTanks[i] = new GTFluidTank(capacity, false, true);
         }
+    }
+
+    public MachineFluidHandler(TileEntityMachine tile) {
+        this(tile, DEFAULT_CAPACITY);
+    }
+
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, NBTTagCompound fluidData) {
+        this(tile, capacity);
+        if (fluidData != null) {
+            //TODO
+        }
+    }
+
+    public MachineFluidHandler(TileEntityMachine tile, NBTTagCompound fluidData) {
+        this(tile, DEFAULT_CAPACITY, fluidData);
     }
 
     public int getInputCount() {

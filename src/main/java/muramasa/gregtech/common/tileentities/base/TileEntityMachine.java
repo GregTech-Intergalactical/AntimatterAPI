@@ -19,6 +19,9 @@ public class TileEntityMachine extends TileEntityTickable {
     private int facing, tint = -1;
     private MachineState machineState = MachineState.IDLE;
 
+    /** Data from NBT **/
+    protected NBTTagCompound itemData, fluidData;
+
     public final void init(Tier tier, int facing) {
         this.type = ((BlockMachine) getBlockType()).getType();
         this.tier = tier;
@@ -129,6 +132,9 @@ public class TileEntityMachine extends TileEntityTickable {
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_FACING)) {
             facing = compound.getInteger(Ref.KEY_MACHINE_TILE_FACING);
         }
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_ITEMS)) {
+            itemData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
+        }
     }
 
     @Override
@@ -136,6 +142,9 @@ public class TileEntityMachine extends TileEntityTickable {
         super.writeToNBT(compound); //TODO add tile data tag
         compound.setString(Ref.KEY_MACHINE_TILE_TIER, getTier().getName());
         compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, facing);
+        if (getItemHandler() != null) {
+            compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS, getItemHandler().serialize());
+        }
         return compound;
     }
 }

@@ -29,10 +29,10 @@ public class TileEntityHatch extends TileEntityMachine {
     public void onFirstTick() {
         super.onFirstTick();
         if (getType().hasFlag(ITEM)) {
-            itemHandler = new MachineItemHandler(this);
+            itemHandler = new MachineItemHandler(this, itemData);
         }
         if (getType().hasFlag(FLUID)) {
-            fluidHandler = new MachineFluidHandler(this, 8000 * getTierId());
+            fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
         }
         componentHandler = new HatchComponentHandler(getType(), this);
         texture = super.getTexture();
