@@ -4,6 +4,7 @@ import muramasa.gregtech.api.gui.server.ContainerBase;
 import net.minecraft.client.gui.inventory.GuiContainer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GuiBase extends GuiContainer {
 
@@ -26,7 +27,7 @@ public class GuiBase extends GuiContainer {
         drawTooltipInArea(list, mouseX, mouseY, x, y, sizeX, sizeY);
     }
 
-    public void drawTooltipInArea(ArrayList<String> lines, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
+    public void drawTooltipInArea(List<String> lines, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
         if (isInGui(x, y, sizeX, sizeY, mouseX, mouseY)) {
             drawHoveringText(lines, mouseX - guiLeft, mouseY - guiTop);
         }

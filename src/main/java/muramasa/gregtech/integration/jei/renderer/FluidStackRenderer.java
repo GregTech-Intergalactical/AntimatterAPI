@@ -2,6 +2,7 @@ package muramasa.gregtech.integration.jei.renderer;
 
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.ingredients.IIngredientRenderer;
+import muramasa.gregtech.common.fluid.GTFluid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -19,34 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
-    private static final int TEX_WIDTH = 16;
-    private static final int TEX_HEIGHT = 16;
-    private static final int MIN_FLUID_HEIGHT = 1; // ensure tiny amounts of fluid are still visible
 
-    private final int capacityMb;
-    private final TooltipMode tooltipMode;
-    private final int width;
-    private final int height;
+    private static final int TEX_WIDTH = 16, TEX_HEIGHT = 16;
+
+    private final int width, height;
     @Nullable
     private final IDrawable overlay;
 
-    enum TooltipMode {
-        SHOW_AMOUNT,
-        SHOW_AMOUNT_AND_CAPACITY,
-        ITEM_LIST
-    }
-
     public FluidStackRenderer() {
-        this(Fluid.BUCKET_VOLUME, TooltipMode.ITEM_LIST, TEX_WIDTH, TEX_HEIGHT, null);
+        this(TEX_WIDTH, TEX_HEIGHT, null);
     }
 
-    public FluidStackRenderer(int capacityMb, boolean showCapacity, int width, int height, @Nullable IDrawable overlay) {
-        this(capacityMb, showCapacity ? TooltipMode.SHOW_AMOUNT_AND_CAPACITY : TooltipMode.SHOW_AMOUNT, width, height, overlay);
-    }
-
-    public FluidStackRenderer(int capacityMb, TooltipMode tooltipMode, int width, int height, @Nullable IDrawable overlay) {
-        this.capacityMb = capacityMb;
-        this.tooltipMode = tooltipMode;
+    public FluidStackRenderer(int width, int height, @Nullable IDrawable overlay) {
         this.width = width;
         this.height = height;
         this.overlay = overlay;
@@ -85,13 +71,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 
         int fluidColor = fluid.getColor(fluidStack);
 
-        int scaledAmount = 16;//(fluidStack.amount * height) / capacityMb;
-//        if (fluidStack.amount > 0 && scaledAmount < MIN_FLUID_HEIGHT) {
-//            scaledAmount = MIN_FLUID_HEIGHT;
-//        }
-//        if (scaledAmount > height) {
-//            scaledAmount = height;
-//        }
+        int scaledAmount = 16;
 
         drawTiledSprite(minecraft, xPosition, yPosition, width, height, fluidColor, scaledAmount, fluidStillSprite);
     }
@@ -165,21 +145,15 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     @Override
     public List<String> getTooltip(Minecraft minecraft, FluidStack fluidStack, ITooltipFlag tooltipFlag) {
         List<String> tooltip = new ArrayList<>();
-        Fluid fluidType = fluidStack.getFluid();
-        if (fluidType == null) {
+        if (!(fluidStack.getFluid() instanceof GTFluid)) {
             return tooltip;
         }
 
-        String fluidName = fluidType.getLocalizedName(fluidStack);
-        tooltip.add(fluidName);
-
-//        if (tooltipMode == TooltipMode.SHOW_AMOUNT_AND_CAPACITY) {
-//            String amount = Translator.translateToLocalFormatted("jei.tooltip.liquid.amount.with.capacity", fluidStack.amount, capacityMb);
-//            tooltip.add(TextFormatting.GRAY + amount);
-//        } else if (tooltipMode == TooltipMode.SHOW_AMOUNT) {
-//            String amount = Translator.translateToLocalFormatted("jei.tooltip.liquid.amount", fluidStack.amount);
-//            tooltip.add(TextFormatting.GRAY + amount);
-//        }
+        GTFluid fluid = (GTFluid) fluidStack.getFluid();
+        tooltip.add(fluid.getLocalizedName(fluidStack));
+        tooltip.add(TextFormatting.BLUE + "Amount: " + fluidStack.amount);
+        tooltip.add(TextFormatting.RED + "Temperature: " + fluid.getTemperature() + " K");
+        tooltip.add(TextFormatting.GREEN + "State: " + fluid.getState());
 
         return tooltip;
     }

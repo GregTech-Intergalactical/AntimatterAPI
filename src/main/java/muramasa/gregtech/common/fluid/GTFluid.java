@@ -20,17 +20,20 @@ public class GTFluid extends Fluid {
         switch (flag) {
             case LIQUID:
                 setViscosity(1000);
+                setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
                 break;
             case GAS:
                 setViscosity(200);
                 setDensity(-100);
                 setGaseous(true);
+                setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
                 break;
             case PLASMA:
                 setViscosity(10);
                 setDensity(55536);
                 setLuminosity(15);
                 setGaseous(true);
+                setTemperature(10000);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot create a fluid with the flag: " + flag.getName());
@@ -51,6 +54,15 @@ public class GTFluid extends Fluid {
                 return Materials.get(name).getDisplayName() + " Plasma";
             default:
                 return "FLUID NAME ERROR";
+        }
+    }
+
+    public String getState() {
+        switch (flag) {
+            case LIQUID: return "Liquid";
+            case GAS: return "Gas";
+            case PLASMA: return "Plasma";
+            default: return "";
         }
     }
 }

@@ -2,6 +2,7 @@ package muramasa.gregtech.api.data;
 
 import static muramasa.gregtech.api.data.Machines.*;
 import static muramasa.gregtech.api.gui.SlotType.*;
+import static muramasa.gregtech.api.machines.Tier.*;
 
 public class Guis {
 
@@ -18,6 +19,9 @@ public class Guis {
         EXTRUDER.getGui().add(ALLOY_SMELTER);
         LATHE.getGui().add(CUTTER);
         PULVERIZER.getGui().add(COMPRESSOR);
+        PULVERIZER.getGui().add(HV, COMPRESSOR).add(HV, IT_OUT, 125, 25);
+        PULVERIZER.getGui().add(EV, COMPRESSOR).add(EV, IT_OUT, 125, 25).add(EV, IT_OUT, 143, 25);
+        PULVERIZER.getGui().add(IV, IT_IN, 53, 25).add(IV, IT_OUT, 107, 16).add(IV, IT_OUT, 125, 16).add(IV, IT_OUT, 107, 34).add(IV, IT_OUT, 125, 34);
         RECYCLER.getGui().add(COMPRESSOR);
         SCANNER.getGui().add(COMPRESSOR);
         WIRE_MILL.getGui().add(COMPRESSOR);
@@ -58,10 +62,32 @@ public class Guis {
         PRIMITIVE_BLAST_FURNACE.getGui().add(ALLOY_SMELTER); //TODO
         BRONZE_BLAST_FURNACE.getGui().add(PRIMITIVE_BLAST_FURNACE);
 
-        HATCH_ITEM_INPUT.getGui().add(IT_IN, 79, 34);
+        HATCH_MUFFLER.getGui().add(IT_IN, 79, 34);
+
+        HATCH_ITEM_INPUT.getGui().add(ULV, IT_IN, 79, 34);
+        HATCH_ITEM_INPUT.getGui().add(LV, IT_IN, 70, 25).add(LV, IT_IN, 88, 25).add(LV, IT_IN, 70, 43).add(LV, IT_IN, 88, 43);
+        HATCH_ITEM_INPUT.getGui().add(MV, IT_IN, 61, 16).add(MV, IT_IN, 79, 16).add(MV, IT_IN, 97, 16).add(MV, IT_IN, 61, 34).add(MV, IT_IN, 79, 34).add(MV, IT_IN, 97, 34).add(MV, IT_IN, 61, 52).add(MV, IT_IN, 79, 52).add(MV, IT_IN, 97, 52);
+        HATCH_ITEM_INPUT.getGui().add(HV, IT_IN, 52, 7).add(HV, IT_IN, 70, 7).add(HV, IT_IN, 88, 7).add(HV, IT_IN, 106, 7).add(HV, IT_IN, 52, 25).add(HV, IT_IN, 70, 25).add(HV, IT_IN, 88, 25).add(HV, IT_IN, 106, 25).add(HV, IT_IN, 52, 43).add(HV, IT_IN, 70, 43).add(HV, IT_IN, 88, 43).add(HV, IT_IN, 106, 43).add(HV, IT_IN, 52, 61).add(HV, IT_IN, 70, 61).add(HV, IT_IN, 88, 61).add(HV, IT_IN, 106, 61);
+        HATCH_ITEM_INPUT.getGui().add(EV, HATCH_ITEM_INPUT, HV);
+        HATCH_ITEM_INPUT.getGui().add(IV, HATCH_ITEM_INPUT, HV);
+        HATCH_ITEM_INPUT.getGui().add(LUV, HATCH_ITEM_INPUT, HV);
+        HATCH_ITEM_INPUT.getGui().add(ZPM, HATCH_ITEM_INPUT, HV);
+        HATCH_ITEM_INPUT.getGui().add(UV, HATCH_ITEM_INPUT, HV);
+        HATCH_ITEM_INPUT.getGui().add(MAX, HATCH_ITEM_INPUT, HV);
+
+        HATCH_ITEM_OUTPUT.getGui().add(ULV, HATCH_ITEM_INPUT, ULV);
+        HATCH_ITEM_OUTPUT.getGui().add(LV, HATCH_ITEM_INPUT, LV);
+        HATCH_ITEM_OUTPUT.getGui().add(MV, HATCH_ITEM_INPUT, MV);
+        HATCH_ITEM_OUTPUT.getGui().add(HV, HATCH_ITEM_INPUT, HV);
+        HATCH_ITEM_OUTPUT.getGui().add(EV, HATCH_ITEM_INPUT, EV);
+        HATCH_ITEM_OUTPUT.getGui().add(IV, HATCH_ITEM_INPUT, IV);
+        HATCH_ITEM_OUTPUT.getGui().add(LUV, HATCH_ITEM_INPUT, LUV);
+        HATCH_ITEM_OUTPUT.getGui().add(ZPM, HATCH_ITEM_INPUT, ZPM);
+        HATCH_ITEM_OUTPUT.getGui().add(UV, HATCH_ITEM_INPUT, UV);
+        HATCH_ITEM_OUTPUT.getGui().add(MAX, HATCH_ITEM_INPUT, MAX);
+
         HATCH_ITEM_OUTPUT.getGui().add(IT_OUT, 79, 34);
         HATCH_FLUID_INPUT.getGui().add(FL_IN, 79, 34);
         HATCH_FLUID_OUTPUT.getGui().add(FL_OUT, 79, 34);
-        HATCH_MUFFLER.getGui().add(IT_IN, 79, 34);
     }
 }

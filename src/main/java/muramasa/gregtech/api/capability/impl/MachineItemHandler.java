@@ -1,5 +1,6 @@
 package muramasa.gregtech.api.capability.impl;
 
+import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -18,13 +19,13 @@ public class MachineItemHandler {
 
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
-        inputHandler = new GTItemHandler(tile.getType().getGui().getItemInputs()) {
+        inputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_IN)) {
             @Override
             protected void onContentsChanged(int slot) {
                 tile.onContentsChanged(0, slot);
             }
         };
-        outputHandler = new GTItemHandler(tile.getType().getGui().getItemInputs()) {
+        outputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_OUT)) {
             @Override
             protected void onContentsChanged(int slot) {
                 //TODO maybe differentiate a input/output slot update?
@@ -32,7 +33,7 @@ public class MachineItemHandler {
             }
         };
         if (tile.getType().hasFlag(MachineFlag.FLUID)) {
-            cellHandler = new GTItemHandler(2) {
+            cellHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.CELL_IN) + tile.getType().getGui().getCount(SlotType.CELL_OUT)) {
                 @Override
                 protected void onContentsChanged(int slot) {
                     tile.onContentsChanged(2, slot);
