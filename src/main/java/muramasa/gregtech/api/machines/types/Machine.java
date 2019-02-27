@@ -32,7 +32,7 @@ public class Machine implements IStringSerializable {
     protected int internalId;
     protected BlockMachine block;
     protected Class tileClass;
-    protected String name, displayName;
+    protected String name;
     protected ArrayList<Tier> tiers;
     protected int machineMask;
 
@@ -40,14 +40,7 @@ public class Machine implements IStringSerializable {
     protected RecipeMap recipeMap;
 
     /** GUI Members **/
-//    protected Object modInstance;
-//    protected int guiId;
-//    protected ArrayList<SlotData> slots;
-//    protected int inputCount, outputCount;
     protected GuiData guiData;
-
-    /** Fluid Members **/
-//    protected int inputTankCount, outputTankCount;
 
     /** Multi Members **/
     protected Structure structure;
@@ -76,10 +69,7 @@ public class Machine implements IStringSerializable {
     }
 
     public String getDisplayName(Tier tier) {
-        if (displayName == null) {
-            displayName = I18n.format("machine." + name + "." + tier.getName() + ".name");
-        }
-        return displayName;
+        return I18n.format("machine." + name + "." + tier.getName() + ".name");
     }
 
     public String getJeiCategoryID() {
@@ -92,10 +82,6 @@ public class Machine implements IStringSerializable {
 
     public RecipeMap getRecipeMap() {
         return recipeMap;
-    }
-
-    public ResourceLocation getGUITexture(Tier tier) {
-        return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
     }
 
     public ResourceLocation getBaseTexture(Tier tier) {
@@ -143,7 +129,7 @@ public class Machine implements IStringSerializable {
     }
 
     public void addGUI(Object instance, int id) {
-        guiData = new GuiData(instance, id);
+        guiData = new GuiData(this, instance, id);
         addFlags(MachineFlag.GUI);
     }
 

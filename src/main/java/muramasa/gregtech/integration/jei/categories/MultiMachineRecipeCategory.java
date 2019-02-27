@@ -15,7 +15,7 @@ public class MultiMachineRecipeCategory extends MachineRecipeCategory {
 
     public MultiMachineRecipeCategory(IGuiHelper guiHelper, Machine type) {
         super(guiHelper, type);
-        background = guiHelper.drawableBuilder(type.getGUITexture(Tier.MULTI), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
+        background = guiHelper.drawableBuilder(type.getGui().getTexture(Tier.MULTI), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
         icon = guiHelper.createDrawableIngredient(Machines.get(type, Tier.MULTI).asItemStack());
     }
 

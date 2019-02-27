@@ -14,14 +14,14 @@ public class GuiHatch extends GuiMachine {
     public GuiHatch(TileEntityMachine tile, ContainerMachine container) {
         super(tile, container);
         background = new ResourceLocation(Ref.MODID, "textures/gui/machine/hatch.png");
-        itemSlots = tile.getType().getGui().getItemInputs() > 0 ? tile.getType().getGui().getItemInputs() : tile.getType().getGui().getItemOutputs();
-        fluidSlots = tile.getType().getGui().getFluidInputs() > 0 ? tile.getType().getGui().getFluidInputs() : tile.getType().getGui().getFluidOutputs();
+        itemSlots = tile.getType().getGui().hasType(SlotType.IT_IN) ? tile.getType().getGui().getCount(SlotType.IT_IN) : tile.getType().getGui().getCount(SlotType.IT_IN);
+        fluidSlots = tile.getType().getGui().hasType(SlotType.FL_IN) ? tile.getType().getGui().getCount(SlotType.FL_IN) : tile.getType().getGui().getCount(SlotType.FL_OUT);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        for (SlotData slot : tile.getType().getGui().getSlots()) {
+        for (SlotData slot : tile.getType().getGui().getSlots(tile.getTier())) {
             if (slot.type == SlotType.IT_IN || slot.type == SlotType.IT_OUT) {
                 drawTexturedModalRect(guiLeft + slot.x - 1, guiTop + slot.y - 1, xSize, 0, 18, 18);
             } else if (slot.type == SlotType.FL_IN || slot.type == SlotType.FL_OUT) {

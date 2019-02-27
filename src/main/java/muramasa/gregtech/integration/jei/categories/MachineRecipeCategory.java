@@ -6,16 +6,16 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.SlotData;
+import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.integration.jei.MachineRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 
 public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapper> {
 
@@ -30,8 +30,8 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
         this.type = type;
         title = type.getJeiCategoryName();
         uid = type.getJeiCategoryID();
-        background = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
-        progressBar = guiHelper.drawableBuilder(type.getGUITexture(Tier.LV), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
+        background = guiHelper.drawableBuilder(type.getGui().getTexture(Tier.IV), 3, 3, 170, 80).addPadding(0, 55, 0, 0).build();
+        progressBar = guiHelper.drawableBuilder(type.getGui().getTexture(Tier.IV), 176, 0, 20, 18).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
         icon = guiHelper.createDrawableIngredient(Machines.get(type, Tier.LV).asItemStack());
     }
 
@@ -70,28 +70,32 @@ public class MachineRecipeCategory implements IRecipeCategory<MachineRecipeWrapp
     public void setRecipe(IRecipeLayout layout, MachineRecipeWrapper wrapper, IIngredients ingredients) {
         IGuiItemStackGroup itemGroup = layout.getItemStacks();
         IGuiFluidStackGroup fluidGroup = layout.getFluidStacks();
+        List<SlotData> slots;
+        int i = 0, slotIndex = 0;
 
-        int i = 0;
-        ArrayList<SlotData> slots = type.getGui().getSlots();
+        slots = type.getGui().getTypes(SlotType.IT_IN, Tier.IV);
         if (wrapper.recipe.hasInputStacks()) {
             for (ItemStack stack : wrapper.recipe.getInputStacks()) {
-                itemGroup.init(i, true, slots.get(i).x - SLOT_OFFSET_X, slots.get(i).y - SLOT_OFFSET_Y);
-                itemGroup.set(i++, stack);
-            }
-        }
-        if (wrapper.recipe.hasOutputStacks()) {
-            for (ItemStack stack : wrapper.recipe.getOutputStacks()) {
-                itemGroup.init(i, false, slots.get(i).x - SLOT_OFFSET_X, slots.get(i).y - SLOT_OFFSET_Y);
+                itemGroup.init(i, true, slots.get(slotIndex).x - SLOT_OFFSET_X, slots.get(slotIndex++).y - SLOT_OFFSET_Y);
                 itemGroup.set(i++, stack);
             }
         }
 
-        i = 0;
-        if (wrapper.recipe.hasInputFluids()) {
-            for (FluidStack stack : wrapper.recipe.getInputFluids()) {
-//                fluidGroup.init(i, true, );
+        slotIndex = 0;
+        slots = type.getGui().getTypes(SlotType.IT_OUT, Tier.IV);
+        if (wrapper.recipe.hasOutputStacks()) {
+            for (ItemStack stack : wrapper.recipe.getOutputStacks()) {
+                itemGroup.init(i, false, slots.get(slotIndex).x - SLOT_OFFSET_X, slots.get(slotIndex++).y - SLOT_OFFSET_Y);
+                itemGroup.set(i++, stack);
             }
         }
+
+//        i = 0;
+//        if (wrapper.recipe.hasInputFluids()) {
+//            for (FluidStack stack : wrapper.recipe.getInputFluids()) {
+////                fluidGroup.init(i, true, );
+//            }
+//        }
 //
 //        if (type.getFluidInputCount() > 0) {
 //            fluidGroup.init(0, true, 50, 60, 16, 16, 1, false, null);

@@ -13,8 +13,7 @@ import muramasa.gregtech.integration.jei.categories.MultiMachineRecipeCategory;
 import java.util.LinkedList;
 import java.util.List;
 
-import static muramasa.gregtech.api.machines.MachineFlag.BASIC;
-import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
+import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 @JEIPlugin
 public class GregTechJEIPlugin implements IModPlugin {

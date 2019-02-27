@@ -54,6 +54,13 @@ public class TileEntityHatch extends TileEntityMachine {
     }
 
     @Override
+    public void onContentsChanged(int type, int slot) {
+        if (type == 2) {
+            //TODO handle cells
+        }
+    }
+
+    @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
