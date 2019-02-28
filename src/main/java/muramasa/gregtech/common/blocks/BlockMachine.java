@@ -1,11 +1,12 @@
 package muramasa.gregtech.common.blocks;
 
-import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.CoverBehaviour;
 import muramasa.gregtech.api.cover.behaviour.CoverBehaviourTintable;
 import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.gui.GuiData;
+import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.properties.GTProperties;
@@ -125,10 +126,14 @@ public class BlockMachine extends Block {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
-            int guiId = ((TileEntityMachine) tile).getType().getGui().getId();
-            player.openGui(GregTech.INSTANCE, guiId, world, pos.getX(), pos.getY(), pos.getZ());
+            TileEntityMachine machine = (TileEntityMachine) tile;
+            if (machine.getType().hasFlag(MachineFlag.GUI)) {
+                GuiData gui = machine.getType().getGui();
+                player.openGui(gui.getInstance(), gui.getId(), world, pos.getX(), pos.getY(), pos.getZ());
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     @Override

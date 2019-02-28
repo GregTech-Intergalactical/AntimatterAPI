@@ -2,6 +2,7 @@ package muramasa.gregtech.api.structure;
 
 import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.util.Pair;
+import muramasa.gregtech.api.util.int2;
 import muramasa.gregtech.api.util.int3;
 import net.minecraft.util.IStringSerializable;
 
@@ -67,7 +68,7 @@ public class StructureBuilder {
                     e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e != null) {
-                        if (!e.shouldAddToList()) continue;
+                        if (!e.addToList()) continue;
                         elements.add(new Pair<>(new int3(x, y, z), e));
                     } else {
                         throw new NullPointerException();

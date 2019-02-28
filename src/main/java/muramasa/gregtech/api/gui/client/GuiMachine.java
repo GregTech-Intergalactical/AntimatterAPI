@@ -7,6 +7,8 @@ import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
+import java.io.IOException;
+
 public class GuiMachine extends GuiBase {
 
     protected TileEntityMachine tile;
@@ -40,7 +42,8 @@ public class GuiMachine extends GuiBase {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
         if (!Loader.isModLoaded("jei") || !tile.getType().hasFlag(MachineFlag.RECIPE)) return;
         if (isInGui((xSize / 2) - 10, 24, 20, 18, mouseX, mouseY)) {
             GregTechJEIPlugin.showCategory(tile.getType());
