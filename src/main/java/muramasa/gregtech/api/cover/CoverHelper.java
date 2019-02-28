@@ -10,11 +10,12 @@ import net.minecraft.util.EnumFacing;
 
 public class CoverHelper {
 
+    /** Attempts to place a cover on a tile at a given side **/
     public static boolean placeCover(TileEntity tile, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (tile.hasCapability(GTCapabilities.COVERABLE, null)) {
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
             if (coverHandler == null) return false;
-            CoverBehaviour cover = GregTechAPI.getCover(stack);
+            Cover cover = GregTechAPI.getCover(stack);
             if (cover == null) return false;
             EnumFacing targetSide = Utils.determineInteractionSide(side, hitX, hitY, hitZ);
             if (cover.needsNewInstance()) {

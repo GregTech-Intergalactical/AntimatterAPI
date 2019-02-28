@@ -42,12 +42,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     public void onServerUpdate() {
         if (shouldCheckStructure) {
             clearComponents();
-            if (checkStructure()) {
-                validStructure = true;
-            } else {
-                validStructure = false;
-                clearComponents();
-            }
+            validStructure = checkStructure();
             shouldCheckStructure = false;
         }
         super.onServerUpdate();
@@ -131,6 +126,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
             return true;
         }
         System.out.println(result.getError());
+        clearComponents();
         return false;
     }
 

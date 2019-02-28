@@ -1,14 +1,14 @@
-package muramasa.gregtech.api.cover.behaviour;
+package muramasa.gregtech.api.cover.impl;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 import java.util.List;
 
-public class CoverBehaviourPlate extends CoverBehaviourTintable {
+public class CoverPlate extends CoverTintable {
 
     private int rgb;
 
-    public CoverBehaviourPlate(int rgb) {
+    public CoverPlate(int rgb) {
         this.rgb = rgb;
     }
 

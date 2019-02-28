@@ -125,7 +125,7 @@ public class ToolHelper {
 
     public static void remove(ItemStack stack, World world, BlockPos pos) {
         stack.setCount(0);
-        SoundList.BREAK.play(world, pos);
+        Sounds.BREAK.play(world, pos);
     }
 
     public static void setup(ItemStack stack, Material primary, Material secondary) {

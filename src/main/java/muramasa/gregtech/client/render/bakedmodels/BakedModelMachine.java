@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
-import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.client.render.RenderHelper;
@@ -124,7 +124,7 @@ public class BakedModelMachine extends BakedModelBase {
 
 //        //Add cover quads
         if (hasUnlistedProperty(exState, GTProperties.COVERS)) {
-            CoverBehaviour[] covers = exState.getValue(GTProperties.COVERS);
+            Cover[] covers = exState.getValue(GTProperties.COVERS);
             if (covers == null) return quadList;
             for (int i = 0; i < covers.length; i++) {
                 if (covers[i].isEmpty()) continue;

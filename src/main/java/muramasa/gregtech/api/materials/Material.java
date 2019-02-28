@@ -2,8 +2,6 @@ package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
-import muramasa.gregtech.api.enums.GenerationFlag;
-import muramasa.gregtech.api.enums.RecipeFlag;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MaterialItem;
 import net.minecraft.client.resources.I18n;
@@ -14,8 +12,8 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static muramasa.gregtech.api.enums.GenerationFlag.*;
-import static muramasa.gregtech.api.enums.RecipeFlag.*;
+import static muramasa.gregtech.api.materials.ItemFlag.*;
+import static muramasa.gregtech.api.materials.RecipeFlag.*;
 
 public class Material {
 
@@ -165,7 +163,7 @@ public class Material {
 
     public boolean hasFlag(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof GenerationFlag) {
+            if (flag instanceof ItemFlag) {
                 return (itemMask & flag.getBit()) != 0;
             } else if (flag instanceof RecipeFlag) {
                 return (recipeMask & flag.getBit()) != 0;
@@ -176,7 +174,7 @@ public class Material {
 
     public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof GenerationFlag) {
+            if (flag instanceof ItemFlag) {
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
                 recipeMask |= flag.getBit();
@@ -379,6 +377,14 @@ public class Material {
 
     public ItemStack getDust(int amount) {
         return MaterialItem.get(Prefix.Dust, this, amount);
+    }
+
+    public ItemStack getDustP(int amount) {
+        return MaterialItem.get(Prefix.DustPure, this, amount);
+    }
+
+    public ItemStack getDustIP(int amount) {
+        return MaterialItem.get(Prefix.DustImpure, this, amount);
     }
 
     public ItemStack getDustS(int amount) {

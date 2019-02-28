@@ -4,8 +4,8 @@ import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.IConfigHandler;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.cover.CoverBehaviour;
-import muramasa.gregtech.api.util.SoundList;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.util.EnumFacing;
@@ -24,10 +24,10 @@ public class ConfigHandler implements IConfigHandler {
         if (tile.hasCapability(GTCapabilities.COVERABLE, side)) { //Side has cover, configure.
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
             if (coverHandler == null) return false;
-            CoverBehaviour cover = coverHandler.get(side);
+            Cover cover = coverHandler.get(side);
             if (!cover.isEmpty()) {
                 cover.onWrench(tile);
-                SoundList.WRENCH.play(tile.getWorld(), tile.getPos());
+                Sounds.WRENCH.play(tile.getWorld(), tile.getPos());
                 return true;
             }
         } else { //Used wrench on side with no cover, rotate.
@@ -46,7 +46,7 @@ public class ConfigHandler implements IConfigHandler {
             if (coverHandler != null && !coverHandler.get(side).isEmpty()) {
                 coverHandler.get(side).onCrowbar(tile);
                 coverHandler.setCover(side, GregTechAPI.CoverBehaviourNone);
-                SoundList.BREAK.play(tile.getWorld(), tile.getPos());
+                Sounds.BREAK.play(tile.getWorld(), tile.getPos());
                 return true;
             }
         } else { //Used crowbar on side with no cover
@@ -62,7 +62,7 @@ public class ConfigHandler implements IConfigHandler {
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
             if (coverHandler != null && !coverHandler.get(side).isEmpty()) {
                 coverHandler.get(side).onScrewdriver(tile);
-                SoundList.WRENCH.play(tile.getWorld(), tile.getPos());
+                Sounds.WRENCH.play(tile.getWorld(), tile.getPos());
             }
         } else { //Used screwdriver on side with no cover
             //NOOP

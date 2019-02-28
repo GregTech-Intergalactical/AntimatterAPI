@@ -2,8 +2,8 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.ICoverHandler;
-import muramasa.gregtech.api.cover.CoverBehaviour;
-import muramasa.gregtech.api.cover.behaviour.CoverBehaviourTintable;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.impl.CoverTintable;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
@@ -79,7 +79,7 @@ public class BlockMachine extends Block {
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, null);
             if (coverHandler != null) {
                 exState = exState
-                    .withProperty(COVERS, new CoverBehaviour[] {
+                    .withProperty(COVERS, new Cover[] {
                         coverHandler.get(EnumFacing.UP),
                         coverHandler.get(EnumFacing.DOWN),
                         coverHandler.get(EnumFacing.SOUTH),
@@ -183,12 +183,12 @@ public class BlockMachine extends Block {
                 if (BakedModelBase.hasUnlistedProperty(exState, GTProperties.TINT)) {
                     return exState.getValue(GTProperties.TINT) != null ? exState.getValue(GTProperties.TINT) : -1;
                 }
-            } else if (tintIndex == CoverBehaviourTintable.coverTintIndex) {
+            } else if (tintIndex == CoverTintable.coverTintIndex) {
                 IExtendedBlockState exState = (IExtendedBlockState) state;
                 if (BakedModelBase.hasUnlistedProperty(exState, GTProperties.COVERS)) {
-                    for (CoverBehaviour cover : exState.getValue(GTProperties.COVERS)) {
-                        if (cover instanceof CoverBehaviourTintable) {
-                            return ((CoverBehaviourTintable) cover).getRGB();
+                    for (Cover cover : exState.getValue(GTProperties.COVERS)) {
+                        if (cover instanceof CoverTintable) {
+                            return ((CoverTintable) cover).getRGB();
                         }
                     }
                 }

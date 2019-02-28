@@ -10,13 +10,13 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
-public abstract class CoverBehaviour {
+public abstract class Cover {
 
     private static int lastInternalId = 0;
 
     private int internalId;
 
-    public CoverBehaviour() {
+    public Cover() {
         internalId = lastInternalId++;
     }
 
@@ -50,12 +50,12 @@ public abstract class CoverBehaviour {
         return false;
     }
 
-    public CoverBehaviour getNewInstance(ItemStack stack) {
+    public Cover getNewInstance(ItemStack stack) {
         //TODO avoid assigning a new internal id on a new instance creation
         return this;
     }
 
-    public boolean isEqual(CoverBehaviour otherCover) {
+    public boolean isEqual(Cover otherCover) {
         return internalId == otherCover.internalId;
     }
 

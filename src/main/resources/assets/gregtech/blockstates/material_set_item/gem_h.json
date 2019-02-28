@@ -20,6 +20,12 @@
       "dust": {
         "textures": {"layer0": "gregtech:items/material_set/gem_h/dust"}
       },
+	  "dust_pure": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_h/dust_pure", "layer1": "gregtech:items/material_set/gem_h/overlay/dust_pure"}
+      },
+	  "dust_impure": {
+        "textures": {"layer0": "gregtech:items/material_set/gem_h/dust_impure", "layer1": "gregtech:items/material_set/gem_h/overlay/dust_impure"}
+      },
       "dust_small": {
         "textures": {"layer0": "gregtech:items/material_set/gem_h/dust_small"}
       },

@@ -2,8 +2,8 @@ package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ICoverHandler;
-import muramasa.gregtech.api.cover.CoverBehaviour;
-import muramasa.gregtech.api.util.SoundList;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import net.minecraft.util.EnumFacing;
 
@@ -14,7 +14,7 @@ public class CoverHandler implements ICoverHandler {
     protected TileEntityBase tile;
     protected ArrayList<String> validCovers;
 
-    private CoverBehaviour[] covers = new CoverBehaviour[] {
+    private Cover[] covers = new Cover[] {
         GregTechAPI.CoverBehaviourNone,
         GregTechAPI.CoverBehaviourNone,
         GregTechAPI.CoverBehaviourNone,
@@ -23,11 +23,11 @@ public class CoverHandler implements ICoverHandler {
         GregTechAPI.CoverBehaviourNone
     };
 
-    public CoverHandler(TileEntityBase tile, CoverBehaviour... covers) {
+    public CoverHandler(TileEntityBase tile, Cover... covers) {
         this.tile = tile;
         validCovers = new ArrayList<>();
         validCovers.add(GregTechAPI.CoverBehaviourNone.getName());
-        for (CoverBehaviour cover : covers) {
+        for (Cover cover : covers) {
             validCovers.add(cover.getName());
         }
     }
@@ -41,11 +41,11 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean setCover(EnumFacing side, CoverBehaviour cover) {
+    public boolean setCover(EnumFacing side, Cover cover) {
         if (tile == null) return false;
         if (isCoverValid(side, cover) && covers[side.getIndex()] != cover) {
             covers[side.getIndex()] = cover;
-            SoundList.PLACE_METAL.play(tile.getWorld(), tile.getPos());
+            Sounds.PLACE_METAL.play(tile.getWorld(), tile.getPos());
             tile.markForRenderUpdate();
             return true;
         }
@@ -53,21 +53,21 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public CoverBehaviour get(EnumFacing side) {
+    public Cover get(EnumFacing side) {
         return covers[side.ordinal()];
     }
 
-    public CoverBehaviour[] getCovers() {
+    public Cover[] getCovers() {
         return covers;
     }
 
     @Override
-    public boolean hasCover(EnumFacing side, CoverBehaviour cover) {
+    public boolean hasCover(EnumFacing side, Cover cover) {
         return get(side).isEqual(cover);
     }
 
     @Override
-    public boolean isCoverValid(EnumFacing side, CoverBehaviour cover) {
+    public boolean isCoverValid(EnumFacing side, Cover cover) {
         return validCovers.contains(cover.getName());
     }
 }

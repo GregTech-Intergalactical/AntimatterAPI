@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.fluid;
 
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.GenerationFlag;
+import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.util.ResourceLocation;
@@ -12,9 +12,9 @@ import net.minecraftforge.fluids.FluidStack;
 public class GTFluid extends Fluid {
 
     private String name;
-    private GenerationFlag flag;
+    private ItemFlag flag;
 
-    public GTFluid(Material mat, GenerationFlag flag) {
+    public GTFluid(Material mat, ItemFlag flag) {
         super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/machine/base/liquid"), new ResourceLocation(Ref.MODID, "blocks/machine/base/lv"));
         setColor(mat.getRGB());
         switch (flag) {

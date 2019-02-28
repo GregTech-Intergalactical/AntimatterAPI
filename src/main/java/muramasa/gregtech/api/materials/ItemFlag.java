@@ -1,12 +1,11 @@
-package muramasa.gregtech.api.enums;
+package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
-import muramasa.gregtech.api.materials.Material;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public enum GenerationFlag implements IMaterialFlag {
+public enum ItemFlag implements IMaterialFlag {
 
     //TODO rename to generation flag?
 
@@ -42,7 +41,7 @@ public enum GenerationFlag implements IMaterialFlag {
     private long bit;
     private ArrayList<Material> materials = new ArrayList<>();
 
-    GenerationFlag() {
+    ItemFlag() {
         bit = 1 << ordinal();
     }
 

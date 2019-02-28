@@ -1,19 +1,20 @@
 package muramasa.gregtech.api.materials;
 
-import muramasa.gregtech.api.enums.GenerationFlag;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
-import static muramasa.gregtech.api.enums.GenerationFlag.*;
+import static muramasa.gregtech.api.materials.ItemFlag.*;
 
 public class Prefix implements IStringSerializable {
 
     private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
+    private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
 
     public static Prefix Ore = new Prefix("ore", true, false, ORE);
     public static Prefix Block = new Prefix("block", true, false, BLOCK);
@@ -23,6 +24,8 @@ public class Prefix implements IStringSerializable {
     public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDC, ORE);
     public static Prefix CrushedPurified = new Prefix("crushed_purified", false, CRUSHEDP, ORE);
     public static Prefix Dust = new Prefix("dust", true, DUST);
+    public static Prefix DustPure = new Prefix("dust_pure", false, ORE);
+    public static Prefix DustImpure = new Prefix("dust_impure", false, ORE);
     public static Prefix DustSmall = new Prefix("dust_small", false, DUST);
     public static Prefix DustTiny = new Prefix("dust_tiny", false, DUST);
     public static Prefix Nugget = new Prefix("nugget", false, INGOT);
@@ -55,17 +58,17 @@ public class Prefix implements IStringSerializable {
     private boolean doesGenerate, hasLocName, visible;
     private long generationBits;
 
-    public Prefix(String name, boolean visible, GenerationFlag... flags) {
+    public Prefix(String name, boolean visible, ItemFlag... flags) {
         this.name = name;
         this.visible = visible;
-        for (GenerationFlag flag : flags) {
+        for (ItemFlag flag : flags) {
             generationBits |= flag.getBit();
         }
         this.doesGenerate = true;
         PREFIX_LOOKUP.put(name, this);
     }
 
-    public Prefix(String name, boolean visible, boolean generatesItems, GenerationFlag... flags) {
+    public Prefix(String name, boolean visible, boolean generatesItems, ItemFlag... flags) {
         this(name, visible, flags);
         this.doesGenerate = generatesItems;
     }
@@ -90,7 +93,15 @@ public class Prefix implements IStringSerializable {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && (material.getItemMask() & generationBits) != 0;
+        return doesGenerate && (material.getItemMask() & generationBits) != 0 && !ITEM_REPLACEMENT.containsKey(getName() + material.getName());
+    }
+
+    public void addItemReplacement(Material material, ItemStack stack) {
+        ITEM_REPLACEMENT.put(getName() + material.getName(), stack);
+    }
+
+    public ItemStack getItemReplacement(Material material) {
+        return ITEM_REPLACEMENT.get(getName() + material.getName());
     }
 
     @Override

@@ -4,7 +4,7 @@ import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
-import muramasa.gregtech.api.enums.GenerationFlag;
+import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
@@ -67,12 +67,12 @@ public class ContentLoader {
             }
         }
         for (Material material : Materials.getAll()) {
-            if (material.hasFlag(GenerationFlag.ORE)) {
+            if (material.hasFlag(ItemFlag.ORE)) {
                 for (StoneType type : StoneType.getAll()) {
                     event.getRegistry().register(new BlockOre(type, material));
                 }
             }
-            if (material.hasFlag(GenerationFlag.BLOCK)) {
+            if (material.hasFlag(ItemFlag.BLOCK)) {
                 event.getRegistry().register(new BlockStorage(material));
             }
         }

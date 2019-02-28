@@ -1,8 +1,10 @@
 package muramasa.gregtech.api;
 
-import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.materials.Prefix;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -11,8 +13,12 @@ import java.util.HashMap;
 
 public class GregTechAPI {
 
-    /** Block Registry Section **/
+    /** Item Registry Section **/
+    public static void addItemReplacement(Prefix prefix, Material material, ItemStack stack) {
+        prefix.addItemReplacement(material, stack);
+    }
 
+    /** Block Registry Section **/
     public static void addCasing(String name) {
         new Casing(name);
     }
@@ -22,28 +28,27 @@ public class GregTechAPI {
     }
 
     /** Cover Registry Section **/
+    private static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
 
-    private static HashMap<String, CoverBehaviour> COVER_REGISTRY = new HashMap<>();
-
-    public static CoverBehaviour CoverBehaviourNone;
-    public static CoverBehaviour CoverBehaviourPlate;
-    public static CoverBehaviour CoverBehaviourItem;
-    public static CoverBehaviour CoverBehaviourFluid;
-    public static CoverBehaviour CoverBehaviourEnergy;
+    public static Cover CoverBehaviourNone;
+    public static Cover CoverBehaviourPlate;
+    public static Cover CoverBehaviourItem;
+    public static Cover CoverBehaviourFluid;
+    public static Cover CoverBehaviourEnergy;
 
     /**
      * Registers a cover behaviour. This must be done during preInit.
      * @param stack The stack used to place the cover on a machine.
      * @param cover The behaviour instance to be attached.
      */
-    public static void registerCover(ItemStack stack, CoverBehaviour cover) {
+    public static void registerCover(ItemStack stack, Cover cover) {
         ResourceLocation registryName = stack.getItem().getRegistryName();
         if (registryName != null) {
             COVER_REGISTRY.put(registryName.toString(), cover);
         }
     }
 
-    public static CoverBehaviour getCover(ItemStack stack) {
+    public static Cover getCover(ItemStack stack) {
         ResourceLocation registryName = stack.getItem().getRegistryName();
         if (registryName != null) {
             return COVER_REGISTRY.get(registryName.toString());
@@ -51,7 +56,7 @@ public class GregTechAPI {
         return null;
     }
 
-    public static Collection<CoverBehaviour> getRegisteredCovers() {
+    public static Collection<Cover> getRegisteredCovers() {
         return COVER_REGISTRY.values();
     }
 }

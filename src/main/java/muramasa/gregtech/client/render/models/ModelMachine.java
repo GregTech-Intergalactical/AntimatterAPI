@@ -1,7 +1,7 @@
 package muramasa.gregtech.client.render.models;
 
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
@@ -68,7 +68,7 @@ public class ModelMachine extends ModelBase {
             addTexture(type.getOverlayTexture(1, "bottom"));
             addTexture(type.getOverlayTexture(1, "side"));
         }
-        for (CoverBehaviour cover : GregTechAPI.getRegisteredCovers()) {
+        for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             addTexture(cover.getTextureLoc());
         }
@@ -110,8 +110,8 @@ public class ModelMachine extends ModelBase {
             ));
         }
 
-        IBakedModel[] bakedCovers = new IBakedModel[CoverBehaviour.getLastInternalId()];
-        for (CoverBehaviour cover : GregTechAPI.getRegisteredCovers()) {
+        IBakedModel[] bakedCovers = new IBakedModel[Cover.getLastInternalId()];
+        for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             model = load(cover.getModelLoc());
             bakedCovers[cover.getInternalId()] = model.bake(state, format, getter);
