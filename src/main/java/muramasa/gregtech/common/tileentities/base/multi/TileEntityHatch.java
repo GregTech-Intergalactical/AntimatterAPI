@@ -34,7 +34,7 @@ public class TileEntityHatch extends TileEntityMachine {
         if (getType().hasFlag(FLUID)) {
             fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
         }
-        componentHandler = new HatchComponentHandler(getType(), this);
+        componentHandler = new HatchComponentHandler(this);
         texture = super.getTexture();
     }
 

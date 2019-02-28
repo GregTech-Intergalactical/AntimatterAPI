@@ -5,8 +5,9 @@ import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IStringSerializable;
 
-public class MachineStack {
+public class MachineStack implements IStringSerializable {
 
     private Machine type;
     private Tier tier;
@@ -22,6 +23,11 @@ public class MachineStack {
 
     public Tier getTier() {
         return tier;
+    }
+
+    @Override
+    public String getName() {
+        return type.getName() + "_" + tier.getName();
     }
 
     public ItemStack asItemStack() {

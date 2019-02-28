@@ -4,7 +4,7 @@ import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.IComponent;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 
@@ -19,16 +19,11 @@ public class StructureElement {
     private boolean addToList;
 
     public StructureElement(IStringSerializable elementName) {
-        this(elementName.getName(), true, elementName);
+        this(elementName.getName(), elementName);
     }
 
     public StructureElement(String elementName, IStringSerializable... elementIds) {
-        this(elementName, true, elementIds);
-    }
-
-    public StructureElement(String elementName, boolean addToList, IStringSerializable... elementIds) {
         this.elementName = elementName;
-        this.addToList = addToList;
         this.elementIds = new String[elementIds.length];
         for (int i = 0; i < elementIds.length; i++) {
             this.elementIds[i] = elementIds[i].getName();
@@ -41,18 +36,27 @@ public class StructureElement {
         return elementName;
     }
 
-    public boolean shouldAddToList() {
+    public StructureElement excludeFromList() {
+        addToList = false;
+        return this;
+    }
+
+    public boolean addToList() {
         return addToList;
     }
 
-    public boolean evaluate(TileEntityMultiMachine machine, int3 pos, StructureResult result) {
-        TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBlockPos());
+    public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
+        TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBP());
         if (tile != null && tile.hasCapability(GTCapabilities.COMPONENT, null)) {
             IComponent component = tile.getCapability(GTCapabilities.COMPONENT, null);
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
                     result.addComponent(elementName, component);
-                    return true;
+                    if (testComponent(component)) {
+                        return true;
+                    }
+                    result.withError("Failed Component Requirement: " + component.getId());
+                    return false;
                 }
             }
             result.withError("Expected: '" + elementName + "' Found: '" + component.getId() + "' @" + pos);
@@ -60,6 +64,10 @@ public class StructureElement {
         }
         result.withError("No valid component found @" + pos);
         return false;
+    }
+
+    public boolean testComponent(IComponent component) {
+        return true;
     }
 
     public static StructureElement get(String name) {

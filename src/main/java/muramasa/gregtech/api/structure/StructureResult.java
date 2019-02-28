@@ -47,7 +47,7 @@ public class StructureResult {
         if (hasError) return false;
         for (String key : structure.getRequirements()) {
             if (!components.containsKey(key) || !structure.testRequirement(key, components.get(key).size())) {
-                withError("Failed Requirement: " + key);
+                withError("Failed Element Requirement: " + key);
                 return false;
             }
         }

@@ -1,14 +1,13 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.machines.Tier;
-import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 
 public class HatchComponentHandler extends ComponentHandler {
 
-    public HatchComponentHandler(Machine type, TileEntityHatch componentTile) {
-        super(type.getName(), componentTile);
+    public HatchComponentHandler(TileEntityHatch componentTile) {
+        super(componentTile.getType().getName(), componentTile);
     }
 
     @Override

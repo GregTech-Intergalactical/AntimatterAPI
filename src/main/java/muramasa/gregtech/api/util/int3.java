@@ -124,6 +124,10 @@ public class int3 {
         return offset(n, EnumFacing.UP);
     }
 
+    public int3 down(int n) {
+        return offset(n, EnumFacing.DOWN);
+    }
+
     public int3 offset(int n, EnumFacing facing) {
         if (n == 0 || facing == null) return this;
         return set(x + facing.getFrontOffsetX() * n, y + facing.getFrontOffsetY() * n, z + facing.getFrontOffsetZ() * n);
@@ -155,7 +159,7 @@ public class int3 {
         return this;
     }
 
-    public BlockPos asBlockPos() {
+    public BlockPos asBP() {
         return new BlockPos(x, y, z);
     }
 

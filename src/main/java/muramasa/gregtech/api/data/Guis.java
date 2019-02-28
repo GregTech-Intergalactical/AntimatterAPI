@@ -8,6 +8,8 @@ public class Guis {
 
     public static void init() {
 
+        //TODO changing slots of a machine in world, will crash from GTItemHandler.validateSlot()
+
         ALLOY_SMELTER.getGui().add(IT_IN, 35, 25).add(IT_IN, 53, 25).add(IT_OUT, 107, 25);
         ASSEMBLER.getGui().add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 25);
         BENDER.getGui().add(ALLOY_SMELTER);
@@ -59,8 +61,8 @@ public class Guis {
         STEAM_COMPRESSOR.getGui().add(COMPRESSOR);
         STEAM_ALLOY_SMELTER.getGui().add(ALLOY_SMELTER);
 
-        PRIMITIVE_BLAST_FURNACE.getGui().add(ALLOY_SMELTER); //TODO
-        BRONZE_BLAST_FURNACE.getGui().add(PRIMITIVE_BLAST_FURNACE);
+        PRIMITIVE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_IN, 53, 52).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25);
+        BRONZE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25);
 
         HATCH_MUFFLER.getGui().add(IT_IN, 79, 34);
 
