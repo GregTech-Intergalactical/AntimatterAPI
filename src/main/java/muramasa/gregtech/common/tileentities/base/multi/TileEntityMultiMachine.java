@@ -114,7 +114,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
         return false;
     }
 
-    private boolean checkStructure() {
+    public boolean checkStructure() {
         Structure structure = getType().getStructure();
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);

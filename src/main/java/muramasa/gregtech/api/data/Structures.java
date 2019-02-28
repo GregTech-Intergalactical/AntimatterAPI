@@ -59,28 +59,19 @@ public class Structures {
     public static StructureElement FR_INPUT_OR_CASING = new StructureElement("inputorcasingfr", FUSION_3, HATCH_FLUID_INPUT) {
         @Override
         public boolean testComponent(IComponent component) {
-            if (component.getTile() instanceof TileEntityHatch) {
-                return ((TileEntityHatch) component.getTile()).getTier() == Tier.UV;
-            }
-            return super.testComponent(component);
+            return !(component.getTile() instanceof TileEntityHatch) || ((TileEntityHatch) component.getTile()).getTier() == Tier.UV;
         }
     };
     public static StructureElement FR_OUTPUT_OR_CASING = new StructureElement("outputorcasingfr", FUSION_3, HATCH_FLUID_OUTPUT) {
         @Override
         public boolean testComponent(IComponent component) {
-            if (component.getTile() instanceof TileEntityHatch) {
-                return ((TileEntityHatch) component.getTile()).getTier() == Tier.UV;
-            }
-            return super.testComponent(component);
+            return !(component.getTile() instanceof TileEntityHatch) || ((TileEntityHatch) component.getTile()).getTier() == Tier.UV;
         }
     };
     public static StructureElement FR_ENERGY_OR_CASING = new StructureElement("energyorcasingfr", FUSION_3, HATCH_ENERGY) {
         @Override
         public boolean testComponent(IComponent component) {
-            if (component.getTile() instanceof TileEntityHatch) {
-                return ((TileEntityHatch) component.getTile()).getTier() == Tier.UV;
-            }
-            return super.testComponent(component);
+            return !(component.getTile() instanceof TileEntityHatch) || ((TileEntityHatch) component.getTile()).getTier() == Tier.UV;
         }
     };
 

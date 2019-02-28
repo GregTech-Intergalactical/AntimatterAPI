@@ -16,7 +16,8 @@ public class StructureElement {
 
     private String elementName;
     private String[] elementIds;
-    private boolean addToList;
+
+    public boolean excludeFromList;
 
     public StructureElement(IStringSerializable elementName) {
         this(elementName.getName(), elementName);
@@ -37,12 +38,8 @@ public class StructureElement {
     }
 
     public StructureElement excludeFromList() {
-        addToList = false;
+        excludeFromList = true;
         return this;
-    }
-
-    public boolean addToList() {
-        return addToList;
     }
 
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
@@ -51,8 +48,8 @@ public class StructureElement {
             IComponent component = tile.getCapability(GTCapabilities.COMPONENT, null);
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
-                    result.addComponent(elementName, component);
                     if (testComponent(component)) {
+                        result.addComponent(elementName, component);
                         return true;
                     }
                     result.withError("Failed Component Requirement: " + component.getId());
