@@ -1,19 +1,19 @@
 package muramasa.gregtech.api.capability;
 
-import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.Cover;
 import net.minecraft.util.EnumFacing;
 
 public interface ICoverHandler {
 
     void tick();
 
-    boolean setCover(EnumFacing side, CoverBehaviour cover);
+    boolean setCover(EnumFacing side, Cover cover);
 
-    CoverBehaviour get(EnumFacing side);
+    Cover get(EnumFacing side);
 
-    CoverBehaviour[] getCovers();
+    Cover[] getCovers();
 
-    boolean hasCover(EnumFacing side, CoverBehaviour cover);
+    boolean hasCover(EnumFacing side, Cover cover);
 
-    boolean isCoverValid(EnumFacing side, CoverBehaviour cover);
+    boolean isCoverValid(EnumFacing side, Cover cover);
 }

@@ -14,8 +14,8 @@
 //
 //import java.util.ArrayList;
 //
-//import static muramasa.gregtech.api.enums.GenerationFlag.*;
-//import static muramasa.gregtech.api.enums.RecipeFlag.*;
+//import static muramasa.gregtech.api.materials.GenerationFlag.*;
+//import static muramasa.gregtech.api.materials.RecipeFlag.*;
 //
 ////TODO EXCLUDED FROM COMPILE
 //

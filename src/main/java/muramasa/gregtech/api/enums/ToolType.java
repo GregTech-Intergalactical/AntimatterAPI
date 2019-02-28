@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.api.items.MetaTool;
-import muramasa.gregtech.api.util.SoundList;
+import muramasa.gregtech.api.util.Sounds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +30,7 @@ public enum ToolType implements IStringSerializable {
     KNIFE("Knife", "", null, 0, 2.0f, 0.5f, 1.0f, 100, 200, 100),
     SCYTHE("Scythe", "", null, 0, 3.0f, 1.0f, 4.0f, 100, 200, 800),
     PLUNGER("Plunger", "", null, 0, 1.25f, 1.0f, 0.25f, 100, 200, 800),
-    DRILL("Electric Drill", "", SoundList.DRILL, 1, 3.0f, 9.0f, 4.0f, 800, 3200, 12800),
+    DRILL("Electric Drill", "", Sounds.DRILL, 1, 3.0f, 9.0f, 4.0f, 800, 3200, 12800),
     CHAINSAW("Electric Chainsaw", "", null, 1, 4.0f, 4.0f, 4.0f, 800, 3200, 12800),
     WRENCH_P("Electric Wrench", "", null, 1, 2.0f, 4.0f, 4.0f, 800, 3200, 12800),
     JACKHAMMER("Electric Jackhammer", "", null, 1, 3.0f, 12.0f, 2.0f, 400, 800, 3200),
@@ -39,11 +39,11 @@ public enum ToolType implements IStringSerializable {
     TURBINE("Turbine Rotor", "", null, 0, 3.0f, 4.0f, 4.0f, 100, 200, 800);
 
     private String displayName, tooltip;
-    private SoundList useSound;
+    private Sounds useSound;
     private int baseQuality, damageMining, damageEntity, damageCrafting;
     private float baseDamage, speedMulti, duraMulti;
 
-    ToolType(String displayName, String tooltip, SoundList useSound, int baseQuality, float baseDamage, float speedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
+    ToolType(String displayName, String tooltip, Sounds useSound, int baseQuality, float baseDamage, float speedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
         this.displayName = displayName;
         this.tooltip = tooltip;
         this.useSound = useSound;

@@ -20,6 +20,12 @@
       "dust": {
         "textures": {"layer0": "gregtech:items/material_set/ruby/dust"}
       },
+	  "dust_pure": {
+        "textures": {"layer0": "gregtech:items/material_set/ruby/dust_pure", "layer1": "gregtech:items/material_set/ruby/overlay/dust_pure"}
+      },
+	  "dust_impure": {
+        "textures": {"layer0": "gregtech:items/material_set/ruby/dust_impure", "layer1": "gregtech:items/material_set/ruby/overlay/dust_impure"}
+      },
       "dust_small": {
         "textures": {"layer0": "gregtech:items/material_set/ruby/dust_small"}
       },

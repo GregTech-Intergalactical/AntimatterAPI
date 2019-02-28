@@ -20,6 +20,12 @@
       "dust": {
         "textures": {"layer0": "gregtech:items/material_set/metallic/dust"}
       },
+	  "dust_pure": {
+        "textures": {"layer0": "gregtech:items/material_set/metallic/dust_pure", "layer1": "gregtech:items/material_set/metallic/overlay/dust_pure"}
+      },
+	  "dust_impure": {
+        "textures": {"layer0": "gregtech:items/material_set/metallic/dust_impure", "layer1": "gregtech:items/material_set/metallic/overlay/dust_impure"}
+      },
       "dust_small": {
         "textures": {"layer0": "gregtech:items/material_set/metallic/dust_small"}
       },

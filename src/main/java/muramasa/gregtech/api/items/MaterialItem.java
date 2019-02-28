@@ -5,9 +5,11 @@ import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.utils.Ref;
+import net.minecraft.block.BlockCauldron;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -88,6 +90,17 @@ public class MaterialItem extends Item {
         if (tile != null) {
             return CoverHelper.placeCover(tile, stack, side, hitX, hitY, hitZ) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
+        if (prefix == Prefix.DustImpure && world.getBlockState(pos).getBlock() instanceof BlockCauldron) {
+            int level = world.getBlockState(pos).getValue(BlockCauldron.LEVEL);
+            if (level > 0) {
+                System.out.println(level);
+                MaterialItem item = (MaterialItem) player.getHeldItem(hand).getItem();
+                player.setHeldItem(hand, get(Prefix.DustPure, item.getMaterial(), stack.getCount()));
+                world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockCauldron.LEVEL, --level));
+                Sounds.BUCKET_EMPTY.play(world, pos);
+                return EnumActionResult.SUCCESS;
+            }
+        }
         return EnumActionResult.FAIL;
     }
 
@@ -118,7 +131,13 @@ public class MaterialItem extends Item {
     }
 
     public static ItemStack get(Prefix prefix, Material material, int count) {
-        return new ItemStack(TYPE_LOOKUP.get(prefix.getName() + material.getName()), count);
+        ItemStack replacement = prefix.getItemReplacement(material);
+        if (replacement == null) {
+            return new ItemStack(TYPE_LOOKUP.get(prefix.getName() + material.getName()), count);
+        } else {
+            replacement.setCount(count);
+            return replacement;
+        }
     }
 
     public static Collection<MaterialItem> getAll() {

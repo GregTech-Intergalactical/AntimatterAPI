@@ -32,7 +32,8 @@ public class Ref {
     public static final int HATCH_ID = 2;
 
     //Config Values //TODO maybe move?
-    public static final boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
+    public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
+    public static boolean ENABLE_ITEM_REPLACEMENTS = true;
 
     //NBT Tags & Keys
     public static final String TAG_MACHINE_STACK_DATA = "machinestack";

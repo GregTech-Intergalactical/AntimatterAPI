@@ -1,13 +1,13 @@
-package muramasa.gregtech.api.cover.behaviour;
+package muramasa.gregtech.api.cover.impl;
 
-import muramasa.gregtech.api.cover.CoverBehaviour;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 
-public class CoverBehaviourEnergy extends CoverBehaviour {
+public class CoverItem extends Cover {
 
     @Override
     public String getName() {
-        return "cover_energy";
+        return "cover_item";
     }
 
     @Override

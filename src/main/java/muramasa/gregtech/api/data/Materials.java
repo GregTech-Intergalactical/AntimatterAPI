@@ -1,14 +1,18 @@
 package muramasa.gregtech.api.data;
 
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.common.fluid.GTFluid;
+import muramasa.gregtech.common.utils.Ref;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import static muramasa.gregtech.api.enums.Element.*;
-import static muramasa.gregtech.api.enums.GenerationFlag.*;
+import static muramasa.gregtech.api.materials.ItemFlag.*;
 import static muramasa.gregtech.api.materials.MaterialSet.*;
 
 public class Materials {
@@ -417,6 +421,17 @@ public class Materials {
 //    }
 
     public static void init() {
+        if (Ref.ENABLE_ITEM_REPLACEMENTS) {
+            Prefix.Ingot.addItemReplacement(Iron, new ItemStack(Items.IRON_INGOT));
+            Prefix.Ingot.addItemReplacement(Gold, new ItemStack(Items.GOLD_INGOT));
+            Prefix.Nugget.addItemReplacement(Iron, new ItemStack(Items.IRON_NUGGET));
+            Prefix.Nugget.addItemReplacement(Gold, new ItemStack(Items.GOLD_NUGGET));
+            Prefix.Gem.addItemReplacement(Diamond, new ItemStack(Items.DIAMOND));
+            Prefix.Gem.addItemReplacement(Coal, new ItemStack(Items.COAL));
+            Prefix.Gem.addItemReplacement(Charcoal, new ItemStack(Items.COAL, 1, 1));
+            Prefix.Dust.addItemReplacement(Redstone, new ItemStack(Items.REDSTONE));
+        }
+
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
         for (Material mat : MATERIAL_LOOKUP.values()) {

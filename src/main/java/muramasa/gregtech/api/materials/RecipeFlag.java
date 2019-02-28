@@ -1,4 +1,4 @@
-package muramasa.gregtech.api.enums;
+package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.materials.Material;
