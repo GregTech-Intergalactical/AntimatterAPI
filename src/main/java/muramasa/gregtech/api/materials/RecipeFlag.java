@@ -1,7 +1,6 @@
 package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
-import muramasa.gregtech.api.materials.Material;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -11,7 +10,7 @@ public enum RecipeFlag implements IMaterialFlag {
     ELEC(), //Add Electrolyzer Recipes - SHOULD NOT SHARE MATS WITH CENT
     CENT(), //Add Centrifuging Recipes - SHOULD NOT SHARE MATS WITH ELEC
     CRACK(), //Add Cracking Recipes
-    //SMELTG(), //Add Smelting to Gem Recipes
+    SMELTG(), //Add Smelting to Gem Recipes
     SMELTF(), //Add Smelting to Fluid Recipes
     GRINDABLE(), //Is Grindable with the Mortar
     CRYSTALLIZE(), //Allows Dust > Gem Recipes
@@ -32,7 +31,7 @@ public enum RecipeFlag implements IMaterialFlag {
     CABLE(),
     ELEMENTAL();
 
-    //TODO add alloy flag for adding mixer and dust crafting recipes automatically
+    //TODO get alloy flag for adding mixer and dust crafting recipes automatically
 
     private long bit;
     private ArrayList<Material> materials = new ArrayList<>();

@@ -21,7 +21,7 @@ public class GuiBasicMachine extends GuiMachine {
     @Override
     public void initGui() {
         super.initGui();
-//        this.buttonList.add(new GuiButton(1, guiLeft, guiTop, 16, 16, "X"));
+//        this.buttonList.get(new GuiButton(1, guiLeft, guiTop, 16, 16, "X"));
     }
 
     @Override
@@ -52,8 +52,8 @@ public class GuiBasicMachine extends GuiMachine {
 //            for (FluidStack stack : fluidHandler.getInputs()) {
 //                renderer.;
 //            }
-            renderer.render(mc, 107, 63, Materials.Iron.getLiquidStack(245));
-            drawTooltipInArea(renderer.getTooltip(mc, Materials.Iron.getLiquidStack(245), ITooltipFlag.TooltipFlags.NORMAL), mouseX, mouseY, 107, 63, 16, 16);
+            renderer.render(mc, 107, 63, Materials.Iron.getLiquid(245));
+            drawTooltipInArea(renderer.getTooltip(mc, Materials.Iron.getLiquid(245), ITooltipFlag.TooltipFlags.NORMAL), mouseX, mouseY, 107, 63, 16, 16);
         }
     }
 

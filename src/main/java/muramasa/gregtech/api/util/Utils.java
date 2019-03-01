@@ -85,6 +85,11 @@ public class Utils {
         return stack;
     }
 
+    public static ItemStack mul(int amount, ItemStack stack) {
+        stack.setCount(stack.getCount() * amount);
+        return stack;
+    }
+
     public static boolean areStacksValid(ItemStack... stacks) {
         if (stacks == null) return false;
         for (int i = 0; i < stacks.length; i++) {

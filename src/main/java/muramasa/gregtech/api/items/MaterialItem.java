@@ -133,6 +133,10 @@ public class MaterialItem extends Item {
     public static ItemStack get(Prefix prefix, Material material, int count) {
         ItemStack replacement = prefix.getItemReplacement(material);
         if (replacement == null) {
+            if (!prefix.allowGeneration(material)) {
+                System.err.println("GET ERROR: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                throw new IllegalStateException();
+            }
             return new ItemStack(TYPE_LOOKUP.get(prefix.getName() + material.getName()), count);
         } else {
             replacement.setCount(count);

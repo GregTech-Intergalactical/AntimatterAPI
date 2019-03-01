@@ -76,10 +76,10 @@ public class BlockOre extends Block {
         return 1;
     }
 
-    @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        drops.add(material.getChunk(1));
-    }
+//    @Override
+//    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+//        drops.add(material.getChunk(1));
+//    }
 
     @Override
     public BlockRenderLayer getBlockLayer() {
@@ -100,8 +100,8 @@ public class BlockOre extends Block {
         return type.getName() + material.getSet().getName();
     }
 
-    public static BlockOre get(String material) {
-        return BLOCK_LOOKUP.get(material);
+    public static BlockOre get(Material material) {
+        return BLOCK_LOOKUP.get(material.getName());
     }
 
     public static Collection<BlockOre> getAll() {

@@ -39,7 +39,7 @@
         "textures": {"layer0": "gregtech:items/material_set/fine/ingot"}
       },
       "ingot_hot": {
-        "textures": {"layer0": "gregtech:items/material_set/fine/ingot_hot"}
+        "textures": {"layer0": "gregtech:items/material_set/fine/ingot_hot", "layer1": "gregtech:items/material_set/fine/overlay/ingot_hot"}
       },
       "plate": {
         "textures": {"layer0": "gregtech:items/material_set/fine/plate"}

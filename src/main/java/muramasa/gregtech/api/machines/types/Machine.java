@@ -45,7 +45,7 @@ public class Machine implements IStringSerializable {
     /** Multi Members **/
     protected Structure structure;
 
-    //TODO add valid covers
+    //TODO get valid covers
 
     public Machine(String name) {
         this(name, new BlockMachine(name), TileEntityMachine.class);

@@ -133,6 +133,7 @@ public class Materials {
     public static Material WoodVinegar = new Material("Wood Vinegar", 0xd45500, NONE).asFluid();
     public static Material LiquidAir = new Material("Liquid Air", 0xa9d0f5, NONE).asFluid()/*.setTemp(79, 0)*/.add(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1); //TODO Rrename to liquid oxygen
     public static Material Water = new Material("Water", 0x0000ff, NONE).asFluid().add(Hydrogen, 2, Oxygen, 1);
+    public static Material DistilledWater = new Material("Distilled Water", 0x5C5CFF, NONE).asFluid().add(Hydrogen, 2, Oxygen, 1);
     public static Material Glyceryl = new Material("Glyceryl", 0x009696, NONE).asFluid().add(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9);
     public static Material Titaniumtetrachloride = new Material("Titaniumtetrachloride", 0xd40d5c, NONE).asFluid().add(Titanium, 1, Chlorine, 4);
     public static Material SaltWater = new Material("Salt Water", 0x0000c8, NONE).asFluid(); //TODO needed?
@@ -325,7 +326,7 @@ public class Materials {
     public static Material Sodalite = new Material("Sodalite", 0x1414ff, LAPIS).asGemBasic(false, ORE).add(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1);
     public static Material Tanzanite = new Material("Tanzanite", 0x4000c8, GEM_V).asGem(true).addTools(7.0F, 256, 2).add(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1, Oxygen, 13);
     public static Material Topaz = new Material("Topaz", 0xff8000, GEM_H).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
-    public static Material Glass = new Material("Glass", 0xfafafa, NONE).asGem(true).add(SiliconDioxide, 1);
+    public static Material Glass = new Material("Glass", 0xfafafa, NONE).asDust(PLATE).add(SiliconDioxide, 1);
     public static Material Olivine = new Material("Olivine", 0x96ff96, RUBY).asGem(true, ORE).addTools(7.0F, 256, 2).add(Magnesium, 2, Iron, 1, SiliconDioxide, 2);
     public static Material Opal = new Material("Opal", 0x0000ff, RUBY).asGem(true).addTools(7.0F, 256, 2).add(SiliconDioxide, 1);
     public static Material Amethyst = new Material("Amethyst", 0xd232d2, FLINT).asGem(true).addTools(7.0F, 256, 3).add(SiliconDioxide, 4, Iron, 1);

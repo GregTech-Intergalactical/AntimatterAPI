@@ -11,17 +11,18 @@ public class Recipe {
     private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, power;
     private int[] chances;
-    private int specialValue;
+    private int special;
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, int power) {
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, int power, int special) {
         this.stacksInput = stacksInput;
         this.stacksOutput = stacksOutput;
         this.duration = duration;
         this.power = power;
+        this.special = special;
     }
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, int power) {
-        this(stacksInput, stacksOutput, duration, power);
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, int power, int special) {
+        this(stacksInput, stacksOutput, duration, power, special);
         this.fluidsInput = fluidsInput;
         this.fluidsOutput = fluidsOutput;
     }
@@ -77,7 +78,7 @@ public class Recipe {
     }
 
     public int getSpecialValue() {
-        return specialValue;
+        return special;
     }
 
     private static ItemStack[] evaluateChances(ItemStack[] outputs) {

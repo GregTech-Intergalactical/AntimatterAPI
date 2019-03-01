@@ -66,8 +66,8 @@ public class BlockStorage extends Block {
         return material;
     }
 
-    public static BlockStorage get(String material) {
-        return BLOCK_LOOKUP.get(material);
+    public static BlockStorage get(Material material) {
+        return BLOCK_LOOKUP.get(material.getName());
     }
 
     public static Collection<BlockStorage> getAll() {

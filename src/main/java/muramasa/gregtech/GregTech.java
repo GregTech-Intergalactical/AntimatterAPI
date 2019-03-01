@@ -12,6 +12,7 @@ import muramasa.gregtech.common.events.EventHandler;
 import muramasa.gregtech.common.utils.CommandTool;
 import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.loaders.MachineRecipeLoader;
+import muramasa.gregtech.loaders.MaterialRecipeLoader;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
 import net.minecraftforge.fml.common.Mod;
@@ -65,6 +66,7 @@ public class GregTech {
         proxy.postInit(e);
         //TODO new MaterialRecipeLoader().run();
         MachineRecipeLoader.init();
+        MaterialRecipeLoader.init();
     }
 
     @Mod.EventHandler

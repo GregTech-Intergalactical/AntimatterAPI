@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 public enum Sounds {
 
-    //TODO add GT sound category
+    //TODO get GT sound category
 
     WRENCH(Ref.MODID, "wrench"),
     DRILL(Ref.MODID, "drill"),
