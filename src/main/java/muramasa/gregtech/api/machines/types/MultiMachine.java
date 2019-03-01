@@ -18,7 +18,7 @@ public class MultiMachine extends Machine {
         addFlags(extraFlags);
         addRecipeMap();
         addGUI(GregTech.INSTANCE, Ref.MULTI_MACHINE_ID);
-        //TODO add structure pattern
+        //TODO get structure pattern
     }
 
     @Override

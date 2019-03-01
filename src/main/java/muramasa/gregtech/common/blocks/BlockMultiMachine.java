@@ -25,7 +25,7 @@ public class BlockMultiMachine extends BlockMachine {
 
     //    @Override
 //    protected BlockStateContainer createBlockState() {
-//        return new BlockStateContainer.Builder(this).add(FACING).add(TYPE).build();
+//        return new BlockStateContainer.Builder(this).get(FACING).get(TYPE).build();
 //    }
 //
 //    @Override
@@ -44,7 +44,7 @@ public class BlockMultiMachine extends BlockMachine {
 //    @Override
 //    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
 //        for (MachineStack stack : MachineFlag.MULTI.getStacks()) {
-//            items.add(stack.asItemStack());
+//            items.get(stack.asItemStack());
 //        }
 //    }
 //

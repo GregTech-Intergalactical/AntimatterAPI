@@ -4,6 +4,8 @@ import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MaterialItem;
+import muramasa.gregtech.common.blocks.BlockOre;
+import muramasa.gregtech.common.blocks.BlockStorage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -18,7 +20,7 @@ import static muramasa.gregtech.api.materials.RecipeFlag.*;
 public class Material {
 
     /** Basic Members **/
-    private int rgb, mass;
+    private int rgb, protons, mass;
     private long itemMask, recipeMask;
     private String name, displayName;
     private MaterialSet set;
@@ -44,6 +46,7 @@ public class Material {
     private String handleMaterial;
 
     /** Processing Members **/
+    private int oreMulti, smeltingMulti, byProductMulti;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<String> byProducts = new ArrayList<>();
@@ -152,7 +155,7 @@ public class Material {
             add(TOOLS, PLATE, ROD, BOLT);
         } else if (hasFlag(BGEM)) {
             add(TOOLS, ROD);
-        } /*else if (this == Material.Stone || this == Material.Wood) {
+        } /*else {
             add(TOOLS);
         }*/
         this.toolSpeed = toolSpeed;
@@ -244,6 +247,17 @@ public class Material {
         return recipeMask;
     }
 
+    public int getProtons() {
+        if (protons == 0) {
+            if (element != null) return element.getProtons();
+            if (processInto.size() <= 0) return Element.Tc.getProtons();
+            for (MaterialStack stack : processInto) {
+                protons += stack.size * stack.get().getProtons();
+            }
+        }
+        return protons;
+    }
+
     public int getMass() {
         if (mass == 0) {
             if (element != null) return element.getMass();
@@ -265,7 +279,7 @@ public class Material {
         return meltingPoint;
     }
 
-    public int getBlastFurnaceTemp() {
+    public int getBlastTemp() {
         return blastFurnaceTemp;
     }
 
@@ -308,7 +322,19 @@ public class Material {
         return fuelPower;
     }
 
-    /** Processing Helpers **/
+    /** Processing Getters **/
+    public int getOreMulti() {
+        return oreMulti;
+    }
+
+    public int getSmeltingMulti() {
+        return smeltingMulti;
+    }
+
+    public int getByProductMulti() {
+        return byProductMulti;
+    }
+
     public Material getSmeltInto() {
         return smeltInto;
     }
@@ -359,9 +385,9 @@ public class Material {
     }
 
     /** Helpful Stack Getters **/
-    public ItemStack getChunk(int amount) {
-        return MaterialItem.get(Prefix.Chunk, this, amount);
-    }
+//    public ItemStack getChunk(int amount) {
+//        return MaterialItem.get(Prefix.Chunk, this, amount);
+//    }
 
     public ItemStack getCrushed(int amount) {
         return MaterialItem.get(Prefix.Crushed, this, amount);
@@ -491,15 +517,32 @@ public class Material {
         return MaterialItem.get(Prefix.CellPlasma, this, amount);
     }
 
-    public FluidStack getLiquidStack(int amount) {
-        return new FluidStack(getLiquid(), amount);
+    public ItemStack getOre(int amount) {
+        return new ItemStack(BlockOre.get(this), amount);
     }
 
-    public FluidStack getGasStack(int amount) {
+    public ItemStack getBlock(int amount) {
+        return new ItemStack(BlockStorage.get(this), amount);
+    }
+
+    public FluidStack getLiquid(int amount) {
+        if (liquid == null) {
+            throw new NullPointerException(getName() + ": Liquid is null");
+        }
+        return new FluidStack(liquid, amount);
+    }
+
+    public FluidStack getGas(int amount) {
+        if (gas == null) {
+            throw new NullPointerException(getName() + ": Gas is null");
+        }
         return new FluidStack(getGas(), amount);
     }
 
-    public FluidStack getPlasmaStack(int amount) {
+    public FluidStack getPlasma(int amount) {
+        if (plasma == null) {
+            throw new NullPointerException(getName() + ": Plasma is null");
+        }
         return new FluidStack(getPlasma(), amount);
     }
 }

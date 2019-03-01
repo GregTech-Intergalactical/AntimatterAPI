@@ -39,7 +39,7 @@
         "textures": {"layer0": "gregtech:items/material_set/quartz/ingot"}
       },
       "ingot_hot": {
-        "textures": {"layer0": "gregtech:items/material_set/quartz/ingot_hot"}
+        "textures": {"layer0": "gregtech:items/material_set/quartz/ingot_hot", "layer1": "gregtech:items/material_set/quartz/overlay/ingot_hot"}
       },
       "plate": {
         "textures": {"layer0": "gregtech:items/material_set/quartz/plate"}

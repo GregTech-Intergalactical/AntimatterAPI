@@ -7,34 +7,34 @@ public class MachineEnergyHandler implements IEnergyStorage {
 
     public long energy;
     private long capacity;
-    private long maxReceive;
+    private long maxInsert;
     private long maxExtract;
 
     public MachineEnergyHandler(Tier tier) {
         this.capacity = tier.getVoltage() * 64;
-        this.maxReceive = tier.getVoltage();
+        this.maxInsert = tier.getVoltage();
         this.maxExtract = tier.getVoltage();
         this.energy = Math.max(0 , Math.min(capacity, energy));
     }
 
     @Override
-    public long receiveEnergy(long maxReceive, boolean simulate) {
-        if (!canReceive()) return 0;
+    public long insert(long maxInsert, boolean simulate) {
+        if (!canInsert()) return 0;
 
-        long energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
-        if (!simulate) energy += energyReceived;
+        long inserted = Math.min(capacity - energy, Math.min(this.maxInsert, maxInsert));
+        if (!simulate) energy += inserted;
 
-        return energyReceived;
+        return inserted;
     }
 
     @Override
-    public long extractEnergy(long maxExtract, boolean simulate) {
+    public long extract(long maxExtract, boolean simulate) {
         if (!canExtract()) return 0;
 
-        long energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
-        if (!simulate) energy -= energyExtracted;
+        long extracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
+        if (!simulate) energy -= extracted;
 
-        return energyExtracted;
+        return extracted;
     }
 
     @Override
@@ -48,12 +48,12 @@ public class MachineEnergyHandler implements IEnergyStorage {
     }
 
     @Override
-    public boolean canExtract() {
-        return maxExtract > 0;
+    public boolean canInsert() {
+        return maxInsert > 0;
     }
 
     @Override
-    public boolean canReceive() {
-        return maxReceive > 0;
+    public boolean canExtract() {
+        return maxExtract > 0;
     }
 }

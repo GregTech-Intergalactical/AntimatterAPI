@@ -39,7 +39,7 @@
         "textures": {"layer0": "gregtech:items/material_set/lapis/ingot"}
       },
       "ingot_hot": {
-        "textures": {"layer0": "gregtech:items/material_set/lapis/ingot_hot"}
+        "textures": {"layer0": "gregtech:items/material_set/lapis/ingot_hot", "layer1": "gregtech:items/material_set/lapis/overlay/ingot_hot"}
       },
       "plate": {
         "textures": {"layer0": "gregtech:items/material_set/lapis/plate"}

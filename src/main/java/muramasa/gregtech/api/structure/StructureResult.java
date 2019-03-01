@@ -36,7 +36,7 @@ public class StructureResult {
 //        if (!components.containsKey(elementName)) {
 //            components.put(elementName, new ArrayList<>());
 //        }
-//        components.get(elementName).add(component);
+//        components.get(elementName).get(component);
     }
 
     public HashMap<String, ArrayList<IComponent>> getComponents() {

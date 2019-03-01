@@ -139,7 +139,7 @@ public class TileEntityMachine extends TileEntityTickable {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound); //TODO add tile data tag
+        super.writeToNBT(compound); //TODO get tile data tag
         compound.setString(Ref.KEY_MACHINE_TILE_TIER, getTier().getName());
         compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, facing);
         if (getItemHandler() != null) {

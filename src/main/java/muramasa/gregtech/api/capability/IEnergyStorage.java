@@ -2,15 +2,15 @@ package muramasa.gregtech.api.capability;
 
 public interface IEnergyStorage {
 
-    long receiveEnergy(long maxReceive, boolean simulate);
+    long insert(long maxInsert, boolean simulate);
 
-    long extractEnergy(long maxExtract, boolean simulate);
+    long extract(long maxExtract, boolean simulate);
 
     long getEnergyStored();
 
     long getMaxEnergyStored();
 
-    boolean canExtract();
+    boolean canInsert();
 
-    boolean canReceive();
+    boolean canExtract();
 }

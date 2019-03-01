@@ -20,12 +20,12 @@ public class Prefix implements IStringSerializable {
     public static Prefix Block = new Prefix("block", true, false, BLOCK);
 
     public static Prefix Chunk = new Prefix("chunk", true, ORE);
-    public static Prefix Crushed = new Prefix("crushed", false, CRUSHED, ORE);
-    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDC, ORE);
+    public static Prefix Crushed = new Prefix("crushed", false, CRUSHEDC, ORE);
+    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDP, ORE);
     public static Prefix CrushedPurified = new Prefix("crushed_purified", false, CRUSHEDP, ORE);
-    public static Prefix Dust = new Prefix("dust", true, DUST);
     public static Prefix DustPure = new Prefix("dust_pure", false, ORE);
     public static Prefix DustImpure = new Prefix("dust_impure", false, ORE);
+    public static Prefix Dust = new Prefix("dust", true, DUST);
     public static Prefix DustSmall = new Prefix("dust_small", false, DUST);
     public static Prefix DustTiny = new Prefix("dust_tiny", false, DUST);
     public static Prefix Nugget = new Prefix("nugget", false, INGOT);

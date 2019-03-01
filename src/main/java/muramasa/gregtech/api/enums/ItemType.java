@@ -5,61 +5,61 @@ import muramasa.gregtech.api.cover.impl.*;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 
 public class ItemType implements IStringSerializable {
 
     private static LinkedHashMap<String, ItemType> TYPE_LOOKUP = new LinkedHashMap<>();
 
-    public static ItemType EmptyCell = new ItemType("Empty Cell");
-    public static ItemType DebugScanner = new ItemType("Debug Scanner",TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
-    public static ItemType PumpComponent = new ItemType("Pump Component", "");
-    public static ItemType ConveyorComponent = new ItemType("Conveyor Component", "");
-    public static ItemType ItemPort = new ItemType("Item Port", "Can be placed on machines as a cover");
-    public static ItemType FluidPort = new ItemType("Fluid Port", "Can be placed on machines as a cover");
-    public static ItemType EnergyPort = new ItemType("Energy Port", "Can be placed on machines as a cover");
+    public static ItemType EmptyCell = new ItemType("empty_cell");
+    public static ItemType DebugScanner = new ItemType("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
+    public static ItemType PumpComponent = new ItemType("component_pump", "");
+    public static ItemType ConveyorComponent = new ItemType("component_conveyor", "");
+    public static ItemType ItemPort = new ItemType("item_port", "Can be placed on machines as a cover");
+    public static ItemType FluidPort = new ItemType("fluid_port", "Can be placed on machines as a cover");
+    public static ItemType EnergyPort = new ItemType("energy_port", "Can be placed on machines as a cover");
 
-//    Empty_Shape("Empty Shape Plate", "Raw plate to make Molds and Extruder Shapes"),
-//    Mold_Plate("Mold (Plate)", "Mold for making Plates"),
-//    Mold_Gear("Mold (Gear)", "Mold for making Gears"),
-//    Mold_Gear_Small("Mold (Small Gear)", "Mold for making Small Gears"),
-//    Mold_Coinage("Mold (Coinage)", "Secure Mold for making Coins (Don't lose it!)"),
-//    Mold_Bottle("Mold (Bottle)", "Mold for making Bottles"),
-//    Mold_Ingot("Mold (Ingot)", "Mold for making Ingots"),
-//    Mold_Ball("Mold (Ball)", "Mold for making Balls"),
-//    Mold_Block("Mold (Block)", "Mold for making Blocks"),
-//    Mold_Nugget("Mold (Nugget)", "Mold for making Nuggets"),
-//    Mold_Anvil("Mold (Anvil)", "Mold for making Anvils"),
-//    Shape_Plate("Extruder Shape (Plate)", "Shape for making Plates"),
-//    Shape_Rod("Extruder Shape (Rod)", "Shape for making Rods"),
-//    Shape_Bolt("Extruder Shape (Bolt)", "Shape for making Bolts"),
-//    Shape_Ring("Extruder Shape (Ring)", "Shape for making Rings"),
-//    Shape_Cell("Extruder Shape (Cell)", "Shape for making Cells"),
-//    Shape_Ingot("Extruder Shape (Ingot)", "Shape for making Ingots"),
-//    Shape_Wire("Extruder Shape (Wire)", "Shape for making Wires"),
-//    Shape_Pipe_Tiny("Extruder Shape (Tiny Pipe)", "Shape for making Tiny Pipes"),
-//    Shape_Pipe_Small("Extruder Shape (Small Pipe)", "Shape for making Small Pipes"),
-//    Shape_Pipe_Normal("Extruder Shape (Normal Pipe)", "Shape for making Normal Pipes"),
-//    Shape_Pipe_Large("Extruder Shape (Large Pipe)", "Shape for making Large Pipes"),
-//    Shape_Pipe_Huge("Extruder Shape (Huge Pipe)", "Shape for making Huge Pipes"),
-//    Shape_Block("Extruder Shape (Block)", "Shape for making Blocks"),
-//    Shape_Head_Sword("Extruder Shape (Sword Blade)", "Shape for making Sword Blades"),
-//    Shape_Head_Pickaxe("Extruder Shape (Pickaxe Head)", "Shape for making Pickaxe Heads"),
-//    Shape_Head_Shovel("Extruder Shape (Shovel Head)", "Shape for making Shovel Heads"),
-//    Shape_Head_Axe("Extruder Shape (Axe Head)", "Shape for making Axe Heads"),
-//    Shape_Head_Hoe("Extruder Shape (Hoe Head)", "Shape for making Hoe Heads"),
-//    Shape_Head_Hammer("Extruder Shape (Hammer Head)", "Shape for making Hammer Heads"),
-//    Shape_Head_File("Extruder Shape (File Head)", "Shape for making File Heads"),
-//    Shape_Head_Saw("Extruder Shape (Saw Blade)", "Shape for making Saw Heads"),
-//    Shape_Gear("Extruder Shape (Gear)", "Shape for making Gears"),
-//    Shape_Gear_Small("Extruder Shape (Small Gear)", "Shape for making Small Gears"),
-//    Shape_Bottle("Extruder Shape (Bottle)", "Shape for making Bottles"); //TODO needed?
+    public static ItemType EmptyShape = new ItemType("empty_shape_plate", "Raw plate to make Molds and Extruder Shapes");
+    public static ItemType MoldPlate = new ItemType("mold_plate", "Mold for making Plates");
+    public static ItemType MoldGear = new ItemType("mold_gear", "Mold for making Gears");
+    public static ItemType MoldGearSmall = new ItemType("mold_small_gear", "Mold for making Small Gears");
+    public static ItemType MoldCoinage = new ItemType("mold_coinage", "Secure Mold for making Coins (Don't lose it!)");
+    public static ItemType MoldBottle = new ItemType("mold_bottle", "Mold for making Bottles");
+    public static ItemType MoldIngot = new ItemType("mold_ingot", "Mold for making Ingots");
+    public static ItemType MoldBall = new ItemType("mold_ball", "Mold for making Balls");
+    public static ItemType MoldBlock = new ItemType("bold_block", "Mold for making Blocks");
+    public static ItemType MoldNugget = new ItemType("mold_nugget", "Mold for making Nuggets");
+    public static ItemType MoldAnvil = new ItemType("mold_anvil", "Mold for making Anvils");
+    public static ItemType ShapePlate = new ItemType("shape_plate", "Shape for making Plates");
+    public static ItemType ShapeRod = new ItemType("shape_rod", "Shape for making Rods");
+    public static ItemType ShapeBolt = new ItemType("shape_bolt", "Shape for making Bolts");
+    public static ItemType ShapeRing = new ItemType("shape_ring", "Shape for making Rings");
+    public static ItemType ShapeCell = new ItemType("shape_cell", "Shape for making Cells");
+    public static ItemType ShapeIngot = new ItemType("shape_ingot", "Shape for making Ingots");
+    public static ItemType ShapeWire = new ItemType("shape_wire", "Shape for making Wires");
+    public static ItemType ShapePipeTiny = new ItemType("shape_pipe_tiny", "Shape for making Tiny Pipes");
+    public static ItemType ShapePipeSmall = new ItemType("shape_pipe_small", "Shape for making Small Pipes");
+    public static ItemType ShapePipeNormal = new ItemType("shape_pipe_normal", "Shape for making Normal Pipes");
+    public static ItemType ShapePipeLarge = new ItemType("shape_pipe_large", "Shape for making Large Pipes");
+    public static ItemType ShapePipeHuge = new ItemType("shape_pipe_huge", "Shape for making Huge Pipes");
+    public static ItemType ShapeBlock = new ItemType("shape_block", "Shape for making Blocks");
+    public static ItemType ShapeHeadSword = new ItemType("shape_head_sword", "Shape for making Sword Blades");
+    public static ItemType ShapeHeadPickaxe = new ItemType("shape_head_pickaxe", "Shape for making Pickaxe Heads");
+    public static ItemType ShapeHeadShovel = new ItemType("shape_head_shovel", "Shape for making Shovel Heads");
+    public static ItemType ShapeHeadAxe = new ItemType("shape_head_axe", "Shape for making Axe Heads");
+    public static ItemType ShapeHeadHoe = new ItemType("shape_head_hoe", "Shape for making Hoe Heads");
+    public static ItemType ShapeHeadHammer = new ItemType("shape_head_hammer", "Shape for making Hammer Heads");
+    public static ItemType ShapeHeadFile = new ItemType("shape_head_file", "Shape for making File Heads");
+    public static ItemType ShapeHeadSaw = new ItemType("shape_head_saw", "Shape for making Saw Heads");
+    public static ItemType ShapeGear = new ItemType("shape_head_gear", "Shape for making Gears");
+    public static ItemType ShapeGearSmall = new ItemType("shape_head_gear_small", "Shape for making Small Gears");
+    public static ItemType ShapeBottle = new ItemType("shape_bottle", "Shape for making Bottles"); //TODO needed?
 
     public static void init() {
         GregTechAPI.CoverBehaviourNone = new CoverNone();
@@ -78,17 +78,16 @@ public class ItemType implements IStringSerializable {
         GregTechAPI.registerCover(EnergyPort.get(1), GregTechAPI.CoverBehaviourEnergy);
     }
 
-    private String name, displayName, tooltip;
+    private String name, tooltip;
 
-    public ItemType(String displayName, String tooltip) {
-        this.name = displayName.toLowerCase(Locale.ENGLISH).replace(" ", "_");
-        this.displayName = displayName;
+    public ItemType(String name, String tooltip) {
+        this.name = name;
         this.tooltip = tooltip;
         TYPE_LOOKUP.put(name, this);
     }
 
-    public ItemType(String displayName) {
-        this(displayName, "");
+    public ItemType(String name) {
+        this(name, "");
     }
 
     @Override
@@ -97,7 +96,7 @@ public class ItemType implements IStringSerializable {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return I18n.format("item.standard." + getName() + ".name");
     }
 
     public String getTooltip() {
@@ -120,6 +119,7 @@ public class ItemType implements IStringSerializable {
     }
 
     public ItemStack get(int count) { //TODO implement 0 size = no recipe consume
+        if (count == 0) count = 1; //TODO temp
         return StandardItem.get(name, count);
     }
 

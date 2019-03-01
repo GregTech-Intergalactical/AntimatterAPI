@@ -33,6 +33,7 @@ public class Ref {
 
     //Config Values //TODO maybe move?
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
+    public static boolean mDisableOldChemicalRecipes = false;
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;
 
     //NBT Tags & Keys
