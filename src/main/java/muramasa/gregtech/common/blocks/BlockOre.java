@@ -43,7 +43,7 @@ public class BlockOre extends Block {
         setCreativeTab(Ref.TAB_BLOCKS);
         this.material = material;
         this.type = type;
-        BLOCK_LOOKUP.put(type.getName() + "_" + material.getName(), this);
+        BLOCK_LOOKUP.put(type.getName() + material.getName(), this);
     }
 
     @Override
@@ -96,12 +96,8 @@ public class BlockOre extends Block {
         return material;
     }
 
-    public String getMapString() {
-        return type.getName() + material.getSet().getName();
-    }
-
-    public static BlockOre get(Material material) {
-        return BLOCK_LOOKUP.get(material.getName());
+    public static BlockOre get(StoneType type, Material material) {
+        return BLOCK_LOOKUP.get(type.getName() + material.getName());
     }
 
     public static Collection<BlockOre> getAll() {

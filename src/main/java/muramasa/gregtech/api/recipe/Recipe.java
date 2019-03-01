@@ -1,9 +1,16 @@
 package muramasa.gregtech.api.recipe;
 
+import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Recipe {
+
+    private static Random RNG = new Random();
 
     //TODO split up recipe types (item only, fluid only, mix etc) to optimize memory usage
 
@@ -54,7 +61,29 @@ public class Recipe {
     }
 
     public ItemStack[] getOutputStacks() {
-        return stacksOutput.clone();
+        ItemStack[] outputs = stacksOutput.clone();
+        if (chances != null) {
+            ArrayList<ItemStack> evaluated = new ArrayList<>();
+            for (int i = 0; i < outputs.length; i++) {
+                if (RNG.nextInt(100) < chances[i]) {
+                    evaluated.add(outputs[i].copy());
+                }
+            }
+            outputs = evaluated.toArray(new ItemStack[0]);
+        }
+        return outputs;
+    }
+
+    public ItemStack[] getOutputStacksJEI() {
+        ItemStack[] outputs = stacksOutput.clone();
+        if (chances != null) {
+            for (int i = 0; i < outputs.length; i++) {
+                if (chances[i] >= 100) continue;
+                if (!outputs[i].hasTagCompound()) outputs[i].setTagCompound(new NBTTagCompound());
+                outputs[i].getTagCompound().setInteger(Ref.KEY_STACK_CHANCE, chances[i]);
+            }
+        }
+        return outputs;
     }
 
     public FluidStack[] getInputFluids() {
@@ -79,10 +108,6 @@ public class Recipe {
 
     public int getSpecialValue() {
         return special;
-    }
-
-    private static ItemStack[] evaluateChances(ItemStack[] outputs) {
-        return outputs;
     }
 
     @Override

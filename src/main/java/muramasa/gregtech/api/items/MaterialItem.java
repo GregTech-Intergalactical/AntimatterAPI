@@ -23,6 +23,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -80,6 +81,9 @@ public class MaterialItem extends Item {
         Element element = ((MaterialItem) stack.getItem()).getMaterial().getElement();
         if (element != null) {
             tooltip.add(element.getDisplayName());
+        }
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_CHANCE)) {
+            tooltip.add(TextFormatting.WHITE + "Chance: " + stack.getTagCompound().getInteger(Ref.KEY_STACK_CHANCE) + "%");
         }
     }
 

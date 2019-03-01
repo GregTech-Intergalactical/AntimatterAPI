@@ -1,4 +1,4 @@
-package muramasa.gregtech.integration.jei;
+package muramasa.gregtech.integration.jei.wrapper;
 
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -22,7 +22,7 @@ public class MachineRecipeWrapper implements IRecipeWrapper {
             ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputStacks()));
         }
         if (recipe.hasOutputStacks()) {
-            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputStacks()));
+            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputStacksJEI()));
         }
         if (recipe.hasInputFluids()) {
             ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(recipe.getInputFluids()));

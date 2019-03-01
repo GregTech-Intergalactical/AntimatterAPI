@@ -23,7 +23,7 @@ public class RecipeBuilder {
         //TODO validate item/fluid inputs/outputs do not exceed machine gui values
         //TODO get a recipe build method to machine type so it can be overriden?
         Recipe recipe = new Recipe(stacksInput, stacksOutput, fluidsInput, fluidsOutput, duration, power, special);
-        if (chances != null) recipe.addChances(chances);
+        if (chances != null && chances.length == stacksOutput.length) recipe.addChances(chances);
         recipeMap.add(recipe);
     }
 
