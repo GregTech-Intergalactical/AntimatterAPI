@@ -19,16 +19,16 @@ public class Prefix implements IStringSerializable {
     public static Prefix Ore = new Prefix("ore", true, false, ORE);
     public static Prefix Block = new Prefix("block", true, false, BLOCK);
 
-    public static Prefix Chunk = new Prefix("chunk", true, ORE);
-    public static Prefix Crushed = new Prefix("crushed", false, CRUSHEDC, ORE);
-    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDP, ORE);
-    public static Prefix CrushedPurified = new Prefix("crushed_purified", false, CRUSHEDP, ORE);
-    public static Prefix DustPure = new Prefix("dust_pure", false, ORE);
-    public static Prefix DustImpure = new Prefix("dust_impure", false, ORE);
+//    public static Prefix Chunk = new Prefix("chunk", true, ORE);
+    public static Prefix Crushed = new Prefix("crushed", false, CRUSHED);
+    public static Prefix CrushedPurified = new Prefix("crushed_purified", false, CRUSHEDP);
+    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDC, CRUSHEDP);
+    public static Prefix DustPure = new Prefix("dust_pure", false, DUSTP);
+    public static Prefix DustImpure = new Prefix("dust_impure", false, DUSTIP);
     public static Prefix Dust = new Prefix("dust", true, DUST);
-    public static Prefix DustSmall = new Prefix("dust_small", false, DUST);
-    public static Prefix DustTiny = new Prefix("dust_tiny", false, DUST);
-    public static Prefix Nugget = new Prefix("nugget", false, INGOT);
+    public static Prefix DustSmall = new Prefix("dust_small", false, DUSTS);
+    public static Prefix DustTiny = new Prefix("dust_tiny", false, DUSTT);
+    public static Prefix Nugget = new Prefix("nugget", false, NUGGET);
     public static Prefix Ingot = new Prefix("ingot", true, INGOT);
     public static Prefix IngotHot = new Prefix("ingot_hot", false, HINGOT);
     public static Prefix Plate = new Prefix("plate", true, PLATE);
@@ -48,7 +48,7 @@ public class Prefix implements IStringSerializable {
     public static Prefix Rotor = new Prefix("rotor", true, ROTOR);
     public static Prefix Gear = new Prefix("gear", true, GEAR);
     public static Prefix GearSmall = new Prefix("gear_small", true, SGEAR);
-    public static Prefix Lens = new Prefix("lens", true, GEM);
+    public static Prefix Lens = new Prefix("lens", true, LENS);
     public static Prefix Cell = new Prefix("cell", true, LIQUID);
     public static Prefix CellGas = new Prefix("cell_gas", true, GAS);
     public static Prefix CellPlasma = new Prefix("cell_plasma", true, PLASMA);

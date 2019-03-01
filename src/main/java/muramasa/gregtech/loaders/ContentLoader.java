@@ -1,16 +1,15 @@
 package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
-import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockMachines;
@@ -66,15 +65,14 @@ public class ContentLoader {
                 registeredTiles.add(type.getTileClass().getName());
             }
         }
-        for (Material material : Materials.getAll()) {
-            if (material.hasFlag(ItemFlag.ORE)) {
-                for (StoneType type : StoneType.getAll()) {
-                    event.getRegistry().register(new BlockOre(type, material));
-                }
+        for (Material m : ItemFlag.ORE.getMats()) {
+            System.out.println("Ore Mat: " + m.getName());
+            for (StoneType type : StoneType.getAll()) {
+                event.getRegistry().register(new BlockOre(type, m));
             }
-            if (material.hasFlag(ItemFlag.BLOCK)) {
-                event.getRegistry().register(new BlockStorage(material));
-            }
+        }
+        for (Material m : ItemFlag.BLOCK.getMats()) {
+            event.getRegistry().register(new BlockStorage(m));
         }
         for (Casing type : Casing.getAll()) {
             event.getRegistry().register(new BlockCasing(type));

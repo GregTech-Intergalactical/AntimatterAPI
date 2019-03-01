@@ -1,4 +1,4 @@
-package muramasa.gregtech.integration.jei.categories;
+package muramasa.gregtech.integration.jei.category;
 
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawableAnimated;
@@ -10,7 +10,7 @@ import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.utils.Ref;
-import muramasa.gregtech.integration.jei.MachineRecipeWrapper;
+import muramasa.gregtech.integration.jei.wrapper.MachineRecipeWrapper;
 import muramasa.gregtech.integration.jei.renderer.FluidStackRenderer;
 import net.minecraft.util.ResourceLocation;
 

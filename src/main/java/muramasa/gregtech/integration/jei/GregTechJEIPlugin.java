@@ -7,8 +7,9 @@ import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.recipe.Recipe;
-import muramasa.gregtech.integration.jei.categories.MachineRecipeCategory;
-import muramasa.gregtech.integration.jei.categories.MultiMachineRecipeCategory;
+import muramasa.gregtech.integration.jei.category.MachineRecipeCategory;
+import muramasa.gregtech.integration.jei.category.MultiMachineRecipeCategory;
+import muramasa.gregtech.integration.jei.wrapper.MachineRecipeWrapper;
 
 import java.util.LinkedList;
 import java.util.List;

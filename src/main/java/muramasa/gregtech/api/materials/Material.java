@@ -2,6 +2,7 @@ package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
+import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.common.blocks.BlockOre;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static muramasa.gregtech.api.materials.ItemFlag.*;
-import static muramasa.gregtech.api.materials.RecipeFlag.*;
+import static muramasa.gregtech.api.materials.RecipeFlag.METAL;
 
 public class Material {
 
@@ -66,8 +67,13 @@ public class Material {
     }
 
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
-        add(DUST);
+        add(DUST, DUSTS, DUSTT);
         add(flags);
+        for (IMaterialFlag flag : flags) {
+            if (flag == ORE) {
+                add(CRUSHED, CRUSHEDP, CRUSHEDC, DUSTIP, DUSTP);
+            }
+        }
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 0) {
             asFluid();
@@ -85,7 +91,7 @@ public class Material {
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
         asDust(meltingPoint, flags);
-        add(INGOT);
+        add(INGOT, NUGGET);
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
@@ -109,7 +115,7 @@ public class Material {
         add(BGEM);
         if (transparent) {
             this.transparent = true;
-            add(PLATE);
+            add(BLOCK, PLATE, LENS);
         }
         return this;
     }
@@ -518,7 +524,7 @@ public class Material {
     }
 
     public ItemStack getOre(int amount) {
-        return new ItemStack(BlockOre.get(this), amount);
+        return new ItemStack(BlockOre.get(StoneType.STONE, this), amount);
     }
 
     public ItemStack getBlock(int amount) {
