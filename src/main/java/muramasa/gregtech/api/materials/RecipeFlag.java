@@ -10,7 +10,7 @@ public enum RecipeFlag implements IMaterialFlag {
     ELEC(), //Add Electrolyzer Recipes - SHOULD NOT SHARE MATS WITH CENT
     CENT(), //Add Centrifuging Recipes - SHOULD NOT SHARE MATS WITH ELEC
     CRACK(), //Add Cracking Recipes
-    SMELTG(), //Add Smelting to Gem Recipes
+//    SMELTG(), //Add Smelting to Gem Recipes
     SMELTF(), //Add Smelting to Fluid Recipes
     GRINDABLE(), //Is Grindable with the Mortar
     CRYSTALLIZE(), //Allows Dust > Gem Recipes

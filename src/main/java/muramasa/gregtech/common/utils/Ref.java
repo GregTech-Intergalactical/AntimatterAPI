@@ -11,7 +11,7 @@ import java.util.Random;
 public class Ref {
 
     public static Minecraft mc = Minecraft.getMinecraft();
-    public static Random rng = new Random();
+    public static Random RNG = new Random();
 
     public static boolean showAllItems = true;
 
@@ -32,6 +32,8 @@ public class Ref {
     public static final int HATCH_ID = 2;
 
     //Config Values //TODO maybe move?
+    public static boolean ENABLE_RECIPE_DEBUG_EXCEPTIONS = true;
+
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
     public static boolean mDisableOldChemicalRecipes = false;
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;

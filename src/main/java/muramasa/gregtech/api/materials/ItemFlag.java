@@ -1,6 +1,5 @@
 package muramasa.gregtech.api.materials;
 
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 
 import java.util.ArrayList;
@@ -64,9 +63,6 @@ public enum ItemFlag implements IMaterialFlag {
         for (Material material : mats) {
             if (!materials.contains(material)) {
                 materials.add(material);
-            }
-            if (material == Materials.Steel) {
-                throw new NullPointerException();
             }
         }
     }

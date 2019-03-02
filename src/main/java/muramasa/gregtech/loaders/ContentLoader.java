@@ -66,7 +66,6 @@ public class ContentLoader {
             }
         }
         for (Material m : ItemFlag.ORE.getMats()) {
-            System.out.println("Ore Mat: " + m.getName());
             for (StoneType type : StoneType.getAll()) {
                 event.getRegistry().register(new BlockOre(type, m));
             }

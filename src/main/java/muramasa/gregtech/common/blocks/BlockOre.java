@@ -76,10 +76,10 @@ public class BlockOre extends Block {
         return 1;
     }
 
-//    @Override
-//    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-//        drops.add(material.getChunk(1));
-//    }
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        drops.add(material.getOre(1));
+    }
 
     @Override
     public BlockRenderLayer getBlockLayer() {

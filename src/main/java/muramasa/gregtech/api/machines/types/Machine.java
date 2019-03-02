@@ -72,14 +72,6 @@ public class Machine implements IStringSerializable {
         return I18n.format("machine." + name + "." + tier.getName() + ".name");
     }
 
-    public String getJeiCategoryID() {
-        return "it.recipe_map." + name;
-    }
-
-    public String getJeiCategoryName() {
-        return I18n.format("jei.category." + name + ".name");
-    }
-
     public RecipeMap getRecipeMap() {
         return recipeMap;
     }
@@ -134,7 +126,7 @@ public class Machine implements IStringSerializable {
     }
 
     public void addRecipeMap() {
-        recipeMap = new RecipeMap(10);
+        recipeMap = new RecipeMap(name, I18n.format("jei.category." + name + ".name"), 10);
         addFlags(RECIPE);
     }
 

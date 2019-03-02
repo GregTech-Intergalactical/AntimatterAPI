@@ -15,7 +15,7 @@ public class GregTechAPI {
 
     /** Item Registry Section **/
     public static void addItemReplacement(Prefix prefix, Material material, ItemStack stack) {
-        prefix.addItemReplacement(material, stack);
+        prefix.addReplacement(material, stack);
     }
 
     /** Block Registry Section **/

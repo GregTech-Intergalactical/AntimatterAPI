@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.recipe;
 
 import muramasa.gregtech.api.util.Utils;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -10,17 +11,30 @@ import java.util.LinkedHashMap;
 
 public class RecipeMap {
 
-    private LinkedHashMap<String, ArrayList<Recipe>> recipeLookup;
+    public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", I18n.format("jei.category.ore_byproducts.name"), 100);
 
-    public RecipeMap(int initialSize) {
+    private LinkedHashMap<String, ArrayList<Recipe>> recipeLookup;
+    private String categoryId, categoryName;
+
+    public RecipeMap(String jeiCategoryName, String jeiCategoryId, int initialSize) {
+        this.categoryId = "gt.recipe_map." + jeiCategoryId;
+        this.categoryName = jeiCategoryName;
         recipeLookup = new LinkedHashMap<>(initialSize);
     }
 
-    public Collection<Recipe> getRecipes() {
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public Collection<Recipe> getRecipes(boolean filterHidden) {
         ArrayList<Recipe> recipes = new ArrayList<>();
         for (ArrayList<Recipe> subList : recipeLookup.values()) {
             for (Recipe recipe : subList) {
-                if (!recipes.contains(recipe)) {
+                if (!recipes.contains(recipe) && !(recipe.isHidden() && filterHidden)) {
                     recipes.add(recipe);
                 }
             }
