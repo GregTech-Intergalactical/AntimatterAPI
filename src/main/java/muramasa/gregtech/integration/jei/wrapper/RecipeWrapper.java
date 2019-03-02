@@ -8,11 +8,11 @@ import net.minecraft.client.Minecraft;
 
 import java.util.Arrays;
 
-public class MachineRecipeWrapper implements IRecipeWrapper {
+public class RecipeWrapper implements IRecipeWrapper {
 
     public Recipe recipe;
 
-    public MachineRecipeWrapper(Recipe recipe) {
+    public RecipeWrapper(Recipe recipe) {
         this.recipe = recipe;
     }
 
@@ -34,10 +34,16 @@ public class MachineRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        minecraft.fontRenderer.drawString("Total: " + recipe.getTotalPower() + " EU", 10, 85, 0x000000);
-        minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, 95, 0x000000);
-        minecraft.fontRenderer.drawString("Voltage: " + "32 (LV)" + "", 10, 105, 0x000000);
-        minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, 115, 0x000000);
-        minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s", 10, 125, 0x000000);
+        if (recipe.getTotalPower() > 0) {
+            minecraft.fontRenderer.drawString("Total: " + recipe.getTotalPower() + " EU", 10, 85, 0x000000);
+        }
+        if (recipe.getPower() > 0) {
+            minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, 95, 0x000000);
+            minecraft.fontRenderer.drawString("Voltage: " + "32 (LV)" + "", 10, 105, 0x000000);
+            minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, 115, 0x000000);
+        }
+        if (recipe.getDuration() > 0) {
+            minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s", 10, 125, 0x000000);
+        }
     }
 }

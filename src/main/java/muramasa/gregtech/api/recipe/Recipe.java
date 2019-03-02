@@ -6,21 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Recipe {
 
-    private static Random RNG = new Random();
-
-    //TODO split up recipe types (item only, fluid only, mix etc) to optimize memory usage
-
     private ItemStack[] stacksInput, stacksOutput;
     private FluidStack[] fluidsInput, fluidsOutput;
-    private int duration, power;
+    private int duration, special;
+    private long power;
     private int[] chances;
-    private int special;
+    private boolean hidden;
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, int power, int special) {
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, long power, int special) {
         this.stacksInput = stacksInput;
         this.stacksOutput = stacksOutput;
         this.duration = duration;
@@ -28,16 +24,18 @@ public class Recipe {
         this.special = special;
     }
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, int power, int special) {
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
         this(stacksInput, stacksOutput, duration, power, special);
         this.fluidsInput = fluidsInput;
         this.fluidsOutput = fluidsOutput;
     }
 
-    public Recipe addChances(int[] chances) {
-        //TODO validation
+    public void addChances(int[] chances) {
         this.chances = chances;
-        return this;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     public boolean hasInputStacks() {
@@ -65,7 +63,7 @@ public class Recipe {
         if (chances != null) {
             ArrayList<ItemStack> evaluated = new ArrayList<>();
             for (int i = 0; i < outputs.length; i++) {
-                if (RNG.nextInt(100) < chances[i]) {
+                if (Ref.RNG.nextInt(100) < chances[i]) {
                     evaluated.add(outputs[i].copy());
                 }
             }
@@ -98,16 +96,20 @@ public class Recipe {
         return duration;
     }
 
-    public int getPower() {
+    public long getPower() {
         return power;
     }
 
-    public int getTotalPower() {
+    public long getTotalPower() {
         return getDuration() * getPower();
     }
 
     public int getSpecialValue() {
         return special;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 
     @Override

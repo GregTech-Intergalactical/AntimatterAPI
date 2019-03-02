@@ -2,6 +2,7 @@ package muramasa.gregtech.api.recipe;
 
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -13,32 +14,90 @@ public class RecipeBuilder {
     private ItemStack[] stacksInput, stacksOutput;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int[] chances;
+    private int duration, special;
+    private long power;
+    private boolean hidden;
 
-    public void add(int duration, int power, int special) {
-        if (stacksInput != null && !Utils.areStacksValid(stacksInput)) return;
-        if (stacksOutput != null && !Utils.areStacksValid(stacksOutput)) return;
-        if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) return;
-        if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) return;
+    public void add() {
+        if (stacksInput != null && !Utils.areStacksValid(stacksInput)) {
+            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
+            } else {
+                System.out.println("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
+                return;
+            }
+        }
+        if (stacksOutput != null && !Utils.areStacksValid(stacksOutput)) {
+            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                for (ItemStack stack : stacksOutput) {
+                    System.out.println(stack != null ? stack.getDisplayName() : "NULL");
+                }
+                throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
+            } else {
+                System.out.println("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
+                return;
+            }
+        }
+        if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) {
+            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
+            } else {
+                System.out.println("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
+                return;
+            }
+        }
+        if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) {
+            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
+            } else {
+                System.out.println("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
+                return;
+            }
+        }
 
         //TODO validate item/fluid inputs/outputs do not exceed machine gui values
         //TODO get a recipe build method to machine type so it can be overriden?
-        Recipe recipe = new Recipe(stacksInput, stacksOutput, fluidsInput, fluidsOutput, duration, power, special);
+
+        //TODO FILTER EMPTY AND NULL STACKS
+        Recipe recipe = new Recipe(
+            stacksInput != null ? stacksInput.clone() : stacksInput,
+            stacksOutput != null ? stacksOutput.clone() : stacksOutput,
+            fluidsInput != null ? fluidsInput.clone() : fluidsInput,
+            fluidsOutput != null ? fluidsOutput.clone() : fluidsOutput,
+            duration, power, special
+        );
         if (chances != null && chances.length == stacksOutput.length) recipe.addChances(chances);
+        recipe.setHidden(hidden);
         recipeMap.add(recipe);
     }
 
-    public void add(int duration, int power) {
+    public void add(int duration, long power, int special) {
+        this.duration = duration;
+        this.power = power;
+        this.special = special;
+        add();
+    }
+
+    public void add(int duration, long power) {
         add(duration, power, 0);
     }
 
     public void add(int duration) {
-        add(duration, 0);
+        add(duration, 0, 0);
     }
 
     public RecipeBuilder get(Machine type) {
+        return get(type.getRecipeMap());
+    }
+
+    public RecipeBuilder get(RecipeMap map) {
         stacksInput = stacksOutput = null;
         fluidsInput = fluidsOutput = null;
-        recipeMap = type.getRecipeMap();
+        chances = null;
+        duration = special = 0;
+        power = 0;
+        hidden = false;
+        recipeMap = map;
         return this;
     }
 
@@ -75,6 +134,11 @@ public class RecipeBuilder {
     /** 10 = 10%, 75 = 75% etc **/
     public RecipeBuilder chances(int... values) {
         chances = values;
+        return this;
+    }
+
+    public RecipeBuilder hide() {
+        hidden = true;
         return this;
     }
 }

@@ -96,11 +96,11 @@ public class Prefix implements IStringSerializable {
         return doesGenerate && (material.getItemMask() & generationBits) != 0 && !ITEM_REPLACEMENT.containsKey(getName() + material.getName());
     }
 
-    public void addItemReplacement(Material material, ItemStack stack) {
+    public void addReplacement(Material material, ItemStack stack) {
         ITEM_REPLACEMENT.put(getName() + material.getName(), stack);
     }
 
-    public ItemStack getItemReplacement(Material material) {
+    public ItemStack getReplacement(Material material) {
         return ITEM_REPLACEMENT.get(getName() + material.getName());
     }
 

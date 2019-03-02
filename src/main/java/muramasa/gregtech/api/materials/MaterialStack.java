@@ -1,18 +1,20 @@
 package muramasa.gregtech.api.materials;
 
-import muramasa.gregtech.api.data.Materials;
-
 public class MaterialStack {
 
-    public String name;
-    public int size;
+    private Material material;
+    private int size;
 
-    public MaterialStack(String name, int size) {
-        this.name = name;
+    public MaterialStack(Material material, int size) {
+        this.material = material;
         this.size = size;
     }
 
     public Material get() {
-        return Materials.get(name);
+        return material;
+    }
+
+    public int size() {
+        return size;
     }
 }

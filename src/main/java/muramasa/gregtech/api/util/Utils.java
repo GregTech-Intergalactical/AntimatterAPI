@@ -80,14 +80,14 @@ public class Utils {
         return fluids;
     }
 
-    public static ItemStack ca(int amount, ItemStack stack) {
+    public static ItemStack ca(int amount, ItemStack toCopy) {
+        ItemStack stack = toCopy.copy();
         stack.setCount(amount);
         return stack;
     }
 
     public static ItemStack mul(int amount, ItemStack stack) {
-        stack.setCount(stack.getCount() * amount);
-        return stack;
+        return ca(stack.getCount() * amount, stack);
     }
 
     public static boolean areStacksValid(ItemStack... stacks) {

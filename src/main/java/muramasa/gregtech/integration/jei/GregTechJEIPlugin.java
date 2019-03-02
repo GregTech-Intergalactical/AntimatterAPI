@@ -7,9 +7,11 @@ import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.recipe.Recipe;
+import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.integration.jei.category.MachineRecipeCategory;
 import muramasa.gregtech.integration.jei.category.MultiMachineRecipeCategory;
-import muramasa.gregtech.integration.jei.wrapper.MachineRecipeWrapper;
+import muramasa.gregtech.integration.jei.category.RecipeMapCategory;
+import muramasa.gregtech.integration.jei.wrapper.RecipeWrapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,34 +32,34 @@ public class GregTechJEIPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
         for (Machine type : MachineFlag.RECIPE.getTypes()) {
-            if (type.hasFlag(BASIC) /*|| (type.getSlots() != null && type.hasFlag(MULTI))*/) {
+            if (type.hasFlag(BASIC)) {
                 registry.addRecipeCategories(new MachineRecipeCategory(guiHelper, type));
             } else if (type.hasFlag(MULTI)){
                 registry.addRecipeCategories(new MultiMachineRecipeCategory(guiHelper, type));
             }
         }
+        registry.addRecipeCategories(new RecipeMapCategory(guiHelper, RecipeMap.ORE_BY_PRODUCTS));
     }
 
     @Override
     public void register(IModRegistry registry) {
         for (Machine type : MachineFlag.RECIPE.getTypes()) {
-//            if (type.getSlots() != null) {
-                registry.addRecipes(type.getRecipeMap().getRecipes(), type.getJeiCategoryID());
-                registry.handleRecipes(Recipe.class, MachineRecipeWrapper::new, type.getJeiCategoryID());
-//            }
+            registry.addRecipes(type.getRecipeMap().getRecipes(true), type.getRecipeMap().getCategoryId());
+            registry.handleRecipes(Recipe.class, RecipeWrapper::new, type.getRecipeMap().getCategoryId());
             for (Tier tier : type.getTiers()) {
-                registry.addRecipeCatalyst(new MachineStack(type, tier).asItemStack(), type.getJeiCategoryID());
+                registry.addRecipeCatalyst(new MachineStack(type, tier).asItemStack(), type.getRecipeMap().getCategoryId());
             }
         }
+        registry.addRecipes(RecipeMap.ORE_BY_PRODUCTS.getRecipes(true), RecipeMap.ORE_BY_PRODUCTS.getCategoryId());
+        registry.handleRecipes(Recipe.class, RecipeWrapper::new, RecipeMap.ORE_BY_PRODUCTS.getCategoryId());
     }
 
-    public static void showCategory(Machine... type) {
+    public static void showCategory(Machine... types) {
         if (runtime != null) {
             List<String> list = new LinkedList<>();
-            for (int i = 0; i < type.length; i++) {
-                if (type[i].getJeiCategoryID() != null) {
-                    list.add(type[i].getJeiCategoryID());
-                }
+            for (int i = 0; i < types.length; i++) {
+                if (!types[i].hasFlag(RECIPE)) continue;
+                list.add(types[i].getRecipeMap().getCategoryId());
             }
             runtime.getRecipesGui().showCategories(list);
         }

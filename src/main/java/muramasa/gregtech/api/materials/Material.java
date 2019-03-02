@@ -21,7 +21,7 @@ import static muramasa.gregtech.api.materials.RecipeFlag.METAL;
 public class Material {
 
     /** Basic Members **/
-    private int rgb, protons, mass;
+    private int rgb, protons, neutrons, mass;
     private long itemMask, recipeMask;
     private String name, displayName;
     private MaterialSet set;
@@ -47,10 +47,10 @@ public class Material {
     private String handleMaterial;
 
     /** Processing Members **/
-    private int oreMulti, smeltingMulti, byProductMulti;
+    private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
-    private ArrayList<String> byProducts = new ArrayList<>();
+    private ArrayList<Material> byProducts = new ArrayList<>();
 
     public Material(String name, int rgb, MaterialSet set, Element element) {
         this(name, rgb, set);
@@ -195,15 +195,8 @@ public class Material {
     public Material add(Object... objects) {
         if (objects.length % 2 == 0) {
             for (int i = 0; i < objects.length; i += 2) {
-                processInto.add(new MaterialStack(((Material) objects[i]).getName(), (int) objects[i + 1]));
+                processInto.add(new MaterialStack(((Material) objects[i]), (int) objects[i + 1]));
             }
-        }
-        return this;
-    }
-
-    public Material add(Material... mats) {
-        for (Material mat : mats) {
-            byProducts.add(mat.getName());
         }
         return this;
     }
@@ -257,20 +250,52 @@ public class Material {
         if (protons == 0) {
             if (element != null) return element.getProtons();
             if (processInto.size() <= 0) return Element.Tc.getProtons();
-            for (MaterialStack stack : processInto) {
-                protons += stack.size * stack.get().getProtons();
+            long rAmount = 0, tAmount = 0;
+            for (MaterialStack tMaterial : processInto) {
+                tAmount += tMaterial.size();
+                rAmount += tMaterial.size() * tMaterial.get().getProtons();
             }
+            long pro = (3628800 * rAmount) / (tAmount * 3628800);
+            if (pro >= Integer.MAX_VALUE) {
+                System.out.println("PROTON OVERFLOW: " + getName());
+            }
+            protons = (int)pro;
         }
         return protons;
+    }
+
+    public int getNeutrons() {
+        if (neutrons == 0) {
+            if (element != null) return element.getNeutrons();
+            if (processInto.size() <= 0) return Element.Tc.getNeutrons();
+            long rAmount = 0, tAmount = 0;
+            for (MaterialStack tMaterial : processInto) {
+                tAmount += tMaterial.size();
+                rAmount += tMaterial.size() * tMaterial.get().getNeutrons();
+            }
+            long neu = (3628800 * rAmount) / (tAmount * 3628800);
+            if (neu >= Integer.MAX_VALUE) {
+                System.out.println("NEUTRON OVERFLOW: " + getName());
+            }
+            neutrons = (int)neu;
+        }
+        return neutrons;
     }
 
     public int getMass() {
         if (mass == 0) {
             if (element != null) return element.getMass();
             if (processInto.size() <= 0) return Element.Tc.getMass();
-            for (MaterialStack stack : processInto) {
-                mass += stack.size * stack.get().getMass();
+            long rAmount = 0, tAmount = 0;
+            for (MaterialStack tMaterial : processInto) {
+                tAmount += tMaterial.size();
+                rAmount += tMaterial.size() * tMaterial.get().getMass();
             }
+            long mas = (3628800 * rAmount) / (tAmount * 3628800);
+            if (mas >= Integer.MAX_VALUE) {
+                System.out.println("MASS OVERFLOW: " + getName());
+            }
+            mass = (int)mas;
         }
         return mass;
     }
@@ -328,7 +353,7 @@ public class Material {
         return fuelPower;
     }
 
-    /** Processing Getters **/
+    /** Processing Getters/Setters **/
     public int getOreMulti() {
         return oreMulti;
     }
@@ -339,6 +364,21 @@ public class Material {
 
     public int getByProductMulti() {
         return byProductMulti;
+    }
+
+    public Material setOreMulti(int multi) {
+        oreMulti = multi;
+        return this;
+    }
+
+    public Material setSmeltingMulti(int multi) {
+        smeltingMulti = multi;
+        return this;
+    }
+
+    public Material setByProductMulti(int multi) {
+        byProductMulti = multi;
+        return this;
     }
 
     public Material getSmeltInto() {
@@ -357,20 +397,40 @@ public class Material {
         return macerateInto;
     }
 
+    public Material setSmeltInto(Material m) {
+        smeltInto = m;
+        return this;
+    }
+
+    public Material setDirectSmeltInto(Material m) {
+        directSmeltInto = m;
+        return this;
+    }
+
+    public Material setArcSmeltInto(Material m) {
+        arcSmeltInto = m;
+        return this;
+    }
+
+    public Material setMacerateInto(Material m) {
+        macerateInto = m;
+        return this;
+    }
+
     public boolean hasSmeltInto() {
-        return !name.equals(smeltInto);
+        return smeltInto != this;
     }
 
     public boolean hasDirectSmeltInto() {
-        return !name.equals(directSmeltInto);
+        return directSmeltInto != this;
     }
 
     public boolean hasArcSmeltInto() {
-        return !name.equals(arcSmeltInto);
+        return arcSmeltInto != this;
     }
 
     public boolean hasMacerateInto() {
-        return !name.equals(macerateInto);
+        return macerateInto != this;
     }
 
     public ArrayList<MaterialStack> getProcessInto() {
@@ -378,16 +438,18 @@ public class Material {
     }
 
     public ArrayList<Material> getByProducts() {
-        ArrayList<Material> materials = new ArrayList<>(byProducts.size());
-        int size = byProducts.size();
-        for (int i = 0; i < size; i++) {
-            materials.add(Materials.get(byProducts.get(i)));
-        }
-        return materials;
+        return byProducts;
     }
 
     public boolean hasByProducts() {
         return byProducts.size() > 0;
+    }
+
+    public Material addByProduct(Material... mats) {
+        for (Material mat : mats) {
+            byProducts.add(mat);
+        }
+        return this;
     }
 
     /** Helpful Stack Getters **/
