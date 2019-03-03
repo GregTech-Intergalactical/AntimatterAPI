@@ -40,6 +40,7 @@ public class Prefix implements IStringSerializable {
     public static Prefix GemExquisite = new Prefix("gem_exquisite", true, GEM);
     public static Prefix Foil = new Prefix("foil", true, FOIL);
     public static Prefix Rod = new Prefix("rod", true, ROD);
+    public static Prefix RodLong = new Prefix("rod_long", true, RODL);
     public static Prefix Bolt = new Prefix("bolt", true, BOLT);
     public static Prefix Screw = new Prefix("screw", true, SCREW);
     public static Prefix Ring = new Prefix("ring", true, RING);

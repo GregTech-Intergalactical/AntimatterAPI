@@ -26,6 +26,7 @@ public enum ItemFlag implements IMaterialFlag {
 
     PLATE(), //Add Plates
     ROD(), //Add Rods
+    RODL(), //Add Long Rods
     RING(), //Add Rings
     BOLT(), //Add Bolts
     FOIL(), //Add Foils

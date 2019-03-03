@@ -1,10 +1,16 @@
 package muramasa.gregtech.client.render;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Matrix4f;
@@ -39,5 +45,82 @@ public class RenderHelper {
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
         return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
+    }
+
+    public static void drawFluid(Minecraft minecraft, int xPosition, int yPosition, int width, int height, int scaledAmount, FluidStack fluidStack) {
+        if (fluidStack == null) return;
+        Fluid fluid = fluidStack.getFluid();
+        if (fluid == null) return;
+
+        TextureAtlasSprite fluidStillSprite = getStillFluidSprite(minecraft, fluid);
+        int fluidColor = fluid.getColor(fluidStack);
+
+        drawTiledSprite(minecraft, xPosition, yPosition, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
+    }
+
+    public static void drawTiledSprite(Minecraft minecraft, int xPosition, int yPosition, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
+        minecraft.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        setGLColorFromInt(color);
+
+        int xTileCount = tiledWidth / texWidth;
+        int xRemainder = tiledWidth - (xTileCount * texWidth);
+        int yTileCount = scaledAmount / texHeight;
+        int yRemainder = scaledAmount - (yTileCount * texHeight);
+
+        final int yStart = yPosition + tiledHeight;
+
+        for (int xTile = 0; xTile <= xTileCount; xTile++) {
+            for (int yTile = 0; yTile <= yTileCount; yTile++) {
+                int width = (xTile == xTileCount) ? xRemainder : texWidth;
+                int height = (yTile == yTileCount) ? yRemainder : texHeight;
+                int x = xPosition + (xTile * texWidth);
+                int y = yStart - ((yTile + 1) * texHeight);
+                if (width > 0 && height > 0) {
+                    int maskTop = texHeight - height;
+                    int maskRight = texWidth - width;
+
+                    drawTextureWithMasking(x, y, sprite, maskTop, maskRight, 100);
+                }
+            }
+        }
+    }
+
+    public static TextureAtlasSprite getStillFluidSprite(Minecraft minecraft, Fluid fluid) {
+        TextureMap textureMapBlocks = minecraft.getTextureMapBlocks();
+        ResourceLocation fluidStill = fluid.getStill();
+        TextureAtlasSprite fluidStillSprite = null;
+        if (fluidStill != null) {
+            fluidStillSprite = textureMapBlocks.getTextureExtry(fluidStill.toString());
+        }
+        if (fluidStillSprite == null) {
+            fluidStillSprite = textureMapBlocks.getMissingSprite();
+        }
+        return fluidStillSprite;
+    }
+
+    public static void setGLColorFromInt(int color) {
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+
+        GlStateManager.color(red, green, blue, 1.0F);
+    }
+
+    public static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
+        double uMin = (double) textureSprite.getMinU();
+        double uMax = (double) textureSprite.getMaxU();
+        double vMin = (double) textureSprite.getMinV();
+        double vMax = (double) textureSprite.getMaxV();
+        uMax = uMax - (maskRight / 16.0 * (uMax - uMin));
+        vMax = vMax - (maskTop / 16.0 * (vMax - vMin));
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferBuilder.pos(xCoord, yCoord + 16, zLevel).tex(uMin, vMax).endVertex();
+        bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + 16, zLevel).tex(uMax, vMax).endVertex();
+        bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).tex(uMax, vMin).endVertex();
+        bufferBuilder.pos(xCoord, yCoord + maskTop, zLevel).tex(uMin, vMin).endVertex();
+        tessellator.draw();
     }
 }

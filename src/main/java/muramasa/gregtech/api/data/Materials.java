@@ -43,7 +43,7 @@ public class Materials {
     public static Material Plutonium241 = new Material("Plutonium 241", 0xfa4646, SHINY, Pu241).asMetal(912, 0).addTools(6.0F, 512, 3);
     public static Material Silver = new Material("Silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE).addTools(10.0F, 64, 2);
     public static Material Thorium = new Material("Thorium", 0x001e00, SHINY, Th).asMetal(2115, 0, ORE).addTools(6.0F, 512, 2);
-    public static Material Titanium = new Material("Titanium", 0xdca0f0, METALLIC).asMetal();
+    public static Material Titanium = new Material("Titanium", 0xdca0f0, METALLIC).asMetal(1941, 1940, ROD, SPRING);
     public static Material Tungsten = new Material("Tungsten", 0x323232, METALLIC, W).asMetal(3695, 3000, FOIL).addTools(7.0F, 2560, 3);
     public static Material Uranium = new Material("Uranium 238", 0x32f032, METALLIC, U).asMetal(1405, 0).addTools(6.0F, 512, 3);
     public static Material Uranium235 = new Material("Uranium 235", 0x46fa46, METALLIC, U235).asMetal(1405, 0).addTools(6.0F, 512, 3);
@@ -275,7 +275,7 @@ public class Materials {
     public static Material Tungstate = new Material("Tungstate", 0x373223, DULL).asDust(ORE).add(Tungsten, 1, Lithium, 2, Oxygen, 4);
     public static Material Uraninite = new Material("Uraninite", 0x232323, METALLIC).asDust(ORE).add(Uranium, 1, Oxygen, 2);
     public static Material Uvarovite = new Material("Uvarovite", 0xb4ffb4, DIAMOND).asDust().add(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12);
-    public static Material Wood = new Material("Wood", 0x643200, NONE).asDust(PLATE, GEAR).addTools(2.0F, 16, 0).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
+    public static Material Wood = new Material("Wood", 0x643200, NONE).asDust(PLATE, GEAR, ROD).addTools(2.0F, 16, 0).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
     public static Material Stone = new Material("Stone", 0xcdcdcd, ROUGH).asDust(GEAR).addTools(4.0F, 32, 1);
     public static Material Wulfenite = new Material("Wulfenite", 0xff8000, DULL).asDust(ORE).add(Lead, 1, Molybdenum, 1, Oxygen, 4);
     public static Material YellowLimonite = new Material("Yellow Limonite", 0xc8c800, METALLIC).asDust(ORE).add(Iron, 1, Hydrogen, 1, Oxygen, 2);

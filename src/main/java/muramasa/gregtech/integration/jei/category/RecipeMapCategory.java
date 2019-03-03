@@ -47,8 +47,8 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
         id = map.getCategoryId();
         title = map.getCategoryName();
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();
-        background = guiHelper.drawableBuilder(gui.getTexture(Tier.getMax()), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
-        progressBar = guiHelper.drawableBuilder(gui.getTexture(Tier.getMax()), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
+        background = guiHelper.drawableBuilder(gui.getTexture(gui.getHighestTier()), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
+        progressBar = guiHelper.drawableBuilder(gui.getTexture(gui.getHighestTier()), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
         icon = guiHelper.createDrawableIngredient(ItemType.DebugScanner.get(1));
         this.gui = gui;
     }
@@ -92,12 +92,14 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
         IGuiItemStackGroup itemGroup = layout.getItemStacks();
         IGuiFluidStackGroup fluidGroup = layout.getFluidStacks();
         List<SlotData> slots;
+        Tier tier = gui.getHighestTier();
         int i = 0, slotIndex = 0;
 
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
 
+
         if (wrapper.recipe.hasInputStacks()) {
-            slots = gui.getTypes(SlotType.IT_IN, Tier.getMax());
+            slots = gui.getSlots(SlotType.IT_IN, tier);
             if (slots.size() > 0) {
                 for (ItemStack stack : wrapper.recipe.getInputStacks()) {
                     itemGroup.init(i, true, slots.get(slotIndex).x - offsetX, slots.get(slotIndex++).y - offsetY);
@@ -106,7 +108,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
             }
         }
         if (wrapper.recipe.hasOutputStacks()) {
-            slots = gui.getTypes(SlotType.IT_OUT, Tier.getMax());
+            slots = gui.getSlots(SlotType.IT_OUT, tier);
             if (slots.size() > 0) {
                 slotIndex = 0;
                 for (ItemStack stack : wrapper.recipe.getOutputStacksJEI()) {
@@ -118,7 +120,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
 
         i = 0;
         if (wrapper.recipe.hasInputFluids()) {
-            slots = gui.getTypes(SlotType.FL_IN, Tier.getMax());
+            slots = gui.getSlots(SlotType.FL_IN, tier);
             if (slots.size() > 0) {
                 slotIndex = 0;
                 for (FluidStack fluid : wrapper.recipe.getInputFluids()) {
@@ -128,7 +130,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
             }
         }
         if (wrapper.recipe.hasOutputFluids()) {
-            slots = gui.getTypes(SlotType.FL_OUT, Tier.getMax());
+            slots = gui.getSlots(SlotType.FL_OUT, tier);
             if (slots.size() > 0) {
                 slotIndex = 0;
                 for (FluidStack fluid : wrapper.recipe.getOutputFluids()) {
