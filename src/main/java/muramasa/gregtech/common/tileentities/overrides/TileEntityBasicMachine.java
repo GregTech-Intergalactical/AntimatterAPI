@@ -3,7 +3,9 @@ package muramasa.gregtech.common.tileentities.overrides;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.types.Machine;
@@ -193,9 +195,11 @@ public class TileEntityBasicMachine extends TileEntityMachine {
             if (stack.getItem() instanceof MaterialItem) {
                 Material material = ((MaterialItem) stack.getItem()).getMaterial();
                 if (material != null && material.getLiquid() != null) {
+                    System.out.println(Machines.ORE_WASHER.getGui().getCount(SlotType.FL_IN));
                     fluidHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
                 }
             } else if (ItemType.EmptyCell.isEqual(stack)) {
+                System.out.println("Empty Cell");
                 fluidHandler.getInput(0).setFluid(null);
             }
         } else if (slot == 1) { //Output slot

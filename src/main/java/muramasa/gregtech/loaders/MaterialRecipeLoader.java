@@ -58,7 +58,7 @@ public class MaterialRecipeLoader {
         }
 
         for (Material m : HINGOT.getMats()) {
-            RB.get(VACUUM_FREEZER).ii(m.getIngot(1)).io(m.getIngotH(1)).add(Math.max(m.getMass() * 3, 1), 120);
+            RB.get(VACUUM_FREEZER).ii(m.getIngotH(1)).io(m.getIngot(1)).add(Math.max(m.getMass() * 3, 1), 120);
         }
 
         for (Material m : SPRING.getMats()) {
@@ -71,9 +71,9 @@ public class MaterialRecipeLoader {
         }
 
         for (Material m : ROTOR.getMats()) {
+            RB.get(ASSEMBLER).ii(m.getPlate(4), m.getRing(1)).fi(Materials.Lead.getLiquid(48)).io(m.getRotor(1)).add(240, 24);
             RB.get(ASSEMBLER).ii(m.getPlate(4), m.getRing(1)).fi(Materials.Tin.getLiquid(32)).io(m.getRotor(1)).add(240, 24);
-            RB.get(ASSEMBLER).ii(m.getPlate(4), m.getRing(1)).fi(Materials.Lead.getLiquid(32)).io(m.getRotor(1)).add(240, 24);
-            RB.get(ASSEMBLER).ii(m.getPlate(4), m.getRing(1)).fi(Materials.SolderingAlloy.getLiquid(32)).io(m.getRotor(1)).add(240, 24);
+            RB.get(ASSEMBLER).ii(m.getPlate(4), m.getRing(1)).fi(Materials.SolderingAlloy.getLiquid(16)).io(m.getRotor(1)).add(240, 24);
             //RecipeHelper.addShapedToolRecipe(aRotor, "PhP", "SRf", "PdP", 'P', aPlate, 'R', aRing, 'S', m.getScrew(1));
         }
 
@@ -86,7 +86,7 @@ public class MaterialRecipeLoader {
         }
 
         for (Material m : SGEAR.getMats()) {
-            RB.get(FLUID_SOLIDIFIER).io(MoldGearSmall.get(0)).fi(m.getLiquid(144)).io(m.getGearS(1)).add(16, 8);
+            RB.get(FLUID_SOLIDIFIER).ii(MoldGearSmall.get(0)).fi(m.getLiquid(144)).io(m.getGearS(1)).add(16, 8);
             //RecipeHelper.addShapedToolRecipe(aGearS, "P  ", (m == Materials.Wood || m == Materials.WoodSealed) ? " s " : " h ", "   ", 'P', m.getPlate(1));
         }
 
@@ -94,7 +94,7 @@ public class MaterialRecipeLoader {
             //RecipeHelper.addShapedToolRecipe(aGear, "SPS", "PwP", "SPS", 'P', m.getPlate(1), 'S', m.getRod(1));
 
             if (m.hasFlag(LIQUID)) {
-                RB.get(FLUID_SOLIDIFIER).io(MoldGear.get(0)).fi(m.getLiquid(576)).io(m.getGear(1)).add(128, 8);
+                RB.get(FLUID_SOLIDIFIER).ii(MoldGear.get(0)).fi(m.getLiquid(576)).io(m.getGear(1)).add(128, 8);
             }
             if (m.hasFlag(INGOT) && !m.hasFlag(NOSMELT)) {
                 int aVoltageMulti = m.getBlastTemp() >= 2800 ? 64 : 16;
@@ -138,16 +138,36 @@ public class MaterialRecipeLoader {
         }
 
         for (Material m : ROD.getMats()) {
-            if (m.hasFlag(BGEM) && m.hasFlag(BRITTLEG)) {
+            if (m.hasFlag(BGEM)) {
                 RB.get(LATHE).ii(m.getGem(1)).io(m.getRod(1), m.getMacerateInto().getDustS(2)).add(Math.max(m.getMass() * 5, 1), 16);
             } else if (m.hasFlag(INGOT)) {
                 RB.get(LATHE).ii(m.getIngot(1)).io(m.getRod(1), m.getMacerateInto().getDustS(2)).add(Math.max(m.getMass() * 5, 1), 16);
                 //RecipeHelper.addShapedToolRecipe(m.getRod(1), "f  ", " X ", "   ", 'X', m.getIngot(1));
             }
-            if (!m.hasFlag(NOSMELT) && !m.hasFlag(BGEM)) {
+            if (m.hasFlag(INGOT) && !m.hasFlag(NOSMELT)) {
                 int aEU = m.getBlastTemp() >= 2800 ? 384 : 96;
                 RB.get(EXTRUDER).ii(m.getIngot(1), ShapeRod.get(0)).io(m.getSmeltInto().getRod(2)).add(m.getMass() * 2, aEU);
-                //RB.get(EXTRUDER).ii(m.getIngot(1), ShapeWire.get(0)).io(m.getSmeltInto().getWire01(2)).add(m.getMass() * 2, aEU);
+                //TODO RB.get(EXTRUDER).ii(m.getIngot(1), ShapeWire.get(0)).io(m.getSmeltInto().getWire01(2)).add(m.getMass() * 2, aEU);
+            }
+        }
+
+        for (Material m : RODL.getMats()) {
+            //TODO
+        }
+
+        for (Material m : BLOCK.getMats()) {
+            ItemStack ingotOrGem = m.hasFlag(BGEM) ? m.getGem(9) : m.getIngot(9);
+            RB.get(COMPRESSOR).ii(ingotOrGem).io(m.getBlock(1)).add(300, 2);
+            if (m.hasFlag(PLATE)) {
+                RB.get(CUTTER).ii(m.getBlock(1)).io(m.getPlate(9)).add(Math.max(m.getMass() * 10, 1), 30);
+            }
+            if (m.hasFlag(LIQUID)) {
+                RB.get(FLUID_SOLIDIFIER).ii(MoldBlock.get(0)).fi(m.getLiquid(1296)).io(m.getBlock(1)).add(288, 8);
+            }
+            if (m.hasFlag(INGOT) && !m.hasFlag(NOSMELT)) {
+                int aVoltageMulti = m.hasFlag(NOSMASH) ? m.getBlastTemp() >= 2800 ? 16 : 4 : m.getBlastTemp() >= 2800 ? 64 : 16;
+                RB.get(EXTRUDER).ii(ingotOrGem, ShapeBlock.get(0)).io(m.getBlock(1)).add(10, 8 * aVoltageMulti);
+                RB.get(ALLOY_SMELTER).ii(ingotOrGem, MoldBlock.get(0)).io(m.getBlock(1)).add(5, 4 * aVoltageMulti);
             }
         }
 
@@ -182,31 +202,15 @@ public class MaterialRecipeLoader {
 //                GT_ModHandler.addCompressorRecipe(aDustStack, aPlateStack);
 //            }
             }
-            if (m.hasFlag(BLOCK)) {
-                RB.get(CUTTER).ii(m.getBlock(1)).io(m.getPlate(9)).add(Math.max(m.getMass() * 10, 1), 30);
-            }
             //GregTech_API.registerCover(aPlate, new GT_RenderedTexture(m.mIconSet.mTextures[71], m.getRGB(), false), null);
-        }
-
-        for (Material m : BLOCK.getMats()) {
-            ItemStack ingotOrGem = m.hasFlag(BGEM) ? m.getGem(9) : m.getIngot(9);
-            RB.get(COMPRESSOR).ii(ingotOrGem).io(m.getBlock(1)).add(300, 2);
-            if (m.hasFlag(LIQUID)) {
-                RB.get(FLUID_SOLIDIFIER).ii(MoldBlock.get(0)).fi(m.getLiquid(1296)).io(m.getBlock(1)).add(288, 8);
-            }
-            if (!m.hasFlag(NOSMELT)) {
-                int aVoltageMulti = m.hasFlag(NOSMASH) ? m.getBlastTemp() >= 2800 ? 16 : 4 : m.getBlastTemp() >= 2800 ? 64 : 16;
-                RB.get(EXTRUDER).ii(ingotOrGem, ShapeBlock.get(0)).io(m.getBlock(1)).add(10, 8 * aVoltageMulti);
-                RB.get(ALLOY_SMELTER).ii(ingotOrGem, MoldBlock.get(0)).io(m.getBlock(1)).add(5, 4 * aVoltageMulti);
-            }
         }
 
         for (Material m : DUST.getMats()) {
             ItemStack aDust = m.getDust(1), aDustS = m.getDustS(1), aDustT = m.getDustT(1);
-//            RecipeHelper.addBasicShapedRecipe(Utils.ca(4, aDustS), " X", "  ", 'X', aDust);
-//            RecipeHelper.addBasicShapedRecipe(Utils.ca(9, aDustT), "X ", "  ", 'X', aDust);
-//            RecipeHelper.addBasicShapelessRecipe(aDust, aDustS, aDustS, aDustS, aDustS);
-//            RecipeHelper.addBasicShapelessRecipe(aDust, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT);
+            RecipeHelper.addShaped(Utils.ca(4, aDustS), " X", "  ", 'X', aDust);
+            RecipeHelper.addShaped(Utils.ca(9, aDustT), "X ", "  ", 'X', aDust);
+            RecipeHelper.addShapeless(aDust, aDustS, aDustS, aDustS, aDustS);
+            RecipeHelper.addShapeless(aDust, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT);
             if (m.getFuelPower() > 0) {
                 //RecipeAdder.addFuel(aDust, null, m.mFuelPower, m.mFuelType);
             }
@@ -287,7 +291,10 @@ public class MaterialRecipeLoader {
             if (m.hasFlag(LIQUID)) {
                 RB.get(FLUID_SOLIDIFIER).ii(MoldNugget.get(0)).fi(m.getLiquid(16)).io(m.getNugget(1)).add(16, 4);
             }
+
+            //Broken
             RB.get(ALLOY_SMELTER).ii(m.getNugget(9), MoldIngot.get(0)).io(m.getSmeltInto().getIngot(1)).add(200, 2);
+
             if (!m.hasFlag(NOSMELT)) {
                 RB.get(ALLOY_SMELTER).ii(m.getIngot(1), MoldNugget.get(0)).io(m.getNugget(9)).add(100, 1);
             }
@@ -298,7 +305,8 @@ public class MaterialRecipeLoader {
             if (m.getFuelPower() > 0) {
                 //RecipeAdder.addFuel(aIngot, null, m.getFuelPower(), m.mFuelType);
             }
-            //TODO move these to their respective loops
+
+
             if (m.hasFlag(LIQUID)) {
                 RB.get(FLUID_SOLIDIFIER).ii(MoldIngot.get(0)).fi(m.getLiquid(144)).io(m.getIngot(1)).add(32, 8);
             }
@@ -376,7 +384,9 @@ public class MaterialRecipeLoader {
             if (m.hasFlag(NOSMASH)) {
                 RB.get(FORGE_HAMMER).ii(m.getGem(1)).io(m.getGemFlawed(2)).add(64, 16);
             }
-            RB.get(LATHE).ii(m.getGemFlawless(1)).io(m.getRod(1), m.getDust(1)).add(m.getMass(), 16);
+            if (m.hasFlag(RODL)) {
+                RB.get(LATHE).ii(m.getGemFlawless(1)).io(m.getRod(1), m.getDust(1)).add(m.getMass(), 16);
+            }
             RB.get(LATHE).ii(m.getGemExquisite(1)).io(m.getLens(1), m.getDust(2)).add(m.getMass(), 24);
             //GT_ModHandler.addShapedToolRecipe(GT_Utility.ca(2, aGemStack), "h  ", "X  ", "   ", 'X', aFlawlessStack);
             //GT_ModHandler.addShapedToolRecipe(GT_Utility.ca(2, aChippedStack), "h  ", "X  ", "   ", 'X', aFlawedStack);
