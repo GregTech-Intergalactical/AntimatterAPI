@@ -2,6 +2,7 @@ package muramasa.gregtech.api.gui;
 
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.util.int4;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.util.ResourceLocation;
 
@@ -13,15 +14,22 @@ public class GuiData {
 
     private static final String ANY = "any";
 
-    private Machine type;
+    private String name;
     private Object instance;
     private int id;
+
+    private int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
+    private BarDir dir = BarDir.LEFT;
 
     private LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     private LinkedHashMap<SlotType, Integer> COUNT_LOOKUP = new LinkedHashMap<>();
 
+    public GuiData(String name) {
+        this.name = name;
+    }
+
     public GuiData(Machine type, Object instance, int id) {
-        this.type = type;
+        this.name = type.getName();
         this.instance = instance;
         this.id = id;
     }
@@ -35,11 +43,29 @@ public class GuiData {
     }
 
     public ResourceLocation getTexture(Tier tier) {
+//        for (Tier t : Tier.getAll()) {
+//            if (hasSlots(tier)) {
+//                return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + "_" + tier.getName() + ".png");
+//            }
+//        }
+//        return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
         if (hasSlots(tier)) {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + type.getName() + "_" + tier.getName() + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + "_" + tier.getName() + ".png");
         } else {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + type.getName() + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
         }
+    }
+
+    public int4 getArea() {
+        return area;
+    }
+
+    public int4 getPadding() {
+        return padding;
+    }
+
+    public BarDir getDir() {
+        return dir;
     }
 
     public GuiData add(String key, SlotData slot) {
@@ -66,6 +92,13 @@ public class GuiData {
         return add(tier.getName(), new SlotData(type, x, y));
     }
 
+    public GuiData add(GuiData data) {
+        for (SlotData slot : data.getAnySlots()) {
+            add(ANY, slot);
+        }
+        return this;
+    }
+
     public GuiData add(Machine type) {
         for (SlotData slot : type.getGui().getAnySlots()) {
             add(ANY, slot);
@@ -86,6 +119,16 @@ public class GuiData {
         for (SlotData slot : type.getGui().getSlots(fromTier)) {
             add(toTier.getName(), slot);
         }
+        return this;
+    }
+
+    public GuiData setArea(int x, int y, int z, int w) {
+        area.set(x, y, z, w);
+        return this;
+    }
+
+    public GuiData setPadding(int x, int y, int z, int w) {
+        padding.set(x, y, z, w);
         return this;
     }
 

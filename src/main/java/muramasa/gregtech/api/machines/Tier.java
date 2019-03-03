@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Tier implements IStringSerializable {
@@ -96,6 +97,14 @@ public class Tier implements IStringSerializable {
 
     public static Tier[] getBasic() {
         return new Tier[]{BRONZE, STEEL, LV, MV, HV, EV, IV};
+    }
+
+    public static Tier getMax() {
+        return Tier.IV; //TODO update...
+    }
+
+    public static Collection<Tier> getAll() {
+        return tierLookup.values();
     }
 
     public static ResourceLocation[] getTextures(Tier... tiers) {

@@ -1,9 +1,7 @@
 package muramasa.gregtech.api.enums;
 
-import muramasa.gregtech.api.materials.Material;
 import net.minecraft.util.IStringSerializable;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 public enum Element implements IStringSerializable {
@@ -138,11 +136,6 @@ public enum Element implements IStringSerializable {
     public final int mProtons, mNeutrons, mAdditionalMass, mHalfLifeSeconds;
     public final String mName, mDecayTo;
     public final boolean mIsIsotope;
-
-    /**
-     * Links to every pure Material containing just this Element.
-     **/
-    public ArrayList<Material> mLinkedMaterials = new ArrayList<>();
 
     /**
      * @param aProtons         Amount of Protons. Antiprotons if negative.

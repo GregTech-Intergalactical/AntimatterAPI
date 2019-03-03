@@ -1,10 +1,15 @@
 package muramasa.gregtech.api.data;
 
+import muramasa.gregtech.api.gui.GuiData;
+
 import static muramasa.gregtech.api.data.Machines.*;
 import static muramasa.gregtech.api.gui.SlotType.*;
 import static muramasa.gregtech.api.machines.Tier.*;
 
 public class Guis {
+
+    public static GuiData MULTI_DISPLAY = new GuiData("multi_display").add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 143, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34);
+    public static GuiData MULTI_DISPLAY_COMPACT = new GuiData("multi_display").add(MULTI_DISPLAY).setPadding(0, 0, 0, 0);
 
     public static void init() {
 
@@ -61,7 +66,7 @@ public class Guis {
         STEAM_COMPRESSOR.getGui().add(COMPRESSOR);
         STEAM_ALLOY_SMELTER.getGui().add(ALLOY_SMELTER);
 
-        PRIMITIVE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_IN, 53, 52).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25);
+        PRIMITIVE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_IN, 53, 52).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25).setPadding(0, 0, 0, 0);
         BRONZE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25);
 
         HATCH_MUFFLER.getGui().add(IT_IN, 79, 34);
