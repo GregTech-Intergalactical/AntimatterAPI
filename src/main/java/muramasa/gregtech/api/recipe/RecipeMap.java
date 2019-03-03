@@ -11,15 +11,23 @@ import java.util.LinkedHashMap;
 
 public class RecipeMap {
 
-    public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", I18n.format("jei.category.ore_byproducts.name"), 100);
+    public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", 100);
+    public static RecipeMap PLASMA_FUELS = new RecipeMap("plasma_fuels", "Fuel Value: ", " EU", 100);
 
     private LinkedHashMap<String, ArrayList<Recipe>> recipeLookup;
     private String categoryId, categoryName;
+    private String specialPre = "", specialPost = "";
 
-    public RecipeMap(String jeiCategoryName, String jeiCategoryId, int initialSize) {
+    public RecipeMap(String jeiCategoryId, int initialSize) {
         this.categoryId = "gt.recipe_map." + jeiCategoryId;
-        this.categoryName = jeiCategoryName;
+        this.categoryName = I18n.format("jei.category." + jeiCategoryId + ".name");
         recipeLookup = new LinkedHashMap<>(initialSize);
+    }
+
+    public RecipeMap(String jeiCategoryId, String specialPre, String specialPost, int initialSize) {
+        this(jeiCategoryId, initialSize);
+        this.specialPre = specialPre;
+        this.specialPost = specialPost;
     }
 
     public String getCategoryId() {

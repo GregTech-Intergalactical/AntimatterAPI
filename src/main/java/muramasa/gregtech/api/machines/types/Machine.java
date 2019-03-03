@@ -126,7 +126,7 @@ public class Machine implements IStringSerializable {
     }
 
     public void addRecipeMap() {
-        recipeMap = new RecipeMap(name, I18n.format("jei.category." + name + ".name"), 10);
+        recipeMap = new RecipeMap(name, 10);
         addFlags(RECIPE);
     }
 

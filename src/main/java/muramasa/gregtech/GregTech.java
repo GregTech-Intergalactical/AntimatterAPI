@@ -8,9 +8,11 @@ import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
+import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.common.events.EventHandler;
 import muramasa.gregtech.common.utils.CommandTool;
 import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import muramasa.gregtech.loaders.MachineRecipeLoader;
 import muramasa.gregtech.loaders.MaterialRecipeLoader;
 import muramasa.gregtech.proxy.GuiHandler;
@@ -39,6 +41,9 @@ public class GregTech {
     public void preInit(FMLPreInitializationEvent e) {
         logger = e.getModLog();
         proxy.preInit(e);
+
+        GregTechJEIPlugin.registerCategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
+        GregTechJEIPlugin.registerCategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
 
         new EventHandler().init();
         GTCapabilities.register();

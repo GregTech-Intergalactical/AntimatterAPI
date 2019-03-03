@@ -2,8 +2,11 @@ package muramasa.gregtech.api.gui.client;
 
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.gui.SlotData;
+import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.gui.server.ContainerMachine;
 import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
 import muramasa.gregtech.integration.jei.renderer.FluidStackRenderer;
@@ -11,6 +14,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.util.ITooltipFlag;
 
 import java.io.IOException;
+import java.util.List;
 
 public class GuiBasicMachine extends GuiMachine {
 
@@ -52,8 +56,11 @@ public class GuiBasicMachine extends GuiMachine {
 //            for (FluidStack stack : fluidHandler.getInputs()) {
 //                renderer.;
 //            }
-            renderer.render(mc, 107, 63, Materials.Iron.getLiquid(245));
-            drawTooltipInArea(renderer.getTooltip(mc, Materials.Iron.getLiquid(245), ITooltipFlag.TooltipFlags.NORMAL), mouseX, mouseY, 107, 63, 16, 16);
+            List<SlotData> slots = tile.getType().getGui().getTypes(SlotType.FL_IN, Tier.getMax());
+            if (slots != null && slots.size() > 0) {
+                renderer.render(mc, 107, 63, Materials.Iron.getLiquid(245));
+                drawTooltipInArea(renderer.getTooltip(mc, Materials.Iron.getLiquid(245), ITooltipFlag.TooltipFlags.NORMAL), mouseX, mouseY, slots.get(0).x, slots.get(0).y, 16, 16);
+            }
         }
     }
 

@@ -18,6 +18,7 @@ import static muramasa.gregtech.api.data.Machines.*;
 import static muramasa.gregtech.api.enums.ItemType.*;
 import static muramasa.gregtech.api.materials.ItemFlag.*;
 import static muramasa.gregtech.api.materials.RecipeFlag.*;
+import static muramasa.gregtech.api.recipe.RecipeMap.*;
 
 //TODO EXCLUDED FROM COMPILE
 
@@ -53,7 +54,7 @@ public class MaterialRecipeLoader {
         for (Material m : PLASMA.getMats()) {
             ItemStack cell = m.hasFlag(LIQUID) ? m.getCell(1) : m.getCellG(1);
             RB.get(VACUUM_FREEZER).ii(m.getCellP(1)).io(cell).add(Math.max(m.getMass() * 2, 1), 120);
-            //RecipeAdder.addFuel(aPlasmaStack, ItemType.EmptyCell.get(1), Math.max(1024, 1024 * m.getMass()), 4);
+            RB.get(PLASMA_FUELS).fi(m.getPlasma(1296)).add(0, 0, Math.max(1024, 1024 * m.getMass()) * 1000);
         }
 
         for (Material m : HINGOT.getMats()) {
