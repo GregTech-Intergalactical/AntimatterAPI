@@ -24,7 +24,7 @@ import java.util.Map;
 public class TileEntityMultiMachine extends TileEntityBasicMachine {
 
     //TODO set protected
-    public boolean shouldCheckStructure, validStructure;
+    public boolean validStructure;
     protected int curEfficiency, maxEfficiency;
     protected HashMap<String, ArrayList<IComponent>> components;
     protected ControllerComponentHandler componentHandler;
@@ -34,17 +34,10 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
         super.onFirstTick();
         components = new HashMap<>();
         componentHandler = new ControllerComponentHandler(getType(), this);
-        shouldCheckStructure = true;
-        shouldCheckRecipe = true;
     }
 
     @Override
     public void onServerUpdate() {
-        if (shouldCheckStructure) {
-            clearComponents();
-            validStructure = checkStructure();
-            shouldCheckStructure = false;
-        }
         super.onServerUpdate();
     }
 
@@ -102,14 +95,11 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
 
     @Override
     public boolean consumeResourceForRecipe() {
-        if (energyStorage != null && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower()) {
-            energyStorage.energy -= Math.max(energyStorage.energy -= activeRecipe.getPower(), 0);
-            return true;
-        }
-        return false;
+        return true; //TODO
     }
 
     public boolean checkStructure() {
+        clearComponents();
         Structure structure = getType().getStructure();
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
@@ -122,11 +112,13 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
             }
             System.out.println("[Structure Debug] Valid Structure");
             System.out.println(getStoredInputs());
+            validStructure = true;
             onValidStructure();
             return true;
         }
         System.out.println(result.getError());
         clearComponents();
+        validStructure = false;
         return false;
     }
 

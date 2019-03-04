@@ -1,36 +1,38 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IEnergyStorage;
-import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 
 public class MachineEnergyHandler implements IEnergyStorage {
 
-    public long energy;
-    private long capacity;
-    private long maxInsert;
-    private long maxExtract;
+    protected TileEntityMachine tile;
+    protected long energy;
+    protected long capacity;
+    protected long maxInsert;
+    protected long maxExtract;
 
-    public MachineEnergyHandler(Tier tier) {
-        this.capacity = tier.getVoltage() * 64;
-        this.maxInsert = tier.getVoltage();
-        this.maxExtract = tier.getVoltage();
+    public MachineEnergyHandler(TileEntityMachine tile) {
+        capacity = tile.getTier().getVoltage() * 64;
+        maxInsert = tile.getTier().getVoltage();
+        maxExtract = tile.getTier().getVoltage();
+        energy = Long.MAX_VALUE; //TODO temp
     }
 
     @Override
-    public long insert(long maxInsert, boolean simulate) {
+    public long insert(long toInsert, boolean simulate) {
         if (!canInsert()) return 0;
 
-        long inserted = Math.min(capacity - energy, Math.min(this.maxInsert, maxInsert));
+        long inserted = Math.min(capacity - energy, Math.min(this.maxInsert, toInsert));
         if (!simulate) energy += inserted;
 
         return inserted;
     }
 
     @Override
-    public long extract(long maxExtract, boolean simulate) {
+    public long extract(long toExtract, boolean simulate) {
         if (!canExtract()) return 0;
 
-        long extracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
+        long extracted = Math.min(energy, Math.min(this.maxExtract, toExtract));
         if (!simulate) energy -= extracted;
 
         return extracted;

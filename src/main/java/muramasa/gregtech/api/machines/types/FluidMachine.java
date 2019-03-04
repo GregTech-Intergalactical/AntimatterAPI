@@ -17,6 +17,11 @@ public class FluidMachine extends BasicMachine {
         getGui().add(CELL_IN, 35, 63).add(CELL_OUT, 125, 63).add(FL_IN, 53, 63).add(FL_OUT, 107, 63);
     }
 
+    public FluidMachine(String name, Class tileClass) {
+        this(name);
+        setTileClass(tileClass);
+    }
+
     @Override
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
         return RecipeMap.findRecipeFluid(recipeMap, tankHandler.getInputs());

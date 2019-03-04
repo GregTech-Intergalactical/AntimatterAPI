@@ -8,14 +8,14 @@ import muramasa.gregtech.api.recipe.RecipeMap;
 
 public class SteamMachine extends ItemFluidMachine {
 
-    public SteamMachine(String name) {
+    public SteamMachine(String name, Tier... tiers) {
         super(name);
-        setTiers(Tier.getSteam());
+        setTiers(tiers != null ? tiers : Tier.getSteam());
     }
 
-    public SteamMachine(String name, Tier tier) {
+    public SteamMachine(String name, Class tileClass) {
         this(name);
-        setTiers(tier);
+        setTileClass(tileClass);
     }
 
     @Override

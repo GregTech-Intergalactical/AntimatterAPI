@@ -4,7 +4,6 @@ import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.ConfigHandler;
 import muramasa.gregtech.api.capability.impl.CoverHandler;
 import muramasa.gregtech.api.capability.impl.MachineEnergyHandler;
-import muramasa.gregtech.api.machines.Tier;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.EnumFacing;
@@ -41,9 +40,9 @@ public class GTCapabilities {
                 if (!(instance instanceof MachineEnergyHandler)) {
                     throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
                 }
-                ((MachineEnergyHandler)instance).energy = ((NBTTagLong)nbt).getLong();
+                instance.insert(((NBTTagLong)nbt).getLong(), false);
             }
-        }, () -> new MachineEnergyHandler(Tier.LV));
+        }, () -> new MachineEnergyHandler(null));
 
         CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
             @Nullable

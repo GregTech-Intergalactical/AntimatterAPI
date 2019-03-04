@@ -21,4 +21,9 @@ public class HatchMachine extends Machine {
             addGUI(GregTech.INSTANCE, Ref.HATCH_ID);
         }
     }
+
+    public HatchMachine(String name, Class tileClass, MachineFlag... flags) {
+        this(name, flags);
+        setTileClass(tileClass);
+    }
 }

@@ -88,7 +88,7 @@ public class StandardItem extends Item {
             } else if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
-                        ((TileEntityMultiMachine) tile).shouldCheckStructure = true;
+                        ((TileEntityMultiMachine) tile).checkStructure();
                         System.out.println("Forced Structure Check");
 //                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                     } else if (tile instanceof TileEntityHatch) {
