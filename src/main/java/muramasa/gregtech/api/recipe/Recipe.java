@@ -1,8 +1,8 @@
 package muramasa.gregtech.api.recipe;
 
+import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -77,8 +77,7 @@ public class Recipe {
         if (chances != null) {
             for (int i = 0; i < outputs.length; i++) {
                 if (chances[i] >= 100) continue;
-                if (!outputs[i].hasTagCompound()) outputs[i].setTagCompound(new NBTTagCompound());
-                outputs[i].getTagCompound().setInteger(Ref.KEY_STACK_CHANCE, chances[i]);
+                Utils.addChanceTag(outputs[i], chances[i]);
             }
         }
         return outputs;

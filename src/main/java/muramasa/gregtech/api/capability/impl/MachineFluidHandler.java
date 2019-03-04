@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.gui.SlotType;
+import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
@@ -11,9 +12,8 @@ public class MachineFluidHandler {
 
     private static final int DEFAULT_CAPACITY = 99999;
 
-    private TileEntityMachine tile;
-    public GTFluidTank[] inputTanks, outputTanks;
-    private int capacity;
+    protected TileEntityMachine tile;
+    protected GTFluidTank[] inputTanks, outputTanks;
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
@@ -34,7 +34,7 @@ public class MachineFluidHandler {
     public MachineFluidHandler(TileEntityMachine tile, int capacity, NBTTagCompound fluidData) {
         this(tile, capacity);
         if (fluidData != null) {
-            //TODO
+            deserialize(fluidData);
         }
     }
 
@@ -53,12 +53,6 @@ public class MachineFluidHandler {
     public GTFluidTank getInput(int i) {
         return inputTanks[i];
     }
-
-//    public FluidStack getFirstInput() {
-//        for (int i = 0; i < inputTanks.length; i++) {
-//
-//        }
-//    }
 
     public GTFluidTank getOutput(int i) {
         return outputTanks[i];
@@ -84,31 +78,19 @@ public class MachineFluidHandler {
         return stacks.toArray(new FluidStack[0]);
     }
 
-    public boolean canInput(FluidStack... fluids) {
-        int matchCount = 0;
-        for (int i = 0; i < fluids.length; i++) {
+    public void consumeInputs(FluidStack... inputs) {
+        for (int i = 0; i < inputs.length; i++) {
             for (int j = 0; j < inputTanks.length; j++) {
-                if (inputTanks[j].fill(fluids[i], false) == fluids[i].amount) {
-                    matchCount++;
+                if (Utils.equals(inputs[i], inputTanks[j].getFluid())) {
+                    System.out.println("FOUND FLUID");
+                    inputTanks[j].drain(inputs[i].amount, true);
                 }
             }
         }
-        return matchCount >= fluids.length;
-    }
-
-    public boolean canOutput(FluidStack... fluids) {
-        int matchCount = 0;
-        for (int i = 0; i < fluids.length; i++) {
-            for (int j = 0; j < outputTanks.length; j++) {
-                if (outputTanks[j].fill(fluids[i], false) == fluids[i].amount) {
-                    matchCount++;
-                }
-            }
-        }
-        return matchCount >= fluids.length;
     }
 
     public void addInputs(FluidStack... fluids) {
+        //TODO fix
         for (int i = 0; i < fluids.length; i++) {
             for (int j = 0; j < inputTanks.length; j++) {
                 inputTanks[j].fill(fluids[i], true);
@@ -117,6 +99,7 @@ public class MachineFluidHandler {
     }
 
     public void addOutputs(FluidStack... fluids) {
+        //TODO fix
         for (int i = 0; i < fluids.length; i++) {
             for (int j = 0; j < outputTanks.length; j++) {
                 outputTanks[j].fill(fluids[i], true);
@@ -124,19 +107,44 @@ public class MachineFluidHandler {
         }
     }
 
-    public void consumeInputs() {
-
+    /** Helpers **/
+    public boolean canFluidsFit(FluidStack[] a) {
+        return getSpaceForFluids(a) >= a.length;
     }
 
-    public void consumeOutputs() {
-
+    public int getSpaceForFluids(FluidStack[] a) {
+        int matchCount = 0;
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < outputTanks.length; j++) {
+                if (outputTanks[j].fill(a[i], false) == a[i].amount) {
+                    matchCount++;
+                }
+            }
+        }
+        return matchCount;
+//        int matchCount = 0;
+//        for (int i = 0; i < a.length; i++) {
+//            for (int j = 0; j < outputTanks.length; j++) {
+//                if (outputTanks[j].getFluid() == null || (Utils.equals(a[i], outputTanks[j].getFluid()) && outputTanks[j].getFluid().amount + a[i].amount <= outputTanks[j].getCapacity())) {
+//                    matchCount++;
+//                    break;
+//                }
+//            }
+//        }
+//        return matchCount;
     }
 
-//    public FluidStack findAndConsumeNextInput() {
-//
-//    }
-//
-//    public FluidStack findAndConsumeNextOutput() {
-//
-//    }
+    public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
+        return inputs; //TODO
+    }
+
+    /** NBT **/
+    public NBTTagCompound serialize() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        return nbt; //TODO
+    }
+
+    public void deserialize(NBTTagCompound nbt) {
+        //TODO
+    }
 }

@@ -109,6 +109,10 @@ public class RecipeMap {
         return null;
     }
 
+    public static Recipe findRecipeFluid(RecipeMap map, FluidStack[] fluids) {
+        return null; //TODO
+    }
+
 //    public static Recipe findRecipeFluid(RecipeMap map, FluidStack[] inputs) {
 //        if (map == null) return null;
 //        if (Utils.areFluidsValid(inputs)) {

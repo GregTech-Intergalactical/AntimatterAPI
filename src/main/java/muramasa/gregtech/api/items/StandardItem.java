@@ -1,12 +1,16 @@
 package muramasa.gregtech.api.items;
 
+import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.cover.CoverHelper;
 import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.common.tileentities.overrides.TileEntityItemFluidMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -20,8 +24,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -67,6 +73,9 @@ public class StandardItem extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(((StandardItem) stack.getItem()).getType().getTooltip());
+        if (Utils.hasNoConsumeTag(stack)) {
+            tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+        }
     }
 
     @Override
@@ -89,11 +98,20 @@ public class StandardItem extends Item {
 //                        MachineFluidHandler fluidHandler = ((TileEntityHatch) tile).getFluidHandler();
 //                        System.out.println("Input Tanks: " + fluidHandler.getInputCount());
 //                        System.out.println("Output Tanks: " + fluidHandler.getOutputCount());
+                    } else if (tile instanceof TileEntityItemFluidMachine) {
+                        MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
+                        for (FluidStack fluid : fluidHandler.getInputs()) {
+                            System.out.println(fluid.getLocalizedName() + " - " + fluid.amount);
+                        }
+                        tile.markDirty();
                     } else {
 //                        System.out.println("Setting Tint");
 //                        ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());
 //                        ((TileEntityMachine) tile).markForRenderUpdate();
                         System.out.println(tile);
+                        if (((TileEntityMachine) tile).getType().hasFlag(MachineFlag.ENERGY)) {
+                            System.out.println("Energy: " + tile.getCapability(GTCapabilities.ENERGY, null).getEnergyStored());
+                        }
                     }
                 }
             }

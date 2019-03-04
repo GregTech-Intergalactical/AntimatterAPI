@@ -14,7 +14,6 @@ public class MachineEnergyHandler implements IEnergyStorage {
         this.capacity = tier.getVoltage() * 64;
         this.maxInsert = tier.getVoltage();
         this.maxExtract = tier.getVoltage();
-        this.energy = Math.max(0 , Math.min(capacity, energy));
     }
 
     @Override

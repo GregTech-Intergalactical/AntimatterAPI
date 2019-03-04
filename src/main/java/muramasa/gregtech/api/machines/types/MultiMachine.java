@@ -1,8 +1,11 @@
 package muramasa.gregtech.api.machines.types;
 
 import muramasa.gregtech.GregTech;
+import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
+import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.common.blocks.BlockMultiMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +21,11 @@ public class MultiMachine extends Machine {
         addFlags(extraFlags);
         addRecipeMap();
         addGUI(GregTech.INSTANCE, Ref.MULTI_MACHINE_ID);
-        //TODO get structure pattern
+    }
+
+    @Override
+    public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
+        return super.findRecipe(stackHandler, tankHandler);
     }
 
     @Override

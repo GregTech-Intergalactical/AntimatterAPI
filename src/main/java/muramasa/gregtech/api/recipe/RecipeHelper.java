@@ -26,7 +26,7 @@ public class RecipeHelper {
     public static void addShapeless(ItemStack output, ItemStack... inputs) {
         ResourceLocation registryName = output.getItem().getRegistryName();
         if (registryName != null) {
-            addShaped(registryName.toString(), "shapeless", output, inputs);
+            addShapeless(registryName.toString(), "shapeless", output, inputs);
         }
     }
 

@@ -3,29 +3,25 @@ package muramasa.gregtech.common.tileentities.overrides;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
-import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.types.Machine;
-import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.recipe.Recipe;
-import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
 
-public class TileEntityBasicMachine extends TileEntityMachine {
+public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     /** Capabilities **/
     protected MachineItemHandler itemHandler;
@@ -91,6 +87,8 @@ public class TileEntityBasicMachine extends TileEntityMachine {
                 maxProgress = recipe.getDuration();
                 setMachineState(MachineState.FOUND_RECIPE);
                 onRecipeFound();
+            } else {
+                System.out.println("No recipe");
             }
         }
     }
@@ -131,36 +129,17 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         }
     }
 
-    public ItemStack[] getStoredInputs() {
-        return itemHandler.getInputs();
-    }
+    /** Abstracts **/
+    public abstract void consumeInputs();
 
-    public void consumeInputs() {
-        itemHandler.consumeInputs(activeRecipe.getInputStacks());
-        if (activeRecipe.hasInputFluids()) {
-            //TODO?
-        }
-    }
+    public abstract boolean canOutput();
 
-    public boolean canOutput() {
-        /*if (!getType().hasFlag(FLUID)) {
-            return itemHandler.canStacksFit(activeRecipe.getInputStacks());
-        } else {
-            return Utils.canStacksFit(activeRecipe.getOutputStacks(), itemHandler.getOutputs()) && fluidHandler.canOutput(activeRecipe.getOutputFluids());
-        }*/
-        return itemHandler.canStacksFit(activeRecipe.getOutputStacks());
-    }
+    public abstract void addOutputs();
 
-    public void addOutputs() {
-        itemHandler.addOutputs(activeRecipe.getOutputStacks());
-    }
-
-    public boolean canRecipeContinue() {
-        return Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), itemHandler.getInputs());
-    }
+    public abstract boolean canRecipeContinue();
 
     public boolean consumeResourceForRecipe() {
-        if (energyStorage != null && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower()) {
+        if (getType().hasFlag(ENERGY) && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower()) {
             energyStorage.energy -= Math.max(energyStorage.energy -= activeRecipe.getPower(), 0);
             return true;
         }
@@ -193,11 +172,15 @@ public class TileEntityBasicMachine extends TileEntityMachine {
         if (slot == 0) { //Input slot
             ItemStack stack = itemHandler.getCellInput();
             if (stack.getItem() instanceof MaterialItem) {
-                Material material = ((MaterialItem) stack.getItem()).getMaterial();
-                if (material != null && material.getLiquid() != null) {
-                    System.out.println(Machines.ORE_WASHER.getGui().getCount(SlotType.FL_IN));
-                    fluidHandler.addInputs(new FluidStack(material.getLiquid(), 1000));
+                MaterialItem item = (MaterialItem) stack.getItem();
+                if (item.getPrefix() == Prefix.Cell) {
+                    fluidHandler.addInputs(item.getMaterial().getLiquid(1000));
+                } else if (item.getPrefix() == Prefix.CellGas) {
+                    fluidHandler.addInputs(item.getMaterial().getGas(1000));
+                } else if (item.getPrefix() == Prefix.CellPlasma) {
+                    fluidHandler.addInputs(item.getMaterial().getPlasma(1000));
                 }
+                itemHandler.getCellInput().setCount(0);
             } else if (ItemType.EmptyCell.isEqual(stack)) {
                 System.out.println("Empty Cell");
                 fluidHandler.getInput(0).setFluid(null);
