@@ -7,7 +7,6 @@ import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
-import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
@@ -21,8 +20,7 @@ import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
-import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
-import muramasa.gregtech.common.tileentities.overrides.TileEntitySteamMachine;
+import muramasa.gregtech.common.tileentities.overrides.*;
 import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -35,6 +33,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
 
 @Mod.EventBusSubscriber
 public class ContentLoader {
@@ -52,15 +52,19 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        //TODO auto register all type tiles???
         GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "tile_machine"));
         GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(Ref.MODID, "tile_basic_machine"));
+        GameRegistry.registerTileEntity(TileEntityItemMachine.class, new ResourceLocation(Ref.MODID, "tile_item_machine"));
+        GameRegistry.registerTileEntity(TileEntityFluidMachine.class, new ResourceLocation(Ref.MODID, "tile_fluid_machine"));
+        GameRegistry.registerTileEntity(TileEntityItemFluidMachine.class, new ResourceLocation(Ref.MODID, "tile_item_fluid_machine"));
         GameRegistry.registerTileEntity(TileEntitySteamMachine.class, new ResourceLocation(Ref.MODID, "tile_steam_machine"));
         GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(Ref.MODID, "tile_multi_machine"));
         GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "tile_hatch"));
         List<String> registeredTiles = new LinkedList<>();
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(type.getBlock());
-            if (type.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(type.getTileClass().getName())) {
+            if (type.hasFlag(MULTI) && !registeredTiles.contains(type.getTileClass().getName())) {
                 GameRegistry.registerTileEntity(type.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + type.getName()));
                 registeredTiles.add(type.getTileClass().getName());
             }

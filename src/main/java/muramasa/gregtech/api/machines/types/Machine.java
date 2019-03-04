@@ -135,8 +135,7 @@ public class Machine implements IStringSerializable {
     }
 
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
-        if (stackHandler == null) return null;
-        return RecipeMap.findRecipeItem(recipeMap, stackHandler.getInputs());
+        return null;
     }
 
     public boolean hasFlag(MachineFlag flag) {

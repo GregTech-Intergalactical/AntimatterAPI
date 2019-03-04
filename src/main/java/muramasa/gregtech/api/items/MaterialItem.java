@@ -79,12 +79,8 @@ public class MaterialItem extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         Element element = ((MaterialItem) stack.getItem()).getMaterial().getElement();
-        if (element != null) {
-            tooltip.add(element.getDisplayName());
-        }
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_CHANCE)) {
-            tooltip.add(TextFormatting.WHITE + "Chance: " + stack.getTagCompound().getInteger(Ref.KEY_STACK_CHANCE) + "%");
-        }
+        if (element != null) tooltip.add(element.getDisplayName());
+        if (Utils.hasChanceTag(stack)) tooltip.add(TextFormatting.WHITE + "Chance: " + Utils.getChanceTag(stack) + "%");
     }
 
     @Override

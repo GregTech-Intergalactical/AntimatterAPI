@@ -49,6 +49,19 @@ public class MachineItemHandler {
         }
     }
 
+    /** Handler Access **/
+    public IItemHandler getInputHandler() {
+        return inputHandler;
+    }
+
+    public IItemHandler getOutputHandler() {
+        return outputHandler;
+    }
+
+    public IItemHandler getCellHandler() {
+        return cellHandler;
+    }
+
     public int getInputCount() {
         return inputHandler.stacks.length;
     }
@@ -62,7 +75,11 @@ public class MachineItemHandler {
     }
 
     public ItemStack[] getInputs() {
-        return inputHandler.stacks;
+        ArrayList<ItemStack> list = new ArrayList<>();
+        for (int i = 0; i < inputHandler.stacks.length; i++) {
+            if (!inputHandler.stacks[i].isEmpty()) list.add(inputHandler.stacks[i].copy());
+        }
+        return list.toArray(new ItemStack[0]);
     }
 
     public ItemStack[] getOutputs() {
@@ -90,7 +107,7 @@ public class MachineItemHandler {
     public void consumeInputs(ItemStack... inputs) {
         for (int i = 0; i < inputs.length; i++) {
             for (int j = 0; j < inputHandler.stacks.length; j++) {
-                if (Utils.equals(inputs[i], inputHandler.stacks[j])) {
+                if (Utils.equals(inputs[i], inputHandler.stacks[j]) && !Utils.hasNoConsumeTag(inputs[i])) {
                     inputHandler.stacks[j].shrink(inputs[i].getCount());
                     break;
                 }
@@ -134,19 +151,6 @@ public class MachineItemHandler {
             }
         }
         return notConsumed.toArray(new ItemStack[0]);
-    }
-
-    /** Handler Access **/
-    public IItemHandler getInputHandler() {
-        return inputHandler;
-    }
-
-    public IItemHandler getOutputHandler() {
-        return outputHandler;
-    }
-
-    public IItemHandler getCellHandler() {
-        return cellHandler;
     }
 
     /** NBT **/

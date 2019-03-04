@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.tileentities.overrides;
 
-public class TileEntitySteamMachine extends TileEntityBasicMachine {
+public class TileEntitySteamMachine extends TileEntityItemFluidMachine {
 
     @Override
     public boolean consumeResourceForRecipe() {

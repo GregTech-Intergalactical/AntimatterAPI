@@ -5,6 +5,7 @@ import muramasa.gregtech.api.cover.impl.*;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.util.Utils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
@@ -119,7 +120,7 @@ public class ItemType implements IStringSerializable {
     }
 
     public ItemStack get(int count) { //TODO implement 0 size = no recipe consume
-        if (count == 0) count = 1; //TODO temp
+        if (count == 0) return Utils.addNoConsumeTag(StandardItem.get(name, 1));
         return StandardItem.get(name, count);
     }
 

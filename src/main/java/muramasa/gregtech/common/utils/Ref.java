@@ -40,6 +40,7 @@ public class Ref {
 
     //NBT Tags & Keys
     public static final String KEY_STACK_CHANCE = "chance";
+    public static final String KEY_STACK_NO_CONSUME = "noconsume";
 
     public static final String TAG_MACHINE_STACK_DATA = "machinestack";
 //    public static final String KEY_MACHINE_STACK_TYPE = "st1";

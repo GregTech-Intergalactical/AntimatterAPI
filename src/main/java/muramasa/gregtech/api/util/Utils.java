@@ -1,7 +1,8 @@
 package muramasa.gregtech.api.util;
 
-import muramasa.gregtech.api.recipe.Recipe;
+import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -16,11 +17,9 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 public class Utils {
 
-    private static Random RNG = new Random();
     private static DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
     private static DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
 
@@ -55,29 +54,58 @@ public class Utils {
     }
 
     public static int contains(List<ItemStack> list, ItemStack stack) {
-        for (int i = 0; i < list.size(); i++) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
             if (list.get(i).isItemEqual(stack)) return i;
         }
         return -1;
     }
 
-    public static List<ItemStack> merge(List<ItemStack> a, List<ItemStack> b) {
-        int position;
-        for (int i = 0; i < a.size(); i++) {
+    public static int contains(List<FluidStack> list, FluidStack stack) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            if (list.get(i).isFluidEqual(stack)) return i;
+        }
+        return -1;
+    }
+
+//    public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
+//        int position, size = a.size();
+//        ItemStack stack;
+//        for (int i = 0; i < size; i++) {
+//            stack = a.get(i);
+//            position = contains(b, stack);
+//            if (position != -1) {
+//                if (stack.getCount() + b.get(position).getCount() <= stack.getMaxStackSize()) {
+//                    stack.grow(b.get(position).getCount());
+//                } else {
+//                    ItemStack copy = stack.copy();
+//                    copy.setCount(stack.getCount() + b.get(position).getCount() - stack.getMaxStackSize());
+//                    a.add(copy);
+//                    stack.setCount(stack.getMaxStackSize());
+//                }
+//            }
+//        }
+//        return a;
+//    }
+
+    /** Merges two Lists of ItemStacks, ignoring maxStackSize **/
+    public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
+        int position, size = a.size();
+        for (int i = 0; i < size; i++) {
             position = contains(b, a.get(i));
-            if (position != -1) {
-                a.get(i).grow(b.get(position).getCount());
-            }
+            if (position != -1) a.get(i).grow(b.get(position).getCount());
         }
         return a;
     }
 
-    public static ItemStack[] arr(ItemStack... stacks) {
-        return stacks;
-    }
-
-    public static FluidStack[] arr(FluidStack... fluids) {
-        return fluids;
+    public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
+        int position, size = a.size();
+        for (int i = 0; i < size; i++) {
+            position = contains(b, a.get(i));
+            if (position != -1) a.get(i).amount += b.get(position).amount;
+        }
+        return a;
     }
 
     public static ItemStack ca(int amount, ItemStack toCopy) {
@@ -86,15 +114,55 @@ public class Utils {
         return stack;
     }
 
+    public static FluidStack ca(int amount, FluidStack toCopy) {
+        FluidStack stack = toCopy.copy();
+        stack.amount = amount;
+        return stack;
+    }
+
     public static ItemStack mul(int amount, ItemStack stack) {
         return ca(stack.getCount() * amount, stack);
+    }
+
+    public static FluidStack mul(int amount, FluidStack stack) {
+        return ca(stack.amount * amount, stack);
+    }
+
+    public static boolean hasChanceTag(ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_CHANCE);
+    }
+
+    public static boolean hasNoConsumeTag(ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_NO_CONSUME);
+    }
+
+    public static int getChanceTag(ItemStack stack) {
+        return stack.getTagCompound().getInteger(Ref.KEY_STACK_CHANCE);
+    }
+
+    public static boolean getNoConsumeTag(ItemStack stack) {
+        return stack.getTagCompound().getBoolean(Ref.KEY_STACK_NO_CONSUME);
+    }
+
+    public static ItemStack addChanceTag(ItemStack stack, int chance) {
+        validateNBT(stack).getTagCompound().setInteger(Ref.KEY_STACK_CHANCE, chance);
+         return stack;
+    }
+
+    public static ItemStack addNoConsumeTag(ItemStack stack) {
+        validateNBT(stack).getTagCompound().setBoolean(Ref.KEY_STACK_NO_CONSUME, true);
+        return stack;
+    }
+
+    public static ItemStack validateNBT(ItemStack stack) {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        return stack;
     }
 
     public static boolean areStacksValid(ItemStack... stacks) {
         if (stacks == null) return false;
         for (int i = 0; i < stacks.length; i++) {
-            //TODO remove null check. Due to RecipeAdder passing stack arrays with null items
-            if (stacks[i] == null || stacks[i].isEmpty()) return false;
+            if (stacks[i].isEmpty()) return false;
         }
         return true;
     }
@@ -121,19 +189,6 @@ public class Utils {
         return true;
     }
 
-    public static boolean doStacksMatch(ItemStack[] a, ItemStack[] b) {
-        int matchCount = 0;
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                if (equals(a[i], b[j])) {
-                    matchCount++;
-                    break;
-                }
-            }
-        }
-        return matchCount >= a.length;
-    }
-
     public static boolean doStacksMatchAndSizeValid(ItemStack[] a, ItemStack[] b) {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
@@ -157,109 +212,13 @@ public class Utils {
                 }
             }
         }
+        System.out.println("FM: " + (matchCount >= a.length));
         return matchCount >= a.length;
-    }
-//
-    public static boolean canStacksFit(ItemStack[] a, ItemStack[] b) {
-        return getSpaceForStacks(a, b) >= a.length;
-    }
-
-    public static int getSpaceForStacks(ItemStack[] a, ItemStack[] b) {
-        int matchCount = 0;
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                if (b[j].isEmpty() || (equals(a[i], b[j]) && b[j].getCount() + a[i].getCount() <= b[j].getMaxStackSize())) {
-                    matchCount++;
-                    break;
-                }
-            }
-        }
-        return matchCount;
-    }
-
-//    public static boolean canFluidsFit(FluidStack[] a, FluidStack[] b) {
-//        return getSpaceForFluids(a, b) >= a.length;
-//    }
-//
-//    public static int getSpaceForFluids(FluidStack[] a, FluidStack[] b) {
-//        int matchCount = 0;
-//        for (int i = 0; i < a.length; i++) {
-//            for (int j = 0; j < b.length; j++) {
-//                if ((equals(a[i], b[j]) && b[j].amount + a[i].amount <= b[j].getMaxStackSize())) {
-//                    matchCount++;
-//                    break;
-//                }
-//            }
-//        }
-//        return matchCount;
-//    }
-
-//    public static boolean isStacksValidForRecipe(Recipe recipe, ItemStack[] inputs) {
-//        int matchCount = 0;
-//        for (int i = 0; i < recipe.getInputStacks().length; i++) {
-//            for (int j = 0; j < inputs.length; j++) {
-//                if (equals(recipe.getInputStacks()[i], inputs[j]) && inputs[j].getCount() >= recipe.getInputStacks()[i].getCount()) {
-//                    matchCount++;
-//                    break;
-//                }
-//            }
-//        }
-//        return recipe.getInputStacks().length == matchCount;
-//    }
-
-//    public static boolean isStacksCountMoreOrEqual(Recipe recipe, ItemStack[] inputs) {
-//        int matchCount = 0;
-////        System.out.println(recipe.getInputStacks().length + " - " + inputs.length);
-////        System.out.println(inputs);
-//        if (recipe.getInputStacks().length != inputs.length) return false;
-//        for (int i = 0; i < recipe.getInputStacks().length; i++) {
-//            for (int j = 0; j < inputs.length; j++) {
-//                if (inputs[j].getCount() >= recipe.getInputStacks()[i].getCount()) {
-//                    matchCount++;
-//                    break;
-//                }
-//            }
-//        }
-//        System.out.println("MC: " + matchCount);
-//        return recipe.getInputStacks().length == matchCount;
-//    }
-
-//    public static boolean doStacksMatch(ItemStack[] a, ItemStack[] b) {
-//        for (int i = 0; i < a.length; i++) {
-//            if (!equals(a[i], b[i])) return false;
-//        }
-//        return true;
-//    }
-//
-//    public static boolean areStacksEmpty(ItemStack[] a) {
-//        for (int i = 0; i < a.length; i++) {
-//            if (!(a[i] == ItemStack.EMPTY)) return false;
-//        }
-//        return true;
-//    }
-
-    public static boolean doFluidsMatch(Recipe recipe, FluidStack... inputs) {
-        for (int i = 0; i < inputs.length; i++) {
-            if (!equals(inputs[i], recipe.getInputFluids()[i])) return false;
-        }
-        return true;
     }
 
     public static String formatNumber(int aNumber) {
         return DECIMAL_FORMAT.format(aNumber);
     }
-
-    public static int getRNG(int bound) {
-        return RNG.nextInt(bound);
-    }
-
-    public static void seedRNG(int seed) {
-        RNG.setSeed(seed);
-    }
-
-//    public static boolean hasFlag(long value, long flag) {
-//        return (value & flag) != 0;
-//    }
 
     public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) { //Safe version of world.getTileEntity
         if (blockAccess instanceof ChunkCache) {
@@ -267,16 +226,6 @@ public class Utils {
         } else {
             return blockAccess.getTileEntity(pos);
         }
-    }
-
-//    public static long addFlag(long value, long flag) {
-//        value |= flag;
-//        return value;
-//    }
-
-    public static long removeFlag(long value, long flag) {
-        value &= ~flag;
-        return value;
     }
 
     //TODO replace with doRaytrace in block?

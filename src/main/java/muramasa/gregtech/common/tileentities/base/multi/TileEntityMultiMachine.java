@@ -151,7 +151,6 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     }
 
     /** Returns list of stacks across all input hatches. Merges equal stacks and filters empty **/
-    @Override
     public ItemStack[] getStoredInputs() {
         ArrayList<ItemStack> all = new ArrayList<>();
         ArrayList<IComponent> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
@@ -163,7 +162,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
             if (all.isEmpty()) {
                 all.addAll(itemHandler.getInputList());
             } else {
-                Utils.merge(all, itemHandler.getInputList());
+                Utils.mergeItems(all, itemHandler.getInputList());
             }
         }
         return all.toArray(new ItemStack[0]);
