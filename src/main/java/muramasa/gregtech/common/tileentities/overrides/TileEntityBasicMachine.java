@@ -3,15 +3,10 @@ package muramasa.gregtech.common.tileentities.overrides;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
-import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.MachineState;
-import muramasa.gregtech.api.machines.types.Machine;
-import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.utils.Ref;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,6 +15,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import javax.annotation.Nullable;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
+import static muramasa.gregtech.api.machines.MachineState.*;
 
 public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
@@ -27,106 +23,76 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     protected MachineItemHandler itemHandler;
     protected MachineFluidHandler fluidHandler;
     protected MachineEnergyHandler energyStorage;
-    protected ConfigHandler configHandler;
     protected MachineCoverHandler coverHandler;
+    protected ConfigHandler configHandler;
 
     /** Logic **/
+    protected Recipe activeRecipe;
     protected int curProgress, maxProgress;
     protected float clientProgress;
-    protected Recipe activeRecipe;
-    protected boolean shouldCheckRecipe;
 
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        Machine machine = getType();
-        if (machine.hasFlag(ITEM)) {
-            itemHandler = new MachineItemHandler(this, itemData);
-        }
-        if (machine.hasFlag(FLUID)) {
-            fluidHandler = new MachineFluidHandler(this, fluidData);
-//            inputTank = new MachineTankHandler(this, 9999, null, true, false);
-//            if (fluidData != null) inputTank.deserializeNBT(fluidData);
-//            cellHandler = new MachineStackHandlerOld(this, 2, 2, 2);
-        }
-//        inputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), true, false);
-//        outputTank = new MachineTankHandler(this, 9999, new FluidStack(FluidRegistry.WATER, 1), false, true);
-        if (machine.hasFlag(ENERGY)) {
-            energyStorage = new MachineEnergyHandler(getTier());
-            energyStorage.energy = 99999999; //Temporary
-        }
-        if (machine.hasFlag(COVERABLE)) {
-            coverHandler = new MachineCoverHandler(this, GregTechAPI.CoverBehaviourPlate, GregTechAPI.CoverBehaviourItem, GregTechAPI.CoverBehaviourFluid, GregTechAPI.CoverBehaviourEnergy);
-        }
-        if (machine.hasFlag(CONFIGURABLE)) {
-            configHandler = new ConfigHandler(this);
-        }
+        if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
+        if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
+        if (getType().hasFlag(ENERGY)) energyStorage = new MachineEnergyHandler(this);
+        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this, GregTechAPI.CoverBehaviourPlate, GregTechAPI.CoverBehaviourItem, GregTechAPI.CoverBehaviourFluid, GregTechAPI.CoverBehaviourEnergy);
+        if (getType().hasFlag(CONFIGURABLE)) configHandler = new ConfigHandler(this);
     }
 
     @Override
     public void onServerUpdate() {
-        if (shouldCheckRecipe) {
-            checkRecipe();
-            shouldCheckRecipe = false;
-        }
-        if (getMachineState() == MachineState.FOUND_RECIPE) {
-            setMachineState(tickRecipe());
-            onRecipeTick();
-        }
-        if (coverHandler != null) {
-            coverHandler.tick();
-        }
-    }
-
-    public void checkRecipe() {
-        if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
-            Recipe recipe = findRecipe();
-            if (recipe != null) {
-                activeRecipe = recipe;
-                curProgress = 0;
-                maxProgress = recipe.getDuration();
-                setMachineState(MachineState.FOUND_RECIPE);
-                onRecipeFound();
-            } else {
-                System.out.println("No recipe");
-            }
-        }
+        if (getMachineState() == ACTIVE) tickMachineLoop();
+        if (coverHandler != null) coverHandler.tick();
     }
 
     public Recipe findRecipe() {
         return getType().findRecipe(itemHandler, fluidHandler);
     }
 
-    public MachineState tickRecipe() { //TODO do count check here instead of checkRecipe being called on every contents tick
-        //TODO this null check added if saved state triggers tickRecipe, but there is no recipe to process
-        if (activeRecipe == null) return MachineState.IDLE;
-        if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
-            if (!canOutput()) {
-                return MachineState.OUTPUT_FULL; //Return and loop until outputs can be added
-            }
-
-            //Add outputs and reset to process next recipe cycle
-            addOutputs();
-            curProgress = 0;
-
-            //Check if has enough stack count for next recipe cycle
-            if (!canRecipeContinue()) {
-                return MachineState.IDLE;
-            } else {
-                return MachineState.FOUND_RECIPE;
-            }
-        } else {
-            //Calculate per recipe tick so user has risk of losing items
-            if (consumeResourceForRecipe()) { //Has enough power to process recipe
-                if (curProgress == 0) { //Consume recipe inputs on first recipe tick
-                    consumeInputs();
-                }
-                curProgress++;
-                return MachineState.FOUND_RECIPE;
-            } else {
-                return curProgress == 0 ? MachineState.NO_POWER : MachineState.POWER_LOSS;
+    public void checkRecipe() {
+        if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
+            if ((activeRecipe = findRecipe()) != null) {
+                curProgress = 0;
+                maxProgress = activeRecipe.getDuration();
+                setMachineState(ACTIVE);
+                onRecipeFound();
             }
         }
+    }
+
+    public MachineState tickRecipe() {
+        onRecipeTick();
+        if (activeRecipe == null) return IDLE; //TODO this null check added if saved state triggers tickMachineLoop, but there is no recipe to process
+        if (curProgress == maxProgress) { //End of current recipe cycle, deposit items
+            if (!canOutput()) return OUTPUT_FULL; //Return and loop until outputs can be added
+            curProgress = 0;
+            addOutputs(); //Add outputs and reset to process next recipe cycle
+            return !canRecipeContinue() ? IDLE : ACTIVE; //Check if has enough stack count for next recipe cycle
+        } else {
+            //Calculate per recipe tick so user has risk of losing items
+            if (!consumeResourceForRecipe()) return curProgress == 0 ? NO_POWER : POWER_LOSS;
+            if (curProgress == 0) consumeInputs(); //Consume recipe inputs on first recipe tick
+            curProgress++;
+            return ACTIVE;
+        }
+    }
+
+    public void tickMachineLoop() {
+        switch (getMachineState()) {
+            case ACTIVE:
+            case OUTPUT_FULL:
+                setMachineState(tickRecipe()); break;
+        }
+    }
+
+    public boolean consumeResourceForRecipe() {
+        if (energyStorage.extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
+            energyStorage.extract(activeRecipe.getPower(), false);
+            return true;
+        }
+        return false;
     }
 
     /** Abstracts **/
@@ -137,14 +103,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     public abstract void addOutputs();
 
     public abstract boolean canRecipeContinue();
-
-    public boolean consumeResourceForRecipe() {
-        if (getType().hasFlag(ENERGY) && activeRecipe != null && energyStorage.energy >= activeRecipe.getPower()) {
-            energyStorage.energy -= Math.max(energyStorage.energy -= activeRecipe.getPower(), 0);
-            return true;
-        }
-        return false;
-    }
 
     /** Events **/
     public void onRecipeFound() {
@@ -157,36 +115,11 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     @Override
     public void onContentsChanged(int type, int slot) {
+        markDirty();
         if (type == 0) {
-            if (getMachineState().allowRecipeTickOnContentUpdate()) {
-                //TODO maybe avoid using FOUND, change?
-                setMachineState(MachineState.FOUND_RECIPE);
-            }
-            shouldCheckRecipe = true;
-        } else if (type == 2) {
-            handleCellSlotUpdate(slot);
-        }
-    }
-
-    public void handleCellSlotUpdate(int slot) {
-        if (slot == 0) { //Input slot
-            ItemStack stack = itemHandler.getCellInput();
-            if (stack.getItem() instanceof MaterialItem) {
-                MaterialItem item = (MaterialItem) stack.getItem();
-                if (item.getPrefix() == Prefix.Cell) {
-                    fluidHandler.addInputs(item.getMaterial().getLiquid(1000));
-                } else if (item.getPrefix() == Prefix.CellGas) {
-                    fluidHandler.addInputs(item.getMaterial().getGas(1000));
-                } else if (item.getPrefix() == Prefix.CellPlasma) {
-                    fluidHandler.addInputs(item.getMaterial().getPlasma(1000));
-                }
-                itemHandler.getCellInput().setCount(0);
-            } else if (ItemType.EmptyCell.isEqual(stack)) {
-                System.out.println("Empty Cell");
-                fluidHandler.getInput(0).setFluid(null);
-            }
-        } else if (slot == 1) { //Output slot
-
+            System.out.println("CONTENT UPDATE");
+            if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
+            checkRecipe();
         }
     }
 
@@ -236,7 +169,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         super.readFromNBT(compound);
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_STATE)) {
             //TODO saving state needed? if recipe is saved, serverUpdate should handle it.
-            super.setMachineState(MachineState.VALUES[compound.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);
+            super.setMachineState(VALUES[compound.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);
         }
     }
 

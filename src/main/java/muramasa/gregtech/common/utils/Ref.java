@@ -17,8 +17,8 @@ public class Ref {
 
     //Mod Data
     public static final String MODID = "gregtech";
-    public static final String NAME = "GregTech Unofficial";
-    public static final String VERSION = "0.1";
+    public static final String NAME = "GregTech";
+    public static final String VERSION = "1.01.01";
 
     //Creative Tabs
     public static GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT));

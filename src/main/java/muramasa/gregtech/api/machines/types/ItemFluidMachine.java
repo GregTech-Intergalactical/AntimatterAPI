@@ -17,6 +17,11 @@ public class ItemFluidMachine extends BasicMachine {
         getGui().add(CELL_IN, 35, 63).add(CELL_OUT, 125, 63).add(FL_IN, 53, 63).add(FL_OUT, 107, 63);
     }
 
+    public ItemFluidMachine(String name, Class tileClass) {
+        this(name);
+        setTileClass(tileClass);
+    }
+
     @Override
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
         return RecipeMap.findRecipeItemFluid(recipeMap, stackHandler.getInputs(), tankHandler.getInputs());

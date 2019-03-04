@@ -1,24 +1,26 @@
 package muramasa.gregtech.common.tileentities.overrides;
 
-public class TileEntityFluidMachine extends TileEntityBasicMachine {
+import muramasa.gregtech.api.util.Utils;
+
+public class TileEntityFluidMachine extends TileEntityItemFluidMachine {
 
     @Override
     public void consumeInputs() {
-
+        fluidHandler.consumeInputs(activeRecipe.getInputFluids());
     }
 
     @Override
     public boolean canOutput() {
-        return false;
+        return fluidHandler.canFluidsFit(activeRecipe.getOutputFluids());
     }
 
     @Override
     public void addOutputs() {
-
+        fluidHandler.addOutputs(activeRecipe.getOutputFluids());
     }
 
     @Override
     public boolean canRecipeContinue() {
-        return false;
+        return Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), fluidHandler.getInputs());
     }
 }

@@ -15,6 +15,11 @@ public class ItemMachine extends BasicMachine {
         addFlags(ITEM);
     }
 
+    public ItemMachine(String name, Class tileClass) {
+        this(name);
+        setTileClass(tileClass);
+    }
+
     @Override
     public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
         return RecipeMap.findRecipeItem(recipeMap, stackHandler.getInputs());
