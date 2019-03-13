@@ -65,11 +65,11 @@ public abstract class Cover {
     }
 
     public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/cover/" + getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine/cover/" + getName());
     }
 
     public static ModelResourceLocation getBasicModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/cover/cover_basic");
+        return new ModelResourceLocation(Ref.MODID + ":machine/cover/basic");
     }
 
     public static int getLastInternalId() {

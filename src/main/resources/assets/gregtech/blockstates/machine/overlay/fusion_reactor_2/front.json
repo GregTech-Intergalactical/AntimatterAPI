@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/overlay/fusion_reactor_2/front"
+    }
+  }
+}

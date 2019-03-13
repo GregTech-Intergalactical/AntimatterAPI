@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/overlay/plasma_arc_furnace/bottom"
+    }
+  }
+}

@@ -38,7 +38,7 @@ public class ModelMachine extends ModelBase {
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        BakedModelMachine.BAKED = (Ref.BASIC_MACHINE_MODELS ? load("machine_part/machine_base_basic") : load("machine_part/machine_base")).bake(state, format, getter);
+        BakedModelMachine.BAKED = load("machine/machine_base").bake(state, format, getter);
 
         if (!Ref.BASIC_MACHINE_MODELS) {
             Collection<Machine> machines = Machines.getTypes(BASIC, MULTI, HATCH);
@@ -60,7 +60,7 @@ public class ModelMachine extends ModelBase {
                 overlay = load(type.getOverlayModel(TextureType.SIDE)).bake(state, format, getter);
                 if (overlay.getQuads(null, null, 0).size() > 0) BakedModelMachine.OVERLAYS[type.getInternalId()][4] = overlay;
             }
-            BakedModelMachine.OVERLAY_EMPTY = load(new ModelResourceLocation(Ref.MODID + ":machine_part/overlay_empty")).bake(state, format, getter);
+            BakedModelMachine.OVERLAY_EMPTY = load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty")).bake(state, format, getter);
         }
 
         BakedModelMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
