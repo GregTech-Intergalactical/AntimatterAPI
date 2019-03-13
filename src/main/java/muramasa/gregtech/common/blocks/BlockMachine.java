@@ -1,8 +1,6 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
@@ -10,7 +8,7 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.items.ItemBlockMachines;
+import muramasa.gregtech.common.items.ItemBlockMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -23,7 +21,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -69,8 +66,9 @@ public class BlockMachine extends Block {
                 .withProperty(TYPE, machine.getTypeId())
                 .withProperty(FACING, machine.getFacing())
                 .withProperty(TEXTURE, machine.getTextureData());
-            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, null);
-            if (coverHandler != null) exState = exState.withProperty(COVER, coverHandler.getAll());
+            if (getType().hasFlag(MachineFlag.COVERABLE)) {
+                exState = exState.withProperty(COVER, machine.getCoverHandler().getAll());
+            }
         }
         return exState;
     }
@@ -121,10 +119,9 @@ public class BlockMachine extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.getItem() instanceof ItemBlockMachines) {
+        if (stack.getItem() instanceof ItemBlockMachine) {
             if (stack.hasTagCompound()) {
-                NBTTagCompound data = (NBTTagCompound) stack.getTagCompound().getTag(Ref.TAG_MACHINE_STACK_DATA);
-                String machineTier = data.getString(Ref.KEY_MACHINE_STACK_TIER);
+                String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
                 TileEntity tile = Utils.getTile(world, pos);
                 if (tile instanceof TileEntityMachine) {
                     ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite().getIndex());

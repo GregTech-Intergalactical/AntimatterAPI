@@ -57,7 +57,7 @@ public class ModelBase implements IModel {
             }
             return bakeModel(modelState, vertexFormat, bakedTextureGetter);
         } catch (Exception e) {
-            System.err.println(name + ".bake() failed due to exception:" + e);
+            System.err.println(name + ".bake() failed due to: " + e);
             e.printStackTrace();
             return ModelLoaderRegistry.getMissingModel().bake(state, format, bakedTextureGetter);
         }

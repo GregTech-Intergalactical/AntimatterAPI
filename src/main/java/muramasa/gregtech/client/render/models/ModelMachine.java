@@ -4,15 +4,19 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.texture.TextureType;
+import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelMachine;
+import muramasa.gregtech.client.render.bakedmodels.BakedModelMachineItem;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 
 import java.util.Collection;
@@ -28,8 +32,9 @@ public class ModelMachine extends ModelBase {
         addTextures(Tier.getTextures(Tier.getSteam()));
         for (Machine type : getTypes(BASIC, HATCH, MULTI)) {
             addTextures(type.getTextures());
-            if (type.hasFlag(MULTI)) addTexture(type.getBaseTexture(Tier.MULTI));
+            if (type.hasFlag(MULTI)) addTextures(type.getBaseTextures(Tier.MULTI));
         }
+        addTextures(Machines.INVALID.getTextures());
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             addTextures(cover.getTextures());
@@ -38,12 +43,13 @@ public class ModelMachine extends ModelBase {
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        BakedModelMachine.BAKED = load("machine/machine_base").bake(state, format, getter);
+        IModel BASE = load("machine/base");
+        BakedModelMachine.BASE = BASE.bake(state, format, getter);
+
+        Collection<Machine> machines = Machines.getTypes(BASIC, MULTI, HATCH);
+        machines.add(Machines.INVALID);
 
         if (!Ref.BASIC_MACHINE_MODELS) {
-            Collection<Machine> machines = Machines.getTypes(BASIC, MULTI, HATCH);
-            machines.add(Machines.INVALID);
-
             //TODO use Pair<int, IBakedModel>[] instead?
 
             BakedModelMachine.OVERLAYS = new IBakedModel[Machine.getLastInternalId()][6];
@@ -63,6 +69,13 @@ public class ModelMachine extends ModelBase {
             BakedModelMachine.OVERLAY_EMPTY = load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty")).bake(state, format, getter);
         }
 
+        BakedModelMachineItem.OVERLAYS = new IBakedModel[Machine.getLastInternalId()];
+        for (Machine type : machines) {
+            BakedModelMachineItem.OVERLAYS[type.getInternalId()] = new BakedModelBase(
+                texAndBake(BASE, new String[] {"1", "2", "3", "4", "5", "6"}, type.getOverlayTextures(MachineState.ACTIVE)
+            ));
+        }
+
         BakedModelMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
@@ -71,21 +84,5 @@ public class ModelMachine extends ModelBase {
         }
 
         return Ref.BASIC_MACHINE_MODELS ? new BakedModelMachine() : new BakedModelMachine();
-
-//        HashMap<String, IBakedModel> bakedItems = new HashMap<>();
-//        Collection<MachineStack> machineStacks = Machines.getStacks(BASIC, MULTI, HATCH);
-//        machineStacks.add(Machines.get(Machines.INVALID, Tier.LV));
-//        for (MachineStack stack : machineStacks) {
-//            bakedItems.put(stack.getType().getName() + stack.getTier().getName(), new BakedModelBase(
-//                texAndBake(machineBaseBasic, new String[]{"base", "front", "back", "top", "bottom", "side"}, new ResourceLocation[]{
-//                    stack.getType().getBaseTexture(stack.getTier()),
-//                    stack.getType().getOverlayTexture(TextureType.FRONT, 1),
-//                    stack.getType().getOverlayTexture(TextureType.BACK, 1),
-//                    stack.getType().getOverlayTexture(TextureType.TOP, 1),
-//                    stack.getType().getOverlayTexture(TextureType.BOTTOM, 1),
-//                    stack.getType().getOverlayTexture(TextureType.SIDE, 1)
-//                })
-//            ));
-//        }
     }
 }

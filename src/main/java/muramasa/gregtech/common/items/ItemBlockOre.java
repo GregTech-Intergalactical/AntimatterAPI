@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class ItemBlockOres extends ItemBlock {
+public class ItemBlockOre extends ItemBlock {
 
-    public ItemBlockOres(Block block) {
+    public ItemBlockOre(Block block) {
         super(block);
     }
 

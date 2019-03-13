@@ -55,7 +55,7 @@ public class TileEntityHatch extends TileEntityMachine {
         if (!componentHandler.hasLinkedController()) return data;
         TileEntityMultiMachine tile = componentHandler.getFirstController();
         if (tile == null) return data;
-        data.setBase(tile.getType().getBaseTexture(Tier.MULTI));
+        data.setBase(tile.getType().getBaseTextures(Tier.MULTI));
         return data;
     }
 

@@ -11,7 +11,7 @@ import muramasa.gregtech.client.render.models.ModelCable;
 import muramasa.gregtech.client.render.models.ModelMachine;
 import muramasa.gregtech.client.render.models.ModelOre;
 import muramasa.gregtech.common.blocks.*;
-import muramasa.gregtech.common.items.ItemBlockOres;
+import muramasa.gregtech.common.items.ItemBlockOre;
 import muramasa.gregtech.common.items.ItemBlockStorage;
 import muramasa.gregtech.loaders.ContentLoader;
 import net.minecraft.client.Minecraft;
@@ -50,7 +50,7 @@ public class ClientProxy implements IProxy {
         }
 
         IBlockColor oreColorHandlerBlock = new BlockOre.ColorHandler();
-        IItemColor oreColorHandlerItem = new ItemBlockOres.ColorHandler();
+        IItemColor oreColorHandlerItem = new ItemBlockOre.ColorHandler();
         for (BlockOre block : BlockOre.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(oreColorHandlerBlock, block);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(oreColorHandlerItem, Item.getItemFromBlock(block));

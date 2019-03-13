@@ -79,36 +79,31 @@ public class Machine implements IStringSerializable {
     }
 
     public Texture[] getTextures() {
+        ArrayList<Texture> textures = new ArrayList<>();
+        textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
+        textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE)));
+        return textures.toArray(new Texture[0]);
+    }
+
+    public Texture[] getBaseTextures(Tier tier) {
         return new Texture[] {
-            getOverlayTexture(TextureType.FRONT, MachineState.IDLE),
-            getOverlayTexture(TextureType.BACK, MachineState.IDLE),
-            getOverlayTexture(TextureType.TOP, MachineState.IDLE),
-            getOverlayTexture(TextureType.BOTTOM, MachineState.IDLE),
-            getOverlayTexture(TextureType.SIDE, MachineState.IDLE),
-            getOverlayTexture(TextureType.FRONT, MachineState.ACTIVE),
-            getOverlayTexture(TextureType.BACK, MachineState.ACTIVE),
-            getOverlayTexture(TextureType.TOP, MachineState.ACTIVE),
-            getOverlayTexture(TextureType.BOTTOM, MachineState.ACTIVE),
-            getOverlayTexture(TextureType.SIDE, MachineState.ACTIVE)
+            new Texture("blocks/machine/base/" + tier.getName())
         };
     }
 
-    public Texture getBaseTexture(Tier tier) {
-        return new Texture("blocks/machine/base/" + tier.getName());
-    }
-
-    public Texture getOverlayTexture(TextureType side, MachineState state) {
-        if (state.getOverlayId() == 0) {
-            return new Texture("blocks/machine/overlay/" + name + "/" + side.getName());
-        } else if (state.getOverlayId() == 1) {
-            return new Texture("blocks/machine/overlay/" + name + "/active/" + side.getName());
-        } else {
-            return new Texture(":blocks/machine/overlay/" + name + "/" + side.getName());
-        }
+    public Texture[] getOverlayTextures(MachineState state) {
+        String stateDir = state == MachineState.IDLE ? "" : state.getName() + "/";
+        return new Texture[] {
+            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BOTTOM),
+            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.TOP),
+            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.FRONT),
+            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BACK),
+            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.SIDE),
+            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.SIDE),
+        };
     }
 
     public ModelResourceLocation getOverlayModel(TextureType side) {
-//        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name);
         return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getName());
     }
 
