@@ -6,7 +6,7 @@ import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -24,7 +24,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     protected MachineFluidHandler fluidHandler;
     protected MachineEnergyHandler energyStorage;
     protected MachineCoverHandler coverHandler;
-    protected ConfigHandler configHandler;
+    protected MachineConfigHandler configHandler;
 
     /** Logic **/
     protected Recipe activeRecipe;
@@ -37,8 +37,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
         if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
         if (getType().hasFlag(ENERGY)) energyStorage = new MachineEnergyHandler(this);
-        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this, GregTechAPI.CoverBehaviourPlate, GregTechAPI.CoverBehaviourItem, GregTechAPI.CoverBehaviourFluid, GregTechAPI.CoverBehaviourEnergy);
-        if (getType().hasFlag(CONFIGURABLE)) configHandler = new ConfigHandler(this);
+        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this, GregTechAPI.CoverPlate, GregTechAPI.CoverItem, GregTechAPI.CoverFluid, GregTechAPI.CoverEnergy);
+        if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
     }
 
     @Override
@@ -149,6 +149,11 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         return fluidHandler;
     }
 
+    @Override
+    public MachineCoverHandler getCoverHandler() {
+        return coverHandler;
+    }
+
     /** Setters **/
     @Override
     public void setMachineState(MachineState newState) {
@@ -183,22 +188,22 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourItem);
+            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
         } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
-            return facing == null || coverHandler.hasCover(facing, GregTechAPI.CoverBehaviourEnergy);
+            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
         } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
-            return facing == null || (!coverHandler.get(facing).isEmpty());
+            return side == null || (!coverHandler.get(side).isEmpty());
         } else if (getType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }
-        return super.hasCapability(capability, facing);
+        return super.hasCapability(capability, side);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
         } else if (capability == GTCapabilities.ENERGY) {
@@ -208,6 +213,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         } else if (capability == GTCapabilities.CONFIGURABLE) {
             return GTCapabilities.CONFIGURABLE.cast(configHandler);
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability, side);
     }
 }

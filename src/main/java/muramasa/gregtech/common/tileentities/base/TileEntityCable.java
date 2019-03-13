@@ -22,7 +22,7 @@ public class TileEntityCable extends TileEntityTickable {
     private CableConfigHandler configHandler;
 
     public TileEntityCable() {
-        coverHandler = new CoverHandler(this, GregTechAPI.CoverBehaviourPlate);
+        coverHandler = new CoverHandler(this, GregTechAPI.CoverPlate);
         configHandler = new CableConfigHandler(this);
     }
 
@@ -67,23 +67,23 @@ public class TileEntityCable extends TileEntityTickable {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (capability == GTCapabilities.COVERABLE) {
             return true;
         } else if (capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }
-        return super.hasCapability(capability, facing);
+        return super.hasCapability(capability, side);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == GTCapabilities.COVERABLE) {
             return GTCapabilities.COVERABLE.cast(coverHandler);
         } else if (capability == GTCapabilities.CONFIGURABLE) {
             return GTCapabilities.CONFIGURABLE.cast(configHandler);
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability, side);
     }
 }

@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.creativetab;
 
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

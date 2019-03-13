@@ -1,4 +1,4 @@
-package muramasa.gregtech.common.utils;
+package muramasa.gregtech;
 
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,7 @@ public class Ref {
     //Mod Data
     public static final String MODID = "gregtech";
     public static final String NAME = "GregTech";
-    public static final String VERSION = "1.01.01";
+    public static final String VERSION = "1.00.01";
 
     //Creative Tabs
     public static GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT));
@@ -32,6 +32,8 @@ public class Ref {
     public static final int HATCH_ID = 2;
 
     //Config Values //TODO maybe move?
+    public static boolean BASIC_MACHINE_MODELS = false;
+
     public static boolean ENABLE_RECIPE_DEBUG_EXCEPTIONS = true;
 
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;

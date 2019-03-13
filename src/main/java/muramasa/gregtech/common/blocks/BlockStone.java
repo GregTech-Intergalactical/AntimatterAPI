@@ -2,7 +2,7 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;

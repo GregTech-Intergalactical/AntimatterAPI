@@ -63,20 +63,19 @@ public class ItemType implements IStringSerializable {
     public static ItemType ShapeBottle = new ItemType("shape_bottle", "Shape for making Bottles"); //TODO needed?
 
     public static void init() {
-        GregTechAPI.CoverBehaviourNone = new CoverNone();
-        //TODO avoid creating "dummy" instance due to requiring name string
-        GregTechAPI.CoverBehaviourPlate = new CoverPlate(-1);
+        GregTechAPI.registerCover(GregTechAPI.CoverNone = new CoverNone());
+        GregTechAPI.registerCover(GregTechAPI.CoverItem = new CoverItem());
+        GregTechAPI.registerCover(GregTechAPI.CoverFluid = new CoverFluid());
+        GregTechAPI.registerCover(GregTechAPI.CoverEnergy = new CoverEnergy());
+        GregTechAPI.registerCover(GregTechAPI.CoverPlate = new CoverPlate());
+
+        GregTechAPI.registerCoverCatalyst(ItemPort.get(1), GregTechAPI.CoverItem);
+        GregTechAPI.registerCoverCatalyst(FluidPort.get(1), GregTechAPI.CoverFluid);
+        GregTechAPI.registerCoverCatalyst(EnergyPort.get(1), GregTechAPI.CoverEnergy);
+
         for (Material mat : ItemFlag.PLATE.getMats()) {
-            GregTechAPI.registerCover(mat.getPlate(1), new CoverPlate(mat.getRGB()));
+            GregTechAPI.registerCoverCatalyst(mat.getPlate(1), GregTechAPI.CoverPlate);
         }
-        GregTechAPI.CoverBehaviourItem = new CoverItem();
-        GregTechAPI.CoverBehaviourFluid = new CoverFluid();
-        GregTechAPI.CoverBehaviourEnergy = new CoverEnergy();
-
-
-        GregTechAPI.registerCover(ItemPort.get(1), GregTechAPI.CoverBehaviourItem);
-        GregTechAPI.registerCover(FluidPort.get(1), GregTechAPI.CoverBehaviourFluid);
-        GregTechAPI.registerCover(EnergyPort.get(1), GregTechAPI.CoverBehaviourEnergy);
     }
 
     private String name, tooltip;

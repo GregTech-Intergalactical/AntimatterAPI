@@ -11,7 +11,12 @@ public class MachineCoverHandler extends CoverHandler {
     }
 
     @Override
-    public boolean isCoverValid(EnumFacing side, Cover cover) {
-        return side != ((TileEntityMachine) tile).getEnumFacing() && super.isCoverValid(side, cover);
+    public boolean isValid(EnumFacing side, Cover cover) {
+        return /*side != getTileFacing() &&*/ super.isValid(side, cover);
+    }
+
+    @Override
+    public EnumFacing getTileFacing() {
+        return ((TileEntityMachine) getTile()).getEnumFacing();
     }
 }

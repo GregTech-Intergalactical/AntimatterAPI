@@ -82,19 +82,37 @@ public class Guis {
         HATCH_ITEM_INPUT.getGui().add(UV, HATCH_ITEM_INPUT, HV);
         HATCH_ITEM_INPUT.getGui().add(MAX, HATCH_ITEM_INPUT, HV);
 
-        HATCH_ITEM_OUTPUT.getGui().add(ULV, HATCH_ITEM_INPUT, ULV);
-        HATCH_ITEM_OUTPUT.getGui().add(LV, HATCH_ITEM_INPUT, LV);
-        HATCH_ITEM_OUTPUT.getGui().add(MV, HATCH_ITEM_INPUT, MV);
-        HATCH_ITEM_OUTPUT.getGui().add(HV, HATCH_ITEM_INPUT, HV);
-        HATCH_ITEM_OUTPUT.getGui().add(EV, HATCH_ITEM_INPUT, EV);
-        HATCH_ITEM_OUTPUT.getGui().add(IV, HATCH_ITEM_INPUT, IV);
-        HATCH_ITEM_OUTPUT.getGui().add(LUV, HATCH_ITEM_INPUT, LUV);
-        HATCH_ITEM_OUTPUT.getGui().add(ZPM, HATCH_ITEM_INPUT, ZPM);
-        HATCH_ITEM_OUTPUT.getGui().add(UV, HATCH_ITEM_INPUT, UV);
-        HATCH_ITEM_OUTPUT.getGui().add(MAX, HATCH_ITEM_INPUT, MAX);
+        HATCH_ITEM_OUTPUT.getGui().add(ULV, IT_OUT, 79, 34);
+        HATCH_ITEM_OUTPUT.getGui().add(LV, IT_OUT, 70, 25).add(LV, IT_OUT, 88, 25).add(LV, IT_OUT, 70, 43).add(LV, IT_OUT, 88, 43);
+        HATCH_ITEM_OUTPUT.getGui().add(MV, IT_OUT, 61, 16).add(MV, IT_OUT, 79, 16).add(MV, IT_OUT, 97, 16).add(MV, IT_OUT, 61, 34).add(MV, IT_OUT, 79, 34).add(MV, IT_OUT, 97, 34).add(MV, IT_OUT, 61, 52).add(MV, IT_OUT, 79, 52).add(MV, IT_OUT, 97, 52);
+        HATCH_ITEM_OUTPUT.getGui().add(HV, IT_OUT, 52, 7).add(HV, IT_OUT, 70, 7).add(HV, IT_OUT, 88, 7).add(HV, IT_OUT, 106, 7).add(HV, IT_OUT, 52, 25).add(HV, IT_OUT, 70, 25).add(HV, IT_OUT, 88, 25).add(HV, IT_OUT, 106, 25).add(HV, IT_OUT, 52, 43).add(HV, IT_OUT, 70, 43).add(HV, IT_OUT, 88, 43).add(HV, IT_OUT, 106, 43).add(HV, IT_OUT, 52, 61).add(HV, IT_OUT, 70, 61).add(HV, IT_OUT, 88, 61).add(HV, IT_OUT, 106, 61);
+        HATCH_ITEM_OUTPUT.getGui().add(EV, HATCH_ITEM_OUTPUT, HV);
+        HATCH_ITEM_OUTPUT.getGui().add(IV, HATCH_ITEM_OUTPUT, HV);
+        HATCH_ITEM_OUTPUT.getGui().add(LUV, HATCH_ITEM_OUTPUT, HV);
+        HATCH_ITEM_OUTPUT.getGui().add(ZPM, HATCH_ITEM_OUTPUT, HV);
+        HATCH_ITEM_OUTPUT.getGui().add(UV, HATCH_ITEM_OUTPUT, HV);
+        HATCH_ITEM_OUTPUT.getGui().add(MAX, HATCH_ITEM_OUTPUT, HV);
 
-        HATCH_ITEM_OUTPUT.getGui().add(IT_OUT, 79, 34);
         HATCH_FLUID_INPUT.getGui().add(FL_IN, 79, 34);
-        HATCH_FLUID_OUTPUT.getGui().add(FL_OUT, 79, 34);
+        HATCH_FLUID_INPUT.getGui().add(LV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(MV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(HV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(EV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(IV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(LUV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(ZPM, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(UV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(MAX, HATCH_FLUID_INPUT, ULV);
+
+        HATCH_FLUID_OUTPUT.getGui().add(FL_IN, 79, 34);
+        HATCH_FLUID_OUTPUT.getGui().add(LV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(MV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(HV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(EV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(IV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(LUV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(ZPM, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(UV, HATCH_FLUID_OUTPUT, ULV);
+        HATCH_FLUID_OUTPUT.getGui().add(MAX, HATCH_FLUID_OUTPUT, ULV);
     }
 }

@@ -7,8 +7,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
+//Credit: From AE2
 public final class MatrixVertexTransformer extends QuadGatheringTransformer {
 
     private final Matrix4f transform;
@@ -59,71 +61,44 @@ public final class MatrixVertexTransformer extends QuadGatheringTransformer {
     private float[] transform(float[] fs, int elemCount) {
         switch (fs.length) {
             case 3:
-                javax.vecmath.Vector3f vec = new javax.vecmath.Vector3f(fs[0], fs[1], fs[2]);
-                vec.x -= 0.5f;
-                vec.y -= 0.5f;
-                vec.z -= 0.5f;
-                this.transform.transform(vec);
-                vec.x += 0.5f;
-                vec.y += 0.5f;
-                vec.z += 0.5f;
-                return new float[]{
-                    vec.x,
-                    vec.y,
-                    vec.z
-                };
+                Vector3f v3 = new Vector3f(fs[0], fs[1], fs[2]);
+                v3.x -= 0.5f;
+                v3.y -= 0.5f;
+                v3.z -= 0.5f;
+                this.transform.transform(v3);
+                v3.x += 0.5f;
+                v3.y += 0.5f;
+                v3.z += 0.5f;
+                return new float[] {v3.x, v3.y, v3.z};
             case 4:
-                Vector4f vecc = new Vector4f(fs[0], fs[1], fs[2], fs[3]);
-                // Otherwise all translation is lost
-                if (elemCount == 3) {
-                    vecc.w = 1;
-                }
-                vecc.x -= 0.5f;
-                vecc.y -= 0.5f;
-                vecc.z -= 0.5f;
-                this.transform.transform(vecc);
-                vecc.x += 0.5f;
-                vecc.y += 0.5f;
-                vecc.z += 0.5f;
-                return new float[]{
-                    vecc.x,
-                    vecc.y,
-                    vecc.z,
-                    vecc.w
-                };
-
-            default:
-                return fs;
+                Vector4f v4 = new Vector4f(fs[0], fs[1], fs[2], fs[3]);
+                if (elemCount == 3) v4.w = 1; // Otherwise all translation is lost
+                v4.x -= 0.5f;
+                v4.y -= 0.5f;
+                v4.z -= 0.5f;
+                this.transform.transform(v4);
+                v4.x += 0.5f;
+                v4.y += 0.5f;
+                v4.z += 0.5f;
+                return new float[] {v4.x, v4.y, v4.z, v4.w};
+            default: return fs;
         }
     }
 
     private float[] transformNormal(float[] fs) {
         Vector4f normal;
-
         switch (fs.length) {
             case 3:
                 normal = new Vector4f(fs[0], fs[1], fs[2], 0);
                 this.transform.transform(normal);
                 normal.normalize();
-                return new float[]{
-                    normal.x,
-                    normal.y,
-                    normal.z
-                };
-
+                return new float[] {normal.x, normal.y, normal.z};
             case 4:
                 normal = new Vector4f(fs[0], fs[1], fs[2], fs[3]);
                 this.transform.transform(normal);
                 normal.normalize();
-                return new float[]{
-                    normal.x,
-                    normal.y,
-                    normal.z,
-                    normal.w
-                };
-
-            default:
-                return fs;
+                return new float[] {normal.x, normal.y, normal.z, normal.w};
+            default: return fs;
         }
     }
 }

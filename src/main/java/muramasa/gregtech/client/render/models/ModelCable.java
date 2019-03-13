@@ -1,7 +1,7 @@
 package muramasa.gregtech.client.render.models;
 
 import muramasa.gregtech.client.render.bakedmodels.BakedModelCable;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

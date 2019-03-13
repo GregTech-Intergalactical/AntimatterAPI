@@ -4,29 +4,25 @@ import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.util.Sounds;
-import muramasa.gregtech.common.tileentities.base.TileEntityBase;
+import muramasa.gregtech.api.util.Utils;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import java.util.ArrayList;
 
 public class CoverHandler implements ICoverHandler {
 
-    protected TileEntityBase tile;
+    private TileEntity tile;
     protected ArrayList<String> validCovers;
 
     private Cover[] covers = new Cover[] {
-        GregTechAPI.CoverBehaviourNone,
-        GregTechAPI.CoverBehaviourNone,
-        GregTechAPI.CoverBehaviourNone,
-        GregTechAPI.CoverBehaviourNone,
-        GregTechAPI.CoverBehaviourNone,
-        GregTechAPI.CoverBehaviourNone
+        GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone
     };
 
-    public CoverHandler(TileEntityBase tile, Cover... covers) {
+    public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
         validCovers = new ArrayList<>();
-        validCovers.add(GregTechAPI.CoverBehaviourNone.getName());
+        validCovers.add(GregTechAPI.CoverNone.getName());
         for (Cover cover : covers) {
             validCovers.add(cover.getName());
         }
@@ -36,28 +32,26 @@ public class CoverHandler implements ICoverHandler {
     public void tick() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onUpdate(tile);
+            covers[i].onUpdate(getTile());
         }
     }
 
     @Override
-    public boolean setCover(EnumFacing side, Cover cover) {
-        if (tile == null) return false;
-        if (isCoverValid(side, cover) && covers[side.getIndex()] != cover) {
-            covers[side.getIndex()] = cover;
-            Sounds.PLACE_METAL.play(tile.getWorld(), tile.getPos());
-            tile.markForRenderUpdate();
-            return true;
-        }
-        return false;
+    public boolean set(EnumFacing side, Cover cover) {
+        side = Utils.rotateFacing(side, getTileFacing());
+        if (!isValid(side, cover) || covers[side.getIndex()] == cover) return false;
+        covers[side.getIndex()] = cover;
+        Sounds.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
+        Utils.markTileForRenderUpdate(getTile());
+        return true;
     }
 
     @Override
     public Cover get(EnumFacing side) {
-        return covers[side.ordinal()];
+        return covers[Utils.rotateFacing(side, getTileFacing()).getIndex()];
     }
 
-    public Cover[] getCovers() {
+    public Cover[] getAll() {
         return covers;
     }
 
@@ -67,7 +61,18 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean isCoverValid(EnumFacing side, Cover cover) {
+    public boolean isValid(EnumFacing side, Cover cover) {
         return validCovers.contains(cover.getName());
+    }
+
+    @Override
+    public EnumFacing getTileFacing() {
+        return EnumFacing.NORTH;
+    }
+
+    @Override
+    public TileEntity getTile() {
+        if (tile == null) throw new NullPointerException("CoverHandler cannot have a null tile");
+        return tile;
     }
 }

@@ -1,10 +1,11 @@
 package muramasa.gregtech.api.enums;
 
+import muramasa.gregtech.Ref;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 
 public class Casing implements IStringSerializable {
 
@@ -63,7 +64,11 @@ public class Casing implements IStringSerializable {
 
     @Override
     public String getName() {
-        return name.toLowerCase(Locale.ENGLISH);
+        return name;
+    }
+
+    public ResourceLocation getLoc() {
+        return new ResourceLocation(Ref.MODID, "blocks/casing/" + name);
     }
 
     public static Casing get(String name) {

@@ -1,8 +1,7 @@
 package muramasa.gregtech.api.machines;
 
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -63,8 +62,8 @@ public class Tier implements IStringSerializable {
         return rarityColor;
     }
 
-    public ResourceLocation getBaseTexture() {
-        return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + name);
+    public Texture getBaseTexture() {
+        return new Texture("blocks/machine/base/" + name);
     }
 
     public static int getCount() {
@@ -107,15 +106,15 @@ public class Tier implements IStringSerializable {
         return tierLookup.values();
     }
 
-    public static ResourceLocation[] getTextures(Tier... tiers) {
-        ResourceLocation[] textures = new ResourceLocation[tiers.length];
+    public static Texture[] getTextures(Tier... tiers) {
+        Texture[] textures = new Texture[tiers.length];
         for (int i = 0; i < tiers.length; i++) {
             textures[i] = tiers[i].getBaseTexture();
         }
         return textures;
     }
 
-    public static ResourceLocation[] getAllTextures() {
+    public static Texture[] getAllTextures() {
         return getTextures(tierLookup.values().toArray(new Tier[0]));
     }
 }

@@ -12,8 +12,8 @@ public class CableConfigHandler extends ConfigHandler {
 
     @Override
     public boolean onWrench(EnumFacing side) {
-        if (tile instanceof TileEntityCable) {
-            ((TileEntityCable) tile).toggleConnection(side);
+        if (getTile() instanceof TileEntityCable) {
+            ((TileEntityCable) getTile()).toggleConnection(side);
             return true;
         }
         return false;

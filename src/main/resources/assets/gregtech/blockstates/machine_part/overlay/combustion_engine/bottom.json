@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "gregtech:machine_part/overlay/alloy_smelter/bottom"
+      "model": "gregtech:machine_part/overlay/combustion_engine/bottom"
     }
   }
 }

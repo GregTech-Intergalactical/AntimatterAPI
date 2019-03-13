@@ -3,7 +3,7 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;

@@ -11,7 +11,7 @@ import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

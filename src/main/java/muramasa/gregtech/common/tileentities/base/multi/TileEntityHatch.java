@@ -5,11 +5,11 @@ import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.HatchComponentHandler;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
+import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -20,7 +20,6 @@ import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
 
 public class TileEntityHatch extends TileEntityMachine {
 
-    private ResourceLocation texture;
     private MachineItemHandler itemHandler;
     private MachineFluidHandler fluidHandler;
     private ComponentHandler componentHandler;
@@ -28,29 +27,19 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        if (getType().hasFlag(ITEM)) {
-            itemHandler = new MachineItemHandler(this, itemData);
-        }
-        if (getType().hasFlag(FLUID)) {
-            fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
-        }
+        if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
+        if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
         componentHandler = new HatchComponentHandler(this);
-        texture = super.getTexture();
-    }
-
-    @Override
-    public ResourceLocation getTexture() {
-        return texture;
-    }
-
-    @Override
-    public void setTexture(ResourceLocation loc) {
-        texture = loc;
     }
 
     @Override
     public MachineItemHandler getItemHandler() {
         return itemHandler;
+    }
+
+    @Override
+    public MachineFluidHandler getFluidHandler() {
+        return fluidHandler;
     }
 
     @Override
@@ -61,40 +50,44 @@ public class TileEntityHatch extends TileEntityMachine {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public TextureData getTextureData() {
+        TextureData data = super.getTextureData();
+        if (!componentHandler.hasLinkedController()) return data;
+        TileEntityMultiMachine tile = componentHandler.getFirstController();
+        if (tile == null) return data;
+        data.setBase(tile.getType().getBaseTexture(Tier.MULTI));
+        return data;
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
         } else if (capability == GTCapabilities.COMPONENT) {
             return true;
         }
-        return super.hasCapability(capability, facing);
+        return super.hasCapability(capability, side);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
         } else if (capability == GTCapabilities.COMPONENT) {
             return GTCapabilities.COMPONENT.cast(componentHandler);
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability, side);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
-            texture = new ResourceLocation(compound.getString(Ref.KEY_MACHINE_TILE_TEXTURE));
-        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (texture != null) {
-            compound.setString(Ref.KEY_MACHINE_TILE_TEXTURE, texture.toString());
-        }
         return compound;
     }
 }

@@ -1,14 +1,15 @@
 package muramasa.gregtech.api.items;
 
-import muramasa.gregtech.api.cover.CoverHelper;
+import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
+import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -88,12 +89,11 @@ public class MaterialItem extends Item {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null) {
-            return CoverHelper.placeCover(tile, stack, side, hitX, hitY, hitZ) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+            return GregTechAPI.placeCover(tile, stack, side, hitX, hitY, hitZ) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
         if (prefix == Prefix.DustImpure && world.getBlockState(pos).getBlock() instanceof BlockCauldron) {
             int level = world.getBlockState(pos).getValue(BlockCauldron.LEVEL);
             if (level > 0) {
-                System.out.println(level);
                 MaterialItem item = (MaterialItem) player.getHeldItem(hand).getItem();
                 player.setHeldItem(hand, get(Prefix.DustPure, item.getMaterial(), stack.getCount()));
                 world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockCauldron.LEVEL, --level));
@@ -124,6 +124,16 @@ public class MaterialItem extends Item {
 
     public static boolean hasMaterial(ItemStack stack, Material material) {
         return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getMaterial() == material;
+    }
+
+    public static Prefix getPrefix(ItemStack stack) {
+        if (!(stack.getItem() instanceof MaterialItem)) return null;
+        return ((MaterialItem) stack.getItem()).getPrefix();
+    }
+
+    public static Material getMaterial(ItemStack stack) {
+        if (!(stack.getItem() instanceof MaterialItem)) return null;
+        return ((MaterialItem) stack.getItem()).getMaterial();
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {

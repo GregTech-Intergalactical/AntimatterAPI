@@ -5,7 +5,7 @@ import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.blocks.BlockHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 
 import static muramasa.gregtech.api.machines.MachineFlag.GUI;
 import static muramasa.gregtech.api.machines.MachineFlag.HATCH;

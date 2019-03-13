@@ -1,18 +1,22 @@
 package muramasa.gregtech.common.tileentities.base;
 
+import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.capability.impl.CoverHandler;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.texture.IBakedTile;
+import muramasa.gregtech.api.texture.Texture;
+import muramasa.gregtech.api.texture.TextureData;
+import muramasa.gregtech.api.texture.TextureType;
 import muramasa.gregtech.common.blocks.BlockMachine;
-import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 
-public class TileEntityMachine extends TileEntityTickable {
+public class TileEntityMachine extends TileEntityTickable implements IBakedTile {
 
     private Machine type;
     private Tier tier;
@@ -60,19 +64,11 @@ public class TileEntityMachine extends TileEntityTickable {
     }
 
     public EnumFacing getEnumFacing() {
-        return EnumFacing.VALUES[facing + 2];
+        return EnumFacing.VALUES[facing];
     }
 
     public MachineState getMachineState() {
         return machineState;
-    }
-
-    public int getTint() {
-        return tint;
-    }
-
-    public ResourceLocation getTexture() {
-        return getType().getBaseTexture(getTier());
     }
 
     public int getCurProgress() {
@@ -95,10 +91,14 @@ public class TileEntityMachine extends TileEntityTickable {
         return null;
     }
 
+    public CoverHandler getCoverHandler() {
+        return null;
+    }
+
     /** Setters **/
     public void setFacing(EnumFacing side) {
         if (side.getAxis() != EnumFacing.Axis.Y) {
-            setFacing(side.getIndex() - 2);
+            setFacing(side.getIndex());
         }
     }
 
@@ -107,20 +107,37 @@ public class TileEntityMachine extends TileEntityTickable {
         markForRenderUpdate();
     }
 
-    public void setTint(int newTint) {
-        tint = newTint;
-    }
-
-    public void setTexture(ResourceLocation loc) {
-        //NOOP
-    }
-
     public void setMachineState(MachineState newState) {
         machineState = newState;
     }
 
     public void setClientProgress(float newProgress) {
         //NOOP
+    }
+
+    @Override
+    public TextureData getTextureData() {
+        return new TextureData(
+            new Texture[] {
+                getType().getBaseTexture(getTier())
+            },
+            new Texture[] {
+                getType().getOverlayTexture(TextureType.BOTTOM, getMachineState()),
+                getType().getOverlayTexture(TextureType.TOP, getMachineState()),
+                getType().getOverlayTexture(TextureType.FRONT, getMachineState()),
+                getType().getOverlayTexture(TextureType.BACK, getMachineState()),
+                getType().getOverlayTexture(TextureType.SIDE, getMachineState()),
+                getType().getOverlayTexture(TextureType.SIDE, getMachineState())
+            }
+        );
+    }
+
+    public int getTint() {
+        return tint;
+    }
+
+    public void setTint(int newTint) {
+        tint = newTint;
     }
 
     @Override

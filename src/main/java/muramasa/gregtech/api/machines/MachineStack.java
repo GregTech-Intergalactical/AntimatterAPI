@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.machines;
 
 import muramasa.gregtech.api.machines.types.Machine;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

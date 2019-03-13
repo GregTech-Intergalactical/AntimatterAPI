@@ -1,7 +1,8 @@
 package muramasa.gregtech.api.cover.impl;
 
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.common.tileentities.base.TileEntityBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class CoverItem extends Cover {
 
@@ -11,7 +12,13 @@ public class CoverItem extends Cover {
     }
 
     @Override
-    public void onUpdate(TileEntityBase tile) {
+    public Cover onPlace(ItemStack stack) {
+        //TODO allows instance sensitive data
+        return this;
+    }
+
+    @Override
+    public void onUpdate(TileEntity tile) {
         //TODO
     }
 }

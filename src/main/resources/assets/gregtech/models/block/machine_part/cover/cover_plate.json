@@ -1,19 +1,11 @@
 {
-  "textures": {
-    "overlay": "gregtech:blocks/machine/cover/cover_plate"
-  },
-  "elements": [
-    {
-      "from": [ 1.0, 1.0, 15.0 ],
-      "to": [ 15.0, 15.0, 16.0 ],
-      "faces": {
-        "north": { "texture": "#overlay", "tintindex": 5, "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-        "east": { "texture": "#overlay", "tintindex": 5, "uv": [ 0.0, 1.0, 1.0, 15.0 ] },
-        "south": { "texture": "#overlay", "tintindex": 5, "uv": [ 0.0, 0.0, 16.0, 15.0 ] },
-        "west": { "texture": "#overlay", "tintindex": 5, "uv": [ 0.0, 1.0, 1.0, 15.0 ] },
-        "up": { "texture": "#overlay", "tintindex": 5, "uv": [ 1.0, 0.0, 15.0, 1.0 ] },
-        "down": { "texture": "#overlay", "tintindex": 5, "uv": [ 1.0, 0.0, 15.0, 1.0 ] }
-      }
-    }
-  ]
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 0.01],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#base", "tintindex": 5}
+			}
+		}
+	]
 }

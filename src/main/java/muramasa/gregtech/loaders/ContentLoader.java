@@ -21,7 +21,7 @@ import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.*;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;

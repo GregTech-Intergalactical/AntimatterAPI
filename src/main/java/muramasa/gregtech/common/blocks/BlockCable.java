@@ -2,7 +2,7 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
