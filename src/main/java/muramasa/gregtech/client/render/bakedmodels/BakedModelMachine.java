@@ -1,7 +1,6 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.overrides.ItemOverrideMachine;
@@ -17,9 +16,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static muramasa.gregtech.api.properties.GTProperties.*;
+
 public class BakedModelMachine extends BakedModelBase {
 
-    public static IBakedModel BAKED, OVERLAY_EMPTY;
+    public static IBakedModel BASE, OVERLAY_EMPTY;
     public static IBakedModel[][] OVERLAYS;
     public static IBakedModel[] COVERS;
     public static ItemOverrideMachine itemOverride = new ItemOverrideMachine();
@@ -29,12 +30,12 @@ public class BakedModelMachine extends BakedModelBase {
         if (!(state instanceof IExtendedBlockState) || side != null) return Collections.emptyList();
         IExtendedBlockState exState = (IExtendedBlockState) state;
         List<BakedQuad> quads = new LinkedList<>();
-        int type = exState.getValue(GTProperties.TYPE);
-        int facing = exState.getValue(GTProperties.FACING);
-        TextureData data = exState.getValue(GTProperties.TEXTURE);
+        int type = exState.getValue(TYPE);
+        int facing = exState.getValue(FACING);
+        TextureData data = exState.getValue(TEXTURE);
+        Cover[] covers = exState.getValue(COVER);
 
-        if (hasUnlistedProperty(exState, GTProperties.COVER)) {
-            Cover[] covers = exState.getValue(GTProperties.COVER);
+        if (covers != null) {
             for (int s = 0; s < 6; s++) {
                 if (!covers[s].isEmpty()) {
                     quads.addAll(covers[s].onRender(getCovers(covers[s], s, state), s));

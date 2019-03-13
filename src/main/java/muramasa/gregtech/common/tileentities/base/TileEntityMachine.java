@@ -9,9 +9,7 @@ import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.texture.IBakedTile;
-import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
-import muramasa.gregtech.api.texture.TextureType;
 import muramasa.gregtech.common.blocks.BlockMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -118,17 +116,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public TextureData getTextureData() {
         return new TextureData(
-            new Texture[] {
-                getType().getBaseTexture(getTier())
-            },
-            new Texture[] {
-                getType().getOverlayTexture(TextureType.BOTTOM, getMachineState()),
-                getType().getOverlayTexture(TextureType.TOP, getMachineState()),
-                getType().getOverlayTexture(TextureType.FRONT, getMachineState()),
-                getType().getOverlayTexture(TextureType.BACK, getMachineState()),
-                getType().getOverlayTexture(TextureType.SIDE, getMachineState()),
-                getType().getOverlayTexture(TextureType.SIDE, getMachineState())
-            }
+            getType().getBaseTextures(getTier()),
+            getType().getOverlayTextures(getMachineState())
         );
     }
 

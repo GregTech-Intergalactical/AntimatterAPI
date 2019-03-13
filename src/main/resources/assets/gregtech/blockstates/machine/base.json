@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/base"
+    },
+    "inventory": {
+      "model": "gregtech:machine/base"
+    }
+  }
+}

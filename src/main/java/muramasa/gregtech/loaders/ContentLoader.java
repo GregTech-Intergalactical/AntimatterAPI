@@ -11,8 +11,8 @@ import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.common.blocks.*;
-import muramasa.gregtech.common.items.ItemBlockMachines;
-import muramasa.gregtech.common.items.ItemBlockOres;
+import muramasa.gregtech.common.items.ItemBlockMachine;
+import muramasa.gregtech.common.items.ItemBlockOre;
 import muramasa.gregtech.common.items.ItemBlockStorage;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -104,10 +104,10 @@ public class ContentLoader {
             event.getRegistry().register(item);
         }
         for (Machine type : Machines.getAll()) {
-            event.getRegistry().register(new ItemBlockMachines(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));
+            event.getRegistry().register(new ItemBlockMachine(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));
         }
         for (BlockOre block : BlockOre.getAll()) {
-            event.getRegistry().register(new ItemBlockOres(block).setRegistryName(block.getRegistryName()));
+            event.getRegistry().register(new ItemBlockOre(block).setRegistryName(block.getRegistryName()));
         }
         for (BlockStorage block : BlockStorage.getAll()) {
             event.getRegistry().register(new ItemBlockStorage(block).setRegistryName(block.getRegistryName()));

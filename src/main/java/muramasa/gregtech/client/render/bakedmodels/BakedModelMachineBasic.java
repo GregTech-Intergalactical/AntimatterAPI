@@ -22,7 +22,7 @@ public class BakedModelMachineBasic extends BakedModelMachine {
         int facing = exState.getValue(GTProperties.FACING);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 
-        List<BakedQuad> quads = new LinkedList<>(BAKED.getQuads(state, side, rand));
+        List<BakedQuad> quads = new LinkedList<>(BASE.getQuads(state, side, rand));
         tex(quads, data.getBaseMode(), data.getBase(), 0);
 
 //        Cover[] covers;
@@ -34,7 +34,7 @@ public class BakedModelMachineBasic extends BakedModelMachine {
 ////                    overlays[i].setEmpty();
 //                    coverQuads = Utils.trans(COVER[covers[i].getInternalId()].getQuads(state, side, rand), i);
 //                    if (covers[i].retextureToMachineTier()) {
-//                        Utils.tex(coverQuads, 0, RenderHelper.getSprite(Tier.get(exState.getValue(GTProperties.TIER)).getBaseTexture()));
+//                        Utils.tex(coverQuads, 0, RenderHelper.getSprite(Tier.get(exState.getValue(GTProperties.TIER)).getBaseTextures()));
 //                    }
 //                    coverQuads.addAll(covers[i].onRender(coverQuads));
 //                }

@@ -8,8 +8,9 @@ import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.texture.Texture;
-import muramasa.gregtech.common.blocks.BlockMultiMachine;
+import muramasa.gregtech.common.blocks.BlockMachine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
@@ -17,7 +18,7 @@ import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
 public class MultiMachine extends Machine {
 
     public MultiMachine(String name, Class tileClass, MachineFlag... extraFlags) {
-        super(name, new BlockMultiMachine(name), tileClass);
+        super(name, new BlockMachine(name), tileClass);
         setTiers(Tier.getMulti());
         addFlags(MULTI);
         addFlags(extraFlags);
@@ -32,14 +33,16 @@ public class MultiMachine extends Machine {
 
     @Override
     public Texture[] getTextures() {
-        Texture[] textures = super.getTextures();
-        textures = Arrays.copyOf(textures, textures.length);
-        textures[textures.length - 1] = getBaseTexture(Tier.MULTI);
-        return textures;
+        ArrayList<Texture> textures = new ArrayList<>();
+        textures.addAll(Arrays.asList(super.getTextures()));
+        textures.addAll(Arrays.asList(getBaseTextures(Tier.MULTI)));
+        return textures.toArray(new Texture[0]);
     }
 
     @Override
-    public Texture getBaseTexture(Tier tier) {
-        return new Texture("blocks/machine/base/" + name);
+    public Texture[] getBaseTextures(Tier tier) {
+        return new Texture[] {
+            new Texture("blocks/machine/base/" + name)
+        };
     }
 }
