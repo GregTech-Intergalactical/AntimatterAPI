@@ -19,43 +19,24 @@ public class ConfigHandler implements IConfigHandler {
     }
 
     @Override
-    public boolean onWrench(EnumFacing side) {
-        if (getTile().hasCapability(GTCapabilities.COVERABLE, side)) { //Side has cover, configure.
-            ICoverHandler coverHandler = getTile().getCapability(GTCapabilities.COVERABLE, side);
-            if (coverHandler == null) return false;
-            Cover cover = coverHandler.get(side);
-            if (cover.isEmpty() || !cover.onInteract(getTile(), ToolType.WRENCH)) return false;
-            Sounds.WRENCH.play(getTile().getWorld(), getTile().getPos());
-            return true;
+    public boolean onInteract(EnumFacing side, ToolType type) {
+        ICoverHandler coverHandler = getTile().getCapability(GTCapabilities.COVERABLE, side);
+        if (coverHandler == null) return false;
+        Cover cover = coverHandler.get(side);
+        if (cover.isEmpty() || !cover.onInteract(getTile(), type)) return false;
+        switch (type) {
+            case WRENCH:
+                Sounds.WRENCH.play(getTile().getWorld(), getTile().getPos());
+                return true;
+            case CROWBAR:
+                coverHandler.set(side, GregTechAPI.CoverNone);
+                Sounds.BREAK.play(getTile().getWorld(), getTile().getPos());
+                return true;
+            case SCREWDRIVER:
+                Sounds.WRENCH.play(getTile().getWorld(), getTile().getPos());
+                return true;
+            default: return false;
         }
-        return false;
-    }
-
-    @Override
-    public boolean onCrowbar(EnumFacing side) {
-        if (getTile().hasCapability(GTCapabilities.COVERABLE, side)) { //Side has cover
-            ICoverHandler coverHandler = getTile().getCapability(GTCapabilities.COVERABLE, side);
-            if (coverHandler == null) return false;
-            Cover cover = coverHandler.get(side);
-            if (cover.isEmpty() || !cover.onInteract(getTile(), ToolType.CROWBAR)) return false;
-            coverHandler.set(side, GregTechAPI.CoverNone);
-            Sounds.BREAK.play(getTile().getWorld(), getTile().getPos());
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onScrewdriver(EnumFacing side) {
-        if (getTile().hasCapability(GTCapabilities.COVERABLE, side)) { //Side has cover
-            ICoverHandler coverHandler = getTile().getCapability(GTCapabilities.COVERABLE, side);
-            if (coverHandler == null) return false;
-            Cover cover = coverHandler.get(side);
-            if (cover.isEmpty() || !cover.onInteract(getTile(), ToolType.SCREWDRIVER)) return false;
-            Sounds.WRENCH.play(getTile().getWorld(), getTile().getPos());
-            return true;
-        }
-        return false;
     }
 
     @Override
