@@ -20,7 +20,6 @@ public class ItemBlockMachine extends ItemBlock {
 
     public ItemBlockMachine(Block block) {
         super(block);
-        setHasSubtypes(true);
     }
 
     //TODO add a ItemBlockMachine per type * tier to avoid NBT

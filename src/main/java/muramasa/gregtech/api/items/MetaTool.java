@@ -96,16 +96,9 @@ public class MetaTool extends Item {
             EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
             IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
-                if (ToolType.WRENCH.isItemEqual(stack)) {
-                    configHandler.onWrench(targetSide);
-                    return EnumActionResult.SUCCESS;
-                } else if (ToolType.CROWBAR.isItemEqual(stack)) {
-                    configHandler.onCrowbar(targetSide);
-                    return EnumActionResult.SUCCESS;
-                } else if (ToolType.SCREWDRIVER.isItemEqual(stack)) {
-                    configHandler.onScrewdriver(targetSide);
-                    return EnumActionResult.SUCCESS;
-                }
+                ToolType type = ToolType.get(stack);
+                if (type == null) return EnumActionResult.PASS;
+                return configHandler.onInteract(targetSide, type) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
             }
         }
         return EnumActionResult.PASS;
