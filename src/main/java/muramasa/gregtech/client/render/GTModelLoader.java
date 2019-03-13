@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.render;
 
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -10,7 +10,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 
 import java.util.HashMap;
 
-public class ModelLoader implements ICustomModelLoader {
+public class GTModelLoader implements ICustomModelLoader {
 
     private static HashMap<String, IModel> modelLookup = new HashMap<>();
 

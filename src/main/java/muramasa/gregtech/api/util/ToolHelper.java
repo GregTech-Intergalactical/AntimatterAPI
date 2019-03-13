@@ -3,7 +3,7 @@ package muramasa.gregtech.api.util;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;

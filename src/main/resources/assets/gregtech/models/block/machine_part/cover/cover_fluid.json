@@ -1,7 +1,4 @@
 {
-  "textures": {
-    "overlay": "gregtech:blocks/machine/cover/cover_fluid"
-  },
   "elements": [
     {
       "from": [ 1.0, 1.0, 15.0 ],

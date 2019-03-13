@@ -1,8 +1,7 @@
 package muramasa.gregtech.api.materials;
 
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.Locale;
 
@@ -23,12 +22,12 @@ public enum MaterialSet implements IStringSerializable {
     FINE,
     FLINT;
 
-    public ResourceLocation getBlockLoc(Prefix prefix) {
-        return new ResourceLocation(Ref.MODID, "blocks/material_set/" + getName() + "/" + prefix.getName());
+    public Texture getBlockTexture(Prefix prefix) {
+        return new Texture("blocks/material_set/" + getName() + "/" + prefix.getName());
     }
 
-    public ResourceLocation getItemLoc(Prefix prefix) {
-        return new ResourceLocation(Ref.MODID, "items/material_set/" + getName() + "/" + prefix.getName());
+    public Texture getItemTexture(Prefix prefix) {
+        return new Texture("items/material_set/" + getName() + "/" + prefix.getName());
     }
 
     @Override

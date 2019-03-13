@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IComponent;
+import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 public class ComponentHandler implements IComponent {
 
-    protected String componentId = "null";
+    protected String componentId;
     protected TileEntityBase componentTile;
     protected ArrayList<BlockPos> controllers = new ArrayList<>();
 
@@ -63,5 +64,21 @@ public class ComponentHandler implements IComponent {
     @Override
     public void unlinkController(TileEntityMultiMachine controllerTile) {
         controllers.remove(controllerTile.getPos());
+    }
+
+    @Override
+    public boolean hasLinkedController() {
+        return controllers.size() > 0;
+    }
+
+    @Override
+    public TileEntityMultiMachine getFirstController() {
+        int size = controllers.size();
+        TileEntity tile;
+        for (int i = 0; i < size; i++) {
+            tile = Utils.getTile(componentTile.getWorld(), controllers.get(i));
+            if (tile instanceof TileEntityMultiMachine) return (TileEntityMultiMachine) tile;
+        }
+        return null;
     }
 }

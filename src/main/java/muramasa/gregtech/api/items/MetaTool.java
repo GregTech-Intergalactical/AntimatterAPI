@@ -8,7 +8,7 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.ToolHelper;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -93,7 +93,7 @@ public class MetaTool extends Item {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null && tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
-            EnumFacing targetSide = Utils.determineInteractionSide(facing, hitX, hitY, hitZ);
+            EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
             IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
                 if (ToolType.WRENCH.isItemEqual(stack)) {

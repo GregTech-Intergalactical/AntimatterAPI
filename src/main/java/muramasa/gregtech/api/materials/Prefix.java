@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.materials;
 
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;

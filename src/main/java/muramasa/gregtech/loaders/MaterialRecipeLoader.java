@@ -8,7 +8,7 @@ import muramasa.gregtech.api.recipe.RecipeBuilder;
 import muramasa.gregtech.api.recipe.RecipeHelper;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -51,11 +51,11 @@ public class MaterialRecipeLoader {
             //TODO
         }
 
-        for (Material m : PLASMA.getMats()) {
+        PLASMA.getMats().forEach(m -> {
             ItemStack cell = m.hasFlag(LIQUID) ? m.getCell(1) : m.getCellG(1);
             RB.get(VACUUM_FREEZER).ii(m.getCellP(1)).io(cell).add(Math.max(m.getMass() * 2, 1), 120);
             RB.get(PLASMA_FUELS).fi(m.getPlasma(1296)).add(0, 0, Math.max(1024, 1024 * m.getMass()) * 1000);
-        }
+        });
 
         for (Material m : HINGOT.getMats()) {
             RB.get(VACUUM_FREEZER).ii(m.getIngotH(1)).io(m.getIngot(1)).add(Math.max(m.getMass() * 3, 1), 120);

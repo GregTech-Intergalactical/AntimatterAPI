@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.cover.impl;
 
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.common.tileentities.base.TileEntityBase;
+import net.minecraft.tileentity.TileEntity;
 
 public class CoverEnergy extends Cover {
 
@@ -11,7 +11,7 @@ public class CoverEnergy extends Cover {
     }
 
     @Override
-    public void onUpdate(TileEntityBase tile) {
+    public void onUpdate(TileEntity tile) {
         //TODO
     }
 }

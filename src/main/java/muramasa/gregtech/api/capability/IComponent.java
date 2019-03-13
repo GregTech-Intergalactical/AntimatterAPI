@@ -20,4 +20,8 @@ public interface IComponent {
     void linkController(TileEntityMultiMachine tile);
 
     void unlinkController(TileEntityMultiMachine tile);
+
+    boolean hasLinkedController();
+
+    public TileEntityMultiMachine getFirstController();
 }

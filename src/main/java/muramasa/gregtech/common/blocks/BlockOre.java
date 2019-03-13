@@ -1,10 +1,10 @@
 package muramasa.gregtech.common.blocks;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-public class BlockOre extends Block {
+public class BlockOre extends Block /*implements IBakedBlock*/ {
 
     private static LinkedHashMap<String, BlockOre> BLOCK_LOOKUP = new LinkedHashMap<>();
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
@@ -44,6 +44,10 @@ public class BlockOre extends Block {
         this.material = material;
         this.type = type;
         BLOCK_LOOKUP.put(type.getName() + material.getName(), this);
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     @Override
@@ -90,11 +94,25 @@ public class BlockOre extends Block {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_ore", "inventory"));
         ModelLoader.setCustomStateMapper(this, stateMapRedirect);
+//        GTModelLoader.register(this, new ModelBasic("ModelOre", this));
     }
 
-    public Material getMaterial() {
-        return material;
-    }
+//    @Override
+//    public ModelResourceLocation getModel() {
+//        return new ModelResourceLocation(Ref.MODID, "block_ore_base");
+//    }
+//
+//    @Override
+//    public TextureData getTextureData() {
+//        return new TextureData(
+//            new Texture[] {
+//                type.getTexture()
+//            },
+//            new Texture[] {
+//                material.getSet().getBlockTexture(Prefix.Ore)
+//            }
+//        );
+//    }
 
     public static BlockOre get(StoneType type, Material material) {
         return BLOCK_LOOKUP.get(type.getName() + material.getName());

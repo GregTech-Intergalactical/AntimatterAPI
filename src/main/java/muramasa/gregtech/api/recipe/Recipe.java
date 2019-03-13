@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.recipe;
 
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 

@@ -23,19 +23,19 @@ public class TileEntityCoil extends TileEntityBase {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (capability == GTCapabilities.COMPONENT) {
             return true;
         }
-        return super.hasCapability(capability, facing);
+        return super.hasCapability(capability, side);
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == GTCapabilities.COMPONENT) {
             return GTCapabilities.COMPONENT.cast(componentHandler);
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability, side);
     }
 }

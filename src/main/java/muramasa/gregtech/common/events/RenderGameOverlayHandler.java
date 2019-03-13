@@ -3,7 +3,7 @@ package muramasa.gregtech.common.events;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.util.ToolHelper;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;

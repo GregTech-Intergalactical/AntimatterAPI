@@ -5,7 +5,7 @@ import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.int4;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;

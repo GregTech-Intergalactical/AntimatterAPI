@@ -1,12 +1,13 @@
 package muramasa.gregtech.api.cover;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.common.tileentities.base.TileEntityBase;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
 
@@ -16,63 +17,59 @@ public abstract class Cover {
 
     private int internalId;
 
-    public Cover() {
-        internalId = lastInternalId++;
-    }
-
     public abstract String getName();
 
     public int getInternalId() {
         return internalId;
     }
 
-    public void onWrench(TileEntityBase tile) {
-        //NOOP
+    public final void onRegister() {
+        internalId = lastInternalId++;
     }
 
-    public void onCrowbar(TileEntityBase tile) {
-        //NOOP
+    public final Cover getNewInstance(ItemStack stack) {
+        int id = internalId;
+        Cover cover = onPlace(stack);
+        cover.internalId = id;
+        return cover;
     }
 
-    public void onScrewdriver(TileEntityBase tile) {
-        //NOOP
-    }
-
-    public void onUpdate(TileEntityBase tile) {
-        //NOOP
-    }
-
-    public List<BakedQuad> onRender(List<BakedQuad> quads) {
-        return quads;
-    }
-
-    public boolean needsNewInstance() {
-        return false;
-    }
-
-    public Cover getNewInstance(ItemStack stack) {
-        //TODO avoid assigning a new internal id on a new instance creation
+    public Cover onPlace(ItemStack stack) {
         return this;
     }
 
-    public boolean isEqual(Cover otherCover) {
-        return internalId == otherCover.internalId;
+    public boolean onInteract(TileEntity tile, ToolType type) {
+        return true;
+    }
+
+    public void onUpdate(TileEntity tile) {
+        //NOOP
+    }
+
+    public List<BakedQuad> onRender(List<BakedQuad> quads, int side) {
+        return quads;
+    }
+
+    public boolean isEqual(Cover cover) {
+        return internalId == cover.getInternalId();
     }
 
     public boolean isEmpty() {
-        return internalId == GregTechAPI.CoverBehaviourNone.internalId;
+        return internalId == GregTechAPI.CoverNone.internalId;
     }
 
-    public ModelResourceLocation getModelLoc() {
+    public Texture[] getTextures() {
+        return new Texture[] {
+            new Texture("blocks/machine/cover/" + getName())
+        };
+    }
+
+    public ModelResourceLocation getModel() {
         return new ModelResourceLocation(Ref.MODID + ":machine_part/cover/" + getName());
     }
 
-    public ResourceLocation getTextureLoc() {
-        return new ResourceLocation(Ref.MODID, "blocks/machine/cover/" + getName());
-    }
-
-    public boolean retextureToMachineTier() {
-        return false;
+    public static ModelResourceLocation getBasicModel() {
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/cover/cover_basic");
     }
 
     public static int getLastInternalId() {

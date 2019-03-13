@@ -1,17 +1,16 @@
 package muramasa.gregtech.api.items;
 
-import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
-import muramasa.gregtech.api.cover.CoverHelper;
+import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityItemFluidMachine;
-import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -83,7 +82,7 @@ public class StandardItem extends Item {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null) {
-            if (CoverHelper.placeCover(tile, stack, side, hitX, hitY, hitZ)) {
+            if (GregTechAPI.placeCover(tile, stack, side, hitX, hitY, hitZ)) {
                 return EnumActionResult.SUCCESS;
             } else if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
@@ -92,7 +91,7 @@ public class StandardItem extends Item {
                         System.out.println("Forced Structure Check");
 //                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                     } else if (tile instanceof TileEntityHatch) {
-//                            System.out.println(((TileEntityHatch) tile).getTexture());
+//                            System.out.println(((TileEntityHatch) tile).getBaseTexture());
 //                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());
 //                            ((TileEntityHatch) tile).markForRenderUpdate();
 //                        MachineFluidHandler fluidHandler = ((TileEntityHatch) tile).getFluidHandler();
@@ -108,10 +107,20 @@ public class StandardItem extends Item {
 //                        System.out.println("Setting Tint");
 //                        ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());
 //                        ((TileEntityMachine) tile).markForRenderUpdate();
-                        System.out.println(tile);
-                        if (((TileEntityMachine) tile).getType().hasFlag(MachineFlag.ENERGY)) {
-                            System.out.println("Energy: " + tile.getCapability(GTCapabilities.ENERGY, null).getEnergyStored());
+//                        System.out.println(tile);
+                        for (Cover c : GregTechAPI.getRegisteredCovers()) {
+                            System.out.println(c.getName() + " - " + c.getInternalId());
                         }
+
+//                        Utils.offset(side, ((TileEntityMachine) tile).getEnumFacing());
+
+//                        dif = side.getIndex() < facing.getIndex() ? -dif : dif;
+//                        System.out.println("Dif2: " + dif);
+
+
+//                        if (((TileEntityMachine) tile).getType().hasFlag(MachineFlag.ENERGY)) {
+//                            System.out.println("Energy: " + tile.getCapability(GTCapabilities.ENERGY, null).getEnergyStored());
+//                        }
                     }
                 }
             }

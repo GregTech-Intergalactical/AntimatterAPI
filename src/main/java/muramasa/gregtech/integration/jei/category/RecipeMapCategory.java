@@ -12,7 +12,7 @@ import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.util.int4;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.integration.jei.renderer.FluidStackRenderer;
 import muramasa.gregtech.integration.jei.wrapper.RecipeWrapper;
 import net.minecraft.client.Minecraft;

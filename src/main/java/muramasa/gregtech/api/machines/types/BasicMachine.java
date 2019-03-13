@@ -3,7 +3,7 @@ package muramasa.gregtech.api.machines.types;
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.common.blocks.BlockMachine;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
 

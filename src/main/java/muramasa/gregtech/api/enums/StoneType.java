@@ -2,10 +2,9 @@ package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,8 +53,8 @@ public class StoneType implements IStringSerializable {
         return material.getDust(1);
     }
 
-    public ResourceLocation getLoc() {
-        return new ResourceLocation(Ref.MODID, "blocks/stone/" + getName());
+    public Texture getTexture() {
+        return new Texture("blocks/stone/" + getName());
     }
 
     public int getInternalId() {

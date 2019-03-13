@@ -1,21 +1,23 @@
 package muramasa.gregtech.api.machines.types;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.structure.Structure;
+import muramasa.gregtech.api.texture.Texture;
+import muramasa.gregtech.api.texture.TextureType;
 import muramasa.gregtech.common.blocks.BlockMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.utils.Ref;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,23 +78,38 @@ public class Machine implements IStringSerializable {
         return recipeMap;
     }
 
-    public ResourceLocation getBaseTexture(Tier tier) {
-        return new ResourceLocation(Ref.MODID, "blocks/machine/base/" + tier.getName());
+    public Texture[] getTextures() {
+        return new Texture[] {
+            getOverlayTexture(TextureType.FRONT, MachineState.IDLE),
+            getOverlayTexture(TextureType.BACK, MachineState.IDLE),
+            getOverlayTexture(TextureType.TOP, MachineState.IDLE),
+            getOverlayTexture(TextureType.BOTTOM, MachineState.IDLE),
+            getOverlayTexture(TextureType.SIDE, MachineState.IDLE),
+            getOverlayTexture(TextureType.FRONT, MachineState.ACTIVE),
+            getOverlayTexture(TextureType.BACK, MachineState.ACTIVE),
+            getOverlayTexture(TextureType.TOP, MachineState.ACTIVE),
+            getOverlayTexture(TextureType.BOTTOM, MachineState.ACTIVE),
+            getOverlayTexture(TextureType.SIDE, MachineState.ACTIVE)
+        };
     }
 
-    public ResourceLocation getOverlayTexture(int state, String type) {
-        if (state == 0) {
-            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name + "/" + type);
-        } else if (state == 1) {
-            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name + "/active/" + type);
+    public Texture getBaseTexture(Tier tier) {
+        return new Texture("blocks/machine/base/" + tier.getName());
+    }
+
+    public Texture getOverlayTexture(TextureType side, MachineState state) {
+        if (state.getOverlayId() == 0) {
+            return new Texture("blocks/machine/overlay/" + name + "/" + side.getName());
+        } else if (state.getOverlayId() == 1) {
+            return new Texture("blocks/machine/overlay/" + name + "/active/" + side.getName());
         } else {
-            return new ResourceLocation(Ref.MODID + ":blocks/machine/overlay/" + name + "/" + type);
+            return new Texture(":blocks/machine/overlay/" + name + "/" + side.getName());
         }
     }
 
-    public ModelResourceLocation getOverlayModel(String type) {
+    public ModelResourceLocation getOverlayModel(TextureType side) {
 //        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name);
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name + "/" + type);
+        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name + "/" + side.getName());
     }
 
     public void addFlags(MachineFlag... flags) {

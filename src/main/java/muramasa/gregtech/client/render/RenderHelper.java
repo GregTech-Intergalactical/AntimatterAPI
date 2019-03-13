@@ -47,19 +47,19 @@ public class RenderHelper {
         return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
     }
 
-    public static void drawFluid(Minecraft minecraft, int xPosition, int yPosition, int width, int height, int scaledAmount, FluidStack fluidStack) {
-        if (fluidStack == null) return;
-        Fluid fluid = fluidStack.getFluid();
+    public static void drawFluid(Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
+        if (stack == null) return;
+        Fluid fluid = stack.getFluid();
         if (fluid == null) return;
 
-        TextureAtlasSprite fluidStillSprite = getStillFluidSprite(minecraft, fluid);
-        int fluidColor = fluid.getColor(fluidStack);
+        TextureAtlasSprite fluidStillSprite = getStillFluidSprite(mc, fluid);
+        int fluidColor = fluid.getColor(stack);
 
-        drawTiledSprite(minecraft, xPosition, yPosition, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
+        drawTiledSprite(mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
     }
 
-    public static void drawTiledSprite(Minecraft minecraft, int xPosition, int yPosition, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        minecraft.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+    public static void drawTiledSprite(Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         setGLColorFromInt(color);
 
         int xTileCount = tiledWidth / texWidth;
@@ -67,13 +67,13 @@ public class RenderHelper {
         int yTileCount = scaledAmount / texHeight;
         int yRemainder = scaledAmount - (yTileCount * texHeight);
 
-        final int yStart = yPosition + tiledHeight;
+        final int yStart = posY + tiledHeight;
 
         for (int xTile = 0; xTile <= xTileCount; xTile++) {
             for (int yTile = 0; yTile <= yTileCount; yTile++) {
                 int width = (xTile == xTileCount) ? xRemainder : texWidth;
                 int height = (yTile == yTileCount) ? yRemainder : texHeight;
-                int x = xPosition + (xTile * texWidth);
+                int x = posX + (xTile * texWidth);
                 int y = yStart - ((yTile + 1) * texHeight);
                 if (width > 0 && height > 0) {
                     int maskTop = texHeight - height;
@@ -89,21 +89,9 @@ public class RenderHelper {
         TextureMap textureMapBlocks = minecraft.getTextureMapBlocks();
         ResourceLocation fluidStill = fluid.getStill();
         TextureAtlasSprite fluidStillSprite = null;
-        if (fluidStill != null) {
-            fluidStillSprite = textureMapBlocks.getTextureExtry(fluidStill.toString());
-        }
-        if (fluidStillSprite == null) {
-            fluidStillSprite = textureMapBlocks.getMissingSprite();
-        }
+        if (fluidStill != null) fluidStillSprite = textureMapBlocks.getTextureExtry(fluidStill.toString());
+        if (fluidStillSprite == null) fluidStillSprite = textureMapBlocks.getMissingSprite();
         return fluidStillSprite;
-    }
-
-    public static void setGLColorFromInt(int color) {
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-
-        GlStateManager.color(red, green, blue, 1.0F);
     }
 
     public static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
@@ -122,5 +110,19 @@ public class RenderHelper {
         bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).tex(uMax, vMin).endVertex();
         bufferBuilder.pos(xCoord, yCoord + maskTop, zLevel).tex(uMin, vMin).endVertex();
         tessellator.draw();
+    }
+
+    public static void setGLColorFromInt(int color) {
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+        GlStateManager.color(red, green, blue, 1.0F);
+    }
+
+    public static int rgbToABGR(int rgb) {
+        rgb |= 0xFF000000;
+        int r = (rgb >> 16) & 0xFF;
+        int b = rgb & 0xFF;
+        return (rgb & 0xFF00FF00) | (b << 16) | r;
     }
 }

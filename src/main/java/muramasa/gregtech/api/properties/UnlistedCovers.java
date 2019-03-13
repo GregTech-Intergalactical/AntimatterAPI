@@ -3,8 +3,6 @@ package muramasa.gregtech.api.properties;
 import muramasa.gregtech.api.cover.Cover;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-import java.util.Arrays;
-
 public class UnlistedCovers implements IUnlistedProperty<Cover[]> {
 
     @Override
@@ -13,7 +11,7 @@ public class UnlistedCovers implements IUnlistedProperty<Cover[]> {
     }
 
     @Override
-    public boolean isValid(Cover[] cover) {
+    public boolean isValid(Cover[] handler) {
         return true;
     }
 
@@ -23,7 +21,7 @@ public class UnlistedCovers implements IUnlistedProperty<Cover[]> {
     }
 
     @Override
-    public String valueToString(Cover[] cover) {
-        return Arrays.toString(cover);
+    public String valueToString(Cover[] handler) {
+        return handler.toString();
     }
 }

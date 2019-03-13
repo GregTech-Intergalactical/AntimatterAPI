@@ -1,22 +1,22 @@
-package muramasa.gregtech.client.render.objects;
+package muramasa.gregtech.client.render;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
+//Credit: http://www.minecraftforge.net/forum/topic/66893-112-is-there-a-way-to-color-bakedquads/?do=findComment&comment=321762
 public class BakedQuadTinted extends BakedQuad {
 
-    private int[] tintedVertexData;
+    private int[] vertexData;
 
     public BakedQuadTinted(BakedQuad quad, int rgb) {
         super(quad.getVertexData(), quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
-        System.out.println("TINT INDEX: " + quad.getTintIndex());
-        tintedVertexData = quad.getVertexData();
+        this.vertexData = quad.getVertexData();
         for (int i = 0; i < 4; i++) {
-            tintedVertexData[(format.getColorOffset() / 4) + format.getIntegerSize() * i] = rgb;
+            vertexData[(format.getColorOffset() / 4) + format.getIntegerSize() * i] = RenderHelper.rgbToABGR(rgb);
         }
     }
 
     @Override
     public int[] getVertexData() {
-        return tintedVertexData;
+        return vertexData;
     }
 }

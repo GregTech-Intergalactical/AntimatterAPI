@@ -10,8 +10,6 @@ import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.common.events.EventHandler;
-import muramasa.gregtech.common.utils.CommandTool;
-import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import muramasa.gregtech.loaders.MachineRecipeLoader;
 import muramasa.gregtech.loaders.MaterialRecipeLoader;
@@ -77,6 +75,5 @@ public class GregTech {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent e) {
         proxy.serverStarting(e);
-        e.registerServerCommand(new CommandTool());
     }
 }

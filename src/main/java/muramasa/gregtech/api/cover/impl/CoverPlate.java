@@ -1,15 +1,27 @@
 package muramasa.gregtech.api.cover.impl;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.items.MaterialItem;
+import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.materials.MaterialSet;
+import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.api.texture.Texture;
+import net.minecraft.item.ItemStack;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class CoverPlate extends CoverTintable {
+public class CoverPlate extends CoverMaterial {
 
-    private int rgb;
+    private Prefix prefix;
+    private Material material;
 
-    public CoverPlate(int rgb) {
-        this.rgb = rgb;
+    public CoverPlate() {
+        //NOOP
+    }
+
+    public CoverPlate(Prefix prefix, Material material) {
+        this.prefix = prefix;
+        this.material = material;
     }
 
     @Override
@@ -18,12 +30,28 @@ public class CoverPlate extends CoverTintable {
     }
 
     @Override
-    public List<BakedQuad> onRender(List<BakedQuad> quads) {
-        return quads;
+    public Material getMaterial() {
+        return material;
     }
 
     @Override
-    public int getRGB() {
-        return rgb;
+    public Prefix getPrefix() {
+        return prefix;
+    }
+
+    @Override
+    public Cover onPlace(ItemStack stack) {
+        Material material = MaterialItem.getMaterial(stack);
+        if (material != null) return new CoverPlate(Prefix.Block, material);
+        return this;
+    }
+
+    @Override
+    public Texture[] getTextures() {
+        ArrayList<Texture> textures = new ArrayList<>();
+        for (MaterialSet set : MaterialSet.values()) {
+            textures.add(set.getBlockTexture(Prefix.Block));
+        }
+        return textures.toArray(new Texture[0]);
     }
 }

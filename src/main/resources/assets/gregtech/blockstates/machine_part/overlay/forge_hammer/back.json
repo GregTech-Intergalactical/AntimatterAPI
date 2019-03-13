@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "gregtech:machine_part/overlay/alloy_smelter/back"
+      "model": "gregtech:machine_part/overlay/forge_hammer/back"
     }
   }
 }

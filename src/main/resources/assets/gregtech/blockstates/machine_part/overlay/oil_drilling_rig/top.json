@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "gregtech:machine_part/overlay/alloy_smelter/top"
+      "model": "gregtech:machine_part/overlay/oil_drilling_rig/top"
     }
   }
 }

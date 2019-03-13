@@ -4,7 +4,7 @@ import muramasa.gregtech.api.gui.SlotData;
 import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.gui.server.ContainerMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiHatch extends GuiMachine {

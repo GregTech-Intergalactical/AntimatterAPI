@@ -1,18 +1,18 @@
 package muramasa.gregtech.proxy;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
-import muramasa.gregtech.client.render.ModelLoader;
+import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.models.ModelCable;
 import muramasa.gregtech.client.render.models.ModelMachine;
 import muramasa.gregtech.client.render.models.ModelOre;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockOres;
 import muramasa.gregtech.common.items.ItemBlockStorage;
-import muramasa.gregtech.common.utils.Ref;
 import muramasa.gregtech.loaders.ContentLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -34,7 +34,7 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
-        ModelLoaderRegistry.registerLoader(new ModelLoader());
+        ModelLoaderRegistry.registerLoader(new GTModelLoader());
     }
 
     @Override
@@ -110,12 +110,12 @@ public class ClientProxy implements IProxy {
         }
 
         ModelMachine modelMachine = new ModelMachine();
-        ModelLoader.register(new ResourceLocation(Ref.MODID, "block_machine"), modelMachine);
+        GTModelLoader.register(new ResourceLocation(Ref.MODID, "block_machine"), modelMachine);
 
         ModelOre modelOre = new ModelOre();
-        ModelLoader.register(new ResourceLocation(Ref.MODID, "block_ore"), modelOre);
+        GTModelLoader.register(new ResourceLocation(Ref.MODID, "block_ore"), modelOre);
 
         ModelCable modelCable = new ModelCable();
-        ModelLoader.register(ContentLoader.blockCable, modelCable);
+        GTModelLoader.register(ContentLoader.blockCable, modelCable);
     }
 }

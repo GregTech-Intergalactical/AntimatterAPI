@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.util;
 
-import muramasa.gregtech.common.utils.Ref;
+import muramasa.gregtech.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -99,6 +99,7 @@ public class Utils {
         return a;
     }
 
+    /** Merges two Lists of FluidStacks, ignoring max amount (Int.Max) **/
     public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
         int position, size = a.size();
         for (int i = 0; i < size; i++) {
@@ -228,55 +229,86 @@ public class Utils {
         }
     }
 
+    public static void markTileForNBTSync(TileEntity tile) {
+        tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getWorld().getBlockState(tile.getPos()), tile.getWorld().getBlockState(tile.getPos()), 3);
+    }
+
+    public static void markTileForRenderUpdate(TileEntity tile) {
+        markTileForNBTSync(tile);
+        tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+    }
+
+    public static EnumFacing rotateFacing(EnumFacing toRotate, EnumFacing rotateBy) {
+        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return toRotate;
+        /** S-W-N-E **/
+        if (rotateBy.getHorizontalIndex() < EnumFacing.NORTH.getHorizontalIndex()) {
+            //Rotate CCW
+            int dif = rotateBy.getHorizontalIndex() - EnumFacing.NORTH.getHorizontalIndex();
+//            System.out.println("Difccw: " + dif);
+            for (int i = 0; i < Math.abs(dif); i++) {
+                toRotate = toRotate.rotateYCCW();
+            }
+        } else {
+            //Rotate CW
+            int dif = EnumFacing.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
+//            System.out.println("Difcw: " + dif);
+            for (int i = 0; i < Math.abs(dif); i++) {
+                toRotate = toRotate.rotateY();
+            }
+        }
+//        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
+        return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? toRotate.getOpposite() : toRotate;
+    }
+
     //TODO replace with doRaytrace in block?
     //TODO optimize...
-    public static EnumFacing determineInteractionSide(EnumFacing side, float aX, float aY, float aZ) {
+    public static EnumFacing getInteractSide(EnumFacing side, float x, float y, float z) {
         EnumFacing backSide = side.getOpposite();
         switch (side.getIndex()) {
             case 0:
             case 1:
-                if (aX < 0.25) {
-                    if (aZ < 0.25) return backSide;
-                    if (aZ > 0.75) return backSide;
+                if (x < 0.25) {
+                    if (z < 0.25) return backSide;
+                    if (z > 0.75) return backSide;
                     return EnumFacing.WEST;
                 }
-                if (aX > 0.75) {
-                    if (aZ < 0.25) return backSide;
-                    if (aZ > 0.75) return backSide;
+                if (x > 0.75) {
+                    if (z < 0.25) return backSide;
+                    if (z > 0.75) return backSide;
                     return EnumFacing.EAST;
                 }
-                if (aZ < 0.25) return EnumFacing.NORTH;
-                if (aZ > 0.75) return EnumFacing.SOUTH;
+                if (z < 0.25) return EnumFacing.NORTH;
+                if (z > 0.75) return EnumFacing.SOUTH;
                 return side;
             case 2:
             case 3:
-                if (aX < 0.25) {
-                    if (aY < 0.25) return backSide;
-                    if (aY > 0.75) return backSide;
+                if (x < 0.25) {
+                    if (y < 0.25) return backSide;
+                    if (y > 0.75) return backSide;
                     return EnumFacing.WEST;
                 }
-                if (aX > 0.75) {
-                    if (aY < 0.25) return backSide;
-                    if (aY > 0.75) return backSide;
+                if (x > 0.75) {
+                    if (y < 0.25) return backSide;
+                    if (y > 0.75) return backSide;
                     return EnumFacing.EAST;
                 }
-                if (aY < 0.25) return EnumFacing.DOWN;
-                if (aY > 0.75) return EnumFacing.UP;
+                if (y < 0.25) return EnumFacing.DOWN;
+                if (y > 0.75) return EnumFacing.UP;
                 return side;
             case 4:
             case 5:
-                if (aZ < 0.25) {
-                    if (aY < 0.25) return backSide;
-                    if (aY > 0.75) return backSide;
+                if (z < 0.25) {
+                    if (y < 0.25) return backSide;
+                    if (y > 0.75) return backSide;
                     return EnumFacing.NORTH;
                 }
-                if (aZ > 0.75) {
-                    if (aY < 0.25) return backSide;
-                    if (aY > 0.75) return backSide;
+                if (z > 0.75) {
+                    if (y < 0.25) return backSide;
+                    if (y > 0.75) return backSide;
                     return EnumFacing.SOUTH;
                 }
-                if (aY < 0.25) return EnumFacing.DOWN;
-                if (aY > 0.75) return EnumFacing.UP;
+                if (y < 0.25) return EnumFacing.DOWN;
+                if (y > 0.75) return EnumFacing.UP;
                 return side;
         }
         return side;

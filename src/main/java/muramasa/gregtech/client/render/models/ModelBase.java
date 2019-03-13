@@ -1,6 +1,8 @@
 package muramasa.gregtech.client.render.models;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -13,7 +15,6 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -67,31 +68,29 @@ public class ModelBase implements IModel {
         return textureLookup.get(name);
     }
 
-    public void addTexture(ResourceLocation texture) {
-        textureLookup.get(name).add(texture);
+    public void addTexture(Texture texture) {
+        textureLookup.get(name).add(texture.getLoc());
     }
 
-    public void addTextures(ResourceLocation[] textures) {
-        addTextures(Arrays.asList(textures));
+    public void addTextures(Texture[] textures) {
+        for (int i = 0; i < textures.length; i++) {
+            addTexture(textures[i]);
+        }
     }
 
-    public void addTextures(Collection<ResourceLocation> textures) {
-        textureLookup.get(name).addAll(textures);
-    }
-
-    public IBakedModel texAndBake(IModel model, String[] elements, IModelState state, ResourceLocation[] textures) {
+    public IBakedModel texAndBake(IModel model, String[] elements, IModelState state, Texture[] textures) {
         return tex(model, elements, textures).bake(state, format, textureGetter);
     }
 
-    public IBakedModel texAndBake(IModel model, String[] elements, ResourceLocation[] textures) {
+    public IBakedModel texAndBake(IModel model, String[] elements, Texture[] textures) {
         return tex(model, elements, textures).bake(state, format, textureGetter);
     }
 
-    public IBakedModel texAndBake(IModel model, String element, IModelState state, ResourceLocation texture) {
+    public IBakedModel texAndBake(IModel model, String element, IModelState state, Texture texture) {
         return tex(model, element, texture).bake(state, format, textureGetter);
     }
 
-    public IBakedModel texAndBake(IModel model, String element, ResourceLocation texture) {
+    public IBakedModel texAndBake(IModel model, String element, Texture texture) {
         return tex(model, element, texture).bake(state, format, textureGetter);
     }
 
@@ -107,6 +106,14 @@ public class ModelBase implements IModel {
 //        bakedModelLookup.put(prefix + modelName, new IBakedModel[]{model});
 //    }
 
+    public static IModel load(String path) {
+        return load(new ModelResourceLocation(Ref.MODID + ":" + path));
+    }
+
+    public static IModel load(String domain, String path) {
+        return load(new ModelResourceLocation(domain + ":" + path));
+    }
+
     public static IModel load(ModelResourceLocation loc) {
         try {
             return ModelLoaderRegistry.getModel(loc);
@@ -117,16 +124,16 @@ public class ModelBase implements IModel {
         }
     }
 
-    public static IModel tex(IModel model, String[] elements, ResourceLocation[] textures) {
+    public static IModel tex(IModel model, String[] elements, Texture[] textures) {
         for (int i = 0; i < elements.length; i++) {
             model = tex(model, elements[i], textures[i]);
         }
         return model;
     }
 
-    public static IModel tex(IModel model, String element, ResourceLocation texture) {
+    public static IModel tex(IModel model, String element, Texture texture) {
         try {
-            return model.retexture(ImmutableMap.of(element, texture.toString()));
+            return model.retexture(ImmutableMap.of(element, texture.getLoc().toString()));
         } catch (Exception e) {
             System.err.println("ModelBase.tex() failed due to " + e + ":");
             e.printStackTrace();
