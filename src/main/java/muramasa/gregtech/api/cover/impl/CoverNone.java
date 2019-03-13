@@ -6,6 +6,6 @@ public class CoverNone extends Cover {
 
     @Override
     public String getName() {
-        return "cover_none";
+        return "none";
     }
 }

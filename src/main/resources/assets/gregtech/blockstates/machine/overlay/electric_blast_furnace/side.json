@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/overlay/electric_blast_furnace/side"
+    }
+  }
+}

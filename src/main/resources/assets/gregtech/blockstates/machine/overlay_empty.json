@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/overlay_empty"
+    },
+    "inventory": {
+      "model": "gregtech:machine/overlay_empty"
+    }
+  }
+}

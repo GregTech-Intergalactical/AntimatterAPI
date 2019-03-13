@@ -7,7 +7,7 @@ public class CoverFluid extends Cover {
 
     @Override
     public String getName() {
-        return "cover_fluid";
+        return "fluid";
     }
 
     @Override

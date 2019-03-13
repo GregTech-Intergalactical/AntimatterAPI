@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/overlay/large_turbine_3/back"
+    }
+  }
+}

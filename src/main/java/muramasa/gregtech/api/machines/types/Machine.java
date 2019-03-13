@@ -109,7 +109,7 @@ public class Machine implements IStringSerializable {
 
     public ModelResourceLocation getOverlayModel(TextureType side) {
 //        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name);
-        return new ModelResourceLocation(Ref.MODID + ":machine_part/overlay/" + name + "/" + side.getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getName());
     }
 
     public void addFlags(MachineFlag... flags) {

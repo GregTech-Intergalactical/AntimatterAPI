@@ -7,7 +7,7 @@ public class CoverEnergy extends Cover {
 
     @Override
     public String getName() {
-        return "cover_energy";
+        return "energy";
     }
 
     @Override

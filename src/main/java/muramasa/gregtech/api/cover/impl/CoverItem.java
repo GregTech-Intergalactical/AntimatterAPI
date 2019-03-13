@@ -8,7 +8,7 @@ public class CoverItem extends Cover {
 
     @Override
     public String getName() {
-        return "cover_item";
+        return "item";
     }
 
     @Override

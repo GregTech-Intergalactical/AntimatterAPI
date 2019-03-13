@@ -14,12 +14,12 @@ import java.util.function.Function;
 
 public class ModelCable extends ModelBase {
 
-    private static final ModelResourceLocation CABLE_BASE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_base");
-    private static final ModelResourceLocation CABLE_SINGLE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_single");
-    private static final ModelResourceLocation CABLE_LINE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_line");
-    private static final ModelResourceLocation CABLE_CORNER = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_corner");
-    private static final ModelResourceLocation CABLE_CROSS = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_cross");
-    private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(Ref.MODID + ":cable_part/cable_side");
+    private static final ModelResourceLocation CABLE_BASE = new ModelResourceLocation(Ref.MODID + ":cable/base");
+    private static final ModelResourceLocation CABLE_SINGLE = new ModelResourceLocation(Ref.MODID + ":cable/single");
+    private static final ModelResourceLocation CABLE_LINE = new ModelResourceLocation(Ref.MODID + ":cable/line");
+    private static final ModelResourceLocation CABLE_CORNER = new ModelResourceLocation(Ref.MODID + ":cable/corner");
+    private static final ModelResourceLocation CABLE_CROSS = new ModelResourceLocation(Ref.MODID + ":cable/cross");
+    private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(Ref.MODID + ":cable/side");
 
     public ModelCable() {
         super("ModelCable");

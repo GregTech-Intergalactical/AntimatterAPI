@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gregtech:machine/overlay/steam_forge_hammer/bottom"
+    }
+  }
+}
