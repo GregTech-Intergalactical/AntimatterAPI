@@ -3,6 +3,7 @@ package muramasa.gregtech.api.capability.impl;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;
@@ -44,6 +45,18 @@ public class CoverHandler implements ICoverHandler {
         Sounds.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
         Utils.markTileForRenderUpdate(getTile());
         return true;
+    }
+
+    @Override
+    public boolean onInteract(EnumFacing side, ToolType type) {
+        Cover cover = get(side);
+        if (cover.isEmpty() || !cover.onInteract(getTile(), type)) return false;
+        switch (type) {
+            case CROWBAR:
+                set(side, GregTechAPI.CoverNone);
+                return true;
+            default: return false;
+        }
     }
 
     @Override

@@ -14,22 +14,26 @@ public enum Sounds {
 
     WRENCH(Ref.MODID, "wrench"),
     DRILL(Ref.MODID, "drill"),
-    BREAK("entity.item.break"),
-    PLACE_METAL("block.metal.place"),
-    BUCKET_EMPTY("item.bucket.empty");
+    BREAK("minecraft", "entity.item.break"),
+    PLACE_METAL("minecraft", "block.metal.place"),
+    BUCKET_EMPTY("minecraft", "item.bucket.empty"),
+    HAMMER("minecraft", "block.anvil.place", 1.0f, 0.75f);
 
     private SoundEvent event;
-
-    Sounds(String loc) {
-        event = new SoundEvent(new ResourceLocation(loc));
-    }
+    private float volume = 1.0f, pitch = 1.0f;
 
     Sounds(String domain, String path) {
         event = new SoundEvent(new ResourceLocation(domain, path));
     }
 
+    Sounds(String domain, String path, float volume, float pitch) {
+        this(domain, path);
+        this.volume = volume;
+        this.pitch = pitch;
+    }
+
     public void play(World world, BlockPos pos) {
-        playSound(world, pos, event, 1.0f, 1.0f);
+        playSound(world, pos, event, volume, pitch);
     }
 
     public void play(World world, BlockPos pos, float volume, float pitch) {

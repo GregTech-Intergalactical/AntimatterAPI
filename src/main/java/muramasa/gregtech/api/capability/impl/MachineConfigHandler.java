@@ -1,28 +1,34 @@
 package muramasa.gregtech.api.capability.impl;
 
+import muramasa.gregtech.api.capability.IConfigHandler;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.util.EnumFacing;
 
-public class MachineConfigHandler extends ConfigHandler {
+public class MachineConfigHandler implements IConfigHandler {
+
+    private TileEntityMachine tile;
 
     public MachineConfigHandler(TileEntityMachine tile) {
-        super(tile);
+        this.tile = tile;
     }
 
     @Override
     public boolean onInteract(EnumFacing side, ToolType type) {
-         if (getTile() instanceof TileEntityMachine) {
-            switch (type) {
-                case WRENCH:
-                    ((TileEntityMachine) getTile()).setFacing(side);
-                    return true;
-                case CROWBAR:
-                    return super.onInteract(side, type);
-                case SCREWDRIVER:
-                    return super.onInteract(side, type);
-            }
+        switch (type) {
+            case WRENCH:
+                getTile().setFacing(side);
+                return true;
+            case HAMMER:
+                getTile().toggleDisabled();
+                return true;
+            default: return false;
         }
-        return false;
+    }
+
+    @Override
+    public TileEntityMachine getTile() {
+        if (tile == null) throw new NullPointerException("ConfigHandler cannot have a null tile");
+        return tile;
     }
 }

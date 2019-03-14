@@ -67,6 +67,7 @@ public class BlockMachine extends Block {
                 .withProperty(FACING, machine.getFacing())
                 .withProperty(TEXTURE, machine.getTextureData());
             if (getType().hasFlag(MachineFlag.COVERABLE)) {
+                if (machine.getCoverHandler() == null) return exState;
                 exState = exState.withProperty(COVER, machine.getCoverHandler().getAll());
             }
         }

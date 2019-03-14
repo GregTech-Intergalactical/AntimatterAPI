@@ -1,10 +1,7 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.capability.impl.ComponentHandler;
-import muramasa.gregtech.api.capability.impl.HatchComponentHandler;
-import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
-import muramasa.gregtech.api.capability.impl.MachineItemHandler;
+import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -15,13 +12,14 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gregtech.api.machines.MachineFlag.FLUID;
-import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
+import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class TileEntityHatch extends TileEntityMachine {
 
     private MachineItemHandler itemHandler;
     private MachineFluidHandler fluidHandler;
+    private MachineConfigHandler configHandler;
+    private MachineCoverHandler coverHandler;
     private ComponentHandler componentHandler;
 
     @Override
@@ -29,6 +27,8 @@ public class TileEntityHatch extends TileEntityMachine {
         super.onFirstTick();
         if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
         if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
+        if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
+        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
         componentHandler = new HatchComponentHandler(this);
     }
 
@@ -40,6 +40,11 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public MachineFluidHandler getFluidHandler() {
         return fluidHandler;
+    }
+
+    @Override
+    public MachineCoverHandler getCoverHandler() {
+        return coverHandler;
     }
 
     @Override
@@ -62,8 +67,12 @@ public class TileEntityHatch extends TileEntityMachine {
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
+            return side == getEnumFacing();
         } else if (capability == GTCapabilities.COMPONENT) {
+            return true;
+        } else if (capability == GTCapabilities.CONFIGURABLE) {
+            return true;
+        } else if (capability == GTCapabilities.COVERABLE) {
             return true;
         }
         return super.hasCapability(capability, side);
@@ -72,10 +81,14 @@ public class TileEntityHatch extends TileEntityMachine {
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == getEnumFacing()) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
         } else if (capability == GTCapabilities.COMPONENT) {
             return GTCapabilities.COMPONENT.cast(componentHandler);
+        } else if (capability == GTCapabilities.CONFIGURABLE) {
+            return GTCapabilities.CONFIGURABLE.cast(configHandler);
+        } else if (capability == GTCapabilities.COVERABLE) {
+            return GTCapabilities.COVERABLE.cast(coverHandler);
         }
         return super.getCapability(capability, side);
     }

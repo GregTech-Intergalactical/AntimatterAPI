@@ -1,8 +1,8 @@
 package muramasa.gregtech.api.capability;
 
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
-import muramasa.gregtech.api.capability.impl.ConfigHandler;
 import muramasa.gregtech.api.capability.impl.CoverHandler;
+import muramasa.gregtech.api.capability.impl.MachineConfigHandler;
 import muramasa.gregtech.api.capability.impl.MachineEnergyHandler;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagLong;
@@ -55,7 +55,7 @@ public class GTCapabilities {
             public void readNBT(Capability<IConfigHandler> capability, IConfigHandler instance, EnumFacing side, NBTBase nbt) {
 
             }
-        }, () -> new ConfigHandler(null));
+        }, () -> new MachineConfigHandler(null));
 
         CapabilityManager.INSTANCE.register(ICoverHandler.class, new Capability.IStorage<ICoverHandler>() {
             @Nullable

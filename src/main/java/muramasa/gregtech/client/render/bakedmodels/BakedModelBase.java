@@ -4,7 +4,6 @@ import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureMode;
 import muramasa.gregtech.client.render.BakedQuadTinted;
 import muramasa.gregtech.client.render.MatrixVertexTransformer;
-import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.models.ModelBase;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -166,7 +165,7 @@ public class BakedModelBase implements IBakedModel {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             if (quads.get(i).getTintIndex() != layer) continue;
-            quads.set(i, new BakedQuadRetextured(quads.get(i), RenderHelper.getSprite(texture.getLoc())));
+            quads.set(i, new BakedQuadRetextured(quads.get(i), texture.getSprite()));
         }
         return quads;
     }

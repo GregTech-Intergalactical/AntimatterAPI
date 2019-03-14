@@ -1,14 +1,15 @@
 package muramasa.gregtech.api.items;
 
 import com.google.common.collect.Multimap;
-import muramasa.gregtech.api.capability.IConfigHandler;
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.api.capability.IConfigHandler;
+import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.ToolHelper;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
-import muramasa.gregtech.Ref;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -92,16 +93,39 @@ public class MetaTool extends Item {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile != null && tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
+        if (tile == null) return EnumActionResult.PASS;
+        EnumActionResult result = EnumActionResult.PASS;
+        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
             EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
             IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
                 ToolType type = ToolType.get(stack);
-                if (type == null) return EnumActionResult.PASS;
-                return configHandler.onInteract(targetSide, type) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+                if (type != null && configHandler.onInteract(targetSide, type)) {
+                    if (type.getUseSound() != null) {
+                        type.getUseSound().play(world, pos);
+                        result = EnumActionResult.SUCCESS;
+                    } else {
+                        result = EnumActionResult.SUCCESS;
+                    }
+                }
             }
         }
-        return EnumActionResult.PASS;
+        if (tile.hasCapability(GTCapabilities.COVERABLE, facing)) {
+            EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
+            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
+            if (coverHandler != null) {
+                ToolType type = ToolType.get(stack);
+                if (type != null && coverHandler.onInteract(targetSide, type)) {
+                    if (type.getUseSound() != null) {
+                        type.getUseSound().play(world, pos);
+                        result = EnumActionResult.SUCCESS;
+                    } else {
+                        result = EnumActionResult.SUCCESS;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

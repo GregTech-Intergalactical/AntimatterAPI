@@ -13,14 +13,14 @@ import muramasa.gregtech.common.blocks.BlockMachine;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
+import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class MultiMachine extends Machine {
 
     public MultiMachine(String name, Class tileClass, MachineFlag... extraFlags) {
         super(name, new BlockMachine(name), tileClass);
         setTiers(Tier.getMulti());
-        addFlags(MULTI);
+        addFlags(MULTI, CONFIGURABLE, COVERABLE);
         addFlags(extraFlags);
         addRecipeMap();
         addGUI(GregTech.INSTANCE, Ref.MULTI_MACHINE_ID);

@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.capability;
 
 import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.enums.ToolType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -11,6 +12,8 @@ public interface ICoverHandler {
     boolean set(EnumFacing side, Cover cover);
 
     Cover get(EnumFacing side);
+
+    boolean onInteract(EnumFacing side, ToolType type);
 
     Cover[] getAll();
 
