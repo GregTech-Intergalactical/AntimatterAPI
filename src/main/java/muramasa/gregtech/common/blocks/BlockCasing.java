@@ -32,7 +32,7 @@ public class BlockCasing extends Block {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("casing_" + type.getName());
         setRegistryName("casing_" + type.getName());
-        setCreativeTab(Ref.TAB_MACHINES);
+        setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
         BLOCK_LOOKUP.put(type.getName(), this);

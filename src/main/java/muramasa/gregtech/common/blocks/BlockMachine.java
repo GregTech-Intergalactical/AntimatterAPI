@@ -82,7 +82,7 @@ public class BlockMachine extends Block {
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
         Machine type = getType();
-//        if (type.getName().equals(Machines.INVALID.getName())) return;
+        if (type == Machines.INVALID) return;
         for (Tier tier : type.getTiers()) {
             items.add(Machines.get(type, tier).asItemStack());
         }
@@ -95,8 +95,8 @@ public class BlockMachine extends Block {
             return (TileEntityMachine) getType().getTileClass().newInstance();
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
+            throw new IllegalArgumentException("Was not able to instantiate a TileEntity class for: " + type);
         }
-        return null;
     }
 
     @Override
@@ -162,23 +162,7 @@ public class BlockMachine extends Block {
             if (index == 0) {
                 TileEntityMachine tile = (TileEntityMachine) Utils.getTile(world, pos);
                 if (tile != null && tile.getTextureData().getTint() > -1) return tile.getTextureData().getTint();
-            } /*else if (index == CoverTintable.COVER_TINT_INDEX) {
-
-
-
-                IExtendedBlockState exState = (IExtendedBlockState) state;
-                if (BakedModelBase.hasUnlistedProperty(exState, GTProperties.COVER)) {
-                    Cover[] covers  = exState.getValue(GTProperties.COVER);
-                    for (int i = 0; i < 6; i++) {
-
-                    }
-                    for (Cover cover : exState.getValue(GTProperties.COVER)) {
-                        if (cover instanceof CoverTintable) {
-                            return ((CoverTintable) cover).getRGB();
-                        }
-                    }
-                }
-            }*/
+            }
             return -1;
         }
     }

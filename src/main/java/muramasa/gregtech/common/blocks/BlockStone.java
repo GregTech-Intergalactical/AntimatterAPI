@@ -26,7 +26,7 @@ public class BlockStone extends Block {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("stone_" + type.getName());
         setRegistryName("stone_" + type.getName());
-        setCreativeTab(Ref.TAB_MACHINES);
+        setCreativeTab(Ref.TAB_BLOCKS);
         this.type = type;
         BLOCK_LOOKUP.put(type.getName(), this);
     }

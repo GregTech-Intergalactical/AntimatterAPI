@@ -55,6 +55,14 @@ public class TileEntityHatch extends TileEntityMachine {
     }
 
     @Override
+    public boolean setFacing(EnumFacing side) {
+        if (facing == side.getIndex()) return false;
+        facing = side.getIndex();
+        markForRenderUpdate();
+        return true;
+    }
+
+    @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
         if (!componentHandler.hasLinkedController()) return data;

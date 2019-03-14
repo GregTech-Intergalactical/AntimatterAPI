@@ -32,6 +32,7 @@ public enum ToolType implements IStringSerializable {
     PLUNGER("Plunger", "", null, 0, 1.25f, 1.0f, 0.25f, 100, 200, 800),
     DRILL("Electric Drill", "", Sounds.DRILL, 1, 3.0f, 9.0f, 4.0f, 800, 3200, 12800),
     CHAINSAW("Electric Chainsaw", "", null, 1, 4.0f, 4.0f, 4.0f, 800, 3200, 12800),
+    //TODO merge powered versions of tools (add isPowered())
     WRENCH_P("Electric Wrench", "", null, 1, 2.0f, 4.0f, 4.0f, 800, 3200, 12800),
     JACKHAMMER("Electric Jackhammer", "", null, 1, 3.0f, 12.0f, 2.0f, 400, 800, 3200),
     SCREWDRIVER_P("Electric Screwdriver", "", null, 0, 1.0f, 1.0f, 1.0f, 100, 200, 200),

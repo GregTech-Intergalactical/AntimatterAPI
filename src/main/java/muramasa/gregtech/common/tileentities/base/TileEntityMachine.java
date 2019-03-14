@@ -18,8 +18,9 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     private Machine type;
     private Tier tier;
-    private int facing, tint = -1;
     private MachineState machineState = MachineState.IDLE;
+
+    protected int facing, tint = -1;
 
     /** Data from NBT **/
     protected NBTTagCompound itemData, fluidData;
@@ -94,15 +95,12 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     /** Setters **/
-    public void setFacing(EnumFacing side) {
-        if (side.getAxis() != EnumFacing.Axis.Y) {
-            setFacing(side.getIndex());
-        }
-    }
-
-    public void setFacing(int newFacing) { //Rotate the front to face a given direction
-        facing = newFacing;
+    public boolean setFacing(EnumFacing side) { //Rotate the front to face a given direction
+        if (side.getAxis() == EnumFacing.Axis.Y) return false;
+        if (facing == side.getIndex()) return false;
+        facing = side.getIndex();
         markForRenderUpdate();
+        return true;
     }
 
     public void toggleDisabled() {
@@ -125,6 +123,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         );
     }
 
+    //TODO move to TextureData
     public int getTint() {
         return tint;
     }
