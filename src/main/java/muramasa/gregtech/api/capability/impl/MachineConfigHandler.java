@@ -17,8 +17,7 @@ public class MachineConfigHandler implements IConfigHandler {
     public boolean onInteract(EnumFacing side, ToolType type) {
         switch (type) {
             case WRENCH:
-                getTile().setFacing(side);
-                return true;
+                return getTile().setFacing(side);
             case HAMMER:
                 getTile().toggleDisabled();
                 return true;

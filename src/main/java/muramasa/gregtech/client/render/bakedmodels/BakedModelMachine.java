@@ -50,7 +50,7 @@ public class BakedModelMachine extends BakedModelBase {
         }
 
         tex(quads, data.getBaseMode(), data.getBase(), 0);
-        if (facing > 2) quads = trans(quads, facing);
+        quads = trans(quads, facing);
 
         return quads;
     }

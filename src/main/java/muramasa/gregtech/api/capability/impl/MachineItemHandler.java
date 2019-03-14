@@ -28,7 +28,7 @@ public class MachineItemHandler {
         outputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_OUT)) {
             @Override
             protected void onContentsChanged(int slot) {
-                //TODO maybe differentiate a input/output slot update?
+                //TODO maybe differentiate a input/output slot update? YES DO THIS
                 tile.onContentsChanged(0, slot);
             }
         };

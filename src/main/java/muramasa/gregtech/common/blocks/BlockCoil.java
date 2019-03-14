@@ -32,7 +32,7 @@ public class BlockCoil extends Block {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("coil_" + type.getName());
         setRegistryName("coil_" + type.getName());
-        setCreativeTab(Ref.TAB_MACHINES);
+        setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
         BLOCK_LOOKUP.put(type.getName(), this);
