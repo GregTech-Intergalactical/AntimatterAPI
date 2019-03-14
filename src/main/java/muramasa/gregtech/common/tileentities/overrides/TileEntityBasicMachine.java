@@ -37,7 +37,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
         if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
         if (getType().hasFlag(ENERGY)) energyStorage = new MachineEnergyHandler(this);
-        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this, GregTechAPI.CoverPlate, GregTechAPI.CoverItem, GregTechAPI.CoverFluid, GregTechAPI.CoverEnergy);
+        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
         if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
     }
 

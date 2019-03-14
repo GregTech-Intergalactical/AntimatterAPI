@@ -22,6 +22,7 @@ public class RenderHelper {
 
     private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(128).order(ByteOrder.nativeOrder()).asDoubleBuffer();
 
+
     public static Matrix4f[] sideToMatrixRotation = new Matrix4f[] {
         new Matrix4f(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f),
         new Matrix4f(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
@@ -43,9 +44,10 @@ public class RenderHelper {
         return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
     }
 
-    public static TextureAtlasSprite getSprite(ResourceLocation loc) {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
-    }
+//    public static TextureAtlasSprite getSprite(Texture texture) {
+//        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(texture.getLoc().toString());
+//        return sprite != null ? sprite : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(ERROR.getLoc().toString());
+//    }
 
     public static void drawFluid(Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
         if (stack == null) return;

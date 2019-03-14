@@ -105,6 +105,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         markForRenderUpdate();
     }
 
+    public void toggleDisabled() {
+        setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
+    }
+
     public void setMachineState(MachineState newState) {
         machineState = newState;
     }

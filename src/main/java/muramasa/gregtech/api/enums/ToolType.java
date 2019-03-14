@@ -17,11 +17,11 @@ public enum ToolType implements IStringSerializable {
     AXE("Axe", "", null, 0, 3.0f, 2.0f, 1.0f, 50, 200, 100),
     HOE("Hoe", "", null, 0, 1.75f, 1.0f, 1.0f, 50, 200, 100),
     SAW("Saw", "", null, 0, 1.75f, 1.0f, 1.0f, 50, 200, 200),
-    HAMMER("Hammer", "", null, 0, 3.0f, 0.75f, 1.0f, 50, 200, 400),
-    WRENCH("Wrench", "", null, 0, 3.0f, 1.0f, 1.0f, 50, 200, 800),
+    HAMMER("Hammer", "", Sounds.HAMMER, 0, 3.0f, 0.75f, 1.0f, 50, 200, 400),
+    WRENCH("Wrench", "", Sounds.WRENCH, 0, 3.0f, 1.0f, 1.0f, 50, 200, 800),
     FILE("File", "", null, 0, 1.5f, 1.0f, 1.0f, 50, 200, 400),
-    SCREWDRIVER("Screwdriver", "Adjusts Covers and Machines", null, 0, 1.5f, 1.0f, 1.0f, 200, 200, 400),
-    CROWBAR("Crowbar", "Removes Covers", null, 0, 2.0f, 1.0f, 1.0f, 50, 200, 100),
+    SCREWDRIVER("Screwdriver", "Adjusts Covers and Machines", Sounds.WRENCH, 0, 1.5f, 1.0f, 1.0f, 200, 200, 400),
+    CROWBAR("Crowbar", "Removes Covers", Sounds.BREAK, 0, 2.0f, 1.0f, 1.0f, 50, 200, 100),
     MORTAR("Mortar", "Grinds Ingots into Dust", null, 0, 2.0f, 1.0f, 1.0f, 50, 200, 400),
     WIRE_CUTTER("Wire Cutter", "", null, 0, 1.25f, 1.0f, 1.0f, 100, 200, 400),
     SCOOP("Scoop", "Harvests Bees from Hives", null, 0, 1.0f, 1.0f, 1.0f, 200, 200, 200),
@@ -67,6 +67,10 @@ public enum ToolType implements IStringSerializable {
 
     public String getTooltip() {
         return tooltip;
+    }
+
+    public Sounds getUseSound() {
+        return useSound;
     }
 
     public int getBaseQuality() {

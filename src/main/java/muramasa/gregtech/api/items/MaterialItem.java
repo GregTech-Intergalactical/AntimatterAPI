@@ -1,15 +1,14 @@
 package muramasa.gregtech.api.items;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
-import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
-import muramasa.gregtech.Ref;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;

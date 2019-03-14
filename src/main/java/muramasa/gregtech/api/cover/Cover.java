@@ -39,6 +39,7 @@ public abstract class Cover {
     }
 
     public boolean onInteract(TileEntity tile, ToolType type) {
+        System.out.println("Interacted on " + getName() + " cover with " + type.getName());
         return true;
     }
 
