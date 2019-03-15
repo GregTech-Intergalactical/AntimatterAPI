@@ -15,6 +15,7 @@ public class BlockHandler {
     @SubscribeEvent
     public void onBlockInteract(PlayerInteractEvent.RightClickBlock e) {
         if (/*e.getWorld().isRemote || */e.getHand() == EnumHand.OFF_HAND) return;
+        //TODO fix
         if (e.getEntityPlayer().getHeldItem(e.getHand()) != ItemStack.EMPTY) return;
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
         if (tile == null) return;
