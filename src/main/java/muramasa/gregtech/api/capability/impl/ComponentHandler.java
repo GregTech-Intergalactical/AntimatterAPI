@@ -9,28 +9,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ComponentHandler implements IComponentHandler {
 
     protected String componentId;
     protected TileEntityBase componentTile;
-    protected ArrayList<BlockPos> controllers = new ArrayList<>();
+    protected List<BlockPos> controllers = new ArrayList<>();
 
     public ComponentHandler(String componentId, TileEntityBase componentTile) {
         this.componentId = componentId;
         this.componentTile = componentTile;
-    }
-
-    public void notifyOfRemoval() {
-        //TODO
-        if (controllers.size() > 0) {
-            for (int i = 0; i < controllers.size(); i++) {
-                TileEntity controller = componentTile.getWorld().getTileEntity(controllers.get(i));
-                if (controller != null && controller instanceof TileEntityMultiMachine) {
-                    ((TileEntityMultiMachine) controller).onComponentRemoved();
-                }
-            }
-        }
     }
 
     @Override
@@ -44,7 +33,7 @@ public class ComponentHandler implements IComponentHandler {
     }
 
     @Override
-    public ArrayList<BlockPos> getLinkedControllers() {
+    public List<BlockPos> getLinkedControllers() {
         return controllers;
     }
 
@@ -80,5 +69,18 @@ public class ComponentHandler implements IComponentHandler {
             if (tile instanceof TileEntityMultiMachine) return (TileEntityMultiMachine) tile;
         }
         return null;
+    }
+
+    @Override
+    public void onComponentRemoved() {
+        if (controllers.size() > 0) {
+            int size = controllers.size();
+            for (int i = 0; i < size; i++) {
+                TileEntity tile = Utils.getTile(componentTile.getWorld(), controllers.get(i));
+                if (tile instanceof TileEntityMultiMachine) {
+                    ((TileEntityMultiMachine) tile).onComponentRemoved();
+                }
+            }
+        }
     }
 }

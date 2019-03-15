@@ -5,7 +5,7 @@ import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IComponentHandler {
 
@@ -13,7 +13,7 @@ public interface IComponentHandler {
 
     TileEntity getTile();
 
-    ArrayList<BlockPos> getLinkedControllers();
+    List<BlockPos> getLinkedControllers();
 
     MachineItemHandler getItemHandler();
 
@@ -24,4 +24,6 @@ public interface IComponentHandler {
     boolean hasLinkedController();
 
     TileEntityMultiMachine getFirstController();
+
+    void onComponentRemoved();
 }

@@ -14,13 +14,13 @@ import javax.annotation.Nullable;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
 
-public class TileEntityHatch extends TileEntityMachine {
+public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     private MachineItemHandler itemHandler;
     private MachineFluidHandler fluidHandler;
     private MachineConfigHandler configHandler;
     private MachineCoverHandler coverHandler;
-    private ComponentHandler componentHandler;
+    private HatchComponentHandler componentHandler;
 
     @Override
     public void onFirstTick() {
@@ -48,6 +48,11 @@ public class TileEntityHatch extends TileEntityMachine {
     }
 
     @Override
+    public ComponentHandler getComponentHandler() {
+        return componentHandler;
+    }
+
+    @Override
     public void onContentsChanged(int type, int slot) {
         if (type == 2) {
             //TODO handle cells
@@ -66,6 +71,7 @@ public class TileEntityHatch extends TileEntityMachine {
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
         if (!componentHandler.hasLinkedController()) return data;
+        System.out.println(componentHandler.getLinkedControllers().size());
         TileEntityMultiMachine tile = componentHandler.getFirstController();
         if (tile == null) return data;
         data.setBase(tile.getType().getBaseTextures(Tier.MULTI));

@@ -5,6 +5,7 @@ import muramasa.gregtech.api.enums.ToolType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 public interface ICoverHandler {
 
@@ -14,7 +15,7 @@ public interface ICoverHandler {
 
     Cover get(EnumFacing side);
 
-    boolean onInteract(EntityPlayer player, EnumFacing side, ToolType type);
+    boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type);
 
     Cover[] getAll();
 

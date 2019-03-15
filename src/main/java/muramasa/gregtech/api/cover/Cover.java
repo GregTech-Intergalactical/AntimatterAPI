@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -41,7 +42,8 @@ public abstract class Cover {
         return this;
     }
 
-    public boolean onInteract(EntityPlayer player, TileEntity tile, EnumFacing side, @Nullable ToolType type) {
+    /** Fires once per Side **/
+    public boolean onInteract(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable ToolType type) {
         if (type == null) {
             System.out.println("Interacted on " + getName() + " with MainHand");
         } else {

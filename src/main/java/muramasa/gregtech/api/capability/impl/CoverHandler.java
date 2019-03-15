@@ -9,6 +9,7 @@ import muramasa.gregtech.api.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import java.util.ArrayList;
 
@@ -51,9 +52,10 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean onInteract(EntityPlayer player, EnumFacing side, ToolType type) {
+    public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
         Cover cover = get(side);
-        if (cover.isEmpty() || !cover.onInteract(player, getTile(), side, type)) return false;
+        if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
+        if (type == null) return false;
         switch (type) {
             case CROWBAR:
                 set(side, GregTechAPI.CoverNone);

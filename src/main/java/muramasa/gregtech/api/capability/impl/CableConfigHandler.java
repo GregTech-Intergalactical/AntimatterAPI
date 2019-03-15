@@ -5,6 +5,7 @@ import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 public class CableConfigHandler implements IConfigHandler {
 
@@ -15,7 +16,7 @@ public class CableConfigHandler implements IConfigHandler {
     }
 
     @Override
-    public boolean onInteract(EntityPlayer player, EnumFacing side, ToolType type) {
+    public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
         if (type == null) return false;
         switch (type) {
             case WRENCH:

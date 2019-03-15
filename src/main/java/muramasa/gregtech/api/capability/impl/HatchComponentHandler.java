@@ -13,11 +13,15 @@ public class HatchComponentHandler extends ComponentHandler {
     public void linkController(TileEntityMultiMachine controllerTile) {
         super.linkController(controllerTile);
         getTile().markForRenderUpdate();
+        getTile().markForNBTSync();
+        getTile().markDirty();
     }
 
     @Override
     public void unlinkController(TileEntityMultiMachine controllerTile) {
         super.unlinkController(controllerTile);
         getTile().markForRenderUpdate();
+        getTile().markForNBTSync();
+        getTile().markDirty();
     }
 }
