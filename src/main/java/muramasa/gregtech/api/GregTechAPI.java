@@ -41,6 +41,7 @@ public class GregTechAPI {
     public static Cover CoverItem;
     public static Cover CoverFluid;
     public static Cover CoverEnergy;
+    public static Cover CoverScreen;
 
     /**
      * Registers a cover behaviour. This must be done during preInit.

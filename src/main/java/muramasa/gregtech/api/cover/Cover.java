@@ -6,9 +6,12 @@ import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class Cover {
@@ -38,8 +41,12 @@ public abstract class Cover {
         return this;
     }
 
-    public boolean onInteract(TileEntity tile, ToolType type) {
-        System.out.println("Interacted on " + getName() + " cover with " + type.getName());
+    public boolean onInteract(EntityPlayer player, TileEntity tile, EnumFacing side, @Nullable ToolType type) {
+        if (type == null) {
+            System.out.println("Interacted on " + getName() + " with MainHand");
+        } else {
+            System.out.println("Interacted on " + getName() + " cover with " + type.getName());
+        }
         return true;
     }
 

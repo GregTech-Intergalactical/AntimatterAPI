@@ -7,6 +7,7 @@ import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.MachineState;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureType;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
 import muramasa.gregtech.client.render.bakedmodels.BakedModelMachine;
@@ -19,6 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -28,17 +30,6 @@ public class ModelMachine extends ModelBase {
 
     public ModelMachine() {
         super("ModelMachine");
-        addTextures(Tier.getTextures(Tier.getAllElectric()));
-        addTextures(Tier.getTextures(Tier.getSteam()));
-        for (Machine type : getTypes(BASIC, HATCH, MULTI)) {
-            addTextures(type.getTextures());
-            if (type.hasFlag(MULTI)) addTextures(type.getBaseTextures(Tier.MULTI));
-        }
-        addTextures(Machines.INVALID.getTextures());
-        for (Cover cover : GregTechAPI.getRegisteredCovers()) {
-            if (cover.isEmpty()) continue;
-            addTextures(cover.getTextures());
-        }
     }
 
     @Override
@@ -84,5 +75,36 @@ public class ModelMachine extends ModelBase {
         }
 
         return Ref.BASIC_MACHINE_MODELS ? new BakedModelMachine() : new BakedModelMachine();
+    }
+
+    @Override
+    public Collection<ResourceLocation> getTextures() {
+        ArrayList<ResourceLocation> locations = new ArrayList<>();
+        for (Tier tier : Tier.getAllElectric()) {
+            locations.add(tier.getBaseTexture().getLoc());
+        }
+        for (Tier tier : Tier.getSteam()) {
+            locations.add(tier.getBaseTexture().getLoc());
+        }
+        for (Machine type : getTypes(BASIC, HATCH, MULTI)) {
+            for (Texture texture : type.getTextures()) {
+                locations.add(texture.getLoc());
+            }
+            if (type.hasFlag(MULTI)) {
+                for (Texture texture : type.getBaseTextures(Tier.MULTI)) {
+                    locations.add(texture.getLoc());
+                }
+            }
+        }
+        for (Texture texture : Machines.INVALID.getTextures()) {
+            locations.add(texture.getLoc());
+        }
+        for (Cover cover : GregTechAPI.getRegisteredCovers()) {
+            if (cover.isEmpty()) continue;
+            for (Texture texture : cover.getTextures()) {
+                locations.add(texture.getLoc());
+            }
+        }
+        return locations;
     }
 }

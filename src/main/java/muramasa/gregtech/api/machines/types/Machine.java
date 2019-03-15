@@ -22,6 +22,7 @@ import net.minecraft.util.IStringSerializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static muramasa.gregtech.api.machines.MachineFlag.RECIPE;
 
@@ -78,11 +79,11 @@ public class Machine implements IStringSerializable {
         return recipeMap;
     }
 
-    public Texture[] getTextures() {
+    public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE)));
-        return textures.toArray(new Texture[0]);
+        return textures;
     }
 
     public Texture[] getBaseTextures(Tier tier) {

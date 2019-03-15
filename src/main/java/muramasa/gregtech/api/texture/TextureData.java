@@ -8,7 +8,7 @@ public class TextureData {
     private Texture[] base, overlay;
     private int tint = -1;
 
-    public TextureData(Texture[] base) {
+    public TextureData(Texture... base) {
         this(base, new Texture[0]);
     }
 

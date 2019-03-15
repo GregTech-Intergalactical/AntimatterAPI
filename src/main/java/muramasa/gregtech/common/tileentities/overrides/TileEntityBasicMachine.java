@@ -194,7 +194,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
         } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
-            return side == null || (!coverHandler.get(side).isEmpty());
+            return side == null || !coverHandler.get(side).isEmpty();
         } else if (getType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }

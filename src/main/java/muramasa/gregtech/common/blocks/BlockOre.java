@@ -3,10 +3,13 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.api.properties.GTProperties;
+import muramasa.gregtech.api.materials.MaterialSet;
+import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.api.texture.Texture;
+import muramasa.gregtech.api.texture.TextureData;
+import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockStateContainer;
+import muramasa.gregtech.client.render.models.ModelBasic;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -20,18 +23,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BlockOre extends Block /*implements IBakedBlock*/ {
+public class BlockOre extends BlockBaked {
 
-    private static LinkedHashMap<String, BlockOre> BLOCK_LOOKUP = new LinkedHashMap<>();
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
+    private static ModelBasic model;
 
     private Material material;
     private StoneType type;
@@ -43,22 +45,10 @@ public class BlockOre extends Block /*implements IBakedBlock*/ {
         setCreativeTab(Ref.TAB_BLOCKS);
         this.material = material;
         this.type = type;
-        BLOCK_LOOKUP.put(type.getName() + material.getName(), this);
     }
 
     public Material getMaterial() {
         return material;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(GTProperties.SET, GTProperties.STONE).build();
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(GTProperties.STONE, type.getInternalId()).withProperty(GTProperties.SET, material.getSet().ordinal());
     }
 
     @Override
@@ -94,32 +84,37 @@ public class BlockOre extends Block /*implements IBakedBlock*/ {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_ore", "inventory"));
         ModelLoader.setCustomStateMapper(this, stateMapRedirect);
-//        GTModelLoader.register(this, new ModelBasic("ModelOre", this));
+        if (model == null) model = new ModelBasic("block_ore", this);
+        GTModelLoader.register("block_ore", model);
     }
 
-//    @Override
-//    public ModelResourceLocation getModel() {
-//        return new ModelResourceLocation(Ref.MODID, "block_ore_base");
-//    }
-//
-//    @Override
-//    public TextureData getTextureData() {
-//        return new TextureData(
-//            new Texture[] {
-//                type.getTexture()
-//            },
-//            new Texture[] {
-//                material.getSet().getBlockTexture(Prefix.Ore)
-//            }
-//        );
-//    }
-
-    public static BlockOre get(StoneType type, Material material) {
-        return BLOCK_LOOKUP.get(type.getName() + material.getName());
+    @Override
+    public ModelResourceLocation getModel() {
+        return new ModelResourceLocation(Ref.MODID + ":ore");
     }
 
-    public static Collection<BlockOre> getAll() {
-        return BLOCK_LOOKUP.values();
+    @Override
+    public TextureData getBlockData() {
+        return new TextureData(
+            new Texture[] {
+                type.getTexture()
+            },
+            new Texture[] {
+                material.getSet().getBlockTexture(Prefix.Ore)
+            }
+        );
+    }
+
+    @Override
+    public List<Texture> getTextures() {
+        ArrayList<Texture> textures = new ArrayList<>();
+        for (StoneType type : StoneType.getAll()) {
+            textures.add(type.getTexture());
+        }
+        for (MaterialSet set : MaterialSet.values()) {
+            textures.add(set.getBlockTexture(Prefix.Ore));
+        }
+        return textures;
     }
 
     public static class ColorHandler implements IBlockColor {

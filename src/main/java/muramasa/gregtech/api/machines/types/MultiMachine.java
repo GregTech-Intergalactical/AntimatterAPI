@@ -9,9 +9,9 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.common.blocks.BlockMachine;
+import scala.actors.threadpool.Arrays;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import static muramasa.gregtech.api.machines.MachineFlag.*;
 
@@ -32,11 +32,10 @@ public class MultiMachine extends Machine {
     }
 
     @Override
-    public Texture[] getTextures() {
-        ArrayList<Texture> textures = new ArrayList<>();
-        textures.addAll(Arrays.asList(super.getTextures()));
+    public List<Texture> getTextures() {
+        List<Texture> textures = super.getTextures();
         textures.addAll(Arrays.asList(getBaseTextures(Tier.MULTI)));
-        return textures.toArray(new Texture[0]);
+        return textures;
     }
 
     @Override

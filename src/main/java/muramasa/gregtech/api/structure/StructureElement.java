@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.structure;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.capability.IComponent;
+import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -45,7 +45,7 @@ public class StructureElement {
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
         TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBP());
         if (tile != null && tile.hasCapability(GTCapabilities.COMPONENT, null)) {
-            IComponent component = tile.getCapability(GTCapabilities.COMPONENT, null);
+            IComponentHandler component = tile.getCapability(GTCapabilities.COMPONENT, null);
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
                     if (testComponent(component)) {
@@ -63,7 +63,7 @@ public class StructureElement {
         return false;
     }
 
-    public boolean testComponent(IComponent component) {
+    public boolean testComponent(IComponentHandler component) {
         return true;
     }
 

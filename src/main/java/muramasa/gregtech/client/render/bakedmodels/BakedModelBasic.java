@@ -1,6 +1,7 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.api.properties.GTProperties;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.overrides.ItemOverrideBasic;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -19,19 +20,23 @@ public class BakedModelBasic extends BakedModelBase {
     protected IBakedModel bakedModel;
     protected ItemOverrideBasic itemOverride;
 
-    public BakedModelBasic(IBakedModel bakedModel) {
+    public BakedModelBasic(IBakedModel bakedModel, ItemOverrideBasic itemOverride) {
         this.bakedModel = bakedModel;
-        this.itemOverride = new ItemOverrideBasic(bakedModel);
+        this.itemOverride = itemOverride != null ? itemOverride : new ItemOverrideBasic(bakedModel);
     }
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         if (!(state instanceof IExtendedBlockState) || side != null) return Collections.emptyList();
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        List<BakedQuad> quads = new LinkedList<>();
+        List<BakedQuad> quads = new LinkedList<>(bakedModel.getQuads(state, null, rand));
 
-        if (hasUnlistedProperty(exState, GTProperties.TEXTURE)) {
-            quads.addAll(bakedModel.getQuads(state, null, rand));
+        TextureData data = exState.getValue(GTProperties.TEXTURE);
+        if (data != null) {
+            tex(quads, data.getBaseMode(), data.getBase(), 0);
+            if (data.hasOverlays()) {
+                tex(quads, data.getOverlayMode(), data.getOverlay(), 1);
+            }
         }
 
         return quads;

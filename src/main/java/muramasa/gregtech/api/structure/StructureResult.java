@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.structure;
 
-import muramasa.gregtech.api.capability.IComponent;
+import muramasa.gregtech.api.capability.IComponentHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ public class StructureResult {
     private boolean hasError;
     private String error = "";
 
-    private HashMap<String, ArrayList<IComponent>> components = new HashMap<>();
+    private HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
 
     public StructureResult(Structure structure) {
         this.structure = structure;
@@ -27,7 +27,7 @@ public class StructureResult {
         return "[Structure Debug] " + error;
     }
 
-    public void addComponent(String elementName, IComponent component) {
+    public void addComponent(String elementName, IComponentHandler component) {
         if (!components.containsKey(component.getId())) {
             components.put(component.getId(), new ArrayList<>());
         }
@@ -39,7 +39,7 @@ public class StructureResult {
 //        components.get(elementName).get(component);
     }
 
-    public HashMap<String, ArrayList<IComponent>> getComponents() {
+    public HashMap<String, ArrayList<IComponentHandler>> getComponents() {
         return components;
     }
 

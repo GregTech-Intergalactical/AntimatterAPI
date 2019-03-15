@@ -1,9 +1,9 @@
 package muramasa.gregtech.common.blocks;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -20,12 +20,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 
 public class BlockStorage extends Block {
-
-    private static LinkedHashMap<String, BlockStorage> BLOCK_LOOKUP = new LinkedHashMap<>();
 
     private Material material;
 
@@ -35,7 +31,6 @@ public class BlockStorage extends Block {
         setRegistryName("block_" + material.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
         this.material = material;
-        BLOCK_LOOKUP.put(material.getName(), this);
     }
 
     @Override
@@ -64,14 +59,6 @@ public class BlockStorage extends Block {
 
     public Material getMaterial() {
         return material;
-    }
-
-    public static BlockStorage get(Material material) {
-        return BLOCK_LOOKUP.get(material.getName());
-    }
-
-    public static Collection<BlockStorage> getAll() {
-        return BLOCK_LOOKUP.values();
     }
 
     public static class ColorHandler implements IBlockColor {

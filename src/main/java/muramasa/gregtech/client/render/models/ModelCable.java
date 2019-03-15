@@ -6,13 +6,22 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.function.Function;
 
 public class ModelCable extends ModelBase {
+
+    public static final TRSRTransformation NORTH = TRSRTransformation.from(EnumFacing.SOUTH);
+    public static final TRSRTransformation SOUTH = TRSRTransformation.from(EnumFacing.NORTH);
+    public static final TRSRTransformation EAST = TRSRTransformation.from(EnumFacing.WEST);
+    public static final TRSRTransformation WEST = TRSRTransformation.from(EnumFacing.EAST);
+    public static final TRSRTransformation DOWN = TRSRTransformation.from(EnumFacing.UP);
+    public static final TRSRTransformation UP = TRSRTransformation.from(EnumFacing.DOWN);
 
     private static final ModelResourceLocation CABLE_BASE = new ModelResourceLocation(Ref.MODID + ":cable/base");
     private static final ModelResourceLocation CABLE_SINGLE = new ModelResourceLocation(Ref.MODID + ":cable/single");

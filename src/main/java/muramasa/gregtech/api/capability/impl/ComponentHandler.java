@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.capability.impl;
 
-import muramasa.gregtech.api.capability.IComponent;
+import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 
-public class ComponentHandler implements IComponent {
+public class ComponentHandler implements IComponentHandler {
 
     protected String componentId;
     protected TileEntityBase componentTile;

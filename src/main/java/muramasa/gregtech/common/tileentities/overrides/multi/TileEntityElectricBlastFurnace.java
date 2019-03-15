@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.tileentities.overrides.multi;
 
-import muramasa.gregtech.api.capability.IComponent;
+import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 
@@ -20,8 +20,8 @@ public class TileEntityElectricBlastFurnace extends TileEntityMultiMachine {
     @Override
     public void onValidStructure() {
         heatingCapacity = 0;
-        for (Map.Entry<String, ArrayList<IComponent>> entry : components.entrySet()) {
-            for (IComponent component : entry.getValue()) {
+        for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
+            for (IComponentHandler component : entry.getValue()) {
                 if (component.getTile() instanceof TileEntityCoil) {
                     heatingCapacity += ((TileEntityCoil) component.getTile()).getHeatingCapacity();
                 }

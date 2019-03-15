@@ -99,7 +99,7 @@ public class BakedModelBase implements IBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return ModelBase.missingBaked.getParticleTexture();
+        return ModelBase.MISSING.getParticleTexture();
     }
 
     /** Helper Methods **/

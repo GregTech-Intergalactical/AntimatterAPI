@@ -4,6 +4,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
@@ -11,6 +12,7 @@ import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.TileEntityItemFluidMachine;
+import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,7 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -108,6 +113,8 @@ public class StandardItem extends Item {
                         for (Cover c : GregTechAPI.getRegisteredCovers()) {
                             System.out.println(c.getName() + " - " + c.getInternalId());
                         }
+
+                        System.out.println(GregTechRegistry.getStorage(Materials.Gold));
 
 //                        Utils.offset(side, ((TileEntityMachine) tile).getEnumFacing());
 
