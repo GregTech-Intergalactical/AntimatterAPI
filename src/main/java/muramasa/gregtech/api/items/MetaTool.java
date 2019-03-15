@@ -100,7 +100,7 @@ public class MetaTool extends Item {
             IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
                 ToolType type = ToolType.get(stack);
-                if (type != null && configHandler.onInteract(targetSide, type)) {
+                if (type != null && configHandler.onInteract(player, targetSide, type)) {
                     if (type.getUseSound() != null) {
                         type.getUseSound().play(world, pos);
                         result = EnumActionResult.SUCCESS;
@@ -115,7 +115,7 @@ public class MetaTool extends Item {
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
             if (coverHandler != null) {
                 ToolType type = ToolType.get(stack);
-                if (type != null && coverHandler.onInteract(targetSide, type)) {
+                if (type != null && coverHandler.onInteract(player, targetSide, type)) {
                     if (type.getUseSound() != null) {
                         type.getUseSound().play(world, pos);
                         result = EnumActionResult.SUCCESS;

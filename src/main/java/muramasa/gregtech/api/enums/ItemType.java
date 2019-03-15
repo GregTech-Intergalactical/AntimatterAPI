@@ -25,6 +25,7 @@ public class ItemType implements IStringSerializable {
     public static ItemType ItemPort = new ItemType("item_port", "Can be placed on machines as a cover");
     public static ItemType FluidPort = new ItemType("fluid_port", "Can be placed on machines as a cover");
     public static ItemType EnergyPort = new ItemType("energy_port", "Can be placed on machines as a cover");
+    public static ItemType Screen = new ItemType("screen", "Can be placed on machines as a cover");
 
     public static ItemType EmptyShape = new ItemType("empty_shape_plate", "Raw plate to make Molds and Extruder Shapes");
     public static ItemType MoldPlate = new ItemType("mold_plate", "Mold for making Plates");
@@ -68,14 +69,15 @@ public class ItemType implements IStringSerializable {
         GregTechAPI.registerCover(GregTechAPI.CoverFluid = new CoverFluid());
         GregTechAPI.registerCover(GregTechAPI.CoverEnergy = new CoverEnergy());
         GregTechAPI.registerCover(GregTechAPI.CoverPlate = new CoverPlate());
+        GregTechAPI.registerCover(GregTechAPI.CoverScreen = new CoverScreen());
 
-        GregTechAPI.registerCoverCatalyst(ItemPort.get(1), GregTechAPI.CoverItem);
-        GregTechAPI.registerCoverCatalyst(FluidPort.get(1), GregTechAPI.CoverFluid);
-        GregTechAPI.registerCoverCatalyst(EnergyPort.get(1), GregTechAPI.CoverEnergy);
-
+        GregTechAPI.registerCoverCatalyst(ItemPort.get(), GregTechAPI.CoverItem);
+        GregTechAPI.registerCoverCatalyst(FluidPort.get(), GregTechAPI.CoverFluid);
+        GregTechAPI.registerCoverCatalyst(EnergyPort.get(), GregTechAPI.CoverEnergy);
         for (Material mat : ItemFlag.PLATE.getMats()) {
             GregTechAPI.registerCoverCatalyst(mat.getPlate(1), GregTechAPI.CoverPlate);
         }
+        GregTechAPI.registerCoverCatalyst(Screen.get(), GregTechAPI.CoverScreen);
     }
 
     private String name, tooltip;
@@ -121,6 +123,10 @@ public class ItemType implements IStringSerializable {
     public ItemStack get(int count) { //TODO implement 0 size = no recipe consume
         if (count == 0) return Utils.addNoConsumeTag(StandardItem.get(name, 1));
         return StandardItem.get(name, count);
+    }
+
+    public ItemStack get() {
+        return get(1);
     }
 
     public static ItemType get(String type) {

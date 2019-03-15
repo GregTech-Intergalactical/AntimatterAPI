@@ -6,6 +6,7 @@ import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.api.util.Utils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -16,15 +17,17 @@ public class CoverHandler implements ICoverHandler {
     private TileEntity tile;
     protected ArrayList<String> validCovers;
 
+    //TODO
     private Cover[] covers = new Cover[] {
         GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone
     };
 
     public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
+        //TODO fix valid covers
         validCovers = new ArrayList<>();
         validCovers.add(GregTechAPI.CoverNone.getName());
-        for (Cover cover : covers) {
+        for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             validCovers.add(cover.getName());
         }
     }
@@ -48,9 +51,9 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean onInteract(EnumFacing side, ToolType type) {
+    public boolean onInteract(EntityPlayer player, EnumFacing side, ToolType type) {
         Cover cover = get(side);
-        if (cover.isEmpty() || !cover.onInteract(getTile(), type)) return false;
+        if (cover.isEmpty() || !cover.onInteract(player, getTile(), side, type)) return false;
         switch (type) {
             case CROWBAR:
                 set(side, GregTechAPI.CoverNone);

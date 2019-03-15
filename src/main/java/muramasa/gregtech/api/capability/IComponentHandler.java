@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 
-public interface IComponent {
+public interface IComponentHandler {
 
     String getId();
 
@@ -23,5 +23,5 @@ public interface IComponent {
 
     boolean hasLinkedController();
 
-    public TileEntityMultiMachine getFirstController();
+    TileEntityMultiMachine getFirstController();
 }

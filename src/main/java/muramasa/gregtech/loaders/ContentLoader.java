@@ -1,5 +1,6 @@
 package muramasa.gregtech.loaders;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
@@ -21,7 +22,6 @@ import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import muramasa.gregtech.common.tileentities.overrides.*;
-import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -106,19 +106,26 @@ public class ContentLoader {
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(new ItemBlockMachine(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));
         }
-        for (BlockOre block : BlockOre.getAll()) {
-            event.getRegistry().register(new ItemBlockOre(block).setRegistryName(block.getRegistryName()));
+        for (StoneType type : StoneType.getAll()) {
+            for (Material material : ItemFlag.ORE.getMats()) {
+                Block block = GregTechRegistry.getOre(type, material);
+                event.getRegistry().register(new ItemBlockOre(block).setRegistryName(block.getRegistryName()));
+            }
         }
-        for (BlockStorage block : BlockStorage.getAll()) {
+        for (Material material : ItemFlag.BLOCK.getMats()) {
+            Block block = GregTechRegistry.getStorage(material);
             event.getRegistry().register(new ItemBlockStorage(block).setRegistryName(block.getRegistryName()));
         }
-        for (BlockCasing block : BlockCasing.getAll()) {
+        for (Casing type : Casing.getAll()) {
+            Block block = GregTechRegistry.getCasing(type);
             event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
         }
-        for (BlockCoil block : BlockCoil.getAll()) {
+        for (Coil type : Coil.getAll()) {
+            Block block = GregTechRegistry.getCoil(type);
             event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
         }
-        for (BlockStone block : BlockStone.getAll()) {
+        for (StoneType type : StoneType.getGenerating()) {
+            Block block = GregTechRegistry.getStone(type);
             event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
         }
 

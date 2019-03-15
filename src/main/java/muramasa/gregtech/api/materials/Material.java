@@ -5,8 +5,7 @@ import muramasa.gregtech.api.enums.Element;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MaterialItem;
-import muramasa.gregtech.common.blocks.BlockOre;
-import muramasa.gregtech.common.blocks.BlockStorage;
+import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -586,11 +585,11 @@ public class Material {
     }
 
     public ItemStack getOre(int amount) {
-        return new ItemStack(BlockOre.get(StoneType.STONE, this), amount);
+        return new ItemStack(GregTechRegistry.getOre(StoneType.STONE, this), amount);
     }
 
     public ItemStack getBlock(int amount) {
-        return new ItemStack(BlockStorage.get(this), amount);
+        return new ItemStack(GregTechRegistry.getStorage(this), amount);
     }
 
     public FluidStack getLiquid(int amount) {

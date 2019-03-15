@@ -1,8 +1,7 @@
 package muramasa.gregtech.api.enums;
 
-import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -67,8 +66,8 @@ public class Casing implements IStringSerializable {
         return name;
     }
 
-    public ResourceLocation getLoc() {
-        return new ResourceLocation(Ref.MODID, "blocks/casing/" + name);
+    public Texture getTexture() {
+        return new Texture("blocks/casing/" + name);
     }
 
     public static Casing get(String name) {

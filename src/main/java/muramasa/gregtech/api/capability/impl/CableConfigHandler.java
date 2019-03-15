@@ -3,6 +3,7 @@ package muramasa.gregtech.api.capability.impl;
 import muramasa.gregtech.api.capability.IConfigHandler;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 
 public class CableConfigHandler implements IConfigHandler {
@@ -14,7 +15,8 @@ public class CableConfigHandler implements IConfigHandler {
     }
 
     @Override
-    public boolean onInteract(EnumFacing side, ToolType type) {
+    public boolean onInteract(EntityPlayer player, EnumFacing side, ToolType type) {
+        if (type == null) return false;
         switch (type) {
             case WRENCH:
                 getTile().toggleConnection(side);

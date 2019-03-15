@@ -24,8 +24,8 @@ public class GTCapabilities {
     @CapabilityInject(ICoverHandler.class)
     public static Capability<ICoverHandler> COVERABLE;
 
-    @CapabilityInject(IComponent.class)
-    public static Capability<IComponent> COMPONENT;
+    @CapabilityInject(IComponentHandler.class)
+    public static Capability<IComponentHandler> COMPONENT;
 
     public static void register() {
 
@@ -70,15 +70,15 @@ public class GTCapabilities {
             }
         }, () -> new CoverHandler(null));
 
-        CapabilityManager.INSTANCE.register(IComponent.class, new Capability.IStorage<IComponent>() {
+        CapabilityManager.INSTANCE.register(IComponentHandler.class, new Capability.IStorage<IComponentHandler>() {
             @Nullable
             @Override
-            public NBTBase writeNBT(Capability<IComponent> capability, IComponent instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<IComponentHandler> capability, IComponentHandler instance, EnumFacing side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<IComponent> capability, IComponent instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IComponentHandler> capability, IComponentHandler instance, EnumFacing side, NBTBase nbt) {
 
             }
         }, () -> new ComponentHandler("null", null));

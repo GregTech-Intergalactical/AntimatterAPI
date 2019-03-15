@@ -1,9 +1,9 @@
 package muramasa.gregtech.common.blocks;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
-import muramasa.gregtech.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -19,12 +19,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 
 public class BlockCoil extends Block {
-
-    private static LinkedHashMap<String, BlockCoil> BLOCK_LOOKUP = new LinkedHashMap<>();
 
     private Coil type;
 
@@ -35,7 +31,6 @@ public class BlockCoil extends Block {
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
-        BLOCK_LOOKUP.put(type.getName(), this);
     }
 
     @Override
@@ -62,13 +57,5 @@ public class BlockCoil extends Block {
 
     public Coil getType() {
         return type;
-    }
-
-    public static BlockCoil get(String type) {
-        return BLOCK_LOOKUP.get(type);
-    }
-
-    public static Collection<BlockCoil> getAll() {
-        return BLOCK_LOOKUP.values();
     }
 }

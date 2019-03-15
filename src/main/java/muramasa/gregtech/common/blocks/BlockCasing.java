@@ -1,10 +1,13 @@
 package muramasa.gregtech.common.blocks;
 
-import muramasa.gregtech.api.enums.Casing;
-import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import muramasa.gregtech.Ref;
-import net.minecraft.block.Block;
+import muramasa.gregtech.api.enums.Casing;
+import muramasa.gregtech.api.texture.Texture;
+import muramasa.gregtech.api.texture.TextureData;
+import muramasa.gregtech.client.render.GTModelLoader;
+import muramasa.gregtech.client.render.StateMapperRedirect;
+import muramasa.gregtech.client.render.models.ModelBasic;
+import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -19,12 +22,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BlockCasing extends Block {
+public class BlockCasing extends BlockBaked {
 
-    private static LinkedHashMap<String, BlockCasing> BLOCK_LOOKUP = new LinkedHashMap<>();
+    private static ModelBasic model;
 
     private Casing type;
 
@@ -35,7 +38,10 @@ public class BlockCasing extends Block {
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
-        BLOCK_LOOKUP.put(type.getName(), this);
+    }
+
+    public Casing getType() {
+        return type;
     }
 
     @Override
@@ -58,17 +64,20 @@ public class BlockCasing extends Block {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
+        GTModelLoader.register("block_casing", model != null ? model : (model = new ModelBasic("block_casing", this)));
     }
 
-    public Casing getType() {
-        return type;
+    @Override
+    public TextureData getBlockData() {
+        return new TextureData(type.getTexture());
     }
 
-    public static BlockCasing get(String type) {
-        return BLOCK_LOOKUP.get(type);
-    }
-
-    public static Collection<BlockCasing> getAll() {
-        return BLOCK_LOOKUP.values();
+    @Override
+    public List<Texture> getTextures() {
+        ArrayList<Texture> textures = new ArrayList<>();
+        for (Casing type : Casing.getAll()) {
+            textures.add(type.getTexture());
+        }
+        return textures;
     }
 }

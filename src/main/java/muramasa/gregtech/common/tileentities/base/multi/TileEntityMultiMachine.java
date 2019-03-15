@@ -1,7 +1,7 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.capability.IComponent;
+import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
@@ -26,7 +26,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     //TODO set protected
     public boolean validStructure;
     protected int curEfficiency, maxEfficiency;
-    protected HashMap<String, ArrayList<IComponent>> components;
+    protected HashMap<String, ArrayList<IComponentHandler>> components;
     protected ControllerComponentHandler componentHandler;
 
     @Override
@@ -51,7 +51,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     public void consumeInputs() {
         ItemStack[] toConsume = activeRecipe.getInputStacks().clone();
         MachineItemHandler itemHandler;
-        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             toConsume = itemHandler.consumeAndReturnInputs(toConsume);
@@ -65,7 +65,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
         ItemStack[] toOutput = activeRecipe.getOutputStacks().clone();
         MachineItemHandler itemHandler;
         int matchCount = 0;
-        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             matchCount += itemHandler.getSpaceForStacks(toOutput);
@@ -78,7 +78,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     public void addOutputs() {
         ItemStack[] toOutput = activeRecipe.getOutputStacks().clone();
         MachineItemHandler itemHandler;
-        for (IComponent hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             for (int i = 0; i < toOutput.length; i++) {
@@ -105,8 +105,8 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             components = result.getComponents();
-            for (Map.Entry<String, ArrayList<IComponent>> entry : components.entrySet()) {
-                for (IComponent component : entry.getValue()) {
+            for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
+                for (IComponentHandler component : entry.getValue()) {
                     component.linkController(this);
                 }
             }
@@ -134,8 +134,8 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     }
 
     public void clearComponents() {
-        for (Map.Entry<String, ArrayList<IComponent>> entry : components.entrySet()) {
-            for (IComponent component : entry.getValue()) {
+        for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
+            for (IComponentHandler component : entry.getValue()) {
                 component.unlinkController(this);
             }
         }
@@ -145,10 +145,10 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     /** Returns list of stacks across all input hatches. Merges equal stacks and filters empty **/
     public ItemStack[] getStoredInputs() {
         ArrayList<ItemStack> all = new ArrayList<>();
-        ArrayList<IComponent> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
+        ArrayList<IComponentHandler> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
         if (hatches == null || hatches.size() == 0) return all.toArray(new ItemStack[0]);
         MachineItemHandler itemHandler;
-        for (IComponent hatch : hatches) {
+        for (IComponentHandler hatch : hatches) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             if (all.isEmpty()) {
@@ -161,7 +161,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     }
 
     /** Returns a list of Components **/
-    public ArrayList<IComponent> getComponents(IStringSerializable serializable) {
+    public ArrayList<IComponentHandler> getComponents(IStringSerializable serializable) {
         return components.get(serializable.getName());
     }
 
