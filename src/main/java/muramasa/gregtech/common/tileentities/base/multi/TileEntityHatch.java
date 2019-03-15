@@ -1,8 +1,11 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
+import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.Tier;
+import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +24,8 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     private MachineConfigHandler configHandler;
     private MachineCoverHandler coverHandler;
     private HatchComponentHandler componentHandler;
+
+    private Texture[] textureOverride;
 
     @Override
     public void onFirstTick() {
@@ -70,11 +75,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
-        if (!componentHandler.hasLinkedController()) return data;
-        System.out.println(componentHandler.getLinkedControllers().size());
-        TileEntityMultiMachine tile = componentHandler.getFirstController();
-        if (tile == null) return data;
-        data.setBase(tile.getType().getBaseTextures(Tier.MULTI));
+        if (textureOverride != null) data.setBase(textureOverride);
         return data;
     }
 
@@ -110,11 +111,19 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
+            textureOverride = Machines.get(compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE)).getBaseTextures(Tier.MULTI);
+        } else {
+            textureOverride = null;
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
+        if (componentHandler != null && componentHandler.hasLinkedController()) {
+            compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, componentHandler.getFirstController().getTypeId());
+        }
         return compound;
     }
 }
