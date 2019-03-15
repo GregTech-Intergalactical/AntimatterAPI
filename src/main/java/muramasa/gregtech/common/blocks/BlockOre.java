@@ -9,8 +9,11 @@ import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.client.render.models.ModelBasic;
+import muramasa.gregtech.client.render.models.ModelTextureData;
+import muramasa.gregtech.client.render.overrides.ItemOverrideOre;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
@@ -33,18 +36,22 @@ import java.util.List;
 public class BlockOre extends BlockBaked {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
-    private static ModelBasic model;
+    private static ModelTextureData model;
 
-    private Material material;
     private StoneType type;
+    private Material material;
 
     public BlockOre(StoneType type, Material material) {
-        super(net.minecraft.block.material.Material.ROCK);
+        super(TextureData.get().base(type.getTexture()).overlay(material.getSet().getBlockTexture(Prefix.Ore)));
         setUnlocalizedName("ore_" + type.getName() + "_" + material.getName());
         setRegistryName("ore_" + type.getName() + "_" + material.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
-        this.material = material;
         this.type = type;
+        this.material = material;
+    }
+
+    public StoneType getType() {
+        return type;
     }
 
     public Material getMaterial() {
@@ -84,7 +91,7 @@ public class BlockOre extends BlockBaked {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_ore", "inventory"));
         ModelLoader.setCustomStateMapper(this, stateMapRedirect);
-        if (model == null) model = new ModelBasic("block_ore", this);
+        if (model == null) model = new ModelTextureData(this);
         GTModelLoader.register("block_ore", model);
     }
 
@@ -94,27 +101,18 @@ public class BlockOre extends BlockBaked {
     }
 
     @Override
-    public TextureData getBlockData() {
-        return new TextureData(
-            new Texture[] {
-                type.getTexture()
-            },
-            new Texture[] {
-                material.getSet().getBlockTexture(Prefix.Ore)
-            }
-        );
-    }
-
-    @Override
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        for (StoneType type : StoneType.getAll()) {
-            textures.add(type.getTexture());
-        }
+        textures.addAll(StoneType.getAllTextures());
         for (MaterialSet set : MaterialSet.values()) {
             textures.add(set.getBlockTexture(Prefix.Ore));
         }
         return textures;
+    }
+
+    @Override
+    public ItemOverrideList getOverride(IBakedModel baked) {
+        return new ItemOverrideOre(baked);
     }
 
     public static class ColorHandler implements IBlockColor {

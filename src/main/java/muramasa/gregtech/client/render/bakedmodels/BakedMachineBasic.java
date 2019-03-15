@@ -12,13 +12,10 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BakedModelMachineBasic extends BakedModelMachine {
+public class BakedMachineBasic extends BakedMachine {
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        if (!(state instanceof IExtendedBlockState)) return new LinkedList<>();
-        IExtendedBlockState exState = (IExtendedBlockState) state;
-
+    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         int facing = exState.getValue(GTProperties.FACING);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 

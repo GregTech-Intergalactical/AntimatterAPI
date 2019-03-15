@@ -14,6 +14,8 @@ import muramasa.gregtech.common.blocks.BlockMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
+import java.util.List;
+
 public class TileEntityMachine extends TileEntityTickable implements IBakedTile {
 
     private Machine type;
@@ -117,10 +119,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     @Override
     public TextureData getTextureData() {
-        return new TextureData(
-            getType().getBaseTextures(getTier()),
-            getType().getOverlayTextures(getMachineState())
-        );
+        return TextureData.get().base(getType().getBaseTextures(getTier())).overlay(getType().getOverlayTextures(getMachineState()));
     }
 
     //TODO move to TextureData
@@ -155,5 +154,13 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
             compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS, getItemHandler().serialize());
         }
         return compound;
+    }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> info = super.getInfo();
+        info.add("Machine Type: " + getType().getName());
+        info.add("Machine Tier: " + getTier().getName());
+        return info;
     }
 }

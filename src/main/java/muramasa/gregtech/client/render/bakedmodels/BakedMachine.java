@@ -12,13 +12,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static muramasa.gregtech.api.properties.GTProperties.*;
 
-public class BakedModelMachine extends BakedModelBase {
+public class BakedMachine extends BakedBase {
 
     public static IBakedModel BASE, OVERLAY_EMPTY;
     public static IBakedModel[][] OVERLAYS;
@@ -26,9 +25,7 @@ public class BakedModelMachine extends BakedModelBase {
     public static ItemOverrideMachine itemOverride = new ItemOverrideMachine();
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        if (!(state instanceof IExtendedBlockState) || side != null) return Collections.emptyList();
-        IExtendedBlockState exState = (IExtendedBlockState) state;
+    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new LinkedList<>();
         int type = exState.getValue(TYPE);
         int facing = exState.getValue(FACING);
@@ -44,12 +41,16 @@ public class BakedModelMachine extends BakedModelBase {
                 }
             }
         } else {
+
+
+
             for (int s = 0; s < 6; s++) {
                 quads.addAll(getOverlays(type, s, data.getOverlay(), state));
             }
         }
 
         tex(quads, data.getBaseMode(), data.getBase(), 0);
+//        texOverlays(quads, data.getOverlayMode(), data.getOverlay());
         quads = trans(quads, facing);
 
         return quads;

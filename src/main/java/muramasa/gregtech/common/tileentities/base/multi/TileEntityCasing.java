@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class TileEntityCasing extends TileEntityBase implements IComponent, IBakedTile {
 
@@ -24,6 +25,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
         }
     };
     protected ICoverHandler coverHandler = new CoverHandler(this);
+    protected TextureData data;
 
     public Casing getType() {
         return ((BlockCasing) getState().getBlock()).getType();
@@ -36,7 +38,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 
     @Override
     public TextureData getTextureData() {
-        return new TextureData(getType().getTexture());
+        return data != null ? data : (data = TextureData.get().base(getType().getTexture()));
     }
 
     @Override
@@ -51,5 +53,12 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
         if (capability == GTCapabilities.COMPONENT) return GTCapabilities.COMPONENT.cast(componentHandler);
         else if (capability == GTCapabilities.COVERABLE) return GTCapabilities.COVERABLE.cast(coverHandler);
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> info = super.getInfo();
+        info.add("Casing Type: " + getType().getName());
+        return info;
     }
 }

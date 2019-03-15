@@ -9,9 +9,9 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureType;
-import muramasa.gregtech.client.render.bakedmodels.BakedModelBase;
-import muramasa.gregtech.client.render.bakedmodels.BakedModelMachine;
-import muramasa.gregtech.client.render.bakedmodels.BakedModelMachineItem;
+import muramasa.gregtech.client.render.bakedmodels.BakedBase;
+import muramasa.gregtech.client.render.bakedmodels.BakedMachine;
+import muramasa.gregtech.client.render.bakedmodels.BakedMachineItem;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -28,14 +28,10 @@ import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class ModelMachine extends ModelBase {
 
-    public ModelMachine() {
-        super("ModelMachine");
-    }
-
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
         IModel BASE = load("machine/base");
-        BakedModelMachine.BASE = BASE.bake(state, format, getter);
+        BakedMachine.BASE = BASE.bake(state, format, getter);
 
         Collection<Machine> machines = Machines.getTypes(BASIC, MULTI, HATCH);
         machines.add(Machines.INVALID);
@@ -43,38 +39,38 @@ public class ModelMachine extends ModelBase {
         if (!Ref.BASIC_MACHINE_MODELS) {
             //TODO use Pair<int, IBakedModel>[] instead?
 
-            BakedModelMachine.OVERLAYS = new IBakedModel[Machine.getLastInternalId()][6];
+            BakedMachine.OVERLAYS = new IBakedModel[Machine.getLastInternalId()][6];
             IBakedModel overlay;
             for (Machine type : machines) {
                 overlay = load(type.getOverlayModel(TextureType.BOTTOM)).bake(state, format, getter);
-                if (overlay.getQuads(null, null, 0).size() > 0) BakedModelMachine.OVERLAYS[type.getInternalId()][0] = overlay;
+                if (overlay.getQuads(null, null, 0).size() > 0) BakedMachine.OVERLAYS[type.getInternalId()][0] = overlay;
                 overlay = load(type.getOverlayModel(TextureType.TOP)).bake(state, format, getter);
-                if (overlay.getQuads(null, null, 0).size() > 0) BakedModelMachine.OVERLAYS[type.getInternalId()][1] = overlay;
+                if (overlay.getQuads(null, null, 0).size() > 0) BakedMachine.OVERLAYS[type.getInternalId()][1] = overlay;
                 overlay = load(type.getOverlayModel(TextureType.FRONT)).bake(state, format, getter);
-                if (overlay.getQuads(null, null, 0).size() > 0) BakedModelMachine.OVERLAYS[type.getInternalId()][2] = overlay;
+                if (overlay.getQuads(null, null, 0).size() > 0) BakedMachine.OVERLAYS[type.getInternalId()][2] = overlay;
                 overlay = load(type.getOverlayModel(TextureType.BACK)).bake(state, format, getter);
-                if (overlay.getQuads(null, null, 0).size() > 0) BakedModelMachine.OVERLAYS[type.getInternalId()][3] = overlay;
+                if (overlay.getQuads(null, null, 0).size() > 0) BakedMachine.OVERLAYS[type.getInternalId()][3] = overlay;
                 overlay = load(type.getOverlayModel(TextureType.SIDE)).bake(state, format, getter);
-                if (overlay.getQuads(null, null, 0).size() > 0) BakedModelMachine.OVERLAYS[type.getInternalId()][4] = overlay;
+                if (overlay.getQuads(null, null, 0).size() > 0) BakedMachine.OVERLAYS[type.getInternalId()][4] = overlay;
             }
-            BakedModelMachine.OVERLAY_EMPTY = load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty")).bake(state, format, getter);
+            BakedMachine.OVERLAY_EMPTY = load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty")).bake(state, format, getter);
         }
 
-        BakedModelMachineItem.OVERLAYS = new IBakedModel[Machine.getLastInternalId()];
+        BakedMachineItem.OVERLAYS = new IBakedModel[Machine.getLastInternalId()];
         for (Machine type : machines) {
-            BakedModelMachineItem.OVERLAYS[type.getInternalId()] = new BakedModelBase(
+            BakedMachineItem.OVERLAYS[type.getInternalId()] = new BakedBase(
                 texAndBake(BASE, new String[] {"1", "2", "3", "4", "5", "6"}, type.getOverlayTextures(MachineState.ACTIVE)
             ));
         }
 
-        BakedModelMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
+        BakedMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             ModelResourceLocation loc = Ref.BASIC_MACHINE_MODELS ? cover.getBasicModel() : cover.getModel();
-            BakedModelMachine.COVERS[cover.getInternalId()] = texAndBake(load(loc), "base", cover.getTextures()[0]);
+            BakedMachine.COVERS[cover.getInternalId()] = texAndBake(load(loc), "base", cover.getTextures()[0]);
         }
 
-        return Ref.BASIC_MACHINE_MODELS ? new BakedModelMachine() : new BakedModelMachine();
+        return Ref.BASIC_MACHINE_MODELS ? new BakedMachine() : new BakedMachine();
     }
 
     @Override
