@@ -13,15 +13,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
+@Mod.EventBusSubscriber
 public class RenderGameOverlayHandler extends Gui {
 
     private static ResourceLocation energyBar = new ResourceLocation(Ref.MODID, "textures/gui/energy_bar.png");
 
     @SubscribeEvent
-    public void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
+    public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
         if (Minecraft.getMinecraft().gameSettings.showDebugInfo) {
             TileEntity tile = Utils.getTile(Minecraft.getMinecraft().world, Minecraft.getMinecraft().objectMouseOver.getBlockPos());
             if (tile instanceof TileEntityBase) {
@@ -31,7 +33,7 @@ public class RenderGameOverlayHandler extends Gui {
     }
 
     @SubscribeEvent(receiveCanceled = true)
-    public void onRenderGameOverlay(RenderGameOverlayEvent.Pre e) {
+    public static void onRenderGameOverlay(RenderGameOverlayEvent.Pre e) {
         EntityPlayerSP entityPlayerSP = Ref.mc.player;
         ItemStack stack = entityPlayerSP.getHeldItemMainhand();
         if (ToolType.isPowered(stack) && e.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE && !entityPlayerSP.isCreative()) {
@@ -40,7 +42,7 @@ public class RenderGameOverlayHandler extends Gui {
     }
 
     @SubscribeEvent(receiveCanceled = true)
-    public void onRenderGameOverlay(RenderGameOverlayEvent.Post e) {
+    public static void onRenderGameOverlay(RenderGameOverlayEvent.Post e) {
         EntityPlayerSP entityPlayerSP = Ref.mc.player;
         ItemStack stack = entityPlayerSP.getHeldItemMainhand();
         if (e.getType() == RenderGameOverlayEvent.ElementType.ALL) {

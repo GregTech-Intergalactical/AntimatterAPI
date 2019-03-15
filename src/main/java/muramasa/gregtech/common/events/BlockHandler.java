@@ -8,12 +8,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber
 public class BlockHandler {
 
     @SubscribeEvent
-    public void onBlockInteract(PlayerInteractEvent.RightClickBlock e) {
+    public static void onBlockInteract(PlayerInteractEvent.RightClickBlock e) {
         if (e.getHand() == EnumHand.OFF_HAND || ToolType.get(e.getItemStack()) != null) return;
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
         if (tile == null) return;
@@ -29,7 +31,7 @@ public class BlockHandler {
     }
 
     @SubscribeEvent
-    public void onBlockBreak(BlockEvent.BreakEvent e) {
+    public static void onBlockBreak(BlockEvent.BreakEvent e) {
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
         if (!(tile instanceof IComponent)) return;
         ((IComponent) tile).getComponentHandler().onComponentRemoved();
