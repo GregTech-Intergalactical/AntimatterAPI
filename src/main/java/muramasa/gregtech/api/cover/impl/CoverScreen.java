@@ -1,11 +1,11 @@
 package muramasa.gregtech.api.cover.impl;
 
 import muramasa.gregtech.GregTech;
-import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.common.tileentities.base.multi.TileEntityComponent;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -22,8 +22,8 @@ public class CoverScreen extends Cover {
 
     @Override
     public boolean onInteract(EntityPlayer player, TileEntity tile, EnumFacing side, @Nullable ToolType type) {
-        if (type == null && tile.hasCapability(GTCapabilities.COMPONENT, null)) {
-            TileEntityMultiMachine controller = tile.getCapability(GTCapabilities.COMPONENT, null).getFirstController();
+        if (type == null && tile instanceof TileEntityComponent) {
+            TileEntityMultiMachine controller = ((TileEntityComponent) tile).getComponentHandler().getFirstController();
             if (controller == null) return false;
             if (!controller.getType().hasFlag(MachineFlag.GUI)) return false;
             GuiData gui = controller.getType().getGui();
