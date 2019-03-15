@@ -16,9 +16,11 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +55,12 @@ public class ModelMachine extends ModelBase {
                 overlay = load(type.getOverlayModel(TextureType.SIDE)).bake(state, format, getter);
                 if (overlay.getQuads(null, null, 0).size() > 0) BakedMachine.OVERLAYS[type.getInternalId()][4] = overlay;
             }
-            BakedMachine.OVERLAY_EMPTY = load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty")).bake(state, format, getter);
+
+            IModel overlayEmpty = load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty"));
+            BakedMachine.OVERLAY_EMPTY = new IBakedModel[6];
+            for (int i = 0; i < 6; i++) {
+                BakedMachine.OVERLAY_EMPTY[i] = overlayEmpty.bake(TRSRTransformation.from(EnumFacing.VALUES[i]), format, getter);
+            }
         }
 
         BakedMachineItem.OVERLAYS = new IBakedModel[Machine.getLastInternalId()];

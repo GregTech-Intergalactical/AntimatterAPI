@@ -7,9 +7,12 @@ import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.client.render.models.ModelTextureData;
+import muramasa.gregtech.client.render.overrides.ItemOverrideCasing;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -74,5 +77,10 @@ public class BlockCasing extends BlockBaked {
             textures.add(type.getTexture());
         }
         return textures;
+    }
+
+    @Override
+    public ItemOverrideList getOverride(IBakedModel baked) {
+        return new ItemOverrideCasing(baked);
     }
 }

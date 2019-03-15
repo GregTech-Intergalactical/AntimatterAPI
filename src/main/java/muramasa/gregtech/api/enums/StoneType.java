@@ -4,6 +4,7 @@ import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,31 +14,31 @@ public class StoneType implements IStringSerializable {
     private static ArrayList<StoneType> generating = new ArrayList<>(), all = new ArrayList<>();
     public static int lastInternalId = 0;
 
-    public static StoneType STONE = new StoneType("stone", Materials.Stone, false, "stone");
-    public static StoneType GRANITE = new StoneType("granite", Materials.Stone, false, "stone_granite");
-    public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, "stone_diorite");
-    public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, "stone_andesite");
-    public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, "netherrack");
-    public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, "end_stone");
+    public static StoneType STONE = new StoneType("stone", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone"));
+    public static StoneType GRANITE = new StoneType("granite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_granite"));
+    public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_diorite"));
+    public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_andesite"));
+    public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new ResourceLocation("minecraft", "blocks/netherrack"));
+    public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new ResourceLocation("minecraft", "blocks/end_stone"));
 
-    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GarnetRed);
-    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack);
-    public static StoneType MARBLE = new StoneType("marble", Materials.Marble);
-    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt);
+    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GarnetRed, true, new ResourceLocation("gregtech", "blocks/stone/granite_red"));
+    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new ResourceLocation("gregtech", "blocks/stone/granite_black"));
+    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new ResourceLocation("gregtech", "blocks/stone/marble"));
+    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new ResourceLocation("gregtech", "blocks/stone/basalt"));
 
     private String name;
     private Material material;
-    private String textureName;
+    private ResourceLocation loc;
     private int internalId;
 
-    public StoneType(String name, Material material) {
-        this(name, material, true, name);
-    }
+//    public StoneType(String name, Material material) {
+//        this(name, material, true, name);
+//    }
 
-    public StoneType(String name, Material material, boolean generate, String textureName) {
+    public StoneType(String name, Material material, boolean generate, ResourceLocation loc) {
         this.name = name;
         this.material = material;
-        this.textureName = textureName;
+        this.loc = loc;
         this.internalId = lastInternalId++;
         if (generate) {
             generating.add(this);
@@ -55,8 +56,7 @@ public class StoneType implements IStringSerializable {
     }
 
     public Texture getTexture() {
-        if (!generating.contains(this)) new Texture("minecraft", "blocks/" + textureName);
-        return new Texture("blocks/stone/" + getName());
+        return new Texture(loc);
     }
 
     public int getInternalId() {

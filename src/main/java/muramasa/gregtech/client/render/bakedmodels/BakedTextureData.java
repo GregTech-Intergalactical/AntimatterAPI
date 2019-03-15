@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 public class BakedTextureData extends BakedBase {
@@ -30,7 +31,8 @@ public class BakedTextureData extends BakedBase {
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return (data = exState != null ? exState.getValue(GTProperties.TEXTURE) : data).apply(baked);
+        if (exState != null) return exState.getValue(GTProperties.TEXTURE).apply(baked);
+        return data != null ? data.apply(baked) : Collections.emptyList();
     }
 
     @Override
