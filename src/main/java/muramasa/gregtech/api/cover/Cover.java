@@ -21,10 +21,16 @@ public abstract class Cover {
 
     private int internalId;
 
+    protected ItemStack catalystUsed = ItemStack.EMPTY;
+
     public abstract String getName();
 
     public int getInternalId() {
         return internalId;
+    }
+
+    public ItemStack getCatalystUsed() {
+        return catalystUsed;
     }
 
     public final void onRegister() {
@@ -39,16 +45,12 @@ public abstract class Cover {
     }
 
     public Cover onPlace(ItemStack stack) {
+        catalystUsed = stack;
         return this;
     }
 
     /** Fires once per Side **/
     public boolean onInteract(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable ToolType type) {
-        if (type == null) {
-            System.out.println("Interacted on " + getName() + " with MainHand");
-        } else {
-            System.out.println("Interacted on " + getName() + " cover with " + type.getName());
-        }
         return true;
     }
 

@@ -55,7 +55,7 @@ public class StoneType implements IStringSerializable {
     }
 
     public Texture getTexture() {
-        if (!generating.contains(this)) return new Texture("minecraft", "blocks/" + textureName);
+        if (!generating.contains(this)) new Texture("minecraft", "blocks/" + textureName);
         return new Texture("blocks/stone/" + getName());
     }
 
@@ -69,6 +69,14 @@ public class StoneType implements IStringSerializable {
 
     public static Collection<StoneType> getAll() {
         return all;
+    }
+
+    public static Collection<Texture> getAllTextures() {
+        ArrayList<Texture> textures = new ArrayList<>();
+        for (StoneType type : getAll()) {
+            textures.add(type.getTexture());
+        }
+        return textures;
     }
 
     public static int getLastInternalId() {

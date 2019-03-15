@@ -69,6 +69,12 @@ public class ContentLoader {
                 registeredTiles.add(type.getTileClass().getName());
             }
         }
+        for (Casing type : Casing.getAll()) {
+            event.getRegistry().register(new BlockCasing(type));
+        }
+        for (Coil type : Coil.getAll()) {
+            event.getRegistry().register(new BlockCoil(type));
+        }
         for (Material m : ItemFlag.ORE.getMats()) {
             for (StoneType type : StoneType.getAll()) {
                 event.getRegistry().register(new BlockOre(type, m));
@@ -76,12 +82,6 @@ public class ContentLoader {
         }
         for (Material m : ItemFlag.BLOCK.getMats()) {
             event.getRegistry().register(new BlockStorage(m));
-        }
-        for (Casing type : Casing.getAll()) {
-            event.getRegistry().register(new BlockCasing(type));
-        }
-        for (Coil type : Coil.getAll()) {
-            event.getRegistry().register(new BlockCoil(type));
         }
         for (StoneType type : StoneType.getGenerating()) {
             event.getRegistry().register(new BlockStone(type));

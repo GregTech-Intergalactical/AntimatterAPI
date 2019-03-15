@@ -14,7 +14,7 @@ public class CoverItem extends Cover {
     @Override
     public Cover onPlace(ItemStack stack) {
         //TODO allows instance sensitive data
-        return this;
+        return super.onPlace(stack);
     }
 
     @Override

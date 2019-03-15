@@ -43,7 +43,7 @@ public class CoverPlate extends CoverMaterial {
     public Cover onPlace(ItemStack stack) {
         Material material = MaterialItem.getMaterial(stack);
         if (material != null) return new CoverPlate(Prefix.Block, material);
-        return this;
+        return super.onPlace(stack);
     }
 
     @Override

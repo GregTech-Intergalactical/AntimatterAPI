@@ -20,10 +20,11 @@ import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BakedModelBase implements IBakedModel {
+public class BakedBase implements IBakedModel {
 
     private static Matrix4f[] facingToMatrix = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -42,28 +43,29 @@ public class BakedModelBase implements IBakedModel {
 //
 //    };
 
-    protected IBakedModel bakedModel;
+    private IBakedModel bakedModel;
 
-    public BakedModelBase() {
+    public BakedBase() {
 
     }
 
-    public BakedModelBase(IBakedModel bakedModel) {
+    public BakedBase(IBakedModel bakedModel) {
         this.bakedModel = bakedModel;
     }
 
-    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         return bakedModel.getQuads(state, side, rand);
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         try {
-            return getBakedQuads(state, side, rand);
+            if (/*!(state instanceof IExtendedBlockState) || */side != null) return Collections.emptyList();
+            return getBakedQuads((IExtendedBlockState) state, state, null, rand);
         } catch (Exception e) {
             System.err.println("BakedModelBase.getBakedQuads() failed due to: " + e);
             e.printStackTrace();
-            return new LinkedList<>();
+            return Collections.emptyList();
         }
     }
 
@@ -122,6 +124,10 @@ public class BakedModelBase implements IBakedModel {
         return exState.getUnlistedNames().contains(property);
     }
 
+    public static IBakedModel getBaked(IBakedModel baked, List<BakedQuad> quads) {
+        return new SimpleBakedModel(quads, null, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
+    }
+
     //Credit: From AE2
     public static List<BakedQuad> trans(List<BakedQuad> quads, int rotation) {
         List<BakedQuad> transformedQuads = new LinkedList<>();
@@ -157,6 +163,26 @@ public class BakedModelBase implements IBakedModel {
                     tex(quads, layer, textures[i]);
                     break;
             }
+        }
+        return quads;
+    }
+
+    public static List<BakedQuad> texOverlays(List<BakedQuad> quads, TextureMode mode, Texture[] textures) {
+        switch (mode) {
+            case FULL:
+                int size = quads.size(), index;
+                for (int t = 0; t < textures.length; t++) {
+                    for (int q = 0; q < size; q++) {
+                        index = quads.get(q).getTintIndex();
+//                        if (index != t || index) continue;
+                        if (index == t) {
+                            quads.set(q, new BakedQuadRetextured(quads.get(q), textures[t].getSprite()));
+                        } else {
+                            System.out.println("ELSE: " + index);
+                        }
+                    }
+                }
+                break;
         }
         return quads;
     }

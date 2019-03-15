@@ -13,14 +13,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BakedModelCable extends BakedModelBase {
+public class BakedCable extends BakedBase {
 
     private static HashMap<Integer, IBakedModel> maskToModelMap = new HashMap<>();
     private static HashMap<Integer, List<BakedQuad>> maskToQuadCache = new HashMap<>();
 
     private IBakedModel bakedBase;
 
-    public BakedModelCable(IBakedModel[][] bakedConfigs) {
+    public BakedCable(IBakedModel[][] bakedConfigs) {
         this.bakedBase = bakedConfigs[0][0];
 
         //Default Mask
@@ -65,13 +65,10 @@ public class BakedModelCable extends BakedModelBase {
     }
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quadList = new LinkedList<>();
 
-        if (!(state instanceof IExtendedBlockState)) return quadList;
-
-        IExtendedBlockState extendedState = (IExtendedBlockState) state;
-        int connections = extendedState.getValue(BlockCable.CONNECTIONS);
+        int connections = exState.getValue(BlockCable.CONNECTIONS);
 
         IBakedModel bakedModel = maskToModelMap.get(connections);
 
@@ -79,12 +76,12 @@ public class BakedModelCable extends BakedModelBase {
             if (maskToQuadCache.containsKey(connections)) {
                 quadList.addAll(maskToQuadCache.get(connections));
             } else {
-                List<BakedQuad> bakedQuads = maskToModelMap.get(connections).getQuads(extendedState, side, rand);
+                List<BakedQuad> bakedQuads = maskToModelMap.get(connections).getQuads(exState, side, rand);
                 maskToQuadCache.put(connections, bakedQuads);
                 quadList.addAll(bakedQuads);
             }
         } else {
-            quadList.addAll(bakedBase.getQuads(extendedState, side, rand));
+            quadList.addAll(bakedBase.getQuads(exState, side, rand));
         }
 
         return quadList;

@@ -2,6 +2,7 @@ package muramasa.gregtech.api.util;
 
 import muramasa.gregtech.Ref;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -220,6 +221,14 @@ public class Utils {
 
     public static String formatNumber(int aNumber) {
         return DECIMAL_FORMAT.format(aNumber);
+    }
+
+    public static void spawnItem(TileEntity tile, EnumFacing side, ItemStack stack) {
+        if (tile.getWorld().isRemote) return;
+        int x = tile.getPos().getX() + side.getDirectionVec().getX();
+        int y = tile.getPos().getY() + side.getDirectionVec().getY();
+        int z = tile.getPos().getZ() + side.getDirectionVec().getZ();
+        tile.getWorld().spawnEntity(new EntityItem(tile.getWorld(), x, y, z, stack));
     }
 
     /** Safe version of world.getTileEntity **/

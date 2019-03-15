@@ -18,14 +18,9 @@ public class ModelBase implements IModel {
 
     public static IBakedModel MISSING;
 
-    private String name;
     private IModelState state;
     private VertexFormat format;
     private Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-
-    public ModelBase(String name) {
-        this.name = name;
-    }
 
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
         return ModelLoaderRegistry.getMissingModel().bake(state, format, getter);
@@ -42,7 +37,7 @@ public class ModelBase implements IModel {
             }
             return bakeModel(modelState, vertexFormat, bakedTextureGetter);
         } catch (Exception e) {
-            System.err.println(name + ".bake() failed due to: " + e);
+            System.err.println("ModelBase.bake failed due to: " + e);
             e.printStackTrace();
             return ModelLoaderRegistry.getMissingModel().bake(state, format, bakedTextureGetter);
         }

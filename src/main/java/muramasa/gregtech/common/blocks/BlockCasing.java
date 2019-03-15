@@ -6,7 +6,7 @@ import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.client.render.models.ModelBasic;
+import muramasa.gregtech.client.render.models.ModelTextureData;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -27,12 +27,12 @@ import java.util.List;
 
 public class BlockCasing extends BlockBaked {
 
-    private static ModelBasic model;
+    private static ModelTextureData model;
 
     private Casing type;
 
     public BlockCasing(Casing type) {
-        super(net.minecraft.block.material.Material.IRON);
+        super(TextureData.get().base(type.getTexture()));
         setUnlocalizedName("casing_" + type.getName());
         setRegistryName("casing_" + type.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
@@ -64,12 +64,7 @@ public class BlockCasing extends BlockBaked {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
-        GTModelLoader.register("block_casing", model != null ? model : (model = new ModelBasic("block_casing", this)));
-    }
-
-    @Override
-    public TextureData getBlockData() {
-        return new TextureData(type.getTexture());
+        GTModelLoader.register("block_casing", model != null ? model : (model = new ModelTextureData(this)));
     }
 
     @Override

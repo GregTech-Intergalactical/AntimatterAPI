@@ -95,6 +95,7 @@ public class MetaTool extends Item {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile == null) return EnumActionResult.PASS;
         EnumActionResult result = EnumActionResult.PASS;
+//        if (tile.getWorld().isRemote) return result;
         if (tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
             EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
             IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);

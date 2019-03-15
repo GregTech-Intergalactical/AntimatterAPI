@@ -1,6 +1,6 @@
 package muramasa.gregtech.client.render.models;
 
-import muramasa.gregtech.client.render.bakedmodels.BakedModelCable;
+import muramasa.gregtech.client.render.bakedmodels.BakedCable;
 import muramasa.gregtech.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -29,10 +29,6 @@ public class ModelCable extends ModelBase {
     private static final ModelResourceLocation CABLE_CORNER = new ModelResourceLocation(Ref.MODID + ":cable/corner");
     private static final ModelResourceLocation CABLE_CROSS = new ModelResourceLocation(Ref.MODID + ":cable/cross");
     private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(Ref.MODID + ":cable/side");
-
-    public ModelCable() {
-        super("ModelCable");
-    }
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
@@ -86,6 +82,6 @@ public class ModelCable extends ModelBase {
             },
         };
 
-        return new BakedModelCable(bakedConfigs);
+        return new BakedCable(bakedConfigs);
     }
 }
