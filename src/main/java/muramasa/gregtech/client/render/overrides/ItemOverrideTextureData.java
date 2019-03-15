@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 
 public class ItemOverrideTextureData extends ItemOverrideList {
 
-    private IBakedModel baked;
+    protected IBakedModel baked;
 
     public ItemOverrideTextureData(IBakedModel baked) {
         super(ImmutableList.of());

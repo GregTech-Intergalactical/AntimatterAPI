@@ -19,9 +19,9 @@ import static muramasa.gregtech.api.properties.GTProperties.*;
 
 public class BakedMachine extends BakedBase {
 
-    public static IBakedModel BASE, OVERLAY_EMPTY;
+    public static IBakedModel BASE;
     public static IBakedModel[][] OVERLAYS;
-    public static IBakedModel[] COVERS;
+    public static IBakedModel[] OVERLAY_EMPTY, COVERS;
     public static ItemOverrideMachine itemOverride = new ItemOverrideMachine();
 
     @Override
@@ -57,7 +57,7 @@ public class BakedMachine extends BakedBase {
     }
 
     public List<BakedQuad> getOverlays(int t, int s, Texture[] data, IBlockState state) {
-        return OVERLAYS[t][s] != null ? tex(OVERLAYS[t][s].getQuads(state, null, -1), 1, data[s]) : trans(OVERLAY_EMPTY.getQuads(state, null, -1), s);
+        return OVERLAYS[t][s] != null ? tex(OVERLAYS[t][s].getQuads(state, null, -1), 1, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, -1);
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {

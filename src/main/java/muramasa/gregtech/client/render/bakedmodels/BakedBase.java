@@ -1,5 +1,7 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureMode;
 import muramasa.gregtech.client.render.BakedQuadTinted;
@@ -23,6 +25,7 @@ import javax.vecmath.Vector3f;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class BakedBase implements IBakedModel {
 
@@ -125,7 +128,11 @@ public class BakedBase implements IBakedModel {
     }
 
     public static IBakedModel getBaked(IBakedModel baked, List<BakedQuad> quads) {
-        return new SimpleBakedModel(quads, null, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
+        Map faceQuads = Maps.newEnumMap(EnumFacing.class);
+        for (EnumFacing s : EnumFacing.values()) {
+            faceQuads.put(s, Lists.newArrayList());
+        }
+        return new BakedBase(new SimpleBakedModel(quads, faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides()));
     }
 
     //Credit: From AE2

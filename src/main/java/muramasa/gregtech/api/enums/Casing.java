@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 public class Casing implements IStringSerializable {
 
     private static LinkedHashMap<String, Casing> TYPE_LOOKUP = new LinkedHashMap<>();
+    private static int lastInternalId = 0;
 
     public static Casing ULV = new Casing("ulv");
     public static Casing LV = new Casing("lv");
@@ -55,15 +56,21 @@ public class Casing implements IStringSerializable {
     public static Casing FUSION_3 = new Casing("fusion_3");
     
     private String name;
+    private int internalId;
 
     public Casing(String name) {
         this.name = name;
+        this.internalId = lastInternalId++;
         TYPE_LOOKUP.put(name, this);
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    public int getInternalId() {
+        return internalId;
     }
 
     public Texture getTexture() {
@@ -76,5 +83,9 @@ public class Casing implements IStringSerializable {
 
     public static Collection<Casing> getAll() {
         return TYPE_LOOKUP.values();
+    }
+
+    public static int getLastInternalId() {
+        return lastInternalId;
     }
 }
