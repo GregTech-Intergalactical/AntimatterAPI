@@ -4,7 +4,7 @@ import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityComponent;
+import muramasa.gregtech.common.tileentities.base.multi.IComponent;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 
@@ -44,8 +44,8 @@ public class StructureElement {
 
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
         TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBP());
-        if (tile instanceof TileEntityComponent) {
-            IComponentHandler component = ((TileEntityComponent) tile).getComponentHandler();
+        if (tile instanceof IComponent) {
+            IComponentHandler component = ((IComponent) tile).getComponentHandler();
             for (int i = 0; i < elementIds.length; i++) {
                 if (elementIds[i].equals(component.getId())) {
                     if (testComponent(component)) {

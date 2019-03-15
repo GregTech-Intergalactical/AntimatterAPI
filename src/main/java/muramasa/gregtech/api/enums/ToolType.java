@@ -7,6 +7,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public enum ToolType implements IStringSerializable {
@@ -106,8 +107,9 @@ public enum ToolType implements IStringSerializable {
         return stack.getItem() instanceof MetaTool && stack.getMetadata() == ordinal();
     }
 
+    @Nullable
     public static ToolType get(ItemStack stack) {
-        return values()[stack.getMetadata()];
+        return stack.getItem() instanceof MetaTool ? values()[stack.getMetadata()] : null;
     }
 
     public static void playDigSound(World world, BlockPos pos, ItemStack stack) {

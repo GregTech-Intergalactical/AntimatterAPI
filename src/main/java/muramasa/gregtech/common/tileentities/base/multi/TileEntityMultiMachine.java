@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TileEntityMultiMachine extends TileEntityBasicMachine {
+public class TileEntityMultiMachine extends TileEntityBasicMachine implements IComponent {
 
     //TODO set protected
     public boolean validStructure;
@@ -163,6 +163,11 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine {
     /** Returns a list of Components **/
     public ArrayList<IComponentHandler> getComponents(IStringSerializable serializable) {
         return components.get(serializable.getName());
+    }
+
+    @Override
+    public ControllerComponentHandler getComponentHandler() {
+        return componentHandler;
     }
 
     @Override

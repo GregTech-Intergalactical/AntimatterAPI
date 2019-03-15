@@ -89,6 +89,7 @@ public class StandardItem extends Item {
             } else if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
+                        if (world.isRemote) return EnumActionResult.PASS;
                         ((TileEntityMultiMachine) tile).checkStructure();
                         System.out.println("Forced Structure Check");
 //                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
@@ -99,6 +100,10 @@ public class StandardItem extends Item {
 //                        MachineFluidHandler fluidHandler = ((TileEntityHatch) tile).getFluidHandler();
 //                        System.out.println("Input Tanks: " + fluidHandler.getInputCount());
 //                        System.out.println("Output Tanks: " + fluidHandler.getOutputCount());
+
+                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers());
+                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers().size());
+
                     } else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {
