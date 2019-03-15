@@ -1,5 +1,6 @@
 package muramasa.gregtech.common.tileentities.base;
 
+import muramasa.gregtech.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -50,12 +51,13 @@ public class TileEntityBase extends TileEntity {
         world.setBlockState(pos, state);
     }
 
-    public void markForNBTSync() { //Syncs NBT between Client & Server
-        world.notifyBlockUpdate(pos, getState(), getState(), 3);
+    /** Syncs NBT between Client & Server **/
+    public void markForNBTSync() {
+        Utils.markTileForNBTSync(this);
     }
 
-    public void markForRenderUpdate() { //Triggers the BakedModel to refresh
-        markForNBTSync();
-        world.markBlockRangeForRenderUpdate(pos, pos);
+    /** Sends block update to clients **/
+    public void markForRenderUpdate() {
+        Utils.markTileForRenderUpdate(this);
     }
 }

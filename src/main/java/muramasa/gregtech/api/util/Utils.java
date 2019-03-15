@@ -1,6 +1,7 @@
 package muramasa.gregtech.api.util;
 
 import muramasa.gregtech.Ref;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -221,7 +222,8 @@ public class Utils {
         return DECIMAL_FORMAT.format(aNumber);
     }
 
-    public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) { //Safe version of world.getTileEntity
+    /** Safe version of world.getTileEntity **/
+    public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) {
         if (blockAccess instanceof ChunkCache) {
             return ((ChunkCache) blockAccess).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
         } else {
@@ -229,13 +231,16 @@ public class Utils {
         }
     }
 
+    /** Syncs NBT between Client & Server **/
     public static void markTileForNBTSync(TileEntity tile) {
-        tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getWorld().getBlockState(tile.getPos()), tile.getWorld().getBlockState(tile.getPos()), 3);
+        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
     }
 
+    /** Sends block update to clients **/
     public static void markTileForRenderUpdate(TileEntity tile) {
-        markTileForNBTSync(tile);
-        tile.getWorld().markBlockRangeForRenderUpdate(tile.getPos(), tile.getPos());
+        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
     }
 
     public static EnumFacing rotateFacing(EnumFacing toRotate, EnumFacing rotateBy) {
