@@ -6,7 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,7 +23,7 @@ public class BakedMachineItem extends BakedBase {
     }
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return tex(OVERLAYS[type.getInternalId()].getQuads(state, side, rand), 0, type.getBaseTextures(tier)[0]);
+    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        return tex(OVERLAYS[type.getInternalId()].getQuads(state, side, rand), 0, type.getBaseTexture(tier));
     }
 }

@@ -25,8 +25,9 @@ public class BakedMachine extends BakedBase {
     public static ItemOverrideMachine itemOverride = new ItemOverrideMachine();
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new LinkedList<>();
+        IExtendedBlockState exState = (IExtendedBlockState) state;
         int type = exState.getValue(TYPE);
         int facing = exState.getValue(FACING);
         TextureData data = exState.getValue(TEXTURE);
@@ -41,9 +42,6 @@ public class BakedMachine extends BakedBase {
                 }
             }
         } else {
-
-
-
             for (int s = 0; s < 6; s++) {
                 quads.addAll(getOverlays(type, s, data.getOverlay(), state));
             }

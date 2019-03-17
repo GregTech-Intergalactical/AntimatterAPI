@@ -65,8 +65,9 @@ public class BakedCable extends BakedBase {
     }
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quadList = new LinkedList<>();
+        IExtendedBlockState exState = (IExtendedBlockState) state;
 
         int connections = exState.getValue(BlockCable.CONNECTIONS);
 

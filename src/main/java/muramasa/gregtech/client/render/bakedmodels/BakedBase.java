@@ -42,10 +42,6 @@ public class BakedBase implements IBakedModel {
     public static Matrix4f matrixFPH = get(0, 0, 0, 0, 45, 0, 0.4f).getMatrix();
     public static Matrix4f matrixIdentity = TRSRTransformation.identity().getMatrix();
 
-//    private static IVertexConsumer[] transformationConsumers = new IVertexConsumer[]{
-//
-//    };
-
     private IBakedModel bakedModel;
 
     public BakedBase() {
@@ -56,15 +52,15 @@ public class BakedBase implements IBakedModel {
         this.bakedModel = bakedModel;
     }
 
-    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         return bakedModel.getQuads(state, side, rand);
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        if (side != null) return Collections.emptyList();
         try {
-            if (/*!(state instanceof IExtendedBlockState) || */side != null) return Collections.emptyList();
-            return getBakedQuads((IExtendedBlockState) state, state, null, rand);
+            return getBakedQuads(state, null, rand);
         } catch (Exception e) {
             System.err.println("BakedModelBase.getBakedQuads() failed due to: " + e);
             e.printStackTrace();
@@ -152,22 +148,37 @@ public class BakedBase implements IBakedModel {
     }
 
     public static List<BakedQuad> tex(List<BakedQuad> quads, TextureMode mode, Texture[] textures, int layer) {
-        for (int i = 0; i < textures.length; i++) {
-            if (textures[i] == null) continue;
-            switch (mode) {
-                case SINGLE:
-                case FULL:
-                    tex(quads, layer, textures[i]);
-                    break;
-                case COPIED_SIDES:
-//                    System.out.println("Side: " + i + " - " + textures[i].getLoc());
-//                    tex(quads, i, layer, textures[i]);
-//                    if (i == textures.length - 1) {
-//                        System.out.println(i);
-////                        tex(quads, 5, layer, textures[4]);
-//                    }
-                    break;
-            }
+//        for (int i = 0; i < textures.length; i++) {
+//            if (textures[i] == null) continue;
+//            switch (mode) {
+//                case SINGLE:
+//                case FULL:
+//                    tex(quads, layer, textures[i]);
+//                    break;
+//                case COPIED_SIDES:
+////                    System.out.println("Side: " + i + " - " + textures[i].getLoc());
+////                    tex(quads, i, layer, textures[i]);
+////                    if (i == textures.length - 1) {
+////                        System.out.println(i);
+//////                        tex(quads, 5, layer, textures[4]);
+////                    }
+//                    break;
+//            }
+//        }
+//        return quads;
+        switch (mode) {
+            case SINGLE:
+                tex(quads, layer, textures[0]);
+                break;
+            case FULL:
+//                for (int i = 0; i < 6; i++) {
+//                    tex(quads, layer, textures[i]);
+//                }
+                //TODO
+                break;
+            case COPIED_SIDES:
+                //TODO
+                break;
         }
         return quads;
     }

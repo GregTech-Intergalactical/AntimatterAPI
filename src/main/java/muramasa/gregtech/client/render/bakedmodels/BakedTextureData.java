@@ -22,8 +22,8 @@ public class BakedTextureData extends BakedBase {
     }
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return exState.getValue(GTProperties.TEXTURE).apply(baked);
+    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        return ((IExtendedBlockState) state).getValue(GTProperties.TEXTURE).apply(baked);
     }
 
     @Override

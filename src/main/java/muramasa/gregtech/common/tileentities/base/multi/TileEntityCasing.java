@@ -46,7 +46,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 //            Texture overlay = data.getOverlay()[0];
 //            data.setOverlay(overlay, overlay, Textures.LARGE_TURBINE_ACTIVE[3], Textures.LARGE_TURBINE_ACTIVE[3], overlay, overlay);
 //            data.setOverlay(Textures.LARGE_TURBINE_ACTIVE[4]);
-            data.setOverlay(Textures.LARGE_TURBINE_ACTIVE[4]);
+            data.overlay(Textures.LARGE_TURBINE_ACTIVE[4]);
         }
         return data;
     }

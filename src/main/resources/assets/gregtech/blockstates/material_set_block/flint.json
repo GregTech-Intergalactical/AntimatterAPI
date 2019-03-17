@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:generated"
+  },
+  "variants": {
+    "flint": {
+      "block": {
+        "textures": {"all": "gregtech:blocks/material_set/flint/block"}
+      },
+	  "ore": {
+        "textures": {"all": "gregtech:blocks/material_set/flint/ore"}
+      }
+    }
+  }
+}

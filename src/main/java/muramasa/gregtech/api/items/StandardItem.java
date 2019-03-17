@@ -94,7 +94,7 @@ public class StandardItem extends Item {
                         System.out.println("Forced Structure Check");
 //                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
                     } else if (tile instanceof TileEntityHatch) {
-//                            System.out.println(((TileEntityHatch) tile).getBaseTextures());
+//                            System.out.println(((TileEntityHatch) tile).getBaseTexture());
 //                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());
 //                            ((TileEntityHatch) tile).markForRenderUpdate();
 //                        MachineFluidHandler fluidHandler = ((TileEntityHatch) tile).getFluidHandler();

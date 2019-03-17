@@ -20,11 +20,13 @@ public class TextureData {
 
     public TextureData base(Texture... base) {
         this.base = base;
+//        if (base.length == 6) overlayMode = TextureMode.FULL;
         return this;
     }
 
     public TextureData overlay(Texture... overlay) {
         this.overlay = overlay;
+//        if (overlay.length == 6) baseMode = TextureMode.FULL;
         return this;
     }
 
@@ -56,15 +58,5 @@ public class TextureData {
 
     public int getTint() {
         return tint;
-    }
-
-    public void setBase(Texture... textures) {
-        base = textures;
-        if (textures.length == 6) baseMode = TextureMode.FULL;
-    }
-
-    public void setOverlay(Texture... textures) {
-        overlay = textures;
-        if (textures.length == 6) overlayMode = TextureMode.FULL;
     }
 }

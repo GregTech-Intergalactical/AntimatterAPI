@@ -15,7 +15,8 @@ import java.util.List;
 public class BakedMachineBasic extends BakedMachine {
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IExtendedBlockState exState, @Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        IExtendedBlockState exState = (IExtendedBlockState) state;
         int facing = exState.getValue(GTProperties.FACING);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 
@@ -31,7 +32,7 @@ public class BakedMachineBasic extends BakedMachine {
 ////                    overlays[i].setEmpty();
 //                    coverQuads = Utils.trans(COVER[covers[i].getInternalId()].getQuads(state, side, rand), i);
 //                    if (covers[i].retextureToMachineTier()) {
-//                        Utils.tex(coverQuads, 0, RenderHelper.getSprite(Tier.get(exState.getValue(GTProperties.TIER)).getBaseTextures()));
+//                        Utils.tex(coverQuads, 0, RenderHelper.getSprite(Tier.get(exState.getValue(GTProperties.TIER)).getBaseTexture()));
 //                    }
 //                    coverQuads.addAll(covers[i].onRender(coverQuads));
 //                }
