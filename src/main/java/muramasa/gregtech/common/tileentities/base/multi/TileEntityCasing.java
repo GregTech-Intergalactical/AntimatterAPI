@@ -6,6 +6,7 @@ import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.CoverHandler;
+import muramasa.gregtech.api.data.Textures;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.texture.IBakedTile;
 import muramasa.gregtech.api.texture.TextureData;
@@ -45,6 +46,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 //            Texture overlay = data.getOverlay()[0];
 //            data.setOverlay(overlay, overlay, Textures.LARGE_TURBINE_ACTIVE[3], Textures.LARGE_TURBINE_ACTIVE[3], overlay, overlay);
 //            data.setOverlay(Textures.LARGE_TURBINE_ACTIVE[4]);
+            data.setOverlay(Textures.LARGE_TURBINE_ACTIVE[4]);
         }
         return data;
     }
