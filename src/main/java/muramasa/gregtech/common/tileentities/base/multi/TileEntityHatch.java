@@ -73,7 +73,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
-        if (textureOverride > -1) data.setBase(Machines.get(textureOverride).getBaseTextures(Tier.MULTI));
+        if (textureOverride > -1) data.base(Machines.get(textureOverride).getBaseTexture(Tier.MULTI));
         return data;
     }
 

@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public class ModelBase implements IModel {
 
-    public static IBakedModel MISSING;
+    public static IBakedModel MISSING, BAKED_BASIC;
 
     private IModelState state;
     private VertexFormat format;
@@ -32,9 +32,8 @@ public class ModelBase implements IModel {
             state = modelState;
             format = vertexFormat;
             textureGetter = bakedTextureGetter;
-            if (MISSING == null) {
-                MISSING = ModelLoaderRegistry.getMissingModel().bake(modelState, vertexFormat, bakedTextureGetter);
-            }
+            if (MISSING == null) MISSING = ModelLoaderRegistry.getMissingModel().bake(modelState, vertexFormat, bakedTextureGetter);
+            if (BAKED_BASIC == null) BAKED_BASIC = load("basic").bake(modelState, vertexFormat, bakedTextureGetter);
             return bakeModel(modelState, vertexFormat, bakedTextureGetter);
         } catch (Exception e) {
             System.err.println("ModelBase.bake failed due to: " + e);

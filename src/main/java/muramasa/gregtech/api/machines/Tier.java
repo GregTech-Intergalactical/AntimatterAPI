@@ -36,12 +36,14 @@ public class Tier implements IStringSerializable {
     private String name;
     private long voltage;
     private TextFormatting rarityColor;
+    private Texture baseTexture;
 
     public Tier(String name, long voltage, TextFormatting rarityColor) {
         internalId = lastInternalId++;
         this.name = name;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
+        this.baseTexture = new Texture("blocks/machine/base/" + name);
         tierLookup.put(name, this);
         tierLookupArray.add(internalId, this);
     }
@@ -63,7 +65,7 @@ public class Tier implements IStringSerializable {
     }
 
     public Texture getBaseTexture() {
-        return new Texture("blocks/machine/base/" + name);
+        return baseTexture;
     }
 
     public static int getCount() {

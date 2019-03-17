@@ -94,9 +94,7 @@ public class ModelMachine extends ModelBase {
                 locations.add(texture.getLoc());
             }
             if (type.hasFlag(MULTI)) {
-                for (Texture texture : type.getBaseTextures(Tier.MULTI)) {
-                    locations.add(texture.getLoc());
-                }
+                locations.add(type.getBaseTexture(Tier.MULTI).getLoc());
             }
         }
         for (Texture texture : Machines.INVALID.getTextures()) {

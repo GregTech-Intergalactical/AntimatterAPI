@@ -45,6 +45,9 @@ public class Machine implements IStringSerializable {
     /** GUI Members **/
     protected GuiData guiData;
 
+    /** Texture Members **/
+    protected Texture baseTexture;
+
     /** Multi Members **/
     protected Structure structure;
 
@@ -86,10 +89,8 @@ public class Machine implements IStringSerializable {
         return textures;
     }
 
-    public Texture[] getBaseTextures(Tier tier) {
-        return new Texture[] {
-            new Texture("blocks/machine/base/" + tier.getName())
-        };
+    public Texture getBaseTexture(Tier tier) {
+        return tier.getBaseTexture();
     }
 
     public Texture[] getOverlayTextures(MachineState state) {

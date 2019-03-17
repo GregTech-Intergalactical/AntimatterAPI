@@ -23,8 +23,6 @@ public class ItemOverrideTextureData extends ItemOverrideList {
 
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
-        Block block = Block.getBlockFromItem(stack.getItem());
-        if (!(block instanceof BlockBaked)) return originalModel;
-        return new BakedTextureDataItem(baked, ((BlockBaked) block).getBlockData());
+        return new BakedTextureDataItem(baked, ((BlockBaked) Block.getBlockFromItem(stack.getItem())).getBlockData());
     }
 }

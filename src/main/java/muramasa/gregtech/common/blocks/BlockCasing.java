@@ -34,7 +34,7 @@ public class BlockCasing extends BlockBaked {
     private Casing type;
 
     public BlockCasing(Casing type) {
-        super(TextureData.get().base(type.getTexture()).overlay(type.getTexture()), new ModelResourceLocation(Ref.MODID + ":layered"));
+        super(TextureData.get().base(type.getTexture()), new ModelResourceLocation(Ref.MODID + ":layered"));
         setUnlocalizedName("casing_" + type.getName());
         setRegistryName("casing_" + type.getName());
         setCreativeTab(Ref.TAB_BLOCKS);
@@ -82,6 +82,6 @@ public class BlockCasing extends BlockBaked {
 
     @Override
     public ItemOverrideList getOverride(IBakedModel baked) {
-        return new ItemOverrideCasing(baked);
+        return new ItemOverrideCasing();
     }
 }
