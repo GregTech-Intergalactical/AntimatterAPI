@@ -1,6 +1,8 @@
 package muramasa.gregtech.client.render;
 
 import muramasa.gregtech.Ref;
+import muramasa.gregtech.client.render.models.ModelTextureData;
+import muramasa.gregtech.common.blocks.BlockBaked;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
@@ -17,6 +19,10 @@ public class GTModelLoader implements ICustomModelLoader {
 
     public static void register(String registryPath, IModel model) {
         if (!modelLookup.containsKey(registryPath)) modelLookup.put(registryPath, model);
+    }
+
+    public static void register(String registryPath, BlockBaked block) {
+        if (!modelLookup.containsKey(registryPath)) modelLookup.put(registryPath, new ModelTextureData(block));
     }
 
     @Override

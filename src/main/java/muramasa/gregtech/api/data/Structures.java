@@ -55,6 +55,10 @@ public class Structures {
     /** Vacuum Freezer Elements **/
     public static StructureElement VF_HATCH_OR_CASING = new StructureElement("hatchorcasingvf", FROST_PROOF, HATCH_ITEM_INPUT, HATCH_ITEM_OUTPUT, HATCH_ENERGY);
 
+    /** Large Turbine Elements **/
+    public static StructureElement LT_HATCH_OR_CASING = new StructureElement("hatchorcasinglt", TURBINE_4, HATCH_FLUID_INPUT, HATCH_FLUID_OUTPUT);
+    public static StructureElement LT_DYNAMO_OR_CASING = new StructureElement("dynamoorcasinglt", TURBINE_4, HATCH_DYNAMO);
+
     /** Fusion Reactor Elements **/
     public static StructureElement FR_INPUT_OR_CASING = new StructureElement("inputorcasingfr", FUSION_3, HATCH_FLUID_INPUT) {
         @Override
@@ -100,6 +104,12 @@ public class Structures {
             .of("CCC", "CCC", "CCC").of("CCC", "CAM", "CCC").of(0)
             .at("C", VF_HATCH_OR_CASING).at("M", VACUUM_FREEZER).build()
             .offset(2, -1).exact(VACUUM_FREEZER, 1).min(FROST_PROOF, 22).min(HATCH_ITEM_INPUT, 1).min(HATCH_ITEM_OUTPUT, 1).min(HATCH_ENERGY, 1)
+        );
+
+        LARGE_TURBINE_4.addStructure(StructureBuilder.start()
+            .of("CCCC", "CCCC", "CCCC").of("CHHC", "EAAM", "CHHC").of(0)
+            .at("C", TURBINE_4).at("H", LT_HATCH_OR_CASING).at("E", LT_DYNAMO_OR_CASING).at("M", LARGE_TURBINE_4).build()
+            .offset(3, -1).exact(LARGE_TURBINE_4, 1).min(TURBINE_4, 28).min(HATCH_FLUID_INPUT, 1).min(HATCH_FLUID_OUTPUT, 1)
         );
 
         FUSION_REACTOR_1.addStructure(StructureBuilder.start()

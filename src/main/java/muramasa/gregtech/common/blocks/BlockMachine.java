@@ -15,7 +15,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -155,16 +154,5 @@ public class BlockMachine extends Block {
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_machine", "inventory"));
         ModelLoader.setCustomStateMapper(this, stateMapRedirect);
-    }
-
-    public static class ColorHandler implements IBlockColor {
-        @Override
-        public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int index) {
-            if (index == 0) {
-                TileEntityMachine tile = (TileEntityMachine) Utils.getTile(world, pos);
-                if (tile != null && tile.getTextureData().getTint() > -1) return tile.getTextureData().getTint();
-            }
-            return -1;
-        }
     }
 }

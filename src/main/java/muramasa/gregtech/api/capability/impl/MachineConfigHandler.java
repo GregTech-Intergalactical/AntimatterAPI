@@ -22,7 +22,8 @@ public class MachineConfigHandler implements IConfigHandler {
             case WRENCH:
                 return getTile().setFacing(side);
             case HAMMER:
-                getTile().toggleDisabled();
+//                getTile().toggleDisabled();
+//                player.sendMessage(new TextComponentString("Machine was " + (getTile().getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
                 return true;
             default: return false;
         }

@@ -5,7 +5,6 @@ import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.machines.Tier;
-import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,13 +18,12 @@ import static muramasa.gregtech.api.machines.MachineFlag.*;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    private MachineItemHandler itemHandler;
-    private MachineFluidHandler fluidHandler;
-    private MachineConfigHandler configHandler;
-    private MachineCoverHandler coverHandler;
-    private HatchComponentHandler componentHandler;
-
-    private Texture[] textureOverride;
+    protected MachineItemHandler itemHandler;
+    protected MachineFluidHandler fluidHandler;
+    protected MachineConfigHandler configHandler;
+    protected MachineCoverHandler coverHandler;
+    protected HatchComponentHandler componentHandler;
+    protected int textureOverride = -1;
 
     @Override
     public void onFirstTick() {
@@ -75,8 +73,13 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
-        if (textureOverride != null) data.setBase(textureOverride);
+        if (textureOverride > -1) data.setBase(Machines.get(textureOverride).getBaseTextures(Tier.MULTI));
         return data;
+    }
+
+    @Override
+    public void setTextureOverride(int textureOverride) {
+        this.textureOverride = textureOverride;
     }
 
     @Override
@@ -111,19 +114,13 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
-            textureOverride = Machines.get(compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE)).getBaseTextures(Tier.MULTI);
-        } else {
-            textureOverride = null;
-        }
+        textureOverride = compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE) ? compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE) : -1;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (componentHandler != null && componentHandler.hasLinkedController()) {
-            compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, componentHandler.getFirstController().getTypeId());
-        }
+        if (textureOverride != -1) compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
         return compound;
     }
 }
