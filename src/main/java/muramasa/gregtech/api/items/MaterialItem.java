@@ -11,7 +11,6 @@ import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.creativetab.GregTechTab;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -182,20 +181,5 @@ public class MaterialItem extends Item {
 
     public static Collection<MaterialItem> getAll() {
         return TYPE_LOOKUP.values();
-    }
-
-    public static class ColorHandler implements IItemColor {
-        @Override
-        public int colorMultiplier(ItemStack stack, int tintIndex) {
-            if (tintIndex == 0) {
-                if (stack.getItem() instanceof MaterialItem) {
-                    Material material = ((MaterialItem) stack.getItem()).getMaterial();
-                    if (material != null) {
-                        return material.getRGB();
-                    }
-                }
-            }
-            return -1;
-        }
     }
 }

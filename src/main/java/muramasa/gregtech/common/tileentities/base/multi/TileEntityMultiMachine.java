@@ -3,6 +3,7 @@ package muramasa.gregtech.common.tileentities.base.multi;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.capability.impl.ControllerComponentHandler;
+import muramasa.gregtech.api.capability.impl.ControllerConfigHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.recipe.Recipe;
@@ -34,6 +35,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         super.onFirstTick();
         components = new HashMap<>();
         componentHandler = new ControllerComponentHandler(getType(), this);
+        configHandler = new ControllerConfigHandler(this);
     }
 
     @Override
@@ -112,25 +114,24 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
             }
             System.out.println("[Structure Debug] Valid Structure");
             System.out.println(getStoredInputs());
-            validStructure = true;
-            onValidStructure();
-            return true;
+            onStructureIntegrity(true);
+            return (validStructure = true);
         }
         System.out.println(result.getError());
         clearComponents();
-        validStructure = false;
-        return false;
+        return (validStructure = false);
     }
 
     /** Events **/
-    public void onValidStructure() {
-        //NOOP
-    }
-
     public void onComponentRemoved() {
         clearComponents();
         validStructure = false;
         System.out.println("INVALIDATED STRUCTURE");
+        onStructureIntegrity(false);
+    }
+
+    public void onStructureIntegrity(boolean valid) {
+        //NOOP
     }
 
     public void clearComponents() {

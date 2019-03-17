@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:layered"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

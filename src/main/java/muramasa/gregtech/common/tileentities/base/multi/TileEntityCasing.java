@@ -1,5 +1,6 @@
 package muramasa.gregtech.common.tileentities.base.multi;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.capability.ICoverHandler;
@@ -10,6 +11,7 @@ import muramasa.gregtech.api.texture.IBakedTile;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.common.blocks.BlockCasing;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -25,7 +27,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
         }
     };
     protected ICoverHandler coverHandler = new CoverHandler(this);
-    protected TextureData data;
+    protected int textureOverride = -1;
 
     public Casing getType() {
         return ((BlockCasing) getState().getBlock()).getType();
@@ -38,7 +40,18 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 
     @Override
     public TextureData getTextureData() {
-        return data != null ? data : (data = TextureData.get().base(getType().getTexture()));
+        TextureData data = TextureData.get().base(getType().getTexture()).overlay(getType().getTexture());
+        if (textureOverride == 0) {
+//            Texture overlay = data.getOverlay()[0];
+//            data.setOverlay(overlay, overlay, Textures.LARGE_TURBINE_ACTIVE[3], Textures.LARGE_TURBINE_ACTIVE[3], overlay, overlay);
+//            data.setOverlay(Textures.LARGE_TURBINE_ACTIVE[4]);
+        }
+        return data;
+    }
+
+    @Override
+    public void setTextureOverride(int textureOverride) {
+        this.textureOverride = textureOverride;
     }
 
     @Override
@@ -53,6 +66,26 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
         if (capability == GTCapabilities.COMPONENT) return GTCapabilities.COMPONENT.cast(componentHandler);
         else if (capability == GTCapabilities.COVERABLE) return GTCapabilities.COVERABLE.cast(coverHandler);
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
+            textureOverride = compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE);
+        } else {
+            textureOverride = -1;
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+//        if (componentHandler != null && componentHandler.hasLinkedController()) {
+//            compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, componentHandler.getFirstController().getTypeId());
+//        }
+        if (textureOverride != -1) compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
+        return compound;
     }
 
     @Override

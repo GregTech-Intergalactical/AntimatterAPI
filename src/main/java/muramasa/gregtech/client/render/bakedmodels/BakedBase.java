@@ -156,6 +156,7 @@ public class BakedBase implements IBakedModel {
             if (textures[i] == null) continue;
             switch (mode) {
                 case SINGLE:
+                case FULL:
                     tex(quads, layer, textures[i]);
                     break;
                 case COPIED_SIDES:
@@ -165,9 +166,6 @@ public class BakedBase implements IBakedModel {
 //                        System.out.println(i);
 ////                        tex(quads, 5, layer, textures[4]);
 //                    }
-                    break;
-                case FULL:
-                    tex(quads, layer, textures[i]);
                     break;
             }
         }

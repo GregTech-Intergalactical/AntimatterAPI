@@ -60,9 +60,11 @@ public class TextureData {
 
     public void setBase(Texture... textures) {
         base = textures;
+        if (textures.length == 6) baseMode = TextureMode.FULL;
     }
 
     public void setOverlay(Texture... textures) {
         overlay = textures;
+        if (textures.length == 6) overlayMode = TextureMode.FULL;
     }
 }

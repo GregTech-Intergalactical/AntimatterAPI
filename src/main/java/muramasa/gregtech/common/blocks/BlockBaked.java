@@ -25,10 +25,16 @@ import java.util.List;
 public abstract class BlockBaked extends Block {
 
     protected TextureData data;
+    protected ModelResourceLocation model;
 
-    public BlockBaked(TextureData data) {
+    public BlockBaked(TextureData data, ModelResourceLocation model) {
         super(Material.ROCK);
         this.data = data;
+        this.model = model;
+    }
+
+    public BlockBaked(TextureData data) {
+        this(data, new ModelResourceLocation(Ref.MODID + ":basic"));
     }
 
     @Override
@@ -39,7 +45,7 @@ public abstract class BlockBaked extends Block {
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(GTProperties.TEXTURE, hasTileEntity ? getTileData(state, world, pos) : getBlockData());
+        return exState.withProperty(GTProperties.TEXTURE, hasTileEntity(state) ? getTileData(state, world, pos) : getBlockData());
     }
 
     public TextureData getTileData(IBlockState state, IBlockAccess world, BlockPos pos) {
@@ -54,12 +60,12 @@ public abstract class BlockBaked extends Block {
         return data;
     }
 
-    public List<Texture> getTextures() {
-        return Collections.emptyList();
+    public ModelResourceLocation getModel() {
+        return model;
     }
 
-    public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(Ref.MODID + ":basic");
+    public List<Texture> getTextures() {
+        return Collections.emptyList();
     }
 
     public ItemOverrideList getOverride(IBakedModel baked) {

@@ -18,15 +18,17 @@ public class TileEntityElectricBlastFurnace extends TileEntityMultiMachine {
     }
 
     @Override
-    public void onValidStructure() {
-        heatingCapacity = 0;
-        for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
-            for (IComponentHandler component : entry.getValue()) {
-                if (component.getTile() instanceof TileEntityCoil) {
-                    heatingCapacity += ((TileEntityCoil) component.getTile()).getHeatingCapacity();
+    public void onStructureIntegrity(boolean valid) {
+        if (valid) {
+            heatingCapacity = 0;
+            for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
+                for (IComponentHandler component : entry.getValue()) {
+                    if (component.getTile() instanceof TileEntityCoil) {
+                        heatingCapacity += ((TileEntityCoil) component.getTile()).getHeatingCapacity();
+                    }
                 }
             }
+            System.out.println("Heating Capacity: " + heatingCapacity);
         }
-        System.out.println("Heating Capacity: " + heatingCapacity);
     }
 }
