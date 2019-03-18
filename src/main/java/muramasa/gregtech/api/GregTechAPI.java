@@ -67,6 +67,10 @@ public class GregTechAPI {
         return COVER_CATALYST_REGISTRY.get(registryName.toString());
     }
 
+    public static boolean isCoverCatalyst(ItemStack stack) {
+        return getCoverFromCatalyst(stack) != null;
+    }
+
     public static Collection<Cover> getRegisteredCovers() {
         return COVER_REGISTRY.values();
     }

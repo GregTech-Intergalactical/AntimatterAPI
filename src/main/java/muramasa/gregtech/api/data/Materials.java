@@ -1,9 +1,11 @@
 package muramasa.gregtech.api.data;
 
+import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.common.fluid.GTFluid;
 import muramasa.gregtech.Ref;
+import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -334,7 +336,6 @@ public class Materials {
     public static Material Lapis = new Material("Lapis", 0x4646dc, LAPIS).asGemBasic(false, ORE).add(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1);
     public static Material EnderPearl = new Material("Enderpearl", 0x6cdcc8, SHINY).asGemBasic(false, ROD, PLATE).add(Beryllium, 1, Potassium, 4, Nitrogen, 5/*, Magic, 6*/);
     public static Material EnderEye = new Material("Endereye", 0xa0fae6, SHINY).asGemBasic(false, ROD, PLATE).add(EnderPearl, 1, Blaze, 1);
-    public static Material Apatite = new Material("Apatite", 0xc8c8ff, DIAMOND).asGemBasic(false, ORE).add(Calcium, 5, Phosphate, 3, Chlorine, 1);
     public static Material Phosphorus = new Material("Phosphorus", 0xffff00, FLINT).asGemBasic(false, ORE).add(Calcium, 3, Phosphate, 2);
     public static Material GarnetRed = new Material("Red Garnet", 0xc85050, RUBY).asGemBasic(true).addTools(7.0F, 128, 2).add(Pyrope, 3, Almandine, 5, Spessartine, 8);
     public static Material GarnetYellow = new Material("Yellow Garnet", 0xc8c850, RUBY).asGemBasic(true).addTools(7.0F, 128, 2).add(Andradite, 5, Grossular, 8, Uvarovite, 3);
@@ -437,20 +438,20 @@ public class Materials {
         ELECSEPI.add(Bastnasite, Monazite);
         ELECSEPG.add(Magnetite, VanadiumMagnetite);
         ELECSEPN.add(YellowLimonite, BrownLimonite, Pyrite, BandedIron, Nickel, Glauconite, Pentlandite, Tin, Antimony, Ilmenite, Manganese, Chrome, Andradite);
-        ELEC.add(Methane, CarbonDioxide, NitrogenDioxide, Toluene, VinylChloride, SulfurDioxide, SulfurTrioxide, Dimethylamine, DinitrogenTetroxide, NitricOxide, Ammonia, Chloromethane, Tetrafluoroethylene, CarbonMonoxide, Ethylene, Propane, Ethenone, Ethanol, Glyceryl, SodiumPersulfate, Dichlorobenzene, Styrene, Isoprene, Tetranitromethane, Epichlorohydrin, NitricAcid, Dimethylhydrazine, Chloramine, Dimethyldichlorosilane, HydrofluoricAcid, Chloroform, BisphenolA, AceticAcid, CalciumAcetateSolution, Acetone, Methanol, VinylAcetate, MethylAcetate, AllylChloride, HypochlorousAcid, Cumene, PhosphoricAcid, SulfuricAcid, Benzene, Phenol, Glycerol, SodiumSulfide, Almandine, Andradite, BandedIron, Calcite, Cassiterite, Chalcopyrite, Cobaltite, Galena, Garnierite, Grossular, Bauxite, Magnesite, Magnetite, Molybdenite, Obsidian, Phosphate, Polydimethylsiloxane, Pyrite, Pyrolusite, Pyrope, RockSalt, Saltpeter, SiliconDioxide, Pyrochlore, Massicot, ArsenicTrioxide, CobaltOxide, Zincite, Magnesia, Quicklime, Potash, SodaAsh, PhosphorousPentoxide, SodiumHydroxide, Spessartine, Sphalerite, Uvarovite, PotassiumFeldspar, Biotite, GraniteRed, Bastnasite, Pentlandite, Spodumene, Tantalite, Lepidolite, Glauconite, Bentonite, Malachite, Barite, Talc, Soapstone, AntimonyTrioxide, CupricOxide, Ferrosilite, Quartzite, BlueTopaz, Charcoal, Coal, Lignite, Diamond, Emerald, GreenSapphire, Lazurite, Ruby, Sapphire, Sodalite, Tanzanite, Topaz, Olivine, Opal, Amethyst, EnderPearl, Apatite, Monazite, StainlessSteel, Steel, Ultimet, IronMagnetic, SteelMagnetic, NeodymiumMagnetic, Osmiridium);
+        ELEC.add(Methane, CarbonDioxide, NitrogenDioxide, Toluene, VinylChloride, SulfurDioxide, SulfurTrioxide, Dimethylamine, DinitrogenTetroxide, NitricOxide, Ammonia, Chloromethane, Tetrafluoroethylene, CarbonMonoxide, Ethylene, Propane, Ethenone, Ethanol, Glyceryl, SodiumPersulfate, Dichlorobenzene, Styrene, Isoprene, Tetranitromethane, Epichlorohydrin, NitricAcid, Dimethylhydrazine, Chloramine, Dimethyldichlorosilane, HydrofluoricAcid, Chloroform, BisphenolA, AceticAcid, CalciumAcetateSolution, Acetone, Methanol, VinylAcetate, MethylAcetate, AllylChloride, HypochlorousAcid, Cumene, PhosphoricAcid, SulfuricAcid, Benzene, Phenol, Glycerol, SodiumSulfide, Almandine, Andradite, BandedIron, Calcite, Cassiterite, Chalcopyrite, Cobaltite, Galena, Garnierite, Grossular, Bauxite, Magnesite, Magnetite, Molybdenite, Obsidian, Phosphate, Polydimethylsiloxane, Pyrite, Pyrolusite, Pyrope, RockSalt, Saltpeter, SiliconDioxide, Pyrochlore, Massicot, ArsenicTrioxide, CobaltOxide, Zincite, Magnesia, Quicklime, Potash, SodaAsh, PhosphorousPentoxide, SodiumHydroxide, Spessartine, Sphalerite, Uvarovite, PotassiumFeldspar, Biotite, GraniteRed, Bastnasite, Pentlandite, Spodumene, Tantalite, Lepidolite, Glauconite, Bentonite, Malachite, Barite, Talc, Soapstone, AntimonyTrioxide, CupricOxide, Ferrosilite, Quartzite, BlueTopaz, Charcoal, Coal, Lignite, Diamond, Emerald, GreenSapphire, Lazurite, Ruby, Sapphire, Sodalite, Tanzanite, Topaz, Olivine, Opal, Amethyst, EnderPearl, Monazite, StainlessSteel, Steel, Ultimet, IronMagnetic, SteelMagnetic, NeodymiumMagnetic, Osmiridium);
         CENT.add(NobleGases, Air, BrownLimonite, /*Cinnabar, */Clay, Sheldonite, Powellite, Stibnite, Tetrahedrite, Uraninite, Wulfenite, YellowLimonite, Blaze, Flint, Marble, GraniteBlack, VanadiumMagnetite, Pitchblende, Glass, Lapis, EnderEye, Phosphorus, GarnetRed, GarnetYellow, Redstone, Basalt, AnnealedCopper, BatteryAlloy, Brass, Bronze, Cupronickel, Electrum, Invar, Kanthal, Magnalium, Nichrome, NiobiumTitanium, PigIron, SolderingAlloy, VanadiumGallium, WroughtIron, SterlingSilver, RoseGold, BlackBronze, BismuthBronze, BlackSteel, DamascusSteel, TungstenSteel, RedAlloy, CobaltBrass, TungstenCarbide, VanadiumSteel, HSSG, HSSE, HSSS, GalliumArsenide/*, IndiumGalliumPhosphide, BorosilicateGlass*/);
         CRACK.add(RefineryGas, Naphtha, Ethane, Propane, Butane, Butene, Ethylene, Propene, LightDiesel, HeavyDiesel);
         CALCITE2X.add(Pyrite, BrownLimonite, YellowLimonite, Magnetite);
         CALCITE3X.add(Iron, PigIron, WroughtIron/*, MeteoricIron*/);
         WASHM.add(Gold, Silver, Osmium, Platinum, Sheldonite, Galena, Nickel, Tungstate, Lead, Magnetite, Iridium, Copper, Chalcopyrite);
         WASHS.add(Zinc, Nickel, Copper, Cobaltite, Tetrahedrite, Gold, Sphalerite, Garnierite, Chalcopyrite, Sheldonite, Platinum, Pentlandite, Tin, Malachite, YellowLimonite);
-        NOSMELT.add(Wood, WoodSealed, Sulfur, Saltpeter, Graphite, /*Paper, */Coal, Charcoal, Lignite, Glyceryl, NitroFuel, Emerald, Amethyst, Tanzanite, Topaz, /*Amber,*/ GreenSapphire, Sapphire, Ruby, Opal, Olivine, GarnetRed, GarnetYellow, Apatite, Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz, Phosphorus, Phosphate, NetherStar, EnderPearl, EnderEye, Blaze);
-        NOSMASH.add(Wood, WoodSealed, Sulfur, Saltpeter, Graphite, /*Paper, */Coal, Charcoal, Lignite, Rubber, StyreneButadieneRubber, Plastic, PolyvinylChloride, Polystyrene, Silicone, Glyceryl, NitroFuel, Concrete, Redstone, Glowstone, Netherrack, Stone, Brick, Endstone, Marble, Basalt, Obsidian, Flint, GraniteRed, GraniteBlack, Salt, RockSalt, Glass, Diamond, Emerald, Amethyst, Tanzanite, Topaz, /*Amber,*/ GreenSapphire, Sapphire, Ruby, Opal, Olivine, GarnetRed, GarnetYellow, Apatite, Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz, Phosphorus, Phosphate, NetherStar, EnderPearl, EnderEye);
+        NOSMELT.add(Wood, WoodSealed, Sulfur, Saltpeter, Graphite, /*Paper, */Coal, Charcoal, Lignite, Glyceryl, NitroFuel, Emerald, Amethyst, Tanzanite, Topaz, /*Amber,*/ GreenSapphire, Sapphire, Ruby, Opal, Olivine, GarnetRed, GarnetYellow, Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz, Phosphorus, Phosphate, NetherStar, EnderPearl, EnderEye, Blaze);
+        NOSMASH.add(Wood, WoodSealed, Sulfur, Saltpeter, Graphite, /*Paper, */Coal, Charcoal, Lignite, Rubber, StyreneButadieneRubber, Plastic, PolyvinylChloride, Polystyrene, Silicone, Glyceryl, NitroFuel, Concrete, Redstone, Glowstone, Netherrack, Stone, Brick, Endstone, Marble, Basalt, Obsidian, Flint, GraniteRed, GraniteBlack, Salt, RockSalt, Glass, Diamond, Emerald, Amethyst, Tanzanite, Topaz, /*Amber,*/ GreenSapphire, Sapphire, Ruby, Opal, Olivine, GarnetRed, GarnetYellow, Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz, Phosphorus, Phosphate, NetherStar, EnderPearl, EnderEye);
         GRINDABLE.add(/*Paper, */Coal, Charcoal, Lignite, Lead, Tin, SolderingAlloy, Flint, Gold, Silver, Iron, IronMagnetic, Steel, SteelMagnetic, Zinc, Antimony, Copper, AnnealedCopper, Bronze, Nickel, Invar, Brass, WroughtIron, Electrum, Clay, Blaze);
         SMELTF.add(Concrete, Redstone, Glowstone, Glass, Blaze);
         //TODO explicit recipe SMELTG.add(Mercury, CINNABAR); //TODO Remove
         NOBBF.add(Tetrahedrite, Chalcopyrite, Sheldonite, Pyrolusite, Magnesite, Molybdenite, Galena);
-        CRYSTALLIZE.add(Apatite, Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz);
+        CRYSTALLIZE.add(Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz);
         BRITTLEG.add(Coal, Charcoal, Lignite, BlueTopaz); //TODO Blue Topaz probably should not be brittle gem
         RUBBERTOOLS.add(Rubber, StyreneButadieneRubber, Plastic, PolyvinylChloride, Polystyrene, Silicone);
         SOLDER.add(Lead, Tin, SolderingAlloy);
@@ -495,7 +496,6 @@ public class Materials {
         CertusQuartz.setOreMulti(2).setSmeltingMulti(2);
         Phosphorus.setOreMulti(3).setSmeltingMulti(3);
         Saltpeter.setOreMulti(4).setSmeltingMulti(4);
-        Apatite.setOreMulti(4).setSmeltingMulti(4).setByProductMulti(2);
         Redstone.setOreMulti(5).setSmeltingMulti(5);
         Glowstone.setOreMulti(5).setSmeltingMulti(5);
         Lapis.setOreMulti(6).setSmeltingMulti(6).setByProductMulti(4);
@@ -600,7 +600,7 @@ public class Materials {
         Sodalite.addByProduct(Lazurite, Lapis);
         Spodumene.addByProduct(Aluminium, Lithium);
         Ruby.addByProduct(Chrome, GarnetRed);
-        Phosphorus.addByProduct(Apatite, Phosphate);
+        Phosphorus.addByProduct(Phosphate);
         Iridium.addByProduct(Platinum, Osmium);
         Pyrope.addByProduct(GarnetRed, Magnesium);
         Almandine.addByProduct(GarnetRed, Aluminium);
@@ -617,7 +617,6 @@ public class Materials {
         Lignite.addByProduct(Coal);
         Diamond.addByProduct(Graphite);
         Beryllium.addByProduct(Emerald);
-        Apatite.addByProduct(Phosphorus);
         Magnesite.addByProduct(Magnesium);
         NetherQuartz.addByProduct(Netherrack);
         PigIron.addByProduct(Iron);
@@ -692,6 +691,10 @@ public class Materials {
             if (mat.hasFlag(PLASMA) && mat.getPlasma() == null) {
                 mat.setPlasma(new GTFluid(mat, PLASMA));
             }
+        }
+
+        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
+            registrar.onMaterialInit();
         }
     }
 

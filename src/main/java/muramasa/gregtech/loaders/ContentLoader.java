@@ -4,6 +4,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
@@ -100,8 +101,9 @@ public class ContentLoader {
         for (MaterialItem item : MaterialItem.getAll()) {
             event.getRegistry().register(item);
         }
-        for (StandardItem item : StandardItem.getAll()) {
-            event.getRegistry().register(item);
+        for (ItemType type : ItemType.getAll()) {
+            if (!type.isEnabled()) continue;
+            event.getRegistry().register(new StandardItem(type));
         }
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(new ItemBlockMachine(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));

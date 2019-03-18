@@ -5,26 +5,581 @@
   },
   "variants": {
     "id": {
+	  "energy_port": {
+		"textures": {"layer0": "gregtech:items/standard/energy_port"}
+	  },
+	  "sticky_resin": {
+		"textures": {"layer0": "gregtech:items/standard/sticky_resin"}
+	  },
 	  "empty_cell": {
 		"textures": {"layer0": "gregtech:items/standard/empty_cell"}
 	  },
 	  "debug_scanner": {
 		"textures": {"layer0": "gregtech:items/standard/debug_scanner"}
 	  },
-	  "pump_component": {
-		"textures": {"layer0": "gregtech:items/standard/component_pump"}
+	  "computer_monitor": {
+		"textures": {"layer0": "gregtech:items/standard/computer_monitor"}
 	  },
-	  "conveyor_component": {
-		"textures": {"layer0": "gregtech:items/standard/component_conveyor"}
+	  "item_filter": {
+		"textures": {"layer0": "gregtech:items/standard/item_filter"}
 	  },
-	  "item_port": {
-		"textures": {"layer0": "gregtech:items/standard/cover_item_port"}
+	  "diamond_saw_blade": {
+		"textures": {"layer0": "gregtech:items/standard/diamond_saw_blade"}
 	  },
-	  "fluid_port": {
-		"textures": {"layer0": "gregtech:items/standard/cover_fluid_port"}
+	  "diamond_grind_head": {
+		"textures": {"layer0": "gregtech:items/standard/diamond_grind_head"}
 	  },
-	  "energy_port": {
-		"textures": {"layer0": "gregtech:items/standard/cover_energy_port"}
+	  "tungsten_grind_head": {
+		"textures": {"layer0": "gregtech:items/standard/tungsten_grind_head"}
+	  },
+	  "iridium_alloy_ingot": {
+		"textures": {"layer0": "gregtech:items/standard/iridium_alloy_ingot"}
+	  },
+	  "iridium_reinforced_plate": {
+		"textures": {"layer0": "gregtech:items/standard/iridium_reinforced_plate"}
+	  },
+	  "iridium_neutron_reflector": {
+		"textures": {"layer0": "gregtech:items/standard/iridium_neutron_reflector"}
+	  },
+	  "quantum_eye": {
+		"textures": {"layer0": "gregtech:items/standard/quantum_eye"}
+	  },
+	  "quantum_star": {
+		"textures": {"layer0": "gregtech:items/standard/quantum_star"}
+	  },
+	  "gravi_star": {
+		"textures": {"layer0": "gregtech:items/standard/gravi_star"}
+	  },
+	  "motor_lv": {
+		"textures": {"layer0": "gregtech:items/standard/motor_lv"}
+	  },
+	  "motor_mv": {
+		"textures": {"layer0": "gregtech:items/standard/motor_mv"}
+	  },
+	  "motor_hv": {
+		"textures": {"layer0": "gregtech:items/standard/motor_hv"}
+	  },
+	  "motor_ev": {
+		"textures": {"layer0": "gregtech:items/standard/motor_ev"}
+	  },
+	  "motor_iv": {
+		"textures": {"layer0": "gregtech:items/standard/motor_iv"}
+	  },
+	  "pump_lv": {
+		"textures": {"layer0": "gregtech:items/standard/pump_lv"}
+	  },
+	  "pump_mv": {
+		"textures": {"layer0": "gregtech:items/standard/pump_mv"}
+	  },
+	  "pump_hv": {
+		"textures": {"layer0": "gregtech:items/standard/pump_hv"}
+	  },
+	  "pump_ev": {
+		"textures": {"layer0": "gregtech:items/standard/pump_ev"}
+	  },
+	  "pump_iv": {
+		"textures": {"layer0": "gregtech:items/standard/pump_iv"}
+	  },
+	  "fluid_regulator_lv": {
+		"textures": {"layer0": "gregtech:items/standard/fluid_regulator_lv"}
+	  },
+	  "fluid_regulator_mv": {
+		"textures": {"layer0": "gregtech:items/standard/fluid_regulator_mv"}
+	  },
+	  "fluid_regulator_hv": {
+		"textures": {"layer0": "gregtech:items/standard/fluid_regulator_hv"}
+	  },
+	  "fluid_regulator_ev": {
+		"textures": {"layer0": "gregtech:items/standard/fluid_regulator_ev"}
+	  },
+	  "fluid_regulator_iv": {
+		"textures": {"layer0": "gregtech:items/standard/fluid_regulator_iv"}
+	  },
+	  "conveyor_lv": {
+		"textures": {"layer0": "gregtech:items/standard/conveyor_lv"}
+	  },
+	  "conveyor_mv": {
+		"textures": {"layer0": "gregtech:items/standard/conveyor_mv"}
+	  },
+	  "conveyor_hv": {
+		"textures": {"layer0": "gregtech:items/standard/conveyor_hv"}
+	  },
+	  "conveyor_ev": {
+		"textures": {"layer0": "gregtech:items/standard/conveyor_ev"}
+	  },
+	  "conveyor_iv": {
+		"textures": {"layer0": "gregtech:items/standard/conveyor_iv"}
+	  },
+	  "piston_lv": {
+		"textures": {"layer0": "gregtech:items/standard/piston_lv"}
+	  },
+	  "piston_mv": {
+		"textures": {"layer0": "gregtech:items/standard/piston_mv"}
+	  },
+	  "piston_hv": {
+		"textures": {"layer0": "gregtech:items/standard/piston_hv"}
+	  },
+	  "piston_ev": {
+		"textures": {"layer0": "gregtech:items/standard/piston_ev"}
+	  },
+	  "piston_iv": {
+		"textures": {"layer0": "gregtech:items/standard/piston_iv"}
+	  },
+	  "robot_arm_lv": {
+		"textures": {"layer0": "gregtech:items/standard/robot_arm_lv"}
+	  },
+	  "robot_arm_mv": {
+		"textures": {"layer0": "gregtech:items/standard/robot_arm_mv"}
+	  },
+	  "robot_arm_hv": {
+		"textures": {"layer0": "gregtech:items/standard/robot_arm_hv"}
+	  },
+	  "robot_arm_ev": {
+		"textures": {"layer0": "gregtech:items/standard/robot_arm_ev"}
+	  },
+	  "robot_arm_iv": {
+		"textures": {"layer0": "gregtech:items/standard/robot_arm_iv"}
+	  },
+	  "field_gen_lv": {
+		"textures": {"layer0": "gregtech:items/standard/field_gen_lv"}
+	  },
+	  "field_gen_mv": {
+		"textures": {"layer0": "gregtech:items/standard/field_gen_mv"}
+	  },
+	  "field_gen_hv": {
+		"textures": {"layer0": "gregtech:items/standard/field_gen_hv"}
+	  },
+	  "field_gen_ev": {
+		"textures": {"layer0": "gregtech:items/standard/field_gen_ev"}
+	  },
+	  "field_gen_iv": {
+		"textures": {"layer0": "gregtech:items/standard/field_gen_iv"}
+	  },
+	  "emitter_lv": {
+		"textures": {"layer0": "gregtech:items/standard/emitter_lv"}
+	  },
+	  "emitter_mv": {
+		"textures": {"layer0": "gregtech:items/standard/emitter_mv"}
+	  },
+	  "emitter_hv": {
+		"textures": {"layer0": "gregtech:items/standard/emitter_hv"}
+	  },
+	  "emitter_ev": {
+		"textures": {"layer0": "gregtech:items/standard/emitter_ev"}
+	  },
+	  "emitter_iv": {
+		"textures": {"layer0": "gregtech:items/standard/emitter_iv"}
+	  },
+	  "sensor_lv": {
+		"textures": {"layer0": "gregtech:items/standard/sensor_lv"}
+	  },
+	  "sensor_mv": {
+		"textures": {"layer0": "gregtech:items/standard/sensor_mv"}
+	  },
+	  "sensor_hv": {
+		"textures": {"layer0": "gregtech:items/standard/sensor_hv"}
+	  },
+	  "sensor_ev": {
+		"textures": {"layer0": "gregtech:items/standard/sensor_ev"}
+	  },
+	  "sensor_iv": {
+		"textures": {"layer0": "gregtech:items/standard/sensor_iv"}
+	  },
+	  "nand_chip": {
+		"textures": {"layer0": "gregtech:items/standard/nand_chip"}
+	  },
+	  "adv_circuit_parts": {
+		"textures": {"layer0": "gregtech:items/standard/adv_circuit_parts"}
+	  },
+	  "etched_wiring_mv": {
+		"textures": {"layer0": "gregtech:items/standard/etched_wiring_mv"}
+	  },
+	  "etched_wiring_hv": {
+		"textures": {"layer0": "gregtech:items/standard/etched_wiring_hv"}
+	  },
+	  "etched_wiring_ev": {
+		"textures": {"layer0": "gregtech:items/standard/etched_wiring_ev"}
+	  },
+	  "engraved_crystal_chip": {
+		"textures": {"layer0": "gregtech:items/standard/engraved_crystal_chip"}
+	  },
+	  "engraved_lapotron_chip": {
+		"textures": {"layer0": "gregtech:items/standard/engraved_lapotron_chip"}
+	  },
+	  "circuit_board_empty": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_board_empty"}
+	  },
+	  "circuit_board_basic": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_board_basic"}
+	  },
+	  "circuit_board_adv": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_board_adv"}
+	  },
+	  "circuit_board_processor_empty": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_board_processor_empty"}
+	  },
+	  "circuit_board_processor": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_board_processor"}
+	  },
+	  "circuit_basic": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_basic"}
+	  },
+	  "circuit_good": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_good"}
+	  },
+	  "circuit_adv": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_adv"}
+	  },
+	  "circuit_data_storage": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_data_storage"}
+	  },
+	  "circuit_data_control": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_data_control"}
+	  },
+	  "circuit_energy_flow": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_energy_flow"}
+	  },
+	  "circuit_data_orb": {
+		"textures": {"layer0": "gregtech:items/standard/circuit_data_orb"}
+	  },
+	  "data_stick": {
+		"textures": {"layer0": "gregtech:items/standard/data_stick"}
+	  },
+	  "battery_hull_small": {
+		"textures": {"layer0": "gregtech:items/standard/battery_hull_small"}
+	  },
+	  "battery_hull_medium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_hull_medium"}
+	  },
+	  "battery_hull_large": {
+		"textures": {"layer0": "gregtech:items/standard/battery_hull_large"}
+	  },
+	  "battery_tantalum": {
+		"textures": {"layer0": "gregtech:items/standard/battery_tantalum"}
+	  },
+	  "battery_small_acid": {
+		"textures": {"layer0": "gregtech:items/standard/battery_small_acid"}
+	  },
+	  "battery_small_mercury": {
+		"textures": {"layer0": "gregtech:items/standard/battery_small_mercury"}
+	  },
+	  "battery_small_cadmium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_small_cadmium"}
+	  },
+	  "battery_small_lithium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_small_lithium"}
+	  },
+	  "battery_small_sodium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_small_sodium"}
+	  },
+	  "battery_medium_acid": {
+		"textures": {"layer0": "gregtech:items/standard/battery_medium_acid"}
+	  },
+	  "battery_medium_mercury": {
+		"textures": {"layer0": "gregtech:items/standard/battery_medium_mercury"}
+	  },
+	  "battery_medium_cadmium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_medium_cadmium"}
+	  },
+	  "battery_medium_lithium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_medium_lithium"}
+	  },
+	  "battery_medium_sodium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_medium_sodium"}
+	  },
+	  "battery_large_acid": {
+		"textures": {"layer0": "gregtech:items/standard/battery_large_acid"}
+	  },
+	  "battery_large_mercury": {
+		"textures": {"layer0": "gregtech:items/standard/battery_large_mercury"}
+	  },
+	  "battery_large_cadmium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_large_cadmium"}
+	  },
+	  "battery_large_lithium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_large_lithium"}
+	  },
+	  "battery_large_sodium": {
+		"textures": {"layer0": "gregtech:items/standard/battery_large_sodium"}
+	  },
+	  "battery_energy_orb": {
+		"textures": {"layer0": "gregtech:items/standard/battery_energy_orb"}
+	  },
+	  "battery_energy_orb_cluster": {
+		"textures": {"layer0": "gregtech:items/standard/battery_energy_orb_cluster"}
+	  },
+	  "empty_shape_plate": {
+		"textures": {"layer0": "gregtech:items/standard/empty_shape_plate"}
+	  },
+	  "mold_plate": {
+		"textures": {"layer0": "gregtech:items/standard/mold_plate"}
+	  },
+	  "mold_gear": {
+		"textures": {"layer0": "gregtech:items/standard/mold_gear"}
+	  },
+	  "mold_small_gear": {
+		"textures": {"layer0": "gregtech:items/standard/mold_small_gear"}
+	  },
+	  "mold_coinage": {
+		"textures": {"layer0": "gregtech:items/standard/mold_coinage"}
+	  },
+	  "mold_bottle": {
+		"textures": {"layer0": "gregtech:items/standard/mold_bottle"}
+	  },
+	  "mold_ingot": {
+		"textures": {"layer0": "gregtech:items/standard/mold_ingot"}
+	  },
+	  "mold_ball": {
+		"textures": {"layer0": "gregtech:items/standard/mold_ball"}
+	  },
+	  "mold_block": {
+		"textures": {"layer0": "gregtech:items/standard/mold_block"}
+	  },
+	  "mold_nugget": {
+		"textures": {"layer0": "gregtech:items/standard/mold_nugget"}
+	  },
+	  "mold_anvil": {
+		"textures": {"layer0": "gregtech:items/standard/mold_anvil"}
+	  },
+	  "shape_plate": {
+		"textures": {"layer0": "gregtech:items/standard/shape_plate"}
+	  },
+	  "shape_rod": {
+		"textures": {"layer0": "gregtech:items/standard/shape_rod"}
+	  },
+	  "shape_bolt": {
+		"textures": {"layer0": "gregtech:items/standard/shape_bolt"}
+	  },
+	  "shape_ring": {
+		"textures": {"layer0": "gregtech:items/standard/shape_ring"}
+	  },
+	  "shape_cell": {
+		"textures": {"layer0": "gregtech:items/standard/shape_cell"}
+	  },
+	  "shape_ingot": {
+		"textures": {"layer0": "gregtech:items/standard/shape_ingot"}
+	  },
+	  "shape_wire": {
+		"textures": {"layer0": "gregtech:items/standard/shape_wire"}
+	  },
+	  "shape_pipe_tiny": {
+		"textures": {"layer0": "gregtech:items/standard/shape_pipe_tiny"}
+	  },
+	  "shape_pipe_small": {
+		"textures": {"layer0": "gregtech:items/standard/shape_pipe_small"}
+	  },
+	  "shape_pipe_normal": {
+		"textures": {"layer0": "gregtech:items/standard/shape_pipe_normal"}
+	  },
+	  "shape_pipe_large": {
+		"textures": {"layer0": "gregtech:items/standard/shape_pipe_large"}
+	  },
+	  "shape_pipe_huge": {
+		"textures": {"layer0": "gregtech:items/standard/shape_pipe_huge"}
+	  },
+	  "shape_block": {
+		"textures": {"layer0": "gregtech:items/standard/shape_block"}
+	  },
+	  "shape_head_sword": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_sword"}
+	  },
+	  "shape_head_pickaxe": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_pickaxe"}
+	  },
+	  "shape_head_shovel": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_shovel"}
+	  },
+	  "shape_head_axe": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_axe"}
+	  },
+	  "shape_head_hoe": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_hoe"}
+	  },
+	  "shape_head_hammer": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_hammer"}
+	  },
+	  "shape_head_file": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_file"}
+	  },
+	  "shape_head_saw": {
+		"textures": {"layer0": "gregtech:items/standard/shape_head_saw"}
+	  },
+	  "shape_gear": {
+		"textures": {"layer0": "gregtech:items/standard/shape_gear"}
+	  },
+	  "shape_gear_small": {
+		"textures": {"layer0": "gregtech:items/standard/shape_gear_small"}
+	  },
+	  "shape_bottle": {
+		"textures": {"layer0": "gregtech:items/standard/shape_bottle"}
+	  },
+	  "drop_tin": {
+		"textures": {"layer0": "gregtech:items/standard/drop_tin"}
+	  },
+	  "drop_lead": {
+		"textures": {"layer0": "gregtech:items/standard/drop_lead"}
+	  },
+	  "drop_silver": {
+		"textures": {"layer0": "gregtech:items/standard/drop_silver"}
+	  },
+	  "drop_iron": {
+		"textures": {"layer0": "gregtech:items/standard/drop_iron"}
+	  },
+	  "drop_gold": {
+		"textures": {"layer0": "gregtech:items/standard/drop_gold"}
+	  },
+	  "drop_aluminium": {
+		"textures": {"layer0": "gregtech:items/standard/drop_aluminium"}
+	  },
+	  "drop_titanium": {
+		"textures": {"layer0": "gregtech:items/standard/drop_titanium"}
+	  },
+	  "drop_uranium": {
+		"textures": {"layer0": "gregtech:items/standard/drop_uranium"}
+	  },
+	  "drop_uranite": {
+		"textures": {"layer0": "gregtech:items/standard/drop_uranite"}
+	  },
+	  "drop_thorium": {
+		"textures": {"layer0": "gregtech:items/standard/drop_thorium"}
+	  },
+	  "drop_nickel": {
+		"textures": {"layer0": "gregtech:items/standard/drop_nickel"}
+	  },
+	  "drop_zinc": {
+		"textures": {"layer0": "gregtech:items/standard/drop_zinc"}
+	  },
+	  "drop_manganese": {
+		"textures": {"layer0": "gregtech:items/standard/drop_manganese"}
+	  },
+	  "drop_copper": {
+		"textures": {"layer0": "gregtech:items/standard/drop_copper"}
+	  },
+	  "drop_tungsten": {
+		"textures": {"layer0": "gregtech:items/standard/drop_tungsten"}
+	  },
+	  "drop_platinum": {
+		"textures": {"layer0": "gregtech:items/standard/drop_platinum"}
+	  },
+	  "drop_iridium": {
+		"textures": {"layer0": "gregtech:items/standard/drop_iridium"}
+	  },
+	  "drop_osmium": {
+		"textures": {"layer0": "gregtech:items/standard/drop_osmium"}
+	  },
+	  "drop_gold": {
+		"textures": {"layer0": "gregtech:items/standard/drop_gold"}
+	  },
+	  "drop_emerald": {
+		"textures": {"layer0": "gregtech:items/standard/drop_emerald"}
+	  },
+	  "drop_oil": {
+		"textures": {"layer0": "gregtech:items/standard/drop_oil"}
+	  },
+	  "drop_uum": {
+		"textures": {"layer0": "gregtech:items/standard/drop_uum"}
+	  },
+	  "drop_uua": {
+		"textures": {"layer0": "gregtech:items/standard/drop_uua"}
+	  },
+	  "comb_lignite": {
+		"textures": {"layer0": "gregtech:items/standard/comb_lignite"}
+	  },
+	  "comb_coal": {
+		"textures": {"layer0": "gregtech:items/standard/comb_coal"}
+	  },
+	  "comb_resin": {
+		"textures": {"layer0": "gregtech:items/standard/comb_resin"}
+	  },
+	  "comb_oil": {
+		"textures": {"layer0": "gregtech:items/standard/comb_oil"}
+	  },
+	  "comb_stone": {
+		"textures": {"layer0": "gregtech:items/standard/comb_stone"}
+	  },
+	  "comb_certus": {
+		"textures": {"layer0": "gregtech:items/standard/comb_certus"}
+	  },
+	  "comb_redstone": {
+		"textures": {"layer0": "gregtech:items/standard/comb_redstone"}
+	  },
+	  "comb_lapis": {
+		"textures": {"layer0": "gregtech:items/standard/comb_lapis"}
+	  },
+	  "comb_ruby": {
+		"textures": {"layer0": "gregtech:items/standard/comb_ruby"}
+	  },
+	  "comb_sapphire": {
+		"textures": {"layer0": "gregtech:items/standard/comb_sapphire"}
+	  },
+	  "comb_diamond": {
+		"textures": {"layer0": "gregtech:items/standard/comb_diamond"}
+	  },
+	  "comb_olivine": {
+		"textures": {"layer0": "gregtech:items/standard/comb_olivine"}
+	  },
+	  "comb_emerald": {
+		"textures": {"layer0": "gregtech:items/standard/comb_emerald"}
+	  },
+	  "comb_slag": {
+		"textures": {"layer0": "gregtech:items/standard/comb_slag"}
+	  },
+	  "comb_copper": {
+		"textures": {"layer0": "gregtech:items/standard/comb_copper"}
+	  },
+	  "comb_tin": {
+		"textures": {"layer0": "gregtech:items/standard/comb_tin"}
+	  },
+	  "comb_lead": {
+		"textures": {"layer0": "gregtech:items/standard/comb_lead"}
+	  },
+	  "comb_iron": {
+		"textures": {"layer0": "gregtech:items/standard/comb_iron"}
+	  },
+	  "comb_lead": {
+		"textures": {"layer0": "gregtech:items/standard/comb_lead"}
+	  },
+	  "comb_nickel": {
+		"textures": {"layer0": "gregtech:items/standard/comb_nickel"}
+	  },
+	  "comb_zinc": {
+		"textures": {"layer0": "gregtech:items/standard/comb_zinc"}
+	  },
+	  "comb_silver": {
+		"textures": {"layer0": "gregtech:items/standard/comb_silver"}
+	  },
+	  "comb_gold": {
+		"textures": {"layer0": "gregtech:items/standard/comb_gold"}
+	  },
+	  "comb_aluminium": {
+		"textures": {"layer0": "gregtech:items/standard/comb_aluminium"}
+	  },
+	  "comb_manganese": {
+		"textures": {"layer0": "gregtech:items/standard/comb_manganese"}
+	  },
+	  "comb_titanium": {
+		"textures": {"layer0": "gregtech:items/standard/comb_titanium"}
+	  },
+	  "comb_chrome": {
+		"textures": {"layer0": "gregtech:items/standard/comb_chrome"}
+	  },
+	  "comb_tungsten": {
+		"textures": {"layer0": "gregtech:items/standard/comb_tungsten"}
+	  },
+	  "comb_platinum": {
+		"textures": {"layer0": "gregtech:items/standard/comb_platinum"}
+	  },
+	  "comb_iridium": {
+		"textures": {"layer0": "gregtech:items/standard/comb_iridium"}
+	  },
+	  "comb_uranium": {
+		"textures": {"layer0": "gregtech:items/standard/comb_uranium"}
+	  },
+	  "comb_plutonium": {
+		"textures": {"layer0": "gregtech:items/standard/comb_plutonium"}
+	  },
+	  "comb_naquadah": {
+		"textures": {"layer0": "gregtech:items/standard/comb_naquadah"}
 	  }
     }
   }

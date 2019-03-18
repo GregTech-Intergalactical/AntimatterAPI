@@ -7,13 +7,15 @@ import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.items.MaterialItem;
-import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.recipe.RecipeMap;
+import muramasa.gregtech.integration.forestry.ForestryRegistrar;
 import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
+import muramasa.gregtech.loaders.GregTechRegistry;
 import muramasa.gregtech.loaders.MachineRecipeLoader;
 import muramasa.gregtech.loaders.MaterialRecipeLoader;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -34,6 +36,10 @@ public class GregTech {
 
     public static Logger logger;
 
+    static {
+        if (Loader.isModLoaded(Ref.MOD_FR)) GregTechRegistry.addRegistrar(new ForestryRegistrar());
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         logger = e.getModLog();
@@ -52,7 +58,7 @@ public class GregTech {
         Guis.init();
         Structures.init();
         MaterialItem.init();
-        StandardItem.init();
+//        StandardItem.init();
         ItemType.init();
         //TODO call methods to init addon data
     }

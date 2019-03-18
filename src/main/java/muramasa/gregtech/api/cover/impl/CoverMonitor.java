@@ -14,11 +14,11 @@ import net.minecraft.util.EnumHand;
 
 import javax.annotation.Nullable;
 
-public class CoverScreen extends Cover {
+public class CoverMonitor extends Cover {
 
     @Override
     public String getName() {
-        return "screen";
+        return "monitor";
     }
 
     @Override

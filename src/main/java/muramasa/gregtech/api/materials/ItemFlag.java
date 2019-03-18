@@ -70,7 +70,7 @@ public enum ItemFlag implements IMaterialFlag {
 
     @Override
     public long getBit() {
-        return this.bit;
+        return bit;
     }
 
     @Override
