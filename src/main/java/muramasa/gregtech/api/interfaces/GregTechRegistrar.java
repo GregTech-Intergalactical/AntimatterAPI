@@ -2,10 +2,6 @@ package muramasa.gregtech.api.interfaces;
 
 public class GregTechRegistrar {
 
-    public void onItemRegistration() {
-        //NOOP
-    }
-
     public void onCoverRegistration() {
         //NOOP
     }

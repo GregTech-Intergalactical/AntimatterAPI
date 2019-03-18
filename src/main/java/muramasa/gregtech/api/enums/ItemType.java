@@ -2,10 +2,7 @@ package muramasa.gregtech.api.enums;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.cover.impl.*;
 import muramasa.gregtech.api.items.StandardItem;
-import muramasa.gregtech.api.materials.ItemFlag;
-import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.client.resources.I18n;
@@ -226,31 +223,6 @@ public class ItemType implements IStringSerializable {
     public static ItemType CombPlutonium = new ItemType("comb_plutonium", "").optional(Ref.MOD_FR);
     public static ItemType CombNaquadah = new ItemType("comb_naquadah", "").optional(Ref.MOD_FR);
 
-    public static void init() {
-        GregTechAPI.registerCover(GregTechAPI.CoverNone = new CoverNone());
-        GregTechAPI.registerCover(GregTechAPI.CoverItem = new CoverItem());
-        GregTechAPI.registerCover(GregTechAPI.CoverFluid = new CoverFluid());
-        GregTechAPI.registerCover(GregTechAPI.CoverEnergy = new CoverEnergy());
-        GregTechAPI.registerCover(GregTechAPI.CoverPlate = new CoverPlate());
-        GregTechAPI.registerCover(GregTechAPI.CoverScreen = new CoverMonitor());
-
-        GregTechAPI.registerCoverCatalyst(ConveyorLV.get(1), GregTechAPI.CoverItem);
-        GregTechAPI.registerCoverCatalyst(ConveyorMV.get(1), GregTechAPI.CoverItem);
-        GregTechAPI.registerCoverCatalyst(ConveyorHV.get(1), GregTechAPI.CoverItem);
-        GregTechAPI.registerCoverCatalyst(ConveyorEV.get(1), GregTechAPI.CoverItem);
-        GregTechAPI.registerCoverCatalyst(ConveyorIV.get(1), GregTechAPI.CoverItem);
-        GregTechAPI.registerCoverCatalyst(PumpLV.get(1), GregTechAPI.CoverFluid);
-        GregTechAPI.registerCoverCatalyst(PumpMV.get(1), GregTechAPI.CoverFluid);
-        GregTechAPI.registerCoverCatalyst(PumpHV.get(1), GregTechAPI.CoverFluid);
-        GregTechAPI.registerCoverCatalyst(PumpEV.get(1), GregTechAPI.CoverFluid);
-        GregTechAPI.registerCoverCatalyst(PumpIV.get(1), GregTechAPI.CoverFluid);
-        GregTechAPI.registerCoverCatalyst(EnergyPort.get(1), GregTechAPI.CoverEnergy);
-        for (Material mat : ItemFlag.PLATE.getMats()) {
-            GregTechAPI.registerCoverCatalyst(mat.getPlate(1), GregTechAPI.CoverPlate);
-        }
-        GregTechAPI.registerCoverCatalyst(ComputerMonitor.get(1), GregTechAPI.CoverScreen);
-    }
-
     private String name, tooltip;
     private boolean enabled = true;
 
@@ -307,7 +279,7 @@ public class ItemType implements IStringSerializable {
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return GregTechAPI.isCoverCatalyst(stack);
+        return GregTechAPI.getCoverFromCatalyst(stack) != null;
     }
 
     public StandardItem getItem() {

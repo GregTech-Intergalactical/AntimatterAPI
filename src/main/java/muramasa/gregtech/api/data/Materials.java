@@ -1,11 +1,9 @@
 package muramasa.gregtech.api.data;
 
-import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.common.fluid.GTFluid;
-import muramasa.gregtech.Ref;
-import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -15,8 +13,8 @@ import java.util.LinkedHashMap;
 
 import static muramasa.gregtech.api.enums.Element.*;
 import static muramasa.gregtech.api.materials.ItemFlag.*;
-import static muramasa.gregtech.api.materials.RecipeFlag.*;
 import static muramasa.gregtech.api.materials.MaterialSet.*;
+import static muramasa.gregtech.api.materials.RecipeFlag.*;
 
 public class Materials {
 
@@ -691,10 +689,6 @@ public class Materials {
             if (mat.hasFlag(PLASMA) && mat.getPlasma() == null) {
                 mat.setPlasma(new GTFluid(mat, PLASMA));
             }
-        }
-
-        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
-            registrar.onMaterialInit();
         }
     }
 

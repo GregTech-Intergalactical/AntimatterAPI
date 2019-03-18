@@ -1,11 +1,13 @@
 package muramasa.gregtech.loaders;
 
+import muramasa.gregtech.GregTech;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.StoneType;
+import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
@@ -134,5 +136,10 @@ public class ContentLoader {
         event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
 
         event.getRegistry().register(metaTool);
+
+        GregTech.INTERNAL_REGISTRAR.onCoverRegistration();
+        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
+            registrar.onCoverRegistration();
+        }
     }
 }

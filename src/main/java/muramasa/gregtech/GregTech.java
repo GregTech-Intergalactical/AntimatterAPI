@@ -3,16 +3,14 @@ package muramasa.gregtech;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.data.Guis;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.data.Structures;
-import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.integration.forestry.ForestryRegistrar;
 import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import muramasa.gregtech.loaders.GregTechRegistry;
-import muramasa.gregtech.loaders.MachineRecipeLoader;
-import muramasa.gregtech.loaders.MaterialRecipeLoader;
+import muramasa.gregtech.loaders.InternalRegistrar;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
 import net.minecraftforge.fml.common.Loader;
@@ -36,6 +34,8 @@ public class GregTech {
 
     public static Logger logger;
 
+    public static GregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
+
     static {
         if (Loader.isModLoaded(Ref.MOD_FR)) GregTechRegistry.addRegistrar(new ForestryRegistrar());
     }
@@ -45,22 +45,22 @@ public class GregTech {
         logger = e.getModLog();
         proxy.preInit(e);
 
-        GregTechJEIPlugin.registerCategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechJEIPlugin.registerCategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-
+        NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
         GTCapabilities.register();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
-
-        //Init GT Data
-        Materials.init();
+        GregTechJEIPlugin.registerCategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
+        GregTechJEIPlugin.registerCategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        
+        INTERNAL_REGISTRAR.onMaterialRegistration();
+        INTERNAL_REGISTRAR.onMaterialInit();
+        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
+            registrar.onMaterialRegistration();
+            registrar.onMaterialInit();
+        }
         Machines.init();
         Guis.init();
         Structures.init();
         MaterialItem.init();
-//        StandardItem.init();
-        ItemType.init();
-        //TODO call methods to init addon data
     }
 
     @Mod.EventHandler
@@ -71,9 +71,14 @@ public class GregTech {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
-        //TODO new MaterialRecipeLoader().run();
-        MachineRecipeLoader.init();
-        MaterialRecipeLoader.init();
+        INTERNAL_REGISTRAR.onCraftingRecipeRegistration();
+        INTERNAL_REGISTRAR.onMachineRecipeRegistration();
+        INTERNAL_REGISTRAR.onMaterialRecipeRegistration();
+        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
+            registrar.onCraftingRecipeRegistration();
+            registrar.onMachineRecipeRegistration();
+            registrar.onMaterialRecipeRegistration();
+        }
     }
 
     @Mod.EventHandler

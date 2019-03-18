@@ -36,6 +36,7 @@ public class BlockHighlightHandler {
         if (tile == null) return;
         if (tile.hasCapability(GTCapabilities.CONFIGURABLE, null) || tile.hasCapability(GTCapabilities.COVERABLE, null)) {
             ItemStack stack = event.getPlayer().getHeldItemMainhand();
+            if (stack.isEmpty()) return;
             if (ToolType.doesShowExtendedHighlight(stack) || ItemType.doesShowExtendedHighlight(stack) || MaterialItem.doesShowExtendedHighlight(stack)) {
                 drawGrid(event);
             }
