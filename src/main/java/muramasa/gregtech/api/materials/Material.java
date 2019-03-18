@@ -68,14 +68,9 @@ public class Material {
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
         add(DUST, DUSTS, DUSTT);
         add(flags);
-        for (IMaterialFlag flag : flags) {
-            if (flag == ORE) {
-                add(CRUSHED, CRUSHEDP, CRUSHEDC, DUSTIP, DUSTP);
-            }
-        }
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 0) {
-            asFluid();
+//            asFluid();//TODO disabled due to Sodium having a fluid
         }
         return this;
     }
@@ -90,7 +85,7 @@ public class Material {
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
         asDust(meltingPoint, flags);
-        add(INGOT, NUGGET);
+        add(INGOT, NUGGET, BLOCK, LIQUID);
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
@@ -183,6 +178,9 @@ public class Material {
     public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof ItemFlag) {
+                if (flag == ORE) {
+                    add(CRUSHED, CRUSHEDP, CRUSHEDC, DUSTIP, DUSTP);
+                }
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
                 recipeMask |= flag.getBit();

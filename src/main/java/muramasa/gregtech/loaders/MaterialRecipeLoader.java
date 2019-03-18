@@ -228,7 +228,9 @@ public class MaterialRecipeLoader {
             }
             if (m.getDirectSmeltInto() != m && !m.hasFlag(NOSMELT) && !(m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace()) && !m.hasFlag(NOBBF)) {
                 //TODO requires special handling
-                RB.get(PRIMITIVE_BLAST_FURNACE).ii(m.getDust(2), Materials.Coal.getGem(2)).io(m.getDirectSmeltInto().getIngot(aMixedOreYieldCount)).add(2400);
+                if (m.getDirectSmeltInto().hasFlag(INGOT)) { //TODO ingot check was added to avoid DOES NOT GENERATE: P(ingot) M(mercury)
+                    RB.get(PRIMITIVE_BLAST_FURNACE).ii(m.getDust(2), Materials.Coal.getGem(2)).io(m.getDirectSmeltInto().getIngot(aMixedOreYieldCount)).add(2400);
+                }
                 //RecipeAdder.addPrimitiveBlastRecipe(Utils.ca(2, aDust), null, 2, m.mDirectSmelting.getIngot(aMixedOreYieldCount), null, 2400);
             }
 //            if (m.hasFlag(ELECSEPI)) {

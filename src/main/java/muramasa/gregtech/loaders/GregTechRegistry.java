@@ -8,6 +8,7 @@ import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
+import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.common.blocks.*;
@@ -24,7 +25,7 @@ public class GregTechRegistry {
     private static ArrayList<GregTechRegistrar> REGISTRARS = new ArrayList<>();
 
     public static void addRegistrar(GregTechRegistrar registrar) {
-        REGISTRARS.add(registrar);
+        if (registrar.isEnabled() || Ref.ENABLE_ALL_REGISTRARS) REGISTRARS.add(registrar);
     }
 
     public static Collection<GregTechRegistrar> getRegistrars() {
@@ -48,6 +49,13 @@ public class GregTechRegistry {
     }
 
     public static BlockOre getOre(StoneType type, Material material) {
+        if (!material.hasFlag(ItemFlag.ORE)) {
+            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
+            } else {
+                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
+            }
+        }
         return (BlockOre) getBlock("ore_" + type.getName() + "_" + material.getName());
     }
 

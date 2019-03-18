@@ -32,7 +32,6 @@ public class ModelMachine extends ModelBase {
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-
         IModel BASE = load("machine/base");
         BakedMachine.BASE = BASE.bake(state, format, getter);
 
@@ -71,7 +70,6 @@ public class ModelMachine extends ModelBase {
             ));
         }
 
-        System.out.println("MODEL");
         BakedMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;

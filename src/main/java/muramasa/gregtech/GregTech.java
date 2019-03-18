@@ -13,7 +13,6 @@ import muramasa.gregtech.loaders.GregTechRegistry;
 import muramasa.gregtech.loaders.InternalRegistrar;
 import muramasa.gregtech.proxy.GuiHandler;
 import muramasa.gregtech.proxy.IProxy;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -37,7 +36,7 @@ public class GregTech {
     public static GregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
 
     static {
-        if (Loader.isModLoaded(Ref.MOD_FR)) GregTechRegistry.addRegistrar(new ForestryRegistrar());
+        GregTechRegistry.addRegistrar(new ForestryRegistrar());
     }
 
     @Mod.EventHandler
@@ -50,7 +49,7 @@ public class GregTech {
 
         GregTechJEIPlugin.registerCategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechJEIPlugin.registerCategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        
+
         INTERNAL_REGISTRAR.onMaterialRegistration();
         INTERNAL_REGISTRAR.onMaterialInit();
         for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {

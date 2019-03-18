@@ -33,7 +33,7 @@ public class Ref {
     /** Config Values **/
     public static boolean showAllItems = true;
     public static boolean enableAllModItem = true;
-    public static boolean enableAllModRegistrars = true;
+    public static boolean ENABLE_ALL_REGISTRARS = true;
     public static boolean BASIC_MACHINE_MODELS = false;
     public static boolean ENABLE_RECIPE_DEBUG_EXCEPTIONS = true;
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
@@ -73,4 +73,6 @@ public class Ref {
     public static final String MOD_IC2 = "ic2";
     public static final String MOD_IC2C = "ic2-classic-spmod";
     public static final String MOD_AE = "appliedenergistics2";
+    public static final String MOD_GC = "GalacticraftCore";
+    public static final String MOD_GC_PLANETS = "GalacticraftPlanets";
 }
