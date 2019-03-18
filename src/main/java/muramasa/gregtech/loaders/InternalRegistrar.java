@@ -10,6 +10,11 @@ import muramasa.gregtech.api.materials.Material;
 public class InternalRegistrar extends GregTechRegistrar {
 
     @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
     public void onCoverRegistration() {
         GregTechAPI.registerCover(GregTechAPI.CoverNone);
         GregTechAPI.registerCover(GregTechAPI.CoverItem);

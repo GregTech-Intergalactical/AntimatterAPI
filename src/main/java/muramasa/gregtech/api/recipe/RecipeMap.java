@@ -78,7 +78,7 @@ public class RecipeMap {
                         recipeLookup.put(inputString, list);
                     }
                 }
-            } else if (recipe.hasInputFluids()){
+            } else if (recipe.hasInputFluids()) {
                 for (int i = 0; i < recipe.getInputFluids().length; i++) {
                     String inputString = Utils.getString(recipe.getInputFluids()[i]);
                     ArrayList<Recipe> existing = recipeLookup.get(inputString);

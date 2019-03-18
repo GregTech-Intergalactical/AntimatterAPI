@@ -207,7 +207,7 @@ public class ItemType implements IStringSerializable {
     public static ItemType CombTin = new ItemType("comb_tin", "").optional(Ref.MOD_FR);
     public static ItemType CombLead = new ItemType("comb_lead", "").optional(Ref.MOD_FR);
     public static ItemType CombIron = new ItemType("comb_iron", "").optional(Ref.MOD_FR);
-    public static ItemType CombSteel = new ItemType("comb_lead", "").optional(Ref.MOD_FR);
+    public static ItemType CombSteel = new ItemType("comb_steel", "").optional(Ref.MOD_FR);
     public static ItemType CombNickel = new ItemType("comb_nickel", "").optional(Ref.MOD_FR);
     public static ItemType CombZinc = new ItemType("comb_zinc", "").optional(Ref.MOD_FR);
     public static ItemType CombSilver = new ItemType("comb_silver", "").optional(Ref.MOD_FR);

@@ -536,8 +536,8 @@
 	  "comb_iron": {
 		"textures": {"layer0": "gregtech:items/standard/comb_iron"}
 	  },
-	  "comb_lead": {
-		"textures": {"layer0": "gregtech:items/standard/comb_lead"}
+	  "comb_steel": {
+		"textures": {"layer0": "gregtech:items/standard/comb_steel"}
 	  },
 	  "comb_nickel": {
 		"textures": {"layer0": "gregtech:items/standard/comb_nickel"}

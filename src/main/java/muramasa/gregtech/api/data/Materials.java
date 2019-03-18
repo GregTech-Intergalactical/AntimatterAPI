@@ -24,7 +24,7 @@ public class Materials {
     public static Material Beryllium = new Material("Beryllium", 0x64b464, METALLIC, Be).asMetal(1560, 0, ORE).addTools(14.0F, 64, 2);
     public static Material Bismuth = new Material("Bismuth", 0x64a0a0, METALLIC, Bi).asMetal(544, 0).addTools(6.0F, 64, 1);
     public static Material Carbon = new Material("Carbon", 0x141414, DULL, C).asSolid().addTools(1.0F, 64, 2);
-    public static Material Chrome = new Material("Chrome", 0xffe6e6, SHINY, Cr).asMetal(2180, 1700, SCREW, RING, PLATE, ROTOR, ORE).addTools(11.0F, 256, 3);
+    public static Material Chrome = new Material("Chrome", 0xffe6e6, SHINY, Cr).asMetal(2180, 1700, SCREW, RING, PLATE, ROTOR).addTools(11.0F, 256, 3);
     public static Material Cobalt = new Material("Cobalt", 0x5050fa, METALLIC, Co).asMetal(1768, 0).addTools(8.0F, 512, 3);
     public static Material Gold = new Material( "Gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIREF, GEAR, BLOCK, ORE).addTools(12.0F, 64, 2);
     public static Material Iridium = new Material("Iridium", 0xf0f0f5, DULL, Ir).asMetal(2719, 2719, FRAME, ORE).addTools(6.0F, 2560, 3);
@@ -36,16 +36,16 @@ public class Materials {
     public static Material Neodymium = new Material("Neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, ORE).addTools(7.0F, 512, 2);
     public static Material Neutronium = new Material("Neutronium", 0xfafafa, DULL, Nt).asMetal(10000, 10000, SCREW, RING, GEAR, SGEAR, FRAME).addTools(24.0F, 655360, 6);
     public static Material Nickel = new Material("Nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE).asPlasma().addTools(6.0F, 64, 2);
-    public static Material Osmium = new Material("Osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, WIREF, ORE).addTools(16.0F, 1280, 4);
+    public static Material Osmium = new Material("Osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, WIREF).addTools(16.0F, 1280, 4);
     public static Material Palladium = new Material("Palladium", 0x808080, SHINY, Pd).asMetal(1828, 1828, ORE).addTools(8.0F, 512, 2);
     public static Material Platinum = new Material("Platinum", 0xffffc8, SHINY, Pt).asMetal(2041, 0, PLATE, FOIL, ROD, WIREF, ORE).addTools(12.0F, 64, 2);
-    public static Material Plutonium = new Material("Plutonium 239", 0xf03232, METALLIC, Pu).asMetal(912, 0, ORE).addTools(6.0F, 512, 3);
+    public static Material Plutonium = new Material("Plutonium 244", 0xf03232, METALLIC, Pu).asMetal(912, 0).addTools(6.0F, 512, 3);
     public static Material Plutonium241 = new Material("Plutonium 241", 0xfa4646, SHINY, Pu241).asMetal(912, 0).addTools(6.0F, 512, 3);
     public static Material Silver = new Material("Silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE).addTools(10.0F, 64, 2);
     public static Material Thorium = new Material("Thorium", 0x001e00, SHINY, Th).asMetal(2115, 0, ORE).addTools(6.0F, 512, 2);
     public static Material Titanium = new Material("Titanium", 0xdca0f0, METALLIC).asMetal(1941, 1940, ROD, SPRING);
     public static Material Tungsten = new Material("Tungsten", 0x323232, METALLIC, W).asMetal(3695, 3000, FOIL).addTools(7.0F, 2560, 3);
-    public static Material Uranium = new Material("Uranium 238", 0x32f032, METALLIC, U).asMetal(1405, 0).addTools(6.0F, 512, 3);
+    public static Material Uranium = new Material("Uranium 238", 0x32f032, METALLIC, U).asMetal(1405, 0, ORE).addTools(6.0F, 512, 3);
     public static Material Uranium235 = new Material("Uranium 235", 0x46fa46, METALLIC, U235).asMetal(1405, 0).addTools(6.0F, 512, 3);
     public static Material Graphite = new Material("Graphite", 0x808080, DULL).asDust(ORE).addTools(5.0F, 32, 2);
     public static Material Americium = new Material("Americium", 0xc8c8c8, METALLIC, Am).asMetal(1149, 0, PLATE, ROD);
@@ -340,7 +340,8 @@ public class Materials {
     public static Material Monazite = new Material("Monazite", 0x324632, DIAMOND).asGemBasic(false, ORE).add(RareEarth, 1, Phosphate, 1);
 
     /** **/
-    public static Material Redstone = new Material("Redstone", 0xc80000, ROUGH).asDust(ORE).add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
+    public static Material Redstone = new Material("Redstone", 0xc80000, ROUGH).asDust(ORE, LIQUID).add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
+    public static Material Cinnabar = new Material("Cinnabar", 0x960000, ROUGH).asDust(ORE).add(Mercury, 1, Sulfur, 1);
     public static Material Basalt = new Material("Basalt", 0x1e1414, ROUGH).asDust().add(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
 
     /** Metals **/
@@ -388,7 +389,7 @@ public class Materials {
     public static Material Naquadah = new Material("Naquadah", 0x323232, METALLIC).asMetal(5400, 5400, ORE).addTools(6.0F, 1280, 4);
     public static Material NaquadahAlloy = new Material("Naquadah Alloy", 0x282828, METALLIC).asMetal(7200, 7200).addTools(8.0F, 5120, 5);
     public static Material NaquadahEnriched = new Material("Naquadah Enriched", 0x323232, METALLIC).asMetal(4500, 4500, ORE).addTools(6.0F, 1280, 4); //TODO ORE flag added due to bee recipes, replace with OrePrefixes.mGeneratedItems
-    public static Material Naquadria = new Material("Naquadria", 0x1e1e1e, SHINY).asMetal(9000, 9000, ORE).addTools(1.0F, 512, 4);
+    public static Material Naquadria = new Material("Naquadria", 0x1e1e1e, SHINY).asMetal(9000, 9000).addTools(1.0F, 512, 4);
     public static Material Tritanium = new Material("Tritanium", 0xffffff, METALLIC).asMetal(295, 0, FRAME).addTools(20.0F, 10240, 6);
 
     /** Solids **/
@@ -422,6 +423,8 @@ public class Materials {
 //    }
 
     public static void init() {
+        //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
+
         if (Ref.ENABLE_ITEM_REPLACEMENTS) {
             Prefix.Ingot.addReplacement(Iron, new ItemStack(Items.IRON_INGOT));
             Prefix.Ingot.addReplacement(Gold, new ItemStack(Items.GOLD_INGOT));
@@ -437,7 +440,7 @@ public class Materials {
         ELECSEPG.add(Magnetite, VanadiumMagnetite);
         ELECSEPN.add(YellowLimonite, BrownLimonite, Pyrite, BandedIron, Nickel, Glauconite, Pentlandite, Tin, Antimony, Ilmenite, Manganese, Chrome, Andradite);
         ELEC.add(Methane, CarbonDioxide, NitrogenDioxide, Toluene, VinylChloride, SulfurDioxide, SulfurTrioxide, Dimethylamine, DinitrogenTetroxide, NitricOxide, Ammonia, Chloromethane, Tetrafluoroethylene, CarbonMonoxide, Ethylene, Propane, Ethenone, Ethanol, Glyceryl, SodiumPersulfate, Dichlorobenzene, Styrene, Isoprene, Tetranitromethane, Epichlorohydrin, NitricAcid, Dimethylhydrazine, Chloramine, Dimethyldichlorosilane, HydrofluoricAcid, Chloroform, BisphenolA, AceticAcid, CalciumAcetateSolution, Acetone, Methanol, VinylAcetate, MethylAcetate, AllylChloride, HypochlorousAcid, Cumene, PhosphoricAcid, SulfuricAcid, Benzene, Phenol, Glycerol, SodiumSulfide, Almandine, Andradite, BandedIron, Calcite, Cassiterite, Chalcopyrite, Cobaltite, Galena, Garnierite, Grossular, Bauxite, Magnesite, Magnetite, Molybdenite, Obsidian, Phosphate, Polydimethylsiloxane, Pyrite, Pyrolusite, Pyrope, RockSalt, Saltpeter, SiliconDioxide, Pyrochlore, Massicot, ArsenicTrioxide, CobaltOxide, Zincite, Magnesia, Quicklime, Potash, SodaAsh, PhosphorousPentoxide, SodiumHydroxide, Spessartine, Sphalerite, Uvarovite, PotassiumFeldspar, Biotite, GraniteRed, Bastnasite, Pentlandite, Spodumene, Tantalite, Lepidolite, Glauconite, Bentonite, Malachite, Barite, Talc, Soapstone, AntimonyTrioxide, CupricOxide, Ferrosilite, Quartzite, BlueTopaz, Charcoal, Coal, Lignite, Diamond, Emerald, GreenSapphire, Lazurite, Ruby, Sapphire, Sodalite, Tanzanite, Topaz, Olivine, Opal, Amethyst, EnderPearl, Monazite, StainlessSteel, Steel, Ultimet, IronMagnetic, SteelMagnetic, NeodymiumMagnetic, Osmiridium);
-        CENT.add(NobleGases, Air, BrownLimonite, /*Cinnabar, */Clay, Sheldonite, Powellite, Stibnite, Tetrahedrite, Uraninite, Wulfenite, YellowLimonite, Blaze, Flint, Marble, GraniteBlack, VanadiumMagnetite, Pitchblende, Glass, Lapis, EnderEye, Phosphorus, GarnetRed, GarnetYellow, Redstone, Basalt, AnnealedCopper, BatteryAlloy, Brass, Bronze, Cupronickel, Electrum, Invar, Kanthal, Magnalium, Nichrome, NiobiumTitanium, PigIron, SolderingAlloy, VanadiumGallium, WroughtIron, SterlingSilver, RoseGold, BlackBronze, BismuthBronze, BlackSteel, DamascusSteel, TungstenSteel, RedAlloy, CobaltBrass, TungstenCarbide, VanadiumSteel, HSSG, HSSE, HSSS, GalliumArsenide/*, IndiumGalliumPhosphide, BorosilicateGlass*/);
+        CENT.add(NobleGases, Air, BrownLimonite, Cinnabar, Clay, Sheldonite, Powellite, Stibnite, Tetrahedrite, Uraninite, Wulfenite, YellowLimonite, Blaze, Flint, Marble, GraniteBlack, VanadiumMagnetite, Pitchblende, Glass, Lapis, EnderEye, Phosphorus, GarnetRed, GarnetYellow, Redstone, Basalt, AnnealedCopper, BatteryAlloy, Brass, Bronze, Cupronickel, Electrum, Invar, Kanthal, Magnalium, Nichrome, NiobiumTitanium, PigIron, SolderingAlloy, VanadiumGallium, WroughtIron, SterlingSilver, RoseGold, BlackBronze, BismuthBronze, BlackSteel, DamascusSteel, TungstenSteel, RedAlloy, CobaltBrass, TungstenCarbide, VanadiumSteel, HSSG, HSSE, HSSS, GalliumArsenide/*, IndiumGalliumPhosphide, BorosilicateGlass*/);
         CRACK.add(RefineryGas, Naphtha, Ethane, Propane, Butane, Butene, Ethylene, Propene, LightDiesel, HeavyDiesel);
         CALCITE2X.add(Pyrite, BrownLimonite, YellowLimonite, Magnetite);
         CALCITE3X.add(Iron, PigIron, WroughtIron/*, MeteoricIron*/);
@@ -464,8 +467,8 @@ public class Materials {
         IronMagnetic.setSmeltInto(Iron).setMacerateInto(Iron).setArcSmeltInto(WroughtIron);
         Copper.setSmeltInto(Copper).setMacerateInto(Copper).setArcSmeltInto(AnnealedCopper);
         AnnealedCopper.setSmeltInto(Copper).setMacerateInto(Copper).setArcSmeltInto(AnnealedCopper);
-        //Cinnabar.setDirectSmelting(Mercury);
 
+        Cinnabar.setDirectSmeltInto(Mercury);
         Tetrahedrite.setDirectSmeltInto(Copper);
         Chalcopyrite.setDirectSmeltInto(Copper);
         Malachite.setDirectSmeltInto(Copper);
@@ -549,14 +552,14 @@ public class Materials {
         GarnetRed.addByProduct(Spessartine, Pyrope, Almandine);
         GarnetYellow.addByProduct(Andradite, Grossular, Uvarovite);
         Sheldonite.addByProduct(Palladium, Nickel, Iridium);
-        //Cinnabar.addByProduct(Redstone, Sulfur, Glowstone);
+        Cinnabar.addByProduct(Redstone, Sulfur, Glowstone);
         Tantalite.addByProduct(Manganese, Niobium, Tantalum);
         Pentlandite.addByProduct(Iron, Sulfur, Cobalt);
         Uranium.addByProduct(Lead, Uranium235, Thorium);
         Scheelite.addByProduct(Manganese, Molybdenum, Calcium);
         Tungstate.addByProduct(Manganese, Silver, Lithium);
         Bauxite.addByProduct(Grossular, Rutile, Gallium);
-        Redstone.addByProduct(/*Cinnabar, */RareEarth, Glowstone);
+        Redstone.addByProduct(Cinnabar, RareEarth, Glowstone);
         Monazite.addByProduct(Thorium, Neodymium, RareEarth);
         Malachite.addByProduct(Copper, BrownLimonite, Calcite);
         YellowLimonite.addByProduct(Nickel, BrownLimonite, Cobalt);

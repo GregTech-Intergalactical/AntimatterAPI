@@ -1,6 +1,8 @@
 package muramasa.gregtech.api.interfaces;
 
-public class GregTechRegistrar {
+public abstract class GregTechRegistrar {
+
+    public abstract boolean isEnabled();
 
     public void onCoverRegistration() {
         //NOOP
