@@ -3,13 +3,41 @@ package muramasa.gregtech.loaders;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.StoneType;
+import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.items.MaterialItem;
+import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.common.blocks.*;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class GregTechRegistry {
+
+    /** Registrar Section **/
+    private static ArrayList<GregTechRegistrar> REGISTRARS = new ArrayList<>();
+
+    public static void addRegistrar(GregTechRegistrar registrar) {
+        REGISTRARS.add(registrar);
+    }
+
+    public static Collection<GregTechRegistrar> getRegistrars() {
+        return REGISTRARS;
+    }
+
+    public static MaterialItem getMaterialItem(Prefix prefix, Material material) {
+        return (MaterialItem) getItem(prefix.getName() + material.getName());
+    }
+
+    public static StandardItem getStandardItem(ItemType type) {
+        return (StandardItem) getItem(type.getName());
+    }
 
     public static BlockCasing getCasing(Casing type) {
         return (BlockCasing) getBlock("casing_" + type.getName());
@@ -31,8 +59,16 @@ public class GregTechRegistry {
         return (BlockStorage) getBlock("block_" + material.getName());
     }
 
+    public static Item getItem(String path) {
+        return getItem(new ResourceLocation(Ref.MODID, path));
+    }
+
     public static Block getBlock(String path) {
         return getBlock(new ResourceLocation(Ref.MODID, path));
+    }
+
+    public static Item getItem(ResourceLocation loc) {
+        return Item.getByNameOrId(loc.toString());
     }
 
     public static Block getBlock(ResourceLocation loc) {

@@ -10,37 +10,37 @@ import java.util.Random;
 
 public class Ref {
 
+    /** Global Objects **/
     public static Minecraft mc = Minecraft.getMinecraft();
     public static Random RNG = new Random();
 
-    public static boolean showAllItems = true;
-
-    //Mod Data
+    /** Mod Data **/
     public static final String MODID = "gregtech";
     public static final String NAME = "GregTech";
     public static final String VERSION = "1.00.01";
 
-    //Creative Tabs
+    /** Creative Tabs **/
     public static GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT));
     public static GregTechTab TAB_ITEMS = new GregTechTab("items", new ItemStack(Items.BLAZE_ROD));
     public static GregTechTab TAB_BLOCKS = new GregTechTab("blocks", new ItemStack(Blocks.IRON_BLOCK));
     public static GregTechTab TAB_MACHINES = new GregTechTab("machines", new ItemStack(Blocks.FURNACE));
 
-    //GUI IDs
+    /** GUI IDs **/
     public static final int MACHINE_ID = 0;
     public static final int MULTI_MACHINE_ID = 1;
     public static final int HATCH_ID = 2;
 
-    //Config Values //TODO maybe move?
+    /** Config Values **/
+    public static boolean showAllItems = true;
+    public static boolean enableAllModItem = true;
+    public static boolean enableAllModRegistrars = true;
     public static boolean BASIC_MACHINE_MODELS = false;
-
     public static boolean ENABLE_RECIPE_DEBUG_EXCEPTIONS = true;
-
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
     public static boolean mDisableOldChemicalRecipes = false;
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;
 
-    //NBT Tags & Keys
+    /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";
     public static final String KEY_STACK_NO_CONSUME = "noconsume";
 
@@ -66,4 +66,11 @@ public class Ref {
     public static final String KEY_TOOL_DATA_ATTACK_SPEED = "as";
     public static final String KEY_TOOL_DATA_ATTACK_DAMAGE = "ad";
     public static final String KEY_TOOL_DATA_MINING_SPEED = "ms";
+
+    /** Mod IDs **/
+    public static final String MOD_JEI = "jei";
+    public static final String MOD_FR = "forestry";
+    public static final String MOD_IC2 = "ic2";
+    public static final String MOD_IC2C = "ic2-classic-spmod";
+    public static final String MOD_AE = "appliedenergistics2";
 }

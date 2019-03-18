@@ -53,6 +53,7 @@ public class Prefix implements IStringSerializable {
     public static Prefix Cell = new Prefix("cell", true, LIQUID);
     public static Prefix CellGas = new Prefix("cell_gas", true, GAS);
     public static Prefix CellPlasma = new Prefix("cell_plasma", true, PLASMA);
+//    public static Prefix TurbineBlade = new Prefix("turbine_blade", true, TOOLS);
 
     private String name, namePre, namePost;
 

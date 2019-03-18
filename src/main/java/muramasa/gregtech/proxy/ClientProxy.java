@@ -3,10 +3,10 @@ package muramasa.gregtech.proxy;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.MetaTool;
-import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
@@ -103,7 +103,7 @@ public class ClientProxy implements IProxy {
     }
 
     @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent event) {
+    public static void registerModels(ModelRegistryEvent e) {
         ContentLoader.metaTool.initModel();
 
         ContentLoader.blockCable.initModel();
@@ -111,8 +111,9 @@ public class ClientProxy implements IProxy {
         for (MaterialItem item : MaterialItem.getAll()) {
             item.initModel();
         }
-        for (StandardItem item : StandardItem.getAll()) {
-            item.initModel();
+        for (ItemType type : ItemType.getAll()) {
+            if (!type.isEnabled()) continue;
+            type.getItem().initModel();
         }
         for (Machine type : Machines.getAll()) {
             type.getBlock().initModel();

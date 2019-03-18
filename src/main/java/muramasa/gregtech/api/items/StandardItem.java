@@ -7,7 +7,6 @@ import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemType;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.client.creativetab.GregTechTab;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
@@ -33,13 +32,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class StandardItem extends Item {
-
-    private static LinkedHashMap<String, StandardItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
     private ItemType type;
 
@@ -48,22 +43,15 @@ public class StandardItem extends Item {
         setRegistryName(type.getName());
         setCreativeTab(Ref.TAB_ITEMS);
         this.type = type;
-        TYPE_LOOKUP.put(type.getName(), this);
     }
 
-    public static void init() {
-        for (ItemType type : ItemType.getAll()) {
-            new StandardItem(type);
-        }
+    public ItemType getType() {
+        return type;
     }
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab instanceof GregTechTab) {
-            if (((GregTechTab) tab).getTabName().equals("items")) {
-                items.add(new ItemStack(this));
-            }
-        }
+        items.add(new ItemStack(this));
     }
 
     @Override
@@ -137,20 +125,8 @@ public class StandardItem extends Item {
         return EnumActionResult.FAIL; //TODO FAIL?
     }
 
-    public ItemType getType() {
-        return type;
-    }
-
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getName()));
-    }
-
-    public static ItemStack get(String name, int count) {
-        return new ItemStack(TYPE_LOOKUP.get(name), count);
-    }
-
-    public static Collection<StandardItem> getAll() {
-        return TYPE_LOOKUP.values();
     }
 }
