@@ -3,6 +3,7 @@ package muramasa.gregtech.api;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.Cover;
+import muramasa.gregtech.api.cover.impl.*;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.api.materials.Material;
@@ -36,12 +37,12 @@ public class GregTechAPI {
     private static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
     private static HashMap<String, Cover> COVER_CATALYST_REGISTRY = new HashMap<>();
 
-    public static Cover CoverNone;
-    public static Cover CoverPlate;
-    public static Cover CoverItem;
-    public static Cover CoverFluid;
-    public static Cover CoverEnergy;
-    public static Cover CoverScreen;
+    public static Cover CoverNone = new CoverNone();
+    public static Cover CoverPlate = new CoverPlate();
+    public static Cover CoverItem = new CoverItem();
+    public static Cover CoverFluid = new CoverFluid();
+    public static Cover CoverEnergy = new CoverEnergy();
+    public static Cover CoverMonitor = new CoverMonitor();
 
     /**
      * Registers a cover behaviour. This must be done during preInit.
@@ -67,16 +68,13 @@ public class GregTechAPI {
         return COVER_CATALYST_REGISTRY.get(registryName.toString());
     }
 
-    public static boolean isCoverCatalyst(ItemStack stack) {
-        return getCoverFromCatalyst(stack) != null;
-    }
-
     public static Collection<Cover> getRegisteredCovers() {
         return COVER_REGISTRY.values();
     }
 
     /** Attempts to place a cover on a tile at a given side **/
     public static boolean placeCover(TileEntity tile, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (stack.isEmpty()) return false;
         ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
         if (coverHandler == null) return false;
         Cover cover = GregTechAPI.getCoverFromCatalyst(stack);

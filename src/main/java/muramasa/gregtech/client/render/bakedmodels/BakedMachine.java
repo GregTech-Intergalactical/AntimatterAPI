@@ -59,6 +59,7 @@ public class BakedMachine extends BakedBase {
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
+        System.out.println(COVERS.length);
         return trans(COVERS[cover.getInternalId()].getQuads(state, null, -1), s);
     }
 
