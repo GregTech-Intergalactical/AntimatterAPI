@@ -19,12 +19,13 @@ import static muramasa.gregtech.api.materials.RecipeFlag.METAL;
 
 public class Material {
 
+    public static final long M = 3628800;
+
     /** Basic Members **/
     private int rgb;
-    private long itemMask, recipeMask, protons, neutrons, mass;
-    private String name, displayName;
+    private long itemMask, recipeMask;
+    private String name;
     private MaterialSet set;
-    private boolean hasLocName;
 
     /** Element Members **/
     private Element element;
@@ -59,7 +60,6 @@ public class Material {
     public Material(String displayName, int rgb, MaterialSet set) {
         this.name = displayName.toLowerCase(Locale.ENGLISH).replace("-", "_").replace(" ", "_");
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
-        this.displayName = displayName;
         this.rgb = rgb;
         this.set = set;
         Materials.MATERIAL_LOOKUP.put(name, this);
@@ -219,10 +219,7 @@ public class Material {
     }
 
     public String getDisplayName() {
-        if (!hasLocName) {
-            displayName = I18n.format("material." + getName() + ".name");
-        }
-        return displayName;
+        return I18n.format("material." + getName() + ".name");
     }
 
     public int getRGB() {
@@ -241,58 +238,41 @@ public class Material {
         return recipeMask;
     }
 
+    public long getDensity() {
+        return M;
+    }
+
     public long getProtons() {
-        if (protons == 0) {
-            if (element != null) return element.getProtons();
-            if (processInto.size() <= 0) return Element.Tc.getProtons();
-            long rAmount = 0, tAmount = 0;
-            for (MaterialStack tMaterial : processInto) {
-                tAmount += tMaterial.size();
-                rAmount += tMaterial.size() * tMaterial.get().getProtons();
-            }
-            long pro = (3628800 * rAmount) / (tAmount * 3628800);
-            if (pro >= Integer.MAX_VALUE) {
-                throw new IllegalStateException("PROTON OVERFLOW: " + getName());
-            }
-            protons = pro;
+        if (element != null) return element.getProtons();
+        if (processInto.size() <= 0) return Element.Tc.getProtons();
+        long rAmount = 0, tAmount = 0;
+        for (MaterialStack stack : processInto) {
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getProtons();
         }
-        return protons;
+        return (getDensity() * rAmount) / (tAmount * M);
     }
 
     public long getNeutrons() {
-        if (neutrons == 0) {
-            if (element != null) return element.getNeutrons();
-            if (processInto.size() <= 0) return Element.Tc.getNeutrons();
-            long rAmount = 0, tAmount = 0;
-            for (MaterialStack tMaterial : processInto) {
-                tAmount += tMaterial.size();
-                rAmount += tMaterial.size() * tMaterial.get().getNeutrons();
-            }
-            long neu = (3628800 * rAmount) / (tAmount * 3628800);
-            if (neu >= Integer.MAX_VALUE) {
-                throw new IllegalStateException("NEUTRON OVERFLOW: " + getName());
-            }
-            neutrons = neu;
+        if (element != null) return element.getNeutrons();
+        if (processInto.size() <= 0) return Element.Tc.getNeutrons();
+        long rAmount = 0, tAmount = 0;
+        for (MaterialStack stack : processInto) {
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getNeutrons();
         }
-        return neutrons;
+        return (getDensity() * rAmount) / (tAmount * M);
     }
 
     public long getMass() {
-        if (mass == 0) {
-            if (element != null) return element.getMass();
-            if (processInto.size() <= 0) return Element.Tc.getMass();
-            long rAmount = 0, tAmount = 0;
-            for (MaterialStack tMaterial : processInto) {
-                tAmount += tMaterial.size();
-                rAmount += tMaterial.size() * tMaterial.get().getMass();
-            }
-            long mas = (3628800 * rAmount) / (tAmount * 3628800);
-            if (mas >= Integer.MAX_VALUE) {
-                throw new IllegalStateException("MASS OVERFLOW: " + getName());
-            }
-            mass = mas;
+        if (element != null) return element.getMass();
+        if (processInto.size() <= 0) return Element.Tc.getMass();
+        long rAmount = 0, tAmount = 0;
+        for (MaterialStack stack : processInto) {
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getMass();
         }
-        return mass;
+        return (getDensity() * rAmount) / (tAmount * M);
     }
 
     /** Element Getters **/

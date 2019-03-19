@@ -251,22 +251,22 @@ public class MaterialRecipeLoader {
 
             Material process;
             for (MaterialStack stack : m.getProcessInto()) {
-                process = stack.get();
+                process = stack.m;
                 if ((process.has(LIQUID) || process.has(GAS)) && !process.has(DUST)) {
                     if (firstFluid == null) {
                         if (process.getLiquid() != null) { //If a Material has mFluid & mGas, Prioritise mFluid.
-                            firstFluid = process.getLiquid(stack.size() * 1000);
+                            firstFluid = process.getLiquid(stack.s * 1000);
                         } else {
-                            firstFluid = process.getGas(stack.size() * 1000);
+                            firstFluid = process.getGas(stack.s * 1000);
                         }
                     } else {
-                        outputs.add(process.has(LIQUID) ? process.getCell(stack.size()) : process.getCellG(stack.size()));
-                        inputCellCount += stack.size();
+                        outputs.add(process.has(LIQUID) ? process.getCell(stack.s) : process.getCellG(stack.s));
+                        inputCellCount += stack.s;
                     }
                 } else {
-                    outputs.add(process.getDust(stack.size()));
+                    outputs.add(process.getDust(stack.s));
                 }
-                inputCount += stack.size();
+                inputCount += stack.s;
             }
             inputCount = Math.min(inputCount, 64); //This should not happen. This means process total is over 64 and the recipe should be adjusted
             if (outputs.size() > 0) {
@@ -349,10 +349,13 @@ public class MaterialRecipeLoader {
                 }
             }
             if (m.needsBlastFurnace()) {
-                long aBlastDuration = Math.max(m.getMass() / 4, 1) * m.getBlastTemp();
+                long aBlastDuration = Math.max(m.getMass() / 40, 1) * m.getBlastTemp();
                 ItemStack aBlastStack = m.getBlastTemp() > 1750 && m.getSmeltInto().has(HINGOT) ? m.getSmeltInto().getIngotH(1) : aIngotSmeltInto;
                 RB.get(BLAST_FURNACE).ii(dust).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
                 RB.get(BLAST_FURNACE).ii(m.getDustS(4)).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
+
+//                (int) Math.max(aMaterial.getMass() / 40L, 1L) * aMaterial.mBlastFurnaceTemp, 120, aMaterial.mBlastFurnaceTemp
+
                 if (!m.has(NOSMELT)) { //TODO WUT?
                     RB.get(BLAST_FURNACE).ii(m.getDustT(9)).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
                     RecipeHelper.removeSmelting(m.getDustT(1));
