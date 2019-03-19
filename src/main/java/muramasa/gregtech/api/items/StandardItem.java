@@ -6,6 +6,8 @@ import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.materials.ItemFlag;
+import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
@@ -115,9 +117,13 @@ public class StandardItem extends Item {
 //                        System.out.println("Dif2: " + dif);
 
 
-//                        if (((TileEntityMachine) tile).getType().hasFlag(MachineFlag.ENERGY)) {
+//                        if (((TileEntityMachine) tile).getType().has(MachineFlag.ENERGY)) {
 //                            System.out.println("Energy: " + tile.getCapability(GTCapabilities.ENERGY, null).getEnergyStored());
 //                        }
+                    }
+                } else {
+                    for (Material mat : ItemFlag.PLASMA.getMats()) {
+                        System.out.println(mat.getName());
                     }
                 }
             }

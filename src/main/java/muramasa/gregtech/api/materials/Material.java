@@ -106,10 +106,10 @@ public class Material {
 
     public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
         asDust(flags);
-        add(BGEM);
+        add(BGEM, BLOCK);
         if (transparent) {
             this.transparent = true;
-            add(BLOCK, PLATE, LENS);
+            add(PLATE, LENS);
         }
         return this;
     }
@@ -151,9 +151,9 @@ public class Material {
     }
 
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
-        if (hasFlag(INGOT)) {
+        if (has(INGOT)) {
             add(TOOLS, PLATE, ROD, BOLT);
-        } else if (hasFlag(BGEM)) {
+        } else if (has(BGEM)) {
             add(TOOLS, ROD);
         } /*else {
             add(TOOLS);
@@ -164,12 +164,12 @@ public class Material {
         return this;
     }
 
-    public boolean hasFlag(IMaterialFlag... flags) {
+    public boolean has(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof ItemFlag) {
-                return (itemMask & flag.getBit()) != 0;
+                if ((itemMask & flag.getBit()) == 0) return false;
             } else if (flag instanceof RecipeFlag) {
-                return (recipeMask & flag.getBit()) != 0;
+                if ((recipeMask & flag.getBit()) == 0) return false;
             }
         }
         return true;
