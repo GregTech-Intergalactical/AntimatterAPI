@@ -8,6 +8,7 @@ import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.integration.forestry.ForestryRegistrar;
+import muramasa.gregtech.integration.galacticraft.GalacticraftRegistrar;
 import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import muramasa.gregtech.loaders.GregTechRegistry;
 import muramasa.gregtech.loaders.InternalRegistrar;
@@ -37,6 +38,7 @@ public class GregTech {
 
     static {
         GregTechRegistry.addRegistrar(new ForestryRegistrar());
+        GregTechRegistry.addRegistrar(new GalacticraftRegistrar());
     }
 
     @Mod.EventHandler
@@ -50,12 +52,12 @@ public class GregTech {
         GregTechJEIPlugin.registerCategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechJEIPlugin.registerCategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
 
-        INTERNAL_REGISTRAR.onMaterialRegistration();
-        INTERNAL_REGISTRAR.onMaterialInit();
         for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
             registrar.onMaterialRegistration();
             registrar.onMaterialInit();
         }
+        INTERNAL_REGISTRAR.onMaterialRegistration();
+        INTERNAL_REGISTRAR.onMaterialInit();
         Machines.init();
         Guis.init();
         Structures.init();

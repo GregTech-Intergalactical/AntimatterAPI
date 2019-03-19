@@ -22,7 +22,7 @@ public class Prefix implements IStringSerializable {
 //    public static Prefix Chunk = new Prefix("chunk", true, ORE);
     public static Prefix Crushed = new Prefix("crushed", false, CRUSHED);
     public static Prefix CrushedPurified = new Prefix("crushed_purified", false, CRUSHEDP);
-    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDC, CRUSHEDP);
+    public static Prefix CrushedCentrifuged = new Prefix("crushed_centrifuged", false, CRUSHEDC);
     public static Prefix DustPure = new Prefix("dust_pure", false, DUSTP);
     public static Prefix DustImpure = new Prefix("dust_impure", false, DUSTIP);
     public static Prefix Dust = new Prefix("dust", true, DUST);
@@ -60,18 +60,19 @@ public class Prefix implements IStringSerializable {
     private boolean doesGenerate, hasLocName, visible;
     private long generationBits;
 
-    public Prefix(String name, boolean visible, ItemFlag... flags) {
+    public Prefix(String name, boolean visible, ItemFlag flag) {
         this.name = name;
         this.visible = visible;
-        for (ItemFlag flag : flags) {
-            generationBits |= flag.getBit();
-        }
+//        for (ItemFlag flag : flags) {
+//            generationBits |= flag.getBit();
+//        }
+        generationBits |= flag.getBit();
         this.doesGenerate = true;
         PREFIX_LOOKUP.put(name, this);
     }
 
-    public Prefix(String name, boolean visible, boolean generatesItems, ItemFlag... flags) {
-        this(name, visible, flags);
+    public Prefix(String name, boolean visible, boolean generatesItems, ItemFlag flag) {
+        this(name, visible, flag);
         this.doesGenerate = generatesItems;
     }
 

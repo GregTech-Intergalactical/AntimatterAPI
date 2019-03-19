@@ -37,7 +37,7 @@ public enum RecipeFlag implements IMaterialFlag {
     private ArrayList<Material> materials = new ArrayList<>();
 
     RecipeFlag() {
-        bit = 1 << ordinal();
+        bit = 1L << ordinal();
     }
 
     @Override

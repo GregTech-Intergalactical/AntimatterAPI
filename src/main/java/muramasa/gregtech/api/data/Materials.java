@@ -26,9 +26,9 @@ public class Materials {
     public static Material Carbon = new Material("Carbon", 0x141414, DULL, C).asSolid().addTools(1.0F, 64, 2);
     public static Material Chrome = new Material("Chrome", 0xffe6e6, SHINY, Cr).asMetal(2180, 1700, SCREW, RING, PLATE, ROTOR).addTools(11.0F, 256, 3);
     public static Material Cobalt = new Material("Cobalt", 0x5050fa, METALLIC, Co).asMetal(1768, 0).addTools(8.0F, 512, 3);
-    public static Material Gold = new Material( "Gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIREF, GEAR, BLOCK, ORE).addTools(12.0F, 64, 2);
+    public static Material Gold = new Material( "Gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIREF, GEAR, ORE).addTools(12.0F, 64, 2);
     public static Material Iridium = new Material("Iridium", 0xf0f0f5, DULL, Ir).asMetal(2719, 2719, FRAME, ORE).addTools(6.0F, 2560, 3);
-    public static Material Iron = new Material("Iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME, BLOCK).asPlasma().addTools(6.0F, 256, 2);
+    public static Material Iron = new Material("Iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME).asPlasma().addTools(6.0F, 256, 2);
     public static Material Lanthanum = new Material("Lanthanum", 0xffffff, METALLIC, La).asSolid(1193, 1193);
     public static Material Lead = new Material("Lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, FOIL, ROD, WIREF, DPLATE, ORE).addTools(8.0F, 64, 1);
     public static Material Manganese = new Material("Manganese", 0xfafafa, DULL, Mn).asMetal(1519, 0, FOIL, ORE).addTools(7.0F, 512, 2);
@@ -79,7 +79,7 @@ public class Materials {
     public static Material Phosphor = new Material("Phosphor", 0xffff00, DULL, P).asDust(317);
     public static Material Potassium = new Material("Potassium", 0xfafafa, METALLIC, K).asSolid(336, 0);
     public static Material Radon = new Material("Radon", 0xff00ff, NONE, Rn).asGas();
-    public static Material Silicon = new Material("Silicon", 0x3c3c50, METALLIC, Si).asMetal(1687, 1687, PLATE, FOIL, BLOCK);
+    public static Material Silicon = new Material("Silicon", 0x3c3c50, METALLIC, Si).asMetal(1687, 1687, PLATE, FOIL);
     public static Material Sodium = new Material("Sodium", 0x000096, METALLIC, Na).asDust(370);
     public static Material Sulfur = new Material("Sulfur", 0xc8c800, DULL, S).asDust(388, ORE).asPlasma();
     public static Material Tantalum = new Material("Tantalum", 0xffffff, METALLIC, Ta).asSolid(3290, 0);
@@ -314,9 +314,9 @@ public class Materials {
 
     //Brittle Gems
     public static Material BlueTopaz = new Material("Blue Topaz", 0x0000ff, GEM_H).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
-    public static Material Charcoal = new Material("Charcoal", 0x644646, FINE).asGemBasic(false, BLOCK).add(Carbon, 1);
-    public static Material Coal = new Material("Coal", 0x464646, ROUGH).asGemBasic(false, BLOCK, ORE).add(Carbon, 1);
-    public static Material Lignite = new Material("Lignite Coal", 0x644646, ROUGH).asGemBasic(false, BLOCK, ORE).add(Carbon, 3, Water, 1);
+    public static Material Charcoal = new Material("Charcoal", 0x644646, FINE).asGemBasic(false).add(Carbon, 1);
+    public static Material Coal = new Material("Coal", 0x464646, ROUGH).asGemBasic(false, ORE).add(Carbon, 1);
+    public static Material Lignite = new Material("Lignite Coal", 0x644646, ROUGH).asGemBasic(false, ORE).add(Carbon, 3, Water, 1);
 
     public static Material Diamond = new Material("Diamond", 0xc8ffff, DIAMOND).asGem(true, ORE, GEAR).addTools(8.0F, 1280, 3).add(Carbon, 1);
     public static Material Emerald = new Material("Emerald", 0x50ff50, NONE).asGem(true, ORE).addTools(7.0F, 256, 2).add(Silver, 1, Gold, 1);
@@ -682,16 +682,25 @@ public class Materials {
 
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
-        for (Material mat : MATERIAL_LOOKUP.values()) {
-            if (mat.hasFlag(LIQUID) && mat.getLiquid() == null) {
-                mat.setLiquid(new GTFluid(mat, LIQUID));
-            }
-            if (mat.hasFlag(GAS) && mat.getGas() == null) {
-                mat.setGas(new GTFluid(mat, GAS));
-            }
-            if (mat.hasFlag(PLASMA) && mat.getPlasma() == null) {
-                mat.setPlasma(new GTFluid(mat, PLASMA));
-            }
+//        for (Material mat : MATERIAL_LOOKUP.values()) {
+//            if (mat.has(LIQUID) && mat.getLiquid() == null) {
+//                mat.setLiquid(new GTFluid(mat, LIQUID));
+//            }
+//            if (mat.has(GAS) && mat.getGas() == null) {
+//                mat.setGas(new GTFluid(mat, GAS));
+//            }
+//            if (mat.has(PLASMA) && mat.getPlasma() == null) {
+//                mat.setPlasma(new GTFluid(mat, PLASMA));
+//            }
+//        }
+        for (Material mat : LIQUID.getMats()) {
+            if (mat.getLiquid() == null) mat.setLiquid(new GTFluid(mat, LIQUID));
+        }
+        for (Material mat : GAS.getMats()) {
+            if (mat.getGas() == null) mat.setGas(new GTFluid(mat, GAS));
+        }
+        for (Material mat : PLASMA.getMats()) {
+            if (mat.getPlasma() == null) mat.setPlasma(new GTFluid(mat, PLASMA));
         }
     }
 

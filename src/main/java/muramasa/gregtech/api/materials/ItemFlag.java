@@ -51,7 +51,7 @@ public enum ItemFlag implements IMaterialFlag {
 
     ItemFlag(ItemFlag... subFlags) {
         this.subFlags = subFlags;
-        bit = 1 << ordinal();
+        bit = 1L << ordinal();
     }
 
     @Override

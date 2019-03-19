@@ -49,7 +49,7 @@ public class GregTechRegistry {
     }
 
     public static BlockOre getOre(StoneType type, Material material) {
-        if (!material.hasFlag(ItemFlag.ORE)) {
+        if (!material.has(ItemFlag.ORE)) {
             if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
                 throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
             } else {
