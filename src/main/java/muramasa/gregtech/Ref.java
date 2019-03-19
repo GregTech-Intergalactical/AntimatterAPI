@@ -39,6 +39,8 @@ public class Ref {
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
     public static boolean mDisableOldChemicalRecipes = false;
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;
+    public static boolean DISABLE_VANILLA_ORE_GENERATION = true;
+    public static boolean DISABLE_VANILLA_STONE_GENERATION = false;
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";

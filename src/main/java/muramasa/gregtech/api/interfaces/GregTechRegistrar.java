@@ -1,8 +1,14 @@
 package muramasa.gregtech.api.interfaces;
 
+import net.minecraftforge.fml.common.Loader;
+
 public abstract class GregTechRegistrar {
 
-    public abstract boolean isEnabled();
+    public abstract String getId();
+
+    public boolean isEnabled() {
+        return Loader.isModLoaded(getId());
+    }
 
     public void onCoverRegistration() {
         //NOOP

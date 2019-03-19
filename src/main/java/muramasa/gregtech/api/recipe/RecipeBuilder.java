@@ -71,14 +71,14 @@ public class RecipeBuilder {
         recipeMap.add(recipe);
     }
 
-    public void add(int duration, long power, int special) {
-        this.duration = duration;
+    public void add(long duration, long power, long special) {
+        this.duration = (int)duration;
         this.power = power;
-        this.special = special;
+        this.special = (int)special;
         add();
     }
 
-    public void add(int duration, long power) {
+    public void add(long duration, long power) {
         add(duration, power, 0);
     }
 

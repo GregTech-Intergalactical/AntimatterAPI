@@ -1,5 +1,6 @@
 package muramasa.gregtech.loaders;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemType;
@@ -10,8 +11,8 @@ import muramasa.gregtech.api.materials.Material;
 public class InternalRegistrar extends GregTechRegistrar {
 
     @Override
-    public boolean isEnabled() {
-        return true;
+    public String getId() {
+        return Ref.MODID;
     }
 
     @Override

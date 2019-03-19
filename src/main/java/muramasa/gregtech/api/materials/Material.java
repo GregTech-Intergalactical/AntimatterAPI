@@ -20,8 +20,8 @@ import static muramasa.gregtech.api.materials.RecipeFlag.METAL;
 public class Material {
 
     /** Basic Members **/
-    private int rgb, protons, neutrons, mass;
-    private long itemMask, recipeMask;
+    private int rgb;
+    private long itemMask, recipeMask, protons, neutrons, mass;
     private String name, displayName;
     private MaterialSet set;
     private boolean hasLocName;
@@ -155,9 +155,7 @@ public class Material {
             add(TOOLS, PLATE, ROD, BOLT);
         } else if (has(BGEM)) {
             add(TOOLS, ROD);
-        } /*else {
-            add(TOOLS);
-        }*/
+        }
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
@@ -243,7 +241,7 @@ public class Material {
         return recipeMask;
     }
 
-    public int getProtons() {
+    public long getProtons() {
         if (protons == 0) {
             if (element != null) return element.getProtons();
             if (processInto.size() <= 0) return Element.Tc.getProtons();
@@ -254,14 +252,14 @@ public class Material {
             }
             long pro = (3628800 * rAmount) / (tAmount * 3628800);
             if (pro >= Integer.MAX_VALUE) {
-                System.out.println("PROTON OVERFLOW: " + getName());
+                throw new IllegalStateException("PROTON OVERFLOW: " + getName());
             }
-            protons = (int)pro;
+            protons = pro;
         }
         return protons;
     }
 
-    public int getNeutrons() {
+    public long getNeutrons() {
         if (neutrons == 0) {
             if (element != null) return element.getNeutrons();
             if (processInto.size() <= 0) return Element.Tc.getNeutrons();
@@ -272,14 +270,14 @@ public class Material {
             }
             long neu = (3628800 * rAmount) / (tAmount * 3628800);
             if (neu >= Integer.MAX_VALUE) {
-                System.out.println("NEUTRON OVERFLOW: " + getName());
+                throw new IllegalStateException("NEUTRON OVERFLOW: " + getName());
             }
-            neutrons = (int)neu;
+            neutrons = neu;
         }
         return neutrons;
     }
 
-    public int getMass() {
+    public long getMass() {
         if (mass == 0) {
             if (element != null) return element.getMass();
             if (processInto.size() <= 0) return Element.Tc.getMass();
@@ -290,9 +288,9 @@ public class Material {
             }
             long mas = (3628800 * rAmount) / (tAmount * 3628800);
             if (mas >= Integer.MAX_VALUE) {
-                System.out.println("MASS OVERFLOW: " + getName());
+                throw new IllegalStateException("MASS OVERFLOW: " + getName());
             }
-            mass = (int)mas;
+            mass = mas;
         }
         return mass;
     }
@@ -450,10 +448,6 @@ public class Material {
     }
 
     /** Helpful Stack Getters **/
-//    public ItemStack getChunk(int amount) {
-//        return MaterialItem.get(Prefix.Chunk, this, amount);
-//    }
-
     public ItemStack getCrushed(int amount) {
         return MaterialItem.get(Prefix.Crushed, this, amount);
     }

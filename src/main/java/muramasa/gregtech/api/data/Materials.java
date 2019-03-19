@@ -63,7 +63,7 @@ public class Materials {
     public static Material Deuterium = new Material("Deuterium", 0xffff00, NONE, D).asGas();
     public static Material Dysprosium = new Material("Dysprosium", 0xffffff, METALLIC, D).asMetal(1680, 1680);
     public static Material Europium = new Material("Europium", 0xffffff, METALLIC, Eu).asMetal(1099, 1099, PLATE, ROD);
-    public static Material Fluorine = new Material("Fluorine", 0xffffff, NONE, F).asFluid();
+    public static Material Fluorine = new Material("Fluorine", 0xffffff, NONE, F).asGas();
     public static Material Gallium = new Material("Gallium", 0xdcdcff, SHINY, Ga).asMetal(302, 0, PLATE);
     public static Material Hydrogen = new Material("Hydrogen", 0x0000ff, NONE, H).asGas();
     public static Material Helium = new Material("Helium", 0xffff00, NONE, He).asPlasma();
@@ -84,7 +84,7 @@ public class Materials {
     public static Material Sulfur = new Material("Sulfur", 0xc8c800, DULL, S).asDust(388, ORE).asPlasma();
     public static Material Tantalum = new Material("Tantalum", 0xffffff, METALLIC, Ta).asSolid(3290, 0);
     public static Material Tin = new Material("Tin", 0xdcdcdc, DULL, Sn).asMetal(505, 505, PLATE, ROD, BOLT, SCREW, RING, GEAR, FOIL, WIREF, FRAME, ORE);
-    public static Material Tritium = new Material("Tritium", 0xff0000, METALLIC, T).asFluid();
+    public static Material Tritium = new Material("Tritium", 0xff0000, METALLIC, T).asMetal(LIQUID, GAS);
     public static Material Vanadium = new Material("Vanadium", 0x323232, METALLIC, V).asMetal(2183, 2183);
     public static Material Yttrium = new Material("Yttrium", 0xdcfadc, METALLIC, Y).asMetal(1799, 1799);
     public static Material Zinc = new Material("Zinc", 0xfaf0f0, METALLIC, Zn).asMetal(692, 0, PLATE, FOIL, ORE);
@@ -443,7 +443,7 @@ public class Materials {
         CENT.add(NobleGases, Air, BrownLimonite, Cinnabar, Clay, Sheldonite, Powellite, Stibnite, Tetrahedrite, Uraninite, Wulfenite, YellowLimonite, Blaze, Flint, Marble, GraniteBlack, VanadiumMagnetite, Pitchblende, Glass, Lapis, EnderEye, Phosphorus, GarnetRed, GarnetYellow, Redstone, Basalt, AnnealedCopper, BatteryAlloy, Brass, Bronze, Cupronickel, Electrum, Invar, Kanthal, Magnalium, Nichrome, NiobiumTitanium, PigIron, SolderingAlloy, VanadiumGallium, WroughtIron, SterlingSilver, RoseGold, BlackBronze, BismuthBronze, BlackSteel, DamascusSteel, TungstenSteel, RedAlloy, CobaltBrass, TungstenCarbide, VanadiumSteel, HSSG, HSSE, HSSS, GalliumArsenide/*, IndiumGalliumPhosphide, BorosilicateGlass*/);
         CRACK.add(RefineryGas, Naphtha, Ethane, Propane, Butane, Butene, Ethylene, Propene, LightDiesel, HeavyDiesel);
         CALCITE2X.add(Pyrite, BrownLimonite, YellowLimonite, Magnetite);
-        CALCITE3X.add(Iron, PigIron, WroughtIron/*, MeteoricIron*/);
+        CALCITE3X.add(Iron, PigIron, WroughtIron);
         WASHM.add(Gold, Silver, Osmium, Platinum, Sheldonite, Galena, Nickel, Tungstate, Lead, Magnetite, Iridium, Copper, Chalcopyrite);
         WASHS.add(Zinc, Nickel, Copper, Cobaltite, Tetrahedrite, Gold, Sphalerite, Garnierite, Chalcopyrite, Sheldonite, Platinum, Pentlandite, Tin, Malachite, YellowLimonite);
         NOSMELT.add(Wood, WoodSealed, Sulfur, Saltpeter, Graphite, /*Paper, */Coal, Charcoal, Lignite, Glyceryl, NitroFuel, Emerald, Amethyst, Tanzanite, Topaz, /*Amber,*/ GreenSapphire, Sapphire, Ruby, Opal, Olivine, GarnetRed, GarnetYellow, Lapis, Sodalite, Lazurite, Monazite, Quartzite, Dilithium, NetherQuartz, CertusQuartz, Phosphorus, Phosphate, NetherStar, EnderPearl, EnderEye, Blaze);
@@ -621,7 +621,6 @@ public class Materials {
         Magnesite.addByProduct(Magnesium);
         NetherQuartz.addByProduct(Netherrack);
         PigIron.addByProduct(Iron);
-//        MeteoricIron.addByProduct(Iron);
         Steel.addByProduct(Iron);
         Graphite.addByProduct(Carbon);
         Netherrack.addByProduct(Sulfur);
