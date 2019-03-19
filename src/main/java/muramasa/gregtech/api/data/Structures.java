@@ -94,10 +94,10 @@ public class Structures {
             .offset(2, -1).exact(BRONZE_BLAST_FURNACE, 1).min(BRONZE_PLATED_BRICK, 32)
         );
 
-        ELECTRIC_BLAST_FURNACE.addStructure(StructureBuilder.start()
+        BLAST_FURNACE.addStructure(StructureBuilder.start()
             .of("CCC", "CCM", "CCC").of("BBB", "BAB", "BBB").of(1).of("CCC", "CCC", "CCC")
-            .at("C", HATCH_OR_CASING_EBF).at("B", ANY_COIL_EBF).at("M", ELECTRIC_BLAST_FURNACE).build()
-            .offset(2, 0).exact(ELECTRIC_BLAST_FURNACE, 1).min(HEAT_PROOF, 12).min(HATCH_ITEM_INPUT, 1).min(HATCH_ITEM_OUTPUT, 1)
+            .at("C", HATCH_OR_CASING_EBF).at("B", ANY_COIL_EBF).at("M", BLAST_FURNACE).build()
+            .offset(2, 0).exact(BLAST_FURNACE, 1).min(HEAT_PROOF, 12).min(HATCH_ITEM_INPUT, 1).min(HATCH_ITEM_OUTPUT, 1)
         );
 
         VACUUM_FREEZER.addStructure(StructureBuilder.start()

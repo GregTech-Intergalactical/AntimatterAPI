@@ -16,20 +16,31 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
+import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class GregTechRegistry {
 
     /** Registrar Section **/
-    private static ArrayList<GregTechRegistrar> REGISTRARS = new ArrayList<>();
+    private static HashMap<String, GregTechRegistrar> REGISTRARS = new HashMap<>();
 
     public static void addRegistrar(GregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Ref.ENABLE_ALL_REGISTRARS) REGISTRARS.add(registrar);
+        if (registrar.isEnabled() || Ref.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
+    }
+
+    public static boolean isRegistrarEnabled(String id) {
+        GregTechRegistrar registrar = getRegistrar(id);
+        return registrar != null && registrar.isEnabled();
+    }
+
+    @Nullable
+    public static GregTechRegistrar getRegistrar(String id) {
+        return REGISTRARS.get(id);
     }
 
     public static Collection<GregTechRegistrar> getRegistrars() {
-        return REGISTRARS;
+        return REGISTRARS.values();
     }
 
     public static MaterialItem getMaterialItem(Prefix prefix, Material material) {

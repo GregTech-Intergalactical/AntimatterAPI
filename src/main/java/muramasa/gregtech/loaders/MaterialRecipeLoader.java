@@ -349,12 +349,12 @@ public class MaterialRecipeLoader {
                 }
             }
             if (m.needsBlastFurnace()) {
-                int aBlastDuration = Math.max(m.getMass() / 4, 1) * m.getBlastTemp();
+                long aBlastDuration = Math.max(m.getMass() / 4, 1) * m.getBlastTemp();
                 ItemStack aBlastStack = m.getBlastTemp() > 1750 && m.getSmeltInto().has(HINGOT) ? m.getSmeltInto().getIngotH(1) : aIngotSmeltInto;
-                RB.get(ELECTRIC_BLAST_FURNACE).ii(dust).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
-                RB.get(ELECTRIC_BLAST_FURNACE).ii(m.getDustS(4)).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
+                RB.get(BLAST_FURNACE).ii(dust).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
+                RB.get(BLAST_FURNACE).ii(m.getDustS(4)).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
                 if (!m.has(NOSMELT)) { //TODO WUT?
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(m.getDustT(9)).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
+                    RB.get(BLAST_FURNACE).ii(m.getDustT(9)).io(aBlastStack).add(aBlastDuration, 120, m.getBlastTemp());
                     RecipeHelper.removeSmelting(m.getDustT(1));
                 }
             }
@@ -451,22 +451,22 @@ public class MaterialRecipeLoader {
                 if (aNeedsBlastFurnace) {
                     ItemStack aIngotSmeltInto = m == m.getSmeltInto() ? ingot : m.getSmeltInto().getIngot(1);
                     ItemStack blastOut = m.getBlastTemp() > 1750 && m.getSmeltInto().has(HINGOT) ? m.getSmeltInto().getIngotH(1) : aIngotSmeltInto;
-                    int aBlastDuration = Math.max(m.getMass() / 4, 1) * m.getBlastTemp();
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(crushed).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(m.getCrushedP(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(m.getCrushedC(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(m.getDustP(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(m.getDustIP(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
+                    long aBlastDuration = Math.max(m.getMass() / 4, 1) * m.getBlastTemp();
+                    RB.get(BLAST_FURNACE).ii(crushed).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
+                    RB.get(BLAST_FURNACE).ii(m.getCrushedP(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
+                    RB.get(BLAST_FURNACE).ii(m.getCrushedC(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
+                    RB.get(BLAST_FURNACE).ii(m.getDustP(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
+                    RB.get(BLAST_FURNACE).ii(m.getDustIP(1)).io(blastOut).add(aBlastDuration, 120, m.getBlastTemp());
                 }
                 if (m.has(CALCITE3X)) {
                     ItemStack ingotMulti = Utils.mul(aMultiplier * 3 * m.getSmeltingMulti(), ingot);
                     ItemStack darkAsh = Materials.DarkAsh.getDustS(1);
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(ore, Materials.Calcite.getDust(aMultiplier)).io(ingotMulti, darkAsh).add(ingot.getCount() * 500, 120, 1500);
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(ore, Materials.Quicklime.getDust(aMultiplier)).io(ingotMulti, darkAsh).add(ingot.getCount() * 500, 120, 1500);
+                    RB.get(BLAST_FURNACE).ii(ore, Materials.Calcite.getDust(aMultiplier)).io(ingotMulti, darkAsh).add(ingot.getCount() * 500, 120, 1500);
+                    RB.get(BLAST_FURNACE).ii(ore, Materials.Quicklime.getDust(aMultiplier)).io(ingotMulti, darkAsh).add(ingot.getCount() * 500, 120, 1500);
                 } else if (m.has(CALCITE2X)) {
                     ItemStack darkAsh = Materials.DarkAsh.getDustS(1);
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(ore, Materials.Calcite.getDust(aMultiplier)).io(Utils.mul(aMultiplier * aMixedOreYieldCount * m.getSmeltingMulti(), ingot), darkAsh).add( ingot.getCount() * 500, 120, 1500);
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(ore, Materials.Quicklime.getDustT(aMultiplier * 3)).io(Utils.mul(aMultiplier * 3 * m.getSmeltingMulti(), ingot), darkAsh).add(ingot.getCount() * 500, 120, 1500);
+                    RB.get(BLAST_FURNACE).ii(ore, Materials.Calcite.getDust(aMultiplier)).io(Utils.mul(aMultiplier * aMixedOreYieldCount * m.getSmeltingMulti(), ingot), darkAsh).add( ingot.getCount() * 500, 120, 1500);
+                    RB.get(BLAST_FURNACE).ii(ore, Materials.Quicklime.getDustT(aMultiplier * 3)).io(Utils.mul(aMultiplier * 3 * m.getSmeltingMulti(), ingot), darkAsh).add(ingot.getCount() * 500, 120, 1500);
                 }
                 RecipeHelper.addSmelting(dust, ingot);
                 RecipeHelper.addSmelting(ore, Utils.ca(aMultiplier * m.getSmeltingMulti(), ingot));
@@ -506,7 +506,7 @@ public class MaterialRecipeLoader {
                 } else {
                     ItemStack ingot = m.hasDirectSmeltInto() ? m.getDirectSmeltInto().getIngot(1) : m.getIngot(1);
                     ItemStack blastOut = m.getBlastTemp() > 1750 && m.getSmeltInto().has(HINGOT) ? m.getSmeltInto().getIngotH(1) : (m == m.getSmeltInto() ? ingot : m.getSmeltInto().getIngot(1));
-                    RB.get(ELECTRIC_BLAST_FURNACE).ii(aCrushedC).io(blastOut).add(Math.max(m.getMass() / 4, 1) * m.getBlastTemp(), 120, m.getBlastTemp());
+                    RB.get(BLAST_FURNACE).ii(aCrushedC).io(blastOut).add(Math.max(m.getMass() / 4, 1) * m.getBlastTemp(), 120, m.getBlastTemp());
                 }
             }
         }
@@ -522,7 +522,7 @@ public class MaterialRecipeLoader {
             if ((m.has(INGOT)) && (m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace())) {
                 ItemStack ingot = m.hasDirectSmeltInto() ? m.getDirectSmeltInto().getIngot(1) : m.getIngot(1);
                 ItemStack blastOut = m.getBlastTemp() > 1750 && m.getSmeltInto().has(HINGOT) ? m.getSmeltInto().getIngotH(1) : (m == m.getSmeltInto() ? ingot : m.getSmeltInto().getIngot(1));
-                RB.get(ELECTRIC_BLAST_FURNACE).ii(crushed).io(blastOut).add(Math.max(m.getMass() / 4, 1) * m.getBlastTemp(), 120, m.getBlastTemp());
+                RB.get(BLAST_FURNACE).ii(crushed).io(blastOut).add(Math.max(m.getMass() / 4, 1) * m.getBlastTemp(), 120, m.getBlastTemp());
             }
         }
 
