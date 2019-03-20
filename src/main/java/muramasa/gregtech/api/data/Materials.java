@@ -43,7 +43,7 @@ public class Materials {
     public static Material Plutonium241 = new Material("Plutonium 241", 0xfa4646, SHINY, Pu241).asMetal(912, 0).addTools(6.0F, 512, 3);
     public static Material Silver = new Material("Silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE).addTools(10.0F, 64, 2);
     public static Material Thorium = new Material("Thorium", 0x001e00, SHINY, Th).asMetal(2115, 0, ORE).addTools(6.0F, 512, 2);
-    public static Material Titanium = new Material("Titanium", 0xdca0f0, METALLIC).asMetal(1941, 1940, ROD, SPRING);
+    public static Material Titanium = new Material("Titanium", 0xdca0f0, METALLIC).asMetal(1941, 1940, ROD, SPRING).addTools(7.0F, 1600, 3);
     public static Material Tungsten = new Material("Tungsten", 0x323232, METALLIC, W).asMetal(3695, 3000, FOIL).addTools(7.0F, 2560, 3);
     public static Material Uranium = new Material("Uranium 238", 0x32f032, METALLIC, U).asMetal(1405, 0, ORE).addTools(6.0F, 512, 3);
     public static Material Uranium235 = new Material("Uranium 235", 0x46fa46, METALLIC, U235).asMetal(1405, 0).addTools(6.0F, 512, 3);

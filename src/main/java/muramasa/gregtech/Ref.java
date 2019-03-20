@@ -57,17 +57,17 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
 
     public static final String TAG_TOOL_DATA = "tooldata";
-    public static final String KEY_TOOL_DATA_TYPE = "t";
-    public static final String KEY_TOOL_DATA_QUALITY = "q";
+//    public static final String KEY_TOOL_DATA_TYPE = "t";
+//    public static final String KEY_TOOL_DATA_QUALITY = "q";
     public static final String KEY_TOOL_DATA_PRIMARY_MAT = "pm";
     public static final String KEY_TOOL_DATA_SECONDARY_MAT = "sm";
     public static final String KEY_TOOL_DATA_ENERGY = "e";
     public static final String KEY_TOOL_DATA_MAX_ENERGY = "me";
     public static final String KEY_TOOL_DATA_DURABILITY = "d";
-    public static final String KEY_TOOL_DATA_MAX_DURABILITY = "md";
-    public static final String KEY_TOOL_DATA_ATTACK_SPEED = "as";
-    public static final String KEY_TOOL_DATA_ATTACK_DAMAGE = "ad";
-    public static final String KEY_TOOL_DATA_MINING_SPEED = "ms";
+//    public static final String KEY_TOOL_DATA_MAX_DURABILITY = "md";
+//    public static final String KEY_TOOL_DATA_ATTACK_SPEED = "as";
+//    public static final String KEY_TOOL_DATA_ATTACK_DAMAGE = "ad";
+//    public static final String KEY_TOOL_DATA_MINING_SPEED = "ms";
 
     /** Mod IDs **/
     public static final String MOD_JEI = "jei";

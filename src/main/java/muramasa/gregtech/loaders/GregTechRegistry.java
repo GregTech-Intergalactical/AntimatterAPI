@@ -49,8 +49,8 @@ public class GregTechRegistry {
         return (StandardItem) getItem(type.getName());
     }
 
-    public static MaterialTool getMaterialTool(ToolType type, Material primary) {
-        return (MaterialTool) getItem(type.getName() + "_" + primary.getName());
+    public static MaterialTool getMaterialTool(ToolType type) {
+        return (MaterialTool) getItem(type.getName());
     }
 
     public static BlockCasing getCasing(Casing type) {

@@ -1,8 +1,8 @@
 package muramasa.gregtech.api.enums;
 
 import com.google.common.collect.Sets;
-import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.items.MaterialTool;
+import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.item.ItemStack;
@@ -36,8 +36,7 @@ public enum ToolType implements IStringSerializable {
     SCYTHE("Scythe", "", Sets.newHashSet("scythe"), null, false, 0, 3.0f, 1.0f, 4.0f, 100, 200, 800),
     PLUNGER("Plunger", "", Sets.newHashSet("plunger"), null, false, 0, 1.25f, 1.0f, 0.25f, 100, 200, 800),
     DRILL("Electric Drill", "", Sets.newHashSet("drill", "pickaxe"), Sounds.DRILL, true, 1, 3.0f, 9.0f, 4.0f, 800, 3200, 12800),
-    CHAINSAW("Electric Chainsaw", "", Sets.newHashSet("axe", "sword"), null, true, 1, 4.0f, 4.0f, 4.0f, 800, 3200, 12800),
-    //TODO merge powered versions of tools (add isPowered())
+    CHAINSAW("Electric Chainsaw", "", Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, 4.0f, 4.0f, 800, 3200, 12800),
     WRENCH_P("Electric Wrench", "", Sets.newHashSet("wrench"), null, true, 1, 2.0f, 4.0f, 4.0f, 800, 3200, 12800),
     JACKHAMMER("Electric Jackhammer", "", Sets.newHashSet("jackhammer"), null, true, 1, 3.0f, 12.0f, 2.0f, 400, 800, 3200),
     SCREWDRIVER_P("Electric Screwdriver", "", Sets.newHashSet("screwdriver"), null, true, 0, 1.0f, 1.0f, 1.0f, 100, 200, 200),
@@ -119,20 +118,20 @@ public enum ToolType implements IStringSerializable {
         return toolClasses;
     }
 
-//    public boolean isItemEqual(ItemStack stack) {
-//        return stack.getItem() instanceof MetaTool && stack.getMetadata() == ordinal();
-//    }
-//
-
-    public static void playDigSound(World world, BlockPos pos, ItemStack stack) {
-        ToolType type = get(stack);
-        if (type.useSound != null) {
-            type.useSound.play(world, pos);
-        }
+    public void playUseSound(World world, BlockPos pos) {
+        if (useSound != null) useSound.play(world, pos);
     }
 
-    public MaterialTool getItem(Material primary) {
-        return GregTechRegistry.getMaterialTool(this, primary);
+    public ItemStack get() {
+        return get(null, null);
+    }
+
+    public ItemStack get(Material primary) {
+        return get(primary, primary.getHandleMaterial());
+    }
+
+    public ItemStack get(Material primary, Material secondary) {
+        return GregTechRegistry.getMaterialTool(this).get(primary, secondary);
     }
 
     @Nullable
