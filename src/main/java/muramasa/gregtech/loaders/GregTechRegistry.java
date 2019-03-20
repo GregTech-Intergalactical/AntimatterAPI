@@ -1,16 +1,14 @@
 package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.enums.Casing;
-import muramasa.gregtech.api.enums.Coil;
-import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.enums.StoneType;
+import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.api.items.MaterialTool;
 import muramasa.gregtech.common.blocks.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -49,6 +47,10 @@ public class GregTechRegistry {
 
     public static StandardItem getStandardItem(ItemType type) {
         return (StandardItem) getItem(type.getName());
+    }
+
+    public static MaterialTool getMaterialTool(ToolType type, Material primary) {
+        return (MaterialTool) getItem(type.getName() + "_" + primary.getName());
     }
 
     public static BlockCasing getCasing(Casing type) {

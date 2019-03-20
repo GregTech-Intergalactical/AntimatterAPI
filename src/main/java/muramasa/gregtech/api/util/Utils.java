@@ -219,8 +219,8 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static String formatNumber(int aNumber) {
-        return DECIMAL_FORMAT.format(aNumber);
+    public static String formatNumber(long number) {
+        return DECIMAL_FORMAT.format(number);
     }
 
     public static void spawnItem(TileEntity tile, EnumFacing side, ItemStack stack) {

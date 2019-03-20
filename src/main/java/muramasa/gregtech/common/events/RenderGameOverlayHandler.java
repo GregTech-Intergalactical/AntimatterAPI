@@ -2,8 +2,7 @@ package muramasa.gregtech.common.events;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.enums.ToolType;
-import muramasa.gregtech.api.util.ToolHelper;
+import muramasa.gregtech.api.items.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import net.minecraft.client.Minecraft;
@@ -36,23 +35,27 @@ public class RenderGameOverlayHandler extends Gui {
     public static void onRenderGameOverlay(RenderGameOverlayEvent.Pre e) {
         EntityPlayerSP entityPlayerSP = Ref.mc.player;
         ItemStack stack = entityPlayerSP.getHeldItemMainhand();
-        if (ToolType.isPowered(stack) && e.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE && !entityPlayerSP.isCreative()) {
+        if (!(stack.getItem() instanceof MaterialTool)) return;
+        MaterialTool tool = (MaterialTool) stack.getItem();
+        if (tool.getType().isPowered() && e.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE && !entityPlayerSP.isCreative()) {
             e.setCanceled(true);
         }
     }
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onRenderGameOverlay(RenderGameOverlayEvent.Post e) {
-        EntityPlayerSP entityPlayerSP = Ref.mc.player;
-        ItemStack stack = entityPlayerSP.getHeldItemMainhand();
         if (e.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-            if (ToolType.isPowered(stack) && !entityPlayerSP.isCreative()) {
+            EntityPlayerSP entityPlayerSP = Ref.mc.player;
+            ItemStack stack = entityPlayerSP.getHeldItemMainhand();
+            if (!(stack.getItem() instanceof MaterialTool)) return;
+            MaterialTool tool = (MaterialTool) stack.getItem();
+            if (tool.getType().isPowered() && !entityPlayerSP.isCreative()) {
                 GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                 GL11.glPushMatrix();
                 int x = (e.getResolution().getScaledWidth() / 2) - 91;
                 int y = e.getResolution().getScaledHeight() - 29;
                 Ref.mc.renderEngine.bindTexture(energyBar);
-                int energySize = (int)(180 * ((float) ToolHelper.getEnergy(stack) / (float) ToolHelper.getMaxEnergy(stack)));
+                int energySize = (int)(180 * ((float) tool.getEnergy(stack) / (float) tool.getMaxEnergy(stack)));
                 drawModalRectWithCustomSizedTexture(x, y, 0, 0, 182, 5, 182, 15);
                 drawModalRectWithCustomSizedTexture(x + 1, y + 1, 0, 6, energySize, 3, 182, 15);
                 int iconU = energySize == 0 ? 4 : 0;
