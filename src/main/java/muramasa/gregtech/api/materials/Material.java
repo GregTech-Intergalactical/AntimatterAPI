@@ -44,7 +44,7 @@ public class Material {
     /** Tool Members **/
     private float toolSpeed;
     private int toolDurability, toolQuality;
-    private String handleMaterial;
+    private Material handleMaterial;
 
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
@@ -159,6 +159,7 @@ public class Material {
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
+        this.handleMaterial = this;
         return this;
     }
 
@@ -309,6 +310,10 @@ public class Material {
 
     public int getToolQuality() {
         return toolQuality;
+    }
+
+    public Material getHandleMaterial() {
+        return handleMaterial;
     }
 
     /** Fluid/Gas/Plasma Getters **/

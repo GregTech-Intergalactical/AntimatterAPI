@@ -2,15 +2,12 @@ package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.Casing;
-import muramasa.gregtech.api.enums.Coil;
-import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.enums.StoneType;
+import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.items.MaterialItem;
-import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.items.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.models.ModelCable;
@@ -24,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -90,7 +88,31 @@ public class ClientProxy implements IProxy {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
         }
 
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new MetaTool.ColorHandler(), ContentLoader.metaTool);
+        IItemColor toolItemHandler = new ColorHandler();
+        for (ToolType type : ToolType.values()) {
+            for (Material material : ItemFlag.TOOLS.getMats()) {
+                Minecraft.getMinecraft().getItemColors().registerItemColorHandler(toolItemHandler, type.getItem(material));
+            }
+        }
+
+//        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new MetaTool.ColorHandler(), ContentLoader.metaTool);
+    }
+
+    public static class ColorHandler implements IItemColor {
+        @Override
+        public int colorMultiplier(ItemStack stack, int tintIndex) {
+            MaterialTool tool = (MaterialTool) stack.getItem();
+            if (tool != null) {
+                if (tool.getType() == ToolType.PLUNGER) {
+                    return tintIndex == 0 ? -1 : tool.getSecondary().getRGB();
+                }
+                if (tool.getType() == ToolType.DRILL) {
+                    return tintIndex == 0 ? tool.getPrimary().getRGB() : tool.getSecondary().getRGB();
+                }
+                return tintIndex == 0 ? tool.getPrimary().getRGB() : tool.getSecondary().getRGB();
+            }
+            return 0xffffff;
+        }
     }
 
     @Override
@@ -117,16 +139,11 @@ public class ClientProxy implements IProxy {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
-        ContentLoader.metaTool.initModel();
 
         ContentLoader.blockCable.initModel();
 
         for (MaterialItem item : MaterialItem.getAll()) {
             item.initModel();
-        }
-        for (ItemType type : ItemType.getAll()) {
-            if (!type.isEnabled()) continue;
-            type.getItem().initModel();
         }
         for (Machine type : Machines.getAll()) {
             type.getBlock().initModel();
@@ -152,6 +169,15 @@ public class ClientProxy implements IProxy {
         for (StoneType type : StoneType.getGenerating()) {
             BlockStone block = GregTechRegistry.getStone(type);
             block.initModel();
+        }
+        for (ItemType type : ItemType.getAll()) {
+            if (!type.isEnabled()) continue;
+            type.getItem().initModel();
+        }
+        for (ToolType type : ToolType.values()) {
+            for (Material material : ItemFlag.TOOLS.getMats()) {
+                type.getItem(material).initModel();
+            }
         }
 
         ModelMachine modelMachine = new ModelMachine();

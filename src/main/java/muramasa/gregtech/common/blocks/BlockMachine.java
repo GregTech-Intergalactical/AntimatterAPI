@@ -4,6 +4,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
+import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
@@ -45,6 +46,8 @@ public class BlockMachine extends Block {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName(type);
         setRegistryName(type);
+        setHardness(1.0F);
+        setResistance(10.0F);
         setSoundType(SoundType.METAL);
         setCreativeTab(Ref.TAB_MACHINES);
         this.type = type;
@@ -140,6 +143,34 @@ public class BlockMachine extends Block {
         }
         return Machines.get(Machines.INVALID, Tier.LV).asItemStack();
     }
+
+    @Nullable
+    @Override
+    public String getHarvestTool(IBlockState state) {
+        return "wrench";
+    }
+
+    /** TileEntity Drops Start **/
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMachine) {
+            drops.add(new MachineStack(((TileEntityMachine) tile).getType(), ((TileEntityMachine) tile).getTier()).asItemStack());
+        }
+    }
+
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        if (willHarvest) return true;
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    @Override
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
+        worldIn.setBlockToAir(pos);
+    }
+    /** TileEntity Drops End **/
 
     @Override
     public BlockRenderLayer getBlockLayer() {

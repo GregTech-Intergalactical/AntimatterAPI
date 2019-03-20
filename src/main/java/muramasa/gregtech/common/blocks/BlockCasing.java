@@ -37,6 +37,8 @@ public class BlockCasing extends BlockBaked {
         super(TextureData.get().base(type.getTexture()), new ModelResourceLocation(Ref.MODID + ":layered"));
         setUnlocalizedName("casing_" + type.getName());
         setRegistryName("casing_" + type.getName());
+        setHardness(1.0F);
+        setResistance(10.0F);
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
@@ -60,6 +62,12 @@ public class BlockCasing extends BlockBaked {
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public String getHarvestTool(IBlockState state) {
+        return "wrench";
     }
 
     @SideOnly(Side.CLIENT)

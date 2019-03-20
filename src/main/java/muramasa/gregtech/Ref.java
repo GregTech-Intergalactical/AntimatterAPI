@@ -56,7 +56,7 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
 
-    public static final String TAG_TOOL_DATA = "toolstats";
+    public static final String TAG_TOOL_DATA = "tooldata";
     public static final String KEY_TOOL_DATA_TYPE = "t";
     public static final String KEY_TOOL_DATA_QUALITY = "q";
     public static final String KEY_TOOL_DATA_PRIMARY_MAT = "pm";

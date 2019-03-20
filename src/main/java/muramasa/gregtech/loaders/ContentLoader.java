@@ -3,17 +3,14 @@ package muramasa.gregtech.loaders;
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.Casing;
-import muramasa.gregtech.api.enums.Coil;
-import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.enums.StoneType;
+import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
-import muramasa.gregtech.api.items.MetaTool;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.items.MaterialTool;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockMachine;
 import muramasa.gregtech.common.items.ItemBlockOre;
@@ -41,8 +38,6 @@ import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
 
 @Mod.EventBusSubscriber
 public class ContentLoader {
-
-    public static MetaTool metaTool = new MetaTool();
 
     public static BlockCable blockCable = new BlockCable();
 
@@ -135,7 +130,11 @@ public class ContentLoader {
 
         event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
 
-        event.getRegistry().register(metaTool);
+        for (ToolType type : ToolType.values()) {
+            for (Material material : ItemFlag.TOOLS.getMats()) {
+                event.getRegistry().register(new MaterialTool(type, material, material.getHandleMaterial()));
+            }
+        }
 
         GregTech.INTERNAL_REGISTRAR.onCoverRegistration();
         for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {

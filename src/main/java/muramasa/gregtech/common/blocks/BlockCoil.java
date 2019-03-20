@@ -28,6 +28,8 @@ public class BlockCoil extends Block {
         super(net.minecraft.block.material.Material.IRON);
         setUnlocalizedName("coil_" + type.getName());
         setRegistryName("coil_" + type.getName());
+        setHardness(1.0F);
+        setResistance(10.0F);
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
@@ -47,6 +49,12 @@ public class BlockCoil extends Block {
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public String getHarvestTool(IBlockState state) {
+        return "wrench";
     }
 
     @SideOnly(Side.CLIENT)
