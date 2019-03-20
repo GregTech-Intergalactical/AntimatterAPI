@@ -51,7 +51,7 @@ public class RecipeWrapper implements IRecipeWrapper {
             minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, startY + (lineCount++ * 10), 0x000000);
         }
         if (recipe.getDuration() > 0) {
-            minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s", 10, startY + (lineCount++ * 10), 0x000000);
+            minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s (" + recipe.getDuration() + " ticks)", 10, startY + (lineCount++ * 10), 0x000000);
         }
         if (recipe.getSpecialValue() > 0) {
             minecraft.fontRenderer.drawString("Special: " + recipe.getSpecialValue(), 10, startY + (lineCount++ * 10), 0x000000);

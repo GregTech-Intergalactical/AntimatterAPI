@@ -1,18 +1,23 @@
 package muramasa.gregtech.api;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.cover.impl.*;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +36,13 @@ public class GregTechAPI {
 
     public static void addCoil(String name, int heatingCapacity) {
         new Coil(name, heatingCapacity);
+    }
+
+    /** JEI Registry Section **/
+    public static void registerJEICategory(RecipeMap map, GuiData gui) {
+        if (Loader.isModLoaded(Ref.MOD_JEI)) {
+            GregTechJEIPlugin.registerCategory(map, gui);
+        }
     }
 
     /** Cover Registry Section **/

@@ -97,7 +97,6 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
 
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
 
-
         if (wrapper.recipe.hasInputStacks()) {
             slots = gui.getSlots(SlotType.IT_IN, tier);
             if (slots.size() > 0) {
@@ -124,7 +123,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
             if (slots.size() > 0) {
                 slotIndex = 0;
                 for (FluidStack fluid : wrapper.recipe.getInputFluids()) {
-                    fluidGroup.init(i, true, fluidRenderer, slots.get(slotIndex).x - offsetX, slots.get(slotIndex++).y - offsetY, 16, 16, 0, 0);
+                    fluidGroup.init(i, true, fluidRenderer, slots.get(slotIndex).x - (offsetX - 1), slots.get(slotIndex++).y - (offsetY - 1), 16, 16, 0, 0);
                     fluidGroup.set(i++, fluid);
                 }
             }
@@ -134,56 +133,12 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
             if (slots.size() > 0) {
                 slotIndex = 0;
                 for (FluidStack fluid : wrapper.recipe.getOutputFluids()) {
-                    fluidGroup.init(i, false, fluidRenderer, slots.get(slotIndex).x - offsetX, slots.get(slotIndex++).y - offsetY, 16, 16, 0, 0);
+                    fluidGroup.init(i, false, fluidRenderer, slots.get(slotIndex).x - (offsetX - 1), slots.get(slotIndex++).y - (offsetY - 1), 16, 16, 0, 0);
                     fluidGroup.set(i++, fluid);
                 }
             }
         }
     }
-//        int index = 0;
-//        if (wrapper.recipe.hasInputStacks()) {
-//            for (int i = 0; i < wrapper.recipe.getInputStacks().length; i++) {
-//                int xStart, yStart;
-//                if (wrapper.recipe.getInputStacks().length <= 3) {
-//                    xStart = 31 - 9 * (wrapper.recipe.getInputStacks().length - 1);
-//                    yStart = (22 - SLOT_OFFSET_Y);
-//                } else {
-//                    xStart = i >= 3 ? -41 : 13;
-//                    yStart = i >= 3 ? (29 - SLOT_OFFSET_Y) : (13 - SLOT_OFFSET_Y);
-//                }
-//                itemGroup.init(index, true, xStart + (i * 18), yStart);
-//                itemGroup.set(index++, wrapper.recipe.getInputStacks()[i]);
-//            }
-//        }
-//        if (wrapper.recipe.hasOutputStacks()) {
-//            for (int i = 0; i < wrapper.recipe.getOutputStacks().length; i++) {
-//                int xStart, yStart;
-//                if (wrapper.recipe.getOutputStacks().length <= 3) {
-//                    xStart = 121 - 9 * (wrapper.recipe.getOutputStacks().length - 1);
-//                    yStart = (22 - SLOT_OFFSET_Y);
-//                } else {
-//                    xStart = i >= 3 ? 49 : 103;
-//                    yStart = i >= 3 ? (29 - SLOT_OFFSET_Y) : (13 - SLOT_OFFSET_Y);
-//                }
-//                itemGroup.init(index, false, xStart + (i * 18), yStart);
-//                itemGroup.set(index++, wrapper.recipe.getOutputStacks()[i]);
-//            }
-//        }
-//        index = 0;
-//        if (wrapper.recipe.hasInputFluids()) {
-//            for (int i = 0; i < wrapper.recipe.getInputFluids().length; i++) {
-//                int xStart = wrapper.recipe.getInputFluids().length <= 1 ? 50 : 50 - (18 * index);
-//                fluidGroup.init(index, true, new FluidStackRenderer(), xStart, 60 - SLOT_OFFSET_Y, 16, 16, 0, 0);
-//                fluidGroup.set(index++, wrapper.recipe.getInputFluids()[i]);
-//            }
-//        }
-//        if (wrapper.recipe.hasOutputFluids()) {
-//            for (int i = 0; i < wrapper.recipe.getOutputFluids().length; i++) {
-//                int xStart = 104 + (i * 18);
-//                fluidGroup.init(index, false, new FluidStackRenderer(), xStart, 60 - SLOT_OFFSET_Y, 16, 16, 0, 0);
-//                fluidGroup.set(index++, wrapper.recipe.getOutputFluids()[i]);
-//            }
-//        }
 
     public static void setGuiHelper(IGuiHelper helper) {
         guiHelper = helper;

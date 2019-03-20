@@ -1,5 +1,6 @@
 package muramasa.gregtech;
 
+import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.data.Guis;
 import muramasa.gregtech.api.data.Machines;
@@ -10,7 +11,6 @@ import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.common.events.OreGenHandler;
 import muramasa.gregtech.integration.fr.ForestryRegistrar;
 import muramasa.gregtech.integration.gc.GalacticraftRegistrar;
-import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import muramasa.gregtech.loaders.GregTechRegistry;
 import muramasa.gregtech.loaders.InternalRegistrar;
 import muramasa.gregtech.proxy.GuiHandler;
@@ -51,12 +51,10 @@ public class GregTech {
         NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
         GTCapabilities.register();
 
-        if (Ref.DISABLE_VANILLA_ORE_GENERATION) {
-            MinecraftForge.EVENT_BUS.register(new OreGenHandler());
-        }
+        if (Ref.DISABLE_VANILLA_ORE_GENERATION) MinecraftForge.EVENT_BUS.register(new OreGenHandler());
 
-        GregTechJEIPlugin.registerCategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechJEIPlugin.registerCategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        GregTechAPI.registerJEICategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
+        GregTechAPI.registerJEICategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
 
         for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
             registrar.onMaterialRegistration();
