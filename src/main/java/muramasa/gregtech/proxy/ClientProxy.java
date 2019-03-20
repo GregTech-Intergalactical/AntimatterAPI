@@ -1,5 +1,6 @@
 package muramasa.gregtech.proxy;
 
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.enums.Coil;
@@ -23,7 +24,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -100,6 +103,16 @@ public class ClientProxy implements IProxy {
     @Override
     public void serverStarting(FMLServerStartingEvent e) {
         //NOOP
+    }
+
+    @SubscribeEvent
+    public static void onRegisterTexture(TextureStitchEvent.Pre event) {
+        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_still"));
+        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_flowing"));
+        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_still"));
+        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_flowing"));
+        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_still"));
+        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_flowing"));
     }
 
     @SubscribeEvent
