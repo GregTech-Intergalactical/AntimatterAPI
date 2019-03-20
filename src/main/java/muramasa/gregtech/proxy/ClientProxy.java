@@ -90,9 +90,7 @@ public class ClientProxy implements IProxy {
 
         IItemColor toolItemHandler = new ColorHandler();
         for (ToolType type : ToolType.values()) {
-            for (Material material : ItemFlag.TOOLS.getMats()) {
-                Minecraft.getMinecraft().getItemColors().registerItemColorHandler(toolItemHandler, type.getItem(material));
-            }
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
         }
 
 //        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new MetaTool.ColorHandler(), ContentLoader.metaTool);
@@ -102,14 +100,15 @@ public class ClientProxy implements IProxy {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             MaterialTool tool = (MaterialTool) stack.getItem();
-            if (tool != null) {
+            Material primary = tool.getPrimary(stack), secondary = tool.getSecondary(stack);
+            if (primary != null && secondary != null) {
                 if (tool.getType() == ToolType.PLUNGER) {
-                    return tintIndex == 0 ? -1 : tool.getSecondary().getRGB();
+                    return tintIndex == 0 ? -1 : secondary.getRGB();
                 }
                 if (tool.getType() == ToolType.DRILL) {
-                    return tintIndex == 0 ? tool.getPrimary().getRGB() : tool.getSecondary().getRGB();
+                    return tintIndex == 0 ? primary.getRGB() : secondary.getRGB();
                 }
-                return tintIndex == 0 ? tool.getPrimary().getRGB() : tool.getSecondary().getRGB();
+                return tintIndex == 0 ? primary.getRGB() : secondary.getRGB();
             }
             return 0xffffff;
         }
@@ -175,9 +174,7 @@ public class ClientProxy implements IProxy {
             type.getItem().initModel();
         }
         for (ToolType type : ToolType.values()) {
-            for (Material material : ItemFlag.TOOLS.getMats()) {
-                type.getItem(material).initModel();
-            }
+            GregTechRegistry.getMaterialTool(type).initModel();
         }
 
         ModelMachine modelMachine = new ModelMachine();

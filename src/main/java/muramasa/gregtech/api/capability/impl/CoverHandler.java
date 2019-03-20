@@ -58,8 +58,9 @@ public class CoverHandler implements ICoverHandler {
         if (type == null) return false;
         switch (type) {
             case CROWBAR:
+                player.dropItem(cover.getCatalystUsed(), false);
                 set(side, GregTechAPI.CoverNone);
-                Utils.spawnItem(tile, side, cover.getCatalystUsed());
+//                Utils.spawnItem(tile, side, cover.getCatalystUsed());
                 return true;
             default: return false;
         }

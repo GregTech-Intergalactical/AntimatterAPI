@@ -6,11 +6,11 @@ import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
 import muramasa.gregtech.api.items.MaterialItem;
+import muramasa.gregtech.api.items.MaterialTool;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.api.items.MaterialTool;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.items.ItemBlockMachine;
 import muramasa.gregtech.common.items.ItemBlockOre;
@@ -131,9 +131,7 @@ public class ContentLoader {
         event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
 
         for (ToolType type : ToolType.values()) {
-            for (Material material : ItemFlag.TOOLS.getMats()) {
-                event.getRegistry().register(new MaterialTool(type, material, material.getHandleMaterial()));
-            }
+            event.getRegistry().register(new MaterialTool(type));
         }
 
         GregTech.INTERNAL_REGISTRAR.onCoverRegistration();
