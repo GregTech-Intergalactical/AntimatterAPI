@@ -7,7 +7,7 @@ import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.api.items.MaterialTool;
+import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.models.ModelCable;

@@ -1,24 +1,35 @@
 package muramasa.gregtech.api.util;
 
 import muramasa.gregtech.Ref;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class Utils {
 
@@ -232,7 +243,9 @@ public class Utils {
     }
 
     /** Safe version of world.getTileEntity **/
+    @Nullable
     public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) {
+        if (pos == null || blockAccess == null) return null;
         if (blockAccess instanceof ChunkCache) {
             return ((ChunkCache) blockAccess).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
         } else {
@@ -326,5 +339,90 @@ public class Utils {
                 return side;
         }
         return side;
+    }
+
+    public static Set<BlockPos> getCubicPosArea(int3 area, EnumFacing side, BlockPos origin, EntityPlayer player, boolean excludeAir) {
+        int xRadius, yRadius, zRadius;
+        BlockPos center;
+
+        if (side == null) {
+            center = origin;
+            xRadius = area.x;
+            yRadius = area.y;
+            zRadius = area.z;
+        } else {
+            center = origin.offset(side.getOpposite(), area.z);
+            if (side.getAxis() == EnumFacing.Axis.Y) {
+                xRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.X ? area.y : area.x;
+                yRadius = area.z;
+                zRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.Z ? area.y : area.x;
+            } else {
+                xRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.X ? area.z : area.x;
+                yRadius = area.y;
+                zRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.Z ? area.z : area.x;
+            }
+        }
+
+        Set<BlockPos> set = new HashSet<>();
+        IBlockState state;
+        for (int x = center.getX() - xRadius; x <= center.getX() + xRadius; x++) {
+            for (int y = center.getY() - yRadius; y <= center.getY() + yRadius; y++) {
+                for (int z = center.getZ() - zRadius; z <= center.getZ() + zRadius; z++) {
+                    BlockPos harvestPos = new BlockPos(x, y, z);
+                    if (harvestPos.equals(origin)) continue;
+                    if (excludeAir) {
+                        state = player.world.getBlockState(harvestPos);
+                        if (state.getBlock().isAir(state, player.world, harvestPos)) continue;
+                    }
+                    set.add(new BlockPos(x, y, z));
+                }
+            }
+        }
+        return set;
+    }
+
+    public static void breakBlock(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityPlayer player) {
+        Block block = state.getBlock();
+        if (player.capabilities.isCreativeMode) {
+            block.onBlockHarvested(world, pos, state, player);
+            if (block.removedByPlayer(state, world, pos, player, false)) {
+                block.onBlockDestroyedByPlayer(world, pos, state);
+            }
+            if (!world.isRemote) {
+                ((EntityPlayerMP)player).connection.sendPacket(new SPacketBlockChange(world, pos));
+            }
+            return;
+        }
+        stack.onBlockDestroyed(world, state, pos, player);
+
+        if (!world.isRemote) { // server sided handling
+            int xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) player).interactionManager.getGameType(), (EntityPlayerMP) player, pos);
+            if (xp == -1) return;//event cancelled
+
+
+            // serverside we reproduce ItemInWorldManager.tryHarvestBlock
+
+            // ItemInWorldManager.removeBlock
+            block.onBlockHarvested(world, pos, state, player);
+
+            if (block.removedByPlayer(state, world, pos, player, true)){
+                block.onBlockDestroyedByPlayer(world, pos, state);
+                block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
+                block.dropXpOnBlockBreak(world, pos, xp);
+            }
+
+            EntityPlayerMP mpPlayer = (EntityPlayerMP) player;
+            mpPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
+        } else { // client sided handling
+            // PlayerControllerMP.onPlayerDestroyBlock
+            world.playBroadcastSound(2001, pos, Block.getStateId(state));
+            if (block.removedByPlayer(state, world, pos, player, true)) {
+                block.onBlockDestroyedByPlayer(world, pos, state);
+            }
+            stack.onBlockDestroyed(world, state, pos, player);
+
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
+        }
     }
 }
