@@ -8,7 +8,7 @@ import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
-import muramasa.gregtech.api.items.MaterialTool;
+import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.common.blocks.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

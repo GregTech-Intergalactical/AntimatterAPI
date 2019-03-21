@@ -1,7 +1,7 @@
 package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.items.MaterialTool;
+import muramasa.gregtech.api.tools.MaterialTool;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
