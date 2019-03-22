@@ -6,7 +6,6 @@ import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.capability.impl.CoverHandler;
-import muramasa.gregtech.api.data.Textures;
 import muramasa.gregtech.api.enums.Casing;
 import muramasa.gregtech.api.texture.IBakedTile;
 import muramasa.gregtech.api.texture.TextureData;
@@ -41,14 +40,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 
     @Override
     public TextureData getTextureData() {
-        TextureData data = TextureData.get().base(getType().getTexture()).overlay(getType().getTexture());
-        if (textureOverride == 0) {
-//            Texture overlay = data.getOverlay()[0];
-//            data.setOverlay(overlay, overlay, Textures.LARGE_TURBINE_ACTIVE[3], Textures.LARGE_TURBINE_ACTIVE[3], overlay, overlay);
-//            data.setOverlay(Textures.LARGE_TURBINE_ACTIVE[4]);
-            data.overlay(Textures.LARGE_TURBINE_ACTIVE[4]);
-        }
-        return data;
+        return TextureData.get().base(getType().getTexture()).overlay(getType().getTexture());
     }
 
     @Override
@@ -73,19 +65,12 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE)) {
-            textureOverride = compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE);
-        } else {
-            textureOverride = -1;
-        }
+        textureOverride = compound.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE) ? compound.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE) : -1;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-//        if (componentHandler != null && componentHandler.hasLinkedController()) {
-//            compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, componentHandler.getFirstController().getTypeId());
-//        }
         if (textureOverride != -1) compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
         return compound;
     }

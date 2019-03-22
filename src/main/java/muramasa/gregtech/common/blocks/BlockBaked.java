@@ -50,10 +50,7 @@ public abstract class BlockBaked extends Block {
 
     public TextureData getTileData(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof IBakedTile) {
-            return ((IBakedTile) tile).getTextureData();
-        }
-        return null;
+        return tile instanceof IBakedTile ? ((IBakedTile) tile).getTextureData() : null;
     }
 
     public TextureData getBlockData() {

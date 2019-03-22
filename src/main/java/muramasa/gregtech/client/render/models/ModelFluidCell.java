@@ -2,7 +2,7 @@ package muramasa.gregtech.client.render.models;
 
 import com.google.common.collect.ImmutableList;
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.client.render.bakedmodels.BakedBase;
+import muramasa.gregtech.client.render.ModelUtils;
 import muramasa.gregtech.client.render.bakedmodels.BakedFluidCell;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -13,8 +13,8 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fluids.Fluid;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -44,7 +44,7 @@ public class ModelFluidCell implements IModel {
             TextureAtlasSprite sprite = getter.apply(fluid.getStill());
             if (sprite != null) {
                 List<BakedQuad> quads = BAKED_OVERLAY.getQuads(null, null, 0);
-                quads = BakedBase.tex(quads, fluid.getColor(), sprite);
+                quads = ModelUtils.texCell(quads, fluid.getColor(), sprite);
                 builder.addAll(quads);
             }
         }
@@ -55,8 +55,6 @@ public class ModelFluidCell implements IModel {
 
     @Override
     public Collection<ResourceLocation> getTextures() {
-        ArrayList<ResourceLocation> locs = new ArrayList<>();
-        locs.add(BASE);
-        return locs;
+        return Collections.singletonList(BASE);
     }
 }

@@ -2,6 +2,7 @@ package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
+import muramasa.gregtech.client.render.ModelUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,6 +25,6 @@ public class BakedMachineItem extends BakedBase {
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return tex(OVERLAYS[type.getInternalId()].getQuads(state, side, rand), 0, type.getBaseTexture(tier));
+        return ModelUtils.tex(OVERLAYS[type.getInternalId()].getQuads(state, side, rand), 0, type.getBaseTexture(tier));
     }
 }

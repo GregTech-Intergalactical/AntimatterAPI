@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.cover.impl;
 
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.client.render.bakedmodels.BakedBase;
+import muramasa.gregtech.client.render.ModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 import java.util.List;
@@ -14,6 +14,6 @@ public abstract class CoverTintable extends Cover {
 
     @Override
     public List<BakedQuad> onRender(List<BakedQuad> quads, int side) {
-        return BakedBase.tint(quads, getRGB());
+        return ModelUtils.tint(quads, getRGB());
     }
 }
