@@ -20,6 +20,7 @@ public class MachineConfigHandler implements IConfigHandler {
         if (type == null) return false;
         switch (type) {
             case WRENCH:
+            case WRENCH_P:
                 return getTile().setFacing(side);
             case HAMMER:
 //                getTile().toggleDisabled();
