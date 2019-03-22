@@ -3,6 +3,7 @@ package muramasa.gregtech.client.render.bakedmodels;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
+import muramasa.gregtech.client.render.ModelUtils;
 import muramasa.gregtech.client.render.overrides.ItemOverrideMachine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -47,19 +48,19 @@ public class BakedMachine extends BakedBase {
             }
         }
 
-        tex(quads, data.getBaseMode(), data.getBase(), 0);
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 0);
 //        texOverlays(quads, data.getOverlayMode(), data.getOverlay());
-        quads = trans(quads, facing);
+        quads = ModelUtils.trans(quads, facing);
 
         return quads;
     }
 
     public List<BakedQuad> getOverlays(int t, int s, Texture[] data, IBlockState state) {
-        return OVERLAYS[t][s] != null ? tex(OVERLAYS[t][s].getQuads(state, null, -1), 1, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, -1);
+        return OVERLAYS[t][s] != null ? ModelUtils.tex(OVERLAYS[t][s].getQuads(state, null, -1), 1, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, -1);
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
-        return trans(COVERS[cover.getInternalId()].getQuads(state, null, -1), s);
+        return ModelUtils.trans(COVERS[cover.getInternalId()].getQuads(state, null, -1), s);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.texture;
 
-import muramasa.gregtech.client.render.bakedmodels.BakedBase;
+import muramasa.gregtech.client.render.ModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 
@@ -35,8 +35,8 @@ public class TextureData {
     }
 
     public List<BakedQuad> apply(List<BakedQuad> quads) {
-        if (base != null) BakedBase.tex(quads, baseMode, base, 0);
-        if (overlay != null) BakedBase.tex(quads, overlayMode, overlay, 1);
+        if (base != null) ModelUtils.tex(quads, baseMode, base, 0);
+        if (overlay != null) ModelUtils.tex(quads, overlayMode, overlay, 1);
         return quads;
     }
 

@@ -2,6 +2,7 @@ package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.api.texture.TextureData;
+import muramasa.gregtech.client.render.ModelUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -12,6 +13,8 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static muramasa.gregtech.client.render.ModelUtils.trans;
+
 public class BakedMachineBasic extends BakedMachine {
 
     @Override
@@ -21,7 +24,7 @@ public class BakedMachineBasic extends BakedMachine {
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 
         List<BakedQuad> quads = new LinkedList<>(BASE.getQuads(state, side, rand));
-        tex(quads, data.getBaseMode(), data.getBase(), 0);
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 0);
 
 //        Cover[] covers;
 //        List<BakedQuad> coverQuads = null;
@@ -32,7 +35,7 @@ public class BakedMachineBasic extends BakedMachine {
 ////                    overlays[i].setEmpty();
 //                    coverQuads = Utils.trans(COVER[covers[i].getInternalId()].getQuads(state, side, rand), i);
 //                    if (covers[i].retextureToMachineTier()) {
-//                        Utils.tex(coverQuads, 0, RenderHelper.getSprite(Tier.get(exState.getValue(GTProperties.TIER)).getBaseTexture()));
+//                        Utils.tex(coverQuads, 0, RenderHelper.getSprite(Tier.getTransform(exState.getValue(GTProperties.TIER)).getBaseTexture()));
 //                    }
 //                    coverQuads.addAll(covers[i].onRender(coverQuads));
 //                }
@@ -42,7 +45,7 @@ public class BakedMachineBasic extends BakedMachine {
 //            Utils.tex(quads, data.getOverlayMode(), data.getOverlay(), 1);
 //        }
 
-        if (facing > 2) quads = trans(quads, facing);
+        if (facing > 2) quads = ModelUtils.trans(quads, facing);
 //        if (coverQuads != null) quads.addAll(coverQuads);
 
         return quads;
