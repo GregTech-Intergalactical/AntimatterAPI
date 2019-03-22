@@ -12,17 +12,17 @@ import net.minecraft.world.World;
 
 import java.util.Set;
 
-public class ToolDrill extends MaterialTool {
+public class ToolJackhammer extends MaterialTool {
 
-    public ToolDrill() {
-        super(ToolType.DRILL);
+    public ToolJackhammer() {
+        super(ToolType.JACKHAMMER);
     }
 
     @Override
     public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
         if (!player.isSneaking()) return Sets.newHashSet();
         RayTraceResult result = rayTrace(player.world, player, false);
-        if (result == null || result.sideHit == null) return Sets.newHashSet();
+        if (result.sideHit == null) return Sets.newHashSet();
         return Utils.getCubicPosArea(new int3(1, 1, 0), result.sideHit, origin, player, true);
     }
 }

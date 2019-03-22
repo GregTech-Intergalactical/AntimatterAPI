@@ -2,6 +2,7 @@ package muramasa.gregtech.api.tools;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.ToolType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -17,9 +18,13 @@ public class ToolAxe extends MaterialTool {
         super(ToolType.AXE);
     }
 
+    public ToolAxe(ToolType type) {
+        super(type);
+    }
+
     @Override
     public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
-        if (Ref.AXE_TIMBER) {
+        if (Ref.AXE_TIMBER && player.isSneaking()) {
             Set<BlockPos> set = new HashSet<>();
             BlockPos tempPos;
             IBlockState state;
@@ -27,7 +32,7 @@ public class ToolAxe extends MaterialTool {
                 tempPos = new BlockPos(origin.getX(), y, origin.getZ());
                 state = world.getBlockState(tempPos);
                 if (world.getBlockState(tempPos).getBlock().isAir(state, world, tempPos)) break;
-                set.add(tempPos);
+                if (state.getMaterial() == Material.WOOD) set.add(tempPos);
             }
             return set;
 //            return Utils.getCubicPosArea(new int3(0, Ref.MAX_AXE_TIMBER / 2, 0), null, origin, player, true);

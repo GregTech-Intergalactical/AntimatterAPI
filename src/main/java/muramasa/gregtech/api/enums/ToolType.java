@@ -4,7 +4,8 @@ import com.google.common.collect.Sets;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.tools.ToolAxe;
-import muramasa.gregtech.api.tools.ToolDrill;
+import muramasa.gregtech.api.tools.ToolChainsaw;
+import muramasa.gregtech.api.tools.ToolJackhammer;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.loaders.GregTechRegistry;
 import net.minecraft.item.ItemStack;
@@ -37,12 +38,12 @@ public enum ToolType implements IStringSerializable {
     KNIFE("Knife", "", null, Sets.newHashSet("knife", "sword"), null, false, 0, 2.0f, -2.4f, 0.5f, 1.0f, 100, 200, 100),
     SCYTHE("Scythe", "", null, Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800),
     PLUNGER("Plunger", "", null, Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
-    DRILL("Electric Drill", "", ToolDrill.class, Sets.newHashSet("drill", "pickaxe"), Sounds.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
-    CHAINSAW("Electric Chainsaw", "", null, Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
-    WRENCH_P("Electric Wrench", "", null, Sets.newHashSet("wrench"), null, true, 1, 2.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
-    JACKHAMMER("Electric Jackhammer", "", null, Sets.newHashSet("jackhammer"), null, true, 1, 3.0f, -3.0f, 12.0f, 2.0f, 400, 800, 3200),
-    SCREWDRIVER_P("Electric Screwdriver", "", null, Sets.newHashSet("screwdriver"), null, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
-    BUZZSAW("Electric Buzzsaw", "", null, Sets.newHashSet("buzzsaw", "saw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
+    DRILL("Electric Drill", "", null, Sets.newHashSet("drill", "pickaxe"), Sounds.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
+    CHAINSAW("Electric Chainsaw", "", ToolChainsaw.class, Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 6.0f, 4.0f, 800, 3200, 12800),
+    WRENCH_P("Electric Wrench", "", null, Sets.newHashSet("wrench"), Sounds.WRENCH, true, 1, 2.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
+    JACKHAMMER("Electric Jackhammer", "", ToolJackhammer.class, Sets.newHashSet("jackhammer", "pickaxe"), null, true, 1, 3.0f, -3.0f, 0.25f, 2.0f, 400, 800, 3200),
+    SCREWDRIVER_P("Electric Screwdriver", "", null, Sets.newHashSet("screwdriver"), Sounds.WRENCH, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
+    BUZZSAW("Electric Buzzsaw", "", null, Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("Turbine Rotor", "", null, Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
 
     private String displayName, tooltip;

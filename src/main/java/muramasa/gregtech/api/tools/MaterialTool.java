@@ -3,7 +3,6 @@ package muramasa.gregtech.api.tools;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.IConfigHandler;
@@ -24,7 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -45,12 +44,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends ItemTool {
+public class MaterialTool extends ItemSword {
 
     protected ToolType type;
 
     public MaterialTool(ToolType type) {
-        super(ToolMaterial.WOOD, Sets.newHashSet());
+        super(ToolMaterial.WOOD);
         setUnlocalizedName(type.getName());
         setRegistryName(type.getName());
         setCreativeTab(Ref.TAB_ITEMS);
@@ -108,10 +107,8 @@ public class MaterialTool extends ItemTool {
             EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
             IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
             if (configHandler != null) {
-                ToolType type = ToolType.get(stack);
                 if (type != null && configHandler.onInteract(player, hand, targetSide, type)) {
                     damage(stack, type.getDamageCrafting(), player, true);
-//                    type.playUseSound(world, pos);
                     result = EnumActionResult.SUCCESS;
                 }
             }
@@ -120,10 +117,8 @@ public class MaterialTool extends ItemTool {
             EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
             if (coverHandler != null) {
-                ToolType type = ToolType.get(stack);
                 if (type != null && coverHandler.onInteract(player, hand, targetSide, type)) {
                     damage(stack, type.getDamageCrafting(), player, true);
-//                    type.playUseSound(world, pos);
                     result = EnumActionResult.SUCCESS;
                 }
             }
@@ -237,10 +232,16 @@ public class MaterialTool extends ItemTool {
 
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos originPos, EntityPlayer player) {
+        //TODO move this to onBlockDestroyed?
+        if (getDurability(stack) < type.getDamageMining()) return false;
+        if (player.capabilities.isCreativeMode) return false; //TODO temp?
         for (BlockPos pos : getAOEBlocks(stack, player.world, player, originPos)) {
             if (!ForgeHooks.canHarvestBlock(player.world.getBlockState(pos).getBlock(), player, player.world, pos)) continue;
             Utils.breakBlock(stack, player.world, player.world.getBlockState(pos), pos, player);
-            if (damage(stack, type.getDamageMining(), player, false) <= 0) break;
+            if (damage(stack, type.getDamageMining(), player, false) <= 0) {
+                System.out.println("broke tool early");
+                break;
+            }
         }
         return false;
     }
@@ -278,6 +279,9 @@ public class MaterialTool extends ItemTool {
 
     public int damage(ItemStack stack, int damage, EntityLivingBase living, boolean playSound) {
         NBTTagCompound tag = getTag(stack);
+        if (living instanceof EntityPlayer && ((EntityPlayer) living).capabilities.isCreativeMode) {
+            return tag.getInteger(Ref.KEY_TOOL_DATA_DURABILITY);
+        }
         int newDamage = tag.getInteger(Ref.KEY_TOOL_DATA_DURABILITY) - damage;
         if (type.isPowered()) {
             if (living.getEntityWorld().rand.nextInt(25) == 0) {
