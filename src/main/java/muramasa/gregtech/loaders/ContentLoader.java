@@ -5,6 +5,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.items.ItemFluidCell;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
@@ -39,6 +40,8 @@ import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
 public class ContentLoader {
 
     public static BlockCable blockCable = new BlockCable();
+
+    public static ItemFluidCell fluidCell;
 
     static {
 //        Ref.TAB_MATERIALS.setTabStack(Materials.Titanium.getIngot(1));
@@ -132,6 +135,8 @@ public class ContentLoader {
         for (ToolType type : ToolType.values()) {
             event.getRegistry().register(type.getInstance());
         }
+
+        event.getRegistry().register((fluidCell = new ItemFluidCell()));
 
         GregTech.INTERNAL_REGISTRAR.onCoverRegistration();
         for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {

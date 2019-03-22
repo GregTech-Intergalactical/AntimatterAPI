@@ -88,7 +88,7 @@ public class ClientProxy implements IProxy {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
         }
 
-        IItemColor toolItemHandler = new ColorHandler();
+        IItemColor toolItemHandler = new ColorHandlerTool();
         for (ToolType type : ToolType.values()) {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
         }
@@ -96,7 +96,7 @@ public class ClientProxy implements IProxy {
 //        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new MetaTool.ColorHandler(), ContentLoader.metaTool);
     }
 
-    public static class ColorHandler implements IItemColor {
+    public static class ColorHandlerTool implements IItemColor {
         @Override
         public int colorMultiplier(ItemStack stack, int tintIndex) {
             MaterialTool tool = (MaterialTool) stack.getItem();
@@ -176,6 +176,8 @@ public class ClientProxy implements IProxy {
         for (ToolType type : ToolType.values()) {
             GregTechRegistry.getMaterialTool(type).initModel();
         }
+
+        ContentLoader.fluidCell.initModel();
 
         ModelMachine modelMachine = new ModelMachine();
         GTModelLoader.register("block_machine", modelMachine);

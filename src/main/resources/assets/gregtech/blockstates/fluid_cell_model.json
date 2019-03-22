@@ -1,0 +1,11 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "inventory": {
+      "model": "gregtech:item/fluid_cell_model"
+    },
+	"normal": {
+      "model": "gregtech:item/fluid_cell_model"
+    }
+  }
+}

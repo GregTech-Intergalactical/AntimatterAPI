@@ -6,6 +6,7 @@ import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureMode;
 import muramasa.gregtech.client.render.BakedQuadTinted;
 import muramasa.gregtech.client.render.MatrixVertexTransformer;
+import muramasa.gregtech.client.render.ModelUtils;
 import muramasa.gregtech.client.render.models.ModelBase;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -13,7 +14,6 @@ import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,10 +37,6 @@ public class BakedBase implements IBakedModel {
         getMat(new AxisAngle4f(new Vector3f(0, 1, 0), 1.5708f)),
         getMat(new AxisAngle4f(new Vector3f(0, 1, 0), 4.7124f)),
     };
-
-    public static Matrix4f matrixGui = get(0, 0, 0, 30, 225, 0, 0.625f).getMatrix();
-    public static Matrix4f matrixFPH = get(0, 0, 0, 0, 45, 0, 0.4f).getMatrix();
-    public static Matrix4f matrixIdentity = TRSRTransformation.identity().getMatrix();
 
     private IBakedModel bakedModel;
 
@@ -70,12 +66,7 @@ public class BakedBase implements IBakedModel {
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        switch (cameraTransformType) {
-            case GUI: return Pair.of(this, matrixGui);
-//            case GROUND: return Pair.of(this, get(0, 2, 0, 0, 0, 0, 0.5f).getMatrix());
-            case FIRST_PERSON_RIGHT_HAND: return Pair.of(this, matrixFPH);
-            default: return Pair.of(this, matrixIdentity);
-        }
+        return Pair.of(this, ModelUtils.getBlockTransform(cameraTransformType));
     }
 
     @Override
@@ -109,10 +100,6 @@ public class BakedBase implements IBakedModel {
         mat.setIdentity();
         mat.setRotation(angle);
         return mat;
-    }
-
-    public static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s) {
-        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
     }
 
     public static boolean hasProperty(IBlockState state, IProperty property) {
@@ -210,6 +197,16 @@ public class BakedBase implements IBakedModel {
             quads.set(i, new BakedQuadRetextured(quads.get(i), texture.getSprite()));
         }
         return quads;
+    }
+
+    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, TextureAtlasSprite sprite) {
+        List<BakedQuad> quadsTemp = new LinkedList<>();
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
+            BakedQuad quad = new BakedQuadRetextured(quads.get(i), sprite);
+            quadsTemp.add(new BakedQuadTinted(quad, layer));
+        }
+        return quadsTemp;
     }
 
     public static List<BakedQuad> tint(List<BakedQuad> quads, int rgb) {
