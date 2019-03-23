@@ -1,6 +1,8 @@
 package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.pipe.types.Cable;
+import muramasa.gregtech.api.data.Cables;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.items.MaterialItem;
@@ -10,8 +12,8 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
-import muramasa.gregtech.client.render.models.ModelCable;
 import muramasa.gregtech.client.render.models.ModelMachine;
+import muramasa.gregtech.client.render.models.ModelPipe;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.loaders.ContentLoader;
@@ -68,6 +70,19 @@ public class ClientProxy implements IProxy {
         };
         for (Machine type : Machines.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(machineBlockHandler, type.getBlock());
+        }
+
+        IBlockColor pipeBlockHandler = (state, world, pos, i) -> {
+            if (i == 0) {
+                BlockPipe pipe = (BlockPipe) state.getBlock();
+                return pipe.getRGB();
+            }
+            return -1;
+        };
+        IItemColor pipeItemHandler = (stack, i) -> i == 0 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+        for (Cable type : Cables.getAll()) {
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getCable(type));
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));
         }
 
         IBlockColor oreBlockHandler = (state, world, pos, i) -> i == 1 ? ((BlockOre) state.getBlock()).getMaterial().getRGB() : -1;
@@ -138,14 +153,15 @@ public class ClientProxy implements IProxy {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
-
-        ContentLoader.blockCable.initModel();
-
         for (MaterialItem item : MaterialItem.getAll()) {
             item.initModel();
         }
         for (Machine type : Machines.getAll()) {
             type.getBlock().initModel();
+        }
+        for (Cable type : Cables.getAll()) {
+            BlockPipe block = GregTechRegistry.getCable(type);
+            block.initModel();
         }
         for (StoneType type : StoneType.getAll()) {
             for (Material material : ItemFlag.ORE.getMats()) {
@@ -182,7 +198,7 @@ public class ClientProxy implements IProxy {
         ModelMachine modelMachine = new ModelMachine();
         GTModelLoader.register("block_machine", modelMachine);
 
-        ModelCable modelCable = new ModelCable();
-        GTModelLoader.register(ContentLoader.blockCable.getRegistryName().getResourcePath(), modelCable);
+        ModelPipe modelPipe = new ModelPipe();
+        GTModelLoader.register("block_pipe", modelPipe);
     }
 }

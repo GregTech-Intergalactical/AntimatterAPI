@@ -70,7 +70,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
+        compound = super.writeToNBT(compound);
         if (textureOverride != -1) compound.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
         return compound;
     }

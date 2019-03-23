@@ -1,6 +1,7 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
-import muramasa.gregtech.common.blocks.BlockCable;
+import muramasa.gregtech.client.render.overrides.ItemOverridePipe;
+import muramasa.gregtech.common.blocks.BlockPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -17,6 +18,8 @@ public class BakedCable extends BakedBase {
 
     private static HashMap<Integer, IBakedModel> maskToModelMap = new HashMap<>();
     private static HashMap<Integer, List<BakedQuad>> maskToQuadCache = new HashMap<>();
+
+    private static ItemOverrideList OVERRIDE = new ItemOverridePipe();
 
     private IBakedModel bakedBase;
 
@@ -69,7 +72,7 @@ public class BakedCable extends BakedBase {
         List<BakedQuad> quadList = new LinkedList<>();
         IExtendedBlockState exState = (IExtendedBlockState) state;
 
-        int connections = exState.getValue(BlockCable.CONNECTIONS);
+        int connections = exState.getValue(BlockPipe.CONNECTIONS);
 
         IBakedModel bakedModel = maskToModelMap.get(connections);
 
@@ -89,7 +92,12 @@ public class BakedCable extends BakedBase {
     }
 
     @Override
+    public boolean isAmbientOcclusion() {
+        return true;
+    }
+
+    @Override
     public ItemOverrideList getOverrides() {
-        return bakedBase.getOverrides();
+        return OVERRIDE;
     }
 }

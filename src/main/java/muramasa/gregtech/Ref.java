@@ -30,7 +30,10 @@ public class Ref {
     public static final int MULTI_MACHINE_ID = 1;
     public static final int HATCH_ID = 2;
 
+    public static final int[] V = new int[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+
     /** Config Values **/
+    public static boolean HARDCORE_CABLES = true;
     public static boolean showAllItems = true;
     public static boolean enableAllModItem = true;
     public static boolean ENABLE_ALL_REGISTRARS = true;
@@ -52,6 +55,9 @@ public class Ref {
 
     public static final String KEY_MACHINE_STACK_TIER = "st2";
 
+    public static final String KEY_PIPE_STACK_SIZE = "pss";
+    public static final String KEY_CABLE_STACK_INSULATED = "csi";
+
     public static final String KEY_MACHINE_TILE_TIER = "m2";
     public static final String KEY_MACHINE_TILE_FACING = "mf";
     public static final String KEY_MACHINE_TILE_STATE = "ms";
@@ -59,6 +65,10 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
+
+    public static final String KEY_PIPE_SIZE = "ps";
+
+    public static final String KEY_CABLE_CONNECTIONS = "cc";
 
     public static final String TAG_TOOL_DATA = "tooldata";
     public static final String KEY_TOOL_DATA_PRIMARY_MAT = "pm";

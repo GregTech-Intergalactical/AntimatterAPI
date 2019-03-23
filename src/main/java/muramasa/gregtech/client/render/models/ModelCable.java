@@ -1,5 +1,6 @@
 package muramasa.gregtech.client.render.models;
 
+import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.client.render.bakedmodels.BakedCable;
 import muramasa.gregtech.Ref;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -12,6 +13,8 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 
 public class ModelCable extends ModelBase {
@@ -30,6 +33,8 @@ public class ModelCable extends ModelBase {
     private static final ModelResourceLocation CABLE_CROSS = new ModelResourceLocation(Ref.MODID + ":cable/cross");
     private static final ModelResourceLocation CABLE_SIDE = new ModelResourceLocation(Ref.MODID + ":cable/side");
 
+    private static final ResourceLocation WIRE = new ResourceLocation(Ref.MODID, "blocks/cable/wire");
+
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IModel[] models = new IModel[] {
@@ -40,6 +45,10 @@ public class ModelCable extends ModelBase {
             load(CABLE_SIDE),
             load(CABLE_CORNER),
         };
+
+        for (int i = 0; i < models.length; i++) {
+            models[i] = tex(models[i], "0", new Texture(WIRE));
+        }
 
         IBakedModel[][] bakedConfigs = new IBakedModel[][] {
             new IBakedModel[] {
@@ -83,5 +92,10 @@ public class ModelCable extends ModelBase {
         };
 
         return new BakedCable(bakedConfigs);
+    }
+
+    @Override
+    public Collection<ResourceLocation> getTextures() {
+        return Collections.singletonList(WIRE);
     }
 }
