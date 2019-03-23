@@ -35,7 +35,7 @@ public class MachineStack implements IStringSerializable {
             System.out.println(type + " - " + tier);
             return ItemStack.EMPTY;
         }
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(type.getBlock()), 1, 0);
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(type.getBlock()));
         stack.setTagCompound(new NBTTagCompound());
         stack.getTagCompound().setString(Ref.KEY_MACHINE_STACK_TIER, tier.getName());
         return stack;

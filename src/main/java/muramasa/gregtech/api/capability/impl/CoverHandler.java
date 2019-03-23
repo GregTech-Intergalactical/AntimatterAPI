@@ -19,7 +19,7 @@ public class CoverHandler implements ICoverHandler {
     protected ArrayList<String> validCovers;
 
     //TODO
-    private Cover[] covers = new Cover[] {
+    protected Cover[] covers = new Cover[] {
         GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone
     };
 

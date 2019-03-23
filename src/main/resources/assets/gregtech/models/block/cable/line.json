@@ -1,7 +1,4 @@
 {
-    "textures": {
-        "0": "minecraft:blocks/stone"
-    },
     "elements": [
         {
             "name": "Cube",

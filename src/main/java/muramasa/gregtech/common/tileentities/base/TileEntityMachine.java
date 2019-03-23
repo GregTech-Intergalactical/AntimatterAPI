@@ -102,6 +102,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         if (facing == side.getIndex()) return false;
         facing = side.getIndex();
         markForRenderUpdate();
+        markDirty();
         return true;
     }
 

@@ -11,6 +11,7 @@ import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureType;
 import muramasa.gregtech.client.render.bakedmodels.BakedBase;
 import muramasa.gregtech.client.render.bakedmodels.BakedMachine;
+import muramasa.gregtech.client.render.bakedmodels.BakedMachineBasic;
 import muramasa.gregtech.client.render.bakedmodels.BakedMachineItem;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -77,7 +78,7 @@ public class ModelMachine extends ModelBase {
             BakedMachine.COVERS[cover.getInternalId()] = texAndBake(load(loc), "base", cover.getTextures()[0]);
         }
 
-        return Ref.BASIC_MACHINE_MODELS ? new BakedMachine() : new BakedMachine();
+        return Ref.BASIC_MACHINE_MODELS ? new BakedMachineBasic() : new BakedMachine();
     }
 
     @Override

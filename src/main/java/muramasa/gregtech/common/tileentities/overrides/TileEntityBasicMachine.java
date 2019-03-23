@@ -39,6 +39,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         if (getType().hasFlag(ENERGY)) energyStorage = new MachineEnergyHandler(this);
         if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
         if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
+        markDirty();
     }
 
     @Override
@@ -190,10 +191,13 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (coverHandler == null) return false;
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
         } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
+            if (coverHandler == null) return false;
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
         } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
+            if (coverHandler == null) return false;
             return side == null || !coverHandler.get(side).isEmpty();
         } else if (getType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
             return true;
@@ -205,7 +209,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
+
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getInputHandler());
         } else if (capability == GTCapabilities.ENERGY) {
             return GTCapabilities.ENERGY.cast(energyStorage);
         } else if (capability == GTCapabilities.COVERABLE) {

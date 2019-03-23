@@ -76,8 +76,12 @@ public class ModelBase implements IModel {
     }
 
     public static IModel tex(IModel model, String element, Texture texture) {
+        return tex(model, element, texture.getLoc());
+    }
+
+    public static IModel tex(IModel model, String element, ResourceLocation loc) {
         try {
-            return model.retexture(ImmutableMap.of(element, texture.getLoc().toString()));
+            return model.retexture(ImmutableMap.of(element, loc.toString()));
         } catch (Exception e) {
             System.err.println("ModelBase.tex() failed due to " + e + ":");
             e.printStackTrace();

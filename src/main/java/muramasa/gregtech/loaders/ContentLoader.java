@@ -2,6 +2,7 @@ package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.data.Cables;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
@@ -11,12 +12,15 @@ import muramasa.gregtech.api.items.StandardItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.pipe.types.Cable;
 import muramasa.gregtech.common.blocks.*;
+import muramasa.gregtech.common.items.ItemBlockCable;
 import muramasa.gregtech.common.items.ItemBlockMachine;
 import muramasa.gregtech.common.items.ItemBlockOre;
 import muramasa.gregtech.common.items.ItemBlockStorage;
 import muramasa.gregtech.common.tileentities.base.TileEntityCable;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.common.tileentities.base.TileEntityPipe;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
@@ -38,8 +42,6 @@ import static muramasa.gregtech.api.machines.MachineFlag.MULTI;
 
 @Mod.EventBusSubscriber
 public class ContentLoader {
-
-    public static BlockCable blockCable = new BlockCable();
 
     public static ItemFluidCell fluidCell;
 
@@ -69,6 +71,9 @@ public class ContentLoader {
                 registeredTiles.add(type.getTileClass().getName());
             }
         }
+        for (Cable type : Cables.getAll()) {
+            event.getRegistry().register(new BlockCable(type));
+        }
         for (Casing type : Casing.getAll()) {
             event.getRegistry().register(new BlockCasing(type));
         }
@@ -87,11 +92,10 @@ public class ContentLoader {
             event.getRegistry().register(new BlockStone(type));
         }
 
-        event.getRegistry().register(blockCable);
+
+        GameRegistry.registerTileEntity(TileEntityPipe.class, new ResourceLocation(Ref.MODID, "block_pipe"));
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(Ref.MODID, "block_cable"));
-
         GameRegistry.registerTileEntity(TileEntityCasing.class, new ResourceLocation(Ref.MODID, "block_casing"));
-
         GameRegistry.registerTileEntity(TileEntityCoil.class, new ResourceLocation(Ref.MODID, "block_coil"));
     }
 
@@ -106,6 +110,10 @@ public class ContentLoader {
         }
         for (Machine type : Machines.getAll()) {
             event.getRegistry().register(new ItemBlockMachine(type.getBlock()).setRegistryName(type.getBlock().getRegistryName()));
+        }
+        for (Cable type : Cables.getAll()) {
+            Block block = GregTechRegistry.getCable(type);
+            event.getRegistry().register(new ItemBlockCable(block).setRegistryName(block.getRegistryName()));
         }
         for (StoneType type : StoneType.getAll()) {
             for (Material material : ItemFlag.ORE.getMats()) {
@@ -129,9 +137,6 @@ public class ContentLoader {
             Block block = GregTechRegistry.getStone(type);
             event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
         }
-
-        event.getRegistry().register(new ItemBlock(blockCable).setRegistryName(blockCable.getRegistryName()));
-
         for (ToolType type : ToolType.values()) {
             event.getRegistry().register(type.getInstance());
         }
