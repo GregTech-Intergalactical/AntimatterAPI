@@ -1,11 +1,12 @@
-package muramasa.gregtech.common.tileentities.base;
+package muramasa.gregtech.common.tileentities.pipe;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.PipeSize;
+import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-public class TileEntityPipe extends TileEntityBase {
+public abstract class TileEntityPipe extends TileEntityBase {
 
     private PipeSize size;
 
@@ -16,6 +17,10 @@ public class TileEntityPipe extends TileEntityBase {
 
     public PipeSize getSize() {
         return size;
+    }
+
+    public void refreshConnections() {
+
     }
 
     public void toggleConnection(EnumFacing side) {
@@ -31,7 +36,7 @@ public class TileEntityPipe extends TileEntityBase {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
+        if (size != null) compound.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
         return compound;
     }
 }

@@ -1,20 +1,21 @@
 package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.pipe.types.Cable;
-import muramasa.gregtech.api.data.Cables;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.enums.*;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.pipe.types.Cable;
+import muramasa.gregtech.api.pipe.types.FluidPipe;
 import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.models.ModelMachine;
 import muramasa.gregtech.client.render.models.ModelPipe;
 import muramasa.gregtech.common.blocks.*;
+import muramasa.gregtech.common.blocks.pipe.BlockPipe;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.loaders.ContentLoader;
 import muramasa.gregtech.loaders.GregTechRegistry;
@@ -80,9 +81,13 @@ public class ClientProxy implements IProxy {
             return -1;
         };
         IItemColor pipeItemHandler = (stack, i) -> i == 0 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
-        for (Cable type : Cables.getAll()) {
+        for (Cable type : Cable.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getCable(type));
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));
+        }
+        for (FluidPipe type : FluidPipe.getAll()) {
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getFluidPipe(type));
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getFluidPipe(type)));
         }
 
         IBlockColor oreBlockHandler = (state, world, pos, i) -> i == 1 ? ((BlockOre) state.getBlock()).getMaterial().getRGB() : -1;
@@ -159,8 +164,12 @@ public class ClientProxy implements IProxy {
         for (Machine type : Machines.getAll()) {
             type.getBlock().initModel();
         }
-        for (Cable type : Cables.getAll()) {
+        for (Cable type : Cable.getAll()) {
             BlockPipe block = GregTechRegistry.getCable(type);
+            block.initModel();
+        }
+        for (FluidPipe type : FluidPipe.getAll()) {
+            BlockPipe block = GregTechRegistry.getFluidPipe(type);
             block.initModel();
         }
         for (StoneType type : StoneType.getAll()) {

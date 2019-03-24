@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public enum PipeSize {
 
+    VTINY(),
     TINY(),
     SMALL(),
     NORMAL(),
@@ -22,11 +23,15 @@ public enum PipeSize {
 
     PipeSize() {
         float offset = 0.0625f * ordinal();
-        AABB = new AxisAlignedBB(0.3625 - offset, 0.3625 - offset, 0.3625 - offset, 0.6375 + offset, 0.6375 + offset, 0.6375 + offset);
+        AABB = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
     }
 
     public String getName() {
         return name().toLowerCase(Locale.ENGLISH);
+    }
+
+    public String getDisplayName() {
+        return getName();
     }
 
     public AxisAlignedBB getAABB() {

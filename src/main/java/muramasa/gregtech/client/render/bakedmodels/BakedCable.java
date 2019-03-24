@@ -1,7 +1,7 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.client.render.overrides.ItemOverridePipe;
-import muramasa.gregtech.common.blocks.BlockPipe;
+import muramasa.gregtech.common.blocks.pipe.BlockPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;

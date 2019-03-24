@@ -23,7 +23,7 @@ public class ItemOverridePipe extends ItemOverrideList {
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
         if (stack.hasTagCompound()) {
             PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-            return BakedPipe.BAKED.get("base_" + size.getName());
+            return BakedPipe.BAKED.get("line_" + size.getName());
         }
         return ModelBase.MISSING;
     }

@@ -1,8 +1,8 @@
-package muramasa.gregtech.common.tileentities.base;
+package muramasa.gregtech.common.tileentities.pipe;
 
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.Cable;
-import muramasa.gregtech.common.blocks.BlockCable;
+import muramasa.gregtech.common.blocks.pipe.BlockCable;
 
 public class TileEntityCable extends TileEntityPipe {
 
@@ -16,5 +16,9 @@ public class TileEntityCable extends TileEntityPipe {
 
     public Cable getType() {
         return ((BlockCable) getBlockType()).getType();
+    }
+
+    public boolean isInsulated() {
+        return insulated;
     }
 }

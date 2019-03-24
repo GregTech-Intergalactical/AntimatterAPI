@@ -9,9 +9,11 @@ import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.pipe.types.Cable;
-import muramasa.gregtech.api.pipe.types.Pipe;
+import muramasa.gregtech.api.pipe.types.FluidPipe;
 import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.common.blocks.*;
+import muramasa.gregtech.common.blocks.pipe.BlockCable;
+import muramasa.gregtech.common.blocks.pipe.BlockFluidPipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -55,12 +57,12 @@ public class GregTechRegistry {
         return (MaterialTool) getItem(type.getName());
     }
 
-    public static BlockPipe getPipe(Pipe type) {
-        return (BlockPipe) getBlock("pipe_" + type.getMaterial().getName());
+    public static BlockCable getCable(Cable type) {
+        return (BlockCable) getBlock("cable_" + type.getName());
     }
 
-    public static BlockCable getCable(Cable type) {
-        return (BlockCable) getBlock("cable_" + type.getMaterial().getName());
+    public static BlockFluidPipe getFluidPipe(FluidPipe type) {
+        return (BlockFluidPipe) getBlock("fluid_pipe_" + type.getName());
     }
 
     public static BlockCasing getCasing(Casing type) {
