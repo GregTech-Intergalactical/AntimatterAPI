@@ -26,7 +26,7 @@ public class CableStack implements IStringSerializable {
 
     @Override
     public String getName() {
-        return type.getMaterial().getName() + "_" + size.getName();
+        return type.getName() + "_" + size.getName();
     }
 
     public ItemStack asItemStack() {

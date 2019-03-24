@@ -7,7 +7,7 @@
 //import muramasa.gregtech.api.capability.impl.CableConfigHandler;
 //import muramasa.gregtech.api.capability.impl.CoverHandler;
 //import muramasa.gregtech.api.util.Utils;
-//import muramasa.gregtech.common.blocks.BlockCable;
+//import muramasa.gregtech.common.blocks.pipe.BlockCable;
 //import net.minecraft.nbt.NBTTagCompound;
 //import net.minecraft.tileentity.TileEntity;
 //import net.minecraft.util.EnumFacing;

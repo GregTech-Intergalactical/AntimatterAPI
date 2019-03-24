@@ -1,11 +1,13 @@
-package muramasa.gregtech.common.blocks;
+package muramasa.gregtech.common.blocks.pipe;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.PipeSize;
+import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.tileentities.base.TileEntityPipe;
+import muramasa.gregtech.common.items.ItemBlockPipe;
+import muramasa.gregtech.common.tileentities.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -30,14 +32,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockPipe extends Block {
+public abstract class BlockPipe extends Block {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe"));
 
     public static final UnlistedInteger CONNECTIONS = new UnlistedInteger();
     public static final UnlistedInteger SIZE = new UnlistedInteger();
-
-    public static AxisAlignedBB PIPE_AABB = new AxisAlignedBB(0.30, 0.30, 0.30, 0.70, 0.70, 0.70);
 
     public BlockPipe(String name) {
         super(Material.IRON);
@@ -46,8 +46,10 @@ public class BlockPipe extends Block {
         setCreativeTab(Ref.TAB_MACHINES);
     }
 
+    public abstract Pipe getType();
+
     public int getRGB() {
-        return -1;
+        return getType().getRGB();
     }
 
     @Override
@@ -57,13 +59,13 @@ public class BlockPipe extends Block {
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IExtendedBlockState extendedState = (IExtendedBlockState) state;
+        IExtendedBlockState exState = (IExtendedBlockState) state;
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityPipe) {
             PipeSize size = ((TileEntityPipe) tile).getSize();
-            extendedState = extendedState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
+            exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
         }
-        return extendedState;
+        return exState;
     }
 
     @Override
@@ -88,9 +90,7 @@ public class BlockPipe extends Block {
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileEntityPipe();
-    }
+    public abstract TileEntity createTileEntity(World world, IBlockState state);
 
     @Nullable
     @Override
@@ -113,27 +113,31 @@ public class BlockPipe extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityPipe) {
-            ((TileEntityPipe) tile).init(PipeSize.TINY);
+        if (stack.getItem() instanceof ItemBlockPipe) {
+            if (stack.hasTagCompound()) {
+                TileEntity tile = Utils.getTile(world, pos);
+                if (tile instanceof TileEntityPipe) {
+                    PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
+                    ((TileEntityPipe) tile).init(size);
+                }
+            }
         }
     }
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityCable) {
-//            ((TileEntityCable) tile).refreshConnections();
-//        }
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityPipe) {
+            ((TileEntityPipe) tile).refreshConnections();
+        }
     }
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
-//        System.out.println(pos);
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityCable) {
-//            ((TileEntityCable) tile).refreshConnections();
-//        }
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityPipe) {
+            ((TileEntityPipe) tile).refreshConnections();
+        }
     }
 
     @Override
