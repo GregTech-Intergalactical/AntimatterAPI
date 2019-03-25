@@ -3,6 +3,7 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Textures;
 import muramasa.gregtech.api.enums.Casing;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.GTModelLoader;
@@ -29,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockCasing extends BlockBaked {
+public class BlockCasing extends BlockBaked implements IHasModelOverride {
 
     private Casing type;
 
@@ -70,6 +71,7 @@ public class BlockCasing extends BlockBaked {
         return "wrench";
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));

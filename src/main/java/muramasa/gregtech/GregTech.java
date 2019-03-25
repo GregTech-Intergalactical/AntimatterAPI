@@ -6,11 +6,11 @@ import muramasa.gregtech.api.data.Guis;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.interfaces.GregTechRegistrar;
-import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.common.events.OreGenHandler;
 import muramasa.gregtech.integration.fr.ForestryRegistrar;
 import muramasa.gregtech.integration.gc.GalacticraftRegistrar;
+import muramasa.gregtech.loaders.ContentLoader;
 import muramasa.gregtech.loaders.GregTechRegistry;
 import muramasa.gregtech.loaders.InternalRegistrar;
 import muramasa.gregtech.proxy.GuiHandler;
@@ -65,7 +65,7 @@ public class GregTech {
         Machines.init();
         Guis.init();
         Structures.init();
-        MaterialItem.init();
+        ContentLoader.init();
     }
 
     @Mod.EventHandler

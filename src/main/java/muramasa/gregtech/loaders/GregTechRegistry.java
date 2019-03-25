@@ -19,10 +19,34 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class GregTechRegistry {
+
+    /** Item/Block/Tile Registration **/
+    private static Set<Item> ITEMS = new LinkedHashSet<>();
+    private static Set<Block> BLOCKS = new LinkedHashSet<>();
+    private static Set<Class> TILES = new LinkedHashSet<>();
+
+    public static void register(Item item) {
+        ITEMS.add(item);
+    }
+
+    public static void register(Block block) {
+        BLOCKS.add(block);
+    }
+
+    public static void register(Class tile) {
+        TILES.add(tile);
+    }
+
+    public static Collection<Item> getRegisteredItems() {
+        return ITEMS;
+    }
+
+    public static Collection<Block> getRegisteredBlocks() {
+        return BLOCKS;
+    }
 
     /** Registrar Section **/
     private static HashMap<String, GregTechRegistrar> REGISTRARS = new HashMap<>();

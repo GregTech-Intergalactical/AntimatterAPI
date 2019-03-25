@@ -2,8 +2,8 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.util.Sounds;
@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MaterialItem extends Item {
+public class MaterialItem extends Item implements IHasModelOverride {
 
     private static LinkedHashMap<String, MaterialItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
@@ -49,13 +49,12 @@ public class MaterialItem extends Item {
         this.prefix = prefix;
     }
 
-    public static void init() {
-        for (Prefix prefix : Prefix.getAll()) {
-            for (Material material : Materials.getAll()) {
-                if (!prefix.allowGeneration(material)) continue;
-                new MaterialItem(prefix, material);
-            }
-        }
+    public Prefix getPrefix() {
+        return prefix;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     @Override
@@ -102,18 +101,11 @@ public class MaterialItem extends Item {
         return EnumActionResult.FAIL;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         String set = getMaterial().getSet().getName();
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
-    }
-
-    public Prefix getPrefix() {
-        return prefix;
-    }
-
-    public Material getMaterial() {
-        return material;
     }
 
     public static boolean hasPrefix(ItemStack stack, Prefix prefix) {

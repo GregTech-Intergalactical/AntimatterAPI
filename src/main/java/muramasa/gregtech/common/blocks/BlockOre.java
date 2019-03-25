@@ -2,6 +2,8 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.StoneType;
+import muramasa.gregtech.api.interfaces.IHasItemBlock;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.MaterialSet;
 import muramasa.gregtech.api.materials.Prefix;
@@ -10,6 +12,7 @@ import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.client.render.overrides.ItemOverrideOre;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -30,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockOre extends BlockBaked {
+public class BlockOre extends BlockBaked implements IHasItemBlock, IHasModelOverride {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
 
@@ -86,6 +89,16 @@ public class BlockOre extends BlockBaked {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        Material material = ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial();
+        if (material != null) {
+            return Prefix.Ore.getDisplayName(material);
+        }
+        return getUnlocalizedName();
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_ore", "inventory"));

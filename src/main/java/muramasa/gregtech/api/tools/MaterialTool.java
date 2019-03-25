@@ -9,6 +9,7 @@ import muramasa.gregtech.api.capability.IConfigHandler;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.Utils;
@@ -44,7 +45,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends ItemSword {
+public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     protected ToolType type;
 
@@ -377,6 +378,7 @@ public class MaterialTool extends ItemSword {
     }
 
     /** Item Model Section **/
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_tool", "tool_type=" + type.getName()));

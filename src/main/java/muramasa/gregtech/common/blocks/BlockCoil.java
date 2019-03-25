@@ -2,6 +2,7 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.enums.Coil;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
 import net.minecraft.block.Block;
@@ -20,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockCoil extends Block {
+public class BlockCoil extends Block implements IHasModelOverride {
 
     private Coil type;
 
@@ -33,6 +34,10 @@ public class BlockCoil extends Block {
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
         this.type = type;
+    }
+
+    public Coil getType() {
+        return type;
     }
 
     @Override
@@ -57,13 +62,10 @@ public class BlockCoil extends Block {
         return "wrench";
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName())));
-    }
-
-    public Coil getType() {
-        return type;
     }
 }
