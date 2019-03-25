@@ -6,7 +6,6 @@ import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.Cable;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.items.ItemBlockPipe;
 import muramasa.gregtech.common.tileentities.pipe.TileEntityCable;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -73,14 +72,12 @@ public class BlockCable extends BlockPipe {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.getItem() instanceof ItemBlockPipe) {
-            if (stack.hasTagCompound()) {
-                TileEntity tile = Utils.getTile(world, pos);
-                if (tile instanceof TileEntityCable) {
-                    PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-                    boolean insulated = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED);
-                    ((TileEntityCable) tile).init(size, insulated);
-                }
+        if (stack.hasTagCompound()) {
+            TileEntity tile = Utils.getTile(world, pos);
+            if (tile instanceof TileEntityCable) {
+                PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
+                boolean insulated = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED);
+                ((TileEntityCable) tile).init(size, insulated);
             }
         }
     }

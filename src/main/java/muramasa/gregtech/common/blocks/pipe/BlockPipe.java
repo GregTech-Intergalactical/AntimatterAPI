@@ -1,12 +1,13 @@
 package muramasa.gregtech.common.blocks.pipe;
 
 import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.interfaces.IHasItemBlock;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.items.ItemBlockPipe;
 import muramasa.gregtech.common.tileentities.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -31,8 +32,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
-public abstract class BlockPipe extends Block {
+public abstract class BlockPipe extends Block implements IHasItemBlock, IHasModelOverride {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe"));
 
@@ -113,13 +115,11 @@ public abstract class BlockPipe extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.getItem() instanceof ItemBlockPipe) {
-            if (stack.hasTagCompound()) {
-                TileEntity tile = Utils.getTile(world, pos);
-                if (tile instanceof TileEntityPipe) {
-                    PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-                    ((TileEntityPipe) tile).init(size);
-                }
+        if (stack.hasTagCompound()) {
+            TileEntity tile = Utils.getTile(world, pos);
+            if (tile instanceof TileEntityPipe) {
+                PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
+                ((TileEntityPipe) tile).init(size);
             }
         }
     }
@@ -150,6 +150,17 @@ public abstract class BlockPipe extends Block {
         return false;
     }
 
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return getType().getDisplayName(stack);
+    }
+
+    @Override
+    public List<String> addInformation(ItemStack stack) {
+        return getType().getTooltip(stack);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_pipe", "inventory"));

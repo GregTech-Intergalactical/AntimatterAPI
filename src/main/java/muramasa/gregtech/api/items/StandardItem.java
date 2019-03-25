@@ -6,6 +6,7 @@ import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.cover.Cover;
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.util.Utils;
@@ -36,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class StandardItem extends Item {
+public class StandardItem extends Item implements IHasModelOverride {
 
     private ItemType type;
 
@@ -131,6 +132,7 @@ public class StandardItem extends Item {
         return EnumActionResult.FAIL; //TODO FAIL?
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getName()));

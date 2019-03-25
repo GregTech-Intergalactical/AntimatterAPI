@@ -3,19 +3,22 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.GuiData;
+import muramasa.gregtech.api.interfaces.IHasItemBlock;
+import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.items.ItemBlockMachine;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -34,9 +38,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static muramasa.gregtech.api.properties.GTProperties.*;
 
-public class BlockMachine extends Block {
+public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverride {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine"));
 
@@ -51,6 +57,10 @@ public class BlockMachine extends Block {
         setSoundType(SoundType.METAL);
         setCreativeTab(Ref.TAB_MACHINES);
         this.type = type;
+    }
+
+    public Machine getType() {
+        return Machines.get(type);
     }
 
     @Override
@@ -123,13 +133,11 @@ public class BlockMachine extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.getItem() instanceof ItemBlockMachine) {
-            if (stack.hasTagCompound()) {
-                String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
-                TileEntity tile = Utils.getTile(world, pos);
-                if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite().getIndex());
-                }
+        if (stack.hasTagCompound()) {
+            String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
+            TileEntity tile = Utils.getTile(world, pos);
+            if (tile instanceof TileEntityMachine) {
+                ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite().getIndex());
             }
         }
     }
@@ -177,10 +185,27 @@ public class BlockMachine extends Block {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
-    public Machine getType() {
-        return Machines.get(type);
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
+            Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
+            return tier.getRarityColor() + I18n.format("machine." + getType().getName() + "." + tier.getName() + ".name");
+        }
+        return getUnlocalizedName();
     }
 
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
+            Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
+            if (getType().hasFlag(MachineFlag.BASIC)) {
+                tooltip.add("Voltage IN: " + TextFormatting.GREEN + tier.getVoltage() + " (" + tier.getName().toUpperCase() + ")");
+                tooltip.add("Capacity: " + TextFormatting.BLUE + (tier.getVoltage() * 64));
+            }
+        }
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_machine", "inventory"));

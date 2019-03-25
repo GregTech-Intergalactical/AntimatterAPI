@@ -4,17 +4,15 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.pipe.PipeSize;
 import net.minecraft.item.ItemStack;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class Pipe {
 
-    private List<PipeSize> validSizes;
-    private Material material;
-    private String name;
-    private int rgb;
+    protected PipeSize[] validSizes;
+    protected Material material;
+    protected String name;
+    protected int rgb;
 
     public Pipe(Material material) {
         this.material = material;
@@ -25,12 +23,12 @@ public class Pipe {
         this.rgb = rgb;
     }
 
-    public Collection<PipeSize> getValidSizes() {
-        return validSizes != null ? validSizes : Arrays.asList(PipeSize.VALUES);
+    public PipeSize[] getValidSizes() {
+        return validSizes != null ? validSizes : PipeSize.VALUES;
     }
 
     public void setValidSizes(PipeSize... validSizes) {
-        this.validSizes = Arrays.asList(validSizes);
+        this.validSizes = validSizes;
     }
 
     public String getName() {

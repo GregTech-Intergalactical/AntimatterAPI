@@ -39,7 +39,6 @@ public class InternalRegistrar extends GregTechRegistrar {
             GregTechAPI.registerCoverCatalyst(mat.getPlate(1), GregTechAPI.CoverPlate);
         }
         GregTechAPI.registerCoverCatalyst(ItemType.ComputerMonitor.get(1), GregTechAPI.CoverMonitor);
-        System.out.println("COVERS");
     }
 
     @Override

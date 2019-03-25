@@ -56,14 +56,9 @@ public class FluidPipe extends Pipe {
     }
 
     public FluidPipe(String name, int rgb, int baseCapacity, int heatResistance, boolean gasProof) {
-        super(name, rgb);
-        this.heatResistance = heatResistance;
-        this.gasProof = gasProof;
-        capacities = new int[] {
-            baseCapacity / 6, baseCapacity / 6, baseCapacity / 3, baseCapacity, baseCapacity * 2, baseCapacity * 4
-        };
-        setValidSizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
-        TYPE_LOOKUP.put("fluid_pipe_" + getName(), this);
+        this(null, baseCapacity, heatResistance, gasProof);
+        this.name = name;
+        this.rgb = rgb;
     }
 
     public void setCapacities(int... capacities) {
