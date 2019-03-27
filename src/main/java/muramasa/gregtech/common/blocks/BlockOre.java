@@ -1,9 +1,9 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.enums.StoneType;
-import muramasa.gregtech.api.interfaces.IHasItemBlock;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.data.StoneType;
+import muramasa.gregtech.api.registration.IHasItemBlock;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.client.render.StateMapperRedirect;
@@ -94,12 +94,8 @@ public class BlockOre extends Block implements IHasItemBlock, IHasModelOverride 
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        Material material = ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial();
-        if (material != null) {
-            return Prefix.Ore.getDisplayName(material);
-        }
-        return getUnlocalizedName();
+    public String getItemStackDisplayName(Block block, ItemStack stack) {
+        return Prefix.Ore.getDisplayName(((BlockOre) block).getMaterial());
     }
 
     @Override

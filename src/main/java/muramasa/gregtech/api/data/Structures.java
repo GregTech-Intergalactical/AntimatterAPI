@@ -1,21 +1,20 @@
 package muramasa.gregtech.api.data;
 
 import muramasa.gregtech.api.capability.IComponentHandler;
-import muramasa.gregtech.api.enums.Coil;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.structure.StructureBuilder;
 import muramasa.gregtech.api.structure.StructureElement;
 import muramasa.gregtech.api.structure.StructureResult;
 import muramasa.gregtech.api.util.int3;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.multi.TileEntityHatch;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 
 import static muramasa.gregtech.api.data.Machines.*;
-import static muramasa.gregtech.api.enums.Casing.*;
-import static muramasa.gregtech.api.enums.Coil.FUSION;
+import static muramasa.gregtech.api.data.Casing.*;
+import static muramasa.gregtech.api.data.Coil.FUSION;
 
 public class Structures {
 

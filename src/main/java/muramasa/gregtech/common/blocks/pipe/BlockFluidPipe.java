@@ -3,7 +3,7 @@ package muramasa.gregtech.common.blocks.pipe;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.FluidPipe;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityFluidPipe;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityFluidPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;

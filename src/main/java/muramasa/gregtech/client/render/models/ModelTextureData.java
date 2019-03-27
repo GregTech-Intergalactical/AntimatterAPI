@@ -1,6 +1,5 @@
 package muramasa.gregtech.client.render.models;
 
-import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.client.render.bakedmodels.BakedTextureData;
 import muramasa.gregtech.common.blocks.BlockBaked;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -32,9 +31,7 @@ public class ModelTextureData extends ModelBase {
     @Override
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> locations = new ArrayList<>();
-        for (Texture texture : block.getTextures()) {
-            locations.add(texture.getLoc());
-        }
+        block.getTextures().forEach(t -> locations.add(t.getLoc()));
         return locations;
     }
 }

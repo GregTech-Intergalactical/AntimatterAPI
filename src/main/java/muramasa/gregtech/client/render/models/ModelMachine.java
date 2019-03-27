@@ -74,7 +74,7 @@ public class ModelMachine extends ModelBase {
         BakedMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
-            ModelResourceLocation loc = Ref.BASIC_MACHINE_MODELS ? cover.getBasicModel() : cover.getModel();
+            ModelResourceLocation loc = Ref.BASIC_MACHINE_MODELS ? Cover.getBasicModel() : cover.getModel();
             BakedMachine.COVERS[cover.getInternalId()] = texAndBake(load(loc), "base", cover.getTextures()[0]);
         }
 

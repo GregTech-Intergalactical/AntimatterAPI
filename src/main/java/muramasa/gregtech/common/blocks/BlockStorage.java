@@ -1,10 +1,10 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.interfaces.IHasItemBlock;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
+import muramasa.gregtech.api.registration.IHasItemBlock;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -53,12 +53,8 @@ public class BlockStorage extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        Material material = ((BlockStorage) Block.getBlockFromItem(stack.getItem())).getMaterial();
-        if (material != null) {
-            return Prefix.Block.getDisplayName(material);
-        }
-        return getUnlocalizedName();
+    public String getItemStackDisplayName(Block block, ItemStack stack) {
+        return Prefix.Block.getDisplayName(((BlockStorage) block).getMaterial());
     }
 
     @Override

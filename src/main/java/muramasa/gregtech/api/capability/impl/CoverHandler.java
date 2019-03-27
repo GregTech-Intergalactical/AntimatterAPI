@@ -3,7 +3,7 @@ package muramasa.gregtech.api.capability.impl;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.util.Sounds;
 import muramasa.gregtech.api.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;

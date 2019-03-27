@@ -1,8 +1,8 @@
 package muramasa.gregtech.common.events;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.data.ItemType;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.RenderHelper;

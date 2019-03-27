@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IEnergyStorage;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 
 public class MachineEnergyHandler implements IEnergyStorage {
 

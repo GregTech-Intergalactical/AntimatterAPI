@@ -2,7 +2,7 @@ package muramasa.gregtech.integration.jei.renderer;
 
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import muramasa.gregtech.client.render.RenderHelper;
-import muramasa.gregtech.common.fluid.GTFluid;
+import muramasa.gregtech.api.fluid.GTFluid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.util.ITooltipFlag;

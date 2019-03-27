@@ -1,7 +1,7 @@
 package muramasa.gregtech.integration.ic2classic;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.registration.GregTechRegistrar;
 
 public class IC2ClassicRegistrar extends GregTechRegistrar {
 

@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.machines.types.Machine;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 
 public class ControllerComponentHandler extends ComponentHandler {
 

@@ -1,7 +1,6 @@
 package muramasa.gregtech.api.structure;
 
 import muramasa.gregtech.api.data.Structures;
-import muramasa.gregtech.api.util.Pair;
 import muramasa.gregtech.api.util.int3;
 import net.minecraft.util.IStringSerializable;
 

@@ -1,10 +1,10 @@
 package muramasa.gregtech.common.events;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.data.ItemType;
 import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.tileentities.base.TileEntityBase;
+import muramasa.gregtech.api.tileentities.TileEntityBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;

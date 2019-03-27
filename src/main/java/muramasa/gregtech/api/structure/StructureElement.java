@@ -3,8 +3,8 @@ package muramasa.gregtech.api.structure;
 import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.tileentities.base.multi.IComponent;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
+import muramasa.gregtech.api.interfaces.IComponent;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 

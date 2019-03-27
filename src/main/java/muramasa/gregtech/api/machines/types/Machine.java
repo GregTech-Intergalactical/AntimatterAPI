@@ -14,7 +14,7 @@ import muramasa.gregtech.api.structure.Structure;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureType;
 import muramasa.gregtech.common.blocks.BlockMachine;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IStringSerializable;

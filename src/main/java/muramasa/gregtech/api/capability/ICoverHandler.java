@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.capability;
 
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.tools.ToolType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

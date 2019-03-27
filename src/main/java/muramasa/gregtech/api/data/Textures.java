@@ -4,17 +4,6 @@ import muramasa.gregtech.api.texture.Texture;
 
 public class Textures {
 
-//    public static Int2ObjectArrayMap TEXTURE_REGISTRY = new Int2ObjectArrayMap<>();
-//
-//    public static void init() {
-//        register(LARGE_TURBINE);
-//        register(LARGE_TURBINE_ACTIVE);
-//    }
-//
-//    public static void register(Texture[] textures) {
-//        TEXTURE_REGISTRY.put(TEXTURE_REGISTRY.size() - 1, textures);
-//    }
-
     public static Texture[] LARGE_TURBINE = new Texture[] {
         new Texture("blocks/machine/other/large_turbine_0"),
         new Texture("blocks/machine/other/large_turbine_1"),

@@ -2,11 +2,11 @@ package muramasa.gregtech.api.cover.impl;
 
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.common.tileentities.base.multi.IComponent;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.interfaces.IComponent;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

@@ -1,15 +1,15 @@
 package muramasa.gregtech.common.blocks.pipe;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.interfaces.IHasItemBlock;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.registration.IHasItemBlock;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityPipe;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -163,7 +163,7 @@ public abstract class BlockPipe extends Block implements IHasItemBlock, IHasMode
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(Block block, ItemStack stack) {
         return getType().getDisplayName(stack);
     }
 

@@ -1,10 +1,10 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.enums.Coil;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.data.Coil;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
+import muramasa.gregtech.api.tileentities.multi.TileEntityCoil;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;

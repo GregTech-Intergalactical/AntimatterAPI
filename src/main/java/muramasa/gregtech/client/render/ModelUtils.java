@@ -57,10 +57,6 @@ public class ModelUtils {
         TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
     }
 
-    public static boolean hasCache(String key) {
-        return CACHE.containsKey(key);
-    }
-
     public static IBakedModel getCache(String key) {
         return CACHE.get(key);
     }
@@ -103,6 +99,7 @@ public class ModelUtils {
         return exState.getUnlistedNames().contains(property);
     }
 
+    //Broken
     public static IBakedModel getBaked(IBakedModel baked, List<BakedQuad> quads) {
         Map faceQuads = Maps.newEnumMap(EnumFacing.class);
         for (EnumFacing s : EnumFacing.values()) {

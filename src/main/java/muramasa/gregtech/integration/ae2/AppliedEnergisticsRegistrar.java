@@ -1,7 +1,7 @@
 package muramasa.gregtech.integration.ae2;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.registration.GregTechRegistrar;
 
 public class AppliedEnergisticsRegistrar extends GregTechRegistrar {
 

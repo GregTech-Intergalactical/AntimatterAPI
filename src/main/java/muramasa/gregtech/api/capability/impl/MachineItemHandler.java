@@ -3,7 +3,7 @@ package muramasa.gregtech.api.capability.impl;
 import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

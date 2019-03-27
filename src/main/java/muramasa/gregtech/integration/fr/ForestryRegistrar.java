@@ -2,8 +2,8 @@ package muramasa.gregtech.integration.fr;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.ItemType;
-import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.data.ItemType;
+import muramasa.gregtech.api.registration.GregTechRegistrar;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.recipe.RecipeBuilder;
 import muramasa.gregtech.api.util.Utils;

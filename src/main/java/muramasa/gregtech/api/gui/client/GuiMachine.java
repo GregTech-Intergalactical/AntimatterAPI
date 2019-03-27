@@ -2,7 +2,7 @@ package muramasa.gregtech.api.gui.client;
 
 import muramasa.gregtech.api.gui.server.ContainerMachine;
 import muramasa.gregtech.api.machines.MachineFlag;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import muramasa.gregtech.integration.jei.GregTechJEIPlugin;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;

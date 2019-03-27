@@ -11,7 +11,6 @@ import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
-import muramasa.gregtech.api.util.Pair;
 import muramasa.gregtech.integration.jei.category.RecipeMapCategory;
 import muramasa.gregtech.integration.jei.wrapper.RecipeWrapper;
 

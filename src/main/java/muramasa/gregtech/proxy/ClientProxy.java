@@ -2,8 +2,8 @@ package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.ToolType;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.tools.ToolType;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
@@ -19,8 +19,8 @@ import muramasa.gregtech.client.render.models.ModelPipe;
 import muramasa.gregtech.common.blocks.BlockOre;
 import muramasa.gregtech.common.blocks.BlockStorage;
 import muramasa.gregtech.common.blocks.pipe.BlockPipe;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.loaders.GregTechRegistry;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
+import muramasa.gregtech.api.registration.GregTechRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -110,13 +110,13 @@ public class ClientProxy implements IProxy {
     }
 
     @SubscribeEvent
-    public static void onRegisterTexture(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_still"));
-        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_flowing"));
-        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_still"));
-        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_flowing"));
-        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_still"));
-        event.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_flowing"));
+    public static void onRegisterTexture(TextureStitchEvent.Pre e) {
+        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_still"));
+        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_flowing"));
+        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_still"));
+        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_flowing"));
+        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_still"));
+        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_flowing"));
     }
 
     @SubscribeEvent

@@ -7,7 +7,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class Texture {
 
-//    private static Texture ERROR = Machines.INVALID.getOverlayTextures(MachineState.IDLE)[2];
     private static Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
 
     private ResourceLocation loc;

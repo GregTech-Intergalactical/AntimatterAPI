@@ -2,7 +2,7 @@ package muramasa.gregtech.integration.gc;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.registration.GregTechRegistrar;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.RecipeFlag;
 import net.minecraftforge.fml.common.Loader;
