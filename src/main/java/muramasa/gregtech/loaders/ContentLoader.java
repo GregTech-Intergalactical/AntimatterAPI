@@ -69,11 +69,7 @@ public class ContentLoader {
         FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
         Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
         Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
-        for (Material m : ItemFlag.ORE.getMats()) {
-            for (StoneType type : StoneType.getAll()) {
-                GregTechRegistry.register(new BlockOre(type, m));
-            }
-        }
+        ItemFlag.ORE.getMats().forEach(m -> GregTechRegistry.register(new BlockOre(m)));
         ItemFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
         StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }

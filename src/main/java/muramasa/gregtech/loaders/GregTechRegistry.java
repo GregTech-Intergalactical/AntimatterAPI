@@ -106,7 +106,7 @@ public class GregTechRegistry {
         return (BlockCoil) getBlock("coil_" + type.getName());
     }
 
-    public static BlockOre getOre(StoneType type, Material material) {
+    public static BlockOre getOre(Material material) {
         if (!material.has(ItemFlag.ORE)) {
             if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
                 throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
@@ -114,7 +114,7 @@ public class GregTechRegistry {
                 System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
             }
         }
-        return (BlockOre) getBlock("ore_" + type.getName() + "_" + material.getName());
+        return (BlockOre) getBlock("ore_" + material.getName());
     }
 
     public static BlockStone getStone(StoneType type) {
