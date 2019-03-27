@@ -68,6 +68,9 @@ public class StandardItem extends Item implements IHasModelOverride {
         if (Utils.hasNoConsumeTag(stack)) {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
+        if (type == ItemType.DebugScanner) {
+            tooltip.add("Block Count: " + GregTechRegistry.getRegisteredBlocks().size());
+        }
     }
 
     @Override

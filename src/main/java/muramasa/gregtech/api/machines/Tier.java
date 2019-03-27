@@ -16,16 +16,16 @@ public class Tier implements IStringSerializable {
     public static int lastInternalId = 0;
 
     /** Electricity Tiers **/
-    public static Tier ULV = new Tier("ulv", 8, TextFormatting.WHITE);
-    public static Tier LV = new Tier("lv", 32, TextFormatting.WHITE);
-    public static Tier MV = new Tier("mv", 128, TextFormatting.WHITE);
-    public static Tier HV = new Tier("hv", 512, TextFormatting.YELLOW);
-    public static Tier EV = new Tier("ev", 2048, TextFormatting.AQUA);
-    public static Tier IV = new Tier("iv", 8192, TextFormatting.LIGHT_PURPLE);
-    public static Tier LUV = new Tier("luv", 32768, TextFormatting.LIGHT_PURPLE);
-    public static Tier ZPM = new Tier("zpm", 131072, TextFormatting.LIGHT_PURPLE);
-    public static Tier UV = new Tier("uv", 524288, TextFormatting.LIGHT_PURPLE);
-    public static Tier MAX = new Tier("max", 2147483647, TextFormatting.LIGHT_PURPLE);
+    public static Tier ULV = new Tier("ulv", 8, TextFormatting.WHITE); //Tier 1
+    public static Tier LV = new Tier("lv", 32, TextFormatting.WHITE); //Tier 2
+    public static Tier MV = new Tier("mv", 128, TextFormatting.WHITE); //Tier 3
+    public static Tier HV = new Tier("hv", 512, TextFormatting.YELLOW); //Tier 4
+    public static Tier EV = new Tier("ev", 2048, TextFormatting.AQUA); //Tier 5
+    public static Tier IV = new Tier("iv", 8192, TextFormatting.LIGHT_PURPLE); //Tier 6
+    public static Tier LUV = new Tier("luv", 32768, TextFormatting.LIGHT_PURPLE); //Tier 7
+    public static Tier ZPM = new Tier("zpm", 131072, TextFormatting.LIGHT_PURPLE); //Tier 8
+    public static Tier UV = new Tier("uv", 524288, TextFormatting.LIGHT_PURPLE); //Tier 9
+    public static Tier MAX = new Tier("max", 2147483647, TextFormatting.LIGHT_PURPLE); //Tier 15
 
     /** Special Tiers **/
     public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
