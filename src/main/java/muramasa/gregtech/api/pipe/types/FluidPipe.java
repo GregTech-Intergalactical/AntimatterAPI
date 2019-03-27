@@ -7,10 +7,7 @@ import muramasa.gregtech.api.pipe.PipeSize;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class FluidPipe extends Pipe {
 
@@ -81,28 +78,20 @@ public class FluidPipe extends Pipe {
     public String getDisplayName(ItemStack stack) {
         if (stack.hasTagCompound()) {
             PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-            return size.getDisplayName() + " " + getDisplayName() + " Fluid Pipe";
+            return (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + getDisplayName() + " Fluid Pipe";
         }
         return getName();
     }
 
     @Override
     public List<String> getTooltip(ItemStack stack) {
-        List<String> tooltip = new LinkedList<>();
         if (stack.hasTagCompound()) {
+            List<String> tooltip = new LinkedList<>();
             PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
             tooltip.add("Fluid Capacity: " + TextFormatting.BLUE + (capacities[size.ordinal()] * 20) + "L/s");
             tooltip.add("Heat Limit: " + TextFormatting.RED + heatResistance + " K");
         }
-        return tooltip;
-    }
-
-    public static void add(FluidPipe type) {
-        TYPE_LOOKUP.put(type.getName(), type);
-    }
-
-    public static FluidPipe get(FluidPipe cable) {
-        return TYPE_LOOKUP.get("fluid_pipe_" + cable.getName());
+        return Collections.emptyList();
     }
 
     public static Collection<FluidPipe> getAll() {

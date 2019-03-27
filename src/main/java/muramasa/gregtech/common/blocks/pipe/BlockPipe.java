@@ -4,6 +4,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.interfaces.IHasItemBlock;
 import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.pipe.PipeSize;
+import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.util.Utils;
@@ -24,6 +25,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -119,9 +121,19 @@ public abstract class BlockPipe extends Block implements IHasItemBlock, IHasMode
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityPipe) {
                 PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-                ((TileEntityPipe) tile).init(size);
+                ((TileEntityPipe) tile).init(getType(), size);
             }
         }
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityPipe) {
+            TileEntityPipe pipe = (TileEntityPipe) tile;
+            return new PipeStack(pipe.getBlockType(), pipe.getType(), pipe.getSize()).asItemStack();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

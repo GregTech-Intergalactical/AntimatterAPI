@@ -119,14 +119,6 @@ public class Cable extends Pipe {
         return tooltip;
     }
 
-    public static void add(Cable type) {
-        TYPE_LOOKUP.put(type.getName(), type);
-    }
-
-    public static Cable get(Cable cable) {
-        return TYPE_LOOKUP.get("cable_" + cable.getName());
-    }
-
     public static Collection<Cable> getAll() {
         return TYPE_LOOKUP.values();
     }
