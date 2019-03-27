@@ -2,7 +2,6 @@ package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.interfaces.IHasModelOverride;
 import muramasa.gregtech.api.items.MaterialItem;
@@ -27,7 +26,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -50,39 +49,20 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void init(FMLInitializationEvent e) {
-        IItemColor materialColorHandler = (stack, i) -> {
-            if (i == 0) {
-                if (stack.getItem() instanceof MaterialItem) {
-                    Material material = ((MaterialItem) stack.getItem()).getMaterial();
-                    if (material != null) {
-                        return material.getRGB();
-                    }
-                }
-            }
-            return -1;
-        };
+        IItemColor materialItemHandler = (stack, i) -> i == 0 ? ((MaterialItem) stack.getItem()).getMaterial().getRGB() : -1;
         for (Item item : MaterialItem.getAll()) {
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(materialColorHandler, item);
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(materialItemHandler, item);
         }
 
         IBlockColor machineBlockHandler = (state, world, pos, i) -> {
-            if (i == 0) {
-                TileEntityMachine tile = (TileEntityMachine) Utils.getTile(world, pos);
-                if (tile != null && tile.getTextureData().getTint() > -1) return tile.getTextureData().getTint();
-            }
-            return -1;
+            TileEntity tile = Utils.getTile(world, pos);
+            return tile instanceof TileEntityMachine && i == 0 ? ((TileEntityMachine) tile).getTextureData().getTint() : -1;
         };
         for (Machine type : Machines.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(machineBlockHandler, type.getBlock());
         }
 
-        IBlockColor pipeBlockHandler = (state, world, pos, i) -> {
-            if (i == 0) {
-                BlockPipe pipe = (BlockPipe) state.getBlock();
-                return pipe.getRGB();
-            }
-            return -1;
-        };
+        IBlockColor pipeBlockHandler = (state, world, pos, i) -> i == 0 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
         IItemColor pipeItemHandler = (stack, i) -> i == 0 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
         for (Cable type : Cable.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getCable(type));
@@ -99,12 +79,10 @@ public class ClientProxy implements IProxy {
 
         IBlockColor oreBlockHandler = (state, world, pos, i) -> i == 1 ? ((BlockOre) state.getBlock()).getMaterial().getRGB() : -1;
         IItemColor oreItemHandler = (stack, i) -> i == 1 ? ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial().getRGB() : -1;
-        for (StoneType type : StoneType.getAll()) {
-            for (Material material : ItemFlag.ORE.getMats()) {
-                Block block = GregTechRegistry.getOre(type, material);
-                Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(oreBlockHandler, block);
-                Minecraft.getMinecraft().getItemColors().registerItemColorHandler(oreItemHandler, Item.getItemFromBlock(block));
-            }
+        for (Material material : ItemFlag.ORE.getMats()) {
+            Block block = GregTechRegistry.getOre(material);
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(oreBlockHandler, block);
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(oreItemHandler, Item.getItemFromBlock(block));
         }
 
         IBlockColor storageBlockHandler = (state, world, pos, i) -> i == 0 ? ((BlockStorage) state.getBlock()).getMaterial().getRGB() : -1;
@@ -115,27 +93,9 @@ public class ClientProxy implements IProxy {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
         }
 
-        IItemColor toolItemHandler = new ColorHandlerTool();
+        IItemColor toolItemHandler = MaterialTool::getRGB;
         for (ToolType type : ToolType.values()) {
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
-        }
-    }
-
-    public static class ColorHandlerTool implements IItemColor {
-        @Override
-        public int colorMultiplier(ItemStack stack, int tintIndex) {
-            MaterialTool tool = (MaterialTool) stack.getItem();
-            Material primary = tool.getPrimary(stack), secondary = tool.getSecondary(stack);
-            if (primary != null && secondary != null) {
-                if (tool.getType() == ToolType.PLUNGER) {
-                    return tintIndex == 0 ? -1 : secondary.getRGB();
-                }
-                if (tool.getType() == ToolType.DRILL) {
-                    return tintIndex == 0 ? primary.getRGB() : secondary.getRGB();
-                }
-                return tintIndex == 0 ? primary.getRGB() : secondary.getRGB();
-            }
-            return 0xffffff;
         }
     }
 
