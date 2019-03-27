@@ -2,7 +2,7 @@ package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.util.EnumFacing;
 
 public class MachineCoverHandler extends CoverHandler {

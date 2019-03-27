@@ -1,10 +1,9 @@
 package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.Element;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MaterialItem;
-import muramasa.gregtech.loaders.GregTechRegistry;
+import muramasa.gregtech.api.registration.GregTechRegistry;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;

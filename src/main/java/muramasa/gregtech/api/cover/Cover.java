@@ -2,7 +2,7 @@ package muramasa.gregtech.api.cover;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

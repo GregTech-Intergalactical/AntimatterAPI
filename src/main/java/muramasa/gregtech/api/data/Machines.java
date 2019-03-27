@@ -4,7 +4,7 @@ import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.*;
-import muramasa.gregtech.common.tileentities.overrides.multi.*;
+import muramasa.gregtech.common.tileentities.multi.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

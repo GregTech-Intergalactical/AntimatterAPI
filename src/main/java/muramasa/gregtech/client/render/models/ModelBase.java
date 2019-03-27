@@ -14,6 +14,7 @@ import net.minecraftforge.common.model.IModelState;
 
 import java.util.function.Function;
 
+//TODO remove
 public class ModelBase implements IModel {
 
     public static IBakedModel MISSING, BAKED_BASIC;

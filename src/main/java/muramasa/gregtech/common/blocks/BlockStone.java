@@ -1,8 +1,8 @@
 package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.enums.StoneType;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.data.StoneType;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

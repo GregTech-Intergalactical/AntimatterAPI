@@ -4,7 +4,7 @@ import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.gui.SlotData;
 import muramasa.gregtech.api.gui.slot.SlotInput;
 import muramasa.gregtech.api.gui.slot.SlotOutput;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.inventory.IInventory;
 
 public class ContainerMachine extends ContainerBase {

@@ -1,6 +1,6 @@
 //package muramasa.gregtech.integration.vanilla;
 //
-//import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+//import muramasa.gregtech.api.registration.GregTechRegistrar;
 //import net.minecraft.init.Blocks;
 //import net.minecraft.init.Items;
 //import net.minecraft.item.ItemStack;

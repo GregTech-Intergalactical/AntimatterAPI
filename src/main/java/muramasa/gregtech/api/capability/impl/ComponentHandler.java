@@ -2,9 +2,9 @@ package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.tileentities.base.TileEntityBase;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.tileentities.TileEntityBase;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 

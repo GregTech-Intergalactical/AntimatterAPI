@@ -2,14 +2,14 @@ package muramasa.gregtech.common.blocks;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Textures;
-import muramasa.gregtech.api.enums.Casing;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.data.Casing;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.StateMapperRedirect;
 import muramasa.gregtech.client.render.overrides.ItemOverrideCasing;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
+import muramasa.gregtech.api.tileentities.multi.TileEntityCasing;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;

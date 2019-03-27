@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.tileentities.multi.TileEntityHatch;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 
 public class HatchComponentHandler extends ComponentHandler {
 

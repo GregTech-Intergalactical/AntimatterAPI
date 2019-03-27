@@ -2,8 +2,8 @@ package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
-import muramasa.gregtech.api.enums.Element;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.materials.Element;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.util.Sounds;

@@ -1,7 +1,6 @@
 package muramasa.gregtech.api.tools;
 
 import com.google.common.collect.Sets;
-import muramasa.gregtech.api.enums.ToolType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.util.int3;
 import net.minecraft.entity.player.EntityPlayer;

@@ -3,7 +3,7 @@ package muramasa.gregtech.api.gui.client;
 import muramasa.gregtech.api.gui.SlotData;
 import muramasa.gregtech.api.gui.SlotType;
 import muramasa.gregtech.api.gui.server.ContainerMachine;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import muramasa.gregtech.Ref;
 import net.minecraft.util.ResourceLocation;
 

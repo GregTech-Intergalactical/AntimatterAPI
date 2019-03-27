@@ -4,7 +4,7 @@ import muramasa.gregtech.api.materials.Material;
 
 import java.util.ArrayList;
 
-public interface IMaterialFlag { //TODO rename to IMaterialFlag, rename MaterialFlag to ItemFlag
+public interface IMaterialFlag {
 
     String getName();
 

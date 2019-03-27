@@ -1,9 +1,9 @@
 package muramasa.gregtech.common.events;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.tileentities.base.multi.IComponent;
+import muramasa.gregtech.api.interfaces.IComponent;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;

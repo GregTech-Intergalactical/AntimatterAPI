@@ -3,7 +3,7 @@ package muramasa.gregtech.api.data;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
-import muramasa.gregtech.common.fluid.GTFluid;
+import muramasa.gregtech.api.fluid.GTFluid;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -11,7 +11,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-import static muramasa.gregtech.api.enums.Element.*;
+import static muramasa.gregtech.api.materials.Element.*;
 import static muramasa.gregtech.api.materials.ItemFlag.*;
 import static muramasa.gregtech.api.materials.MaterialSet.*;
 import static muramasa.gregtech.api.materials.RecipeFlag.*;

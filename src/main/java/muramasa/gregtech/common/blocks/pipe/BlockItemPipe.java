@@ -6,7 +6,7 @@ import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.ItemPipe;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityItemPipe;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityItemPipe;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;

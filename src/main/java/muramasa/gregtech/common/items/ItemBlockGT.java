@@ -1,6 +1,6 @@
 package muramasa.gregtech.common.items;
 
-import muramasa.gregtech.api.interfaces.IHasItemBlock;
+import muramasa.gregtech.api.registration.IHasItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
@@ -20,7 +20,7 @@ public class ItemBlockGT extends ItemBlock {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (getBlock() instanceof IHasItemBlock) {
-            return ((IHasItemBlock) getBlock()).getItemStackDisplayName(stack);
+            return ((IHasItemBlock) getBlock()).getItemStackDisplayName(getBlock(), stack);
         }
         return stack.getUnlocalizedName();
     }

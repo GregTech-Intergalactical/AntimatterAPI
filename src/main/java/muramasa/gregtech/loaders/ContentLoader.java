@@ -2,10 +2,8 @@ package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.GregTech;
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.*;
-import muramasa.gregtech.api.interfaces.GregTechRegistrar;
+import muramasa.gregtech.api.data.*;
+import muramasa.gregtech.api.registration.GregTechRegistrar;
 import muramasa.gregtech.api.items.ItemFluidCell;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.items.StandardItem;
@@ -17,20 +15,21 @@ import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.pipe.types.Cable;
 import muramasa.gregtech.api.pipe.types.FluidPipe;
 import muramasa.gregtech.api.pipe.types.ItemPipe;
+import muramasa.gregtech.api.registration.GregTechRegistry;
+import muramasa.gregtech.api.tileentities.*;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.blocks.pipe.BlockCable;
 import muramasa.gregtech.common.blocks.pipe.BlockFluidPipe;
 import muramasa.gregtech.common.blocks.pipe.BlockItemPipe;
 import muramasa.gregtech.common.items.ItemBlockGT;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityCoil;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityHatch;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
-import muramasa.gregtech.common.tileentities.overrides.*;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityCable;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityFluidPipe;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityPipe;
+import muramasa.gregtech.api.tileentities.multi.TileEntityCasing;
+import muramasa.gregtech.api.tileentities.multi.TileEntityCoil;
+import muramasa.gregtech.api.tileentities.multi.TileEntityHatch;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityCable;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityFluidPipe;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -78,7 +77,7 @@ public class ContentLoader {
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
         GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(b));
 
-        //TODO auto register all type tiles???
+        //TODO auto register all type tiles??? probably
         GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "tile_machine"));
         GameRegistry.registerTileEntity(TileEntityBasicMachine.class, new ResourceLocation(Ref.MODID, "tile_basic_machine"));
         GameRegistry.registerTileEntity(TileEntityItemMachine.class, new ResourceLocation(Ref.MODID, "tile_item_machine"));
@@ -89,7 +88,6 @@ public class ContentLoader {
         GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "tile_hatch"));
         List<String> registeredTiles = new LinkedList<>();
         for (Machine type : Machines.getAll()) {
-//            event.getRegistry().register(type.getBlock());
             if (type.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(type.getTileClass().getName())) {
                 GameRegistry.registerTileEntity(type.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + type.getName()));
                 registeredTiles.add(type.getTileClass().getName());

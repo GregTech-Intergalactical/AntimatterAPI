@@ -4,7 +4,7 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
-import muramasa.gregtech.api.enums.ItemType;
+import muramasa.gregtech.api.data.ItemType;
 import muramasa.gregtech.api.gui.GuiData;
 import muramasa.gregtech.api.gui.SlotData;
 import muramasa.gregtech.api.gui.SlotType;

@@ -1,10 +1,10 @@
 package muramasa.gregtech.api.items;
 
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.models.ModelFluidCell;
-import muramasa.gregtech.loaders.GregTechRegistry;
+import muramasa.gregtech.api.registration.GregTechRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,6 +1,6 @@
 package muramasa.gregtech.api.gui.server;
 
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.inventory.IInventory;
 
 public class ContainerHatch extends ContainerMachine {

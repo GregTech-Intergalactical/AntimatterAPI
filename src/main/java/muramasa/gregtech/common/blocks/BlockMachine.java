@@ -3,15 +3,15 @@ package muramasa.gregtech.common.blocks;
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
 import muramasa.gregtech.api.gui.GuiData;
-import muramasa.gregtech.api.interfaces.IHasItemBlock;
-import muramasa.gregtech.api.interfaces.IHasModelOverride;
+import muramasa.gregtech.api.registration.IHasItemBlock;
+import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.machines.MachineFlag;
 import muramasa.gregtech.api.machines.MachineStack;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
@@ -134,9 +134,9 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if (stack.hasTagCompound()) {
-            String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityMachine) {
+                String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
                 ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite().getIndex());
             }
         }
@@ -186,7 +186,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(Block block, ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
             return tier.getRarityColor() + I18n.format("machine." + getType().getName() + "." + tier.getName() + ".name");
@@ -197,8 +197,8 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
-            Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
             if (getType().hasFlag(MachineFlag.BASIC)) {
+                Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
                 tooltip.add("Voltage IN: " + TextFormatting.GREEN + tier.getVoltage() + " (" + tier.getName().toUpperCase() + ")");
                 tooltip.add("Capacity: " + TextFormatting.BLUE + (tier.getVoltage() * 64));
             }

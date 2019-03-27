@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.capability.impl;
 
-import muramasa.gregtech.api.enums.ToolType;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.tools.ToolType;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;

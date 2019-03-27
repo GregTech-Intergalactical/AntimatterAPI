@@ -1,9 +1,8 @@
 package muramasa.gregtech.api.structure;
 
-import muramasa.gregtech.api.util.Pair;
 import muramasa.gregtech.api.util.int2;
 import muramasa.gregtech.api.util.int3;
-import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.ArrayList;

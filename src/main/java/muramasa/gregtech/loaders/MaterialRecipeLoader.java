@@ -1,7 +1,7 @@
 package muramasa.gregtech.loaders;
 
 import muramasa.gregtech.api.data.Materials;
-import muramasa.gregtech.api.enums.ToolType;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.MaterialStack;
@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 
 import static muramasa.gregtech.api.data.Machines.*;
-import static muramasa.gregtech.api.enums.ItemType.*;
+import static muramasa.gregtech.api.data.ItemType.*;
 import static muramasa.gregtech.api.materials.ItemFlag.*;
 import static muramasa.gregtech.api.materials.RecipeFlag.*;
 import static muramasa.gregtech.api.recipe.RecipeMap.*;

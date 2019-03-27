@@ -4,7 +4,7 @@ import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.capability.impl.MachineItemHandler;
 import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
-import muramasa.gregtech.common.tileentities.overrides.TileEntityItemMachine;
+import muramasa.gregtech.api.tileentities.TileEntityItemMachine;
 
 import static muramasa.gregtech.api.machines.MachineFlag.ITEM;
 

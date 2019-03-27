@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.gui.server;
 
 import muramasa.gregtech.api.machines.MachineState;
-import muramasa.gregtech.common.tileentities.overrides.TileEntityBasicMachine;
+import muramasa.gregtech.api.tileentities.TileEntityBasicMachine;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;

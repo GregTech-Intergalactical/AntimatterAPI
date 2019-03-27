@@ -1,7 +1,7 @@
 package muramasa.gregtech.api.gui.client;
 
 import muramasa.gregtech.api.gui.server.ContainerMultiMachine;
-import muramasa.gregtech.common.tileentities.base.multi.TileEntityMultiMachine;
+import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 
 public class GuiMultiMachine extends GuiBasicMachine {
 

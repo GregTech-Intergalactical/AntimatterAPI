@@ -4,7 +4,5 @@ public class CraftingRecipeLoader {
 
     public static void init() {
         //TODO
-
-
     }
 }

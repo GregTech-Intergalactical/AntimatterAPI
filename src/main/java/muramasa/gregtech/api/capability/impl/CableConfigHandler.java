@@ -1,8 +1,8 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IConfigHandler;
-import muramasa.gregtech.api.enums.ToolType;
-import muramasa.gregtech.common.tileentities.pipe.TileEntityCable;
+import muramasa.gregtech.api.tools.ToolType;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityCable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
