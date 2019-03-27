@@ -31,10 +31,6 @@ public class StoneType implements IStringSerializable {
     private ResourceLocation loc;
     private int internalId;
 
-//    public StoneType(String name, Material material) {
-//        this(name, material, true, name);
-//    }
-
     public StoneType(String name, Material material, boolean generate, ResourceLocation loc) {
         this.name = name;
         this.material = material;

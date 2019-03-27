@@ -2,7 +2,6 @@ package muramasa.gregtech.api.materials;
 
 import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.enums.Element;
-import muramasa.gregtech.api.enums.StoneType;
 import muramasa.gregtech.api.interfaces.IMaterialFlag;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.loaders.GregTechRegistry;
@@ -562,7 +561,7 @@ public class Material {
     }
 
     public ItemStack getOre(int amount) {
-        return new ItemStack(GregTechRegistry.getOre(StoneType.STONE, this), amount);
+        return new ItemStack(GregTechRegistry.getOre(this), amount);
     }
 
     public ItemStack getBlock(int amount) {
