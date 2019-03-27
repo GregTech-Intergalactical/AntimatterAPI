@@ -16,9 +16,11 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.materials.Prefix;
 import muramasa.gregtech.api.pipe.types.Cable;
 import muramasa.gregtech.api.pipe.types.FluidPipe;
+import muramasa.gregtech.api.pipe.types.ItemPipe;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.blocks.pipe.BlockCable;
 import muramasa.gregtech.common.blocks.pipe.BlockFluidPipe;
+import muramasa.gregtech.common.blocks.pipe.BlockItemPipe;
 import muramasa.gregtech.common.items.ItemBlockGT;
 import muramasa.gregtech.common.tileentities.base.TileEntityMachine;
 import muramasa.gregtech.common.tileentities.base.multi.TileEntityCasing;
@@ -61,39 +63,24 @@ public class ContentLoader {
         GregTechRegistry.register(new ItemFluidCell());
 
         //Blocks
-        for (Machine type : Machines.getAll()) {
-            GregTechRegistry.register(type.getBlock());
-        }
-        for (Cable type : Cable.getAll()) {
-            GregTechRegistry.register(new BlockCable(type));
-        }
-        for (FluidPipe type : FluidPipe.getAll()) {
-            GregTechRegistry.register(new BlockFluidPipe(type));
-        }
-        for (Casing type : Casing.getAll()) {
-            GregTechRegistry.register(new BlockCasing(type));
-        }
-        for (Coil type : Coil.getAll()) {
-            GregTechRegistry.register(new BlockCoil(type));
-        }
+        Machines.getAll().forEach(type -> GregTechRegistry.register(type.getBlock()));
+        Cable.getAll().forEach(type -> GregTechRegistry.register(new BlockCable(type)));
+        ItemPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockItemPipe(type)));
+        FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
+        Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
+        Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
         for (Material m : ItemFlag.ORE.getMats()) {
             for (StoneType type : StoneType.getAll()) {
                 GregTechRegistry.register(new BlockOre(type, m));
             }
         }
-        for (Material m : ItemFlag.BLOCK.getMats()) {
-            GregTechRegistry.register(new BlockStorage(m));
-        }
-        for (StoneType type : StoneType.getGenerating()) {
-            GregTechRegistry.register(new BlockStone(type));
-        }
+        ItemFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
+        StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
-        for (Block block : GregTechRegistry.getRegisteredBlocks()) {
-            e.getRegistry().register(block);
-        }
+        GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(b));
 
         //TODO auto register all type tiles???
         GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "tile_machine"));
@@ -122,16 +109,10 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
-        for (Item item : GregTechRegistry.getRegisteredItems()) {
-            e.getRegistry().register(item);
-        }
-        for (Block block : GregTechRegistry.getRegisteredBlocks()) {
-            e.getRegistry().register(new ItemBlockGT(block));
-        }
+        GregTechRegistry.getRegisteredItems().forEach(i -> e.getRegistry().register(i));
+        GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(new ItemBlockGT(b)));
 
         GregTech.INTERNAL_REGISTRAR.onCoverRegistration();
-        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
-            registrar.onCoverRegistration();
-        }
+        GregTechRegistry.getRegistrars().forEach(GregTechRegistrar::onCoverRegistration);
     }
 }

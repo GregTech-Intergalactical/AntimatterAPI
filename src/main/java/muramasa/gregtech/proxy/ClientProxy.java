@@ -11,6 +11,7 @@ import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.pipe.types.Cable;
 import muramasa.gregtech.api.pipe.types.FluidPipe;
+import muramasa.gregtech.api.pipe.types.ItemPipe;
 import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
@@ -91,6 +92,10 @@ public class ClientProxy implements IProxy {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getFluidPipe(type));
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getFluidPipe(type)));
         }
+        for (ItemPipe type : ItemPipe.getAll()) {
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getItemPipe(type));
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getItemPipe(type)));
+        }
 
         IBlockColor oreBlockHandler = (state, world, pos, i) -> i == 1 ? ((BlockOre) state.getBlock()).getMaterial().getRGB() : -1;
         IItemColor oreItemHandler = (stack, i) -> i == 1 ? ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial().getRGB() : -1;
@@ -136,9 +141,7 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
-//        ContentLoader.blockMachines.initItemModel();
-//        ContentLoader.blockMultiMachine.initItemModel();
-//        ContentLoader.blockHatch.initItemModel();
+        //NOOP
     }
 
     @Override
@@ -164,54 +167,6 @@ public class ClientProxy implements IProxy {
         for (Block block : GregTechRegistry.getRegisteredBlocks()) {
             if (block instanceof IHasModelOverride) ((IHasModelOverride) block).initModel();
         }
-
-
-
-//        for (MaterialItem item : MaterialItem.getAll()) {
-//            item.initModel();
-//        }
-//        for (Machine type : Machines.getAll()) {
-//            type.getBlock().initModel();
-//        }
-//        for (Cable type : Cable.getAll()) {
-//            BlockPipe block = GregTechRegistry.getCable(type);
-//            block.initModel();
-//        }
-//        for (FluidPipe type : FluidPipe.getAll()) {
-//            BlockPipe block = GregTechRegistry.getFluidPipe(type);
-//            block.initModel();
-//        }
-//        for (StoneType type : StoneType.getAll()) {
-//            for (Material material : ItemFlag.ORE.getMats()) {
-//                BlockOre block = GregTechRegistry.getOre(type, material);
-//                block.initModel();
-//            }
-//        }
-//        for (Material material : ItemFlag.BLOCK.getMats()) {
-//            BlockStorage block = GregTechRegistry.getStorage(material);
-//            block.initModel();
-//        }
-//        for (Casing type : Casing.getAll()) {
-//            BlockCasing block = GregTechRegistry.getCasing(type);
-//            block.initModel();
-//        }
-//        for (Coil type : Coil.getAll()) {
-//            BlockCoil block = GregTechRegistry.getCoil(type);
-//            block.initModel();
-//        }
-//        for (StoneType type : StoneType.getGenerating()) {
-//            BlockStone block = GregTechRegistry.getStone(type);
-//            block.initModel();
-//        }
-//        for (ItemType type : ItemType.getAll()) {
-//            if (!type.isEnabled()) continue;
-//            type.getItem().initModel();
-//        }
-//        for (ToolType type : ToolType.values()) {
-//            GregTechRegistry.getMaterialTool(type).initModel();
-//        }
-
-//        ContentLoader.fluidCell.initModel();
 
         ModelMachine modelMachine = new ModelMachine();
         GTModelLoader.register("block_machine", modelMachine);

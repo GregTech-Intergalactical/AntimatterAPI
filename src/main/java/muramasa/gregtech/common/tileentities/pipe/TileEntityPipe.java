@@ -2,17 +2,24 @@ package muramasa.gregtech.common.tileentities.pipe;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.PipeSize;
+import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.common.tileentities.base.TileEntityBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 public abstract class TileEntityPipe extends TileEntityBase {
 
-    private PipeSize size;
+    protected Pipe type;
+    protected PipeSize size;
 
-    public final void init(PipeSize size) {
+    public final void init(Pipe type, PipeSize size) {
+        this.type = type;
         this.size = size;
 //        markForRenderUpdate();
+    }
+
+    public Pipe getType() {
+        return type;
     }
 
     public PipeSize getSize() {
