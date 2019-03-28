@@ -17,6 +17,7 @@ import muramasa.gregtech.api.pipe.types.FluidPipe;
 import muramasa.gregtech.api.pipe.types.ItemPipe;
 import muramasa.gregtech.api.registration.GregTechRegistry;
 import muramasa.gregtech.api.tileentities.*;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityItemPipe;
 import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.common.blocks.*;
 import muramasa.gregtech.common.blocks.pipe.BlockCable;
@@ -95,6 +96,7 @@ public class ContentLoader {
         }
 
         GameRegistry.registerTileEntity(TileEntityPipe.class, new ResourceLocation(Ref.MODID, "block_pipe"));
+        GameRegistry.registerTileEntity(TileEntityItemPipe.class, new ResourceLocation(Ref.MODID, "block_item_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, new ResourceLocation(Ref.MODID, "block_fluid_pipe"));
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(Ref.MODID, "block_cable"));
         GameRegistry.registerTileEntity(TileEntityCasing.class, new ResourceLocation(Ref.MODID, "block_casing"));

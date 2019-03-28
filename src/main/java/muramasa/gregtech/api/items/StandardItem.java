@@ -9,6 +9,7 @@ import muramasa.gregtech.api.data.ItemType;
 import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.materials.ItemFlag;
 import muramasa.gregtech.api.materials.Material;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import muramasa.gregtech.api.tileentities.multi.TileEntityHatch;
@@ -125,6 +126,8 @@ public class StandardItem extends Item implements IHasModelOverride {
 //                            System.out.println("Energy: " + tile.getCapability(GTCapabilities.ENERGY, null).getEnergyStored());
 //                        }
                     }
+                } else if (tile instanceof TileEntityPipe) {
+                    System.out.println(((TileEntityPipe) tile).cableConnections);
                 } else {
                     for (Material mat : ItemFlag.PLASMA.getMats()) {
                         System.out.println(mat.getName());

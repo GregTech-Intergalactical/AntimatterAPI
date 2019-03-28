@@ -2,6 +2,7 @@ package muramasa.gregtech.client.render;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureMode;
 import muramasa.gregtech.client.render.bakedmodels.BakedBase;
@@ -20,12 +21,15 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ModelUtils {
 
-    private static HashMap<String, IBakedModel> CACHE = new HashMap<>();
+    private static Int2ObjectArrayMap<IBakedModel> CACHE = new Int2ObjectArrayMap<>();
 
     private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;
 
@@ -57,13 +61,21 @@ public class ModelUtils {
         TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
     }
 
-    public static IBakedModel getCache(String key) {
-        return CACHE.get(key);
+    public static IBakedModel getCache(int id) {
+        return CACHE.get(id);
     }
 
-    public static void putCache(String key, IBakedModel baked) {
-        CACHE.put(key, baked);
+    public static void putCache(int id, IBakedModel baked) {
+        CACHE.put(id, baked);
     }
+
+//    public static IBakedModel getCache(int id, int value) {
+//        return CACHE.get((id * 10000) + value);
+//    }
+//
+//    public static void putCache(int id, int value, IBakedModel baked) {
+//        CACHE.put((id * 10000) + value, baked);
+//    }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
         if (TEXTURE_GETTER == null) TEXTURE_GETTER = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());

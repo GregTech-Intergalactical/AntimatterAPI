@@ -12,7 +12,6 @@ import net.minecraftforge.common.model.IModelState;
 import scala.actors.threadpool.Arrays;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.function.Function;
 
 public class ModelPipe extends ModelBase {
@@ -23,13 +22,16 @@ public class ModelPipe extends ModelBase {
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        HashMap<String, IBakedModel> BAKED = new HashMap<>();
-
+        IBakedModel[][] BAKED = new IBakedModel[PipeSize.VALUES.length][6];
         for (PipeSize size : PipeSize.values()) {
-            BAKED.put("base_" + size.getName(), new BakedBase(tex(load("pipe/" + size.getName() + "/base"), "0", PIPE).bake(state, format, getter)));
-            BAKED.put("line_" + size.getName(), new BakedBase(tex(load("pipe/" + size.getName() + "/line"), "0", PIPE).bake(state, format, getter)));
-        }
+            BAKED[size.ordinal()][0] = new BakedBase(tex(load("pipe/" + size.getName() + "/base"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][1] = new BakedBase(tex(load("pipe/" + size.getName() + "/single"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][2] = new BakedBase(tex(load("pipe/" + size.getName() + "/line"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][3] = new BakedBase(tex(load("pipe/" + size.getName() + "/corner"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][4] = new BakedBase(tex(load("pipe/" + size.getName() + "/side"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][5] = new BakedBase(tex(load("pipe/" + size.getName() + "/cross"), "0", PIPE).bake(state, format, getter));
 
+        }
         return new BakedPipe(BAKED);
     }
 

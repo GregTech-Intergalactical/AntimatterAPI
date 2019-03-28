@@ -1,8 +1,4 @@
 {
-	"textures": {
-		"0": "Desktop/wire",
-		"particle": "Desktop/wire"
-	},
 	"elements": [
 		{
 			"from": [2, 2, 2],
