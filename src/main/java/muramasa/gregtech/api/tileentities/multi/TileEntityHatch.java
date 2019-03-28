@@ -4,6 +4,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.capability.GTCapabilities;
 import muramasa.gregtech.api.capability.impl.*;
 import muramasa.gregtech.api.data.Machines;
+import muramasa.gregtech.api.interfaces.IComponent;
 import muramasa.gregtech.api.machines.Tier;
 import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.api.tileentities.TileEntityMachine;
