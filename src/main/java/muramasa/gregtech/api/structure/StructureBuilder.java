@@ -3,6 +3,7 @@ package muramasa.gregtech.api.structure;
 import muramasa.gregtech.api.data.Structures;
 import muramasa.gregtech.api.util.int3;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class StructureBuilder {
     }
 
     public Structure build() {
-        ArrayList<Pair<int3, StructureElement>> elements = new ArrayList<>();
+        ArrayList<Tuple<int3, StructureElement>> elements = new ArrayList<>();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
         for (int y = 0; y < size.y; y++) {
@@ -67,7 +68,7 @@ public class StructureBuilder {
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e != null) {
                         if (e.excludeFromList) continue;
-                        elements.add(new Pair<>(new int3(x, y, z), e));
+                        elements.add(new Tuple<>(new int3(x, y, z), e));
                     } else {
                         throw new NullPointerException();
                     }

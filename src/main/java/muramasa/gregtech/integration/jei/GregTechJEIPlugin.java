@@ -1,6 +1,9 @@
 package muramasa.gregtech.integration.jei;
 
-import mezz.jei.api.*;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import muramasa.gregtech.api.data.Guis;
 import muramasa.gregtech.api.data.Machines;
@@ -13,6 +16,7 @@ import muramasa.gregtech.api.recipe.Recipe;
 import muramasa.gregtech.api.recipe.RecipeMap;
 import muramasa.gregtech.integration.jei.category.RecipeMapCategory;
 import muramasa.gregtech.integration.jei.wrapper.RecipeWrapper;
+import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,10 +28,10 @@ import static muramasa.gregtech.api.machines.MachineFlag.*;
 public class GregTechJEIPlugin implements IModPlugin {
 
     private static IJeiRuntime runtime;
-    private static List<Pair<RecipeMap, GuiData>> REGISTRY = new ArrayList<>();
+    private static List<Tuple<RecipeMap, GuiData>> REGISTRY = new ArrayList<>();
 
     public static void registerCategory(RecipeMap map, GuiData gui) {
-        REGISTRY.add(new Pair<>(map, gui));
+        REGISTRY.add(new Tuple<>(map, gui));
     }
 
     @Override
@@ -49,8 +53,8 @@ public class GregTechJEIPlugin implements IModPlugin {
                 }
             }
         }
-        for (Pair<RecipeMap, GuiData> pair : REGISTRY) {
-            registry.addRecipeCategories(new RecipeMapCategory(pair.getA(), pair.getB()));
+        for (Tuple<RecipeMap, GuiData> pair : REGISTRY) {
+            registry.addRecipeCategories(new RecipeMapCategory(pair.getFirst(), pair.getSecond()));
         }
     }
 
@@ -63,9 +67,9 @@ public class GregTechJEIPlugin implements IModPlugin {
                 registry.addRecipeCatalyst(new MachineStack(type, tier).asItemStack(), type.getRecipeMap().getCategoryId());
             }
         }
-        for (Pair<RecipeMap, GuiData> pair : REGISTRY) {
-            registry.addRecipes(pair.getA().getRecipes(true), pair.getA().getCategoryId());
-            registry.handleRecipes(Recipe.class, RecipeWrapper::new, pair.getA().getCategoryId());
+        for (Tuple<RecipeMap, GuiData> pair : REGISTRY) {
+            registry.addRecipes(pair.getFirst().getRecipes(true), pair.getFirst().getCategoryId());
+            registry.handleRecipes(Recipe.class, RecipeWrapper::new, pair.getFirst().getCategoryId());
         }
     }
 

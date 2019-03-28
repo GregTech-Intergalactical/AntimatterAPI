@@ -3,8 +3,9 @@ package muramasa.gregtech.api.tileentities.multi;
 import muramasa.gregtech.api.capability.IComponentHandler;
 import muramasa.gregtech.api.capability.impl.ComponentHandler;
 import muramasa.gregtech.api.data.Coil;
-import muramasa.gregtech.common.blocks.BlockCoil;
+import muramasa.gregtech.api.interfaces.IComponent;
 import muramasa.gregtech.api.tileentities.TileEntityBase;
+import muramasa.gregtech.common.blocks.BlockCoil;
 
 import java.util.List;
 
