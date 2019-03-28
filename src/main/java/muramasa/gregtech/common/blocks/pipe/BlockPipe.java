@@ -1,15 +1,15 @@
 package muramasa.gregtech.common.blocks.pipe;
 
 import muramasa.gregtech.Ref;
-import muramasa.gregtech.api.registration.IHasItemBlock;
-import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.api.properties.UnlistedInteger;
+import muramasa.gregtech.api.registration.IHasItemBlock;
+import muramasa.gregtech.api.registration.IHasModelOverride;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
-import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -68,6 +68,7 @@ public abstract class BlockPipe extends Block implements IHasItemBlock, IHasMode
         if (tile instanceof TileEntityPipe) {
             PipeSize size = ((TileEntityPipe) tile).getSize();
             exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
+            exState = exState.withProperty(CONNECTIONS, ((TileEntityPipe) tile).cableConnections);
         }
         return exState;
     }

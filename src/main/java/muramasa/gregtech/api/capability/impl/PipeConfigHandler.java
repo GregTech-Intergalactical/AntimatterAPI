@@ -1,17 +1,17 @@
 package muramasa.gregtech.api.capability.impl;
 
 import muramasa.gregtech.api.capability.IConfigHandler;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gregtech.api.tools.ToolType;
-import muramasa.gregtech.api.tileentities.pipe.TileEntityCable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 
-public class CableConfigHandler implements IConfigHandler {
+public class PipeConfigHandler implements IConfigHandler {
 
-    private TileEntityCable tile;
+    private TileEntityPipe tile;
 
-    public CableConfigHandler(TileEntityCable tile) {
+    public PipeConfigHandler(TileEntityPipe tile) {
         this.tile = tile;
     }
 
@@ -27,7 +27,7 @@ public class CableConfigHandler implements IConfigHandler {
     }
 
     @Override
-    public TileEntityCable getTile() {
+    public TileEntityPipe getTile() {
         if (tile == null) throw new NullPointerException("ConfigHandler cannot have a null tile");
         return tile;
     }

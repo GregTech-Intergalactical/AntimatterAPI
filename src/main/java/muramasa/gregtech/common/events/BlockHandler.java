@@ -1,6 +1,8 @@
 package muramasa.gregtech.common.events;
 
 import muramasa.gregtech.api.capability.GTCapabilities;
+import muramasa.gregtech.api.capability.IConfigHandler;
+import muramasa.gregtech.api.capability.ICoverHandler;
 import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.interfaces.IComponent;
@@ -21,11 +23,15 @@ public class BlockHandler {
         if (tile == null) return;
         if (tile.hasCapability(GTCapabilities.COVERABLE, e.getFace())) {
             ToolType type = ToolType.get(e.getItemStack());
-            boolean swing = tile.getCapability(GTCapabilities.COVERABLE, e.getFace()).onInteract(e.getEntityPlayer(), e.getHand(), e.getFace(), type);
+            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, e.getFace());
+            if (coverHandler == null) return;
+            boolean swing = coverHandler.onInteract(e.getEntityPlayer(), e.getHand(), e.getFace(), type);
             if (swing) e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
         } else if (tile.hasCapability(GTCapabilities.CONFIGURABLE, e.getFace())) {
             ToolType type = ToolType.get(e.getItemStack());
-            boolean swing = tile.getCapability(GTCapabilities.CONFIGURABLE, e.getFace()).onInteract(e.getEntityPlayer(), e.getHand(), e.getFace(), type);
+            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, e.getFace());
+            if (configHandler == null) return;
+            boolean swing = configHandler.onInteract(e.getEntityPlayer(), e.getHand(), e.getFace(), type);
             if (swing) e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
         }
     }

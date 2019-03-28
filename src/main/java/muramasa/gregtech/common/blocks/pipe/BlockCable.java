@@ -48,6 +48,7 @@ public class BlockCable extends BlockPipe {
         if (tile instanceof TileEntityCable) {
             PipeSize size = ((TileEntityCable) tile).getSize();
             exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
+            exState = exState.withProperty(CONNECTIONS, ((TileEntityCable) tile).cableConnections);
             exState = exState.withProperty(INSULATED, ((TileEntityCable) tile).isInsulated() ? 1 : 0);
         }
         return exState;

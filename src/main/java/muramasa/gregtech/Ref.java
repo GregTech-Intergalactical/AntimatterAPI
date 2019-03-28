@@ -77,6 +77,11 @@ public class Ref {
     public static final String KEY_TOOL_DATA_MAX_ENERGY = "me";
     public static final String KEY_TOOL_DATA_DURABILITY = "d";
 
+    /** Model Cache IDs **/
+    public static final int CACHE_ID_MACHINE = 1;
+    public static final int CACHE_ID_PIPE = 2;
+    public static final int CACHE_ID_FLUID_CELL = 3;
+
     /** Mod IDs **/
     public static final String MOD_JEI = "jei";
     public static final String MOD_FR = "forestry";
