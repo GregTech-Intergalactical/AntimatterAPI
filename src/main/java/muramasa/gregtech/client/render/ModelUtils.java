@@ -206,22 +206,16 @@ public class ModelUtils {
     }
 
     public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, Texture texture) {
+        return tex(quads, layer, texture.getSprite());
+    }
+
+    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, TextureAtlasSprite sprite) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             if (quads.get(i).getTintIndex() != layer) continue;
-            quads.set(i, new BakedQuadRetextured(quads.get(i), texture.getSprite()));
+            quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
-    }
-
-    public static List<BakedQuad> texCell(List<BakedQuad> quads, int rgb, TextureAtlasSprite sprite) {
-        List<BakedQuad> quadsTemp = new LinkedList<>();
-        int size = quads.size();
-        for (int i = 0; i < size; i++) {
-            BakedQuad quad = new BakedQuadRetextured(quads.get(i), sprite);
-            quadsTemp.add(new BakedQuadTinted(quad, rgb));
-        }
-        return quadsTemp;
     }
 
     public static List<BakedQuad> tint(List<BakedQuad> quads, int rgb) {
@@ -230,5 +224,19 @@ public class ModelUtils {
             quads.set(i, new BakedQuadTinted(quads.get(i), rgb));
         }
         return quads;
+    }
+
+    public static List<BakedQuad> texAndTint(List<BakedQuad> quads, int rgb, Texture texture) {
+        return texAndTint(quads, rgb, texture.getSprite());
+    }
+
+    public static List<BakedQuad> texAndTint(List<BakedQuad> quads, int rgb, TextureAtlasSprite sprite) {
+        List<BakedQuad> quadsTemp = new LinkedList<>();
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
+            BakedQuad quad = new BakedQuadRetextured(quads.get(i), sprite);
+            quadsTemp.add(new BakedQuadTinted(quad, rgb));
+        }
+        return quadsTemp;
     }
 }
