@@ -29,7 +29,8 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
-    private static Int2ObjectArrayMap<IBakedModel> CACHE = new Int2ObjectArrayMap<>();
+    private static Int2ObjectArrayMap<IBakedModel> CACHE_BAKED = new Int2ObjectArrayMap<>();
+    private static Int2ObjectArrayMap<List<BakedQuad>> CACHE_QUAD = new Int2ObjectArrayMap<>();
 
     private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;
 
@@ -61,21 +62,21 @@ public class ModelUtils {
         TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
     }
 
-    public static IBakedModel getCache(int id) {
-        return CACHE.get(id);
+    public static IBakedModel getBaked(int id, int value) {
+        return CACHE_BAKED.get((id * 1000) + value);
     }
 
-    public static void putCache(int id, IBakedModel baked) {
-        CACHE.put(id, baked);
+    public static void putBaked(int id, int value, IBakedModel baked) {
+        CACHE_BAKED.put((id * 1000) + value, baked);
     }
 
-//    public static IBakedModel getCache(int id, int value) {
-//        return CACHE.get((id * 10000) + value);
-//    }
-//
-//    public static void putCache(int id, int value, IBakedModel baked) {
-//        CACHE.put((id * 10000) + value, baked);
-//    }
+    public static List<BakedQuad> getQuads(int id, int value) {
+        return CACHE_QUAD.get((id * 1000) + value);
+    }
+
+    public static void putQuads(int id, int value, List<BakedQuad> quads) {
+        CACHE_QUAD.put((id * 1000) + value, quads);
+    }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
         if (TEXTURE_GETTER == null) TEXTURE_GETTER = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
@@ -120,16 +121,28 @@ public class ModelUtils {
         return new BakedBase(new SimpleBakedModel(quads, faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides()));
     }
 
-    //Credit: From AE2
     public static List<BakedQuad> trans(List<BakedQuad> quads, int rotation) {
+        return trans(quads, FACING_TO_MATRIX[rotation], EnumFacing.VALUES[rotation]);
+    }
+
+    public static List<BakedQuad> trans(List<BakedQuad> quads, int... rotations) {
+        Matrix4f mat = new Matrix4f(FACING_TO_MATRIX[rotations[0]]);
+        for (int i = 1; i < rotations.length; i++) {
+            mat.mul(new Matrix4f(FACING_TO_MATRIX[rotations[i]]));
+        }
+        return trans(quads, mat, EnumFacing.VALUES[rotations[rotations.length - 1]]);
+    }
+
+    //Credit: From AE2
+    public static List<BakedQuad> trans(List<BakedQuad> quads, Matrix4f matrix, EnumFacing facing) {
         List<BakedQuad> transformedQuads = new LinkedList<>();
-        MatrixVertexTransformer transformer = new MatrixVertexTransformer(FACING_TO_MATRIX[rotation]);
+        MatrixVertexTransformer transformer = new MatrixVertexTransformer(matrix);
         for (BakedQuad bakedQuad : quads) {
             UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(bakedQuad.getFormat());
             transformer.setParent(builder);
             transformer.setVertexFormat(builder.getVertexFormat());
             bakedQuad.pipe(transformer);
-            builder.setQuadOrientation(EnumFacing.VALUES[rotation]);
+            builder.setQuadOrientation(facing);
             BakedQuad q = builder.build();
             transformedQuads.add(q);
         }

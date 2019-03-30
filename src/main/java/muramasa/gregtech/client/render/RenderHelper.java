@@ -1,5 +1,6 @@
 package muramasa.gregtech.client.render;
 
+import muramasa.gregtech.api.texture.Texture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,6 +37,11 @@ public class RenderHelper {
         glBuf.put(mat.m00).put(mat.m01).put(mat.m02).put(mat.m03).put(mat.m10).put(mat.m11).put(mat.m12).put(mat.m13).put(mat.m20).put(mat.m21).put(mat.m22).put(mat.m23).put(mat.m30).put(mat.m31).put(mat.m32).put(mat.m33);
         glBuf.flip();
         GL11.glMultMatrix(glBuf);
+    }
+
+    public static TextureAtlasSprite getSprite(ResourceLocation loc) {
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
+        return sprite != null ? sprite : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(Texture.ERROR.getLoc().toString());
     }
 
     public static TextureAtlasSprite getSprite(Fluid fluid) {

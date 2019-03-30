@@ -27,6 +27,8 @@ public class ItemOverrideFluidCell extends ItemOverrideList {
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
         FluidStack fluidStack = ItemFluidCell.getContents(stack);
         if (fluidStack == null) return originalModel;
+
+        //TODO Cache by fluid ID?
         IBakedModel baked = CACHE.get(fluidStack.getFluid().getName());
         if (baked == null) {
             BakedFluidCell bakedCell = (BakedFluidCell) originalModel;
