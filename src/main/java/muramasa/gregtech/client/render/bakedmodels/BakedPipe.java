@@ -131,13 +131,13 @@ public class BakedPipe extends BakedBase {
         int size = exState.getValue(BlockPipe.SIZE);
         int connections = exState.getValue(BlockPipe.CONNECTIONS);
 
-        List<BakedQuad> quads = ModelUtils.getQuads(Ref.CACHE_ID_PIPE, (size * 100) + connections);
+        List<BakedQuad> quads = ModelUtils.getQuads(Ref.CACHE_ID_PIPE, ((size + 1) * 100) + connections);
         if (quads == null) {
             quads = new LinkedList<>();
             int[] config = CONFIG_MAP.get(connections);
             quads.addAll(BAKED[size][config[0]].getQuads(state, side, rand));
             if (config.length > 1) quads = ModelUtils.trans(quads, Arrays.copyOfRange(config, 1, config.length));
-            ModelUtils.putQuads(Ref.CACHE_ID_PIPE, (size * 100) + connections, quads);
+            ModelUtils.putQuads(Ref.CACHE_ID_PIPE, ((size + 1) * 100) + connections, quads);
         }
 
         return quads;
