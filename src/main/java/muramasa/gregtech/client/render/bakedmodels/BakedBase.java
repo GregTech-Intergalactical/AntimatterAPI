@@ -38,7 +38,7 @@ public class BakedBase implements IBakedModel {
         try {
             return getBakedQuads(state, null, rand);
         } catch (Exception e) {
-            System.err.println("BakedModelBase.getBakedQuads() failed due to: " + e);
+            System.err.println("BakedBase.getBakedQuads() failed due to: " + e);
             e.printStackTrace();
             return Collections.emptyList();
         }

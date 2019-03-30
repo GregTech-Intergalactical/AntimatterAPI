@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class Texture {
 
-    private static Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
+    public static final Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
 
     private ResourceLocation loc;
 

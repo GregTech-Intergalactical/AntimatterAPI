@@ -22,14 +22,17 @@ public class ModelPipe extends ModelBase {
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        IBakedModel[][] BAKED = new IBakedModel[PipeSize.VALUES.length][6];
+        IBakedModel[][] BAKED = new IBakedModel[PipeSize.VALUES.length][9];
         for (PipeSize size : PipeSize.values()) {
             BAKED[size.ordinal()][0] = new BakedBase(tex(load("pipe/" + size.getName() + "/base"), "0", PIPE).bake(state, format, getter));
             BAKED[size.ordinal()][1] = new BakedBase(tex(load("pipe/" + size.getName() + "/single"), "0", PIPE).bake(state, format, getter));
             BAKED[size.ordinal()][2] = new BakedBase(tex(load("pipe/" + size.getName() + "/line"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][3] = new BakedBase(tex(load("pipe/" + size.getName() + "/corner"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][3] = new BakedBase(tex(load("pipe/" + size.getName() + "/elbow"), "0", PIPE).bake(state, format, getter));
             BAKED[size.ordinal()][4] = new BakedBase(tex(load("pipe/" + size.getName() + "/side"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][5] = new BakedBase(tex(load("pipe/" + size.getName() + "/cross"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][5] = new BakedBase(tex(load("pipe/" + size.getName() + "/corner"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][6] = new BakedBase(tex(load("pipe/" + size.getName() + "/cross"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][7] = new BakedBase(tex(load("pipe/" + size.getName() + "/five"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][8] = new BakedBase(tex(load("pipe/" + size.getName() + "/all"), "0", PIPE).bake(state, format, getter));
 
         }
         return new BakedPipe(BAKED);
