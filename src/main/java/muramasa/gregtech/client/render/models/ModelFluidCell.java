@@ -44,7 +44,7 @@ public class ModelFluidCell implements IModel {
             TextureAtlasSprite sprite = getter.apply(fluid.getStill());
             if (sprite != null) {
                 List<BakedQuad> quads = BAKED_OVERLAY.getQuads(null, null, 0);
-                quads = ModelUtils.texCell(quads, fluid.getColor(), sprite);
+                quads = ModelUtils.texAndTint(quads, fluid.getColor(), sprite);
                 builder.addAll(quads);
             }
         }

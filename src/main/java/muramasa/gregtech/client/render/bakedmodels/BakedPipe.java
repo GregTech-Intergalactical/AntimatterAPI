@@ -50,7 +50,7 @@ public class BakedPipe extends BakedBase {
         CONFIG_MAP.put(12, new int[]{2});
         CONFIG_MAP.put(48, new int[]{2, EnumFacing.WEST.getIndex()});
 
-        //Corner Shapes (2 Connections)
+        //Elbow Shapes (2 Connections)
         CONFIG_MAP.put(5, new int[]{3, EnumFacing.WEST.getIndex(), EnumFacing.UP.getIndex(), EnumFacing.EAST.getIndex()});
         CONFIG_MAP.put(6, new int[]{3, EnumFacing.WEST.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.EAST.getIndex()});
         CONFIG_MAP.put(9, new int[]{3, EnumFacing.EAST.getIndex(), EnumFacing.UP.getIndex(), EnumFacing.EAST.getIndex()});
@@ -65,18 +65,18 @@ public class BakedPipe extends BakedBase {
         CONFIG_MAP.put(40, new int[]{3, EnumFacing.EAST.getIndex()});
 
         //Side Shapes (3 Connections)
-        CONFIG_MAP.put(7, new int[]{4});
-        CONFIG_MAP.put(11, new int[]{4});
-        CONFIG_MAP.put(13, new int[]{4, EnumFacing.WEST.getIndex(), EnumFacing.DOWN.getIndex()});
-        CONFIG_MAP.put(14, new int[]{4, EnumFacing.WEST.getIndex(), EnumFacing.UP.getIndex()});
-        CONFIG_MAP.put(19, new int[]{4, EnumFacing.UP.getIndex(), EnumFacing.EAST.getIndex(), EnumFacing.SOUTH.getIndex()});
-        CONFIG_MAP.put(28, new int[]{4, EnumFacing.WEST.getIndex()});
-        CONFIG_MAP.put(35, new int[]{4, EnumFacing.UP.getIndex(), EnumFacing.WEST.getIndex(), EnumFacing.SOUTH.getIndex()});
-        CONFIG_MAP.put(44, new int[]{4, EnumFacing.EAST.getIndex()});
-        CONFIG_MAP.put(49, new int[]{4, EnumFacing.DOWN.getIndex()});
-        CONFIG_MAP.put(50, new int[]{4, EnumFacing.UP.getIndex()});
-        CONFIG_MAP.put(52, new int[]{4});
-        CONFIG_MAP.put(56, new int[]{4, EnumFacing.SOUTH.getIndex()});
+        CONFIG_MAP.put(7, new int[]{4, EnumFacing.SOUTH.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(11, new int[]{4, EnumFacing.NORTH.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(13, new int[]{4, EnumFacing.DOWN.getIndex(), EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(14, new int[]{4});
+        CONFIG_MAP.put(19, new int[]{4, EnumFacing.EAST.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(28, new int[]{4, EnumFacing.WEST.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.EAST.getIndex()});
+        CONFIG_MAP.put(35, new int[]{4, EnumFacing.WEST.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(44, new int[]{4, EnumFacing.EAST.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.WEST.getIndex()});
+        CONFIG_MAP.put(49, new int[]{4, EnumFacing.EAST.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(50, new int[]{4, EnumFacing.EAST.getIndex()});
+        CONFIG_MAP.put(52, new int[]{4, EnumFacing.NORTH.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.WEST.getIndex()});
+        CONFIG_MAP.put(56, new int[]{4, EnumFacing.SOUTH.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.WEST.getIndex()});
 
         //Corner Shapes (3 Connections)
         CONFIG_MAP.put(21, new int[]{5, EnumFacing.WEST.getIndex(), EnumFacing.DOWN.getIndex()});
@@ -89,34 +89,34 @@ public class BakedPipe extends BakedBase {
         CONFIG_MAP.put(38, new int[]{5});
 
         //Arrow Shapes (4 Connections)
-        CONFIG_MAP.put(23, new int[]{5});
-        CONFIG_MAP.put(27, new int[]{5});
-        CONFIG_MAP.put(29, new int[]{5});
-        CONFIG_MAP.put(30, new int[]{5});
-        CONFIG_MAP.put(39, new int[]{5});
-        CONFIG_MAP.put(43, new int[]{5});
-        CONFIG_MAP.put(45, new int[]{5});
-        CONFIG_MAP.put(46, new int[]{5});
-        CONFIG_MAP.put(53, new int[]{5});
-        CONFIG_MAP.put(54, new int[]{5});
-        CONFIG_MAP.put(57, new int[]{5});
-        CONFIG_MAP.put(58, new int[]{5});
+        CONFIG_MAP.put(23, new int[]{6, EnumFacing.WEST.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.EAST.getIndex()});
+        CONFIG_MAP.put(27, new int[]{6, EnumFacing.SOUTH.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.EAST.getIndex()});
+        CONFIG_MAP.put(29, new int[]{6, EnumFacing.WEST.getIndex(), EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(30, new int[]{6, EnumFacing.WEST.getIndex()});
+        CONFIG_MAP.put(39, new int[]{6, EnumFacing.EAST.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.WEST.getIndex()});
+        CONFIG_MAP.put(43, new int[]{6, EnumFacing.SOUTH.getIndex(), EnumFacing.DOWN.getIndex(), EnumFacing.WEST.getIndex()});
+        CONFIG_MAP.put(45, new int[]{6, EnumFacing.EAST.getIndex(), EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(46, new int[]{6, EnumFacing.EAST.getIndex()});
+        CONFIG_MAP.put(53, new int[]{6, EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(54, new int[]{6});
+        CONFIG_MAP.put(57, new int[]{6, EnumFacing.SOUTH.getIndex(), EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(58, new int[]{6, EnumFacing.SOUTH.getIndex()});
 
         //Cross Shapes (4 Connections)
-        CONFIG_MAP.put(15, new int[]{6});
-        CONFIG_MAP.put(51, new int[]{6});
-        CONFIG_MAP.put(60, new int[]{6});
+        CONFIG_MAP.put(15, new int[]{7, EnumFacing.WEST.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(51, new int[]{7, EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(60, new int[]{7});
 
         //Five Shapes (5 Connections)
-        CONFIG_MAP.put(31, new int[]{7});
-        CONFIG_MAP.put(47, new int[]{7});
-        CONFIG_MAP.put(55, new int[]{7});
-        CONFIG_MAP.put(59, new int[]{7});
-        CONFIG_MAP.put(61, new int[]{7, EnumFacing.DOWN.getIndex(), EnumFacing.DOWN.getIndex()});
-        CONFIG_MAP.put(62, new int[]{7});
+        CONFIG_MAP.put(31, new int[]{8, EnumFacing.EAST.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(47, new int[]{8, EnumFacing.WEST.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(55, new int[]{8, EnumFacing.SOUTH.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(59, new int[]{8, EnumFacing.NORTH.getIndex(), EnumFacing.UP.getIndex()});
+        CONFIG_MAP.put(61, new int[]{8, EnumFacing.DOWN.getIndex(), EnumFacing.DOWN.getIndex()});
+        CONFIG_MAP.put(62, new int[]{8});
 
         //All Shapes (6 Connections)
-        CONFIG_MAP.put(63, new int[]{8});
+        CONFIG_MAP.put(63, new int[]{9});
     }
 
     public BakedPipe(IBakedModel[][] baked) {
@@ -131,24 +131,13 @@ public class BakedPipe extends BakedBase {
         int size = exState.getValue(BlockPipe.SIZE);
         int connections = exState.getValue(BlockPipe.CONNECTIONS);
 
-
-//        List<BakedQuad> quads = ModelUtils.getQuads(Ref.CACHE_ID_PIPE, connections);
-        List<BakedQuad> quads = null;
+        List<BakedQuad> quads = ModelUtils.getQuads(Ref.CACHE_ID_PIPE, (size * 100) + connections);
         if (quads == null) {
             quads = new LinkedList<>();
             int[] config = CONFIG_MAP.get(connections);
             quads.addAll(BAKED[size][config[0]].getQuads(state, side, rand));
-
-
-            if (connections == 7) {
-                quads = ModelUtils.trans(quads, EnumFacing.UP.getIndex(), EnumFacing.NORTH.getIndex(), EnumFacing.WEST.getIndex(), EnumFacing.EAST.getIndex());
-            } else {
-                if (config.length > 1) quads = ModelUtils.trans(quads, Arrays.copyOfRange(config, 1, config.length));
-            }
-
-            //if (config.length > 1) quads = ModelUtils.trans(quads, Arrays.copyOfRange(config, 1, config.length));
-
-            ModelUtils.putQuads(Ref.CACHE_ID_PIPE, connections, quads);
+            if (config.length > 1) quads = ModelUtils.trans(quads, Arrays.copyOfRange(config, 1, config.length));
+            ModelUtils.putQuads(Ref.CACHE_ID_PIPE, (size * 100) + connections, quads);
         }
 
         return quads;
