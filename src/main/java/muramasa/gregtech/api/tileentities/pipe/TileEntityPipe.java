@@ -6,16 +6,18 @@ import muramasa.gregtech.api.capability.impl.CoverHandler;
 import muramasa.gregtech.api.capability.impl.PipeConfigHandler;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.Pipe;
-import muramasa.gregtech.api.tileentities.TileEntityBase;
+import muramasa.gregtech.api.tileentities.TileEntityTickable;
 import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.common.blocks.pipe.BlockPipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
-public abstract class TileEntityPipe extends TileEntityBase {
+public abstract class TileEntityPipe extends TileEntityTickable {
 
     protected Pipe type;
     protected PipeSize size;
@@ -31,6 +33,11 @@ public abstract class TileEntityPipe extends TileEntityBase {
     public final void init(Pipe type, PipeSize size) {
         this.type = type;
         this.size = size;
+    }
+
+    @Override
+    public void onFirstTick() {
+        type = ((BlockPipe) getBlockType()).getType();
     }
 
     public Pipe getType() {
@@ -102,14 +109,22 @@ public abstract class TileEntityPipe extends TileEntityBase {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(Ref.KEY_PIPE_SIZE)) size = PipeSize.VALUES[compound.getInteger(Ref.KEY_PIPE_SIZE)];
-        if (compound.hasKey(Ref.KEY_CABLE_CONNECTIONS)) cableConnections = compound.getInteger(Ref.KEY_CABLE_CONNECTIONS);
+        if (compound.hasKey(Ref.KEY_PIPE_CONNECTIONS)) cableConnections = compound.getInteger(Ref.KEY_PIPE_CONNECTIONS);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         if (size != null) compound.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
-        /*if (cableConnections > 0)*/ compound.setInteger(Ref.KEY_CABLE_CONNECTIONS, cableConnections);
+        compound.setInteger(Ref.KEY_PIPE_CONNECTIONS, cableConnections);
         return compound;
+    }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> info = super.getInfo();
+        info.add("Pipe Type: " + getType().getName());
+        info.add("Pipe Size: " + getSize().getName());
+        return info;
     }
 }

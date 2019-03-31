@@ -4,9 +4,12 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.ItemPipeStack;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.ItemPipe;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.api.properties.UnlistedInteger;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.tileentities.pipe.TileEntityItemPipe;
+import muramasa.gregtech.client.render.models.ModelPipe;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,7 +31,7 @@ public class BlockItemPipe extends BlockPipe {
     private ItemPipe type;
 
     public BlockItemPipe(ItemPipe type) {
-        super("item_pipe_" + type.getName());
+        super("item_pipe_" + type.getName(), new TextureData().base(ModelPipe.PIPE).overlay(ModelPipe.PIPE_FACE));
         this.type = type;
     }
 
@@ -39,7 +42,7 @@ public class BlockItemPipe extends BlockPipe {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, RESTRICTIVE).build();
+        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, RESTRICTIVE, GTProperties.TEXTURE).build();
     }
 
     @Override
@@ -51,6 +54,7 @@ public class BlockItemPipe extends BlockPipe {
             exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
             exState = exState.withProperty(CONNECTIONS, ((TileEntityItemPipe) tile).cableConnections);
             exState = exState.withProperty(RESTRICTIVE, ((TileEntityItemPipe) tile).isRestrictive() ? 1 : 0);
+            exState = exState.withProperty(GTProperties.TEXTURE, getBlockData());
         }
         return exState;
     }

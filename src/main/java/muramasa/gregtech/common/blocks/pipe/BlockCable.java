@@ -4,9 +4,12 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.CableStack;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.Cable;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.api.properties.UnlistedInteger;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.api.tileentities.pipe.TileEntityCable;
+import muramasa.gregtech.client.render.models.ModelPipe;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,7 +31,7 @@ public class BlockCable extends BlockPipe {
     private Cable type;
 
     public BlockCable(Cable type) {
-        super("cable_" + type.getName());
+        super("cable_" + type.getName(), new TextureData().base(ModelPipe.WIRE).overlay(ModelPipe.WIRE_FACE));
         this.type = type;
     }
 
@@ -38,7 +41,7 @@ public class BlockCable extends BlockPipe {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, INSULATED).build();
+        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, INSULATED, GTProperties.TEXTURE).build();
     }
 
     @Override
@@ -49,7 +52,9 @@ public class BlockCable extends BlockPipe {
             PipeSize size = ((TileEntityCable) tile).getSize();
             exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
             exState = exState.withProperty(CONNECTIONS, ((TileEntityCable) tile).cableConnections);
-            exState = exState.withProperty(INSULATED, ((TileEntityCable) tile).isInsulated() ? 1 : 0);
+            int insulated = ((TileEntityCable) tile).isInsulated() ? 1 : 0;
+            exState = exState.withProperty(INSULATED, insulated);
+            exState = exState.withProperty(GTProperties.TEXTURE, insulated == 1 ? new TextureData().base(ModelPipe.CABLE).overlay(ModelPipe.CABLE_FACE) : getBlockData());
         }
         return exState;
     }

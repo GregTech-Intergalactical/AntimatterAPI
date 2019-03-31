@@ -1,8 +1,10 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gregtech.Ref;
+import muramasa.gregtech.api.properties.GTProperties;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.client.render.ModelUtils;
-import muramasa.gregtech.client.render.RenderHelper;
 import muramasa.gregtech.client.render.models.ModelPipe;
 import muramasa.gregtech.client.render.overrides.ItemOverridePipe;
 import muramasa.gregtech.common.blocks.pipe.BlockPipe;
@@ -19,7 +21,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,10 +29,8 @@ public class BakedPipe extends BakedBase {
     protected static ItemOverrideList OVERRIDE;
     protected static TextureAtlasSprite PARTICLE;
 
-    private static HashMap<Integer, int[]> CONFIG_MAP = new HashMap<>();
+    private static Int2ObjectArrayMap<int[]> CONFIG_MAP = new Int2ObjectArrayMap<>();
     public static IBakedModel[][] BAKED;
-
-//    public static HashMap<Integer, List<BakedQuad>> CACHE = new HashMap<>();
 
     static {
         //Default Shape (0 Connections)
@@ -121,7 +120,7 @@ public class BakedPipe extends BakedBase {
 
     public BakedPipe(IBakedModel[][] baked) {
         BAKED = baked;
-        PARTICLE = RenderHelper.getSprite(ModelPipe.PIPE);
+        PARTICLE = ModelPipe.PIPE.getSprite();
         OVERRIDE = new ItemOverridePipe();
     }
 
@@ -130,13 +129,17 @@ public class BakedPipe extends BakedBase {
         IExtendedBlockState exState = (IExtendedBlockState) state;
         int size = exState.getValue(BlockPipe.SIZE);
         int connections = exState.getValue(BlockPipe.CONNECTIONS);
+        TextureData data = exState.getValue(GTProperties.TEXTURE);
 
-        List<BakedQuad> quads = ModelUtils.getQuads(Ref.CACHE_ID_PIPE, ((size + 1) * 100) + connections);
+//        List<BakedQuad> quads = ModelUtils.getQuads(Ref.CACHE_ID_PIPE, ((size + 1) * 100) + connections);
+        List<BakedQuad> quads = null;
         if (quads == null) {
             quads = new LinkedList<>();
             int[] config = CONFIG_MAP.get(connections);
             quads.addAll(BAKED[size][config[0]].getQuads(state, side, rand));
             if (config.length > 1) quads = ModelUtils.trans(quads, Arrays.copyOfRange(config, 1, config.length));
+            ModelUtils.tex(quads, 0, data.getBase()[0]);
+            ModelUtils.tex(quads, 1, data.getOverlay()[size]);
             ModelUtils.putQuads(Ref.CACHE_ID_PIPE, ((size + 1) * 100) + connections, quads);
         }
 

@@ -4,14 +4,16 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.Pipe;
+import muramasa.gregtech.api.properties.GTProperties;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.registration.IHasItemBlock;
 import muramasa.gregtech.api.registration.IHasModelOverride;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.StateMapperRedirect;
+import muramasa.gregtech.common.blocks.BlockBaked;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -36,15 +38,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BlockPipe extends Block implements IHasItemBlock, IHasModelOverride {
+public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHasModelOverride {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe"));
 
     public static final UnlistedInteger CONNECTIONS = new UnlistedInteger();
     public static final UnlistedInteger SIZE = new UnlistedInteger();
 
-    public BlockPipe(String name) {
-        super(Material.IRON);
+    public BlockPipe(String name, TextureData data) {
+        super(data);
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(Ref.TAB_MACHINES);
@@ -58,7 +60,7 @@ public abstract class BlockPipe extends Block implements IHasItemBlock, IHasMode
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE).build();
+        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, GTProperties.TEXTURE).build();
     }
 
     @Override
@@ -69,6 +71,7 @@ public abstract class BlockPipe extends Block implements IHasItemBlock, IHasMode
             PipeSize size = ((TileEntityPipe) tile).getSize();
             exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
             exState = exState.withProperty(CONNECTIONS, ((TileEntityPipe) tile).cableConnections);
+            exState = exState.withProperty(GTProperties.TEXTURE, getBlockData());
         }
         return exState;
     }
