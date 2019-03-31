@@ -2,8 +2,6 @@ package muramasa.gregtech.proxy;
 
 import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.data.Machines;
-import muramasa.gregtech.api.tools.ToolType;
-import muramasa.gregtech.api.registration.IHasModelOverride;
 import muramasa.gregtech.api.items.MaterialItem;
 import muramasa.gregtech.api.machines.types.Machine;
 import muramasa.gregtech.api.materials.ItemFlag;
@@ -11,7 +9,12 @@ import muramasa.gregtech.api.materials.Material;
 import muramasa.gregtech.api.pipe.types.Cable;
 import muramasa.gregtech.api.pipe.types.FluidPipe;
 import muramasa.gregtech.api.pipe.types.ItemPipe;
+import muramasa.gregtech.api.registration.GregTechRegistry;
+import muramasa.gregtech.api.registration.IHasModelOverride;
+import muramasa.gregtech.api.tileentities.TileEntityMachine;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityCable;
 import muramasa.gregtech.api.tools.MaterialTool;
+import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
 import muramasa.gregtech.client.render.models.ModelMachine;
@@ -19,8 +22,6 @@ import muramasa.gregtech.client.render.models.ModelPipe;
 import muramasa.gregtech.common.blocks.BlockOre;
 import muramasa.gregtech.common.blocks.BlockStorage;
 import muramasa.gregtech.common.blocks.pipe.BlockPipe;
-import muramasa.gregtech.api.tileentities.TileEntityMachine;
-import muramasa.gregtech.api.registration.GregTechRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -62,11 +63,29 @@ public class ClientProxy implements IProxy {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(machineBlockHandler, type.getBlock());
         }
 
-        IBlockColor pipeBlockHandler = (state, world, pos, i) -> i == 0 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
-        IItemColor pipeItemHandler = (stack, i) -> i == 0 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+        IBlockColor cableBlockHandler = (state, world, pos, i) -> {
+            TileEntity tile = Utils.getTile(world, pos);
+            if (tile instanceof TileEntityCable) {
+                if (((TileEntityCable) tile).isInsulated()) {
+                    return i == 1 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
+                } else {
+                    return i == 0 || i == 1? ((BlockPipe) state.getBlock()).getRGB() : -1;
+                }
+            }
+            return -1;
+        };
+        IItemColor cableItemHandler = (stack, i) -> {
+            if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_CABLE_STACK_INSULATED) && stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
+                return i == 1 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+            } else {
+                return i == 0 || i == 1 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+            }
+        };
+        IBlockColor pipeBlockHandler = (state, world, pos, i) -> i == 0 || i == 1? ((BlockPipe) state.getBlock()).getRGB() : -1;
+        IItemColor pipeItemHandler = (stack, i) -> i == 0 || i == 1 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
         for (Cable type : Cable.getAll()) {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getCable(type));
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(cableBlockHandler, GregTechRegistry.getCable(type));
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(cableItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));
         }
         for (FluidPipe type : FluidPipe.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getFluidPipe(type));

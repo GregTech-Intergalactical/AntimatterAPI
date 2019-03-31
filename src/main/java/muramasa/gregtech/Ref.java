@@ -68,7 +68,8 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
 
     public static final String KEY_PIPE_SIZE = "ps";
-    public static final String KEY_CABLE_CONNECTIONS = "cc";
+    public static final String KEY_PIPE_CONNECTIONS = "pc";
+    public static final String KEY_CABLE_INSULATED = "ci";
 
     public static final String TAG_TOOL_DATA = "tooldata";
     public static final String KEY_TOOL_DATA_PRIMARY_MAT = "pm";

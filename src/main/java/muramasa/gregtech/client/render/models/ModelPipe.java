@@ -1,7 +1,7 @@
 package muramasa.gregtech.client.render.models;
 
-import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.PipeSize;
+import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.client.render.bakedmodels.BakedBase;
 import muramasa.gregtech.client.render.bakedmodels.BakedPipe;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -9,37 +9,68 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
-import scala.actors.threadpool.Arrays;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
 public class ModelPipe extends ModelBase {
 
-    public static final ResourceLocation PIPE = new ResourceLocation(Ref.MODID, "blocks/pipe/pipe");
-    public static final ResourceLocation WIRE = new ResourceLocation(Ref.MODID, "blocks/pipe/wire");
-    public static final ResourceLocation CABLE = new ResourceLocation(Ref.MODID, "blocks/pipe/cable");
+    public static final Texture PIPE = new Texture("blocks/pipe/pipe_side");
+    public static final Texture WIRE = new Texture("blocks/pipe/wire_side");
+    public static final Texture CABLE = new Texture("blocks/pipe/cable_side");
+
+    public static Texture[] PIPE_FACE = new Texture[] {
+        new Texture("blocks/pipe/pipe_vtiny"),
+        new Texture("blocks/pipe/pipe_tiny"),
+        new Texture("blocks/pipe/pipe_small"),
+        new Texture("blocks/pipe/pipe_normal"),
+        new Texture("blocks/pipe/pipe_large"),
+        new Texture("blocks/pipe/pipe_huge")
+    };
+
+    public static Texture[] CABLE_FACE = new Texture[] {
+        new Texture("blocks/pipe/cable_vtiny"),
+        new Texture("blocks/pipe/cable_tiny"),
+        new Texture("blocks/pipe/cable_small"),
+        new Texture("blocks/pipe/cable_normal"),
+        new Texture("blocks/pipe/cable_large"),
+        new Texture("blocks/pipe/cable_huge")
+    };
+
+    public static Texture[] WIRE_FACE = new Texture[] {
+        WIRE, WIRE, WIRE, WIRE, WIRE, WIRE
+    };
 
     @Override
     public IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
         IBakedModel[][] BAKED = new IBakedModel[PipeSize.VALUES.length][10];
         for (PipeSize size : PipeSize.values()) {
-            BAKED[size.ordinal()][0] = new BakedBase(tex(load("pipe/" + size.getName() + "/base"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][1] = new BakedBase(tex(load("pipe/" + size.getName() + "/single"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][2] = new BakedBase(tex(load("pipe/" + size.getName() + "/line"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][3] = new BakedBase(tex(load("pipe/" + size.getName() + "/elbow"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][4] = new BakedBase(tex(load("pipe/" + size.getName() + "/side"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][5] = new BakedBase(tex(load("pipe/" + size.getName() + "/corner"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][6] = new BakedBase(tex(load("pipe/" + size.getName() + "/arrow"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][7] = new BakedBase(tex(load("pipe/" + size.getName() + "/cross"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][8] = new BakedBase(tex(load("pipe/" + size.getName() + "/five"), "0", PIPE).bake(state, format, getter));
-            BAKED[size.ordinal()][9] = new BakedBase(tex(load("pipe/" + size.getName() + "/all"), "0", PIPE).bake(state, format, getter));
+            BAKED[size.ordinal()][0] = new BakedBase(load("pipe/" + size.getName() + "/base").bake(state, format, getter));
+            BAKED[size.ordinal()][1] = new BakedBase(load("pipe/" + size.getName() + "/single").bake(state, format, getter));
+            BAKED[size.ordinal()][2] = new BakedBase(load("pipe/" + size.getName() + "/line").bake(state, format, getter));
+            BAKED[size.ordinal()][3] = new BakedBase(load("pipe/" + size.getName() + "/elbow").bake(state, format, getter));
+            BAKED[size.ordinal()][4] = new BakedBase(load("pipe/" + size.getName() + "/side").bake(state, format, getter));
+            BAKED[size.ordinal()][5] = new BakedBase(load("pipe/" + size.getName() + "/corner").bake(state, format, getter));
+            BAKED[size.ordinal()][6] = new BakedBase(load("pipe/" + size.getName() + "/arrow").bake(state, format, getter));
+            BAKED[size.ordinal()][7] = new BakedBase(load("pipe/" + size.getName() + "/cross").bake(state, format, getter));
+            BAKED[size.ordinal()][8] = new BakedBase(load("pipe/" + size.getName() + "/five").bake(state, format, getter));
+            BAKED[size.ordinal()][9] = new BakedBase(load("pipe/" + size.getName() + "/all").bake(state, format, getter));
         }
         return new BakedPipe(BAKED);
     }
 
     @Override
     public Collection<ResourceLocation> getTextures() {
-        return Arrays.asList(new ResourceLocation[]{PIPE, WIRE, CABLE});
+        List<ResourceLocation> locs = new LinkedList<>();
+        locs.add(PIPE.getLoc());
+        locs.add(WIRE.getLoc());
+        locs.add(CABLE.getLoc());
+        for (int i = 0; i < PipeSize.VALUES.length; i++) {
+            locs.add(PIPE_FACE[i].getLoc());
+            locs.add(CABLE_FACE[i].getLoc());
+        }
+        return locs;
     }
 }

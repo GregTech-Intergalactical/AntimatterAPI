@@ -3,7 +3,9 @@ package muramasa.gregtech.common.blocks.pipe;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.FluidPipe;
+import muramasa.gregtech.api.texture.TextureData;
 import muramasa.gregtech.api.tileentities.pipe.TileEntityFluidPipe;
+import muramasa.gregtech.client.render.models.ModelPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -18,7 +20,7 @@ public class BlockFluidPipe extends BlockPipe {
     private FluidPipe type;
 
     public BlockFluidPipe(FluidPipe type) {
-        super("fluid_pipe_" + type.getName());
+        super("fluid_pipe_" + type.getName(), new TextureData().base(ModelPipe.PIPE).overlay(ModelPipe.PIPE_FACE));
         this.type = type;
     }
 

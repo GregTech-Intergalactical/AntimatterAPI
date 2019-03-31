@@ -24,8 +24,8 @@ import java.util.List;
 
 public abstract class BlockBaked extends Block {
 
-    protected TextureData data;
-    protected ModelResourceLocation model;
+    private TextureData data;
+    private ModelResourceLocation model;
 
     public BlockBaked(TextureData data, ModelResourceLocation model) {
         super(Material.ROCK);
