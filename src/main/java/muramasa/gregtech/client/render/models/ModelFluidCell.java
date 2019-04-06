@@ -35,8 +35,8 @@ public class ModelFluidCell implements IModel {
 
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
-        if (BAKED_BASE == null) BAKED_BASE = ModelBase.load(Ref.MODID, "fluid_cell_model").bake(state, format, getter);
-        if (BAKED_OVERLAY == null) BAKED_OVERLAY = ModelBase.load(Ref.MODID, "fluid_cell_overlay_model").bake(state, format, getter);
+        if (BAKED_BASE == null) BAKED_BASE = ModelUtils.load(Ref.MODID, "fluid_cell_model").bake(state, format, getter);
+        if (BAKED_OVERLAY == null) BAKED_OVERLAY = ModelUtils.load(Ref.MODID, "fluid_cell_overlay_model").bake(state, format, getter);
 
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 

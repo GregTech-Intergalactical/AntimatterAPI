@@ -1,8 +1,9 @@
 package muramasa.gregtech.client.render;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureMode;
 import muramasa.gregtech.api.util.Utils;
@@ -12,8 +13,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -30,13 +35,12 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
-    public static Int2ObjectArrayMap<IBakedModel> CACHE_BAKED = new Int2ObjectArrayMap<>();
-    public static Int2ObjectArrayMap<List<BakedQuad>> CACHE_QUAD = new Int2ObjectArrayMap<>();
-
     private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;
 
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
+
+    public static IBakedModel BAKED_MISSING, BAKED_BASIC;
 
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -63,20 +67,9 @@ public class ModelUtils {
         TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
     }
 
-    public static IBakedModel getBaked(int id, int value) {
-        return CACHE_BAKED.get((id * 1000) + value);
-    }
-
-    public static void putBaked(int id, int value, IBakedModel baked) {
-        CACHE_BAKED.put((id * 1000) + value, baked);
-    }
-
-    public static List<BakedQuad> getQuads(int id, int value) {
-        return CACHE_QUAD.get((id * 1000) + value);
-    }
-
-    public static void putQuads(int id, int value, List<BakedQuad> quads) {
-        CACHE_QUAD.put((id * 1000) + value, quads);
+    public static void onModelBake(ModelBakeEvent e) {
+        BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        BAKED_BASIC = load("basic").bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
@@ -122,6 +115,47 @@ public class ModelUtils {
         return new BakedBase(new SimpleBakedModel(quads, faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides()));
     }
 
+    /** Model Helpers **/
+    public static IModel load(String path) {
+        return load(new ModelResourceLocation(Ref.MODID + ":" + path));
+    }
+
+    public static IModel load(String domain, String path) {
+        return load(new ModelResourceLocation(domain + ":" + path));
+    }
+
+    public static IModel load(ModelResourceLocation loc) {
+        try {
+            return ModelLoaderRegistry.getModel(loc);
+        } catch (Exception e) {
+            System.err.println("ModelBase.load() failed due to " + e + ":");
+            e.printStackTrace();
+            return ModelLoaderRegistry.getMissingModel();
+        }
+    }
+
+    public static IModel tex(IModel model, String[] elements, Texture[] textures) {
+        for (int i = 0; i < elements.length; i++) {
+            model = tex(model, elements[i], textures[i]);
+        }
+        return model;
+    }
+
+    public static IModel tex(IModel model, String element, Texture texture) {
+        return tex(model, element, texture.getLoc());
+    }
+
+    public static IModel tex(IModel model, String element, ResourceLocation loc) {
+        try {
+            return model.retexture(ImmutableMap.of(element, loc.toString()));
+        } catch (Exception e) {
+            System.err.println("ModelBase.tex() failed due to " + e + ":");
+            e.printStackTrace();
+            return model;
+        }
+    }
+
+    /** Baked Model Helpers **/
     public static List<BakedQuad> trans(List<BakedQuad> quads, int rotation) {
         return trans(quads, FACING_TO_MATRIX[rotation], EnumFacing.VALUES[rotation]);
     }

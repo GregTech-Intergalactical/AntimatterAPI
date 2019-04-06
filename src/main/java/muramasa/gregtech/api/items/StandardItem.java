@@ -14,7 +14,7 @@ import muramasa.gregtech.api.tileentities.multi.TileEntityHatch;
 import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gregtech.api.util.Utils;
-import muramasa.gregtech.client.render.bakedmodels.BakedPipe;
+import muramasa.gregtech.client.render.ModelUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -70,7 +70,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            tooltip.add("Quads: " + BakedPipe.BAKED[5][2].getQuads(null, null, 0).size());
+            tooltip.add("" + (ModelUtils.BAKED_BASIC == null));
         }
     }
 
