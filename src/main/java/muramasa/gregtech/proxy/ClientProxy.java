@@ -17,6 +17,7 @@ import muramasa.gregtech.api.tools.MaterialTool;
 import muramasa.gregtech.api.tools.ToolType;
 import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.GTModelLoader;
+import muramasa.gregtech.client.render.ModelUtils;
 import muramasa.gregtech.client.render.models.ModelMachine;
 import muramasa.gregtech.client.render.models.ModelPipe;
 import muramasa.gregtech.common.blocks.BlockOre;
@@ -29,6 +30,7 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -152,5 +154,12 @@ public class ClientProxy implements IProxy {
 
         ModelPipe modelPipe = new ModelPipe();
         GTModelLoader.register("block_pipe", modelPipe);
+    }
+
+    @SubscribeEvent
+    public static void onModelBake(ModelBakeEvent e) {
+        System.out.println("ON MODEL BAKE");
+        System.out.println(ModelLoaderRegistry.getMissingModel());
+        ModelUtils.onModelBake(e);
     }
 }

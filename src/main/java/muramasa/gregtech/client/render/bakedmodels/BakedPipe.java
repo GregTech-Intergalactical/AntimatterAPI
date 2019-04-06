@@ -20,7 +20,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static net.minecraft.util.EnumFacing.*;
@@ -129,26 +128,23 @@ public class BakedPipe implements IBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        if (side == null) {
-            IExtendedBlockState exState = (IExtendedBlockState) state;
-            int size = exState.getValue(BlockPipe.SIZE);
-            int connections = exState.getValue(BlockPipe.CONNECTIONS);
-            TextureData data = exState.getValue(GTProperties.TEXTURE);
+        IExtendedBlockState exState = (IExtendedBlockState) state;
+        int size = exState.getValue(BlockPipe.SIZE);
+        int connections = exState.getValue(BlockPipe.CONNECTIONS);
+        TextureData data = exState.getValue(GTProperties.TEXTURE);
 
-            //List<BakedQuad> quads = CACHE.get((size * 100) + connections);
-            List<BakedQuad> quads = null;
-            if (quads == null) {
-                int[] config = connections > 63 ? CONFIG[connections - 64] : CONFIG[connections];
-                quads = new ArrayList<>(BAKED[size][config[0]].getQuads(state, side, rand));
-                if (connections > 63) quads = ModelUtils.remove(quads, 1);
-                if (config.length > 1) quads = ModelUtils.trans(quads, 1, config);
-                ModelUtils.tex(quads, 0, 1, data.getBase()[0]);
-                ModelUtils.tex(quads, 2, data.getOverlay()[size]);
-            }
-            //CACHE.put((size * 100) + connections, quads);
-            return quads;
+        //List<BakedQuad> quads = CACHE.get((size * 100) + connections);
+        List<BakedQuad> quads = null;
+        if (quads == null) {
+            int[] config = connections > 63 ? CONFIG[connections - 64] : CONFIG[connections];
+            quads = new ArrayList<>(BAKED[size][config[0]].getQuads(state, side, rand));
+            if (connections > 63) quads = ModelUtils.remove(quads, 1);
+            if (config.length > 1) quads = ModelUtils.trans(quads, 1, config);
+            ModelUtils.tex(quads, 0, 1, data.getBase()[0]);
+            ModelUtils.tex(quads, 2, data.getOverlay()[size]);
         }
-        return Collections.emptyList();
+        //CACHE.put((size * 100) + connections, quads);
+        return quads;
     }
 
     @Override

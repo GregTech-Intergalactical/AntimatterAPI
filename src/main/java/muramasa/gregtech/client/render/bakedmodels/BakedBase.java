@@ -1,7 +1,6 @@
 package muramasa.gregtech.client.render.bakedmodels;
 
 import muramasa.gregtech.client.render.ModelUtils;
-import muramasa.gregtech.client.render.models.ModelBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -35,13 +34,7 @@ public class BakedBase implements IBakedModel {
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         if (side != null) return Collections.emptyList();
-        try {
-            return getBakedQuads(state, side, rand);
-        } catch (Exception e) {
-            System.err.println("BakedBase.getBakedQuads() failed due to: " + e);
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
+        return getBakedQuads(state, side, rand);
     }
 
     @Override
@@ -71,6 +64,6 @@ public class BakedBase implements IBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return ModelBase.MISSING.getParticleTexture();
+        return ModelUtils.BAKED_MISSING.getParticleTexture();
     }
 }
