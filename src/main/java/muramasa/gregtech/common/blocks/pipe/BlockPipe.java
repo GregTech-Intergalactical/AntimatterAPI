@@ -5,6 +5,7 @@ import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.PipeStack;
 import muramasa.gregtech.api.pipe.types.Pipe;
 import muramasa.gregtech.api.properties.GTProperties;
+import muramasa.gregtech.api.properties.UnlistedByte;
 import muramasa.gregtech.api.properties.UnlistedInteger;
 import muramasa.gregtech.api.registration.IHasItemBlock;
 import muramasa.gregtech.api.registration.IHasModelOverride;
@@ -42,7 +43,7 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe"));
 
-    public static final UnlistedInteger CONNECTIONS = new UnlistedInteger();
+    public static final UnlistedByte CONNECTIONS = new UnlistedByte();
     public static final UnlistedInteger SIZE = new UnlistedInteger();
 
     public BlockPipe(String name, TextureData data) {
@@ -68,9 +69,9 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
         IExtendedBlockState exState = (IExtendedBlockState) state;
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityPipe) {
-            PipeSize size = ((TileEntityPipe) tile).getSize();
-            exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
-            exState = exState.withProperty(CONNECTIONS, ((TileEntityPipe) tile).cableConnections);
+            TileEntityPipe pipe = (TileEntityPipe) tile;
+            exState = exState.withProperty(SIZE, pipe.getSize().ordinal());
+            exState = exState.withProperty(CONNECTIONS, pipe.getConnections());
             exState = exState.withProperty(GTProperties.TEXTURE, getBlockData());
         }
         return exState;
@@ -81,6 +82,13 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
         TileEntity tile = Utils.getTile(source, pos);
         if (tile instanceof TileEntityPipe) {
             PipeSize size = ((TileEntityPipe) tile).getSize();
+//            if (size == null) return FULL_BLOCK_AABB;
+//            switch (BakedPipe.CONFIG_MAP.get(((TileEntityPipe) tile).connections)[0]) {
+////                case 0: return new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(0.0625f * size.ordinal());
+////                case 1: new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(1, 0, 0);
+//                default: return new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(0.0625f * size.ordinal());
+//            }
+
             return size != null ? size.getAABB() : PipeSize.TINY.getAABB();
         }
         return FULL_BLOCK_AABB;
@@ -108,14 +116,6 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-//        TileEntityCable tile = (TileEntityCable) world.getTileEntity(pos);
-//        if (tile != null) {
-//            if (ItemList.DebugScanner.isEqual(player.getHeldItem(hand))) {
-//                player.sendMessage(new TextComponentString(tile.cableConnections + ""));
-//                tile.toggleShouldConnect(facing);
-//            }
-//            return true;
-//        }
         return false;
     }
 
@@ -142,10 +142,10 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityPipe) {
-            ((TileEntityPipe) tile).refreshConnections();
-        }
+//        TileEntity tile = Utils.getTile(world, pos);
+//        if (tile instanceof TileEntityPipe) {
+////            ((TileEntityPipe) tile).refreshConnections();
+//        }
     }
 
     @Override

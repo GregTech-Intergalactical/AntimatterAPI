@@ -24,7 +24,7 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     protected CoverHandler coverHandler;
     protected PipeConfigHandler configHandler;
 
-    public int cableConnections, machineConnections, disabledConnections;
+    protected byte connections, disabledConnections;
 
     public TileEntityPipe() {
         configHandler = new PipeConfigHandler(this);
@@ -38,6 +38,8 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     @Override
     public void onFirstTick() {
         type = ((BlockPipe) getBlockType()).getType();
+        size = size != null ? size : PipeSize.NORMAL;
+        if (isServerSide()) refreshConnections();
     }
 
     public Pipe getType() {
@@ -45,35 +47,42 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     }
 
     public PipeSize getSize() {
+        if (size == null) size = PipeSize.NORMAL;
         return size;
     }
 
+    public byte getConnections() {
+        return connections;
+    }
+
+    public byte getDisabledConnections() {
+        return disabledConnections;
+    }
+
+    public abstract boolean canConnect(TileEntity tile);
+
     public void refreshConnections() {
-        System.out.println("refresh");
-        cableConnections = 0;
-        int sideMask;
-        TileEntity currentTile;
-        for (int side = 0; side < 6; side++) {
-            currentTile = Utils.getTile(world, pos.offset(EnumFacing.VALUES[side]));
-            if (currentTile == null) continue;
-            sideMask = 1 << side;
-            if ((disabledConnections & sideMask) == 0) { //Connection side has not been disabled
-                if (currentTile instanceof TileEntityPipe) {
-                    cableConnections |=  sideMask;
-                } else if (currentTile.hasCapability(GTCapabilities.ENERGY, EnumFacing.VALUES[side].getOpposite())) {
-                    System.out.println(EnumFacing.VALUES[side].getOpposite());
-                    cableConnections |= sideMask;
+//        System.out.println("refresh");
+        connections = 0;
+        int sideMask, smallerPipes = 0;
+        TileEntity adjTile;
+        for (int s = 0; s < 6; s++) {
+            adjTile = Utils.getTile(world, pos.offset(EnumFacing.VALUES[s]));
+            if (adjTile == null) continue;
+            sideMask = 1 << s;
+            if ((disabledConnections & sideMask) == 0) { //Connection s has not been disabled
+                if (canConnect(adjTile)) {
+                    connections |=  sideMask;
+                    //TODO check isFullCube to allow more culled connections?
+                    if (((TileEntityPipe) adjTile).getSize().ordinal() < getSize().ordinal()) smallerPipes++;
+                } else if (adjTile.hasCapability(GTCapabilities.ENERGY, EnumFacing.VALUES[s].getOpposite())) {
+                    connections |= sideMask;
 //                    machineConnections |= sideMask;
                 }
-                /*else if (tileBeingChecked instanceof TileEntityMachine) {
-                    if (((TileEntityMachine) tileBeingChecked).get(cachedFacing[side].getOpposite()) == CoverType.ENERGYPORT) {
-                        cableConnections |= sideMask;
-                        machineConnections |= sideMask;
-                    }
-                }*/
             }
         }
-        markForRenderUpdate();
+        if (smallerPipes == 0) connections += 64; //Use culled models if there are no smaller pipes adjacent
+        markForNBTSync();
     }
 
     public void toggleConnection(EnumFacing side) {
@@ -109,14 +118,14 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey(Ref.KEY_PIPE_SIZE)) size = PipeSize.VALUES[compound.getInteger(Ref.KEY_PIPE_SIZE)];
-        if (compound.hasKey(Ref.KEY_PIPE_CONNECTIONS)) cableConnections = compound.getInteger(Ref.KEY_PIPE_CONNECTIONS);
+        if (compound.hasKey(Ref.KEY_PIPE_CONNECTIONS)) connections = compound.getByte(Ref.KEY_PIPE_CONNECTIONS);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (size != null) compound.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
-        compound.setInteger(Ref.KEY_PIPE_CONNECTIONS, cableConnections);
+        compound.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
+        compound.setInteger(Ref.KEY_PIPE_CONNECTIONS, connections);
         return compound;
     }
 

@@ -23,7 +23,7 @@ public class RenderGameOverlayHandler extends Gui {
 
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
-        if (Minecraft.getMinecraft().gameSettings.showDebugInfo) {
+        if (Minecraft.getMinecraft().gameSettings.showDebugInfo && Minecraft.getMinecraft().objectMouseOver != null) {
             TileEntity tile = Utils.getTile(Minecraft.getMinecraft().world, Minecraft.getMinecraft().objectMouseOver.getBlockPos());
             if (tile instanceof TileEntityBase) {
                 e.getLeft().addAll(((TileEntityBase) tile).getInfo());

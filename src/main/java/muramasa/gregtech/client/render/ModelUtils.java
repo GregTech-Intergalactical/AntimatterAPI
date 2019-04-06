@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gregtech.api.texture.Texture;
 import muramasa.gregtech.api.texture.TextureMode;
+import muramasa.gregtech.api.util.Utils;
 import muramasa.gregtech.client.render.bakedmodels.BakedBase;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -29,8 +30,8 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
-    private static Int2ObjectArrayMap<IBakedModel> CACHE_BAKED = new Int2ObjectArrayMap<>();
-    private static Int2ObjectArrayMap<List<BakedQuad>> CACHE_QUAD = new Int2ObjectArrayMap<>();
+    public static Int2ObjectArrayMap<IBakedModel> CACHE_BAKED = new Int2ObjectArrayMap<>();
+    public static Int2ObjectArrayMap<List<BakedQuad>> CACHE_QUAD = new Int2ObjectArrayMap<>();
 
     private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;
 
@@ -125,9 +126,9 @@ public class ModelUtils {
         return trans(quads, FACING_TO_MATRIX[rotation], EnumFacing.VALUES[rotation]);
     }
 
-    public static List<BakedQuad> trans(List<BakedQuad> quads, int... rotations) {
-        Matrix4f mat = new Matrix4f(FACING_TO_MATRIX[rotations[0]]);
-        for (int i = 1; i < rotations.length; i++) {
+    public static List<BakedQuad> trans(List<BakedQuad> quads, int offset, int... rotations) {
+        Matrix4f mat = new Matrix4f(FACING_TO_MATRIX[rotations[offset]]);
+        for (int i = offset + 1; i < rotations.length; i++) {
             mat.mul(new Matrix4f(FACING_TO_MATRIX[rotations[i]]));
         }
         return trans(quads, mat, EnumFacing.VALUES[rotations[rotations.length - 1]]);
@@ -137,12 +138,13 @@ public class ModelUtils {
     public static List<BakedQuad> trans(List<BakedQuad> quads, Matrix4f matrix, EnumFacing facing) {
         List<BakedQuad> transformedQuads = new LinkedList<>();
         MatrixVertexTransformer transformer = new MatrixVertexTransformer(matrix);
+        UnpackedBakedQuad.Builder builder;
         for (BakedQuad bakedQuad : quads) {
-            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(bakedQuad.getFormat());
+            builder = new UnpackedBakedQuad.Builder(bakedQuad.getFormat());
             transformer.setParent(builder);
             transformer.setVertexFormat(builder.getVertexFormat());
             bakedQuad.pipe(transformer);
-            builder.setQuadOrientation(facing);
+            builder.setQuadOrientation(Utils.rotateFacing(bakedQuad.getFace(), facing));
             BakedQuad q = builder.build();
             transformedQuads.add(q);
         }
@@ -209,10 +211,23 @@ public class ModelUtils {
         return tex(quads, layer, texture.getSprite());
     }
 
+    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer1, int layer2, Texture texture) {
+        return tex(quads, layer1, layer2, texture.getSprite());
+    }
+
     public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, TextureAtlasSprite sprite) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             if (quads.get(i).getTintIndex() != layer) continue;
+            quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
+        }
+        return quads;
+    }
+
+    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer1, int layer2, TextureAtlasSprite sprite) {
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
+            if (!(quads.get(i).getTintIndex() == layer1 || quads.get(i).getTintIndex() == layer2)) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
@@ -236,6 +251,15 @@ public class ModelUtils {
         for (int i = 0; i < size; i++) {
             BakedQuad quad = new BakedQuadRetextured(quads.get(i), sprite);
             quadsTemp.add(new BakedQuadTinted(quad, rgb));
+        }
+        return quadsTemp;
+    }
+
+    public static List<BakedQuad> remove(List<BakedQuad> quads, int layer) {
+        List<BakedQuad> quadsTemp = new LinkedList<>();
+        int size = quads.size();
+        for (int i = 0; i < size; i++) {
+            if (quads.get(i).getTintIndex() != layer) quadsTemp.add(quads.get(i));
         }
         return quadsTemp;
     }

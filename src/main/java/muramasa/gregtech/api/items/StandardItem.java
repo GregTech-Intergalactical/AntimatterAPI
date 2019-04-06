@@ -4,18 +4,17 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.GregTechAPI;
 import muramasa.gregtech.api.capability.impl.MachineFluidHandler;
 import muramasa.gregtech.api.cover.Cover;
-import muramasa.gregtech.api.data.Materials;
 import muramasa.gregtech.api.data.ItemType;
+import muramasa.gregtech.api.data.Materials;
+import muramasa.gregtech.api.registration.GregTechRegistry;
 import muramasa.gregtech.api.registration.IHasModelOverride;
-import muramasa.gregtech.api.materials.ItemFlag;
-import muramasa.gregtech.api.materials.Material;
-import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
-import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gregtech.api.tileentities.TileEntityMachine;
 import muramasa.gregtech.api.tileentities.multi.TileEntityHatch;
 import muramasa.gregtech.api.tileentities.multi.TileEntityMultiMachine;
-import muramasa.gregtech.api.tileentities.TileEntityItemFluidMachine;
-import muramasa.gregtech.api.registration.GregTechRegistry;
+import muramasa.gregtech.api.tileentities.pipe.TileEntityPipe;
+import muramasa.gregtech.api.util.Utils;
+import muramasa.gregtech.client.render.bakedmodels.BakedPipe;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -70,7 +70,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            tooltip.add("Block Count: " + GregTechRegistry.getRegisteredBlocks().size());
+            tooltip.add("Quads: " + BakedPipe.BAKED[5][2].getQuads(null, null, 0).size());
         }
     }
 
@@ -127,11 +127,9 @@ public class StandardItem extends Item implements IHasModelOverride {
 //                        }
                     }
                 } else if (tile instanceof TileEntityPipe) {
-                    System.out.println(((TileEntityPipe) tile).cableConnections);
+                    player.sendMessage(new TextComponentString("C: " + ((TileEntityPipe) tile).getConnections() + (((TileEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
                 } else {
-                    for (Material mat : ItemFlag.PLASMA.getMats()) {
-                        System.out.println(mat.getName());
-                    }
+
                 }
             }
         }
