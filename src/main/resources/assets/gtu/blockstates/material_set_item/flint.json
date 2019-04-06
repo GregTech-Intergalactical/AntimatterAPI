@@ -1,0 +1,109 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gtu:item/generated"
+  },
+  "variants": {
+    "flint": {
+      "chunk": {
+        "textures": {"layer0": "gtu:items/material_set/flint/chunk", "layer1": "gtu:items/material_set/flint/overlay/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "gtu:items/material_set/flint/crushed", "layer1": "gtu:items/material_set/flint/overlay/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "gtu:items/material_set/flint/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "gtu:items/material_set/flint/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "gtu:items/material_set/flint/dust"}
+      },
+	  "dust_pure": {
+        "textures": {"layer0": "gtu:items/material_set/flint/dust_pure", "layer1": "gtu:items/material_set/flint/overlay/dust_pure"}
+      },
+	  "dust_impure": {
+        "textures": {"layer0": "gtu:items/material_set/flint/dust_impure", "layer1": "gtu:items/material_set/flint/overlay/dust_impure"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "gtu:items/material_set/flint/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "gtu:items/material_set/flint/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "gtu:items/material_set/flint/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "gtu:items/material_set/flint/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "gtu:items/material_set/flint/ingot_hot", "layer1": "gtu:items/material_set/flint/overlay/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "gtu:items/material_set/flint/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "gtu:items/material_set/flint/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "gtu:items/material_set/flint/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "gtu:items/material_set/flint/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "gtu:items/material_set/flint/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "gtu:items/material_set/flint/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "gtu:items/material_set/flint/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "gtu:items/material_set/flint/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "gtu:items/material_set/flint/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "gtu:items/material_set/flint/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "gtu:items/material_set/flint/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "gtu:items/material_set/flint/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "gtu:items/material_set/flint/overlay/cell", "layer1": "gtu:items/material_set/flint/cell"}
+      },
+	  "cell_gas": {
+        "textures": {"layer0": "gtu:items/material_set/flint/overlay/cell_gas", "layer1": "gtu:items/material_set/flint/cell_gas"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "gtu:items/material_set/flint/overlay/cell_plasma", "layer1": "gtu:items/material_set/flint/cell_plasma"}
+      }
+    }
+  }
+}

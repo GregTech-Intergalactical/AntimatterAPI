@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gtu:generated"
+  },
+  "variants": {
+    "gem_v": {
+      "block": {
+        "textures": {"all": "gtu:blocks/material_set/gem_v/block"}
+      },
+	  "ore": {
+        "textures": {"all": "gtu:blocks/material_set/gem_v/ore"}
+      }
+    }
+  }
+}

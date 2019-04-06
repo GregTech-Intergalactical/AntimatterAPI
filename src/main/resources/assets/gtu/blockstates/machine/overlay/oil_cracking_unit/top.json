@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gtu:machine/overlay/oil_cracking_unit/top"
+    }
+  }
+}

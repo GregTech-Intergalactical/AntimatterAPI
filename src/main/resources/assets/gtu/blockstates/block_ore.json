@@ -1,0 +1,42 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gtu:block_ore"
+  },
+  "variants": {
+	"normal": [{}],
+    "inventory": [{}],
+    "stone_type": {
+		"0": {
+			"textures": {"0": "minecraft:blocks/stone", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"1": {
+			"textures": {"0": "minecraft:blocks/stone_granite", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"2": {
+			"textures": {"0": "minecraft:blocks/stone_diorite", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"3": {
+			"textures": {"0": "minecraft:blocks/stone_andesite", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"4": {
+			"textures": {"0": "minecraft:blocks/netherrack", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"5": {
+			"textures": {"0": "minecraft:blocks/end_stone", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"6": {
+			"textures": {"0": "gtu:blocks/stone/granite_red", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"7": {
+			"textures": {"0": "gtu:blocks/stone/granite_black", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"8": {
+			"textures": {"0": "gtu:blocks/stone/marble", "1": "gtu:blocks/material_set/none/ore"}
+		},
+		"9": {
+			"textures": {"0": "gtu:blocks/stone/basalt", "1": "gtu:blocks/material_set/none/ore"}
+		}
+	}
+  }
+}
