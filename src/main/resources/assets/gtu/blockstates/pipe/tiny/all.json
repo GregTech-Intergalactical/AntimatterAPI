@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gtu:pipe/tiny/all"
+    }
+  }
+}

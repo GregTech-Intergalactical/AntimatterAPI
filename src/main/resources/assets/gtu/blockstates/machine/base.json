@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gtu:machine/base"
+    },
+    "inventory": {
+      "model": "gtu:machine/base"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "gtu:machine/overlay/combustion_engine/side"
+    }
+  }
+}
