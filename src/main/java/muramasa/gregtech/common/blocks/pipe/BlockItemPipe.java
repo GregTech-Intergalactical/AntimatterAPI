@@ -50,10 +50,10 @@ public class BlockItemPipe extends BlockPipe {
         IExtendedBlockState exState = (IExtendedBlockState) state;
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityItemPipe) {
-            PipeSize size = ((TileEntityItemPipe) tile).getSize();
-            exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
-            exState = exState.withProperty(CONNECTIONS, ((TileEntityItemPipe) tile).cableConnections);
-            exState = exState.withProperty(RESTRICTIVE, ((TileEntityItemPipe) tile).isRestrictive() ? 1 : 0);
+            TileEntityItemPipe pipe = (TileEntityItemPipe) tile;
+            exState = exState.withProperty(SIZE, pipe.getSize().ordinal());
+            exState = exState.withProperty(CONNECTIONS, pipe.getConnections());
+            exState = exState.withProperty(RESTRICTIVE, pipe.isRestrictive() ? 1 : 0);
             exState = exState.withProperty(GTProperties.TEXTURE, getBlockData());
         }
         return exState;

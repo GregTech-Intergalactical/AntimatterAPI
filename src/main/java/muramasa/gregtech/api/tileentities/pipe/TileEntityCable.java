@@ -4,6 +4,7 @@ import muramasa.gregtech.Ref;
 import muramasa.gregtech.api.pipe.PipeSize;
 import muramasa.gregtech.api.pipe.types.Cable;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
 
@@ -22,6 +23,11 @@ public class TileEntityCable extends TileEntityPipe {
 
     public boolean isInsulated() {
         return insulated;
+    }
+
+    @Override
+    public boolean canConnect(TileEntity tile) {
+        return tile instanceof TileEntityCable;
     }
 
     @Override

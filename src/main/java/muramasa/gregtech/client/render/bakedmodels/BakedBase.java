@@ -36,7 +36,7 @@ public class BakedBase implements IBakedModel {
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         if (side != null) return Collections.emptyList();
         try {
-            return getBakedQuads(state, null, rand);
+            return getBakedQuads(state, side, rand);
         } catch (Exception e) {
             System.err.println("BakedBase.getBakedQuads() failed due to: " + e);
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class BakedBase implements IBakedModel {
 
     @Override
     public boolean isAmbientOcclusion() {
-        return true;
+        return false;
     }
 
     @Override

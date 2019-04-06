@@ -67,22 +67,22 @@ public class ClientProxy implements IProxy {
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityCable) {
                 if (((TileEntityCable) tile).isInsulated()) {
-                    return i == 1 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
+                    return i == 2 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
                 } else {
-                    return i == 0 || i == 1? ((BlockPipe) state.getBlock()).getRGB() : -1;
+                    return i == 0 || i == 2 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
                 }
             }
             return -1;
         };
         IItemColor cableItemHandler = (stack, i) -> {
             if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_CABLE_STACK_INSULATED) && stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
-                return i == 1 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+                return i == 2 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
             } else {
-                return i == 0 || i == 1 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+                return i == 0 || i == 1 || i == 2 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
             }
         };
-        IBlockColor pipeBlockHandler = (state, world, pos, i) -> i == 0 || i == 1? ((BlockPipe) state.getBlock()).getRGB() : -1;
-        IItemColor pipeItemHandler = (stack, i) -> i == 0 || i == 1 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
+        IBlockColor pipeBlockHandler = (state, world, pos, i) -> i == 0 || i == 1 || i == 2 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
+        IItemColor pipeItemHandler = (stack, i) -> i == 0 || i == 1 || i == 2 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
         for (Cable type : Cable.getAll()) {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(cableBlockHandler, GregTechRegistry.getCable(type));
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(cableItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));

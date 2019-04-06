@@ -49,10 +49,10 @@ public class BlockCable extends BlockPipe {
         IExtendedBlockState exState = (IExtendedBlockState) state;
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityCable) {
-            PipeSize size = ((TileEntityCable) tile).getSize();
-            exState = exState.withProperty(SIZE, size != null ? size.ordinal() : PipeSize.TINY.ordinal());
-            exState = exState.withProperty(CONNECTIONS, ((TileEntityCable) tile).cableConnections);
-            int insulated = ((TileEntityCable) tile).isInsulated() ? 1 : 0;
+            TileEntityCable cable = (TileEntityCable) tile;
+            exState = exState.withProperty(SIZE, cable.getSize().ordinal());
+            exState = exState.withProperty(CONNECTIONS, cable.getConnections());
+            int insulated = cable.isInsulated() ? 1 : 0;
             exState = exState.withProperty(INSULATED, insulated);
             exState = exState.withProperty(GTProperties.TEXTURE, insulated == 1 ? new TextureData().base(ModelPipe.CABLE).overlay(ModelPipe.CABLE_FACE) : getBlockData());
         }

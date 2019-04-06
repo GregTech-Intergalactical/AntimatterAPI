@@ -100,8 +100,12 @@ public class Cable extends Pipe {
         if (stack.hasTagCompound()) {
             NBTTagCompound compound = stack.getTagCompound();
             PipeSize size = PipeSize.VALUES[compound.getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-            boolean insulated = compound.getBoolean(Ref.KEY_CABLE_STACK_INSULATED);
-            return (size.ordinal() * 2) + "x " + getName() + (insulated ? " Cable" : " Wire");
+            if (compound.getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
+                size = PipeSize.VALUES[Math.max(size.ordinal() - 1, 0)];
+                return  size.getCableThickness() + "x " + getName() + " Cable";
+            } else {
+                return size.getCableThickness() + "x " + getName() + " Wire";
+            }
         }
         return stack.getUnlocalizedName();
     }

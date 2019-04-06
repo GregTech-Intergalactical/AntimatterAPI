@@ -6,12 +6,12 @@ import java.util.Locale;
 
 public enum PipeSize {
 
-    VTINY(),
-    TINY(),
-    SMALL(),
-    NORMAL(),
-    LARGE(),
-    HUGE();
+    VTINY(1),
+    TINY(2),
+    SMALL(4),
+    NORMAL(8),
+    LARGE(12),
+    HUGE(16);
 
     public static PipeSize[] VALUES;
 
@@ -19,9 +19,11 @@ public enum PipeSize {
         VALUES = values();
     }
 
+    private int cableThickness;
     private AxisAlignedBB AABB;
 
-    PipeSize() {
+    PipeSize(int cableThickness) {
+        this.cableThickness = cableThickness;
         float offset = 0.0625f * ordinal();
         AABB = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
     }
@@ -32,6 +34,10 @@ public enum PipeSize {
 
     public String getDisplayName() {
         return getName();
+    }
+
+    public int getCableThickness() {
+        return cableThickness;
     }
 
     public AxisAlignedBB getAABB() {
