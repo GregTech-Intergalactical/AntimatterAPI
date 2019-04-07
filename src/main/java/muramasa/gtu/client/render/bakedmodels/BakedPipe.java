@@ -1,12 +1,11 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
-import muramasa.gtu.client.render.models.ModelPipe;
 import muramasa.gtu.client.render.overrides.ItemOverridePipe;
-import muramasa.gtu.common.blocks.pipe.BlockPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -121,7 +120,7 @@ public class BakedPipe implements IBakedModel {
 
     public BakedPipe(IBakedModel[][] baked) {
         BAKED = baked;
-        PARTICLE = ModelPipe.PIPE.getSprite();
+        PARTICLE = Textures.PIPE.getSprite();
         OVERRIDE = new ItemOverridePipe();
     }
 
@@ -129,8 +128,8 @@ public class BakedPipe implements IBakedModel {
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        int size = exState.getValue(BlockPipe.SIZE);
-        int connections = exState.getValue(BlockPipe.CONNECTIONS);
+        int size = exState.getValue(GTProperties.SIZE);
+        int connections = exState.getValue(GTProperties.CONNECTIONS);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 
         //List<BakedQuad> quads = CACHE.get((size * 100) + connections);

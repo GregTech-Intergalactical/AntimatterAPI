@@ -62,6 +62,13 @@ prefix.post.cell_gas.name=Gas Cell
 prefix.pre.cell_plasma.name=
 prefix.post.cell_plasma.name=Plasma Cell
 
+pipe.vtiny.name=Very Tiny
+pipe.tiny.name=Tiny
+pipe.small.name=Small
+pipe.normal.name=Normal
+pipe.large.name=Large
+pipe.huge.name=Huge
+
 material.aluminium.name=Aluminium
 material.titanium.name=Titanium
 material.beryllium.name=Beryllium

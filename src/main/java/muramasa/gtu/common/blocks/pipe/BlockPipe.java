@@ -4,9 +4,6 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
 import muramasa.gtu.api.pipe.types.Pipe;
-import muramasa.gtu.api.properties.GTProperties;
-import muramasa.gtu.api.properties.UnlistedByte;
-import muramasa.gtu.api.properties.UnlistedInteger;
 import muramasa.gtu.api.registration.IHasItemBlock;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.texture.TextureData;
@@ -39,12 +36,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static muramasa.gtu.api.properties.GTProperties.*;
+
 public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHasModelOverride {
 
     private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe"));
-
-    public static final UnlistedByte CONNECTIONS = new UnlistedByte();
-    public static final UnlistedInteger SIZE = new UnlistedInteger();
 
     public BlockPipe(String name, TextureData data) {
         super(data);
@@ -61,7 +57,7 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, GTProperties.TEXTURE).build();
+        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, TEXTURE).build();
     }
 
     @Override
@@ -72,7 +68,7 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
             TileEntityPipe pipe = (TileEntityPipe) tile;
             exState = exState.withProperty(SIZE, pipe.getSize().ordinal());
             exState = exState.withProperty(CONNECTIONS, pipe.getConnections());
-            exState = exState.withProperty(GTProperties.TEXTURE, getBlockData());
+            exState = exState.withProperty(TEXTURE, getBlockData());
         }
         return exState;
     }
