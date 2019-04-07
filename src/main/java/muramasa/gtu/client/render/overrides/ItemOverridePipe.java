@@ -24,17 +24,13 @@ public class ItemOverridePipe extends ItemOverrideList {
 
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
-        try {
-            if (stack.hasTagCompound()) {
-                PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-                if (stack.getTagCompound().hasKey(Ref.KEY_CABLE_STACK_INSULATED) && stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
-                    int index = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED) ? 2 : 1;
-                    return new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[index].getBase()).overlay(Textures.PIPE_DATA[index].getOverlay()[size.ordinal()]));
-                }
-                return new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[size.ordinal()]));
+        if (stack.hasTagCompound()) {
+            PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
+            if (stack.getTagCompound().hasKey(Ref.KEY_CABLE_STACK_INSULATED)) {
+                int index = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED) ? 2 : 1;
+                return new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[index].getBase()).overlay(Textures.PIPE_DATA[index].getOverlay()[size.ordinal()]));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[size.ordinal()]));
         }
         return ModelUtils.BAKED_MISSING;
     }

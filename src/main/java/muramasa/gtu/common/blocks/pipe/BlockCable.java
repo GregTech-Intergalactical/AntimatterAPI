@@ -54,7 +54,6 @@ public class BlockCable extends BlockPipe {
             items.add(new CableStack(this, type, size, false).asItemStack());
         }
         for (PipeSize size : type.getValidSizes()) {
-            if (size == PipeSize.VTINY) continue;
             items.add(new CableStack(this, type, size, true).asItemStack());
         }
     }

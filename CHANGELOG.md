@@ -1,6 +1,6 @@
 <h1 align="center">GregTech Unofficial Changelog</h1>
 
-**0.0.1** - _April 7, 2019_
+**0.00.01** - _April 7, 2019_
 - Fixed spelling issues.
 - Fixed some achievements not working.
 - Moved Reactor fuel recipes into GT canner.
@@ -15,7 +15,7 @@
 - Added GT Coolant cells to VacFre recipes.
 <hr/>
 
-**0.0.2** - _April 12, 2019_
+**0.00.02** - _April 12, 2019_
 - Fix fluid regulator recipe.
 - Fix some more missing recipes.
 - Change charcoal pit tooltip(now better to understand? If not, help me out please).

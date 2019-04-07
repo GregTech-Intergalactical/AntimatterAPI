@@ -13,13 +13,14 @@ public class ItemPipe extends Pipe {
 
     protected static HashMap<String, ItemPipe> TYPE_LOOKUP = new HashMap<>();
 
-    public static ItemPipe WroughIron = new ItemPipe(Materials.WroughtIron, 1);
+    public static ItemPipe Cupronickel = new ItemPipe(Materials.Cupronickel, 1);
+    public static ItemPipe CobaltBrass = new ItemPipe(Materials.CobaltBrass, 1);
     public static ItemPipe Brass = new ItemPipe(Materials.Brass, 1);
-    public static ItemPipe Nickel = new ItemPipe(Materials.Nickel, 1);
     public static ItemPipe Electrum = new ItemPipe(Materials.Electrum, 2);
-    public static ItemPipe Cobalt = new ItemPipe(Materials.Cobalt, 2);
-    public static ItemPipe Aluminium = new ItemPipe(Materials.Aluminium, 2);
+    public static ItemPipe RoseGold = new ItemPipe(Materials.RoseGold, 2);
+    public static ItemPipe SterlingSilver = new ItemPipe(Materials.SterlingSilver, 2);
     public static ItemPipe Platinum = new ItemPipe(Materials.Platinum, 4);
+    public static ItemPipe Ultimet = new ItemPipe(Materials.Ultimet, 4);
     public static ItemPipe Osmium = new ItemPipe(Materials.Osmium, 8);
 
     public static ItemPipe PolyvinylChloride = new ItemPipe("pvc", Materials.PolyvinylChloride.getRGB(), 4);
