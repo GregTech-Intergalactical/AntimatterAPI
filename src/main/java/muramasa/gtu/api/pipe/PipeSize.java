@@ -1,5 +1,6 @@
 package muramasa.gtu.api.pipe;
 
+import muramasa.gtu.api.util.GTLoc;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ public enum PipeSize {
     }
 
     public String getDisplayName() {
-        return getName();
+        return GTLoc.get("pipe." + getName() + ".name");
     }
 
     public int getCableThickness() {

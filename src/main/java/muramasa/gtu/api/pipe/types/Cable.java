@@ -102,9 +102,9 @@ public class Cable extends Pipe {
             PipeSize size = PipeSize.VALUES[compound.getInteger(Ref.KEY_PIPE_STACK_SIZE)];
             if (compound.getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
                 size = PipeSize.VALUES[Math.max(size.ordinal() - 1, 0)];
-                return  size.getCableThickness() + "x " + getName() + " Cable";
+                return  size.getCableThickness() + "x " + getDisplayName() + " Cable";
             } else {
-                return size.getCableThickness() + "x " + getName() + " Wire";
+                return size.getCableThickness() + "x " + getDisplayName() + " Wire";
             }
         }
         return stack.getUnlocalizedName();

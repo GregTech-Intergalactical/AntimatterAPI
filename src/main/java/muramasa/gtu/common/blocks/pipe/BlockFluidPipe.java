@@ -1,11 +1,10 @@
 package muramasa.gtu.common.blocks.pipe;
 
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
 import muramasa.gtu.api.pipe.types.FluidPipe;
-import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
-import muramasa.gtu.client.render.models.ModelPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -20,7 +19,7 @@ public class BlockFluidPipe extends BlockPipe {
     private FluidPipe type;
 
     public BlockFluidPipe(FluidPipe type) {
-        super("fluid_pipe_" + type.getName(), new TextureData().base(ModelPipe.PIPE).overlay(ModelPipe.PIPE_FACE));
+        super("fluid_pipe_" + type.getName(), Textures.PIPE_DATA[0]);
         this.type = type;
     }
 

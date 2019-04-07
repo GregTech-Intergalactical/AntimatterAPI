@@ -30,6 +30,11 @@ public class TextureData {
         return this;
     }
 
+    public TextureData filterOverlay(int index) {
+        overlay = new Texture[]{overlay[index]};
+        return this;
+    }
+
     public List<BakedQuad> apply(IBakedModel bakedModel) {
         return apply(bakedModel.getQuads(null, null, -1));
     }
