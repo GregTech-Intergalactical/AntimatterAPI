@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "gtu",
+  "name": "GregTech Unofficial",
+  "description": "A continuation of GregTech 5 Unofficial",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Muramasa"],
+  "credits": "Greg and his wonderful work on GregTech",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
