@@ -3,6 +3,7 @@ package muramasa.gtu.api.tileentities;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
+import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.Ref;
@@ -54,6 +55,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
             if ((activeRecipe = findRecipe()) != null) {
+                System.out.println("check recipe");
                 curProgress = 0;
                 maxProgress = activeRecipe.getDuration();
                 setMachineState(ACTIVE);
@@ -114,12 +116,14 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     @Override
-    public void onContentsChanged(int type, int slot) {
-        markDirty();
-        if (type == 0) {
-            System.out.println("CONTENT UPDATE");
-            if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
-            checkRecipe();
+    public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
+        System.out.println("Client: " + isClientSide());
+        if (empty) return;
+        switch (type) {
+            case INPUT:
+                if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
+                checkRecipe();
+                break;
         }
     }
 
@@ -208,7 +212,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getInputHandler());
         } else if (capability == GTCapabilities.ENERGY) {
             return GTCapabilities.ENERGY.cast(energyStorage);

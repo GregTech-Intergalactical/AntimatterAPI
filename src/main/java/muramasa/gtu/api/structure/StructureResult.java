@@ -53,12 +53,4 @@ public class StructureResult {
         }
         return true;
     }
-
-    public static boolean equal(int input1, int input2) {
-        return input1 == input2;
-    }
-
-    public static boolean moreOrEqual(int input1, int input2) {
-        return input1 >= input2;
-    }
 }

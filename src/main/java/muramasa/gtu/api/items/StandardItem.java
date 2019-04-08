@@ -14,7 +14,6 @@ import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -70,7 +69,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            tooltip.add("" + (ModelUtils.BAKED_BASIC == null));
+
         }
     }
 
@@ -85,9 +84,10 @@ public class StandardItem extends Item implements IHasModelOverride {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
                         if (world.isRemote) return EnumActionResult.PASS;
-                        ((TileEntityMultiMachine) tile).checkStructure();
-                        System.out.println("Forced Structure Check");
-//                        ((TileEntityMultiMachine) tile).shouldCheckRecipe = true;
+                        if (!((TileEntityMultiMachine) tile).validStructure) {
+                            ((TileEntityMultiMachine) tile).checkStructure();
+                        }
+                        ((TileEntityMultiMachine) tile).checkRecipe();
                     } else if (tile instanceof TileEntityHatch) {
 //                            System.out.println(((TileEntityHatch) tile).getBaseTexture());
 //                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());

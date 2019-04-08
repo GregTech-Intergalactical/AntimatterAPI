@@ -2,6 +2,7 @@ package muramasa.gtu.api.tileentities;
 
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -42,9 +43,9 @@ public class TileEntityItemFluidMachine extends TileEntityItemMachine {
     }
 
     @Override
-    public void onContentsChanged(int type, int slot) {
-        super.onContentsChanged(type, slot);
-        if (type == 2) {
+    public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
+        super.onContentsChanged(type, slot, empty);
+        if (empty && type == ContentUpdateType.CELL) {
             if (slot == 0) { //Input slot
                 ItemStack stack = itemHandler.getCellInput();
                 if (stack.getItem() instanceof MaterialItem) {
