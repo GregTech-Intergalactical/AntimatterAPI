@@ -1,9 +1,10 @@
 package muramasa.gtu.integration.ae2;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.registration.GregTechRegistrar;
+import muramasa.gtu.api.registration.IGregTechRegistrar;
+import muramasa.gtu.api.registration.RegistrationEvent;
 
-public class AppliedEnergisticsRegistrar extends GregTechRegistrar {
+public class AppliedEnergisticsRegistrar implements IGregTechRegistrar {
 
     @Override
     public String getId() {
@@ -11,7 +12,12 @@ public class AppliedEnergisticsRegistrar extends GregTechRegistrar {
     }
 
     @Override
-    public void onMachineRecipeRegistration() {
+    public void onRegistrationEvent(RegistrationEvent event) {
+        //TODO
+    }
+
+    //    @Override
+//    public void onMachineRecipeRegistration() {
         /*
         GT_Values.RA.addFormingPressRecipe(GT_ModHandler.getModItem(aTextAE, aTextAEMM, 1L, 10), GT_ModHandler.getModItem(aTextAE, aTextAEMM, 0L, 13), GT_ModHandler.getModItem(aTextAE, aTextAEMM, 1L, 16), 200, 16);
         GT_Values.RA.addFormingPressRecipe(GT_OreDictUnificator.get(OrePrefixes.plate, Materials.CertusQuartz, 1L), GT_ModHandler.getModItem(aTextAE, aTextAEMM, 0L, 13), GT_ModHandler.getModItem(aTextAE, aTextAEMM, 1L, 16), 200, 16);
@@ -40,5 +46,5 @@ public class AppliedEnergisticsRegistrar extends GregTechRegistrar {
         GT_Values.RA.addMixerRecipe(GT_ModHandler.getModItem(aTextAE, aTextAEMM, 1L, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Redstone, 1L), GT_OreDictUnificator.get(OrePrefixes.gem, Materials.NetherQuartz, 1L), GT_Values.NI, Materials.Water.getFluid(500L), GT_Values.NF, GT_OreDictUnificator.get(OrePrefixes.gem, Materials.Fluix, 2L), 20, 16);
         GT_Values.RA.addMixerRecipe(GT_ModHandler.getModItem(aTextAE, aTextAEMM, 1L, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Redstone, 1L), GT_OreDictUnificator.get(OrePrefixes.gem, Materials.NetherQuartz, 1L), GT_Values.NI, GT_ModHandler.getDistilledWater(500L), GT_Values.NF, GT_OreDictUnificator.get(OrePrefixes.gem, Materials.Fluix, 2L), 20, 16);
         */
-    }
+//    }
 }

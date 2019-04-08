@@ -32,6 +32,7 @@ public class Ref {
     public static final int MULTI_MACHINE_ID = 1;
     public static final int HATCH_ID = 2;
 
+    /** Global Data **/
     public static final int[] V = new int[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
 
     /** Config Values **/

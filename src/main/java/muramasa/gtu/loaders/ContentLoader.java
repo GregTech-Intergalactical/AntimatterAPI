@@ -1,9 +1,7 @@
 package muramasa.gtu.loaders;
 
-import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.*;
-import muramasa.gtu.api.registration.GregTechRegistrar;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.StandardItem;
@@ -16,21 +14,22 @@ import muramasa.gtu.api.pipe.types.Cable;
 import muramasa.gtu.api.pipe.types.FluidPipe;
 import muramasa.gtu.api.pipe.types.ItemPipe;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.tileentities.*;
-import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
-import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.common.blocks.*;
-import muramasa.gtu.common.blocks.pipe.BlockCable;
-import muramasa.gtu.common.blocks.pipe.BlockFluidPipe;
-import muramasa.gtu.common.blocks.pipe.BlockItemPipe;
-import muramasa.gtu.common.items.ItemBlockGT;
 import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
+import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
+import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.common.blocks.*;
+import muramasa.gtu.common.blocks.pipe.BlockCable;
+import muramasa.gtu.common.blocks.pipe.BlockFluidPipe;
+import muramasa.gtu.common.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.common.items.ItemBlockGT;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -108,7 +107,6 @@ public class ContentLoader {
         GregTechRegistry.getRegisteredItems().forEach(i -> e.getRegistry().register(i));
         GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(new ItemBlockGT(b)));
 
-        GregTech.INTERNAL_REGISTRAR.onCoverRegistration();
-        GregTechRegistry.getRegistrars().forEach(GregTechRegistrar::onCoverRegistration);
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.COVER);
     }
 }

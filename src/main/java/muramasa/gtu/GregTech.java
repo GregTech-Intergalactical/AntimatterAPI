@@ -5,14 +5,13 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Structures;
-import muramasa.gtu.api.registration.GregTechRegistrar;
 import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.common.events.OreGenHandler;
 import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
 import muramasa.gtu.loaders.ContentLoader;
-import muramasa.gtu.api.registration.GregTechRegistry;
-import muramasa.gtu.loaders.InternalRegistrar;
 import muramasa.gtu.proxy.GuiHandler;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,8 +35,6 @@ public class GregTech {
 
     public static Logger logger;
 
-    public static GregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
-
     static {
         GregTechRegistry.addRegistrar(new ForestryRegistrar());
         GregTechRegistry.addRegistrar(new GalacticraftRegistrar());
@@ -56,12 +53,9 @@ public class GregTech {
         GregTechAPI.registerJEICategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechAPI.registerJEICategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
 
-        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
-            registrar.onMaterialRegistration();
-            registrar.onMaterialInit();
-        }
-        INTERNAL_REGISTRAR.onMaterialRegistration();
-        INTERNAL_REGISTRAR.onMaterialInit();
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL);
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL_INIT);
+
         Machines.init();
         Guis.init();
         Structures.init();
@@ -76,14 +70,9 @@ public class GregTech {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
-        INTERNAL_REGISTRAR.onCraftingRecipeRegistration();
-        INTERNAL_REGISTRAR.onMachineRecipeRegistration();
-        INTERNAL_REGISTRAR.onMaterialRecipeRegistration();
-        for (GregTechRegistrar registrar : GregTechRegistry.getRegistrars()) {
-            registrar.onCraftingRecipeRegistration();
-            registrar.onMachineRecipeRegistration();
-            registrar.onMaterialRecipeRegistration();
-        }
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.CRAFTING_RECIPE);
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL_RECIPE);
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MACHINE_RECIPE);
     }
 
     @Mod.EventHandler

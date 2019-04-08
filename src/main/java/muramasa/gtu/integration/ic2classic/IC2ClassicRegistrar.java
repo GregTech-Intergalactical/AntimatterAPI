@@ -1,9 +1,10 @@
 package muramasa.gtu.integration.ic2classic;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.registration.GregTechRegistrar;
+import muramasa.gtu.api.registration.IGregTechRegistrar;
+import muramasa.gtu.api.registration.RegistrationEvent;
 
-public class IC2ClassicRegistrar extends GregTechRegistrar {
+public class IC2ClassicRegistrar implements IGregTechRegistrar {
 
     @Override
     public String getId() {
@@ -11,7 +12,7 @@ public class IC2ClassicRegistrar extends GregTechRegistrar {
     }
 
     @Override
-    public void onMachineRecipeRegistration() {
-
+    public void onRegistrationEvent(RegistrationEvent event) {
+        //TODO
     }
 }
