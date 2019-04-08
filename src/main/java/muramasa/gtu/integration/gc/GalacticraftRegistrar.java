@@ -2,15 +2,16 @@ package muramasa.gtu.integration.gc;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.registration.GregTechRegistrar;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.RecipeFlag;
+import muramasa.gtu.api.registration.IGregTechRegistrar;
+import muramasa.gtu.api.registration.RegistrationEvent;
 import net.minecraftforge.fml.common.Loader;
 
 import static muramasa.gtu.api.materials.ItemFlag.ORE;
 import static muramasa.gtu.api.materials.MaterialSet.METALLIC;
 
-public class GalacticraftRegistrar extends GregTechRegistrar {
+public class GalacticraftRegistrar implements IGregTechRegistrar {
 
     public static Material MeteoricIron, MeteoricSteel;
 
@@ -24,20 +25,23 @@ public class GalacticraftRegistrar extends GregTechRegistrar {
         return Loader.isModLoaded(Ref.MOD_GC) && Loader.isModLoaded(Ref.MOD_GC_PLANETS);
     }
 
-    @Override
-    public void onMaterialRegistration() {
-        MeteoricIron = new Material("Meteoric Iron", 0x643250, METALLIC).asMetal(1811, 0, ORE).addTools(6.0f, 384, 2);
-        MeteoricSteel = new Material("Meteoric Steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
-    }
 
     @Override
-    public void onMaterialInit() {
-        RecipeFlag.CALCITE3X.add(MeteoricIron);
-        MeteoricIron.addByProduct(Materials.Iron);
+    public void onRegistrationEvent(RegistrationEvent event) {
+        switch (event) {
+            case MATERIAL:
+                MeteoricIron = new Material("Meteoric Iron", 0x643250, METALLIC).asMetal(1811, 0, ORE).addTools(6.0f, 384, 2);
+                MeteoricSteel = new Material("Meteoric Steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
+                break;
+            case MATERIAL_INIT:
+                RecipeFlag.CALCITE3X.add(MeteoricIron);
+                MeteoricIron.addByProduct(Materials.Iron);
+                break;
+        }
     }
 
-    @Override
-    public void onMachineRecipeRegistration() {
+//    @Override
+//    public void onMachineRecipeRegistration() {
         /*if (Loader.isModLoaded("GalacticraftMars")) {
             GT_ModHandler.addCraftingRecipe(ItemList.Ingot_Heavy1.get(1L, new Object[0]), GT_ModHandler.RecipeBits.NOT_REMOVABLE, new Object[]{"BhB", "CAS", "B B", 'B', OrePrefixes.bolt.get(Materials.StainlessSteel), 'C', OrePrefixes.compressed.get(Materials.Bronze), 'A', OrePrefixes.compressed.get(Materials.Aluminium), 'S', OrePrefixes.compressed.get(Materials.Steel)});
             GT_ModHandler.addCraftingRecipe(ItemList.Ingot_Heavy2.get(1L, new Object[0]), GT_ModHandler.RecipeBits.NOT_REMOVABLE, new Object[]{" BB", "hPC", " BB", 'B', OrePrefixes.bolt.get(Materials.Tungsten), 'C', OrePrefixes.compressed.get(Materials.MeteoricIron), 'P', GT_ModHandler.getModItem("GalacticraftCore", "item.heavyPlating", 1L)});
@@ -55,5 +59,5 @@ public class GalacticraftRegistrar extends GregTechRegistrar {
             GT_Values.RA.addCentrifugeRecipe(GT_ModHandler.getModItem("GalacticraftMars", "tile.asteroidsBlock", 1L, 0), null, null, Materials.Nitrogen.getGas(33), new ItemStack(Blocks.sand, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Aluminium, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Nickel, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Iron, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Gallium, 1), GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Platinum, 1), new int[]{5000, 400, 400, 100, 100, 100}, 400, 8);
         }*/
 //        OrePrefixes.ingot, MeteoricIron, 1L), GT_Values.NI, Oxygen.getGas(1000L), GT_Values.NF, (OrePrefixes.ingot, MeteoricSteel, 1L), (OrePrefixes.dustSmall, DarkAsh, 1L), 500, 120, 1200);
-    }
+//    }
 }

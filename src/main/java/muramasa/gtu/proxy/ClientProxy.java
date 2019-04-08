@@ -132,6 +132,7 @@ public class ClientProxy implements IProxy {
 
     @SubscribeEvent
     public static void onRegisterTexture(TextureStitchEvent.Pre e) {
+        //Apparently forge does not load fluid textures automatically
         e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_still"));
         e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_flowing"));
         e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_still"));

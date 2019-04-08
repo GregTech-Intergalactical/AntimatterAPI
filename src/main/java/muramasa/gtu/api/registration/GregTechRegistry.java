@@ -19,6 +19,7 @@ import muramasa.gtu.common.blocks.*;
 import muramasa.gtu.common.blocks.pipe.BlockCable;
 import muramasa.gtu.common.blocks.pipe.BlockFluidPipe;
 import muramasa.gtu.common.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.loaders.InternalRegistrar;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -57,23 +58,30 @@ public class GregTechRegistry {
     }
 
     /** Registrar Section **/
-    private static HashMap<String, GregTechRegistrar> REGISTRARS = new HashMap<>();
+    private static IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
 
-    public static void addRegistrar(GregTechRegistrar registrar) {
+    private static HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
+
+    public static void addRegistrar(IGregTechRegistrar registrar) {
         if (registrar.isEnabled() || Ref.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
     }
 
+    public static void callRegistrationEvent(RegistrationEvent event) {
+        INTERNAL_REGISTRAR.onRegistrationEvent(event);
+        REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
+    }
+
     public static boolean isRegistrarEnabled(String id) {
-        GregTechRegistrar registrar = getRegistrar(id);
+        IGregTechRegistrar registrar = getRegistrar(id);
         return registrar != null && registrar.isEnabled();
     }
 
     @Nullable
-    public static GregTechRegistrar getRegistrar(String id) {
+    public static IGregTechRegistrar getRegistrar(String id) {
         return REGISTRARS.get(id);
     }
 
-    public static Collection<GregTechRegistrar> getRegistrars() {
+    public static Collection<IGregTechRegistrar> getRegistrars() {
         return REGISTRARS.values();
     }
 
