@@ -1,6 +1,7 @@
 package muramasa.gtu.api.capability.impl;
 
 import muramasa.gtu.api.gui.SlotType;
+import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -22,21 +23,20 @@ public class MachineItemHandler {
         inputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_IN)) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(0, slot);
+                tile.onContentsChanged(ContentUpdateType.INPUT, slot, stacks[slot].isEmpty());
             }
         };
         outputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_OUT)) {
             @Override
             protected void onContentsChanged(int slot) {
-                //TODO maybe differentiate a input/output slot update? YES DO THIS
-                tile.onContentsChanged(0, slot);
+                tile.onContentsChanged(ContentUpdateType.OUTPUT, slot, stacks[slot].isEmpty());
             }
         };
         if (tile.getType().hasFlag(MachineFlag.FLUID)) {
             cellHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.CELL_IN) + tile.getType().getGui().getCount(SlotType.CELL_OUT)) {
                 @Override
                 protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(2, slot);
+                    tile.onContentsChanged(ContentUpdateType.CELL, slot, stacks[slot].isEmpty());
                 }
             };
         }

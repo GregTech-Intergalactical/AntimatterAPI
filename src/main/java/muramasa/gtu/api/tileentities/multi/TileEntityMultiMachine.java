@@ -135,6 +135,11 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         //NOOP
     }
 
+    public void onHatchContentsChanged() {
+        System.out.println("Hatch Content Update");
+        checkRecipe();
+    }
+
     public void clearComponents() {
         for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
             for (IComponentHandler component : entry.getValue()) {

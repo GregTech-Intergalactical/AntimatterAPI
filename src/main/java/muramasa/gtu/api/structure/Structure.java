@@ -30,12 +30,20 @@ public class Structure {
         return this;
     }
 
+    public static boolean equal(int input1, int input2) {
+        return input1 == input2;
+    }
+
+    public static boolean moreOrEqual(int input1, int input2) {
+        return input1 >= input2;
+    }
+
     public Structure exact(IStringSerializable serializable, int value) {
-        return addReq(serializable, value, StructureResult::equal);
+        return addReq(serializable, value, Structure::equal);
     }
 
     public Structure min(IStringSerializable serializable, int value) {
-        return addReq(serializable, value, StructureResult::moreOrEqual);
+        return addReq(serializable, value, Structure::moreOrEqual);
     }
 
     public Structure addReq(IStringSerializable serializable, int value, BiPredicate<Integer, Integer> method) {
@@ -57,7 +65,8 @@ public class Structure {
         Tuple<int3, StructureElement> element;
         int3 corner = new int3(tile.getPos(), tile.getEnumFacing()).left(size.x / 2).back(offset.x).up(offset.y);
         int3 working = new int3();
-        for (int i = 0; i < elements.size(); i++) {
+        int elementSize = elements.size();
+        for (int i = 0; i < elementSize; i++) {
             element = elements.get(i);
             working.set(corner).offset(element.getFirst(), RIGHT, UP, FORWARD);
             if (!element.getSecond().evaluate(tile, working, result)) {

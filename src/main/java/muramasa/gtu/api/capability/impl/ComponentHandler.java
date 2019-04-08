@@ -8,6 +8,7 @@ import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +16,12 @@ public class ComponentHandler implements IComponentHandler {
 
     protected String componentId;
     protected TileEntityBase componentTile;
-    protected List<BlockPos> controllers = new ArrayList<>();
+    protected List<BlockPos> controllers;
 
     public ComponentHandler(String componentId, TileEntityBase componentTile) {
         this.componentId = componentId;
         this.componentTile = componentTile;
+        this.controllers = new ArrayList<>();
     }
 
     @Override
@@ -38,6 +40,7 @@ public class ComponentHandler implements IComponentHandler {
     }
 
     @Override
+    @Nullable
     public MachineItemHandler getItemHandler() {
         if (componentTile instanceof TileEntityMachine) {
             return ((TileEntityMachine) componentTile).getItemHandler();
@@ -61,6 +64,7 @@ public class ComponentHandler implements IComponentHandler {
     }
 
     @Override
+    @Nullable
     public TileEntityMultiMachine getFirstController() {
         int size = controllers.size();
         TileEntity tile;
