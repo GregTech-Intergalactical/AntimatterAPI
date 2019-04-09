@@ -9,9 +9,12 @@ import net.minecraft.inventory.IInventory;
 
 public class ContainerMachine extends ContainerBase {
 
+    protected TileEntityMachine tile;
+
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
         super(playerInv);
         addSlots(tile);
+        this.tile = tile;
     }
 
     protected void addSlots(TileEntityMachine tile) {

@@ -352,7 +352,7 @@ public class Materials {
     public static Material Cupronickel = new Material("Cupronickel", 0xe39680, METALLIC).asMetal(1728, 0).addTools(6.0F, 64, 1).add(Copper, 1, Nickel, 1);
     public static Material Electrum = new Material("Electrum", 0xffff64, SHINY).asMetal(1330, 0, PLATE, FOIL, ROD, WIREF).addTools(12.0F, 64, 2).add(Silver, 1, Gold, 1);
     public static Material Invar = new Material("Invar", 0xb4b478, METALLIC).asMetal(1700, 0, FRAME).addTools(6.0F, 256, 2).add(Iron, 2, Nickel, 1);
-    public static Material Kanthal = new Material("Kanthalm", 0xc2d2df, METALLIC).asMetal(1800, 1800).addTools(6.0F, 64, 2).add(Iron, 1, Aluminium, 1, Chrome, 1);
+    public static Material Kanthal = new Material("Kanthal", 0xc2d2df, METALLIC).asMetal(1800, 1800).addTools(6.0F, 64, 2).add(Iron, 1, Aluminium, 1, Chrome, 1);
     public static Material Magnalium = new Material("Magnalium", 0xc8beff, DULL).asMetal(870, 0).addTools(6.0F, 256, 2).add(Magnesium, 1, Aluminium, 2);
     public static Material Nichrome = new Material("Nichrome", 0xcdcef6, METALLIC).asMetal(2700, 2700).addTools(6.0F, 64, 2).add(Nickel, 4, Chrome, 1);
     public static Material NiobiumTitanium = new Material("Niobium Titanium", 0x1d1d29, DULL).asMetal(4500, 4500, PLATE, FOIL, ROD, WIREF).add(Nickel, 4, Chrome, 1);

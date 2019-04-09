@@ -175,6 +175,7 @@ public class GuiData {
         return getCount(type) > 0;
     }
 
+    //TODO broken
     public int getCount(SlotType type) {
         return COUNT_LOOKUP.get(type);
     }

@@ -97,7 +97,7 @@ public class Guis {
         HATCH_FLUID_INPUT.getGui().add(LV, HATCH_FLUID_INPUT, ULV);
         HATCH_FLUID_INPUT.getGui().add(MV, HATCH_FLUID_INPUT, ULV);
         HATCH_FLUID_INPUT.getGui().add(HV, HATCH_FLUID_INPUT, ULV);
-        HATCH_FLUID_INPUT.getGui().add(EV, HATCH_FLUID_INPUT, ULV);
+        HATCH_FLUID_INPUT.getGui().add(EV, FL_IN, 61, 16).add(EV, FL_IN, 79, 16).add(EV, FL_IN, 97, 16).add(EV, FL_IN, 61, 34).add(EV, FL_IN, 79, 34).add(EV, FL_IN, 97, 34).add(EV, FL_IN, 61, 52).add(EV, FL_IN, 79, 52).add(EV, FL_IN, 97, 52);
         HATCH_FLUID_INPUT.getGui().add(IV, HATCH_FLUID_INPUT, ULV);
         HATCH_FLUID_INPUT.getGui().add(LUV, HATCH_FLUID_INPUT, ULV);
         HATCH_FLUID_INPUT.getGui().add(ZPM, HATCH_FLUID_INPUT, ULV);

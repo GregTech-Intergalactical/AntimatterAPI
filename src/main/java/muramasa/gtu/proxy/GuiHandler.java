@@ -1,5 +1,6 @@
 package muramasa.gtu.proxy;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.gui.client.GuiBasicMachine;
 import muramasa.gtu.api.gui.client.GuiHatch;
 import muramasa.gtu.api.gui.client.GuiMultiMachine;
@@ -8,10 +9,10 @@ import muramasa.gtu.api.gui.server.ContainerHatch;
 import muramasa.gtu.api.gui.server.ContainerMultiMachine;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
-import muramasa.gtu.Ref;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +35,7 @@ public class GuiHandler implements IGuiHandler {
             } else if (machine.getGui().getId() == Ref.MULTI_MACHINE_ID) {
                 return new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory);
             } else if (machine.getGui().getId() == Ref.HATCH_ID) {
-                return new ContainerHatch((TileEntityMachine) tile, player.inventory);
+                return new ContainerHatch((TileEntityHatch) tile, player.inventory);
             }
         }
         return null;
@@ -52,7 +53,7 @@ public class GuiHandler implements IGuiHandler {
             } else if (machine.getGui().getId() == Ref.MULTI_MACHINE_ID) {
                 return new GuiMultiMachine((TileEntityMultiMachine) tile, new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory));
             } else if (machine.getGui().getId() == Ref.HATCH_ID) {
-                return new GuiHatch((TileEntityMachine) tile, new ContainerHatch((TileEntityMachine) tile, player.inventory));
+                return new GuiHatch((TileEntityHatch) tile, new ContainerHatch((TileEntityHatch) tile, player.inventory));
             }
         }
         return null;

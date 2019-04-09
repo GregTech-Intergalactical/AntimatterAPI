@@ -96,9 +96,12 @@ public class StandardItem extends Item implements IHasModelOverride {
 //                        System.out.println("Input Tanks: " + fluidHandler.getInputCount());
 //                        System.out.println("Output Tanks: " + fluidHandler.getOutputCount());
 
-                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers());
-                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers().size());
-
+//                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers());
+//                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers().size());
+                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
+                        if (handler != null) {
+                            System.out.println(handler.toString());
+                        }
                     } else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {
