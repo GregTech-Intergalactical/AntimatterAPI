@@ -120,7 +120,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         System.out.println("Client: " + isClientSide());
         if (empty) return;
         switch (type) {
-            case INPUT:
+            case ITEM_INPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
                 checkRecipe();
                 break;

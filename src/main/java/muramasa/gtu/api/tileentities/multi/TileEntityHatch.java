@@ -12,6 +12,7 @@ import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
@@ -61,12 +62,15 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
         if (empty) return;
         switch (type) {
-            case INPUT:
+            case ITEM_INPUT:
                 TileEntityMultiMachine controller = componentHandler.getFirstController();
                 if (controller != null) controller.onHatchContentsChanged();
                 break;
-            case CELL:
+            case ITEM_CELL:
                 //TODO handle cells
+                break;
+            case FLUID_INPUT:
+                //TODO
                 break;
         }
     }
@@ -93,8 +97,10 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return side == getEnumFacing();
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getType().hasFlag(ITEM)) {
+            return side == null || side == getEnumFacing();
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && getType().hasFlag(FLUID)) {
+            return side == null || side == getEnumFacing();
         } else if (capability == GTCapabilities.COMPONENT) {
             return true;
         } else if (capability == GTCapabilities.CONFIGURABLE) {
@@ -110,6 +116,8 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == getEnumFacing()) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getOutputHandler());
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler != null) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper());
         } else if (capability == GTCapabilities.COMPONENT) {
             return GTCapabilities.COMPONENT.cast(componentHandler);
         } else if (capability == GTCapabilities.CONFIGURABLE) {

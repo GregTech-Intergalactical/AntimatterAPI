@@ -19,6 +19,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -26,10 +28,7 @@ import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class Utils {
 
@@ -228,6 +227,18 @@ public class Utils {
         }
         System.out.println("FM: " + (matchCount >= a.length));
         return matchCount >= a.length;
+    }
+
+    @Nullable
+    public static Fluid getFluidById(int id) {
+        for (Map.Entry<Fluid, Integer> entry : FluidRegistry.getRegisteredFluidIDs().entrySet()) {
+            if (entry.getValue() == id) return entry.getKey();
+        }
+        return null;
+    }
+
+    public static int getIdByFluid(Fluid fluid) {
+        return FluidRegistry.getRegisteredFluidIDs().get(fluid);
     }
 
     public static String formatNumber(long number) {
