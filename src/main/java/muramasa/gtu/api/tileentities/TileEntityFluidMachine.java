@@ -1,9 +1,16 @@
 package muramasa.gtu.api.tileentities;
 
+import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
 
 //TODO extend BasicMachine
 public class TileEntityFluidMachine extends TileEntityItemFluidMachine {
+
+    @Override
+    public Recipe findRecipe() {
+        return RecipeMap.findRecipeFluid(getType().getRecipeMap(), fluidHandler.getInputs());
+    }
 
     @Override
     public void consumeInputs() {
