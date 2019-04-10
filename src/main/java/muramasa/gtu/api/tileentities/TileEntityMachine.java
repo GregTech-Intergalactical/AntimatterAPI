@@ -5,7 +5,9 @@ import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
@@ -166,8 +168,21 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
+        info.add("Tile Type: " + getClass().getName());
         info.add("Machine Type: " + getType().getName());
         info.add("Machine Tier: " + getTier().getName());
+        if (getType().hasFlag(MachineFlag.ITEM)) {
+            int inputs = getType().getGui().getSlots(SlotType.IT_IN, getTier()).size();
+            int outputs = getType().getGui().getSlots(SlotType.IT_OUT, getTier()).size();
+            if (inputs > 0) info.add("Input Slots: " + inputs);
+            if (outputs > 0) info.add("Output Slots: " + outputs);
+        }
+        if (getType().hasFlag(MachineFlag.FLUID)) {
+            int inputs = getType().getGui().getSlots(SlotType.FL_IN, getTier()).size();
+            int outputs = getType().getGui().getSlots(SlotType.FL_OUT, getTier()).size();
+            if (inputs > 0) info.add("Input Tanks: " + inputs);
+            if (outputs > 0) info.add("Output Tanks: " + outputs);
+        }
         return info;
     }
 }

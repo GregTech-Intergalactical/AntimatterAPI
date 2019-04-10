@@ -1,8 +1,8 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityFluidMultiMachine;
 
-public class TileEntityFusionReactor extends TileEntityMultiMachine {
+public class TileEntityFusionReactor extends TileEntityFluidMultiMachine {
 
     @Override
     public void checkRecipe() {

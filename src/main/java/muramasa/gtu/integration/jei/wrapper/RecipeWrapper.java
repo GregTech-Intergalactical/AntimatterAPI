@@ -24,11 +24,11 @@ public class RecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        if (recipe.hasInputStacks()) {
-            ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputStacks()));
+        if (recipe.hasInputItems()) {
+            ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputItems()));
         }
-        if (recipe.hasOutputStacks()) {
-            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputStacksJEI()));
+        if (recipe.hasOutputItems()) {
+            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputItemsJEI()));
         }
         if (recipe.hasInputFluids()) {
             ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(recipe.getInputFluids()));

@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MachineFluidHandler {
 
@@ -46,23 +47,27 @@ public class MachineFluidHandler {
 
     /** Helpers **/
     public FluidStack[] getInputs() {
-        ArrayList<FluidStack> stacks = new ArrayList<>();
-        for (int i = 0; i < inputWrapper.tanks.length; i++) {
-            if (inputWrapper.tanks[i].getFluid() != null) {
-                stacks.add(inputWrapper.tanks[i].getFluid());
-            }
-        }
-        return stacks.toArray(new FluidStack[0]);
+        return getInputList().toArray(new FluidStack[0]);
     }
 
     public FluidStack[] getOutputs() {
-        ArrayList<FluidStack> stacks = new ArrayList<>();
-        for (int i = 0; i < outputWrapper.tanks.length; i++) {
-            if (outputWrapper.tanks[i].getFluid() != null) {
-                stacks.add(outputWrapper.tanks[i].getFluid());
-            }
+        return getOutputList().toArray(new FluidStack[0]);
+    }
+
+    public List<FluidStack> getInputList() {
+        ArrayList<FluidStack> list = new ArrayList<>();
+        for (int i = 0; i < inputWrapper.tanks.length; i++) {
+            if (inputWrapper.tanks[i].getFluid() != null) list.add(inputWrapper.tanks[i].getFluid());
         }
-        return stacks.toArray(new FluidStack[0]);
+        return list;
+    }
+
+    public List<FluidStack> getOutputList() {
+        ArrayList<FluidStack> list = new ArrayList<>();
+        for (int i = 0; i < outputWrapper.tanks.length; i++) {
+            if (outputWrapper.tanks[i].getFluid() != null) list.add(outputWrapper.tanks[i].getFluid());
+        }
+        return list;
     }
 
     public void consumeInputs(FluidStack... inputs) {
@@ -93,34 +98,40 @@ public class MachineFluidHandler {
         }
     }
 
-    public boolean canFluidsFit(FluidStack[] a) {
-        return getSpaceForFluids(a) >= a.length;
+    public boolean canOutputsFit(FluidStack[] a) {
+        return getSpaceForOutputs(a) >= a.length;
     }
 
-    public int getSpaceForFluids(FluidStack[] a) {
+    public int getSpaceForOutputs(FluidStack[] a) {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < outputWrapper.tanks.length; j++) {
-                if (outputWrapper.tanks[j].fill(a[i], false) == a[i].amount) {
+                if (outputWrapper.tanks[j].getFluid() == null || outputWrapper.tanks[j].fill(a[i], false) == a[i].amount) {
                     matchCount++;
                 }
             }
         }
         return matchCount;
-//        int matchCount = 0;
-//        for (int i = 0; i < a.length; i++) {
-//            for (int j = 0; j < outputTanks.length; j++) {
-//                if (outputTanks[j].getFluid() == null || (Utils.equals(a[i], outputTanks[j].getFluid()) && outputTanks[j].getFluid().amount + a[i].amount <= outputTanks[j].getCapacity())) {
-//                    matchCount++;
-//                    break;
-//                }
-//            }
-//        }
-//        return matchCount;
     }
 
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
-        return inputs; //TODO
+        ArrayList<FluidStack> notConsumed = new ArrayList<>();
+        for (int i = 0; i < inputs.length; i++) {
+            for (int j = 0; j < inputWrapper.tanks.length; j++) {
+                if (Utils.equals(inputs[i], inputWrapper.tanks[j].getFluid())) {
+                    if (inputWrapper.tanks[j].getFluid().amount >= inputs[i].amount) {
+                        inputWrapper.tanks[j].drain(inputs[i], true);
+                    } else {
+                        int leftOver = inputs[i].amount - inputWrapper.tanks[j].getFluid().amount;
+                        notConsumed.add(Utils.ca(leftOver, inputs[i]));
+                        inputWrapper.tanks[j].drain(Utils.ca(inputs[i].amount - leftOver, inputs[i]), true);
+                    }
+                } else {
+                    notConsumed.add(inputs[i]);
+                }
+            }
+        }
+        return notConsumed.toArray(new FluidStack[0]);
     }
 
     public ArrayList<Integer> getInputIds() {
@@ -160,7 +171,7 @@ public class MachineFluidHandler {
             builder.append("Outputs:\n");
             for (int i = 0; i < outputWrapper.tanks.length; i++) {
                 if (outputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(outputWrapper.tanks[i].getFluid().getLocalizedName()).append(" - ").append(inputWrapper.tanks[i].getFluid().amount);
+                    builder.append(outputWrapper.tanks[i].getFluid().getLocalizedName()).append(" - ").append(outputWrapper.tanks[i].getFluid().amount);
                     if (i != outputWrapper.tanks.length - 1) {
                         builder.append("\n");
                     }

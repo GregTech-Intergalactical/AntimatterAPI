@@ -5,11 +5,12 @@ import muramasa.gtu.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class Recipe {
 
-    private ItemStack[] stacksInput, stacksOutput;
+    private ItemStack[] itemsInput, itemsOutput;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, special;
     private long power;
@@ -17,8 +18,8 @@ public class Recipe {
     private boolean hidden;
 
     public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, long power, int special) {
-        this.stacksInput = stacksInput;
-        this.stacksOutput = stacksOutput;
+        this.itemsInput = stacksInput;
+        this.itemsOutput = stacksOutput;
         this.duration = duration;
         this.power = power;
         this.special = special;
@@ -38,12 +39,12 @@ public class Recipe {
         this.hidden = hidden;
     }
 
-    public boolean hasInputStacks() {
-        return stacksInput != null && stacksInput.length > 0;
+    public boolean hasInputItems() {
+        return itemsInput != null && itemsInput.length > 0;
     }
 
-    public boolean hasOutputStacks() {
-        return stacksOutput != null && stacksOutput.length > 0;
+    public boolean hasOutputItems() {
+        return itemsOutput != null && itemsOutput.length > 0;
     }
 
     public boolean hasInputFluids() {
@@ -54,41 +55,52 @@ public class Recipe {
         return fluidsOutput != null && fluidsOutput.length > 0;
     }
 
-    public ItemStack[] getInputStacks() {
-        return stacksInput.clone();
+    @Nullable
+    public ItemStack[] getInputItems() {
+        return hasInputItems() ? itemsInput.clone() : null;
     }
 
-    public ItemStack[] getOutputStacks() {
-        ItemStack[] outputs = stacksOutput.clone();
-        if (chances != null) {
-            ArrayList<ItemStack> evaluated = new ArrayList<>();
-            for (int i = 0; i < outputs.length; i++) {
-                if (Ref.RNG.nextInt(100) < chances[i]) {
-                    evaluated.add(outputs[i].copy());
+    @Nullable
+    public ItemStack[] getOutputItems() {
+        if (hasOutputItems()) {
+            ItemStack[] outputs = itemsOutput.clone();
+            if (chances != null) {
+                ArrayList<ItemStack> evaluated = new ArrayList<>();
+                for (int i = 0; i < outputs.length; i++) {
+                    if (Ref.RNG.nextInt(100) < chances[i]) {
+                        evaluated.add(outputs[i].copy());
+                    }
+                }
+                outputs = evaluated.toArray(new ItemStack[0]);
+            }
+            return outputs;
+        }
+        return null;
+    }
+
+    @Nullable
+    public ItemStack[] getOutputItemsJEI() {
+        if (hasOutputItems()) {
+            ItemStack[] outputs = itemsOutput.clone();
+            if (chances != null) {
+                for (int i = 0; i < outputs.length; i++) {
+                    if (chances[i] >= 100) continue;
+                    Utils.addChanceTag(outputs[i], chances[i]);
                 }
             }
-            outputs = evaluated.toArray(new ItemStack[0]);
+            return outputs;
         }
-        return outputs;
+        return null;
     }
 
-    public ItemStack[] getOutputStacksJEI() {
-        ItemStack[] outputs = stacksOutput.clone();
-        if (chances != null) {
-            for (int i = 0; i < outputs.length; i++) {
-                if (chances[i] >= 100) continue;
-                Utils.addChanceTag(outputs[i], chances[i]);
-            }
-        }
-        return outputs;
-    }
-
+    @Nullable
     public FluidStack[] getInputFluids() {
-        return fluidsInput.clone();
+        return hasInputFluids() ? fluidsInput.clone() : null;
     }
 
+    @Nullable
     public FluidStack[] getOutputFluids() {
-        return fluidsOutput.clone();
+        return hasOutputFluids() ? fluidsOutput.clone() : null;
     }
 
     public int getDuration() {
@@ -114,19 +126,19 @@ public class Recipe {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (stacksInput != null) {
-            builder.append("\nInput Stacks: {");
-            for (int i = 0; i < stacksInput.length; i++) {
-                builder.append(stacksInput[i].getDisplayName() + " x" + stacksInput[i].getCount());
-                if (i != stacksInput.length - 1) builder.append(", ");
+        if (itemsInput != null) {
+            builder.append("\nInput Items: {");
+            for (int i = 0; i < itemsInput.length; i++) {
+                builder.append(itemsInput[i].getDisplayName() + " x" + itemsInput[i].getCount());
+                if (i != itemsInput.length - 1) builder.append(", ");
             }
             builder.append("}\n");
         }
-        if (stacksOutput != null) {
-            builder.append("Output Stacks: {");
-            for (int i = 0; i < stacksOutput.length; i++) {
-                builder.append(stacksOutput[i].getDisplayName() + " x" + stacksOutput[i].getCount());
-                if (i != stacksOutput.length - 1) builder.append(", ");
+        if (itemsOutput != null) {
+            builder.append("Output Items: {");
+            for (int i = 0; i < itemsOutput.length; i++) {
+                builder.append(itemsOutput[i].getDisplayName() + " x" + itemsOutput[i].getCount());
+                if (i != itemsOutput.length - 1) builder.append(", ");
             }
             builder.append("}\n");
         }

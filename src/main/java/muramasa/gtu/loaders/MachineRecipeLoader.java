@@ -2,8 +2,7 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.api.recipe.RecipeBuilder;
 
-import static muramasa.gtu.api.data.Machines.BLAST_FURNACE;
-import static muramasa.gtu.api.data.Machines.FUSION_REACTOR_1;
+import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.api.data.Materials.*;
 
 public class MachineRecipeLoader {
@@ -11,6 +10,10 @@ public class MachineRecipeLoader {
     public static RecipeBuilder RB = new RecipeBuilder();
 
     public static void init() {
+        /** Temp Testing Recipes **/ //TODO remove
+        RB.get(COMBUSTION_ENGINE).fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(16, 1024);
+
+
         //Power Gen Recipes
         RB.get(FUSION_REACTOR_1).fi(Deuterium.getGas(125), Tritium.getGas(125)).fo(Helium.getPlasma(125)).add(16, 4096, 40000000); //Mark 1 Cheap
         RB.get(FUSION_REACTOR_1).fi(Deuterium.getGas(125), Helium3.getGas(125)).fo(Helium.getPlasma(125)).add(16, 2048, 60000000); //Mark 1 Expensive

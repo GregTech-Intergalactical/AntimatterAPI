@@ -11,17 +11,16 @@ public class TileEntityItemFluidMachine extends TileEntityItemMachine {
 
     @Override
     public void consumeInputs() {
+        super.consumeInputs();
         if (activeRecipe.hasInputFluids()) {
-            super.consumeInputs();
             fluidHandler.consumeInputs(activeRecipe.getInputFluids());
         }
-        super.consumeInputs();
     }
 
     @Override
     public boolean canOutput() {
         if (activeRecipe.hasOutputFluids()) {
-            return super.canOutput() && fluidHandler.canFluidsFit(activeRecipe.getOutputFluids());
+            return super.canOutput() && fluidHandler.canOutputsFit(activeRecipe.getOutputFluids());
         }
         return super.canOutput();
     }

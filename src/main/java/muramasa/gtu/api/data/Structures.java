@@ -52,11 +52,13 @@ public class Structures {
     public static StructureElement ANY_COIL_EBF = new StructureElement("anycoilebf", Coil.getAll().toArray(new Coil[0]));
 
     /** Vacuum Freezer Elements **/
-    public static StructureElement VF_HATCH_OR_CASING = new StructureElement("hatchorcasingvf", FROST_PROOF, HATCH_ITEM_INPUT, HATCH_ITEM_OUTPUT, HATCH_ENERGY);
+    public static StructureElement VF_HATCH_OR_CASING = new StructureElement("hatchorcasingvf", FROST_PROOF, HATCH_ITEM_INPUT, HATCH_ITEM_OUTPUT, HATCH_FLUID_INPUT, HATCH_ENERGY);
 
     /** Large Turbine Elements **/
     public static StructureElement LT_HATCH_OR_CASING = new StructureElement("hatchorcasinglt", TURBINE_4, HATCH_FLUID_INPUT, HATCH_FLUID_OUTPUT);
-    public static StructureElement LT_DYNAMO_OR_CASING = new StructureElement("dynamoorcasinglt", TURBINE_4, HATCH_DYNAMO);
+
+    /** Combustion Engine Elements **/
+    public static StructureElement CE_HATCH_OR_CASING = new StructureElement("hatchorcasingce", TITANIUM, HATCH_FLUID_INPUT, HATCH_FLUID_OUTPUT);
 
     /** Fusion Reactor Elements **/
     public static StructureElement FR_INPUT_OR_CASING = new StructureElement("inputorcasingfr", FUSION_3, HATCH_FLUID_INPUT) {
@@ -107,8 +109,14 @@ public class Structures {
 
         LARGE_TURBINE_4.addStructure(StructureBuilder.start()
             .of("CCCC", "CCCC", "CCCC").of("CHHC", "EAAM", "CHHC").of(0)
-            .at("C", TURBINE_4).at("H", LT_HATCH_OR_CASING).at("E", LT_DYNAMO_OR_CASING).at("M", LARGE_TURBINE_4).build()
+            .at("C", TURBINE_4).at("H", LT_HATCH_OR_CASING).at("E", HATCH_DYNAMO).at("M", LARGE_TURBINE_4).build()
             .offset(3, -1).exact(LARGE_TURBINE_4, 1).min(TURBINE_4, 28).min(HATCH_FLUID_INPUT, 1).min(HATCH_FLUID_OUTPUT, 1)
+        );
+
+        COMBUSTION_ENGINE.addStructure(StructureBuilder.start()
+            .of("CCCV", "CCCV", "CCCV").of("CHHV", "EAAM", "CHHV").of(0)
+            .at("C", TITANIUM).at("V", ENGINE_INTAKE).at("H", CE_HATCH_OR_CASING).at("E", HATCH_DYNAMO).at("M", COMBUSTION_ENGINE).build()
+            .offset(3, -1).exact(COMBUSTION_ENGINE, 1).min(TITANIUM, 19).min(HATCH_FLUID_INPUT, 1).min(HATCH_FLUID_OUTPUT, 1)
         );
 
         FUSION_REACTOR_1.addStructure(StructureBuilder.start()

@@ -2,6 +2,7 @@ package muramasa.gtu.api.tileentities;
 
 import muramasa.gtu.api.util.Utils;
 
+//TODO extend BasicMachine
 public class TileEntityFluidMachine extends TileEntityItemFluidMachine {
 
     @Override
@@ -11,7 +12,7 @@ public class TileEntityFluidMachine extends TileEntityItemFluidMachine {
 
     @Override
     public boolean canOutput() {
-        return fluidHandler.canFluidsFit(activeRecipe.getOutputFluids());
+        return fluidHandler.canOutputsFit(activeRecipe.getOutputFluids());
     }
 
     @Override

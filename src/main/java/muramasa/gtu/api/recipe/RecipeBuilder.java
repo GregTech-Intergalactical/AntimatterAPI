@@ -19,7 +19,7 @@ public class RecipeBuilder {
     private boolean hidden;
 
     public void add() {
-        if (stacksInput != null && !Utils.areStacksValid(stacksInput)) {
+        if (stacksInput != null && !Utils.areItemsValid(stacksInput)) {
             if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
                 throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
             } else {
@@ -27,7 +27,7 @@ public class RecipeBuilder {
                 return;
             }
         }
-        if (stacksOutput != null && !Utils.areStacksValid(stacksOutput)) {
+        if (stacksOutput != null && !Utils.areItemsValid(stacksOutput)) {
             if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
                 for (ItemStack stack : stacksOutput) {
                     System.out.println(stack != null ? stack.getDisplayName() : "NULL");

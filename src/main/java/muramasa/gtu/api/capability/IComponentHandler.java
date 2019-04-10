@@ -1,10 +1,12 @@
 package muramasa.gtu.api.capability;
 
+import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public interface IComponentHandler {
@@ -15,7 +17,11 @@ public interface IComponentHandler {
 
     List<BlockPos> getLinkedControllers();
 
+    @Nullable
     MachineItemHandler getItemHandler();
+
+    @Nullable
+    MachineFluidHandler getFluidHandler();
 
     void linkController(TileEntityMultiMachine tile);
 
@@ -23,6 +29,7 @@ public interface IComponentHandler {
 
     boolean hasLinkedController();
 
+    @Nullable
     TileEntityMultiMachine getFirstController();
 
     void onComponentRemoved();
