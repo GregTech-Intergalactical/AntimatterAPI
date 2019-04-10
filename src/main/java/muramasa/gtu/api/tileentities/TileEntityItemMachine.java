@@ -1,8 +1,15 @@
 package muramasa.gtu.api.tileentities;
 
+import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
 
 public class TileEntityItemMachine extends TileEntityBasicMachine {
+
+    @Override
+    public Recipe findRecipe() {
+        return RecipeMap.findRecipeItem(getType().getRecipeMap(), itemHandler.getInputs());
+    }
 
     @Override
     public void consumeInputs() {

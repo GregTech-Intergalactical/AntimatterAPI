@@ -4,10 +4,17 @@ import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 
 public class TileEntityItemFluidMachine extends TileEntityItemMachine {
+
+    @Override
+    public Recipe findRecipe() {
+        return RecipeMap.findRecipeItemFluid(getType().getRecipeMap(), itemHandler.getInputs(), fluidHandler.getInputs());
+    }
 
     @Override
     public void consumeInputs() {

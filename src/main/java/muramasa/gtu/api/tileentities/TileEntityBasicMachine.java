@@ -15,6 +15,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static muramasa.gtu.api.machines.MachineFlag.*;
 import static muramasa.gtu.api.machines.MachineState.*;
 
@@ -56,8 +58,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
+            System.out.println("check recipe");
             if ((activeRecipe = findRecipe()) != null) {
-                System.out.println("check recipe");
                 curProgress = 0;
                 maxProgress = activeRecipe.getDuration();
                 setMachineState(ACTIVE);
@@ -234,5 +236,14 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
             return GTCapabilities.CONFIGURABLE.cast(configHandler);
         }
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> info = super.getInfo();
+        if (clientProgress > 0) {
+            info.add("Recipe Progress: " + clientProgress);
+        }
+        return info;
     }
 }
