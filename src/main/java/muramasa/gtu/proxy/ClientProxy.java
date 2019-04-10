@@ -18,6 +18,7 @@ import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.models.ModelFluidCell;
 import muramasa.gtu.client.render.models.ModelMachine;
 import muramasa.gtu.client.render.models.ModelPipe;
 import muramasa.gtu.common.blocks.BlockOre;
@@ -155,6 +156,9 @@ public class ClientProxy implements IProxy {
 
         ModelPipe modelPipe = new ModelPipe();
         GTModelLoader.register("block_pipe", modelPipe);
+
+        ModelFluidCell modelFluidCell = new ModelFluidCell();
+        GTModelLoader.register("fluid_cell", modelFluidCell);
     }
 
     @SubscribeEvent

@@ -24,6 +24,7 @@ public class ContainerBasicMachine extends ContainerMachine {
         int curState = tile.getMachineState().getId();
         for (IContainerListener listener : listeners) {
             if (curProgress != lastProgress) {
+                //TODO add threshold
                 int progress = (int)(((float)curProgress / (float)tile.getMaxProgress()) * Short.MAX_VALUE);
                 listener.sendWindowProperty(this, GuiUpdateType.PROGRESS.ordinal(), progress);
                 lastProgress = curProgress;

@@ -11,8 +11,14 @@
 	  "sticky_resin": {
 		"textures": {"layer0": "gtu:items/standard/sticky_resin"}
 	  },
-	  "empty_cell": {
-		"textures": {"layer0": "gtu:items/standard/empty_cell"}
+	  "fluid_cell_tin": {
+		"textures": {"layer0": "gtu:items/standard/cell_tin"}
+	  },
+	  "fluid_cell_steel": {
+		"textures": {"layer0": "gtu:items/standard/cell_steel"}
+	  },
+	  "fluid_cell_tungstensteel": {
+		"textures": {"layer0": "gtu:items/standard/cell_tungstensteel"}
 	  },
 	  "debug_scanner": {
 		"textures": {"layer0": "gtu:items/standard/debug_scanner"}

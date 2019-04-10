@@ -279,7 +279,7 @@ public class MaterialRecipeLoader {
                 } else {
                     input = m.getDust(inputCount);
                 }
-                ItemStack inputCell = inputCellCount > 0 ? EmptyCell.get(inputCellCount) : ItemStack.EMPTY;
+                ItemStack inputCell = inputCellCount > 0 ? CellTin.get(inputCellCount) : ItemStack.EMPTY;
                 if (m.has(ELEC)) {
                     RB.get(ELECTROLYZER).ii(input, inputCell).fi(firstFluid).io(outputs).add(Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
                     //RecipeAdder.addElectrolyzerRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);

@@ -2,10 +2,12 @@ package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
-import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
@@ -20,7 +22,7 @@ public class ItemType implements IStringSerializable {
 
     public static ItemType StickyResin = new ItemType("sticky_resin");
 
-    public static ItemType EmptyCell = new ItemType("empty_cell");
+//    public static ItemType EmptyCell = new ItemType("empty_cell");
     public static ItemType DebugScanner = new ItemType("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 //    public static ItemType PumpComponent = new ItemType("component_pump", "");
 //    public static ItemType ConveyorComponent = new ItemType("component_conveyor", "");
@@ -28,6 +30,25 @@ public class ItemType implements IStringSerializable {
 //    public static ItemType FluidPort = new ItemType("fluid_port", "Can be placed on machines as a cover");
     public static ItemType EnergyPort = new ItemType("energy_port", "Can be placed on machines as a cover");
     public static ItemType ComputerMonitor = new ItemType("computer_monitor", "Can be placed on machines as a cover");
+
+    public static ItemType CellTin = new ItemType("fluid_cell_tin") {
+        @Override
+        public Item getNewInstance() {
+            return new ItemFluidCell(this, Ref.MB_INGOT * 9);
+        }
+    };
+    public static ItemType CellSteel = new ItemType("fluid_cell_steel") {
+        @Override
+        public Item getNewInstance() {
+            return new ItemFluidCell(this, 16000);
+        }
+    };
+    public static ItemType CellTungstensteel = new ItemType("fluid_cell_tungstensteel") {
+        @Override
+        public Item getNewInstance() {
+            return new ItemFluidCell(this, 64000);
+        }
+    };
 
     public static ItemType ItemFilter = new ItemType("item_filter");
     public static ItemType DiamondSawBlade = new ItemType("diamond_saw_blade");
@@ -189,6 +210,7 @@ public class ItemType implements IStringSerializable {
     public static ItemType DropUUM = new ItemType("drop_uum", "Source of UU Matter").optional(Ref.MOD_IC2, Ref.MOD_IC2C);
     public static ItemType DropUUA = new ItemType("drop_uua", "Source of UU Amplifier").optional(Ref.MOD_IC2, Ref.MOD_IC2C);
 
+    //TODO move to Forestry Registrar
     public static ItemType CombLignite = new ItemType("comb_lignite", "").optional(Ref.MOD_FR);
     public static ItemType CombCoal = new ItemType("comb_coal", "").optional(Ref.MOD_FR);
     public static ItemType CombResin = new ItemType("comb_resin", "").optional(Ref.MOD_FR);
@@ -280,6 +302,10 @@ public class ItemType implements IStringSerializable {
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
         return GregTechAPI.getCoverFromCatalyst(stack) != null;
+    }
+
+    public Item getNewInstance() {
+        return new StandardItem(this);
     }
 
     public StandardItem getItem() {
