@@ -2,9 +2,7 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.*;
-import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.ItemFlag;
@@ -54,12 +52,11 @@ public class ContentLoader {
         }
         for (ItemType type : ItemType.getAll()) {
             if (!type.isEnabled()) continue;
-            GregTechRegistry.register(new StandardItem(type));
+            GregTechRegistry.register(type.getNewInstance());
         }
         for (ToolType type : ToolType.values()) {
             GregTechRegistry.register(type.getInstance());
         }
-        GregTechRegistry.register(new ItemFluidCell());
 
         //Blocks
         Machines.getAll().forEach(type -> GregTechRegistry.register(type.getBlock()));

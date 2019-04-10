@@ -1,8 +1,5 @@
 package muramasa.gtu.api.gui.slot;
 
-import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.materials.Prefix;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -18,6 +15,7 @@ public class SlotCell extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return ItemType.EmptyCell.isEqual(stack) || MaterialItem.hasPrefix(stack, Prefix.Cell);
+        //TODO return ItemType.EmptyCell.isEqual(stack) || MaterialItem.hasPrefix(stack, Prefix.Cell);
+        return false;
     }
 }

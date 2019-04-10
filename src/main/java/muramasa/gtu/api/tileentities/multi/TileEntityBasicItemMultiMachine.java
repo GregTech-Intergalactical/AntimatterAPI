@@ -5,7 +5,7 @@ import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
-public abstract class TileEntityBasicItemMultiMachine extends TileEntityMultiMachine {
+public class TileEntityBasicItemMultiMachine extends TileEntityMultiMachine {
 
     @Override
     public Recipe findRecipe() {

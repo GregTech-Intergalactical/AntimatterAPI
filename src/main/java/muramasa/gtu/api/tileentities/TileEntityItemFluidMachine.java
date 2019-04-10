@@ -1,6 +1,5 @@
 package muramasa.gtu.api.tileentities;
 
-import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.materials.Prefix;
@@ -64,10 +63,10 @@ public class TileEntityItemFluidMachine extends TileEntityItemMachine {
                         fluidHandler.addInputs(item.getMaterial().getPlasma(1000));
                     }
                     itemHandler.getCellInput().setCount(0);
-                } else if (ItemType.EmptyCell.isEqual(stack)) {
+                } /*else if (ItemType.EmptyCell.isEqual(stack)) {
                     System.out.println("Empty Cell");
 //                    fluidHandler.getInput(0).setFluid(null);
-                }
+                }*/
             } else if (slot == 1) { //Output slot
 
             }

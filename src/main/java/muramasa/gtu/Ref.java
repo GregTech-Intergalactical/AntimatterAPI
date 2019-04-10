@@ -34,6 +34,7 @@ public class Ref {
 
     /** Global Data **/
     public static final int[] V = new int[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+    public static final int MB_INGOT = 144;
 
     /** Config Values **/
     public static boolean HARDCORE_CABLES = true;
