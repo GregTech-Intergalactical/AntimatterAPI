@@ -57,12 +57,24 @@ public class Utils {
         return getString(stack) + getString(fluid);
     }
 
+    /** Returns true of A is not empty, has the same Item and damage is equal to B **/
     public static boolean equals(ItemStack a, ItemStack b) {
-        return a.getItem() == b.getItem() && a.getMetadata() == b.getMetadata();
+        return a.isItemEqual(b);
     }
 
+    /** Returns true of A has the same Fluid as B **/
     public static boolean equals(FluidStack a, FluidStack b) {
         return a.isFluidEqual(b);
+    }
+
+    /** Returns true if A equals() B and A amount >= B amount **/
+    public static boolean contains(ItemStack a, ItemStack b) {
+        return equals(a, b) && a.getCount() >= b.getCount();
+    }
+
+    /** Returns true if A equals() B and A amount >= B amount **/
+    public static boolean contains(FluidStack a, FluidStack b) {
+        return a.containsFluid(b);
     }
 
     public static int contains(List<ItemStack> list, ItemStack stack) {
@@ -81,27 +93,7 @@ public class Utils {
         return -1;
     }
 
-//    public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
-//        int position, size = a.size();
-//        ItemStack stack;
-//        for (int i = 0; i < size; i++) {
-//            stack = a.get(i);
-//            position = contains(b, stack);
-//            if (position != -1) {
-//                if (stack.getCount() + b.get(position).getCount() <= stack.getMaxStackSize()) {
-//                    stack.grow(b.get(position).getCount());
-//                } else {
-//                    ItemStack copy = stack.copy();
-//                    copy.setCount(stack.getCount() + b.get(position).getCount() - stack.getMaxStackSize());
-//                    a.add(copy);
-//                    stack.setCount(stack.getMaxStackSize());
-//                }
-//            }
-//        }
-//        return a;
-//    }
-
-    /** Merges two Lists of ItemStacks, ignoring maxStackSize **/
+    /** Merges two Lists of ItemStacks, ignoring maxStackSize. **/
     public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
         int position, size = a.size();
         for (int i = 0; i < size; i++) {
@@ -111,7 +103,7 @@ public class Utils {
         return a;
     }
 
-    /** Merges two Lists of FluidStacks, ignoring max amount (Int.Max) **/
+    /** Merges two Lists of FluidStacks, ignoring max amount **/
     public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
         int position, size = a.size();
         for (int i = 0; i < size; i++) {
@@ -172,7 +164,7 @@ public class Utils {
         return stack;
     }
 
-    public static boolean areStacksValid(ItemStack... stacks) {
+    public static boolean areItemsValid(ItemStack... stacks) {
         if (stacks == null) return false;
         for (int i = 0; i < stacks.length; i++) {
             if (stacks[i].isEmpty()) return false;
@@ -180,9 +172,9 @@ public class Utils {
         return true;
     }
 
-    public static boolean areStacksValid(ItemStack[]... stackArrays) {
+    public static boolean areItemsValid(ItemStack[]... stackArrays) {
         for (int i = 0; i < stackArrays.length; i++) {
-            if (!areStacksValid(stackArrays[i])) return false;
+            if (!areItemsValid(stackArrays[i])) return false;
         }
         return true;
     }
@@ -202,11 +194,11 @@ public class Utils {
         return true;
     }
 
-    public static boolean doStacksMatchAndSizeValid(ItemStack[] a, ItemStack[] b) {
+    public static boolean doItemsMatchAndSizeValid(ItemStack[] a, ItemStack[] b) {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < b.length; j++) {
-                if (equals(a[i], b[j]) && b[j].getCount() >= a[i].getCount()) {
+                if (contains(b[j], a[i])) {
                     matchCount++;
                     break;
                 }
@@ -219,13 +211,12 @@ public class Utils {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < b.length; j++) {
-                if (equals(a[i], b[j]) && b[j].amount >= a[i].amount) {
+                if (contains(b[j], a[i])) {
                     matchCount++;
                     break;
                 }
             }
         }
-        System.out.println("FM: " + (matchCount >= a.length));
         return matchCount >= a.length;
     }
 
@@ -392,6 +383,7 @@ public class Utils {
         return set;
     }
 
+    //Credit: from Tinkers' Construct
     public static void breakBlock(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityPlayer player) {
         Block block = state.getBlock();
         if (player.capabilities.isCreativeMode) {

@@ -44,7 +44,7 @@ public class Guis {
         REPLICATOR.getGui().add(COMPRESSOR);
         FERMENTER.getGui().add(COMPRESSOR);
         FLUID_EXTRACTOR.getGui().add(COMPRESSOR);
-        FLUID_SOLIDIFIER.getGui().add(COMPRESSOR);
+        FLUID_SOLIDIFIER.getGui().add(COMPRESSOR).add(FL_IN, 53, 63);
         DISTILLERY.getGui().add(COMPRESSOR);
         CHEMICAL_BATH.getGui().add(THERMAL_CENTRIFUGE);
         AUTOCLAVE.getGui().add(COMPRESSOR);
@@ -104,7 +104,7 @@ public class Guis {
         HATCH_FLUID_INPUT.getGui().add(UV, HATCH_FLUID_INPUT, ULV);
         HATCH_FLUID_INPUT.getGui().add(MAX, HATCH_FLUID_INPUT, ULV);
 
-        HATCH_FLUID_OUTPUT.getGui().add(FL_IN, 79, 34);
+        HATCH_FLUID_OUTPUT.getGui().add(FL_OUT, 79, 34);
         HATCH_FLUID_OUTPUT.getGui().add(LV, HATCH_FLUID_OUTPUT, ULV);
         HATCH_FLUID_OUTPUT.getGui().add(MV, HATCH_FLUID_OUTPUT, ULV);
         HATCH_FLUID_OUTPUT.getGui().add(HV, HATCH_FLUID_OUTPUT, ULV);

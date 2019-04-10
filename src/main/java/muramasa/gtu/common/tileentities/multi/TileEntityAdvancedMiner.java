@@ -1,6 +1,6 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityItemMultiMachine;
 
-public class TileEntityAdvancedMiner extends TileEntityMultiMachine {
+public class TileEntityAdvancedMiner extends TileEntityItemMultiMachine {
 }

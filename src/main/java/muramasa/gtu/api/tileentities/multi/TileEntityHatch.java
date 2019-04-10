@@ -36,6 +36,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
         if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
         if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
         componentHandler = new HatchComponentHandler(this);
+        markDirty();
     }
 
     @Override

@@ -2,12 +2,12 @@ package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityItemFluidMultiMachine;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-public class TileEntityElectricBlastFurnace extends TileEntityMultiMachine {
+public class TileEntityElectricBlastFurnace extends TileEntityItemFluidMultiMachine {
 
     private int heatingCapacity;
 

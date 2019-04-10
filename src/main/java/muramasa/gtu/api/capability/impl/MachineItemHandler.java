@@ -75,11 +75,7 @@ public class MachineItemHandler {
     }
 
     public ItemStack[] getInputs() {
-        ArrayList<ItemStack> list = new ArrayList<>();
-        for (int i = 0; i < inputHandler.stacks.length; i++) {
-            if (!inputHandler.stacks[i].isEmpty()) list.add(inputHandler.stacks[i].copy());
-        }
-        return list.toArray(new ItemStack[0]);
+        return getInputList().toArray(new ItemStack[0]);
     }
 
     public ItemStack[] getOutputs() {
@@ -94,12 +90,11 @@ public class MachineItemHandler {
         return cellHandler.getStackInSlot(1);
     }
 
+    /** Gets a list of non empty Stacks **/
     public List<ItemStack> getInputList() {
         ArrayList<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < inputHandler.stacks.length; i++) {
-            if (!inputHandler.stacks[i].isEmpty()) {
-                list.add(inputHandler.stacks[i].copy());
-            }
+            if (!inputHandler.stacks[i].isEmpty()) list.add(inputHandler.stacks[i].copy());
         }
         return list;
     }
@@ -122,11 +117,11 @@ public class MachineItemHandler {
     }
 
     /** Helpers **/
-    public boolean canStacksFit(ItemStack[] a) {
-        return getSpaceForStacks(a) >= a.length;
+    public boolean canOutputsFit(ItemStack[] a) {
+        return getSpaceForOutputs(a) >= a.length;
     }
 
-    public int getSpaceForStacks(ItemStack[] a) {
+    public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < outputHandler.stacks.length; j++) {
@@ -144,7 +139,13 @@ public class MachineItemHandler {
         for (int i = 0; i < inputs.length; i++) {
             for (int j = 0; j < inputHandler.stacks.length; j++) {
                 if (Utils.equals(inputs[i], inputHandler.stacks[j])) {
-                    inputHandler.stacks[j].shrink(inputs[i].getCount());
+                    if (inputHandler.stacks[j].getCount() >= inputs[i].getCount()) {
+                        inputHandler.stacks[j].shrink(inputs[i].getCount());
+                    } else {
+                        int leftOver = inputs[i].getCount() - inputHandler.stacks[j].getCount();
+                        notConsumed.add(Utils.ca(leftOver, inputs[i]));
+                        inputHandler.stacks[j].shrink(inputs[i].getCount() - leftOver);
+                    }
                 } else {
                     notConsumed.add(inputs[i]);
                 }

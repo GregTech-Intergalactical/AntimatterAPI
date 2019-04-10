@@ -1,41 +1,10 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.recipe.Recipe;
-import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.api.tileentities.multi.TileEntityBasicItemMultiMachine;
 import muramasa.gtu.api.util.int3;
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.init.Blocks;
 
-public class TileEntityPrimitiveBlastFurnace extends TileEntityMultiMachine {
-
-    @Override
-    public Recipe findRecipe() {
-        return getType().findRecipe(itemHandler, fluidHandler);
-    }
-
-    public void consumeInputs() {
-        itemHandler.consumeInputs(activeRecipe.getInputStacks());
-    }
-
-    @Override
-    public boolean canOutput() {
-        return itemHandler.canStacksFit(activeRecipe.getOutputStacks());
-    }
-
-    @Override
-    public void addOutputs() {
-        itemHandler.addOutputs(activeRecipe.getOutputStacks());
-    }
-
-    @Override
-    public boolean canRecipeContinue() {
-        return Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), itemHandler.getInputs());
-    }
-
-    @Override
-    public boolean consumeResourceForRecipe() {
-        return true;
-    }
+public class TileEntityPrimitiveBlastFurnace extends TileEntityBasicItemMultiMachine {
 
     @Override
     public void onStructureIntegrity(boolean valid) {

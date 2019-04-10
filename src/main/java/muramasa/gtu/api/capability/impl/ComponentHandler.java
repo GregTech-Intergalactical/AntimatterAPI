@@ -39,13 +39,16 @@ public class ComponentHandler implements IComponentHandler {
         return controllers;
     }
 
-    @Override
     @Nullable
+    @Override
     public MachineItemHandler getItemHandler() {
-        if (componentTile instanceof TileEntityMachine) {
-            return ((TileEntityMachine) componentTile).getItemHandler();
-        }
-        return null;
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getItemHandler() : null;
+    }
+
+    @Nullable
+    @Override
+    public MachineFluidHandler getFluidHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getFluidHandler() : null;
     }
 
     @Override
@@ -63,8 +66,8 @@ public class ComponentHandler implements IComponentHandler {
         return controllers.size() > 0;
     }
 
-    @Override
     @Nullable
+    @Override
     public TileEntityMultiMachine getFirstController() {
         int size = controllers.size();
         TileEntity tile;

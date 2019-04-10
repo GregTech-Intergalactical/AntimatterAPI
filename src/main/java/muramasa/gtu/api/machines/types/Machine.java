@@ -1,20 +1,17 @@
 package muramasa.gtu.api.machines.types;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.capability.impl.MachineFluidHandler;
-import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
-import muramasa.gtu.common.blocks.BlockMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.common.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IStringSerializable;
@@ -146,10 +143,6 @@ public class Machine implements IStringSerializable {
 
     public void addStructure(Structure structure) {
         this.structure = structure;
-    }
-
-    public Recipe findRecipe(MachineItemHandler stackHandler, MachineFluidHandler tankHandler) {
-        return null;
     }
 
     public boolean hasFlag(MachineFlag flag) {

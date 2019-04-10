@@ -97,20 +97,20 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
 
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
 
-        if (wrapper.recipe.hasInputStacks()) {
+        if (wrapper.recipe.hasInputItems()) {
             slots = gui.getSlots(SlotType.IT_IN, tier);
             if (slots.size() > 0) {
-                for (ItemStack stack : wrapper.recipe.getInputStacks()) {
+                for (ItemStack stack : wrapper.recipe.getInputItems()) {
                     itemGroup.init(i, true, slots.get(slotIndex).x - offsetX, slots.get(slotIndex++).y - offsetY);
                     itemGroup.set(i++, stack);
                 }
             }
         }
-        if (wrapper.recipe.hasOutputStacks()) {
+        if (wrapper.recipe.hasOutputItems()) {
             slots = gui.getSlots(SlotType.IT_OUT, tier);
             if (slots.size() > 0) {
                 slotIndex = 0;
-                for (ItemStack stack : wrapper.recipe.getOutputStacksJEI()) {
+                for (ItemStack stack : wrapper.recipe.getOutputItemsJEI()) {
                     itemGroup.init(i, false, slots.get(slotIndex).x - offsetX, slots.get(slotIndex++).y - offsetY);
                     itemGroup.set(i++, stack);
                 }

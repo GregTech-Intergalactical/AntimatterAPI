@@ -1,6 +1,5 @@
 package muramasa.gtu.api.items;
 
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.ItemFlag;
 import muramasa.gtu.api.materials.Material;
@@ -9,6 +8,7 @@ import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.models.ModelFluidCell;
+import muramasa.gtu.common.blocks.BlockStorage;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -61,7 +61,8 @@ public class ItemFluidCell extends Item implements IHasModelOverride {
 
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) return EnumActionResult.PASS;
+        //TODO reenable
+//        if (world.isRemote) return EnumActionResult.PASS;
 
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
@@ -78,11 +79,17 @@ public class ItemFluidCell extends Item implements IHasModelOverride {
                 System.out.println("drain tile");
                 cellHandler.fill(fluidHandler.drain(CAPACITY, true), true);
             }
-        } else {
-            Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
+        } else if (world.getBlockState(pos).getBlock() instanceof BlockStorage) {
+            Material mat = ((BlockStorage) world.getBlockState(pos).getBlock()).getMaterial();
             if (mat != null && mat.has(ItemFlag.LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(mat.getLiquid()));
             }
+        } else{
+//            Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
+//            if (mat != null && mat.has(ItemFlag.LIQUID)) {
+//                player.setHeldItem(hand, getCellWithFluid(mat.getLiquid()));
+//            }
+            player.setHeldItem(hand, getCellWithFluid(Materials.Diesel.getLiquid()));
         }
         return EnumActionResult.SUCCESS;
     }

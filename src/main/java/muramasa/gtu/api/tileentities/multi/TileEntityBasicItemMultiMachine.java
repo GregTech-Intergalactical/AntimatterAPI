@@ -1,8 +1,16 @@
-package muramasa.gtu.api.tileentities;
+package muramasa.gtu.api.tileentities.multi;
 
+import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
 
-public class TileEntityItemMachine extends TileEntityBasicMachine {
+/** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
+public abstract class TileEntityBasicItemMultiMachine extends TileEntityMultiMachine {
+
+    @Override
+    public Recipe findRecipe() {
+        return RecipeMap.findRecipeItem(getType().getRecipeMap(), itemHandler.getInputs());
+    }
 
     @Override
     public void consumeInputs() {
@@ -22,5 +30,10 @@ public class TileEntityItemMachine extends TileEntityBasicMachine {
     @Override
     public boolean canRecipeContinue() {
         return Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.getInputs());
+    }
+
+    @Override
+    public boolean consumeResourceForRecipe() {
+        return true;
     }
 }

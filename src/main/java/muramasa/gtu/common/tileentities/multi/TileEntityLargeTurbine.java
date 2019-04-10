@@ -1,13 +1,13 @@
 package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.api.data.Casing;
+import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
+import muramasa.gtu.api.tileentities.multi.TileEntityFluidMultiMachine;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int3;
-import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityLargeTurbine extends TileEntityMultiMachine {
+public class TileEntityLargeTurbine extends TileEntityFluidMultiMachine {
 
     @Override
     public void onStructureIntegrity(boolean valid) {

@@ -4,11 +4,10 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.ControllerComponentHandler;
 import muramasa.gtu.api.capability.impl.ControllerConfigHandler;
+import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.interfaces.IComponent;
-import muramasa.gtu.api.recipe.Recipe;
-import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
@@ -17,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -44,63 +44,6 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         super.onServerUpdate();
     }
 
-    @Override
-    public Recipe findRecipe() {
-        return RecipeMap.findRecipeItem(getType().getRecipeMap(), getStoredInputs());
-    }
-
-    /** Consumes inputs from all input hatches. Assumes doStacksMatchAndSizeValid has been used **/
-    @Override
-    public void consumeInputs() {
-        ItemStack[] toConsume = activeRecipe.getInputStacks().clone();
-        MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            toConsume = itemHandler.consumeAndReturnInputs(toConsume);
-            if (toConsume.length == 0) break;
-        }
-    }
-
-    /** Tests if outputs can fit across all output hatches **/
-    @Override
-    public boolean canOutput() {
-        ItemStack[] toOutput = activeRecipe.getOutputStacks().clone();
-        MachineItemHandler itemHandler;
-        int matchCount = 0;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            matchCount += itemHandler.getSpaceForStacks(toOutput);
-        }
-        return matchCount >= toOutput.length;
-    }
-
-    /** Export stacks to hatches regardless of space. Assumes canOutputsFit has been used **/
-    @Override
-    public void addOutputs() {
-        ItemStack[] toOutput = activeRecipe.getOutputStacks().clone();
-        MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            for (int i = 0; i < toOutput.length; i++) {
-                System.out.println("Adding output...");
-                itemHandler.addOutputs(toOutput[i]);
-            }
-        }
-    }
-
-    @Override
-    public boolean canRecipeContinue() {
-        return Utils.doStacksMatchAndSizeValid(activeRecipe.getInputStacks(), getStoredInputs());
-    }
-
-    @Override
-    public boolean consumeResourceForRecipe() {
-        return true; //TODO
-    }
-
     public boolean checkStructure() {
         clearComponents();
         Structure structure = getType().getStructure();
@@ -114,7 +57,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
                 }
             }
             System.out.println("[Structure Debug] Valid Structure");
-            System.out.println(getStoredInputs());
+            System.out.println(getStoredItems());
             onStructureIntegrity(true);
             return (validStructure = true);
         }
@@ -149,8 +92,8 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         components.clear();
     }
 
-    /** Returns list of stacks across all input hatches. Merges equal stacks and filters empty **/
-    public ItemStack[] getStoredInputs() {
+    /** Returns list of items across all input hatches. Merges equal items and filters empty **/
+    public ItemStack[] getStoredItems() {
         ArrayList<ItemStack> all = new ArrayList<>();
         ArrayList<IComponentHandler> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
         if (hatches == null || hatches.size() == 0) return all.toArray(new ItemStack[0]);
@@ -165,6 +108,24 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
             }
         }
         return all.toArray(new ItemStack[0]);
+    }
+
+    /** Returns list of fluids across all input hatches. Merges equal stacks and filters empty **/
+    public FluidStack[] getStoredFluids() {
+        ArrayList<FluidStack> all = new ArrayList<>();
+        ArrayList<IComponentHandler> hatches = getComponents(Machines.HATCH_FLUID_INPUT);
+        if (hatches == null || hatches.size() == 0) return all.toArray(new FluidStack[0]);
+        MachineFluidHandler fluidHandler;
+        for (IComponentHandler hatch : hatches) {
+            fluidHandler = hatch.getFluidHandler();
+            if (fluidHandler == null) continue;
+            if (all.isEmpty()) {
+                all.addAll(fluidHandler.getInputList());
+            } else {
+                Utils.mergeFluids(all, fluidHandler.getInputList());
+            }
+        }
+        return all.toArray(new FluidStack[0]);
     }
 
     /** Returns a list of Components **/

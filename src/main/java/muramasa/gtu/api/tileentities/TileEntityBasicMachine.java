@@ -1,15 +1,16 @@
 package muramasa.gtu.api.tileentities;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
-import muramasa.gtu.Ref;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
@@ -48,8 +49,9 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         if (coverHandler != null) coverHandler.tick();
     }
 
+    /** Recipe Methods **/
     public Recipe findRecipe() {
-        return getType().findRecipe(itemHandler, fluidHandler);
+        return null;
     }
 
     public void checkRecipe() {
@@ -85,7 +87,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         switch (getMachineState()) {
             case ACTIVE:
             case OUTPUT_FULL:
-                setMachineState(tickRecipe()); break;
+                setMachineState(tickRecipe());
+                break;
         }
     }
 
@@ -97,14 +100,21 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         return false;
     }
 
-    /** Abstracts **/
-    public abstract void consumeInputs();
+    public void consumeInputs() {
+        //NOOP
+    }
 
-    public abstract boolean canOutput();
+    public boolean canOutput() {
+        return true; //NOOP
+    }
 
-    public abstract void addOutputs();
+    public void addOutputs() {
+        //NOOP
+    }
 
-    public abstract boolean canRecipeContinue();
+    public boolean canRecipeContinue() {
+        return true; //NOOP
+    }
 
     /** Events **/
     public void onRecipeFound() {
@@ -117,12 +127,11 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     @Override
     public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
-        System.out.println("Client: " + isClientSide());
         if (empty) return;
         switch (type) {
             case ITEM_INPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
-                checkRecipe();
+                if (getType().hasFlag(RECIPE)) checkRecipe();
                 break;
         }
     }
@@ -196,6 +205,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (coverHandler == null) return false;
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
+        } else if (getType().hasFlag(FLUID) && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverFluid);
         } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
             if (coverHandler == null) return false;
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
@@ -213,6 +224,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getInputHandler());
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper());
         } else if (capability == GTCapabilities.ENERGY) {
             return GTCapabilities.ENERGY.cast(energyStorage);
         } else if (capability == GTCapabilities.COVERABLE) {
