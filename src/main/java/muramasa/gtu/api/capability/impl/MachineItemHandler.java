@@ -44,9 +44,7 @@ public class MachineItemHandler {
 
     public MachineItemHandler(TileEntityMachine tile, NBTTagCompound itemData) {
         this(tile);
-        if (itemData != null) {
-            deserialize(itemData);
-        }
+        if (itemData != null) deserialize(itemData);
     }
 
     /** Handler Access **/
@@ -156,55 +154,55 @@ public class MachineItemHandler {
 
     /** NBT **/
     public NBTTagCompound serialize() {
-        NBTTagCompound nbt = new NBTTagCompound();
+        NBTTagCompound tag = new NBTTagCompound();
         if (inputHandler != null) {
-            NBTTagList inputTagList = new NBTTagList();
+            NBTTagList list = new NBTTagList();
             for (int i = 0; i < inputHandler.stacks.length; i++) {
                 if (!inputHandler.stacks[i].isEmpty()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     itemTag.setInteger("Slot", i);
                     inputHandler.stacks[i].writeToNBT(itemTag);
-                    inputTagList.appendTag(itemTag);
+                    list.appendTag(itemTag);
                 }
             }
-            nbt.setTag("Input-Items", inputTagList);
-            nbt.setInteger("Input-Size", inputHandler.stacks.length);
+            tag.setTag("Input-Items", list);
+            tag.setInteger("Input-Size", inputHandler.stacks.length);
         }
 
         if (outputHandler != null) {
-            NBTTagList outputTagList = new NBTTagList();
+            NBTTagList list = new NBTTagList();
             for (int i = 0; i < outputHandler.stacks.length; i++) {
                 if (!outputHandler.stacks[i].isEmpty()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     itemTag.setInteger("Slot", i);
                     outputHandler.stacks[i].writeToNBT(itemTag);
-                    outputTagList.appendTag(itemTag);
+                    list.appendTag(itemTag);
                 }
             }
-            nbt.setTag("Output-Items", outputTagList);
-            nbt.setInteger("Output-Size", outputHandler.stacks.length);
+            tag.setTag("Output-Items", list);
+            tag.setInteger("Output-Size", outputHandler.stacks.length);
         }
 
         if (cellHandler != null) {
-            NBTTagList cellTagList = new NBTTagList();
+            NBTTagList list = new NBTTagList();
             for (int i = 0; i < cellHandler.stacks.length; i++) {
                 if (!cellHandler.stacks[i].isEmpty()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     itemTag.setInteger("Slot", i);
                     cellHandler.stacks[i].writeToNBT(itemTag);
-                    cellTagList.appendTag(itemTag);
+                    list.appendTag(itemTag);
                 }
             }
-            nbt.setTag("Cell-Items", cellTagList);
-            nbt.setInteger("Cell-Size", cellHandler.stacks.length);
+            tag.setTag("Cell-Items", list);
+            tag.setInteger("Cell-Size", cellHandler.stacks.length);
         }
-        return nbt;
+        return tag;
     }
 
-    public void deserialize(NBTTagCompound nbt) {
+    public void deserialize(NBTTagCompound tag) {
         if (inputHandler != null) {
-            inputHandler.setSize(nbt.hasKey("Input-Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Input-Size") : inputHandler.stacks.length);
-            NBTTagList inputTagList = nbt.getTagList("Input-Items", Constants.NBT.TAG_COMPOUND);
+            inputHandler.setSize(tag.hasKey("Input-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Input-Size") : inputHandler.stacks.length);
+            NBTTagList inputTagList = tag.getTagList("Input-Items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < inputTagList.tagCount(); i++) {
                 NBTTagCompound itemTags = inputTagList.getCompoundTagAt(i);
                 int slot = itemTags.getInteger("Slot");
@@ -217,8 +215,8 @@ public class MachineItemHandler {
         }
 
         if (outputHandler != null) {
-            outputHandler.setSize(nbt.hasKey("Output-Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Output-Size") : outputHandler.stacks.length);
-            NBTTagList outputTagList = nbt.getTagList("Output-Items", Constants.NBT.TAG_COMPOUND);
+            outputHandler.setSize(tag.hasKey("Output-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Output-Size") : outputHandler.stacks.length);
+            NBTTagList outputTagList = tag.getTagList("Output-Items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < outputTagList.tagCount(); i++) {
                 NBTTagCompound itemTags = outputTagList.getCompoundTagAt(i);
                 int slot = itemTags.getInteger("Slot");
@@ -231,8 +229,8 @@ public class MachineItemHandler {
         }
 
         if (cellHandler != null) {
-           cellHandler.setSize(nbt.hasKey("Cell-Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Cell-Size") : cellHandler.stacks.length);
-           NBTTagList cellTagList = nbt.getTagList("Cell-Items", Constants.NBT.TAG_COMPOUND);
+           cellHandler.setSize(tag.hasKey("Cell-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Cell-Size") : cellHandler.stacks.length);
+           NBTTagList cellTagList = tag.getTagList("Cell-Items", Constants.NBT.TAG_COMPOUND);
            for (int i = 0; i < cellTagList.tagCount(); i++) {
                NBTTagCompound itemTags = cellTagList.getCompoundTagAt(i);
                int slot = itemTags.getInteger("Slot");

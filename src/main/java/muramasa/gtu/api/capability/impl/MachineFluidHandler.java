@@ -4,6 +4,8 @@ import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -28,9 +30,7 @@ public class MachineFluidHandler {
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity, NBTTagCompound fluidData) {
         this(tile, capacity);
-        if (fluidData != null) {
-            deserialize(fluidData);
-        }
+        if (fluidData != null) deserialize(fluidData);
     }
 
     public MachineFluidHandler(TileEntityMachine tile, NBTTagCompound fluidData) {
@@ -145,12 +145,43 @@ public class MachineFluidHandler {
 
     /** NBT **/
     public NBTTagCompound serialize() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        return nbt; //TODO
+        NBTTagCompound tag = new NBTTagCompound();
+        if (inputWrapper != null) {
+            NBTTagList list = new NBTTagList();
+            for (int i = 0; i < inputWrapper.tanks.length; i++) {
+                if (inputWrapper.tanks[i].getFluid() == null) continue;
+                list.appendTag(inputWrapper.tanks[i].writeToNBT(new NBTTagCompound()));
+            }
+            tag.setTag("Input-Fluids", list);
+        }
+        if (outputWrapper != null) {
+            NBTTagList list = new NBTTagList();
+            for (int i = 0; i < outputWrapper.tanks.length; i++) {
+                if (outputWrapper.tanks[i].getFluid() == null) continue;
+                list.appendTag(outputWrapper.tanks[i].writeToNBT(new NBTTagCompound()));
+            }
+            tag.setTag("Output-Fluids", list);
+        }
+        return tag;
     }
 
-    public void deserialize(NBTTagCompound nbt) {
-        //TODO
+    public void deserialize(NBTTagCompound tag) {
+        if (inputWrapper != null) {
+            NBTTagList list = tag.getTagList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.tagCount(); i++) {
+                if (i < inputWrapper.tanks.length) {
+                    inputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+                }
+            }
+        }
+        if (outputWrapper != null) {
+            NBTTagList list = tag.getTagList("Output-Fluids", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.tagCount(); i++) {
+                if (i < outputWrapper.tanks.length) {
+                    outputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+                }
+            }
+        }
     }
 
     @Override
