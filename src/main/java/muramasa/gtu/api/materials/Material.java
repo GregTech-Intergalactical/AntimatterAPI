@@ -4,7 +4,7 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
-import net.minecraft.client.resources.I18n;
+import muramasa.gtu.api.util.GTLoc;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -218,7 +218,7 @@ public class Material {
     }
 
     public String getDisplayName() {
-        return I18n.format("material." + getName() + ".name");
+        return GTLoc.get("material." + getName() + ".name");
     }
 
     public int getRGB() {
@@ -568,23 +568,17 @@ public class Material {
     }
 
     public FluidStack getLiquid(int amount) {
-        if (liquid == null) {
-            throw new NullPointerException(getName() + ": Liquid is null");
-        }
+        if (liquid == null) throw new NullPointerException(getName() + ": Liquid is null");
         return new FluidStack(liquid, amount);
     }
 
     public FluidStack getGas(int amount) {
-        if (gas == null) {
-            throw new NullPointerException(getName() + ": Gas is null");
-        }
+        if (gas == null) throw new NullPointerException(getName() + ": Gas is null");
         return new FluidStack(getGas(), amount);
     }
 
     public FluidStack getPlasma(int amount) {
-        if (plasma == null) {
-            throw new NullPointerException(getName() + ": Plasma is null");
-        }
+        if (plasma == null) throw new NullPointerException(getName() + ": Plasma is null");
         return new FluidStack(getPlasma(), amount);
     }
 }

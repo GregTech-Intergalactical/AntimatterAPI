@@ -1,7 +1,7 @@
 package muramasa.gtu.api.recipe;
 
+import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -20,7 +20,7 @@ public class RecipeMap {
 
     public RecipeMap(String jeiCategoryId, int initialSize) {
         this.categoryId = "gt.recipe_map." + jeiCategoryId;
-        this.categoryName = I18n.format("jei.category." + jeiCategoryId + ".name");
+        this.categoryName = GTLoc.get("jei.category." + jeiCategoryId + ".name");
         recipeLookup = new LinkedHashMap<>(initialSize);
     }
 

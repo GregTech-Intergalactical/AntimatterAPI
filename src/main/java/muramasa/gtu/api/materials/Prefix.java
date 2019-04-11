@@ -1,7 +1,7 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
-import net.minecraft.client.resources.I18n;
+import muramasa.gtu.api.util.GTLoc;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 
@@ -82,9 +82,9 @@ public class Prefix implements IStringSerializable {
 
     public String getDisplayName(Material material) { //TODO cache, server side crash with local?
         if (!hasLocName) {
-            namePre = I18n.format("prefix.pre." + getName() + ".name");
+            namePre = GTLoc.get("prefix.pre." + getName() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = I18n.format("prefix.post." + getName() + ".name");
+            namePost = GTLoc.get("prefix.post." + getName() + ".name");
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }

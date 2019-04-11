@@ -5,8 +5,8 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
@@ -264,7 +264,7 @@ public class ItemType implements IStringSerializable {
     }
 
     public String getDisplayName() {
-        return I18n.format("item.standard." + getName() + ".name");
+        return GTLoc.get("item.standard." + getName() + ".name");
     }
 
     public String getTooltip() {

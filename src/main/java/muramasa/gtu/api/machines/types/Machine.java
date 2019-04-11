@@ -11,9 +11,9 @@ import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.common.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class Machine implements IStringSerializable {
     }
 
     public String getDisplayName(Tier tier) {
-        return I18n.format("machine." + name + "." + tier.getName() + ".name");
+        return GTLoc.get("machine." + name + "." + tier.getName() + ".name");
     }
 
     public RecipeMap getRecipeMap() {
