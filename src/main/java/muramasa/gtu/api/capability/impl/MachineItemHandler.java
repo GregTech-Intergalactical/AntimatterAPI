@@ -110,6 +110,7 @@ public class MachineItemHandler {
 
     public void addOutputs(ItemStack... outputs) {
         for (int i = 0; i < outputs.length; i++) {
+            System.out.println("Adding output: " + outputs[i].getDisplayName());
             outputHandler.insertItem(i, outputs[i].copy(), false);
         }
     }

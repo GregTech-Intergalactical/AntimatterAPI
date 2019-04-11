@@ -81,7 +81,6 @@ public class MachineFluidHandler {
     }
 
     public void addInputs(FluidStack... fluids) {
-        //TODO fix
         for (int i = 0; i < fluids.length; i++) {
             for (int j = 0; j < inputWrapper.tanks.length; j++) {
                 inputWrapper.tanks[j].fill(fluids[i], true);
@@ -90,9 +89,9 @@ public class MachineFluidHandler {
     }
 
     public void addOutputs(FluidStack... fluids) {
-        //TODO fix
         for (int i = 0; i < fluids.length; i++) {
             for (int j = 0; j < outputWrapper.tanks.length; j++) {
+                System.out.println("Adding output: " + fluids[i].getLocalizedName());
                 outputWrapper.tanks[j].fill(fluids[i], true);
             }
         }
