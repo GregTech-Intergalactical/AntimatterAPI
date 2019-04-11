@@ -152,6 +152,9 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         if (compound.hasKey(Ref.KEY_MACHINE_TILE_ITEMS)) {
             itemData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
         }
+        if (compound.hasKey(Ref.KEY_MACHINE_TILE_FLUIDS)) {
+            fluidData = (NBTTagCompound) compound.getTag(Ref.KEY_MACHINE_TILE_FLUIDS);
+        }
     }
 
     @Override
@@ -161,6 +164,9 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         compound.setInteger(Ref.KEY_MACHINE_TILE_FACING, facing);
         if (getItemHandler() != null) {
             compound.setTag(Ref.KEY_MACHINE_TILE_ITEMS, getItemHandler().serialize());
+        }
+        if (getFluidHandler() != null) {
+            compound.setTag(Ref.KEY_MACHINE_TILE_FLUIDS, getFluidHandler().serialize());
         }
         return compound;
     }
