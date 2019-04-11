@@ -128,6 +128,78 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         return all.toArray(new FluidStack[0]);
     }
 
+    /** Tests if items can fit across all output hatches **/
+    public boolean canItemsFit(ItemStack[] items) {
+        if (items == null) return true;
+        int matchCount = 0;
+        MachineItemHandler itemHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            matchCount += itemHandler.getSpaceForOutputs(items);
+        }
+        return matchCount >= items.length;
+    }
+
+    /** Tests if fluids can fit across all output hatches **/
+    public boolean canFluidsFit(FluidStack[] fluids) {
+        if (fluids == null) return true;
+        int matchCount = 0;
+        MachineFluidHandler fluidHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_OUTPUT)) {
+            fluidHandler = hatch.getFluidHandler();
+            if (fluidHandler == null) continue;
+            matchCount += fluidHandler.getSpaceForOutputs(fluids);
+        }
+        return matchCount >= fluids.length;
+    }
+
+    /** Consumes inputs from all input hatches. Assumes Utils.doItemsMatchAndSizeValid has been used **/
+    public void consumeItems(ItemStack[] items) {
+        if (items == null) return;
+        MachineItemHandler itemHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            items = itemHandler.consumeAndReturnInputs(items);
+            if (items.length == 0) break;
+        }
+    }
+
+    /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
+    public void consumeFluids(FluidStack[] fluids) {
+        if (fluids == null) return;
+        MachineFluidHandler fluidHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_INPUT)) {
+            fluidHandler = hatch.getFluidHandler();
+            if (fluidHandler == null) continue;
+            fluids = fluidHandler.consumeAndReturnInputs(fluids);
+            if (fluids.length == 0) break;
+        }
+    }
+
+    /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
+    public void outputItems(ItemStack[] items) {
+        if (items == null) return;
+        MachineItemHandler itemHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            itemHandler.addOutputs(items);
+        }
+    }
+
+    /** Export fluids to hatches regardless of space. Assumes canOutputsFit has been used **/
+    public void outputFluids(FluidStack[] fluids) {
+        if (fluids == null) return;
+        MachineFluidHandler fluidHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_OUTPUT)) {
+            fluidHandler = hatch.getFluidHandler();
+            if (fluidHandler == null) continue;
+            fluidHandler.addOutputs(fluids);
+        }
+    }
+
     /** Returns a list of Components **/
     public ArrayList<IComponentHandler> getComponents(IStringSerializable serializable) {
         return components.get(serializable.getName());
@@ -140,18 +212,12 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
-        if (capability == GTCapabilities.COMPONENT) {
-            return true;
-        }
-        return super.hasCapability(capability, side);
+        return capability == GTCapabilities.COMPONENT || super.hasCapability(capability, side);
     }
 
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        if (capability == GTCapabilities.COMPONENT) {
-            return GTCapabilities.COMPONENT.cast(componentHandler);
-        }
-        return super.getCapability(capability, side);
+        return capability == GTCapabilities.COMPONENT ? GTCapabilities.COMPONENT.cast(componentHandler) : super.getCapability(capability, side);
     }
 }

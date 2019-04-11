@@ -83,11 +83,12 @@ public class ItemFluidCell extends StandardItem {
                 player.setHeldItem(hand, getCellWithFluid(getType(), mat.getLiquid()));
             }
         } else{
-//            Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
-//            if (mat != null && mat.has(ItemFlag.LIQUID)) {
-//                player.setHeldItem(hand, getCellWithFluid(mat.getLiquid()));
-//            }
-            player.setHeldItem(hand, getCellWithFluid(getType(), Materials.Diesel.getLiquid()));
+            Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
+            if (mat != null && mat.has(ItemFlag.LIQUID)) {
+                player.setHeldItem(hand, getCellWithFluid(getType(), mat.getLiquid()));
+            } else {
+                player.setHeldItem(hand, getCellWithFluid(getType(), Materials.Diesel.getLiquid()));
+            }
         }
         return EnumActionResult.SUCCESS;
     }
