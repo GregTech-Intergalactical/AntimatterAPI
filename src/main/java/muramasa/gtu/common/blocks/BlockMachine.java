@@ -3,21 +3,21 @@ package muramasa.gtu.common.blocks;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
-import muramasa.gtu.api.registration.IHasItemBlock;
-import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
+import muramasa.gtu.api.registration.IHasItemBlock;
+import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,7 +37,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
@@ -189,7 +188,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     public String getItemStackDisplayName(Block block, ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-            return tier.getRarityColor() + I18n.format("machine." + getType().getName() + "." + tier.getName() + ".name");
+            return tier.getRarityColor() + GTLoc.get("machine." + getType().getName() + "." + tier.getName() + ".name");
         }
         return getUnlocalizedName();
     }
