@@ -1,15 +1,15 @@
 package muramasa.gtu.common.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.data.Casing;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
+import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import muramasa.gtu.client.render.overrides.ItemOverrideCasing;
-import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,10 +24,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.actors.threadpool.Arrays;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BlockCasing extends BlockBaked implements IHasModelOverride {

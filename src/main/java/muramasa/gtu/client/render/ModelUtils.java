@@ -179,6 +179,7 @@ public class ModelUtils {
             transformer.setVertexFormat(builder.getVertexFormat());
             bakedQuad.pipe(transformer);
             builder.setQuadOrientation(Utils.rotateFacing(bakedQuad.getFace(), facing));
+            builder.setTexture(bakedQuad.getSprite() != null ? bakedQuad.getSprite() : ModelUtils.BAKED_MISSING.getParticleTexture());
             BakedQuad q = builder.build();
             transformedQuads.add(q);
         }
