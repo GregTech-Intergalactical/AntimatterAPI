@@ -62,11 +62,15 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
         if (empty) return;
+        if (componentHandler == null) return;
+        TileEntityMultiMachine controller = componentHandler.getFirstController();
+        if (controller == null) return;
         switch (type) {
             case ITEM_INPUT:
-                TileEntityMultiMachine controller = componentHandler.getFirstController();
-                if (controller != null) controller.onHatchContentsChanged();
+                controller.onContentsChanged(type, slot, empty);
                 break;
+            case ITEM_OUTPUT:
+                controller.onContentsChanged(type, slot, empty);
             case ITEM_CELL:
                 //TODO handle cells
                 break;

@@ -5,7 +5,10 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.gui.SlotType;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
@@ -69,7 +72,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-
+            tooltip.add("Slots: " + Machines.HATCH_ITEM_OUTPUT.getGui().getSlots(SlotType.IT_OUT, Tier.LV).size());
         }
     }
 

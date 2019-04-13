@@ -3,40 +3,41 @@ package muramasa.gtu.api.capability.impl;
 import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineFlag;
-import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MachineItemHandler {
 
-    private GTItemHandler inputHandler, outputHandler, cellHandler;
+    private ItemStackHandler inputHandler, outputHandler, cellHandler;
 
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
-        inputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_IN)) {
+        inputHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.IT_IN, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentUpdateType.ITEM_INPUT, slot, stacks[slot].isEmpty());
+                tile.onContentsChanged(ContentUpdateType.ITEM_INPUT, slot, stacks.get(slot).isEmpty());
             }
         };
-        outputHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.IT_OUT)) {
+        outputHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.IT_OUT, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentUpdateType.ITEM_OUTPUT, slot, stacks[slot].isEmpty());
+                tile.onContentsChanged(ContentUpdateType.ITEM_OUTPUT, slot, stacks.get(slot).isEmpty());
             }
         };
         if (tile.getType().hasFlag(MachineFlag.FLUID)) {
-            cellHandler = new GTItemHandler(tile.getType().getGui().getCount(SlotType.CELL_IN) + tile.getType().getGui().getCount(SlotType.CELL_OUT)) {
+            cellHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.CELL_IN, tile.getTier()).size() + tile.getType().getGui().getSlots(SlotType.CELL_OUT, tile.getTier()).size()) {
                 @Override
                 protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(ContentUpdateType.ITEM_CELL, slot, stacks[slot].isEmpty());
+                    tile.onContentsChanged(ContentUpdateType.ITEM_CELL, slot, stacks.get(slot).isEmpty());
                 }
             };
         }
@@ -61,15 +62,15 @@ public class MachineItemHandler {
     }
 
     public int getInputCount() {
-        return inputHandler.stacks.length;
+        return inputHandler.getSlots();
     }
 
     public int getOutputCount() {
-        return outputHandler.stacks.length;
+        return outputHandler.getSlots();
     }
 
     public int getCellCount() {
-        return cellHandler.stacks.length;
+        return cellHandler.getSlots();
     }
 
     public ItemStack[] getInputs() {
@@ -77,7 +78,7 @@ public class MachineItemHandler {
     }
 
     public ItemStack[] getOutputs() {
-        return outputHandler.stacks;
+        return getOutputList().toArray(new ItemStack[0]);
     }
 
     public ItemStack getCellInput() {
@@ -88,20 +89,29 @@ public class MachineItemHandler {
         return cellHandler.getStackInSlot(1);
     }
 
-    /** Gets a list of non empty Stacks **/
+    /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
         ArrayList<ItemStack> list = new ArrayList<>();
-        for (int i = 0; i < inputHandler.stacks.length; i++) {
-            if (!inputHandler.stacks[i].isEmpty()) list.add(inputHandler.stacks[i].copy());
+        for (int i = 0; i < inputHandler.getSlots(); i++) {
+            if (!inputHandler.getStackInSlot(i).isEmpty()) list.add(inputHandler.getStackInSlot(i).copy());
+        }
+        return list;
+    }
+
+    /** Gets a list of non empty output Items **/
+    public List<ItemStack> getOutputList() {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        for (int i = 0; i < outputHandler.getSlots(); i++) {
+            if (!outputHandler.getStackInSlot(i).isEmpty()) list.add(outputHandler.getStackInSlot(i).copy());
         }
         return list;
     }
 
     public void consumeInputs(ItemStack... inputs) {
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputHandler.stacks.length; j++) {
-                if (Utils.equals(inputs[i], inputHandler.stacks[j]) && !Utils.hasNoConsumeTag(inputs[i])) {
-                    inputHandler.stacks[j].shrink(inputs[i].getCount());
+            for (int j = 0; j < inputHandler.getSlots(); j++) {
+                if (Utils.equals(inputs[i], inputHandler.getStackInSlot(j)) && !Utils.hasNoConsumeTag(inputs[i])) {
+                    inputHandler.getStackInSlot(j).shrink(inputs[i].getCount());
                     break;
                 }
             }
@@ -110,9 +120,14 @@ public class MachineItemHandler {
 
     public void addOutputs(ItemStack... outputs) {
         for (int i = 0; i < outputs.length; i++) {
-            System.out.println("Adding output: " + outputs[i].getDisplayName());
-            outputHandler.insertItem(i, outputs[i].copy(), false);
+            for (int j = 0; j < outputHandler.getSlots(); j++) {
+                ItemStack result = outputHandler.insertItem(j, outputs[i].copy(), false);
+                if (result.isEmpty()) break;
+            }
         }
+//        for (int i = 0; i < outputs.length; i++) {
+//            outputHandler.insertItem(i, outputs[i].copy(), false);
+//        }
     }
 
     /** Helpers **/
@@ -123,8 +138,8 @@ public class MachineItemHandler {
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < outputHandler.stacks.length; j++) {
-                if (outputHandler.stacks[j].isEmpty() || (Utils.equals(a[i], outputHandler.stacks[j]) && outputHandler.stacks[j].getCount() + a[i].getCount() <= outputHandler.stacks[j].getMaxStackSize())) {
+            for (int j = 0; j < outputHandler.getSlots(); j++) {
+                if (outputHandler.getStackInSlot(j).isEmpty() || (Utils.equals(a[i], outputHandler.getStackInSlot(j)) && outputHandler.getStackInSlot(j).getCount() + a[i].getCount() <= outputHandler.getStackInSlot(j).getMaxStackSize())) {
                     matchCount++;
                     break;
                 }
@@ -135,17 +150,16 @@ public class MachineItemHandler {
 
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
         ArrayList<ItemStack> notConsumed = new ArrayList<>();
+        ItemStack result;
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputHandler.stacks.length; j++) {
-                if (Utils.equals(inputs[i], inputHandler.stacks[j])) {
-                    if (inputHandler.stacks[j].getCount() >= inputs[i].getCount()) {
-                        inputHandler.stacks[j].shrink(inputs[i].getCount());
-                    } else {
-                        int leftOver = inputs[i].getCount() - inputHandler.stacks[j].getCount();
-                        notConsumed.add(Utils.ca(leftOver, inputs[i]));
-                        inputHandler.stacks[j].shrink(inputs[i].getCount() - leftOver);
+            for (int j = 0; j < inputHandler.getSlots(); j++) {
+                if (Utils.equals(inputs[i], inputHandler.getStackInSlot(j))) {
+                    result = inputHandler.extractItem(j, inputs[i].getCount(), false);
+                    if (!result.isEmpty()) {
+                        if (result.getCount() == inputs[i].getCount()) break;
+                        else notConsumed.add(Utils.ca(inputs[i].getCount() - result.getCount(), inputs[i]));
                     }
-                } else {
+                } else if (j == inputHandler.getSlots() - 1) {
                     notConsumed.add(inputs[i]);
                 }
             }
@@ -153,94 +167,108 @@ public class MachineItemHandler {
         return notConsumed.toArray(new ItemStack[0]);
     }
 
+    public ItemStack[] exportAndReturnOutputs(ItemStack... outputs) {
+        ArrayList<ItemStack> notExported = new ArrayList<>();
+        ItemStack result;
+        for (int i = 0; i < outputs.length; i++) {
+            for (int j = 0; j < outputHandler.getSlots(); j++) {
+                result = outputHandler.insertItem(j, outputs[i].copy(), false);
+                if (result.isEmpty()) break;
+                else outputs[i] = result;
+                if (j == outputHandler.getSlots() - 1) notExported.add(result);
+            }
+        }
+        return notExported.toArray(new ItemStack[0]);
+    }
+
     /** NBT **/
     public NBTTagCompound serialize() {
         NBTTagCompound tag = new NBTTagCompound();
         if (inputHandler != null) {
             NBTTagList list = new NBTTagList();
-            for (int i = 0; i < inputHandler.stacks.length; i++) {
-                if (!inputHandler.stacks[i].isEmpty()) {
+            for (int i = 0; i < inputHandler.getSlots(); i++) {
+                if (!inputHandler.getStackInSlot(i).isEmpty()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     itemTag.setInteger("Slot", i);
-                    inputHandler.stacks[i].writeToNBT(itemTag);
+                    inputHandler.getStackInSlot(i).writeToNBT(itemTag);
                     list.appendTag(itemTag);
                 }
             }
             tag.setTag("Input-Items", list);
-            tag.setInteger("Input-Size", inputHandler.stacks.length);
+            tag.setInteger("Input-Size", inputHandler.getSlots());
         }
 
         if (outputHandler != null) {
             NBTTagList list = new NBTTagList();
-            for (int i = 0; i < outputHandler.stacks.length; i++) {
-                if (!outputHandler.stacks[i].isEmpty()) {
+            for (int i = 0; i < outputHandler.getSlots(); i++) {
+                if (!outputHandler.getStackInSlot(i).isEmpty()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     itemTag.setInteger("Slot", i);
-                    outputHandler.stacks[i].writeToNBT(itemTag);
+                    outputHandler.getStackInSlot(i).writeToNBT(itemTag);
                     list.appendTag(itemTag);
                 }
             }
             tag.setTag("Output-Items", list);
-            tag.setInteger("Output-Size", outputHandler.stacks.length);
+            tag.setInteger("Output-Size", outputHandler.getSlots());
         }
 
         if (cellHandler != null) {
             NBTTagList list = new NBTTagList();
-            for (int i = 0; i < cellHandler.stacks.length; i++) {
-                if (!cellHandler.stacks[i].isEmpty()) {
+            for (int i = 0; i < cellHandler.getSlots(); i++) {
+                if (!cellHandler.getStackInSlot(i).isEmpty()) {
                     NBTTagCompound itemTag = new NBTTagCompound();
                     itemTag.setInteger("Slot", i);
-                    cellHandler.stacks[i].writeToNBT(itemTag);
+                    cellHandler.getStackInSlot(i).writeToNBT(itemTag);
                     list.appendTag(itemTag);
                 }
             }
             tag.setTag("Cell-Items", list);
-            tag.setInteger("Cell-Size", cellHandler.stacks.length);
+            tag.setInteger("Cell-Size", cellHandler.getSlots());
         }
         return tag;
     }
 
     public void deserialize(NBTTagCompound tag) {
         if (inputHandler != null) {
-            inputHandler.setSize(tag.hasKey("Input-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Input-Size") : inputHandler.stacks.length);
+            inputHandler.setSize(tag.hasKey("Input-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Input-Size") : inputHandler.getSlots());
             NBTTagList inputTagList = tag.getTagList("Input-Items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < inputTagList.tagCount(); i++) {
                 NBTTagCompound itemTags = inputTagList.getCompoundTagAt(i);
                 int slot = itemTags.getInteger("Slot");
 
-                if (slot >= 0 && slot < inputHandler.stacks.length) {
-                    inputHandler.stacks[slot] = new ItemStack(itemTags);
+                if (slot >= 0 && slot < inputHandler.getSlots()) {
+                    inputHandler.setStackInSlot(slot, new ItemStack(itemTags));
                 }
             }
-            inputHandler.onLoad();
+//            inputHandler.onLoad();
         }
 
         if (outputHandler != null) {
-            outputHandler.setSize(tag.hasKey("Output-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Output-Size") : outputHandler.stacks.length);
+            outputHandler.setSize(tag.hasKey("Output-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Output-Size") : outputHandler.getSlots());
             NBTTagList outputTagList = tag.getTagList("Output-Items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < outputTagList.tagCount(); i++) {
                 NBTTagCompound itemTags = outputTagList.getCompoundTagAt(i);
                 int slot = itemTags.getInteger("Slot");
 
-                if (slot >= 0 && slot < outputHandler.stacks.length) {
-                    outputHandler.stacks[slot] = new ItemStack(itemTags);
+                if (slot >= 0 && slot < outputHandler.getSlots()) {
+                    outputHandler.setStackInSlot(slot, new ItemStack(itemTags));
                 }
             }
-            outputHandler.onLoad();
+//            outputHandler.onLoad();
         }
 
         if (cellHandler != null) {
-           cellHandler.setSize(tag.hasKey("Cell-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Cell-Size") : cellHandler.stacks.length);
+           cellHandler.setSize(tag.hasKey("Cell-Size", Constants.NBT.TAG_INT) ? tag.getInteger("Cell-Size") : cellHandler.getSlots());
            NBTTagList cellTagList = tag.getTagList("Cell-Items", Constants.NBT.TAG_COMPOUND);
            for (int i = 0; i < cellTagList.tagCount(); i++) {
                NBTTagCompound itemTags = cellTagList.getCompoundTagAt(i);
                int slot = itemTags.getInteger("Slot");
 
-               if (slot >= 0 && slot < cellHandler.stacks.length) {
-                   cellHandler.stacks[slot] = new ItemStack(itemTags);
+               if (slot >= 0 && slot < cellHandler.getSlots()) {
+                   cellHandler.setStackInSlot(slot, new ItemStack(itemTags));
                }
            }
-           cellHandler.onLoad();
+//           cellHandler.onLoad();
         }
     }
 }

@@ -19,14 +19,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TileEntityMultiMachine extends TileEntityBasicMachine implements IComponent {
 
     //TODO set protected
     public boolean validStructure;
+    //TODO move to BasicMachine
     protected int curEfficiency, maxEfficiency;
     protected HashMap<String, ArrayList<IComponentHandler>> components;
     protected ControllerComponentHandler componentHandler;
@@ -43,6 +42,12 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public void onServerUpdate() {
         super.onServerUpdate();
     }
+
+    //TODO break recipe on invalid structure
+//    @Override
+//    public void onRecipeTick() {
+//        if (!validStructure) activeRecipe
+//    }
 
     public boolean checkStructure() {
         clearComponents();
@@ -78,53 +83,29 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         //NOOP
     }
 
-    public void onHatchContentsChanged() {
-        System.out.println("Hatch Content Update");
-        checkRecipe();
-    }
-
-    public void clearComponents() {
-        for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
-            for (IComponentHandler component : entry.getValue()) {
-                component.unlinkController(this);
-            }
-        }
-        components.clear();
-    }
-
-    /** Returns list of items across all input hatches. Merges equal items and filters empty **/
+    /** Returns list of items across all input hatches. Merges equal filters empty **/
     public ItemStack[] getStoredItems() {
         ArrayList<ItemStack> all = new ArrayList<>();
-        ArrayList<IComponentHandler> hatches = getComponents(Machines.HATCH_ITEM_INPUT);
-        if (hatches == null || hatches.size() == 0) return all.toArray(new ItemStack[0]);
         MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : hatches) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
-            if (all.isEmpty()) {
-                all.addAll(itemHandler.getInputList());
-            } else {
-                Utils.mergeItems(all, itemHandler.getInputList());
-            }
+            Utils.mergeItems(all, itemHandler.getInputList());
         }
+        System.out.println(all.toString());
         return all.toArray(new ItemStack[0]);
     }
 
-    /** Returns list of fluids across all input hatches. Merges equal stacks and filters empty **/
+    /** Returns list of fluids across all input hatches. Merges equal filters empty **/
     public FluidStack[] getStoredFluids() {
         ArrayList<FluidStack> all = new ArrayList<>();
-        ArrayList<IComponentHandler> hatches = getComponents(Machines.HATCH_FLUID_INPUT);
-        if (hatches == null || hatches.size() == 0) return all.toArray(new FluidStack[0]);
         MachineFluidHandler fluidHandler;
-        for (IComponentHandler hatch : hatches) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_INPUT)) {
             fluidHandler = hatch.getFluidHandler();
             if (fluidHandler == null) continue;
-            if (all.isEmpty()) {
-                all.addAll(fluidHandler.getInputList());
-            } else {
-                Utils.mergeFluids(all, fluidHandler.getInputList());
-            }
+            Utils.mergeFluids(all, fluidHandler.getInputList());
         }
+        System.out.println(all.toString());
         return all.toArray(new FluidStack[0]);
     }
 
@@ -161,9 +142,10 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
-            items = itemHandler.consumeAndReturnInputs(items);
+            items = itemHandler.consumeAndReturnInputs(items.clone());
             if (items.length == 0) break;
         }
+        if (items.length > 0) System.out.println("DID NOT CONSUME ALL: " + items.toString());
     }
 
     /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
@@ -176,6 +158,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
             fluids = fluidHandler.consumeAndReturnInputs(fluids);
             if (fluids.length == 0) break;
         }
+        if (fluids.length > 0) System.out.println("DID NOT CONSUME ALL: " + fluids.toString());
     }
 
     /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
@@ -185,8 +168,10 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
-            itemHandler.addOutputs(items);
+            items = itemHandler.exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
+            if (items.length == 0) break;
         }
+        if (items.length > 0) System.out.println("HATCH OVERFLOW: " + items.toString());
     }
 
     /** Export fluids to hatches regardless of space. Assumes canOutputsFit has been used **/
@@ -196,13 +181,26 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_OUTPUT)) {
             fluidHandler = hatch.getFluidHandler();
             if (fluidHandler == null) continue;
-            fluidHandler.addOutputs(fluids);
+            fluids = fluidHandler.exportAndReturnOutputs(fluids.clone());
+            if (fluids.length == 0) break;
         }
+        if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + fluids.toString());
     }
 
     /** Returns a list of Components **/
-    public ArrayList<IComponentHandler> getComponents(IStringSerializable serializable) {
-        return components.get(serializable.getName());
+    public List<IComponentHandler> getComponents(IStringSerializable serializable) {
+        ArrayList<IComponentHandler> list = components.get(serializable.getName());
+        return list != null ? list : Collections.emptyList();
+    }
+
+    /** Clear the cached component map **/
+    public void clearComponents() {
+        for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
+            for (IComponentHandler component : entry.getValue()) {
+                component.unlinkController(this);
+            }
+        }
+        components.clear();
     }
 
     @Override

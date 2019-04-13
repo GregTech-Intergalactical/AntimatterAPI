@@ -77,38 +77,44 @@ public class Utils {
         return a.containsFluid(b);
     }
 
-    public static int contains(List<ItemStack> list, ItemStack stack) {
+    /** Returns the index of an item in a list, or -1 if not found **/
+    public static int contains(List<ItemStack> list, ItemStack item) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
-            if (list.get(i).isItemEqual(stack)) return i;
+            if (Utils.equals(list.get(i), item)) return i;
         }
         return -1;
     }
 
-    public static int contains(List<FluidStack> list, FluidStack stack) {
+    /** Returns the index of a fluid in a list, or -1 if not found **/
+    public static int contains(List<FluidStack> list, FluidStack fluid) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
-            if (list.get(i).isFluidEqual(stack)) return i;
+            if (Utils.equals(list.get(i), fluid)) return i;
         }
         return -1;
     }
 
-    /** Merges two Lists of ItemStacks, ignoring maxStackSize. **/
+    /** Merges B into A, ignoring maxStackSize **/
     public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
-        int position, size = a.size();
+        int position, size = b.size();
         for (int i = 0; i < size; i++) {
-            position = contains(b, a.get(i));
-            if (position != -1) a.get(i).grow(b.get(position).getCount());
+            if (b.get(i).isEmpty()) continue;
+            position = contains(a, b.get(i));
+            if (position == -1) a.add(b.get(i));
+            else a.get(position).grow(b.get(i).getCount());
         }
         return a;
     }
 
     /** Merges two Lists of FluidStacks, ignoring max amount **/
     public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
-        int position, size = a.size();
+        int position, size = b.size();
         for (int i = 0; i < size; i++) {
-            position = contains(b, a.get(i));
-            if (position != -1) a.get(i).amount += b.get(position).amount;
+            if (b.get(i) == null) continue;
+            position = contains(a, b.get(i));
+            if (position == -1) a.add(b.get(i));
+            else a.get(position).amount += b.get(i).amount;
         }
         return a;
     }
