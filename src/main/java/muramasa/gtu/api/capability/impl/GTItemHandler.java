@@ -73,12 +73,15 @@ public class GTItemHandler implements IItemHandler, IItemHandlerModifiable, INBT
 
         boolean reachedLimit = stack.getCount() > limit;
 
+        System.out.println("sim: " + simulate);
         if (!simulate) {
+            System.out.println("sim false");
             if (existing.isEmpty()) {
                 stacks[slot] = reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack;
             } else {
                 existing.grow(reachedLimit ? limit : stack.getCount());
             }
+//            System.out.println("content update: " + stack.getDisplayName());
             onContentsChanged(slot);
         }
 

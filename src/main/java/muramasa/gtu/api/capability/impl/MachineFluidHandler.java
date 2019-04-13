@@ -133,6 +133,20 @@ public class MachineFluidHandler {
         return notConsumed.toArray(new FluidStack[0]);
     }
 
+    public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {
+        ArrayList<FluidStack> notExported = new ArrayList<>();
+        int result;
+        for (int i = 0; i < outputs.length; i++) {
+            for (int j = 0; j < outputWrapper.tanks.length; j++) {
+                result = outputWrapper.tanks[j].fill(outputs[i].copy(), true);
+                if (result == outputs[i].amount) break; //Filling was successful
+                else outputs[i] = Utils.ca(result, outputs[i]);
+                if (j == outputWrapper.tanks.length - 1) notExported.add(outputs[i]);
+            }
+        }
+        return notExported.toArray(new FluidStack[0]);
+    }
+
     public ArrayList<Integer> getInputIds() {
         ArrayList<Integer> ids = new ArrayList<>();
         FluidStack[] fluids = getInputs();

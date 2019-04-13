@@ -8,6 +8,8 @@ public class TileEntityItemMultiMachine extends TileEntityMultiMachine {
 
     @Override
     public Recipe findRecipe() {
+        //TODO findRecipeItem assumes the first item has a String > List<Recipe> entry
+        //TODO I guess multis need to loop over storedItems?
         return RecipeMap.findRecipeItem(getType().getRecipeMap(), getStoredItems());
     }
 

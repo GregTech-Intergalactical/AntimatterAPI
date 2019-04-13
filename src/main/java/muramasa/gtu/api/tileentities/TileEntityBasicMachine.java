@@ -135,6 +135,9 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
                 if (getType().hasFlag(RECIPE)) checkRecipe();
                 break;
+            case ITEM_OUTPUT:
+                if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
+                break;
         }
     }
 
