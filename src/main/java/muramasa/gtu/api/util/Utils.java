@@ -236,12 +236,9 @@ public class Utils {
         return DECIMAL_FORMAT.format(number);
     }
 
-    public static void spawnItem(TileEntity tile, EnumFacing side, ItemStack stack) {
-        if (tile.getWorld().isRemote) return;
-        int x = tile.getPos().getX() + side.getDirectionVec().getX();
-        int y = tile.getPos().getY() + side.getDirectionVec().getY();
-        int z = tile.getPos().getZ() + side.getDirectionVec().getZ();
-        tile.getWorld().spawnEntity(new EntityItem(tile.getWorld(), x, y, z, stack));
+    public static void spawnItems(World world, BlockPos pos, @Nullable EnumFacing side, ItemStack stack) {
+        if (side != null) pos.offset(side);
+        world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
     }
 
     /** Safe version of world.getTileEntity **/
