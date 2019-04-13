@@ -173,11 +173,23 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
-        super.harvestBlock(worldIn, player, pos, state, te, stack);
-        worldIn.setBlockToAir(pos);
+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity tile, ItemStack stack) {
+        super.harvestBlock(world, player, pos, state, tile, stack);
+        world.setBlockToAir(pos);
     }
     /** TileEntity Drops End **/
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMachine) {
+            TileEntityMachine machine = (TileEntityMachine) tile;
+            if (machine.getItemHandler() != null) {
+                machine.getItemHandler().getInputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
+                machine.getItemHandler().getOutputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
+            }
+        }
+    }
 
     @Override
     public BlockRenderLayer getBlockLayer() {
