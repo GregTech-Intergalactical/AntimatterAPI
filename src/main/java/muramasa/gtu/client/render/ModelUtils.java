@@ -10,7 +10,6 @@ import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.bakedmodels.BakedBase;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -74,7 +73,7 @@ public class ModelUtils {
     }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
-        if (TEXTURE_GETTER == null) TEXTURE_GETTER = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+        if (TEXTURE_GETTER == null) TEXTURE_GETTER = location -> Ref.MC.getTextureMapBlocks().getAtlasSprite(location.toString());
         return TEXTURE_GETTER;
     }
 
