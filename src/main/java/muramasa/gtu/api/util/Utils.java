@@ -22,6 +22,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
@@ -256,6 +257,15 @@ public class Utils {
         } else {
             return blockAccess.getTileEntity(pos);
         }
+    }
+
+    public static World getClientWorld() {
+        return Ref.MC.world;
+    }
+
+    /** Gets the Server version of the client world **/
+    public static World getServerWorld() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getClientWorld().provider.getDimension());
     }
 
     /** Syncs NBT between Client & Server **/

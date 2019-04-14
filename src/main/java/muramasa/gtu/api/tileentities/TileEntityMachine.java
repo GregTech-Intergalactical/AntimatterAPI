@@ -212,21 +212,22 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
-        info.add("Tile Type: " + getClass().getName());
-        info.add("Machine Type: " + getType().getName());
-        info.add("Machine Tier: " + getTier().getName());
+        info.add("Tile: " + getClass().getName());
+        info.add("Machine: " + getType().getName() + " Tier: " + getTier().getName());
+        String slots = "";
         if (getType().hasFlag(MachineFlag.ITEM)) {
             int inputs = getType().getGui().getSlots(SlotType.IT_IN, getTier()).size();
             int outputs = getType().getGui().getSlots(SlotType.IT_OUT, getTier()).size();
-            if (inputs > 0) info.add("Input Slots: " + inputs);
-            if (outputs > 0) info.add("Output Slots: " + outputs);
+            if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
+            if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
         }
         if (getType().hasFlag(MachineFlag.FLUID)) {
             int inputs = getType().getGui().getSlots(SlotType.FL_IN, getTier()).size();
             int outputs = getType().getGui().getSlots(SlotType.FL_OUT, getTier()).size();
-            if (inputs > 0) info.add("Input Tanks: " + inputs);
-            if (outputs > 0) info.add("Output Tanks: " + outputs);
+            if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
+            if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }
+        if (slots.length() > 0) info.add("Slots:" + slots);
         return info;
     }
 }

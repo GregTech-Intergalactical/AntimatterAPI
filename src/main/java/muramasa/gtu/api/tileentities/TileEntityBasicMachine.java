@@ -146,9 +146,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
-        if (clientProgress > 0) {
-            info.add("Recipe Progress: " + clientProgress);
-        }
+        info.add("Recipe: " + curProgress + " / " + maxProgress);
         return info;
     }
 }
