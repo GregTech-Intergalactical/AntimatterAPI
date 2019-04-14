@@ -9,7 +9,7 @@ public class TileEntityPrimitiveBlastFurnace extends TileEntityBasicItemMultiMac
     @Override
     public void onStructureIntegrity(boolean valid) {
         if (valid) {
-            int3 controller = new int3(getPos(), getEnumFacing());
+            int3 controller = new int3(getPos(), getFacing());
             controller.back(1);
             getWorld().setBlockState(controller.asBP(), Blocks.LAVA.getDefaultState(), 3);
             controller.up(1);
