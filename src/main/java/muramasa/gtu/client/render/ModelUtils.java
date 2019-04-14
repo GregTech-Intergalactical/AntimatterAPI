@@ -14,12 +14,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.client.model.pipeline.VertexTransformer;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -27,10 +30,8 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.vecmath.Vector4f;
+import java.util.*;
 import java.util.function.Function;
 
 public class ModelUtils {
@@ -185,6 +186,60 @@ public class ModelUtils {
         }
         return transformedQuads;
     }
+
+
+    public static List<BakedQuad> transform(List<BakedQuad> quads, final EnumFacing rotation) {
+        List<BakedQuad> result = new ArrayList<>();
+
+        for (BakedQuad quad : quads) {
+            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
+            final IVertexConsumer consumer = new VertexTransformer(builder) {
+                @Override
+                public void put(int element, float... data) {
+                    VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
+                    switch (formatElement.getUsage()) {
+                        case POSITION: {
+                            float[] newData = new float[4];
+                            Vector4f vec = new Vector4f(data);
+                            TRSRTransformation.from(rotation).getMatrix().transform(vec);
+                            switch (rotation) {
+                                case UP:
+                                    vec.add(new Vector4f(0, 1, 0, 0));
+                                    break;
+                                case DOWN:
+                                    vec.add(new Vector4f(0, 0, 1, 0));
+                                    break;
+                                case NORTH:
+                                    vec.add(new Vector4f(0, 0, 0, 0));
+                                    break;
+                                case EAST:
+                                    vec.add(new Vector4f(1, 0, 0, 0));
+                                    break;
+                                case SOUTH:
+                                    vec.add(new Vector4f(1, 0, 1, 0));
+                                    break;
+                                case WEST:
+                                    vec.add(new Vector4f(0, 0, 1, 0));
+                                    break;
+                            }
+                            vec.get(newData);
+                            parent.put(element, newData);
+                            break;
+                        }
+                        default: {
+                            parent.put(element, data);
+                            break;
+                        }
+                    }
+                }
+            };
+
+            quad.pipe(consumer);
+            result.add(builder.build());
+        }
+        return result;
+    }
+
 
     public static List<BakedQuad> tex(List<BakedQuad> quads, TextureMode mode, Texture[] textures, int layer) {
 //        for (int i = 0; i < textures.length; i++) {

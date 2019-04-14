@@ -2,15 +2,16 @@ package muramasa.gtu.common.events;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.tileentities.TileEntityBase;
 import muramasa.gtu.api.tools.MaterialTool;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.api.tileentities.TileEntityBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,9 +24,18 @@ public class RenderGameOverlayHandler extends Gui {
 
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
-        if (Minecraft.getMinecraft().gameSettings.showDebugInfo && Minecraft.getMinecraft().objectMouseOver != null) {
-            TileEntity tile = Utils.getTile(Minecraft.getMinecraft().world, Minecraft.getMinecraft().objectMouseOver.getBlockPos());
+        if (Minecraft.getMinecraft().gameSettings.showDebugInfo && Ref.MC.objectMouseOver != null) {
+            TileEntity tile;
+            if (Ref.MC.player.isSneaking()) {
+                tile = Utils.getTile(Utils.getClientWorld(), Ref.MC.objectMouseOver.getBlockPos());
+                if (tile instanceof TileEntityBase) {
+                    e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Client]");
+                    e.getLeft().addAll(((TileEntityBase) tile).getInfo());
+                }
+            }
+            tile = Utils.getTile(Utils.getServerWorld(), Ref.MC.objectMouseOver.getBlockPos());
             if (tile instanceof TileEntityBase) {
+                e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
                 e.getLeft().addAll(((TileEntityBase) tile).getInfo());
             }
         }
