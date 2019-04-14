@@ -31,16 +31,16 @@ public class TileEntityCable extends TileEntityPipe {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_CABLE_INSULATED)) insulated = compound.getBoolean(Ref.KEY_CABLE_INSULATED);
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        if (tag.hasKey(Ref.KEY_CABLE_INSULATED)) insulated = tag.getBoolean(Ref.KEY_CABLE_INSULATED);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        compound.setBoolean(Ref.KEY_CABLE_INSULATED, insulated);
-        return compound;
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        super.writeToNBT(tag);
+        tag.setBoolean(Ref.KEY_CABLE_INSULATED, insulated);
+        return tag;
     }
 
     @Override

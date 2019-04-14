@@ -16,12 +16,12 @@ public class MachineFluidHandler {
     protected static int DEFAULT_CAPACITY = 99999;
 
     protected TileEntityMachine tile;
-    protected GTFluidTankWrapper inputWrapper, outputWrapper;
+    protected FluidTankWrapper input, output;
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
-        inputWrapper = new GTFluidTankWrapper(tile, tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier()).size(), capacity, true);
-        outputWrapper = new GTFluidTankWrapper(tile, tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size(), capacity, false);
+        input = new FluidTankWrapper(tile, tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier()).size(), capacity, true);
+        output = new FluidTankWrapper(tile, tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size(), capacity, false);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -37,12 +37,12 @@ public class MachineFluidHandler {
         this(tile, DEFAULT_CAPACITY, fluidData);
     }
 
-    public GTFluidTankWrapper getInputWrapper() {
-        return inputWrapper;
+    public FluidTankWrapper getInputWrapper() {
+        return input;
     }
 
-    public GTFluidTankWrapper getOutputWrapper() {
-        return outputWrapper;
+    public FluidTankWrapper getOutputWrapper() {
+        return output;
     }
 
     /** Helpers **/
@@ -56,25 +56,25 @@ public class MachineFluidHandler {
 
     public List<FluidStack> getInputList() {
         ArrayList<FluidStack> list = new ArrayList<>();
-        for (int i = 0; i < inputWrapper.tanks.length; i++) {
-            if (inputWrapper.tanks[i].getFluid() != null) list.add(inputWrapper.tanks[i].getFluid());
+        for (int i = 0; i < input.tanks.length; i++) {
+            if (input.tanks[i].getFluid() != null) list.add(input.tanks[i].getFluid());
         }
         return list;
     }
 
     public List<FluidStack> getOutputList() {
         ArrayList<FluidStack> list = new ArrayList<>();
-        for (int i = 0; i < outputWrapper.tanks.length; i++) {
-            if (outputWrapper.tanks[i].getFluid() != null) list.add(outputWrapper.tanks[i].getFluid());
+        for (int i = 0; i < output.tanks.length; i++) {
+            if (output.tanks[i].getFluid() != null) list.add(output.tanks[i].getFluid());
         }
         return list;
     }
 
     public void consumeInputs(FluidStack... inputs) {
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputWrapper.tanks.length; j++) {
-                if (Utils.equals(inputs[i], inputWrapper.tanks[j].getFluid())) {
-                    inputWrapper.tanks[j].drain(inputs[i].amount, true);
+            for (int j = 0; j < input.tanks.length; j++) {
+                if (Utils.equals(inputs[i], input.tanks[j].getFluid())) {
+                    input.tanks[j].drain(inputs[i].amount, true);
                 }
             }
         }
@@ -82,17 +82,17 @@ public class MachineFluidHandler {
 
     public void addInputs(FluidStack... fluids) {
         for (int i = 0; i < fluids.length; i++) {
-            for (int j = 0; j < inputWrapper.tanks.length; j++) {
-                inputWrapper.tanks[j].fill(fluids[i], true);
+            for (int j = 0; j < input.tanks.length; j++) {
+                input.tanks[j].fill(fluids[i], true);
             }
         }
     }
 
     public void addOutputs(FluidStack... fluids) {
         for (int i = 0; i < fluids.length; i++) {
-            for (int j = 0; j < outputWrapper.tanks.length; j++) {
+            for (int j = 0; j < output.tanks.length; j++) {
                 System.out.println("Adding output: " + fluids[i].getLocalizedName());
-                outputWrapper.tanks[j].fill(fluids[i], true);
+                output.tanks[j].fill(fluids[i], true);
             }
         }
     }
@@ -104,8 +104,8 @@ public class MachineFluidHandler {
     public int getSpaceForOutputs(FluidStack[] a) {
         int matchCount = 0;
         for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < outputWrapper.tanks.length; j++) {
-                if (outputWrapper.tanks[j].getFluid() == null || outputWrapper.tanks[j].fill(a[i], false) == a[i].amount) {
+            for (int j = 0; j < output.tanks.length; j++) {
+                if (output.tanks[j].getFluid() == null || output.tanks[j].fill(a[i], false) == a[i].amount) {
                     matchCount++;
                 }
             }
@@ -116,14 +116,14 @@ public class MachineFluidHandler {
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
         ArrayList<FluidStack> notConsumed = new ArrayList<>();
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputWrapper.tanks.length; j++) {
-                if (Utils.equals(inputs[i], inputWrapper.tanks[j].getFluid())) {
-                    if (inputWrapper.tanks[j].getFluid().amount >= inputs[i].amount) {
-                        inputWrapper.tanks[j].drain(inputs[i], true);
+            for (int j = 0; j < input.tanks.length; j++) {
+                if (Utils.equals(inputs[i], input.tanks[j].getFluid())) {
+                    if (input.tanks[j].getFluid().amount >= inputs[i].amount) {
+                        input.tanks[j].drain(inputs[i], true);
                     } else {
-                        int leftOver = inputs[i].amount - inputWrapper.tanks[j].getFluid().amount;
+                        int leftOver = inputs[i].amount - input.tanks[j].getFluid().amount;
                         notConsumed.add(Utils.ca(leftOver, inputs[i]));
-                        inputWrapper.tanks[j].drain(Utils.ca(inputs[i].amount - leftOver, inputs[i]), true);
+                        input.tanks[j].drain(Utils.ca(inputs[i].amount - leftOver, inputs[i]), true);
                     }
                 } else {
                     notConsumed.add(inputs[i]);
@@ -137,11 +137,11 @@ public class MachineFluidHandler {
         ArrayList<FluidStack> notExported = new ArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
-            for (int j = 0; j < outputWrapper.tanks.length; j++) {
-                result = outputWrapper.tanks[j].fill(outputs[i].copy(), true);
+            for (int j = 0; j < output.tanks.length; j++) {
+                result = output.tanks[j].fill(outputs[i].copy(), true);
                 if (result == outputs[i].amount) break; //Filling was successful
                 else outputs[i] = Utils.ca(result, outputs[i]);
-                if (j == outputWrapper.tanks.length - 1) notExported.add(outputs[i]);
+                if (j == output.tanks.length - 1) notExported.add(outputs[i]);
             }
         }
         return notExported.toArray(new FluidStack[0]);
@@ -159,19 +159,19 @@ public class MachineFluidHandler {
     /** NBT **/
     public NBTTagCompound serialize() {
         NBTTagCompound tag = new NBTTagCompound();
-        if (inputWrapper != null) {
+        if (input != null) {
             NBTTagList list = new NBTTagList();
-            for (int i = 0; i < inputWrapper.tanks.length; i++) {
-                if (inputWrapper.tanks[i].getFluid() == null) continue;
-                list.appendTag(inputWrapper.tanks[i].writeToNBT(new NBTTagCompound()));
+            for (int i = 0; i < input.tanks.length; i++) {
+                if (input.tanks[i].getFluid() == null) continue;
+                list.appendTag(input.tanks[i].writeToNBT(new NBTTagCompound()));
             }
             tag.setTag("Input-Fluids", list);
         }
-        if (outputWrapper != null) {
+        if (output != null) {
             NBTTagList list = new NBTTagList();
-            for (int i = 0; i < outputWrapper.tanks.length; i++) {
-                if (outputWrapper.tanks[i].getFluid() == null) continue;
-                list.appendTag(outputWrapper.tanks[i].writeToNBT(new NBTTagCompound()));
+            for (int i = 0; i < output.tanks.length; i++) {
+                if (output.tanks[i].getFluid() == null) continue;
+                list.appendTag(output.tanks[i].writeToNBT(new NBTTagCompound()));
             }
             tag.setTag("Output-Fluids", list);
         }
@@ -179,19 +179,19 @@ public class MachineFluidHandler {
     }
 
     public void deserialize(NBTTagCompound tag) {
-        if (inputWrapper != null) {
+        if (input != null) {
             NBTTagList list = tag.getTagList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.tagCount(); i++) {
-                if (i < inputWrapper.tanks.length) {
-                    inputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+                if (i < input.tanks.length) {
+                    input.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
                 }
             }
         }
-        if (outputWrapper != null) {
+        if (output != null) {
             NBTTagList list = tag.getTagList("Output-Fluids", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.tagCount(); i++) {
-                if (i < outputWrapper.tanks.length) {
-                    outputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+                if (i < output.tanks.length) {
+                    output.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
                 }
             }
         }
@@ -200,23 +200,23 @@ public class MachineFluidHandler {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (inputWrapper != null) {
+        if (input != null) {
             builder.append("Inputs:\n");
-            for (int i = 0; i < inputWrapper.tanks.length; i++) {
-                if (inputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(inputWrapper.tanks[i].getFluid().getLocalizedName()).append(" - ").append(inputWrapper.tanks[i].getFluid().amount);
-                    if (i != inputWrapper.tanks.length - 1) {
+            for (int i = 0; i < input.tanks.length; i++) {
+                if (input.tanks[i].getFluid() != null) {
+                    builder.append(input.tanks[i].getFluid().getLocalizedName()).append(" - ").append(input.tanks[i].getFluid().amount);
+                    if (i != input.tanks.length - 1) {
                         builder.append("\n");
                     }
                 }
             }
         }
-        if (outputWrapper != null) {
+        if (output != null) {
             builder.append("Outputs:\n");
-            for (int i = 0; i < outputWrapper.tanks.length; i++) {
-                if (outputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(outputWrapper.tanks[i].getFluid().getLocalizedName()).append(" - ").append(outputWrapper.tanks[i].getFluid().amount);
-                    if (i != outputWrapper.tanks.length - 1) {
+            for (int i = 0; i < output.tanks.length; i++) {
+                if (output.tanks[i].getFluid() != null) {
+                    builder.append(output.tanks[i].getFluid().getLocalizedName()).append(" - ").append(output.tanks[i].getFluid().amount);
+                    if (i != output.tanks.length - 1) {
                         builder.append("\n");
                     }
                 }
