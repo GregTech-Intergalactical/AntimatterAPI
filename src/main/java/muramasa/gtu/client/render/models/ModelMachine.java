@@ -36,13 +36,10 @@ public class ModelMachine implements IModel {
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
         IModel BASE = ModelUtils.load("machine/base");
         BakedMachine.BASE = BASE.bake(state, format, getter);
-
         Collection<Machine> machines = Machines.getTypes(BASIC, MULTI, HATCH);
         machines.add(Machines.INVALID);
-
         if (!Ref.BASIC_MACHINE_MODELS) {
-            //TODO use Pair<int, IBakedModel>[] instead?
-
+            //TODO merge overlays into single model
             BakedMachine.OVERLAYS = new IBakedModel[Machine.getLastInternalId()][6];
             IBakedModel overlay;
             for (Machine type : machines) {
@@ -108,6 +105,12 @@ public class ModelMachine implements IModel {
                 locations.add(texture.getLoc());
             }
         }
+//        Arrays.stream(Tier.getAllElectric()).forEach(t -> locs.add(t.getBaseTexture().getLoc()));
+//        Arrays.stream(Tier.getSteam()).forEach(t -> locs.add(t.getBaseTexture().getLoc()));
+//        getTypes(BASIC, HATCH, MULTI).forEach(m -> m.getTextures().forEach(t -> locs.add(t.getLoc())));
+//        getTypes(MULTI).forEach(m -> locs.add(m.getBaseTexture(Tier.MULTI).getLoc()));
+//        Machines.INVALID.getTextures().forEach(t -> locs.add(t.getLoc()));
+//        GregTechAPI.getRegisteredCovers().forEach(c -> { if (!c.isEmpty()) Arrays.stream(c.getTextures()).forEach(t -> locs.add(t.getLoc())); });
         return locations;
     }
 }

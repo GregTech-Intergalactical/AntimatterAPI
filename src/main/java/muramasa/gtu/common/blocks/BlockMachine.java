@@ -121,6 +121,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
             if (machine.getType().hasFlag(MachineFlag.GUI)) {
+                //TODO if cover returns false, open normal gui if present
                 if (machine.getType().hasFlag(MachineFlag.COVERABLE) && !machine.getCoverHandler().get(side).isEmpty()) return false;
                 GuiData gui = machine.getType().getGui();
                 player.openGui(gui.getInstance(), gui.getId(), world, pos.getX(), pos.getY(), pos.getZ());

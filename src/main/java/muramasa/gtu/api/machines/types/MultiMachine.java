@@ -19,7 +19,7 @@ public class MultiMachine extends Machine {
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
         addFlags(extraFlags);
         addRecipeMap();
-        addGUI(GregTech.INSTANCE, Ref.MULTI_MACHINE_ID);
+        addGUI(GregTech.INSTANCE, Ref.GUI_ID_MULTI_MACHINE);
         baseTexture = new Texture("blocks/machine/base/" + name);
     }
 

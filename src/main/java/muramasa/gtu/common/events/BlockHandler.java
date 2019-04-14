@@ -18,6 +18,7 @@ public class BlockHandler {
 
     @SubscribeEvent
     public static void onBlockInteract(PlayerInteractEvent.RightClickBlock e) {
+        //TODO move to BlockMachine onBlockActivated
         if (e.getHand() == EnumHand.OFF_HAND || ToolType.get(e.getItemStack()) != null) return;
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
         if (tile == null) return;

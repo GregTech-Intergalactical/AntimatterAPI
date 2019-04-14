@@ -17,7 +17,7 @@ public class HatchMachine extends Machine {
         addFlags(HATCH, CONFIGURABLE, COVERABLE);
         addFlags(flags);
         if (hasFlag(GUI)) {
-            addGUI(GregTech.INSTANCE, Ref.HATCH_ID);
+            addGUI(GregTech.INSTANCE, Ref.GUI_ID_HATCH);
         }
     }
 

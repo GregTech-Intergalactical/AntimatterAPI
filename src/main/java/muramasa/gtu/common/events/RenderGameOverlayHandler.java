@@ -33,7 +33,7 @@ public class RenderGameOverlayHandler extends Gui {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onRenderGameOverlay(RenderGameOverlayEvent.Pre e) {
-        EntityPlayerSP entityPlayerSP = Ref.mc.player;
+        EntityPlayerSP entityPlayerSP = Ref.MC.player;
         ItemStack stack = entityPlayerSP.getHeldItemMainhand();
         if (!(stack.getItem() instanceof MaterialTool)) return;
         MaterialTool tool = (MaterialTool) stack.getItem();
@@ -45,7 +45,7 @@ public class RenderGameOverlayHandler extends Gui {
     @SubscribeEvent(receiveCanceled = true)
     public static void onRenderGameOverlay(RenderGameOverlayEvent.Post e) {
         if (e.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-            EntityPlayerSP entityPlayerSP = Ref.mc.player;
+            EntityPlayerSP entityPlayerSP = Ref.MC.player;
             ItemStack stack = entityPlayerSP.getHeldItemMainhand();
             if (!(stack.getItem() instanceof MaterialTool)) return;
             MaterialTool tool = (MaterialTool) stack.getItem();
@@ -54,7 +54,7 @@ public class RenderGameOverlayHandler extends Gui {
                 GL11.glPushMatrix();
                 int x = (e.getResolution().getScaledWidth() / 2) - 91;
                 int y = e.getResolution().getScaledHeight() - 29;
-                Ref.mc.renderEngine.bindTexture(energyBar);
+                Ref.MC.renderEngine.bindTexture(energyBar);
                 int energySize = (int)(180 * ((float) tool.getEnergy(stack) / (float) tool.getMaxEnergy(stack)));
                 drawModalRectWithCustomSizedTexture(x, y, 0, 0, 182, 5, 182, 15);
                 drawModalRectWithCustomSizedTexture(x + 1, y + 1, 0, 6, energySize, 3, 182, 15);

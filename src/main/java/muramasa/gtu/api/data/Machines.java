@@ -67,6 +67,8 @@ public class Machines {
     public static Machine STEAM_COMPRESSOR = new SteamMachine("steam_compressor");
     public static Machine STEAM_ALLOY_SMELTER = new SteamMachine("steam_alloy_smelter");
 
+    public static Machine QUANTUM_TANK = new TankMachine("quantum_tank");
+
     public static Machine CHARCOAL_PIT = new MultiMachine("charcoal_pit", TileEntityCharcoalPit.class);
     public static Machine PRIMITIVE_BLAST_FURNACE = new MultiMachine("primitive_blast_furnace", TileEntityPrimitiveBlastFurnace.class, ITEM);
     public static Machine BRONZE_BLAST_FURNACE = new MultiMachine("bronze_blast_furnace", TileEntityBronzeBlastFurnace.class, ITEM);
