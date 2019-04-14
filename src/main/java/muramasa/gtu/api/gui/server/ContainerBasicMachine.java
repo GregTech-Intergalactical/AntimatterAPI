@@ -19,7 +19,7 @@ public class ContainerBasicMachine extends ContainerMachine {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         int curProgress = tile.getCurProgress();
-        int curState = tile.getMachineState().getId();
+        int curState = tile.getMachineState().ordinal();
         if (Math.abs(curProgress - lastProgress) >= GuiUpdateType.PROGRESS.getUpdateThreshold()) {
             int progress = (int)(((float)curProgress / (float)tile.getMaxProgress()) * Short.MAX_VALUE);
             listeners.forEach(l -> l.sendWindowProperty(this, GuiUpdateType.PROGRESS.ordinal(), progress));
@@ -36,7 +36,7 @@ public class ContainerBasicMachine extends ContainerMachine {
     public void updateProgressBar(int id, int data) {
         super.updateProgressBar(id, data);
         if (id == GuiUpdateType.PROGRESS.ordinal()) {
-            tile.setClientProgress((float)data / (float)Short.MAX_VALUE);
+            ((TileEntityBasicMachine) tile).setClientProgress((float)data / (float)Short.MAX_VALUE);
         } else if (id == GuiUpdateType.MACHINE_STATE.ordinal()) {
             tile.setMachineState(MachineState.VALUES[data]);
         }

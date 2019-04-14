@@ -37,10 +37,6 @@ public enum MachineState implements IStringSerializable {
         this.loopTick = loopTick;
     }
 
-    public int getId() {
-        return ordinal();
-    }
-
     public int getOverlayId() {
         return overlayId;
     }

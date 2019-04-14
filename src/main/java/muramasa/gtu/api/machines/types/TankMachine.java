@@ -7,7 +7,6 @@ import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.common.blocks.BlockMachine;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
-import static muramasa.gtu.api.machines.MachineFlag.CONFIGURABLE;
 
 public class TankMachine extends Machine {
 

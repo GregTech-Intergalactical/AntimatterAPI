@@ -67,7 +67,7 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TIER = "m2";
     public static final String KEY_MACHINE_TILE_FACING = "mf";
     public static final String KEY_MACHINE_TILE_STATE = "ms";
-    public static final String KEY_MACHINE_TILE_TINT = "MC";
+    public static final String KEY_MACHINE_TILE_TINT = "mc";
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";

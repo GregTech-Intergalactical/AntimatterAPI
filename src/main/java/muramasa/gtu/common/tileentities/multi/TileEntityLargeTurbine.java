@@ -15,7 +15,7 @@ public class TileEntityLargeTurbine extends TileEntityFluidMultiMachine {
     }
 
     public void applyTextureToFace(int override) {
-        int3 topCorner = new int3(getPos(), getEnumFacing()).left(1).up(1);
+        int3 topCorner = new int3(getPos(), getFacing()).left(1).up(1);
         int3 working = new int3();
         TileEntity tile;
         for (int x = 0; x < 3; x++) {

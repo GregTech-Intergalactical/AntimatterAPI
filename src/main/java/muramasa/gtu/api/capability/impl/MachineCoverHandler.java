@@ -22,6 +22,6 @@ public class MachineCoverHandler extends CoverHandler {
 
     @Override
     public EnumFacing getTileFacing() {
-        return ((TileEntityMachine) getTile()).getEnumFacing();
+        return ((TileEntityMachine) getTile()).getFacing();
     }
 }

@@ -75,7 +75,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
             TileEntityMachine machine = (TileEntityMachine) tile;
             exState = exState
                 .withProperty(TYPE, machine.getTypeId())
-                .withProperty(FACING, machine.getFacing())
+                .withProperty(FACING, machine.getFacing().getIndex())
                 .withProperty(TEXTURE, machine.getTextureData());
             if (getType().hasFlag(MachineFlag.COVERABLE)) {
                 if (machine.getCoverHandler() == null) return exState;
@@ -137,7 +137,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityMachine) {
                 String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
-                ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite().getIndex());
+                ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite());
             }
         }
     }

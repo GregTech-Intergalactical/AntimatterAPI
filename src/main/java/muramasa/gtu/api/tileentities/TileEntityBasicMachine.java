@@ -1,50 +1,20 @@
 package muramasa.gtu.api.tileentities;
 
-import muramasa.gtu.Ref;
-import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
-
-import javax.annotation.Nullable;
 
 import java.util.List;
 
-import static muramasa.gtu.api.machines.MachineFlag.*;
+import static muramasa.gtu.api.machines.MachineFlag.RECIPE;
 import static muramasa.gtu.api.machines.MachineState.*;
 
 public abstract class TileEntityBasicMachine extends TileEntityMachine {
-
-    /** Capabilities **/
-    //TODO move to TileEntityMachine?
-    protected MachineItemHandler itemHandler;
-    protected MachineFluidHandler fluidHandler;
-    protected MachineEnergyHandler energyHandler;
-    protected MachineCoverHandler coverHandler;
-    protected MachineConfigHandler configHandler;
 
     /** Logic **/
     protected Recipe activeRecipe;
     protected int curProgress, maxProgress;
     protected float clientProgress;
-
-    @Override
-    public void onFirstTick() {
-        super.onFirstTick();
-        if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
-        if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
-        if (getType().hasFlag(ENERGY)) energyHandler = new MachineEnergyHandler(this);
-        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
-        if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
-        markDirty();
-    }
 
     @Override
     public void onServerUpdate() {
@@ -145,7 +115,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     /** Getters **/
-    @Override
     public float getClientProgress() {
         return clientProgress;
     }
@@ -160,21 +129,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         return maxProgress;
     }
 
-    @Override
-    public MachineItemHandler getItemHandler() {
-        return itemHandler;
-    }
-
-    @Override
-    public MachineFluidHandler getFluidHandler() {
-        return fluidHandler;
-    }
-
-    @Override
-    public MachineCoverHandler getCoverHandler() {
-        return coverHandler;
-    }
-
     /** Setters **/
     @Override
     public void setMachineState(MachineState newState) {
@@ -185,63 +139,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         super.setMachineState(newState);
     }
 
-    @Override
-    public void setClientProgress(float newProgress) {
-        clientProgress = newProgress;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_MACHINE_TILE_STATE)) {
-            //TODO saving state needed? if recipe is saved, serverUpdate should handle it.
-            super.setMachineState(VALUES[compound.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);
-        }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        if (getMachineState() != null) {
-            compound.setInteger(Ref.KEY_MACHINE_TILE_STATE, getMachineState().getId());
-        }
-        return compound;
-    }
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
-        if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (coverHandler == null) return false;
-            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
-        } else if (getType().hasFlag(FLUID) && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverFluid);
-        } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
-            if (coverHandler == null) return false;
-            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
-        } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
-            if (coverHandler == null) return false;
-            return side == null || !coverHandler.get(side).isEmpty();
-        } else if (getType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
-            return true;
-        }
-        return super.hasCapability(capability, side);
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getInputHandler());
-        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper());
-        } else if (capability == GTCapabilities.ENERGY) {
-            return GTCapabilities.ENERGY.cast(energyHandler);
-        } else if (capability == GTCapabilities.COVERABLE) {
-            return GTCapabilities.COVERABLE.cast(coverHandler);
-        } else if (capability == GTCapabilities.CONFIGURABLE) {
-            return GTCapabilities.CONFIGURABLE.cast(configHandler);
-        }
-        return super.getCapability(capability, side);
+    public void setClientProgress(float progress) {
+        clientProgress = progress;
     }
 
     @Override
