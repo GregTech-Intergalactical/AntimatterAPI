@@ -1,5 +1,6 @@
 package muramasa.gtu.api.machines.types;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
@@ -42,11 +43,8 @@ public class Machine implements IStringSerializable {
     /** GUI Members **/
     protected GuiData guiData;
 
-    /** Texture Members **/
-    protected Texture baseTexture;
-
     /** Multi Members **/
-    protected Structure structure;
+    protected Int2ObjectArrayMap<Structure> structures;
 
     //TODO get valid covers
 
@@ -106,11 +104,12 @@ public class Machine implements IStringSerializable {
         return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getName());
     }
 
-    public void addFlags(MachineFlag... flags) {
+    public Machine addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
             machineMask |= flag.getBit();
             flag.add(this);
         }
+        return this;
     }
 
     public void setFlags(MachineFlag... flags) {
@@ -142,7 +141,12 @@ public class Machine implements IStringSerializable {
     }
 
     public void addStructure(Structure structure) {
-        this.structure = structure;
+        addStructure(getFirstTier(), structure);
+    }
+
+    public void addStructure(Tier tier, Structure structure) {
+        if (structures == null) structures = new Int2ObjectArrayMap<>();
+        structures.put(tier.getInternalId(), structure);
     }
 
     public boolean hasFlag(MachineFlag flag) {
@@ -166,12 +170,16 @@ public class Machine implements IStringSerializable {
         return tiers;
     }
 
+    public Tier getFirstTier() {
+        return tiers.get(0);
+    }
+
     public GuiData getGui() {
         return guiData;
     }
 
-    public Structure getStructure() {
-        return structure;
+    public Structure getStructure(Tier tier) {
+        return structures.get(tier.getInternalId());
     }
 
     /** Static Methods **/

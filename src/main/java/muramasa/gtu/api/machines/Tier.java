@@ -30,7 +30,6 @@ public class Tier implements IStringSerializable {
     /** Special Tiers **/
     public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
     public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
-    public static Tier MULTI = new Tier("multi", 0, TextFormatting.AQUA);
 
     private int internalId;
     private String name;
@@ -82,10 +81,6 @@ public class Tier implements IStringSerializable {
 
     public static Tier[] getAllElectric() {
         return new Tier[]{ULV, LV, MV, HV, EV, IV, LUV, ZPM, UV, MAX};
-    }
-
-    public static Tier[] getMulti() {
-        return new Tier[]{MULTI};
     }
 
     public static Tier get(String name) {

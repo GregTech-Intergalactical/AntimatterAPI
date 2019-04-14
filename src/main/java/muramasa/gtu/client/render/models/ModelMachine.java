@@ -92,9 +92,6 @@ public class ModelMachine implements IModel {
             for (Texture texture : type.getTextures()) {
                 locations.add(texture.getLoc());
             }
-            if (type.hasFlag(MULTI)) {
-                locations.add(type.getBaseTexture(Tier.MULTI).getLoc());
-            }
         }
         for (Texture texture : Machines.INVALID.getTextures()) {
             locations.add(texture.getLoc());
