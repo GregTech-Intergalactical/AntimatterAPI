@@ -1,13 +1,13 @@
 package muramasa.gtu.common.events;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.RenderHelper;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -56,7 +56,7 @@ public class BlockHighlightHandler {
         buffer.begin(7, DefaultVertexFormats.BLOCK);
         GlStateManager.translate(position.getX(), position.getY(), position.getZ());
 
-        BlockRendererDispatcher rendererDispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        BlockRendererDispatcher rendererDispatcher = Ref.MC.getBlockRendererDispatcher();
         rendererDispatcher.getBlockModelRenderer().renderModel(event.getPlayer().world, rendererDispatcher.getModelForState(state), state, position, buffer, false, MathHelper.getPositionRandom(position));
         tessellator.draw();
 

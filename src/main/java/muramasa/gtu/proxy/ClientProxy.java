@@ -25,7 +25,6 @@ import muramasa.gtu.common.blocks.BlockOre;
 import muramasa.gtu.common.blocks.BlockStorage;
 import muramasa.gtu.common.blocks.pipe.BlockPipe;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
@@ -55,7 +54,7 @@ public class ClientProxy implements IProxy {
     public void init(FMLInitializationEvent e) {
         IItemColor materialItemHandler = (stack, i) -> i == 0 ? ((MaterialItem) stack.getItem()).getMaterial().getRGB() : -1;
         for (Item item : MaterialItem.getAll()) {
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(materialItemHandler, item);
+            Ref.MC.getItemColors().registerItemColorHandler(materialItemHandler, item);
         }
 
         IBlockColor machineBlockHandler = (state, world, pos, i) -> {
@@ -63,7 +62,7 @@ public class ClientProxy implements IProxy {
             return tile instanceof TileEntityMachine && i == 0 ? ((TileEntityMachine) tile).getTextureData().getTint() : -1;
         };
         for (Machine type : Machines.getAll()) {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(machineBlockHandler, type.getBlock());
+            Ref.MC.getBlockColors().registerBlockColorHandler(machineBlockHandler, type.getBlock());
         }
 
         IBlockColor cableBlockHandler = (state, world, pos, i) -> {
@@ -87,37 +86,37 @@ public class ClientProxy implements IProxy {
         IBlockColor pipeBlockHandler = (state, world, pos, i) -> i == 0 || i == 1 || i == 2 ? ((BlockPipe) state.getBlock()).getRGB() : -1;
         IItemColor pipeItemHandler = (stack, i) -> i == 0 || i == 1 || i == 2 ? ((BlockPipe) Block.getBlockFromItem(stack.getItem())).getRGB() : -1;
         for (Cable type : Cable.getAll()) {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(cableBlockHandler, GregTechRegistry.getCable(type));
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(cableItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));
+            Ref.MC.getBlockColors().registerBlockColorHandler(cableBlockHandler, GregTechRegistry.getCable(type));
+            Ref.MC.getItemColors().registerItemColorHandler(cableItemHandler, Item.getItemFromBlock(GregTechRegistry.getCable(type)));
         }
         for (FluidPipe type : FluidPipe.getAll()) {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getFluidPipe(type));
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getFluidPipe(type)));
+            Ref.MC.getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getFluidPipe(type));
+            Ref.MC.getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getFluidPipe(type)));
         }
         for (ItemPipe type : ItemPipe.getAll()) {
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getItemPipe(type));
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getItemPipe(type)));
+            Ref.MC.getBlockColors().registerBlockColorHandler(pipeBlockHandler, GregTechRegistry.getItemPipe(type));
+            Ref.MC.getItemColors().registerItemColorHandler(pipeItemHandler, Item.getItemFromBlock(GregTechRegistry.getItemPipe(type)));
         }
 
         IBlockColor oreBlockHandler = (state, world, pos, i) -> i == 1 ? ((BlockOre) state.getBlock()).getMaterial().getRGB() : -1;
         IItemColor oreItemHandler = (stack, i) -> i == 1 ? ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial().getRGB() : -1;
         for (Material material : ItemFlag.ORE.getMats()) {
             Block block = GregTechRegistry.getOre(material);
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(oreBlockHandler, block);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(oreItemHandler, Item.getItemFromBlock(block));
+            Ref.MC.getBlockColors().registerBlockColorHandler(oreBlockHandler, block);
+            Ref.MC.getItemColors().registerItemColorHandler(oreItemHandler, Item.getItemFromBlock(block));
         }
 
         IBlockColor storageBlockHandler = (state, world, pos, i) -> i == 0 ? ((BlockStorage) state.getBlock()).getMaterial().getRGB() : -1;
         IItemColor storageItemHandler = (stack, i) -> i == 0 ? ((BlockStorage) Block.getBlockFromItem(stack.getItem())).getMaterial().getRGB() : -1;
         for (Material material : ItemFlag.BLOCK.getMats()) {
             Block block = GregTechRegistry.getStorage(material);
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(storageBlockHandler, block);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
+            Ref.MC.getBlockColors().registerBlockColorHandler(storageBlockHandler, block);
+            Ref.MC.getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
         }
 
         IItemColor toolItemHandler = MaterialTool::getRGB;
         for (ToolType type : ToolType.values()) {
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
+            Ref.MC.getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
         }
     }
 

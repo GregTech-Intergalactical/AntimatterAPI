@@ -1,5 +1,6 @@
 package muramasa.gtu.client.render;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -40,12 +41,12 @@ public class RenderHelper {
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
-        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
-        return sprite != null ? sprite : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(Texture.ERROR.getLoc().toString());
+        TextureAtlasSprite sprite = Ref.MC.getTextureMapBlocks().getTextureExtry(loc.toString());
+        return sprite != null ? sprite : Ref.MC.getTextureMapBlocks().getTextureExtry(Texture.ERROR.getLoc().toString());
     }
 
     public static TextureAtlasSprite getSprite(Fluid fluid) {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+        return Ref.MC.getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
     }
 
     public static void drawFluid(Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {

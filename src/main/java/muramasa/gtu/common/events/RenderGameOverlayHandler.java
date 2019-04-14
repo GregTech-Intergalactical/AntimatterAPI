@@ -5,7 +5,6 @@ import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.tileentities.TileEntityBase;
 import muramasa.gtu.api.tools.MaterialTool;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
@@ -24,7 +23,7 @@ public class RenderGameOverlayHandler extends Gui {
 
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
-        if (Minecraft.getMinecraft().gameSettings.showDebugInfo && Ref.MC.objectMouseOver != null) {
+        if (Ref.MC.gameSettings.showDebugInfo && Ref.MC.objectMouseOver != null) {
             TileEntity tile;
             if (Ref.MC.player.isSneaking()) {
                 tile = Utils.getTile(Utils.getClientWorld(), Ref.MC.objectMouseOver.getBlockPos());
