@@ -170,23 +170,23 @@ public class Utils {
         return stack;
     }
 
-    public static boolean areItemsValid(ItemStack... stacks) {
-        if (stacks == null) return false;
-        for (int i = 0; i < stacks.length; i++) {
-            if (stacks[i].isEmpty()) return false;
+    public static boolean areItemsValid(ItemStack... items) {
+        if (items == null || items.length == 0) return false;
+        for (int i = 0; i < items.length; i++) {
+            if (items[i].isEmpty()) return false;
         }
         return true;
     }
 
-    public static boolean areItemsValid(ItemStack[]... stackArrays) {
-        for (int i = 0; i < stackArrays.length; i++) {
-            if (!areItemsValid(stackArrays[i])) return false;
+    public static boolean areItemsValid(ItemStack[]... itemArrays) {
+        for (int i = 0; i < itemArrays.length; i++) {
+            if (!areItemsValid(itemArrays[i])) return false;
         }
         return true;
     }
 
     public static boolean areFluidsValid(FluidStack... fluids) {
-        if (fluids == null) return false;
+        if (fluids == null || fluids.length == 0) return false;
         for (int i = 0; i < fluids.length; i++) {
             if (fluids[i] == null) return false;
         }

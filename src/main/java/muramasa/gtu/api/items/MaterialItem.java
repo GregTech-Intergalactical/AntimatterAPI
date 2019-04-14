@@ -134,7 +134,7 @@ public class MaterialItem extends Item implements IHasModelOverride {
         ItemStack replacement = prefix.getReplacement(material);
         if (replacement == null) {
             if (!prefix.allowGeneration(material)) {
-                if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                if (Ref.RECIPE_EXCEPTIONS) {
                     throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + prefix.getName() + ") M(" + material.getName() + ")");
                 } else {
                     System.err.println("GET ERROR - DOES NOT GENERATE: P(" + prefix.getName() + ") M(" + material.getName() + ")");
@@ -142,14 +142,14 @@ public class MaterialItem extends Item implements IHasModelOverride {
             }
             MaterialItem item = TYPE_LOOKUP.get(prefix.getName() + material.getName());
             if (item == null) {
-                if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                if (Ref.RECIPE_EXCEPTIONS) {
                     throw new IllegalStateException("GET ERROR - MAT ITEM NULL: P(" + prefix.getName() + ") M(" + material.getName() + ")");
                 } else {
                     System.err.println("GET ERROR - MAT ITEM NULL: P(" + prefix.getName() + ") M(" + material.getName() + ")");
                 }
             }
             if (count == 0) {
-                if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                if (Ref.RECIPE_EXCEPTIONS) {
                     System.out.println("ITEM: " + item.getPrefix().getName() + " - " + item.getMaterial().getName());
                     throw new IllegalStateException("GET ERROR - COUNT 0: P(" + prefix.getName() + ") M(" + material.getName() + ")");
                 } else {
@@ -158,7 +158,7 @@ public class MaterialItem extends Item implements IHasModelOverride {
             }
             ItemStack mat = new ItemStack(item, count);
             if (mat.isEmpty()) {
-                if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+                if (Ref.RECIPE_EXCEPTIONS) {
                     System.out.println("ITEM: " + item.getPrefix().getName() + " - " + item.getMaterial().getName());
                     throw new IllegalStateException("GET ERROR - MAT STACK EMPTY: P(" + prefix.getName() + ") M(" + material.getName() + ")");
                 } else {

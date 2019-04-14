@@ -1,17 +1,15 @@
 package muramasa.gtu.api.recipe;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-
-import java.util.List;
 
 public class RecipeBuilder {
 
     private RecipeMap recipeMap;
-    private ItemStack[] stacksInput, stacksOutput;
+    private ItemStack[] itemsInput, itemsOutput;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int[] chances;
     private int duration, special;
@@ -19,54 +17,36 @@ public class RecipeBuilder {
     private boolean hidden;
 
     public void add() {
-        if (stacksInput != null && !Utils.areItemsValid(stacksInput)) {
-            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
-                throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
-            } else {
-                System.out.println("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
-                return;
-            }
+        if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
+            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
+            else System.out.println("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
+            return;
         }
-        if (stacksOutput != null && !Utils.areItemsValid(stacksOutput)) {
-            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
-                for (ItemStack stack : stacksOutput) {
-                    System.out.println(stack != null ? stack.getDisplayName() : "NULL");
-                }
-                throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
-            } else {
-                System.out.println("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
-                return;
-            }
+        if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
+            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
+            else System.out.println("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
+            return;
         }
         if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) {
-            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
-                throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
-            } else {
-                System.out.println("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
-                return;
-            }
+            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
+            else System.out.println("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
+            return;
         }
         if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) {
-            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
-                throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
-            } else {
-                System.out.println("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
-                return;
-            }
+            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
+            else System.out.println("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
+            return;
         }
-
         //TODO validate item/fluid inputs/outputs do not exceed machine gui values
         //TODO get a recipe build method to machine type so it can be overriden?
-
-        //TODO FILTER EMPTY AND NULL STACKS
         Recipe recipe = new Recipe(
-            stacksInput != null ? stacksInput.clone() : stacksInput,
-            stacksOutput != null ? stacksOutput.clone() : stacksOutput,
-            fluidsInput != null ? fluidsInput.clone() : fluidsInput,
-            fluidsOutput != null ? fluidsOutput.clone() : fluidsOutput,
+            itemsInput != null ? itemsInput.clone() : null,
+            itemsOutput != null ? itemsOutput.clone() : null,
+            fluidsInput != null ? fluidsInput.clone() : null,
+            fluidsOutput != null ? fluidsOutput.clone() : null,
             duration, power, special
         );
-        if (chances != null && chances.length == stacksOutput.length) recipe.addChances(chances);
+        if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipeMap.add(recipe);
     }
@@ -91,7 +71,7 @@ public class RecipeBuilder {
     }
 
     public RecipeBuilder get(RecipeMap map) {
-        stacksInput = stacksOutput = null;
+        itemsInput = itemsOutput = null;
         fluidsInput = fluidsOutput = null;
         chances = null;
         duration = special = 0;
@@ -102,22 +82,12 @@ public class RecipeBuilder {
     }
 
     public RecipeBuilder ii(ItemStack... stacks) {
-        stacksInput = stacks;
-        return this;
-    }
-
-    public RecipeBuilder ii(List<ItemStack> stacks) {
-        stacksInput = stacks.toArray(new ItemStack[0]);
+        itemsInput = stacks;
         return this;
     }
 
     public RecipeBuilder io(ItemStack... stacks) {
-        stacksOutput = stacks;
-        return this;
-    }
-
-    public RecipeBuilder io(List<ItemStack> stacks) {
-        stacksOutput = stacks.toArray(new ItemStack[0]);
+        itemsOutput = stacks;
         return this;
     }
 

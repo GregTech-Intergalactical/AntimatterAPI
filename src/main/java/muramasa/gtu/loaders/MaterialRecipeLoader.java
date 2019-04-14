@@ -281,10 +281,10 @@ public class MaterialRecipeLoader {
                 }
                 ItemStack inputCell = inputCellCount > 0 ? CellTin.get(inputCellCount) : ItemStack.EMPTY;
                 if (m.has(ELEC)) {
-                    RB.get(ELECTROLYZER).ii(input, inputCell).fi(firstFluid).io(outputs).add(Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
+                    RB.get(ELECTROLYZER).ii(input, inputCell).fi(firstFluid).io(outputs.toArray(new ItemStack[0])).add(Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
                     //RecipeAdder.addElectrolyzerRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
                 } else if (m.has(CENT)) {
-                    RB.get(CENTRIFUGE).ii(input, inputCell).fi(firstFluid).io(outputs).add(Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
+                    RB.get(CENTRIFUGE).ii(input, inputCell).fi(firstFluid).io(outputs.toArray(new ItemStack[0])).add(Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
                     //RecipeAdder.addCentrifugeRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
                 }
             }
@@ -413,10 +413,8 @@ public class MaterialRecipeLoader {
         for (Material m : CRUSHED.getMats()) {
             if (m.hasByProducts()) {
                 ArrayList<ItemStack> dusts = new ArrayList<>(m.getByProducts().size());
-                for (Material product : m.getByProducts()) {
-                    dusts.add(product.getDust(1));
-                }
-                RB.get(RecipeMap.ORE_BY_PRODUCTS).ii(m.getOre(1)).io(dusts).add();
+                m.getByProducts().forEach(p -> dusts.add(p.getDust(1)));
+                RB.get(RecipeMap.ORE_BY_PRODUCTS).ii(m.getOre(1)).io(dusts.toArray(new ItemStack[0])).add();
             }
 
             boolean aNeedsBlastFurnace = m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace();

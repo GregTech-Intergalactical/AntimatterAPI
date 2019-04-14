@@ -17,16 +17,12 @@ public class Recipe {
     private int[] chances;
     private boolean hidden;
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, int duration, long power, int special) {
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
         this.itemsInput = stacksInput;
         this.itemsOutput = stacksOutput;
         this.duration = duration;
         this.power = power;
         this.special = special;
-    }
-
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
-        this(stacksInput, stacksOutput, duration, power, special);
         this.fluidsInput = fluidsInput;
         this.fluidsOutput = fluidsOutput;
     }
