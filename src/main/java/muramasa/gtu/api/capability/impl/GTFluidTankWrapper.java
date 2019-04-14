@@ -2,6 +2,7 @@ package muramasa.gtu.api.capability.impl;
 
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.util.Utils;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -62,11 +63,11 @@ public class GTFluidTankWrapper implements IFluidHandler {
         return null;
     }
 
-    public void setFirstValidOrEmptyTank(FluidStack stack) {
+    public void setFirstValidOrEmptyTank(FluidStack fluid) {
         GTFluidTank tank = getFirstValidTank();
         if (tank == null) tank = getFirstEmptyTank();
         if (tank != null) {
-            tank.setFluid(stack);
+            tank.setFluid(fluid);
         }
     }
 
@@ -86,9 +87,9 @@ public class GTFluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
-    public GTFluidTank findFluidInTanks(FluidStack stack) {
+    public GTFluidTank findFluidInTanks(FluidStack fluid) {
         for (int i = 0; i < tanks.length; i++) {
-            if (tanks[i].getFluid() != null && tanks[i].getFluid().isFluidEqual(stack)) return tanks[i];
+            if (tanks[i].getFluid() != null && Utils.equals(tanks[i].getFluid(), fluid)) return tanks[i];
         }
         return null;
     }

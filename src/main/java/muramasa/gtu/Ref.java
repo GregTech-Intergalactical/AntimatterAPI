@@ -42,7 +42,7 @@ public class Ref {
     public static boolean enableAllModItem = true;
     public static boolean ENABLE_ALL_REGISTRARS = true;
     public static boolean BASIC_MACHINE_MODELS = false;
-    public static boolean ENABLE_RECIPE_DEBUG_EXCEPTIONS = true;
+    public static boolean RECIPE_EXCEPTIONS = true;
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
     public static boolean mDisableOldChemicalRecipes = false;
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;

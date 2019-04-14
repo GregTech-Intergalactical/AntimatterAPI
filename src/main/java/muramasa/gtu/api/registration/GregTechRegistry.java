@@ -119,7 +119,7 @@ public class GregTechRegistry {
 
     public static BlockOre getOre(Material material) {
         if (!material.has(ItemFlag.ORE)) {
-            if (Ref.ENABLE_RECIPE_DEBUG_EXCEPTIONS) {
+            if (Ref.RECIPE_EXCEPTIONS) {
                 throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
             } else {
                 System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
