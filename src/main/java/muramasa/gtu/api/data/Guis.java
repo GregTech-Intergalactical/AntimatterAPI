@@ -66,6 +66,8 @@ public class Guis {
         STEAM_COMPRESSOR.getGui().add(COMPRESSOR);
         STEAM_ALLOY_SMELTER.getGui().add(ALLOY_SMELTER);
 
+        QUANTUM_TANK.getGui().add(IT_IN, 8, 17).add(IT_OUT, 8, 53).add(FL_IN, 106, 43);
+
         PRIMITIVE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_IN, 53, 52).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25).setPadding(0, 0, 0, 0);
         BRONZE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25);
 

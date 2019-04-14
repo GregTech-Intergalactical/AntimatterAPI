@@ -23,9 +23,10 @@ import static muramasa.gtu.api.machines.MachineState.*;
 public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     /** Capabilities **/
+    //TODO move to TileEntityMachine?
     protected MachineItemHandler itemHandler;
     protected MachineFluidHandler fluidHandler;
-    protected MachineEnergyHandler energyStorage;
+    protected MachineEnergyHandler energyHandler;
     protected MachineCoverHandler coverHandler;
     protected MachineConfigHandler configHandler;
 
@@ -39,7 +40,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         super.onFirstTick();
         if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
         if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
-        if (getType().hasFlag(ENERGY)) energyStorage = new MachineEnergyHandler(this);
+        if (getType().hasFlag(ENERGY)) energyHandler = new MachineEnergyHandler(this);
         if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
         if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
         markDirty();
@@ -96,8 +97,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     public boolean consumeResourceForRecipe() {
-        if (energyStorage.extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
-            energyStorage.extract(activeRecipe.getPower(), false);
+        if (energyHandler.extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
+            energyHandler.extract(activeRecipe.getPower(), false);
             return true;
         }
         return false;
@@ -140,6 +141,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
                 break;
         }
+        markDirty(); //TODO determine if needed
     }
 
     /** Getters **/
@@ -233,7 +235,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper());
         } else if (capability == GTCapabilities.ENERGY) {
-            return GTCapabilities.ENERGY.cast(energyStorage);
+            return GTCapabilities.ENERGY.cast(energyHandler);
         } else if (capability == GTCapabilities.COVERABLE) {
             return GTCapabilities.COVERABLE.cast(coverHandler);
         } else if (capability == GTCapabilities.CONFIGURABLE) {

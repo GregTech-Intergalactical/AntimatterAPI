@@ -11,7 +11,7 @@ import java.util.Random;
 public class Ref {
 
     /** Global Objects **/
-    public static Minecraft mc = Minecraft.getMinecraft();
+    public static Minecraft MC = Minecraft.getMinecraft();
     public static Random RNG = new Random();
 
     /** Mod Data **/
@@ -28,9 +28,9 @@ public class Ref {
     public static GregTechTab TAB_MACHINES = new GregTechTab("machines", new ItemStack(Blocks.FURNACE));
 
     /** GUI IDs **/
-    public static final int MACHINE_ID = 0;
-    public static final int MULTI_MACHINE_ID = 1;
-    public static final int HATCH_ID = 2;
+    public static final int GUI_ID_MACHINE = 0;
+    public static final int GUI_ID_MULTI_MACHINE = 1;
+    public static final int GUI_ID_HATCH = 2;
 
     /** Global Data **/
     public static final int[] V = new int[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
@@ -67,7 +67,7 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TIER = "m2";
     public static final String KEY_MACHINE_TILE_FACING = "mf";
     public static final String KEY_MACHINE_TILE_STATE = "ms";
-    public static final String KEY_MACHINE_TILE_TINT = "mc";
+    public static final String KEY_MACHINE_TILE_TINT = "MC";
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";

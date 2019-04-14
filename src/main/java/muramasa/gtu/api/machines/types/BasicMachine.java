@@ -14,6 +14,6 @@ public class BasicMachine extends Machine {
         setTiers(Tier.getStandard());
         setFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
         addRecipeMap();
-        addGUI(GregTech.INSTANCE, Ref.MACHINE_ID);
+        addGUI(GregTech.INSTANCE, Ref.GUI_ID_MACHINE);
     }
 }

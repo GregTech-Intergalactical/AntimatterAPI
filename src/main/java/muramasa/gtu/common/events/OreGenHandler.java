@@ -6,28 +6,23 @@ import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+
+import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
 
 public class OreGenHandler {
 
     private static EnumSet<OreGenEvent.GenerateMinable.EventType> PREVENTED_TYPES = EnumSet.of(
-        OreGenEvent.GenerateMinable.EventType.COAL, OreGenEvent.GenerateMinable.EventType.IRON, OreGenEvent.GenerateMinable.EventType.GOLD,
-        OreGenEvent.GenerateMinable.EventType.DIAMOND, OreGenEvent.GenerateMinable.EventType.REDSTONE, OreGenEvent.GenerateMinable.EventType.LAPIS,
-        OreGenEvent.GenerateMinable.EventType.QUARTZ
+        COAL, IRON, GOLD, DIAMOND, REDSTONE, LAPIS, QUARTZ
     );
 
     public OreGenHandler() {
-        if (Ref.DISABLE_VANILLA_STONE_GENERATION) {
-            PREVENTED_TYPES.add(OreGenEvent.GenerateMinable.EventType.ANDESITE);
-            PREVENTED_TYPES.add(OreGenEvent.GenerateMinable.EventType.DIORITE);
-            PREVENTED_TYPES.add(OreGenEvent.GenerateMinable.EventType.GRANITE);
-        }
+        if (Ref.DISABLE_VANILLA_STONE_GENERATION) PREVENTED_TYPES.addAll(Arrays.asList(ANDESITE, DIORITE, GRANITE));
     }
 
     @SubscribeEvent
     public void onOreGenMineable(OreGenEvent.GenerateMinable e) {
-        if (e.getGenerator() instanceof WorldGenMinable && PREVENTED_TYPES.contains(e.getType())) {
-            e.setResult(Event.Result.DENY);
-        }
+        e.setResult(e.getGenerator() instanceof WorldGenMinable && PREVENTED_TYPES.contains(e.getType()) ? Event.Result.DENY : e.getResult());
     }
 }
