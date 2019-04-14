@@ -115,18 +115,18 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey(Ref.KEY_PIPE_SIZE)) size = PipeSize.VALUES[compound.getInteger(Ref.KEY_PIPE_SIZE)];
-        if (compound.hasKey(Ref.KEY_PIPE_CONNECTIONS)) connections = compound.getByte(Ref.KEY_PIPE_CONNECTIONS);
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        if (tag.hasKey(Ref.KEY_PIPE_SIZE)) size = PipeSize.VALUES[tag.getInteger(Ref.KEY_PIPE_SIZE)];
+        if (tag.hasKey(Ref.KEY_PIPE_CONNECTIONS)) connections = tag.getByte(Ref.KEY_PIPE_CONNECTIONS);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        compound.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
-        compound.setInteger(Ref.KEY_PIPE_CONNECTIONS, connections);
-        return compound;
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        super.writeToNBT(tag);
+        tag.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
+        tag.setInteger(Ref.KEY_PIPE_CONNECTIONS, connections);
+        return tag;
     }
 
     @Override

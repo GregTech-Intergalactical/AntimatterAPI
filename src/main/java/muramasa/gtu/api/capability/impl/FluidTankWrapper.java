@@ -4,25 +4,28 @@ import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 
-public class GTFluidTankWrapper implements IFluidHandler {
+public class FluidTankWrapper implements IFluidHandler {
 
-    protected GTFluidTank[] tanks;
+    protected FluidTank[] tanks;
 
-    public GTFluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
-        tanks = new GTFluidTank[count];
+    public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
+        tanks = new FluidTank[count];
         for (int i = 0; i < count; i++) {
-            tanks[i] = new GTFluidTank(capacity, true, input) {
+            tanks[i] = new FluidTank(capacity) {
                 @Override
                 protected void onContentsChanged() {
                     machine.onContentsChanged(input ? ContentUpdateType.FLUID_INPUT : ContentUpdateType.FLUID_OUTPUT, 0, fluid == null);
                 }
             };
+            tanks[i].setCanFill(true);
+            tanks[i].setCanDrain(input);
         }
     }
 
@@ -37,7 +40,7 @@ public class GTFluidTankWrapper implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        GTFluidTank tank = findFluidInTanks(resource);
+        FluidTank tank = findFluidInTanks(resource);
         if (tank != null) {
             return tank.fill(resource, doFill);
         } else {
@@ -50,7 +53,7 @@ public class GTFluidTankWrapper implements IFluidHandler {
     @Nullable
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        GTFluidTank tank = findFluidInTanks(resource);
+        FluidTank tank = findFluidInTanks(resource);
         if (tank != null) return tank.drain(resource, doDrain);
         return null;
     }
@@ -58,20 +61,20 @@ public class GTFluidTankWrapper implements IFluidHandler {
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        GTFluidTank tank = getFirstValidTank();
+        FluidTank tank = getFirstValidTank();
         if (tank != null) return tank.drain(maxDrain, doDrain);
         return null;
     }
 
     public void setFirstValidOrEmptyTank(FluidStack fluid) {
-        GTFluidTank tank = getFirstValidTank();
+        FluidTank tank = getFirstValidTank();
         if (tank == null) tank = getFirstEmptyTank();
         if (tank != null) {
             tank.setFluid(fluid);
         }
     }
 
-    public GTFluidTank getFirstEmptyTank() {
+    public FluidTank getFirstEmptyTank() {
         for (int i = 0; i < tanks.length; i++) {
             if (tanks[i].getFluid() == null) return tanks[i];
         }
@@ -79,7 +82,7 @@ public class GTFluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
-    public GTFluidTank getFirstValidTank() {
+    public FluidTank getFirstValidTank() {
         for (int i = 0; i < tanks.length; i++) {
             if (tanks[i].getFluid() != null) return tanks[i];
         }
@@ -87,7 +90,7 @@ public class GTFluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
-    public GTFluidTank findFluidInTanks(FluidStack fluid) {
+    public FluidTank findFluidInTanks(FluidStack fluid) {
         for (int i = 0; i < tanks.length; i++) {
             if (tanks[i].getFluid() != null && Utils.equals(tanks[i].getFluid(), fluid)) return tanks[i];
         }

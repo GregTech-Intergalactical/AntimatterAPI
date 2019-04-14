@@ -30,7 +30,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     public void checkRecipe() {
         if (getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
             System.out.println("check recipe");
-            if (!hadFirstTick) return; //TODO fixme
+            if (!hadFirstTick()) return; //TODO fixme
             if ((activeRecipe = findRecipe()) != null) {
                 curProgress = 0;
                 maxProgress = activeRecipe.getDuration();
