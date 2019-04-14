@@ -2,7 +2,6 @@ package muramasa.gtu.api.machines.types;
 
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.common.blocks.BlockMachine;
@@ -13,25 +12,23 @@ import static muramasa.gtu.api.machines.MachineFlag.*;
 
 public class MultiMachine extends Machine {
 
-    public MultiMachine(String name, Class tileClass, MachineFlag... extraFlags) {
+    public MultiMachine(String name, Class tileClass, Tier... tiers) {
         super(name, new BlockMachine(name), tileClass);
-        setTiers(Tier.getMulti());
+        setTiers(tiers);
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
-        addFlags(extraFlags);
         addRecipeMap();
         addGUI(GregTech.INSTANCE, Ref.GUI_ID_MULTI_MACHINE);
-        baseTexture = new Texture("blocks/machine/base/" + name);
+    }
+
+    @Override
+    public Texture getBaseTexture(Tier tier) {
+        return tiers.size() > 1 ? new Texture("blocks/machine/base/" + name + "_" + tier.getName()) : new Texture("blocks/machine/base/" + name);
     }
 
     @Override
     public List<Texture> getTextures() {
         List<Texture> textures = super.getTextures();
-        textures.add(getBaseTexture(Tier.MULTI));
+        getTiers().forEach(t -> textures.add(getBaseTexture(t)));
         return textures;
-    }
-
-    @Override
-    public Texture getBaseTexture(Tier tier) {
-        return baseTexture;
     }
 }

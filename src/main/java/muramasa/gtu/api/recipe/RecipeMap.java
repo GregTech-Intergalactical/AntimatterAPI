@@ -72,6 +72,7 @@ public class RecipeMap {
     }
 
     @Nullable
+    //TODO take into account machine tier
     public static Recipe findRecipeItem(RecipeMap map, ItemStack[] items) {
         if (map == null || !Utils.areItemsValid(items)) return null;
         List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0]));

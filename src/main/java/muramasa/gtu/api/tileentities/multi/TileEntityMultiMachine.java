@@ -51,7 +51,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
 
     public boolean checkStructure() {
         clearComponents();
-        Structure structure = getType().getStructure();
+        Structure structure = getType().getStructure(getTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {

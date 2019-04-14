@@ -46,10 +46,10 @@ public class GregTechJEIPlugin implements IModPlugin {
             if (type.hasFlag(BASIC)) {
                 registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.LV)));
             } else if (type.hasFlag(MULTI)){
-                if (type.getGui().hasSlots()) {
-                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.MULTI)));
+            if (type.getGui().hasSlots()) {
+                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier())));
                 } else {
-                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.MULTI), Guis.MULTI_DISPLAY));
+                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Guis.MULTI_DISPLAY));
                 }
             }
         }

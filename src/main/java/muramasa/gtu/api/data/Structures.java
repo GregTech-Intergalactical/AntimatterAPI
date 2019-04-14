@@ -81,8 +81,6 @@ public class Structures {
     };
 
     public static void init() {
-
-
         PRIMITIVE_BLAST_FURNACE.addStructure(StructureBuilder.start()
             .of("CCC", "CCC", "CCC").of("CCC", "CBM", "CCC").of("CCC", "CBC", "CCC").of("CCC", "CAC", "CCC")
             .at("C", FIRE_BRICK).at("B", BF_AIR_OR_LAVA).at("M", PRIMITIVE_BLAST_FURNACE).build()
@@ -107,10 +105,10 @@ public class Structures {
             .offset(2, -1).exact(VACUUM_FREEZER, 1).min(FROST_PROOF, 22).min(HATCH_ITEM_INPUT, 1).min(HATCH_ITEM_OUTPUT, 1).min(HATCH_ENERGY, 1)
         );
 
-        LARGE_TURBINE_4.addStructure(StructureBuilder.start()
+        LARGE_TURBINE.addStructure(StructureBuilder.start()
             .of("CCCC", "CCCC", "CCCC").of("CHHC", "EAAM", "CHHC").of(0)
-            .at("C", TURBINE_4).at("H", LT_HATCH_OR_CASING).at("E", HATCH_DYNAMO).at("M", LARGE_TURBINE_4).build()
-            .offset(3, -1).exact(LARGE_TURBINE_4, 1).min(TURBINE_4, 28).min(HATCH_FLUID_INPUT, 1).min(HATCH_FLUID_OUTPUT, 1)
+            .at("C", TURBINE_4).at("H", LT_HATCH_OR_CASING).at("E", HATCH_DYNAMO).at("M", LARGE_TURBINE).build()
+            .offset(3, -1).exact(LARGE_TURBINE, 1).min(TURBINE_4, 28).min(HATCH_FLUID_INPUT, 1).min(HATCH_FLUID_OUTPUT, 1)
         );
 
         COMBUSTION_ENGINE.addStructure(StructureBuilder.start()
@@ -119,7 +117,7 @@ public class Structures {
             .offset(3, -1).exact(COMBUSTION_ENGINE, 1).min(TITANIUM, 19).min(HATCH_FLUID_INPUT, 1).min(HATCH_FLUID_OUTPUT, 1)
         );
 
-        FUSION_REACTOR_1.addStructure(StructureBuilder.start()
+        FUSION_REACTOR.addStructure(Tier.LUV, StructureBuilder.start()
             .of(
                 "XXXXXXXXXXXXXXX",
                 "XXXXXXBOBXXXXXX",
@@ -153,7 +151,7 @@ public class Structures {
                 "XXXXOOCCCOOXXXX",
                 "XXXXXXOOOXXXXXX"
             ).of(0)
-            .at("O", FUSION_3).at("C", FUSION).at("M", FUSION_REACTOR_1).at("B", FR_INPUT_OR_CASING).at("H", FR_OUTPUT_OR_CASING).at("E", FR_ENERGY_OR_CASING).build()
+            .at("O", FUSION_3).at("C", FUSION).at("M", FUSION_REACTOR).at("B", FR_INPUT_OR_CASING).at("H", FR_OUTPUT_OR_CASING).at("E", FR_ENERGY_OR_CASING).build()
             .offset(2, -1).min(HATCH_FLUID_INPUT, 2).min(HATCH_FLUID_OUTPUT, 1).min(HATCH_ENERGY, 1));
     }
 }

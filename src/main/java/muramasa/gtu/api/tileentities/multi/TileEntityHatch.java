@@ -2,7 +2,9 @@ package muramasa.gtu.api.tileentities.multi;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.impl.*;
+import muramasa.gtu.api.capability.impl.ComponentHandler;
+import muramasa.gtu.api.capability.impl.HatchComponentHandler;
+import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.interfaces.IComponent;
 import muramasa.gtu.api.machines.ContentUpdateType;
@@ -15,7 +17,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.machines.MachineFlag.*;
+import static muramasa.gtu.api.machines.MachineFlag.FLUID;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
@@ -67,7 +69,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
-        if (textureOverride > -1) data.base(Machines.get(textureOverride).getBaseTexture(Tier.MULTI));
+        if (textureOverride > -1) data.base(Machines.get(textureOverride / 1000).getBaseTexture(Tier.get(textureOverride % 1000)));
         return data;
     }
 
