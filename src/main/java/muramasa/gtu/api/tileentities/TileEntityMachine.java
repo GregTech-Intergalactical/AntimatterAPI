@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
-import static muramasa.gtu.api.machines.MachineState.VALUES;
 
 public class TileEntityMachine extends TileEntityTickable implements IBakedTile {
 
@@ -193,7 +192,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         super.readFromNBT(tag);
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_TIER)) tier = Tier.get(tag.getString(Ref.KEY_MACHINE_TILE_TIER));
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_FACING)) facing = EnumFacing.VALUES[tag.getInteger(Ref.KEY_MACHINE_TILE_FACING)];
-        if (tag.hasKey(Ref.KEY_MACHINE_TILE_STATE)) setMachineState(VALUES[tag.getInteger(Ref.KEY_MACHINE_TILE_STATE)]);//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
+        if (tag.hasKey(Ref.KEY_MACHINE_TILE_STATE)) machineState = MachineState.VALUES[tag.getInteger(Ref.KEY_MACHINE_TILE_STATE)];//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_ITEMS)) itemData = (NBTTagCompound) tag.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidData = (NBTTagCompound) tag.getTag(Ref.KEY_MACHINE_TILE_FLUIDS);
     }

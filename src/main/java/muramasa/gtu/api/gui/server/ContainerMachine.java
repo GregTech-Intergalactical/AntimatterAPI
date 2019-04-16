@@ -14,7 +14,6 @@ public class ContainerMachine extends ContainerBase {
 
     protected TileEntityMachine tile;
     private int lastState = -1;
-    private boolean firstFluidSync = false;
 
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
         super(playerInv);
@@ -30,10 +29,12 @@ public class ContainerMachine extends ContainerBase {
             listeners.forEach(l -> l.sendWindowProperty(this, GuiUpdateType.MACHINE_STATE.ordinal(), curState));
             lastState = curState;
         }
-        if (!firstFluidSync) {
-            System.out.println("First Fluid Sync");
-            GregTechNetwork.sendTileTankToClient(tile);
-            firstFluidSync = true;
+        if (tile.getFluidHandler() != null) {
+            if (tile.getFluidHandler().getInputWrapper().dirty || tile.getFluidHandler().getOutputWrapper().dirty) {
+                tile.getFluidHandler().getInputWrapper().dirty = false;
+                tile.getFluidHandler().getOutputWrapper().dirty = false;
+                GregTechNetwork.syncMachineTanks(tile);
+            }
         }
     }
 

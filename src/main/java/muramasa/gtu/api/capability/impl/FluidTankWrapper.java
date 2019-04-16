@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 public class FluidTankWrapper implements IFluidHandler {
 
     protected FluidTank[] tanks;
+    public boolean dirty = false;
 
     public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
         tanks = new FluidTank[count];
@@ -21,6 +22,7 @@ public class FluidTankWrapper implements IFluidHandler {
             tanks[i] = new FluidTank(capacity) {
                 @Override
                 protected void onContentsChanged() {
+                    dirty = true;
                     machine.onContentsChanged(input ? ContentUpdateType.FLUID_INPUT : ContentUpdateType.FLUID_OUTPUT, 0, fluid == null);
                 }
             };
