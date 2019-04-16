@@ -54,6 +54,37 @@ public class MachineFluidHandler {
         return getOutputList().toArray(new FluidStack[0]);
     }
 
+    /** Returns raw FluidStacks from all inputs, including nulls **/
+    public FluidStack[] getInputsRaw() {
+        FluidStack[] inputs = new FluidStack[input.tanks.length];
+        for (int i = 0; i < inputs.length; i++) {
+            inputs[i] = input.tanks[i].getFluid();
+        }
+        return inputs;
+    }
+
+    public FluidStack[] getOutputsRaw() {
+        FluidStack[] outputs = new FluidStack[output.tanks.length];
+        for (int i = 0; i < outputs.length; i++) {
+            outputs[i] = output.tanks[i].getFluid();
+        }
+        return outputs;
+    }
+
+    public void setInputs(FluidStack[] inputs) {
+        if (inputs.length != input.tanks.length) return;
+        for (int i = 0; i < inputs.length; i++) {
+            input.tanks[i].setFluid(inputs[i]);
+        }
+    }
+
+    public void setOutputs(FluidStack[] outputs) {
+        if (outputs.length != output.tanks.length) return;
+        for (int i = 0; i < outputs.length; i++) {
+            output.tanks[i].setFluid(outputs[i]);
+        }
+    }
+
     public List<FluidStack> getInputList() {
         ArrayList<FluidStack> list = new ArrayList<>();
         for (int i = 0; i < input.tanks.length; i++) {
@@ -145,15 +176,6 @@ public class MachineFluidHandler {
             }
         }
         return notExported.toArray(new FluidStack[0]);
-    }
-
-    public ArrayList<Integer> getInputIds() {
-        ArrayList<Integer> ids = new ArrayList<>();
-        FluidStack[] fluids = getInputs();
-        for (int i = 0; i < fluids.length; i++) {
-            ids.add(Utils.getIdByFluid(fluids[i].getFluid()));
-        }
-        return ids;
     }
 
     /** NBT **/

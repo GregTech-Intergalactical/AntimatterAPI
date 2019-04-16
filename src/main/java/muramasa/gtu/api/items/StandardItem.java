@@ -17,6 +17,7 @@ import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.common.network.GregTechNetwork;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -86,25 +87,20 @@ public class StandardItem extends Item implements IHasModelOverride {
             } else if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
-                        if (world.isRemote) return EnumActionResult.PASS;
+
                         if (!((TileEntityMultiMachine) tile).validStructure) {
                             ((TileEntityMultiMachine) tile).checkStructure();
                         }
                         ((TileEntityMultiMachine) tile).checkRecipe();
                     } else if (tile instanceof TileEntityHatch) {
-//                            System.out.println(((TileEntityHatch) tile).getBaseTexture());
-//                            ((TileEntityHatch) tile).setTexture(((TileEntityHatch) tile).getTextureId() == Machines.BLAST_FURNACE.getInternalId() ? ((TileEntityHatch) tile).getTierId() : Machines.BLAST_FURNACE.getInternalId());
-//                            ((TileEntityHatch) tile).markForRenderUpdate();
-//                        MachineFluidHandler fluidHandler = ((TileEntityHatch) tile).getFluidHandler();
-//                        System.out.println("Input Tanks: " + fluidHandler.getInputCount());
-//                        System.out.println("Output Tanks: " + fluidHandler.getOutputCount());
+//                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
+//                        if (handler != null) {
+//                            System.out.println(handler.toString());
+//                        }
 
-//                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers());
-//                        System.out.println(((TileEntityHatch) tile).getComponentHandler().getLinkedControllers().size());
-                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
-                        if (handler != null) {
-                            System.out.println(handler.toString());
-                        }
+                        if (world.isRemote) return EnumActionResult.PASS;
+                        GregTechNetwork.sendTileTankToClient((TileEntityHatch) tile);
+
                     } else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {
@@ -134,10 +130,10 @@ public class StandardItem extends Item implements IHasModelOverride {
                     }
                 } else if (tile instanceof TileEntityPipe) {
                     player.sendMessage(new TextComponentString("C: " + ((TileEntityPipe) tile).getConnections() + (((TileEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
-                } else {
-
                 }
             }
+        } else {
+
         }
         return EnumActionResult.FAIL; //TODO FAIL?
     }

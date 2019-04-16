@@ -1,4 +1,4 @@
-package muramasa.gtu.proxy;
+package muramasa.gtu.common.network;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.gui.client.GuiBasicMachine;
