@@ -165,6 +165,7 @@ public class GuiData {
         ArrayList<SlotData> types = new ArrayList<>();
         ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
+        if (slots == null) return types; //No slots found
         for (SlotData slot : slots) {
             if (slot.type == type) types.add(slot);
         }

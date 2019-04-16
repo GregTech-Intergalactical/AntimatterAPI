@@ -18,7 +18,7 @@ import muramasa.gtu.integration.jei.category.RecipeMapCategory;
 import muramasa.gtu.integration.jei.wrapper.RecipeWrapper;
 import net.minecraft.util.Tuple;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,10 +28,10 @@ import static muramasa.gtu.api.machines.MachineFlag.*;
 public class GregTechJEIPlugin implements IModPlugin {
 
     private static IJeiRuntime runtime;
-    private static List<Tuple<RecipeMap, GuiData>> REGISTRY = new ArrayList<>();
+    private static HashMap<String, Tuple<RecipeMap, GuiData>> REGISTRY = new HashMap<>();
 
     public static void registerCategory(RecipeMap map, GuiData gui) {
-        REGISTRY.add(new Tuple<>(map, gui));
+        REGISTRY.put(map.getCategoryId(), new Tuple<>(map, gui));
     }
 
     @Override
@@ -44,18 +44,17 @@ public class GregTechJEIPlugin implements IModPlugin {
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
         for (Machine type : MachineFlag.RECIPE.getTypes()) {
             if (type.hasFlag(BASIC)) {
+                if (REGISTRY.containsKey(type.getRecipeMap().getCategoryId())) continue;
                 registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.LV)));
-            } else if (type.hasFlag(MULTI)){
-            if (type.getGui().hasSlots()) {
+            } else if (type.hasFlag(MULTI)) {
+                if (type.getGui().hasSlots()) {
                     registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier())));
                 } else {
                     registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Guis.MULTI_DISPLAY));
                 }
             }
         }
-        for (Tuple<RecipeMap, GuiData> pair : REGISTRY) {
-            registry.addRecipeCategories(new RecipeMapCategory(pair.getFirst(), pair.getSecond()));
-        }
+        REGISTRY.values().forEach(t -> registry.addRecipeCategories(new RecipeMapCategory(t.getFirst(), t.getSecond())));
     }
 
     @Override
@@ -67,7 +66,7 @@ public class GregTechJEIPlugin implements IModPlugin {
                 registry.addRecipeCatalyst(new MachineStack(type, tier).asItemStack(), type.getRecipeMap().getCategoryId());
             }
         }
-        for (Tuple<RecipeMap, GuiData> pair : REGISTRY) {
+        for (Tuple<RecipeMap, GuiData> pair : REGISTRY.values()) {
             registry.addRecipes(pair.getFirst().getRecipes(true), pair.getFirst().getCategoryId());
             registry.handleRecipes(Recipe.class, RecipeWrapper::new, pair.getFirst().getCategoryId());
         }

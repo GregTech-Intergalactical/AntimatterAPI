@@ -48,7 +48,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         List<String> tooltip = new ArrayList<>();
         tooltip.add(fluidStack.getFluid().getLocalizedName(fluidStack));
         tooltip.add(TextFormatting.BLUE + "Amount: " + fluidStack.amount);
-        tooltip.add(TextFormatting.RED + "Temperature: " + fluidStack.getFluid().getTemperature() + " K");
+        tooltip.add(TextFormatting.RED + "Temp: " + fluidStack.getFluid().getTemperature() + " K");
         if (fluidStack.getFluid() instanceof GTFluid) {
             tooltip.add(TextFormatting.GREEN + "State: " + ((GTFluid) fluidStack.getFluid()).getState());
         } else {

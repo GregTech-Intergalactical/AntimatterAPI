@@ -10,6 +10,7 @@ public class Guis {
 
     public static GuiData MULTI_DISPLAY = new GuiData("multi_display").add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 143, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34).add(FL_IN, 17, 63).add(FL_IN, 35, 63).add(FL_IN, 53, 63).add(FL_OUT, 107, 63).add(FL_OUT, 125, 63).add(FL_OUT, 143, 63);
     public static GuiData MULTI_DISPLAY_COMPACT = new GuiData("multi_display").add(MULTI_DISPLAY).setPadding(0, 0, 0, 0);
+    public static GuiData BASIC_TANK = new GuiData("basic_tank").add(IT_IN, 8, 17).add(IT_OUT, 8, 53).add(FL_IN, 106, 43);
 
     public static void init() {
 
@@ -66,7 +67,13 @@ public class Guis {
         STEAM_COMPRESSOR.getGui().add(COMPRESSOR);
         STEAM_ALLOY_SMELTER.getGui().add(ALLOY_SMELTER);
 
-        QUANTUM_TANK.getGui().add(IT_IN, 8, 17).add(IT_OUT, 8, 53).add(FL_IN, 106, 43);
+        STEAM_GENERATOR.getGui().add(BASIC_TANK);
+        GAS_GENERATOR.getGui().add(BASIC_TANK);
+        COMBUSTION_ENGINE.getGui().add(BASIC_TANK);
+        NAQUADAH_GENERATOR.getGui().add(BASIC_TANK);
+        PLASMA_GENERATOR.getGui().add(BASIC_TANK);
+
+        QUANTUM_TANK.getGui().add(BASIC_TANK);
 
         PRIMITIVE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_IN, 53, 52).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25).setPadding(0, 0, 0, 0);
         BRONZE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25);

@@ -140,6 +140,11 @@ public class Machine implements IStringSerializable {
         addFlags(RECIPE);
     }
 
+    public Machine setRecipeMap(RecipeMap recipeMap) {
+        this.recipeMap = recipeMap;
+        return this;
+    }
+
     public void addStructure(Structure structure) {
         addStructure(getFirstTier(), structure);
     }
