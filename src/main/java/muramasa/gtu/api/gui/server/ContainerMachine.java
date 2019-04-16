@@ -29,12 +29,10 @@ public class ContainerMachine extends ContainerBase {
             listeners.forEach(l -> l.sendWindowProperty(this, GuiUpdateType.MACHINE_STATE.ordinal(), curState));
             lastState = curState;
         }
-        if (tile.getFluidHandler() != null) {
-            if (tile.getFluidHandler().getInputWrapper().dirty || tile.getFluidHandler().getOutputWrapper().dirty) {
-                tile.getFluidHandler().getInputWrapper().dirty = false;
-                tile.getFluidHandler().getOutputWrapper().dirty = false;
-                GregTechNetwork.syncMachineTanks(tile);
-            }
+        if (tile.getFluidHandler() != null && ((tile.getFluidHandler().getInputWrapper() != null && tile.getFluidHandler().getInputWrapper().dirty) || (tile.getFluidHandler().getOutputWrapper() != null && tile.getFluidHandler().getOutputWrapper().dirty))) {
+            if (tile.getFluidHandler().getInputWrapper() != null) tile.getFluidHandler().getInputWrapper().dirty = false;
+            if (tile.getFluidHandler().getOutputWrapper() != null) tile.getFluidHandler().getOutputWrapper().dirty = false;
+            GregTechNetwork.syncMachineTanks(tile);
         }
     }
 

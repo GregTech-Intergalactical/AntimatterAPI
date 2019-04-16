@@ -157,7 +157,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
             if (coverHandler == null) return false;
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
         } else if (getType().hasFlag(FLUID) && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverFluid);
+            if (fluidHandler == null) return false;
+            return side == null || (coverHandler != null && coverHandler.hasCover(side, GregTechAPI.CoverFluid));
         } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
             if (coverHandler == null) return false;
             return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
@@ -176,7 +177,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getInputHandler());
         } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper());
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper() != null ? fluidHandler.getInputWrapper() : fluidHandler.getOutputWrapper());
         } else if (capability == GTCapabilities.ENERGY) {
             return GTCapabilities.ENERGY.cast(energyHandler);
         } else if (capability == GTCapabilities.COVERABLE) {

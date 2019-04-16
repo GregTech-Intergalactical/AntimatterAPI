@@ -5,6 +5,9 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.gui.SlotType;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -37,7 +40,7 @@ import java.util.List;
 
 public class StandardItem extends Item implements IHasModelOverride {
 
-    private ItemType type;
+    protected ItemType type;
 
     public StandardItem(ItemType type) {
         setUnlocalizedName(type.getName());
@@ -67,7 +70,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-
+            tooltip.add("" + Machines.HATCH_FLUID_OUTPUT.getGui().getSlots(SlotType.FL_OUT, Tier.UV).size());
         }
     }
 
@@ -86,7 +89,10 @@ public class StandardItem extends Item implements IHasModelOverride {
                         }
                         ((TileEntityMultiMachine) tile).checkRecipe();
                     } else if (tile instanceof TileEntityHatch) {
-                        //NOOP
+                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
+                        if (handler != null) {
+                            System.out.println(handler.toString());
+                        }
                     } else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {
