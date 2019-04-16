@@ -116,49 +116,37 @@ public class MachineFluidHandler {
         return list;
     }
 
+    //TODO called by Basic machines, should they use consumeAndReturn?
     public void consumeInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputWrapper.tanks.length; j++) {
-                if (Utils.equals(inputs[i], inputWrapper.tanks[j].getFluid())) {
-                    inputWrapper.tanks[j].drain(inputs[i].amount, true);
-                }
-            }
+            inputWrapper.drain(inputs[i], true);
         }
     }
 
-    public void addInputs(FluidStack... fluids) {
+    public void addInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
-        for (int i = 0; i < fluids.length; i++) {
-            for (int j = 0; j < inputWrapper.tanks.length; j++) {
-                inputWrapper.tanks[j].fill(fluids[i], true);
-            }
+        for (int i = 0; i < inputs.length; i++) {
+            inputWrapper.fill(inputs[i], true);
         }
     }
 
-    public void addOutputs(FluidStack... fluids) {
+    public void addOutputs(FluidStack... outputs) {
         if (outputWrapper == null) return;
-        for (int i = 0; i < fluids.length; i++) {
-            for (int j = 0; j < outputWrapper.tanks.length; j++) {
-                System.out.println("Adding output: " + fluids[i].getLocalizedName());
-                outputWrapper.tanks[j].fill(fluids[i], true);
-            }
+        for (int i = 0; i < outputs.length; i++) {
+            outputWrapper.fill(outputs[i], true);
         }
     }
 
-    public boolean canOutputsFit(FluidStack[] a) {
-        return getSpaceForOutputs(a) >= a.length;
+    public boolean canOutputsFit(FluidStack[] outputs) {
+        return getSpaceForOutputs(outputs) >= outputs.length;
     }
 
-    public int getSpaceForOutputs(FluidStack[] a) {
+    public int getSpaceForOutputs(FluidStack[] outputs) {
         int matchCount = 0;
         if (outputWrapper == null) return matchCount;
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < outputWrapper.tanks.length; j++) {
-                if (outputWrapper.tanks[j].getFluid() == null || outputWrapper.tanks[j].fill(a[i], false) == a[i].amount) {
-                    matchCount++;
-                }
-            }
+        for (int i = 0; i < outputs.length; i++) {
+            if (outputWrapper.fill(outputs[i], false) == outputs[i].amount) matchCount++;
         }
         return matchCount;
     }
@@ -166,21 +154,18 @@ public class MachineFluidHandler {
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
         if (inputWrapper == null) return new FluidStack[0];
         ArrayList<FluidStack> notConsumed = new ArrayList<>();
+        FluidStack result;
         for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputWrapper.tanks.length; j++) {
-                if (Utils.equals(inputs[i], inputWrapper.tanks[j].getFluid())) {
-                    if (inputWrapper.tanks[j].getFluid().amount >= inputs[i].amount) {
-                        inputWrapper.tanks[j].drain(inputs[i], true);
-                    } else {
-                        int leftOver = inputs[i].amount - inputWrapper.tanks[j].getFluid().amount;
-                        notConsumed.add(Utils.ca(leftOver, inputs[i]));
-                        inputWrapper.tanks[j].drain(Utils.ca(inputs[i].amount - leftOver, inputs[i]), true);
-                    }
-                } else {
-                    notConsumed.add(inputs[i]);
+            result = inputWrapper.drain(inputs[i], true);
+            if (result != null) {
+                if (result.amount != inputs[i].amount) { //Fluid was partially consumed
+                    notConsumed.add(Utils.ca(inputs[i].amount - result.amount, inputs[i]));
                 }
+            } else {
+                notConsumed.add(inputs[i]); //Fluid not present in input tanks
             }
         }
+
         return notConsumed.toArray(new FluidStack[0]);
     }
 
@@ -189,12 +174,9 @@ public class MachineFluidHandler {
         ArrayList<FluidStack> notExported = new ArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
-            for (int j = 0; j < outputWrapper.tanks.length; j++) {
-                result = outputWrapper.tanks[j].fill(outputs[i].copy(), true);
-                if (result == outputs[i].amount) break; //Filling was successful
-                else outputs[i] = Utils.ca(result, outputs[i]);
-                if (j == outputWrapper.tanks.length - 1) notExported.add(outputs[i]);
-            }
+            result = outputWrapper.fill(outputs[i], true);
+            if (result == 0) notExported.add(outputs[i]); //Valid space was not found
+            else outputs[i] = Utils.ca(result, outputs[i]); //Fluid was partially exported
         }
         return notExported.toArray(new FluidStack[0]);
     }

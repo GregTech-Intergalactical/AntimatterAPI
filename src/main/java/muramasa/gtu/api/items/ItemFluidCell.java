@@ -10,6 +10,7 @@ import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.blocks.BlockStorage;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -41,6 +43,13 @@ public class ItemFluidCell extends StandardItem {
         super(type);
         setMaxStackSize(1);
         this.capacity = capacity;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        ItemFlag.LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));
+        ItemFlag.GAS.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getGas())));
+        ItemFlag.PLASMA.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getPlasma())));
     }
 
     @Nullable
@@ -80,14 +89,14 @@ public class ItemFluidCell extends StandardItem {
         } else if (world.getBlockState(pos).getBlock() instanceof BlockStorage) {
             Material mat = ((BlockStorage) world.getBlockState(pos).getBlock()).getMaterial();
             if (mat != null && mat.has(ItemFlag.LIQUID)) {
-                player.setHeldItem(hand, getCellWithFluid(getType(), mat.getLiquid()));
+                player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             }
         } else{
             Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
             if (mat != null && mat.has(ItemFlag.LIQUID)) {
-                player.setHeldItem(hand, getCellWithFluid(getType(), mat.getLiquid()));
+                player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             } else {
-                player.setHeldItem(hand, getCellWithFluid(getType(), Materials.Diesel.getLiquid()));
+                player.setHeldItem(hand, getCellWithFluid(type, Materials.Diesel.getLiquid()));
             }
         }
         return EnumActionResult.SUCCESS;

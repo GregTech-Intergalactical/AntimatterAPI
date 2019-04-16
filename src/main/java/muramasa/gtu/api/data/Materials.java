@@ -84,7 +84,7 @@ public class Materials {
     public static Material Sulfur = new Material("Sulfur", 0xc8c800, DULL, S).asDust(388, ORE).asPlasma();
     public static Material Tantalum = new Material("Tantalum", 0xffffff, METALLIC, Ta).asSolid(3290, 0);
     public static Material Tin = new Material("Tin", 0xdcdcdc, DULL, Sn).asMetal(505, 505, PLATE, ROD, BOLT, SCREW, RING, GEAR, FOIL, WIREF, FRAME, ORE);
-    public static Material Tritium = new Material("Tritium", 0xff0000, METALLIC, T).asMetal(LIQUID, GAS);
+    public static Material Tritium = new Material("Tritium", 0xff0000, METALLIC, T).asGas();
     public static Material Vanadium = new Material("Vanadium", 0x323232, METALLIC, V).asMetal(2183, 2183);
     public static Material Yttrium = new Material("Yttrium", 0xdcfadc, METALLIC, Y).asMetal(1799, 1799);
     public static Material Zinc = new Material("Zinc", 0xfaf0f0, METALLIC, Zn).asMetal(692, 0, PLATE, FOIL, ORE);

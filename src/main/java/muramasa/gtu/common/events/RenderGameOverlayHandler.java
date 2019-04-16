@@ -25,17 +25,19 @@ public class RenderGameOverlayHandler extends Gui {
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
         if (Ref.MC.gameSettings.showDebugInfo && Ref.MC.objectMouseOver != null) {
             TileEntity tile;
+            tile = Utils.getTile(Utils.getServerWorld(), Ref.MC.objectMouseOver.getBlockPos());
+            if (tile instanceof TileEntityBase) {
+                e.getLeft().add("");
+                e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
+                e.getLeft().addAll(((TileEntityBase) tile).getInfo());
+            }
             if (Ref.MC.player.isSneaking()) {
                 tile = Utils.getTile(Utils.getClientWorld(), Ref.MC.objectMouseOver.getBlockPos());
                 if (tile instanceof TileEntityBase) {
+                    e.getLeft().add("");
                     e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Client]");
                     e.getLeft().addAll(((TileEntityBase) tile).getInfo());
                 }
-            }
-            tile = Utils.getTile(Utils.getServerWorld(), Ref.MC.objectMouseOver.getBlockPos());
-            if (tile instanceof TileEntityBase) {
-                e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
-                e.getLeft().addAll(((TileEntityBase) tile).getInfo());
             }
         }
     }
