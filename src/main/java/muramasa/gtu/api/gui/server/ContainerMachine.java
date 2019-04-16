@@ -1,20 +1,48 @@
 package muramasa.gtu.api.gui.server;
 
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
+import muramasa.gtu.api.gui.GuiUpdateType;
 import muramasa.gtu.api.gui.SlotData;
 import muramasa.gtu.api.gui.slot.SlotInput;
 import muramasa.gtu.api.gui.slot.SlotOutput;
+import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.common.network.GregTechNetwork;
 import net.minecraft.inventory.IInventory;
 
 public class ContainerMachine extends ContainerBase {
 
     protected TileEntityMachine tile;
+    private int lastState = -1;
+    private boolean firstFluidSync = false;
 
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
         super(playerInv);
         addSlots(tile);
         this.tile = tile;
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        int curState = tile.getMachineState().ordinal();
+        if (Math.abs(curState - lastState) >= GuiUpdateType.MACHINE_STATE.getUpdateThreshold()) {
+            listeners.forEach(l -> l.sendWindowProperty(this, GuiUpdateType.MACHINE_STATE.ordinal(), curState));
+            lastState = curState;
+        }
+        if (!firstFluidSync) {
+            System.out.println("First Fluid Sync");
+            GregTechNetwork.sendTileTankToClient(tile);
+            firstFluidSync = true;
+        }
+    }
+
+    @Override
+    public void updateProgressBar(int id, int data) {
+        super.updateProgressBar(id, data);
+        if (id == GuiUpdateType.MACHINE_STATE.ordinal()) {
+            tile.setMachineState(MachineState.VALUES[data]);
+        }
     }
 
     protected void addSlots(TileEntityMachine tile) {

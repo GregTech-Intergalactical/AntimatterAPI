@@ -106,7 +106,7 @@ public class RecipeMap {
 
     @Nullable
     public static Recipe findRecipeItemFluid(RecipeMap map, ItemStack[] items, FluidStack[] fluids) {
-        if (map == null || !Utils.areItemsValid(items) || Utils.areFluidsValid(fluids)) return null;
+        if (map == null || !Utils.areItemsValid(items) || !Utils.areFluidsValid(fluids)) return null;
         List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0], fluids[0]));
         if (matches == null) return null;
         int size = matches.size();

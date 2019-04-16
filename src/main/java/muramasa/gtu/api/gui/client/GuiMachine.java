@@ -40,6 +40,7 @@ public class GuiMachine extends GuiBase {
         FluidStack[] fluids;
         List<SlotData> slots;
 
+        //TODO this should use getInputsRaw to preserve ordering
         fluids = fluidHandler.getInputs();
         slots = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier());
         if (fluids != null) {
