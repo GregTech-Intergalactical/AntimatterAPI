@@ -5,11 +5,6 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.gui.SlotType;
-import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -17,7 +12,6 @@ import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.common.network.GregTechNetwork;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -73,7 +67,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            tooltip.add("Slots: " + Machines.HATCH_ITEM_OUTPUT.getGui().getSlots(SlotType.IT_OUT, Tier.LV).size());
+
         }
     }
 
@@ -87,20 +81,12 @@ public class StandardItem extends Item implements IHasModelOverride {
             } else if (ItemType.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
-
                         if (!((TileEntityMultiMachine) tile).validStructure) {
                             ((TileEntityMultiMachine) tile).checkStructure();
                         }
                         ((TileEntityMultiMachine) tile).checkRecipe();
                     } else if (tile instanceof TileEntityHatch) {
-//                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
-//                        if (handler != null) {
-//                            System.out.println(handler.toString());
-//                        }
-
-                        if (world.isRemote) return EnumActionResult.PASS;
-                        GregTechNetwork.sendTileTankToClient((TileEntityHatch) tile);
-
+                        //NOOP
                     } else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {
@@ -108,25 +94,9 @@ public class StandardItem extends Item implements IHasModelOverride {
                         }
                         tile.markDirty();
                     } else {
-//                        System.out.println("Setting Tint");
-//                        ((TileEntityMachine) tile).setTint(((TileEntityMachine) tile).getTint() != -1 ? -1 : Materials.Plutonium241.getRGB());
-//                        ((TileEntityMachine) tile).markForRenderUpdate();
-//                        System.out.println(tile);
                         for (Cover c : GregTechAPI.getRegisteredCovers()) {
                             System.out.println(c.getName() + " - " + c.getInternalId());
                         }
-
-                        System.out.println(GregTechRegistry.getStorage(Materials.Gold));
-
-//                        Utils.offset(side, ((TileEntityMachine) tile).getEnumFacing());
-
-//                        dif = side.getIndex() < facing.getIndex() ? -dif : dif;
-//                        System.out.println("Dif2: " + dif);
-
-
-//                        if (((TileEntityMachine) tile).getType().has(MachineFlag.ENERGY)) {
-//                            System.out.println("Energy: " + tile.getCapability(GTCapabilities.ENERGY, null).getEnergyStored());
-//                        }
                     }
                 } else if (tile instanceof TileEntityPipe) {
                     player.sendMessage(new TextComponentString("C: " + ((TileEntityPipe) tile).getConnections() + (((TileEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
