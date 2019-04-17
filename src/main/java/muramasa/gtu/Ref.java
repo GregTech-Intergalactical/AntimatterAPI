@@ -20,7 +20,7 @@ public class Ref {
     public static final String VERSION = "0.00.01";
     public static final String DEPENDS = "required-after:crafttweaker";
     public static final String CLIENT = "muramasa.gtu.proxy.ClientProxy";
-    public static final String SERVER = "muramsa.gtu.proxy.ServerProxy";
+    public static final String SERVER = "muramasa.gtu.proxy.ServerProxy";
 
     /** Creative Tabs **/
     public static GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT));

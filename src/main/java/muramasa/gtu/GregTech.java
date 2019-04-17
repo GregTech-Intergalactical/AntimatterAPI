@@ -40,6 +40,7 @@ public class GregTech {
     static {
         GregTechRegistry.addRegistrar(new ForestryRegistrar());
         GregTechRegistry.addRegistrar(new GalacticraftRegistrar());
+        if (Loader.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
     }
 
     @Mod.EventHandler
@@ -51,8 +52,6 @@ public class GregTech {
         GTCapabilities.register();
 
         if (Ref.DISABLE_VANILLA_ORE_GENERATION) MinecraftForge.EVENT_BUS.register(new OreGenHandler());
-
-        if (Loader.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
 
         GregTechAPI.registerJEICategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechAPI.registerJEICategory(RecipeMap.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
