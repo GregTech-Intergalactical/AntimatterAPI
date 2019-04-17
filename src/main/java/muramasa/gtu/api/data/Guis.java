@@ -77,6 +77,7 @@ public class Guis {
 
         PRIMITIVE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_IN, 53, 52).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25).setPadding(0, 0, 0, 0);
         BRONZE_BLAST_FURNACE.getGui().add(IT_IN, 53, 16).add(IT_IN, 53, 34).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25);
+        FUSION_REACTOR.getGui().setEnablePlayerSlots(false);
 
         HATCH_MUFFLER.getGui().add(IT_IN, 79, 34);
 

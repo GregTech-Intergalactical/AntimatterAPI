@@ -16,7 +16,7 @@ public class ContainerMachine extends ContainerBase {
     private int lastState = -1;
 
     public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
-        super(playerInv);
+        super(tile.getType().getGui().enablePlayerSlots() ? playerInv : null);
         addSlots(tile);
         this.tile = tile;
     }
