@@ -19,6 +19,7 @@ public class GuiData {
     private String name;
     private Object instance = GregTech.INSTANCE;
     private int id = 0;
+    private boolean enablePlayerSlots = true;
 
     private int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     private BarDir dir = BarDir.LEFT;
@@ -62,6 +63,14 @@ public class GuiData {
 
     public BarDir getDir() {
         return dir;
+    }
+
+    public boolean enablePlayerSlots() {
+        return enablePlayerSlots;
+    }
+
+    public void setEnablePlayerSlots(boolean enablePlayerSlots) {
+        this.enablePlayerSlots = enablePlayerSlots;
     }
 
     public GuiData setArea(int x, int y, int z, int w) {
