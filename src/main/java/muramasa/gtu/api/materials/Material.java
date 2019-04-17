@@ -10,7 +10,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static muramasa.gtu.api.materials.ItemFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
@@ -55,8 +54,8 @@ public class Material {
         this.element = element;
     }
 
-    public Material(String displayName, int rgb, MaterialSet set) {
-        this.name = displayName.toLowerCase(Locale.ENGLISH).replace("-", "_").replace(" ", "_");
+    public Material(String name, int rgb, MaterialSet set) {
+        this.name = name;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;

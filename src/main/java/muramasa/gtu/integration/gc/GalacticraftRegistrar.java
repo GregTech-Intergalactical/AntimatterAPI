@@ -30,8 +30,8 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
             case MATERIAL:
-                MeteoricIron = new Material("Meteoric Iron", 0x643250, METALLIC).asMetal(1811, 0, ORE).addTools(6.0f, 384, 2);
-                MeteoricSteel = new Material("Meteoric Steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
+                MeteoricIron = new Material("meteoric_iron", 0x643250, METALLIC).asMetal(1811, 0, ORE).addTools(6.0f, 384, 2);
+                MeteoricSteel = new Material("meteoric_steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
                 break;
             case MATERIAL_INIT:
                 RecipeFlag.CALCITE3X.add(MeteoricIron);
