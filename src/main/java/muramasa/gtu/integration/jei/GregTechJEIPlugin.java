@@ -18,6 +18,7 @@ import muramasa.gtu.integration.jei.category.RecipeMapCategory;
 import muramasa.gtu.integration.jei.wrapper.RecipeWrapper;
 import net.minecraft.util.Tuple;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,11 @@ public class GregTechJEIPlugin implements IModPlugin {
 
     public static void registerCategory(RecipeMap map, GuiData gui) {
         REGISTRY.put(map.getCategoryId(), new Tuple<>(map, gui));
+    }
+
+    @Nullable
+    public static Tuple<RecipeMap, GuiData> getRegisteredCategory(String name) {
+        return REGISTRY.get(name);
     }
 
     @Override

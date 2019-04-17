@@ -43,6 +43,10 @@ public class RecipeMap {
         return categoryName;
     }
 
+    public static void register() {
+
+    }
+
     public Collection<Recipe> getRecipes(boolean filterHidden) {
         List<Recipe> recipes = new ArrayList<>();
         LOOKUP.values().forEach(l -> l.forEach(r -> {
