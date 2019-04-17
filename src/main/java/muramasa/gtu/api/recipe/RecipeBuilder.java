@@ -111,4 +111,8 @@ public class RecipeBuilder {
         hidden = true;
         return this;
     }
+
+    public RecipeMap getMap() {
+        return recipeMap;
+    }
 }

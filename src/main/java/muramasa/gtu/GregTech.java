@@ -10,11 +10,13 @@ import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.common.events.OreGenHandler;
 import muramasa.gtu.common.network.GuiHandler;
+import muramasa.gtu.integration.ctx.GregTechTweaker;
 import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
 import muramasa.gtu.loaders.ContentLoader;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -24,7 +26,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Ref.MODID, name = Ref.NAME, version = Ref.VERSION, useMetadata = true)
+@Mod(modid = Ref.MODID, name = Ref.NAME, version = Ref.VERSION, dependencies = Ref.DEPENDS)
 public class GregTech {
 
     @SidedProxy(clientSide = Ref.CLIENT, serverSide = Ref.SERVER)
@@ -50,6 +52,8 @@ public class GregTech {
 
         if (Ref.DISABLE_VANILLA_ORE_GENERATION) MinecraftForge.EVENT_BUS.register(new OreGenHandler());
 
+        if (Loader.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
+
         GregTechAPI.registerJEICategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechAPI.registerJEICategory(RecipeMap.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechAPI.registerJEICategory(RecipeMap.GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
@@ -64,6 +68,7 @@ public class GregTech {
         Guis.init();
         Structures.init();
         ContentLoader.init();
+        System.out.println("GREGTECH PREINIT FINISHED");
     }
 
     @Mod.EventHandler
