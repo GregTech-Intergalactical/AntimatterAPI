@@ -27,7 +27,7 @@ public class ForestryRegistrar implements IGregTechRegistrar {
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
             case MATERIAL:
-                Apatite = new Material("Apatite", 0xc8c8ff, DIAMOND).asGemBasic(false, ORE).add(Calcium, 5, Phosphate, 3, Chlorine, 1);
+                Apatite = new Material("apatite", 0xc8c8ff, DIAMOND).asGemBasic(false, ORE).add(Calcium, 5, Phosphate, 3, Chlorine, 1);
                 break;
             case MATERIAL_INIT:
                 ELEC.add(Apatite);
