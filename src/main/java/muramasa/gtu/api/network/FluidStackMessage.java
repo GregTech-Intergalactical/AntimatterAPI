@@ -1,4 +1,4 @@
-package muramasa.gtu.common.network;
+package muramasa.gtu.api.network;
 
 import io.netty.buffer.ByteBuf;
 import muramasa.gtu.Ref;
@@ -93,7 +93,6 @@ public class FluidStackMessage implements IMessage {
             if (tile instanceof TileEntityMachine) {
                 TileEntityMachine machine = (TileEntityMachine) tile;
                 if (machine.getFluidHandler() == null) return null;
-
                 if (message.inputIds != null) {
                     FluidStack[] inputs = new FluidStack[message.inputIds.length];
                     Fluid currentFluid;

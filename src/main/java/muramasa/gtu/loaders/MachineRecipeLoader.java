@@ -11,7 +11,7 @@ public class MachineRecipeLoader {
 
     public static void init() {
         /** Temp Testing Recipes **/ //TODO remove
-        RB.get(COMBUSTION_ENGINE).fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(16, 1024);
+        RB.get(COMBUSTION_ENGINE).fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(1, 1024);
 
 
         //Power Gen Recipes
