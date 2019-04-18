@@ -8,13 +8,13 @@ import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -188,8 +188,8 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     }
 
     /** Returns a list of Components **/
-    public List<IComponentHandler> getComponents(IStringSerializable serializable) {
-        ArrayList<IComponentHandler> list = components.get(serializable.getName());
+    public List<IComponentHandler> getComponents(IGregTechObject object) {
+        ArrayList<IComponentHandler> list = components.get(object.getName());
         return list != null ? list : Collections.emptyList();
     }
 

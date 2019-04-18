@@ -1,13 +1,13 @@
 package muramasa.gtu.api.machines;
 
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.Ref;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IStringSerializable;
 
-public class MachineStack implements IStringSerializable {
+public class MachineStack implements IGregTechObject {
 
     private Machine type;
     private Tier tier;
@@ -30,6 +30,7 @@ public class MachineStack implements IStringSerializable {
         return type.getName() + "_" + tier.getName();
     }
 
+    @Override
     public ItemStack asItemStack() {
         ItemStack stack = new ItemStack(Item.getItemFromBlock(type.getBlock()));
         stack.setTagCompound(new NBTTagCompound());

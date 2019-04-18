@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
@@ -15,7 +16,6 @@ import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.common.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.util.IStringSerializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.List;
 
 import static muramasa.gtu.api.machines.MachineFlag.RECIPE;
 
-public class Machine implements IStringSerializable {
+public class Machine implements IGregTechObject {
 
     /** Global Members **/
     private static int lastInternalId;
@@ -65,6 +65,7 @@ public class Machine implements IStringSerializable {
         return internalId;
     }
 
+    @Override
     public String getName() {
         return name;
     }

@@ -1,11 +1,11 @@
 package muramasa.gtu.api.data;
 
-import net.minecraft.util.IStringSerializable;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-public class Coil implements IStringSerializable {
+public class Coil implements IGregTechObject {
 
     private static LinkedHashMap<String, Coil> TYPE_LOOKUP = new LinkedHashMap<>();
 

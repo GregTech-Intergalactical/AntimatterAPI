@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 
 import static muramasa.gtu.api.materials.Element.*;
 import static muramasa.gtu.api.materials.ItemFlag.*;
-import static muramasa.gtu.api.materials.MaterialSet.*;
+import static muramasa.gtu.api.materials.TextureSet.*;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
 
 public class Materials {

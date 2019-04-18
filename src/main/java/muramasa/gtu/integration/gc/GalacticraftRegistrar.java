@@ -9,7 +9,7 @@ import muramasa.gtu.api.registration.RegistrationEvent;
 import net.minecraftforge.fml.common.Loader;
 
 import static muramasa.gtu.api.materials.ItemFlag.ORE;
-import static muramasa.gtu.api.materials.MaterialSet.METALLIC;
+import static muramasa.gtu.api.materials.TextureSet.METALLIC;
 
 public class GalacticraftRegistrar implements IGregTechRegistrar {
 

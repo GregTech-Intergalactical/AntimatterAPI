@@ -1,14 +1,14 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.texture.Texture;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class StoneType implements IStringSerializable {
+public class StoneType implements IGregTechObject {
 
     private static ArrayList<StoneType> generating = new ArrayList<>(), all = new ArrayList<>();
     public static int lastInternalId = 0;

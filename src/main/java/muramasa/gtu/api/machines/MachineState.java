@@ -1,10 +1,10 @@
 package muramasa.gtu.api.machines;
 
-import net.minecraft.util.IStringSerializable;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 
 import java.util.Locale;
 
-public enum MachineState implements IStringSerializable {
+public enum MachineState implements IGregTechObject {
 
     //OverlayID: 0(Idle), 1(Active), 2(Error)
 

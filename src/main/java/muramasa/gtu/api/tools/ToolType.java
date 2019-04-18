@@ -1,11 +1,11 @@
 package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.util.Sounds;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.util.Sounds;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Set;
 
-public enum ToolType implements IStringSerializable {
+public enum ToolType implements IGregTechObject {
 
     SWORD("Sword", "", null, Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
     PICKAXE("Pickaxe" , "", null, Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),

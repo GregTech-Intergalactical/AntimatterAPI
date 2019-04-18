@@ -22,7 +22,7 @@ public class Material {
     private int rgb;
     private long itemMask, recipeMask;
     private String name;
-    private MaterialSet set;
+    private TextureSet set;
 
     /** Element Members **/
     private Element element;
@@ -49,12 +49,12 @@ public class Material {
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<Material> byProducts = new ArrayList<>();
 
-    public Material(String name, int rgb, MaterialSet set, Element element) {
+    public Material(String name, int rgb, TextureSet set, Element element) {
         this(name, rgb, set);
         this.element = element;
     }
 
-    public Material(String name, int rgb, MaterialSet set) {
+    public Material(String name, int rgb, TextureSet set) {
         this.name = name;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
@@ -236,7 +236,7 @@ public class Material {
         return rgb;
     }
 
-    public MaterialSet getSet() {
+    public TextureSet getSet() {
         return set;
     }
 

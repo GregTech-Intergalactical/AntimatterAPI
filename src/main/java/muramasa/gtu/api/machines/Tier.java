@@ -1,14 +1,14 @@
 package muramasa.gtu.api.machines;
 
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Tier implements IStringSerializable {
+public class Tier implements IGregTechObject {
 
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
     private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
@@ -51,6 +51,7 @@ public class Tier implements IStringSerializable {
         return internalId;
     }
 
+    @Override
     public String getName() {
         return name;
     }

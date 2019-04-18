@@ -1,9 +1,9 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.util.GTLoc;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import static muramasa.gtu.api.materials.ItemFlag.*;
 
-public class Prefix implements IStringSerializable {
+public class Prefix implements IGregTechObject {
 
     private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
     private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
@@ -76,6 +76,7 @@ public class Prefix implements IStringSerializable {
         this.doesGenerate = generatesItems;
     }
 
+    @Override
     public String getName() {
         return name.toLowerCase(Locale.ENGLISH);
     }

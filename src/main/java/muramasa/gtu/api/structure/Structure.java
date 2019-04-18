@@ -1,9 +1,9 @@
 package muramasa.gtu.api.structure;
 
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.int2;
 import muramasa.gtu.api.util.int3;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
@@ -38,16 +38,16 @@ public class Structure {
         return input1 >= input2;
     }
 
-    public Structure exact(IStringSerializable serializable, int value) {
-        return addReq(serializable, value, Structure::equal);
+    public Structure exact(IGregTechObject object, int value) {
+        return addReq(object, value, Structure::equal);
     }
 
-    public Structure min(IStringSerializable serializable, int value) {
-        return addReq(serializable, value, Structure::moreOrEqual);
+    public Structure min(IGregTechObject object, int value) {
+        return addReq(object, value, Structure::moreOrEqual);
     }
 
-    public Structure addReq(IStringSerializable serializable, int value, BiPredicate<Integer, Integer> method) {
-        requirements.put(serializable.getName(), new Tuple<>(value, method));
+    public Structure addReq(IGregTechObject object, int value, BiPredicate<Integer, Integer> method) {
+        requirements.put(object.getName(), new Tuple<>(value, method));
         return this;
     }
 

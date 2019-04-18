@@ -1,14 +1,14 @@
 package muramasa.gtu.api.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.pipe.types.Pipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IStringSerializable;
 
-public class PipeStack implements IStringSerializable {
+public class PipeStack implements IGregTechObject {
 
     private Block block;
     private Pipe type;
@@ -29,6 +29,7 @@ public class PipeStack implements IStringSerializable {
         return type.getName() + "_" + size.getName();
     }
 
+    @Override
     public ItemStack asItemStack() {
         ItemStack stack = new ItemStack(Item.getItemFromBlock(block));
         stack.setTagCompound(new NBTTagCompound());

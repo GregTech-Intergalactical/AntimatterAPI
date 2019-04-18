@@ -4,9 +4,8 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.pipe.types.Cable;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 
-public class CableStack extends PipeStack implements IStringSerializable {
+public class CableStack extends PipeStack {
 
     private boolean insulated;
 
@@ -15,6 +14,7 @@ public class CableStack extends PipeStack implements IStringSerializable {
         this.insulated = insulated;
     }
 
+    @Override
     public ItemStack asItemStack() {
         ItemStack stack = super.asItemStack();
         stack.getTagCompound().setBoolean(Ref.KEY_CABLE_STACK_INSULATED, insulated);

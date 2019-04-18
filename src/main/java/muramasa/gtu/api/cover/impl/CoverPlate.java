@@ -3,7 +3,7 @@ package muramasa.gtu.api.cover.impl;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialSet;
+import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.item.ItemStack;
@@ -49,7 +49,7 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public Texture[] getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        for (MaterialSet set : MaterialSet.values()) {
+        for (TextureSet set : TextureSet.getAll()) {
             textures.add(set.getBlockTexture(Prefix.Block));
         }
         return textures.toArray(new Texture[0]);
