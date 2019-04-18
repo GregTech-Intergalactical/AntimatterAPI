@@ -83,7 +83,6 @@ public class RecipeMap {
         List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0]));
         if (matches == null) return null;
         int size = matches.size();
-        if (size == 1) return matches.get(0);
         Recipe match;
         for (int i = 0; i < size; i++) {
             match = matches.get(i);
@@ -99,7 +98,6 @@ public class RecipeMap {
         List<Recipe> matches = map.LOOKUP.get(Utils.getString(fluids[0]));
         if (matches == null) return null;
         int size = matches.size();
-        if (size == 1) return matches.get(0);
         Recipe match;
         for (int i = 0; i < size; i++) {
             match = matches.get(i);
@@ -115,7 +113,6 @@ public class RecipeMap {
         List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0], fluids[0]));
         if (matches == null) return null;
         int size = matches.size();
-        if (size == 1) return matches.get(0);
         Recipe match;
         for (int i = 0; i < size; i++) {
             match = matches.get(i);
