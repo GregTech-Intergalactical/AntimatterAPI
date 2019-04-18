@@ -21,6 +21,8 @@ import java.util.List;
 
 public class TileEntityCasing extends TileEntityBase implements IComponent, IBakedTile {
 
+    private Casing type;
+
     protected IComponentHandler componentHandler = new ComponentHandler("null", this) {
         @Override
         public String getId() {
@@ -31,7 +33,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     protected int textureOverride = -1;
 
     public Casing getType() {
-        return ((BlockCasing) getState().getBlock()).getType();
+        return type == null ? (type = ((BlockCasing) getState().getBlock()).getType()) : type;
     }
 
     @Override

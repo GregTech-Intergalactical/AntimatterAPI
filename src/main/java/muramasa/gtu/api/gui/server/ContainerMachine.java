@@ -7,7 +7,7 @@ import muramasa.gtu.api.gui.slot.SlotInput;
 import muramasa.gtu.api.gui.slot.SlotOutput;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.common.network.GregTechNetwork;
+import muramasa.gtu.api.network.GregTechNetwork;
 import net.minecraft.inventory.IInventory;
 
 public class ContainerMachine extends ContainerBase {

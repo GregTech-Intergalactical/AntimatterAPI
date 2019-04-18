@@ -5,6 +5,8 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Structures;
+import muramasa.gtu.api.network.FluidStackMessage;
+import muramasa.gtu.api.network.MachineNetworkEvent;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.RegistrationEvent;
@@ -24,6 +26,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Ref.MODID, name = Ref.NAME, version = Ref.VERSION, dependencies = Ref.DEPENDS)
@@ -35,9 +39,13 @@ public class GregTech {
     @Mod.Instance
     public static GregTech INSTANCE;
 
+    public static SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Ref.MODID);
+
     public static Logger logger;
 
     static {
+        NETWORK.registerMessage(FluidStackMessage.FluidStackMessageHandler.class, FluidStackMessage.class, MachineNetworkEvent.FLUID.ordinal(), Side.CLIENT);
+
         GregTechRegistry.addRegistrar(new ForestryRegistrar());
         GregTechRegistry.addRegistrar(new GalacticraftRegistrar());
         if (Loader.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
