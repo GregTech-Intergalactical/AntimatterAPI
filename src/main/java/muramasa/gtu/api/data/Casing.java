@@ -1,12 +1,12 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
-import net.minecraft.util.IStringSerializable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-public class Casing implements IStringSerializable {
+public class Casing implements IGregTechObject {
 
     private static LinkedHashMap<String, Casing> TYPE_LOOKUP = new LinkedHashMap<>();
     private static int lastInternalId = 0;

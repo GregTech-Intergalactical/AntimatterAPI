@@ -1,8 +1,8 @@
 package muramasa.gtu.api.structure;
 
 import muramasa.gtu.api.data.Structures;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.util.int3;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class StructureBuilder {
         return this;
     }
 
-    public StructureBuilder at(String key, IStringSerializable serializable) {
+    public StructureBuilder at(String key, IGregTechObject serializable) {
         elementLookup.put(key, new StructureElement(serializable));
         return this;
     }

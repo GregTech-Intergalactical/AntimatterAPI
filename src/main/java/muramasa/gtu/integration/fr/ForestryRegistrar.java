@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 
 import static muramasa.gtu.api.data.Materials.*;
 import static muramasa.gtu.api.materials.ItemFlag.ORE;
-import static muramasa.gtu.api.materials.MaterialSet.DIAMOND;
+import static muramasa.gtu.api.materials.TextureSet.DIAMOND;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
 
 public class ForestryRegistrar implements IGregTechRegistrar {

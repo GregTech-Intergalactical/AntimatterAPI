@@ -2,7 +2,7 @@ package muramasa.gtu.integration.ctx;
 
 import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialSet;
+import muramasa.gtu.api.materials.TextureSet;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 public class CTMaterial {
@@ -13,8 +13,8 @@ public class CTMaterial {
         this.material = material;
     }
 
-    public CTMaterial(String name, int rgb, String textureSet) {
-        MaterialSet set = MaterialSet.valueOf(textureSet.toUpperCase());
+    public CTMaterial(String name, int rgb, String setName) {
+        TextureSet set = TextureSet.get(setName);
         material = new Material(name, rgb, set);
     }
 

@@ -1,10 +1,10 @@
 package muramasa.gtu.api.materials;
 
-import net.minecraft.util.IStringSerializable;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 
 import java.util.Locale;
 
-public enum Element implements IStringSerializable {
+public enum Element implements IGregTechObject {
 
     H(1, 0, 0, -1, null, "Hydrogen", false),
     D(1, 1, 0, -1, "H", "Deuterium", true),

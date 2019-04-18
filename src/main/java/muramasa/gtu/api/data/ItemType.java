@@ -2,6 +2,7 @@ package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
@@ -9,14 +10,13 @@ import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
-public class ItemType implements IStringSerializable {
+public class ItemType implements IGregTechObject {
 
     private static LinkedHashMap<String, ItemType> TYPE_LOOKUP = new LinkedHashMap<>();
 

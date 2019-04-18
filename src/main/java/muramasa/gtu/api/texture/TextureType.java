@@ -1,10 +1,10 @@
 package muramasa.gtu.api.texture;
 
-import net.minecraft.util.IStringSerializable;
+import muramasa.gtu.api.interfaces.IGregTechObject;
 
 import java.util.Locale;
 
-public enum TextureType implements IStringSerializable {
+public enum TextureType implements IGregTechObject {
 
     BASE,
     TOP,
