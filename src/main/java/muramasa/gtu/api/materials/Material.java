@@ -185,6 +185,17 @@ public class Material {
         }
     }
 
+    public void remove(IMaterialFlag... flags) {
+        for (IMaterialFlag flag : flags) {
+            if (flag instanceof ItemFlag) {
+                itemMask &= ~flag.getBit();
+            } else if (flag instanceof RecipeFlag) {
+                recipeMask &= ~flag.getBit();
+            }
+            flag.remove(this);
+        }
+    }
+
     //TODO fix this...
     public Material add(Object... objects) {
         if (objects.length % 2 == 0) {

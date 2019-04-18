@@ -38,7 +38,7 @@ public class GregTechTweaker {
     }
 
     @ZenMethod
-    public static CTRecipeBuilder builder(String name) {
+    public static CTRecipeBuilder addRecipe(String name) {
         return new CTRecipeBuilder(Machines.get(name).getRecipeMap());
     }
 

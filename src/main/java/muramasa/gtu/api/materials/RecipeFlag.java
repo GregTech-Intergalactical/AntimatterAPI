@@ -48,9 +48,14 @@ public enum RecipeFlag implements IMaterialFlag {
     @Override
     public void add(Material... mats) {
         for (Material material : mats) {
-            if (!materials.contains(material)) {
-                materials.add(material);
-            }
+            if (!materials.contains(material)) materials.add(material);
+        }
+    }
+
+    @Override
+    public void remove(Material... mats) {
+        for (Material material : mats) {
+            if (materials.remove(material));
         }
     }
 
