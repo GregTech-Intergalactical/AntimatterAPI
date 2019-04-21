@@ -146,11 +146,11 @@ public class Machine implements IGregTechObject {
         return this;
     }
 
-    public void addStructure(Structure structure) {
-        addStructure(getFirstTier(), structure);
+    public void setStructure(Structure structure) {
+        setStructure(getFirstTier(), structure);
     }
 
-    public void addStructure(Tier tier, Structure structure) {
+    public void setStructure(Tier tier, Structure structure) {
         if (structures == null) structures = new Int2ObjectArrayMap<>();
         structures.put(tier.getInternalId(), structure);
     }

@@ -97,10 +97,10 @@ public class Machines {
     public static Machine COMBUSTION_ENGINE = new MultiMachine("combustion_engine", TileEntityCombustionEngine.class, EV);
     public static Machine FUSION_REACTOR = new MultiMachine("fusion_reactor", TileEntityFusionReactor.class, LUV, ZPM, UV);
 
-    public static Machine HATCH_ITEM_INPUT = new HatchMachine("hatch_item_input", GUI, ITEM);
-    public static Machine HATCH_ITEM_OUTPUT = new HatchMachine("hatch_item_output", GUI, ITEM);
-    public static Machine HATCH_FLUID_INPUT = new HatchMachine("hatch_fluid_input", GUI, FLUID);
-    public static Machine HATCH_FLUID_OUTPUT = new HatchMachine("hatch_fluid_output", GUI, FLUID);
+    public static Machine HATCH_ITEM_I = new HatchMachine("hatch_item_input", GUI, ITEM);
+    public static Machine HATCH_ITEM_O = new HatchMachine("hatch_item_output", GUI, ITEM);
+    public static Machine HATCH_FLUID_I = new HatchMachine("hatch_fluid_input", GUI, FLUID);
+    public static Machine HATCH_FLUID_O = new HatchMachine("hatch_fluid_output", GUI, FLUID);
     public static Machine HATCH_MUFFLER = new HatchMachine("hatch_muffler", GUI, ITEM);
     public static Machine HATCH_DYNAMO = new HatchMachine("hatch_dynamo", ENERGY);
     public static Machine HATCH_ENERGY = new HatchMachine("hatch_energy", ENERGY);

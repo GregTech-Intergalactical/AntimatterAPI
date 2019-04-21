@@ -70,7 +70,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            tooltip.add("" + Machines.HATCH_FLUID_OUTPUT.getGui().getSlots(SlotType.FL_OUT, Tier.UV).size());
+            tooltip.add("" + Machines.HATCH_FLUID_O.getGui().getSlots(SlotType.FL_OUT, Tier.UV).size());
         }
     }
 

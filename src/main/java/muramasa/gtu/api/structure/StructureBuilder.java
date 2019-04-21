@@ -1,11 +1,11 @@
 package muramasa.gtu.api.structure;
 
-import muramasa.gtu.api.data.Structures;
 import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.util.int3;
 import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class StructureBuilder {
@@ -15,15 +15,7 @@ public class StructureBuilder {
     private ArrayList<String[]> slices = new ArrayList<>();
     private HashMap<String, StructureElement> elementLookup = new HashMap<>();
 
-    static {
-        globalElementLookup.put("A", Structures.AIR);
-        globalElementLookup.put("X", Structures.X);
-    }
-
-    public static StructureBuilder start() {
-        return new StructureBuilder();
-    }
-
+    //TODO, probably move to StructureElement?
     public static void addGlobalElement(String key, StructureElement element) {
         globalElementLookup.put(key, element);
     }
@@ -38,22 +30,28 @@ public class StructureBuilder {
         return this;
     }
 
-    public StructureBuilder rep(String s, int count) {
-        String[] slices = new String[count];
-        for (int i = 0; i < count; i++) {
-            slices[i] = s;
-        }
-        this.slices.add(slices);
-        return this;
-    }
-
     public StructureBuilder at(String key, StructureElement element) {
         elementLookup.put(key, element);
         return this;
     }
 
-    public StructureBuilder at(String key, IGregTechObject serializable) {
-        elementLookup.put(key, new StructureElement(serializable));
+    public StructureBuilder at(String key, IGregTechObject... objects) {
+        elementLookup.put(key, new StructureElement(objects));
+        return this;
+    }
+
+    public StructureBuilder at(String key, String name, IGregTechObject... objects) {
+        elementLookup.put(key, new StructureElement(name, objects));
+        return this;
+    }
+
+    public StructureBuilder at(String key, Collection<? extends IGregTechObject> objects) {
+        elementLookup.put(key, new StructureElement(objects.toArray(new IGregTechObject[0])));
+        return this;
+    }
+
+    public StructureBuilder at(String key, String name, Collection<? extends IGregTechObject> objects) {
+        elementLookup.put(key, new StructureElement(name, objects.toArray(new IGregTechObject[0])));
         return this;
     }
 
@@ -66,12 +64,9 @@ public class StructureBuilder {
                 for (int z = 0; z < size.z; z++) {
                     e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
-                    if (e != null) {
-                        if (e.excludeFromList) continue;
-                        elements.add(new Tuple<>(new int3(x, y, z), e));
-                    } else {
-                        throw new NullPointerException();
-                    }
+                    if (e == null) throw new NullPointerException("StructureBuilder failed to parse slice: " + slices.get(y)[x]);
+                    if (e.exclude) continue;
+                    elements.add(new Tuple<>(new int3(x, y, z), e));
                 }
             }
         }

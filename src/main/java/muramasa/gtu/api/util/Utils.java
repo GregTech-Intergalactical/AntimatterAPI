@@ -247,6 +247,13 @@ public class Utils {
         world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
     }
 
+    public static int getVoltageTier(long voltage) {
+        for (int i = 0; i < Ref.V.length; i++) {
+            if (voltage <= Ref.V[i]) return i;
+        }
+        return 0;
+    }
+
     /** Safe version of world.getTileEntity **/
     @Nullable
     public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) {

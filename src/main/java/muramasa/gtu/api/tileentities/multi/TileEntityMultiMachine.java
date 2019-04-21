@@ -1,5 +1,6 @@
 package muramasa.gtu.api.tileentities.multi;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.ControllerComponentHandler;
@@ -26,7 +27,8 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     //TODO set protected
     public boolean validStructure;
     //TODO move to BasicMachine
-    protected int curEfficiency, maxEfficiency;
+    protected int efficiency, efficiencyIncrease;
+    protected long EUt;
     protected HashMap<String, ArrayList<IComponentHandler>> components;
     protected ControllerComponentHandler componentHandler;
 
@@ -87,7 +89,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public ItemStack[] getStoredItems() {
         ArrayList<ItemStack> all = new ArrayList<>();
         MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             Utils.mergeItems(all, itemHandler.getInputList());
@@ -100,7 +102,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public FluidStack[] getStoredFluids() {
         ArrayList<FluidStack> all = new ArrayList<>();
         MachineFluidHandler fluidHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_INPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
             fluidHandler = hatch.getFluidHandler();
             if (fluidHandler == null) continue;
             Utils.mergeFluids(all, fluidHandler.getInputList());
@@ -114,7 +116,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         if (items == null) return true;
         int matchCount = 0;
         MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             matchCount += itemHandler.getSpaceForOutputs(items);
@@ -127,7 +129,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         if (fluids == null) return true;
         int matchCount = 0;
         MachineFluidHandler fluidHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_OUTPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
             fluidHandler = hatch.getFluidHandler();
             if (fluidHandler == null) continue;
             matchCount += fluidHandler.getSpaceForOutputs(fluids);
@@ -139,7 +141,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public void consumeItems(ItemStack[] items) {
         if (items == null) return;
         MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_INPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             items = itemHandler.consumeAndReturnInputs(items.clone());
@@ -152,7 +154,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public void consumeFluids(FluidStack[] fluids) {
         if (fluids == null) return;
         MachineFluidHandler fluidHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_INPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
             fluidHandler = hatch.getFluidHandler();
             if (fluidHandler == null) continue;
             fluids = fluidHandler.consumeAndReturnInputs(fluids);
@@ -165,7 +167,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
         MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_OUTPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
             itemHandler = hatch.getItemHandler();
             if (itemHandler == null) continue;
             items = itemHandler.exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
@@ -178,7 +180,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     public void outputFluids(FluidStack[] fluids) {
         if (fluids == null) return;
         MachineFluidHandler fluidHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_OUTPUT)) {
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
             fluidHandler = hatch.getFluidHandler();
             if (fluidHandler == null) continue;
             fluids = fluidHandler.exportAndReturnOutputs(fluids.clone());
@@ -187,9 +189,18 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + fluids.toString());
     }
 
+    public long getMaxInputVoltage() {
+        List<IComponentHandler> hatches = getComponents(Machines.HATCH_ENERGY);
+        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().getMaxInsert() : Ref.V[0];
+    }
+
     /** Returns a list of Components **/
     public List<IComponentHandler> getComponents(IGregTechObject object) {
-        ArrayList<IComponentHandler> list = components.get(object.getName());
+        return getComponents(object.getName());
+    }
+
+    public List<IComponentHandler> getComponents(String name) {
+        ArrayList<IComponentHandler> list = components.get(name);
         return list != null ? list : Collections.emptyList();
     }
 
