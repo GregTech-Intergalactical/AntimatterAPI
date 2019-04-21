@@ -51,6 +51,12 @@ public class ComponentHandler implements IComponentHandler {
         return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getFluidHandler() : null;
     }
 
+    @Nullable
+    @Override
+    public MachineEnergyHandler getEnergyHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getEnergyHandler() : null;
+    }
+
     @Override
     public void linkController(TileEntityMultiMachine controllerTile) {
         controllers.add(controllerTile.getPos());

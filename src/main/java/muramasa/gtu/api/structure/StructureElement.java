@@ -1,44 +1,34 @@
 package muramasa.gtu.api.structure;
 
 import muramasa.gtu.api.capability.IComponentHandler;
+import muramasa.gtu.api.interfaces.IComponent;
 import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int3;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.interfaces.IComponent;
 import net.minecraft.tileentity.TileEntity;
-
-import java.util.HashMap;
 
 public class StructureElement {
 
-    private static HashMap<String, StructureElement> elementLookup = new HashMap<>();
-
-    private String elementName;
+    private String elementName = "";
     private String[] elementIds;
 
-    public boolean excludeFromList;
-
-    public StructureElement(IGregTechObject object) {
-        this(object.getName(), object);
-    }
+    public boolean exclude;
 
     public StructureElement(String elementName, IGregTechObject... objects) {
+        this(objects);
         this.elementName = elementName;
+    }
+
+    public StructureElement(IGregTechObject... objects) {
         this.elementIds = new String[objects.length];
         for (int i = 0; i < objects.length; i++) {
             this.elementIds[i] = objects[i].getName();
-            elementLookup.put(objects[i].getName(), this);
         }
-        elementLookup.put(elementName, this);
     }
 
-    public String getName() {
-        return elementName;
-    }
-
-    public StructureElement excludeFromList() {
-        excludeFromList = true;
+    public StructureElement exclude() {
+        exclude = true;
         return this;
     }
 
@@ -65,9 +55,5 @@ public class StructureElement {
 
     public boolean testComponent(IComponentHandler component) {
         return true;
-    }
-
-    public static StructureElement get(String name) {
-        return elementLookup.get(name);
     }
 }

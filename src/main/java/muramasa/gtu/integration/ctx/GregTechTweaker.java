@@ -6,6 +6,7 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.TextureSet;
 import net.minecraft.item.ItemStack;
@@ -22,12 +23,13 @@ public class GregTechTweaker {
         CraftTweakerAPI.registerClass(GregTechTweaker.class);
         CraftTweakerAPI.registerClass(CTMaterial.class);
         CraftTweakerAPI.registerClass(CTRecipeBuilder.class);
+        CraftTweakerAPI.registerClass(CTStructureBuilder.class);
     }
 
     @ZenMethod
     public static CTMaterial getMaterial(String name) {
         Material material = Materials.get(name);
-        if (material == null) throw new NullPointerException("material for " + name + " does not exist");
+        if (material == null) throw new NullPointerException("material for name " + name + " does not exist");
         return new CTMaterial(material);
     }
 
@@ -46,6 +48,13 @@ public class GregTechTweaker {
     @ZenMethod
     public static CTRecipeBuilder getRecipeMap(String name) {
         return new CTRecipeBuilder(Machines.get(name).getRecipeMap());
+    }
+
+    @ZenMethod
+    public static CTStructureBuilder addStructure(String name) {
+        Machine machine = Machines.get(name);
+        if (machine == null) throw new NullPointerException("machine for name " + name + " does not exist");
+        return new CTStructureBuilder(machine);
     }
 
     public static ItemStack[] getItems(IIngredient... items) {

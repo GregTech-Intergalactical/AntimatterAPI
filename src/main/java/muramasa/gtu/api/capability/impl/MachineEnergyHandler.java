@@ -48,6 +48,14 @@ public class MachineEnergyHandler implements IEnergyStorage {
         return capacity;
     }
 
+    public long getMaxInsert() {
+        return maxInsert;
+    }
+
+    public long getMaxExtract() {
+        return maxExtract;
+    }
+
     @Override
     public boolean canInsert() {
         return maxInsert > 0;

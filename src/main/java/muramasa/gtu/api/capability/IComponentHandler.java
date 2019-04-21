@@ -1,5 +1,6 @@
 package muramasa.gtu.api.capability;
 
+import muramasa.gtu.api.capability.impl.MachineEnergyHandler;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
@@ -22,6 +23,9 @@ public interface IComponentHandler {
 
     @Nullable
     MachineFluidHandler getFluidHandler();
+
+    @Nullable
+    MachineEnergyHandler getEnergyHandler();
 
     void linkController(TileEntityMultiMachine tile);
 
