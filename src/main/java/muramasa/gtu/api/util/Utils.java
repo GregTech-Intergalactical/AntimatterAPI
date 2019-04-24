@@ -81,7 +81,7 @@ public class Utils {
     public static int contains(List<ItemStack> list, ItemStack item) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
-            if (Utils.equals(list.get(i), item)) return i;
+            if (equals(list.get(i), item)) return i;
         }
         return -1;
     }
@@ -90,7 +90,7 @@ public class Utils {
     public static int contains(List<FluidStack> list, FluidStack fluid) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
-            if (Utils.equals(list.get(i), fluid)) return i;
+            if (equals(list.get(i), fluid)) return i;
         }
         return -1;
     }
@@ -248,10 +248,14 @@ public class Utils {
     }
 
     public static int getVoltageTier(long voltage) {
+        int tier = 0;
         for (int i = 0; i < Ref.V.length; i++) {
-            if (voltage <= Ref.V[i]) return i;
+            if (voltage <= Ref.V[i]) {
+                tier = i;
+                break;
+            }
         }
-        return 0;
+        return Math.max(1, tier);
     }
 
     /** Safe version of world.getTileEntity **/

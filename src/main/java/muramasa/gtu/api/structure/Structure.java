@@ -7,6 +7,7 @@ import muramasa.gtu.api.util.int3;
 import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.BiPredicate;
@@ -38,12 +39,14 @@ public class Structure {
         return input1 >= input2;
     }
 
-    public Structure exact(IGregTechObject object, int value) {
-        return addReq(object, value, Structure::equal);
+    public Structure exact(int value, IGregTechObject... objects) {
+        Arrays.stream(objects).forEach(o -> addReq(o, value, Structure::equal));
+        return this;
     }
 
-    public Structure min(IGregTechObject object, int value) {
-        return addReq(object, value, Structure::moreOrEqual);
+    public Structure min(int value, IGregTechObject... objects) {
+        Arrays.stream(objects).forEach(o -> addReq(o, value, Structure::moreOrEqual));
+        return this;
     }
 
     public Structure addReq(IGregTechObject object, int value, BiPredicate<Integer, Integer> method) {

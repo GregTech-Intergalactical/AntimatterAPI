@@ -86,12 +86,13 @@ public class ComponentHandler implements IComponentHandler {
 
     @Override
     public void onComponentRemoved() {
+        //TODO use getFirstController()
         if (controllers.size() > 0) {
             int size = controllers.size();
             for (int i = 0; i < size; i++) {
                 TileEntity tile = Utils.getTile(componentTile.getWorld(), controllers.get(i));
                 if (tile instanceof TileEntityMultiMachine) {
-                    ((TileEntityMultiMachine) tile).onComponentRemoved();
+                    ((TileEntityMultiMachine) tile).onStructureInvalid();
                 }
             }
         }

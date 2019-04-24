@@ -3,10 +3,7 @@ package muramasa.gtu.api.tileentities.multi;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
-import muramasa.gtu.api.capability.impl.ControllerComponentHandler;
-import muramasa.gtu.api.capability.impl.ControllerConfigHandler;
-import muramasa.gtu.api.capability.impl.MachineFluidHandler;
-import muramasa.gtu.api.capability.impl.MachineItemHandler;
+import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.interfaces.IComponent;
 import muramasa.gtu.api.interfaces.IGregTechObject;
@@ -29,27 +26,15 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     //TODO move to BasicMachine
     protected int efficiency, efficiencyIncrease;
     protected long EUt;
-    protected HashMap<String, ArrayList<IComponentHandler>> components;
+    protected HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
     protected ControllerComponentHandler componentHandler;
 
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        components = new HashMap<>();
         componentHandler = new ControllerComponentHandler(getType(), this);
         configHandler = new ControllerConfigHandler(this);
     }
-
-    @Override
-    public void onServerUpdate() {
-        super.onServerUpdate();
-    }
-
-    //TODO break recipe on invalid structure
-//    @Override
-//    public void onRecipeTick() {
-//        if (!validStructure) activeRecipe
-//    }
 
     public boolean checkStructure() {
         clearComponents();
@@ -58,31 +43,27 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             components = result.getComponents();
-            for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
-                for (IComponentHandler component : entry.getValue()) {
-                    component.linkController(this);
-                }
+            if (onStructureValid(result)) {
+                components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
+                System.out.println("[Structure Debug] Valid Structure");
+                return (validStructure = true);
             }
-            System.out.println("[Structure Debug] Valid Structure");
-            System.out.println(getStoredItems());
-            onStructureIntegrity(true);
-            return (validStructure = true);
         }
-        System.out.println(result.getError());
+        System.out.println("[Structure Debug] Invalid Structure" + result.getError());
         clearComponents();
         return (validStructure = false);
     }
 
     /** Events **/
-    public void onComponentRemoved() {
-        clearComponents();
-        validStructure = false;
-        System.out.println("INVALIDATED STRUCTURE");
-        onStructureIntegrity(false);
+    public boolean onStructureValid(StructureResult result) {
+        return true;
     }
 
-    public void onStructureIntegrity(boolean valid) {
-        //NOOP
+    public void onStructureInvalid() {
+        validStructure = false;
+        clearComponents();
+        resetMachine();
+        System.out.println("INVALIDATED STRUCTURE");
     }
 
     /** Returns list of items across all input hatches. Merges equal filters empty **/
@@ -111,30 +92,16 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         return all.toArray(new FluidStack[0]);
     }
 
-    /** Tests if items can fit across all output hatches **/
-    public boolean canItemsFit(ItemStack[] items) {
-        if (items == null) return true;
-        int matchCount = 0;
-        MachineItemHandler itemHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            matchCount += itemHandler.getSpaceForOutputs(items);
+    /** Returns the total energy stored across all energy hatches **/
+    public long getStoredEnergy() {
+        long total = 0;
+        MachineEnergyHandler energyHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ENERGY)) {
+            energyHandler = hatch.getEnergyHandler();
+            if (energyHandler == null) continue;
+            total += energyHandler.getEnergyStored();
         }
-        return matchCount >= items.length;
-    }
-
-    /** Tests if fluids can fit across all output hatches **/
-    public boolean canFluidsFit(FluidStack[] fluids) {
-        if (fluids == null) return true;
-        int matchCount = 0;
-        MachineFluidHandler fluidHandler;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
-            fluidHandler = hatch.getFluidHandler();
-            if (fluidHandler == null) continue;
-            matchCount += fluidHandler.getSpaceForOutputs(fluids);
-        }
-        return matchCount >= fluids.length;
+        return total;
     }
 
     /** Consumes inputs from all input hatches. Assumes Utils.doItemsMatchAndSizeValid has been used **/
@@ -163,6 +130,18 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         if (fluids.length > 0) System.out.println("DID NOT CONSUME ALL: " + fluids.toString());
     }
 
+    /** Consumes energy from all energy hatches. Assumes enough energy is present in hatches **/
+    public void consumeEnergy(long energy) {
+        if (energy <= 0) return;
+        MachineEnergyHandler energyHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ENERGY)) {
+            energyHandler = hatch.getEnergyHandler();
+            if (energyHandler == null) return;
+            energy -= energyHandler.extract(energy, false);
+            if (energy == 0) break;
+        }
+    }
+
     /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
@@ -189,6 +168,33 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + fluids.toString());
     }
 
+    /** Tests if items can fit across all output hatches **/
+    public boolean canItemsFit(ItemStack[] items) {
+        if (items == null) return true;
+        int matchCount = 0;
+        MachineItemHandler itemHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
+            itemHandler = hatch.getItemHandler();
+            if (itemHandler == null) continue;
+            matchCount += itemHandler.getSpaceForOutputs(items);
+        }
+        return matchCount >= items.length;
+    }
+
+    /** Tests if fluids can fit across all output hatches **/
+    public boolean canFluidsFit(FluidStack[] fluids) {
+        if (fluids == null) return true;
+        int matchCount = 0;
+        MachineFluidHandler fluidHandler;
+        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
+            fluidHandler = hatch.getFluidHandler();
+            if (fluidHandler == null) continue;
+            matchCount += fluidHandler.getSpaceForOutputs(fluids);
+        }
+        return matchCount >= fluids.length;
+    }
+
+    @Override
     public long getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents(Machines.HATCH_ENERGY);
         return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().getMaxInsert() : Ref.V[0];
@@ -206,11 +212,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
 
     /** Clear the cached component map **/
     public void clearComponents() {
-        for (Map.Entry<String, ArrayList<IComponentHandler>> entry : components.entrySet()) {
-            for (IComponentHandler component : entry.getValue()) {
-                component.unlinkController(this);
-            }
-        }
+        components.forEach((k, v) -> v.forEach(c -> c.unlinkController(this)));
         components.clear();
     }
 

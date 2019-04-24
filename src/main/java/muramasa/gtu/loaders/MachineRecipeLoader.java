@@ -1,6 +1,8 @@
 package muramasa.gtu.loaders;
 
+import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.recipe.RecipeBuilder;
+import net.minecraft.item.crafting.FurnaceRecipes;
 
 import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.api.data.Materials.*;
@@ -13,6 +15,9 @@ public class MachineRecipeLoader {
         /** Temp Testing Recipes **/ //TODO remove
         RB.get(COMBUSTION_ENGINE).fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(1, 1024);
 
+        FurnaceRecipes.instance().getSmeltingList().forEach((k, v) -> RB.get(MULTI_SMELTER).ii(k).io(v).add(60, 2));
+
+        RB.get(IMPLOSION_COMPRESSOR).ii(ItemType.IridiumAlloyIngot.get(1)).io(ItemType.IridiumReinforcedPlate.get(1), DarkAsh.getDustT(4)).add(20, 30);
 
         //Power Gen Recipes
         RB.get(FUSION_REACTOR).fi(Deuterium.getGas(125), Tritium.getGas(125)).fo(Helium.getPlasma(125)).add(16, 4096, 40000000); //Mark 1 Cheap

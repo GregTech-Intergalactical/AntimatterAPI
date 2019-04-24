@@ -59,14 +59,6 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
-    public boolean setFacing(EnumFacing side) {
-        if (getFacing() == side) return false;
-        super.setFacing(side);
-        markForRenderUpdate();
-        return true;
-    }
-
-    @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
         if (textureOverride > -1) data.base(Machines.get(textureOverride / 1000).getBaseTexture(Tier.get(textureOverride % 1000)));

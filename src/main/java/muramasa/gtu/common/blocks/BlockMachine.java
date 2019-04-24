@@ -137,7 +137,8 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityMachine) {
                 String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
-                ((TileEntityMachine) tile).init(Tier.get(machineTier), placer.getHorizontalFacing().getOpposite());
+                EnumFacing facing = EnumFacing.getFacingFromVector((float)placer.getLookVec().x, (float)placer.getLookVec().y, (float)placer.getLookVec().z).getOpposite();
+                ((TileEntityMachine) tile).init(Tier.get(machineTier), facing);
             }
         }
     }
