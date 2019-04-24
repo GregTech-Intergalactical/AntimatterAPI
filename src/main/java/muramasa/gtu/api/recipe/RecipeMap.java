@@ -13,6 +13,8 @@ public class RecipeMap {
 
     public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", 100);
 
+//    public static RecipeMap SMELTING = new RecipeMap("smelting", 100);
+
     public static RecipeMap STEAM_FUELS = new RecipeMap("steam_fuels", "Fuel Value: ", " EU", 1);
     public static RecipeMap GAS_FUELS = new RecipeMap("gas_fuels", "Fuel Value: ", " EU", 20);
     public static RecipeMap COMBUSTION_FUELS = new RecipeMap("combustion_fuels", "Fuel Value: ", " EU", 20);

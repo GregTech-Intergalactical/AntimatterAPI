@@ -7,7 +7,6 @@ import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.ContentUpdateType;
-import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
@@ -46,7 +45,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     public final void init(Tier tier, EnumFacing facing) {
         this.type = ((BlockMachine) getBlockType()).getType();
         this.tier = tier;
-        this.facing = facing;
+        setFacing(facing);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     /** Events **/
-    public void onContentsChanged(ContentUpdateType type, int slot, boolean air) {
+    public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
         //NOOP
     }
 
@@ -125,7 +124,6 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     /** Setters **/
     public boolean setFacing(EnumFacing side) { //Rotate the front to face a given direction
-        if (side.getAxis() == EnumFacing.Axis.Y) return false;
         if (facing == side) return false;
         facing = side;
         markForRenderUpdate();
@@ -215,19 +213,22 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         info.add("Tile: " + getClass().getName());
         info.add("Machine: " + getType().getName() + " Tier: " + getTier().getName());
         String slots = "";
-        if (getType().hasFlag(MachineFlag.ITEM)) {
+        if (getType().hasFlag(ITEM)) {
             int inputs = getType().getGui().getSlots(SlotType.IT_IN, getTier()).size();
             int outputs = getType().getGui().getSlots(SlotType.IT_OUT, getTier()).size();
             if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
             if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
         }
-        if (getType().hasFlag(MachineFlag.FLUID)) {
+        if (getType().hasFlag(FLUID)) {
             int inputs = getType().getGui().getSlots(SlotType.FL_IN, getTier()).size();
             int outputs = getType().getGui().getSlots(SlotType.FL_OUT, getTier()).size();
             if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
             if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }
         if (slots.length() > 0) info.add("Slots:" + slots);
+        if (getType().hasFlag(ENERGY)) {
+            info.add("Energy: " + energyHandler.getEnergyStored() + " / " + energyHandler.getMaxEnergyStored());
+        }
         return info;
     }
 }

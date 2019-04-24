@@ -5,7 +5,6 @@ import muramasa.gtu.api.tileentities.TileEntityMachine;
 
 public class MachineEnergyHandler implements IEnergyStorage {
 
-    protected TileEntityMachine tile;
     protected long energy;
     protected long capacity;
     protected long maxInsert;
@@ -15,7 +14,14 @@ public class MachineEnergyHandler implements IEnergyStorage {
         capacity = tile.getTier().getVoltage() * 64;
         maxInsert = tile.getTier().getVoltage();
         maxExtract = tile.getTier().getVoltage();
-        energy = Long.MAX_VALUE; //TODO temp
+        energy = capacity; //TODO temp
+    }
+
+    public MachineEnergyHandler(long capacity, long maxInsert, long maxExtract) {
+        this.capacity = capacity;
+        this.maxInsert = maxInsert;
+        this.maxExtract = maxExtract;
+        energy = capacity; //TODO temp
     }
 
     @Override

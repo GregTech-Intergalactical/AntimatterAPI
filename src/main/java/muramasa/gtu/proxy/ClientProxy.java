@@ -162,8 +162,6 @@ public class ClientProxy implements IProxy {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
-        System.out.println("ON MODEL BAKE");
-        System.out.println(ModelLoaderRegistry.getMissingModel());
         ModelUtils.onModelBake(e);
     }
 }

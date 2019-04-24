@@ -3,6 +3,7 @@ package muramasa.gtu.api.tileentities;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
+import net.minecraft.util.EnumFacing;
 
 import java.util.List;
 
@@ -20,6 +21,15 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     public void onServerUpdate() {
         if (getMachineState() == ACTIVE) tickMachineLoop();
         if (coverHandler != null) coverHandler.tick();
+    }
+
+    public void tickMachineLoop() {
+        switch (getMachineState()) {
+            case ACTIVE:
+            case OUTPUT_FULL:
+                setMachineState(tickRecipe());
+                break;
+        }
     }
 
     /** Recipe Methods **/
@@ -57,23 +67,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         }
     }
 
-    public void tickMachineLoop() {
-        switch (getMachineState()) {
-            case ACTIVE:
-            case OUTPUT_FULL:
-                setMachineState(tickRecipe());
-                break;
-        }
-    }
-
-    public boolean consumeResourceForRecipe() {
-        if (energyHandler.extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
-            energyHandler.extract(activeRecipe.getPower(), false);
-            return true;
-        }
-        return false;
-    }
-
     public void consumeInputs() {
         //NOOP
     }
@@ -88,6 +81,24 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     public boolean canRecipeContinue() {
         return true; //NOOP
+    }
+
+    public boolean consumeResourceForRecipe() {
+        if (energyHandler.extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
+            energyHandler.extract(activeRecipe.getPower(), false);
+            return true;
+        }
+        return false;
+    }
+
+    /** Helpers **/
+    public void resetMachine() {
+        setMachineState(IDLE);
+        activeRecipe = null;
+    }
+
+    public long getMaxInputVoltage() {
+        return energyHandler != null ? energyHandler.getMaxInsert() : 0;
     }
 
     /** Events **/
@@ -130,6 +141,11 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     /** Setters **/
+    @Override
+    public boolean setFacing(EnumFacing side) {
+        return super.setFacing(side.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : side);
+    }
+
     @Override
     public void setMachineState(MachineState newState) {
         if (getMachineState().getOverlayId() != newState.getOverlayId() && (newState.getOverlayId() == 0 || newState.getOverlayId() == 1)) {

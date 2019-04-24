@@ -60,7 +60,7 @@ public class GregTechJEIPlugin implements IModPlugin {
                 }
             }
         }
-        REGISTRY.values().forEach(t -> registry.addRecipeCategories(new RecipeMapCategory(t.getFirst(), t.getSecond())));
+        REGISTRY.forEach((k, v) -> registry.addRecipeCategories(new RecipeMapCategory(v.getFirst(), v.getSecond())));
     }
 
     @Override
