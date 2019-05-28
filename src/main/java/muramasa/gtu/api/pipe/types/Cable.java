@@ -38,7 +38,6 @@ public class Cable extends Pipe {
 
     public static Cable Nichrome = new Cable(Materials.Nichrome, HC ? 4 : 32, HC ? 8 : 64, 3, Tier.EV);
     public static Cable Steel = new Cable(Materials.Steel, HC ? 2 : 16, HC ? 4 : 32, 2, Tier.EV);
-    public static Cable BlackSteel = new Cable(Materials.BlackSteel, HC ? 2 : 14, HC ? 4 : 28, 3, Tier.EV);
     public static Cable Titanium = new Cable(Materials.Titanium, HC ? 2 : 12, HC ? 4 : 24, 4, Tier.EV);
     public static Cable Aluminium = new Cable(Materials.Aluminium, HC ? 1 : 8, HC ? 2 : 16, 1, Tier.EV);
 

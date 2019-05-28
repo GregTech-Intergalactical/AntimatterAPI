@@ -9,41 +9,40 @@ public enum ItemFlag implements IMaterialFlag {
 
     //TODO rename to generation flag?
 
-    ORE(),
-    DUST(), //Add Dusts
-    DUSTS(),
-    DUSTT(),
-    CRUSHED(),
-    CRUSHEDC(),
-    CRUSHEDP(),
-    DUSTIP(),
-    DUSTP(),
-    INGOT(), //Add Ingots and Nuggets (Can't have Nuggets without Ingots)
-    NUGGET(),
-    BGEM(), //Add Basic Gem
-    GEM(), //Add Gem quality variants
-    LENS(),
+    GENERATE_ORE(),
+    GENERATE_DUST(), //Add Dusts
+    GENERATE_SMALL_DUST(),
+    GENERATE_TINY_DUST(),
+    GENERATE_IMPURE_DUST(),
+    GENERATE_PURE_DUST(),
+    GENERATE_CRUSHED(),
+    GENERATE_CENTRIFUGED_CRUSHED(),
+    GENERATE_PURIFIED_CRUSHED(),   
+    GENERATE_INGOT(), //Add Ingots and Nuggets (Can't have Nuggets without Ingots)
+    GENERATE_NUGGET(),
+    GENERATE_BASIC_GEM(), //Add Basic Gem
+    GENERATE_GEM_VARIANTS(), //Add Gem quality variants
+    GENERATE_LENS(),
 
-    PLATE(), //Add Plates
-    ROD(), //Add Rods
-    RODL(), //Add Long Rods
-    RING(), //Add Rings
-    BOLT(), //Add Bolts
-    FOIL(), //Add Foils
-    SCREW(), //Add Screws
-    GEAR(), //Add Gears
-    SGEAR(), //Add Small Gear
-    WIREF(), //Add Fine Wire
-    ROTOR(), //Add Rotors
-    DPLATE(), //Add Dense Plates
-    SPRING(), //Add Springs
-    HINGOT(), //Hot Ingots
-    BLOCK(), //Add Blocks
-    FRAME(), //Add Frame Blocks
-    LIQUID(), //Add Standard Fluid
-    GAS(), //Add Gas Fluid
-    PLASMA(), //Add Plasma Fluid
-    TOOLS(); //Add Tool Parts
+    GENERATE_PLATE(), //Add Plates
+    GENERATE_DENSE_PLATE(),
+    GENERATE_ROD(), //Add Rods
+    GENERATE_LONG_ROD(), //Add Long Rods
+    GENERATE_RING(), //Add Rings
+    GENERATE_FOIL(), //Add Foils
+    GENERATE_SCREW(), //Add Screws
+    GENERATE_GEAR(), //Add Gears
+    GENERATE_FINE_WIRE(), //Add Fine Wire
+    GENERATE_TURBINE_ROTOR(), //Add Rotors
+    GENERATE_SPRING(), //Add Springs
+    GENERATE_HOT_INGOT(), //Hot Ingots
+    GENERATE_BLOCK(), //Add Blocks
+    GENERATE_FRAME(), //Add Frame Blocks
+    
+    GENERATE_LIQUID(), //Add Standard Fluid
+    GENERATE_GAS(), //Add Gas Fluid
+    GENERATE_PLASMA(), //Add Plasma Fluid
+    GENERATE_TOOLS(); //Add Tool Parts
 
     private long bit;
     private ItemFlag[] subFlags;

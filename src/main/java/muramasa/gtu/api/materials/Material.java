@@ -27,7 +27,7 @@ public class Material {
     /** Element Members **/
     private Element element;
 
-    /** Solid Members **/
+    /** Ingot Members **/
     private int meltingPoint, blastFurnaceTemp;
     private boolean needsBlastFurnace;
 
@@ -61,9 +61,13 @@ public class Material {
         this.set = set;
         Materials.MATERIAL_LOOKUP.put(name, this);
     }
+    
+    public Material asDust(IMaterialFlag... flags) {
+        return asDust(0, flags);
+    }
 
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
-        add(DUST, DUSTS, DUSTT);
+        add(GENERATE_DUST, GENERATE_SMALL_DUST, GENERATE_TINY_DUST);
         add(flags);
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 0) {
@@ -72,21 +76,17 @@ public class Material {
         return this;
     }
 
-    public Material asDust(IMaterialFlag... flags) {
-        return asDust(0, flags);
-    }
-
     public Material asSolid(IMaterialFlag... flags) {
         return asSolid(0, 0, flags);
     }
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
         asDust(meltingPoint, flags);
-        add(INGOT, NUGGET, BLOCK, LIQUID);
+        add(GENERATE_INGOT, GENERATE_NUGGET, GENERATE_BLOCK, GENERATE_LIQUID); //TODO: Shall we generate blocks for every solid?
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
-            add(HINGOT);
+            add(GENERATE_HOT_INGOT);
         }
         return this;
     }
@@ -103,17 +103,18 @@ public class Material {
 
     public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
         asDust(flags);
-        add(BGEM, BLOCK);
+        add(GENERATE_BASIC_GEM, GENERATE_BLOCK);
         if (transparent) {
             this.transparent = true;
-            add(PLATE, LENS);
+            add(GENERATE_PLATE, GENERATE_LENS);
         }
         return this;
     }
 
+    //TODO: Shall we do gem variants, at all?
     public Material asGem(boolean transparent, IMaterialFlag... flags) {
         asGemBasic(transparent, flags);
-        add(GEM);
+        add(GENERATE_GEM_VARIANTS);
         return this;
     }
 
@@ -122,7 +123,7 @@ public class Material {
     }
 
     public Material asFluid(int fuelPower) {
-        add(LIQUID);
+        add(GENERATE_LIQUID);
         this.fuelPower = fuelPower;
         return this;
     }
@@ -132,7 +133,7 @@ public class Material {
     }
 
     public Material asGas(int fuelPower) {
-        add(GAS);
+        add(GENERATE_GAS);
         this.fuelPower = fuelPower;
         return this;
     }
@@ -143,15 +144,15 @@ public class Material {
 
     public Material asPlasma(int fuelPower) {
         asGas(fuelPower);
-        add(PLASMA);
+        add(GENERATE_PLASMA);
         return this;
     }
 
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
-        if (has(INGOT)) {
-            add(TOOLS, PLATE, ROD, BOLT);
-        } else if (has(BGEM)) {
-            add(TOOLS, ROD);
+        if (has(GENERATE_INGOT)) {
+            add(GENERATE_TOOLS, GENERATE_PLATE, GENERATE_ROD, GENERATE_SCREW);
+        } else if (has(GENERATE_BASIC_GEM)) {
+            add(GENERATE_TOOLS, GENERATE_ROD);
         }
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
@@ -174,8 +175,8 @@ public class Material {
     public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof ItemFlag) {
-                if (flag == ORE) {
-                    add(CRUSHED, CRUSHEDP, CRUSHEDC, DUSTIP, DUSTP);
+                if (flag == GENERATE_ORE) {
+                    add(GENERATE_CRUSHED, GENERATE_PURIFIED_CRUSHED, GENERATE_CENTRIFUGED_CRUSHED, GENERATE_IMPURE_DUST, GENERATE_PURE_DUST, GENERATE_DUST);
                 }
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
@@ -522,9 +523,10 @@ public class Material {
         return MaterialItem.get(Prefix.Rod, this, amount);
     }
 
+    /*
     public ItemStack getBolt(int amount) {
         return MaterialItem.get(Prefix.Bolt, this, amount);
-    }
+    }*/
 
     public ItemStack getScrew(int amount) {
         return MaterialItem.get(Prefix.Screw, this, amount);
@@ -534,25 +536,27 @@ public class Material {
         return MaterialItem.get(Prefix.Ring, this, amount);
     }
 
+    /*
     public ItemStack getSpring(int amount) {
         return MaterialItem.get(Prefix.Spring, this, amount);
-    }
+    }*/
 
     public ItemStack getWireF(int amount) {
         return MaterialItem.get(Prefix.WireFine, this, amount);
     }
 
-    public ItemStack getRotor(int amount) {
-        return MaterialItem.get(Prefix.Rotor, this, amount);
+    public ItemStack getTurbineRotor(int amount) {
+        return MaterialItem.get(Prefix.TurbineRotor, this, amount);
     }
 
     public ItemStack getGear(int amount) {
         return MaterialItem.get(Prefix.Gear, this, amount);
     }
 
+    /*
     public ItemStack getGearS(int amount) {
         return MaterialItem.get(Prefix.GearSmall, this, amount);
-    }
+    }*/
 
     public ItemStack getLens(int amount) {
         return MaterialItem.get(Prefix.Lens, this, amount);
