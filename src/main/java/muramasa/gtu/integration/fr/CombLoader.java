@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import java.util.Arrays;
 
 import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.materials.ItemFlag.GENERATE_LIQUID;
+import static muramasa.gtu.api.materials.GenerationFlag.LIQUID;
 
 public class CombLoader {
 
@@ -214,7 +214,7 @@ public class CombLoader {
             if (materials.length == 0) return;
 //            FluidStack output =  ? materials[0].getByProducts().get(0).getLiquid(144) : new FluidStack[0];
             RB.get(Machines.CHEMICAL_REACTOR).ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedP(4) : materials[0].getCrushedP(4));
-            if (!materials[0].getByProducts().isEmpty() && materials[0].getByProducts().get(0).has(GENERATE_LIQUID)) {
+            if (!materials[0].getByProducts().isEmpty() && materials[0].getByProducts().get(0).has(LIQUID)) {
                 RB.fo(materials[0].getByProducts().get(0).getLiquid(144)).add(96, 24);
             }
             RB.add(96, 24);

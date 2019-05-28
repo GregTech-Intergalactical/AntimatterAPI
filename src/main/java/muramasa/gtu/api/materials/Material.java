@@ -11,7 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 
-import static muramasa.gtu.api.materials.ItemFlag.*;
+import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
 
 public class Material {
@@ -67,7 +67,7 @@ public class Material {
     }
 
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
-        add(GENERATE_DUST, GENERATE_SMALL_DUST, GENERATE_TINY_DUST);
+        add(DUST, SMALL_DUST, TINY_DUST);
         add(flags);
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 0) {
@@ -82,11 +82,11 @@ public class Material {
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
         asDust(meltingPoint, flags);
-        add(GENERATE_INGOT, GENERATE_NUGGET, GENERATE_BLOCK, GENERATE_LIQUID); //TODO: Shall we generate blocks for every solid?
+        add(INGOT, NUGGET, BLOCK, LIQUID); //TODO: Shall we generate blocks for every solid?
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
-            add(GENERATE_HOT_INGOT);
+            add(HOT_INGOT);
         }
         return this;
     }
@@ -103,10 +103,10 @@ public class Material {
 
     public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
         asDust(flags);
-        add(GENERATE_BASIC_GEM, GENERATE_BLOCK);
+        add(BASIC_GEM, BLOCK);
         if (transparent) {
             this.transparent = true;
-            add(GENERATE_PLATE, GENERATE_LENS);
+            add(PLATE, LENS);
         }
         return this;
     }
@@ -114,7 +114,7 @@ public class Material {
     //TODO: Shall we do gem variants, at all?
     public Material asGem(boolean transparent, IMaterialFlag... flags) {
         asGemBasic(transparent, flags);
-        add(GENERATE_GEM_VARIANTS);
+        add(GEM_VARIANTS);
         return this;
     }
 
@@ -123,7 +123,7 @@ public class Material {
     }
 
     public Material asFluid(int fuelPower) {
-        add(GENERATE_LIQUID);
+        add(LIQUID);
         this.fuelPower = fuelPower;
         return this;
     }
@@ -133,7 +133,7 @@ public class Material {
     }
 
     public Material asGas(int fuelPower) {
-        add(GENERATE_GAS);
+        add(GAS);
         this.fuelPower = fuelPower;
         return this;
     }
@@ -144,15 +144,15 @@ public class Material {
 
     public Material asPlasma(int fuelPower) {
         asGas(fuelPower);
-        add(GENERATE_PLASMA);
+        add(PLASMA);
         return this;
     }
 
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
-        if (has(GENERATE_INGOT)) {
-            add(GENERATE_TOOLS, GENERATE_PLATE, GENERATE_ROD, GENERATE_SCREW);
-        } else if (has(GENERATE_BASIC_GEM)) {
-            add(GENERATE_TOOLS, GENERATE_ROD);
+        if (has(INGOT)) {
+            add(TOOLS, PLATE, ROD, SCREW);
+        } else if (has(BASIC_GEM)) {
+            add(TOOLS, ROD);
         }
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
@@ -163,7 +163,7 @@ public class Material {
 
     public boolean has(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 if ((itemMask & flag.getBit()) == 0) return false;
             } else if (flag instanceof RecipeFlag) {
                 if ((recipeMask & flag.getBit()) == 0) return false;
@@ -174,9 +174,9 @@ public class Material {
 
     public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
-                if (flag == GENERATE_ORE) {
-                    add(GENERATE_CRUSHED, GENERATE_PURIFIED_CRUSHED, GENERATE_CENTRIFUGED_CRUSHED, GENERATE_IMPURE_DUST, GENERATE_PURE_DUST, GENERATE_DUST);
+            if (flag instanceof GenerationFlag) {
+                if (flag == ORE) {
+                    add(CRUSHED, PURIFIED_CRUSHED, CENTRIFUGED_CRUSHED, IMPURE_DUST, PURE_DUST, DUST);
                 }
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
@@ -188,7 +188,7 @@ public class Material {
 
     public void remove(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 itemMask &= ~flag.getBit();
             } else if (flag instanceof RecipeFlag) {
                 recipeMask &= ~flag.getBit();

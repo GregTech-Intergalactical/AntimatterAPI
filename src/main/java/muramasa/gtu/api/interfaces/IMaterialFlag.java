@@ -1,6 +1,6 @@
 package muramasa.gtu.api.interfaces;
 
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.RecipeFlag;
 import org.apache.commons.lang3.EnumUtils;
@@ -34,7 +34,7 @@ public interface IMaterialFlag {
     static ArrayList<IMaterialFlag> getFlagsFor(String... flagNames) {
         ArrayList<IMaterialFlag> flags = new ArrayList<>();
         for (String name : flagNames) {
-            if (EnumUtils.isValidEnum(ItemFlag.class, name.toUpperCase())) flags.add(ItemFlag.valueOf(name.toUpperCase()));
+            if (EnumUtils.isValidEnum(GenerationFlag.class, name.toUpperCase())) flags.add(GenerationFlag.valueOf(name.toUpperCase()));
             else if (EnumUtils.isValidEnum(RecipeFlag.class, name.toUpperCase())) flags.add(RecipeFlag.valueOf(name.toUpperCase()));
         }
         return flags;

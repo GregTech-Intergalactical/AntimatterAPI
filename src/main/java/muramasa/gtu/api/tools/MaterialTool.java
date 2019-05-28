@@ -9,7 +9,7 @@ import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.registration.IHasModelOverride;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
@@ -176,7 +176,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         Material primary = getPrimary(toRepair);
         if (primary != null) {
-            ItemStack mat = primary.has(ItemFlag.GENERATE_BASIC_GEM) ? primary.getGem(1) : primary.getIngot(1);
+            ItemStack mat = primary.has(GenerationFlag.BASIC_GEM) ? primary.getGem(1) : primary.getIngot(1);
             if (!mat.isEmpty() && OreDictionary.itemMatches(mat, repair, false)) return true;
         }
         return super.getIsRepairable(toRepair, repair);

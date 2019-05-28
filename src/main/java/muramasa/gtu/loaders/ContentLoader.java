@@ -5,7 +5,7 @@ import muramasa.gtu.api.data.*;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.pipe.types.Cable;
@@ -65,8 +65,8 @@ public class ContentLoader {
         FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
         Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
         Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
-        ItemFlag.GENERATE_ORE.getMats().forEach(m -> GregTechRegistry.register(new BlockOre(m)));
-        ItemFlag.GENERATE_BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
+        GenerationFlag.ORE.getMats().forEach(m -> GregTechRegistry.register(new BlockOre(m)));
+        GenerationFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
         StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }
 

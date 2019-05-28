@@ -9,7 +9,7 @@ import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
 import net.minecraftforge.fml.common.Loader;
 
-import static muramasa.gtu.api.materials.ItemFlag.GENERATE_ORE;
+import static muramasa.gtu.api.materials.GenerationFlag.ORE;
 import static muramasa.gtu.api.materials.TextureSet.METALLIC;
 
 public class GalacticraftRegistrar implements IGregTechRegistrar {
@@ -31,7 +31,7 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
             case MATERIAL:
-                MeteoricIron = new Material("meteoric_iron", 0x643250, METALLIC).asMetal(1811, 0, GENERATE_ORE).addTools(6.0f, 384, 2);
+                MeteoricIron = new Material("meteoric_iron", 0x643250, METALLIC).asMetal(1811, 0, ORE).addTools(6.0f, 384, 2);
                 MeteoricSteel = new Material("meteoric_steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
                 break;
             case MATERIAL_INIT:
