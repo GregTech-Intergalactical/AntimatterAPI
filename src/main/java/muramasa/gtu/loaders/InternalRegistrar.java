@@ -37,7 +37,7 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCoverCatalyst(ItemType.PumpEV.get(1), GregTechAPI.CoverFluid);
                 GregTechAPI.registerCoverCatalyst(ItemType.PumpIV.get(1), GregTechAPI.CoverFluid);
                 GregTechAPI.registerCoverCatalyst(ItemType.EnergyPort.get(1), GregTechAPI.CoverEnergy);
-                ItemFlag.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverCatalyst(m.getPlate(1), GregTechAPI.CoverPlate));
+                ItemFlag.GENERATE_PLATE.getMats().forEach(m -> GregTechAPI.registerCoverCatalyst(m.getPlate(1), GregTechAPI.CoverPlate));
                 GregTechAPI.registerCoverCatalyst(ItemType.ComputerMonitor.get(1), GregTechAPI.CoverMonitor);
                 break;
             case MATERIAL_INIT:

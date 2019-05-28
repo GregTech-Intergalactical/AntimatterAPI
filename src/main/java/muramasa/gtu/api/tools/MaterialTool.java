@@ -176,7 +176,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         Material primary = getPrimary(toRepair);
         if (primary != null) {
-            ItemStack mat = primary.has(ItemFlag.BGEM) ? primary.getGem(1) : primary.getIngot(1);
+            ItemStack mat = primary.has(ItemFlag.GENERATE_BASIC_GEM) ? primary.getGem(1) : primary.getIngot(1);
             if (!mat.isEmpty() && OreDictionary.itemMatches(mat, repair, false)) return true;
         }
         return super.getIsRepairable(toRepair, repair);

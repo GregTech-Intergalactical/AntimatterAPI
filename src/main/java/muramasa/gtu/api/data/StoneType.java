@@ -12,15 +12,21 @@ public class StoneType implements IGregTechObject {
 
     private static ArrayList<StoneType> generating = new ArrayList<>(), all = new ArrayList<>();
     public static int lastInternalId = 0;
+    
+    //TODO: more functionality, soundtype etc
 
     public static StoneType STONE = new StoneType("stone", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone"));
     public static StoneType GRANITE = new StoneType("granite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_granite"));
     public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_diorite"));
     public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_andesite"));
+    
+    public static StoneType SAND = new StoneType("sand", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sand"));
+    public static StoneType SANDSTONE = new StoneType("sandstone", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sandstone"));
+    
     public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new ResourceLocation("minecraft", "blocks/netherrack"));
     public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new ResourceLocation("minecraft", "blocks/end_stone"));
 
-    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GarnetRed, true, new ResourceLocation("gregtech", "blocks/stone/granite_red"));
+    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new ResourceLocation("gregtech", "blocks/stone/granite_red"));
     public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new ResourceLocation("gregtech", "blocks/stone/granite_black"));
     public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new ResourceLocation("gregtech", "blocks/stone/marble"));
     public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new ResourceLocation("gregtech", "blocks/stone/basalt"));

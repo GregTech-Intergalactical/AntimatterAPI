@@ -58,9 +58,9 @@ public class ItemFluidCell extends StandardItem {
     //TODO: Shall we eliminate JEI clutter with every filled cell being displayed?
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        ItemFlag.LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));
-        ItemFlag.GAS.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getGas())));
-        ItemFlag.PLASMA.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getPlasma())));
+        ItemFlag.GENERATE_LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));
+        ItemFlag.GENERATE_GAS.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getGas())));
+        ItemFlag.GENERATE_PLASMA.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getPlasma())));
     }
 
     @Nullable
@@ -99,12 +99,12 @@ public class ItemFluidCell extends StandardItem {
             }
         } else if (world.getBlockState(pos).getBlock() instanceof BlockStorage) {
             Material mat = ((BlockStorage) world.getBlockState(pos).getBlock()).getMaterial();
-            if (mat != null && mat.has(ItemFlag.LIQUID)) {
+            if (mat != null && mat.has(ItemFlag.GENERATE_LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             }
         } else{
             Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
-            if (mat != null && mat.has(ItemFlag.LIQUID)) {
+            if (mat != null && mat.has(ItemFlag.GENERATE_LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             } else {
                 player.setHeldItem(hand, getCellWithFluid(type, Materials.Diesel.getLiquid()));

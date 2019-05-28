@@ -18,17 +18,17 @@ public class GTFluid extends Fluid {
         super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
         setColor(mat.getRGB());
         switch (flag) {
-            case LIQUID:
+            case GENERATE_LIQUID:
                 setViscosity(1000);
                 setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
                 break;
-            case GAS:
+            case GENERATE_GAS:
                 setViscosity(200);
                 setDensity(-100);
                 setGaseous(true);
                 setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
                 break;
-            case PLASMA:
+            case GENERATE_PLASMA:
                 setViscosity(10);
                 setDensity(55536);
                 setLuminosity(15);
@@ -46,11 +46,11 @@ public class GTFluid extends Fluid {
     @Override
     public String getLocalizedName(FluidStack stack) {
         switch (flag) {
-            case LIQUID:
+            case GENERATE_LIQUID:
                 return "Molten " + Materials.get(name).getDisplayName();
-            case GAS:
+            case GENERATE_GAS:
                 return Materials.get(name).getDisplayName() + " Gas";
-            case PLASMA:
+            case GENERATE_PLASMA:
                 return Materials.get(name).getDisplayName() + " Plasma";
             default:
                 return "FLUID NAME ERROR";
@@ -59,9 +59,9 @@ public class GTFluid extends Fluid {
 
     public String getState() {
         switch (flag) {
-            case LIQUID: return "Liquid";
-            case GAS: return "Gas";
-            case PLASMA: return "Plasma";
+            case GENERATE_LIQUID: return "Liquid";
+            case GENERATE_GAS: return "Gas";
+            case GENERATE_PLASMA: return "Plasma";
             default: return "";
         }
     }
