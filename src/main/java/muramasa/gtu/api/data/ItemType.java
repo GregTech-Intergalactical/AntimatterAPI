@@ -11,6 +11,7 @@ import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Loader;
 
 import java.util.Collection;
@@ -186,6 +187,7 @@ public class ItemType implements IGregTechObject {
     public static ItemType ShapeGearSmall = new ItemType("shape_gear_small", "Shape for making Small Gears");
     public static ItemType ShapeBottle = new ItemType("shape_bottle", "Shape for making Bottles"); //TODO needed?
 
+    //TODO move to IC2+IC2C Registrar
     public static ItemType DropTin = new ItemType("drop_tin", "Source of Tin").optional(Ref.MOD_IC2, Ref.MOD_IC2C);
     public static ItemType DropLead = new ItemType("drop_lead", "Source of Lead").optional(Ref.MOD_IC2, Ref.MOD_IC2C);
     public static ItemType DropSilver = new ItemType("drop_silver", "Source of Silver").optional(Ref.MOD_IC2, Ref.MOD_IC2C);
@@ -277,7 +279,7 @@ public class ItemType implements IGregTechObject {
 
     public ItemType required(String... mods) {
         for (int i = 0; i < mods.length; i++) {
-            if (!Loader.isModLoaded(mods[i])) {
+            if (!Utils.isModLoaded(mods[i])) {
                 enabled = false;
                 break;
             }
@@ -288,7 +290,7 @@ public class ItemType implements IGregTechObject {
     public ItemType optional(String... mods) {
         enabled = false;
         for (int i = 0; i < mods.length; i++) {
-            if (Loader.isModLoaded(mods[i])) {
+            if (Utils.isModLoaded(mods[i])) {
                 enabled = true;
                 break;
             }

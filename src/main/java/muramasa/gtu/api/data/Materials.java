@@ -410,7 +410,7 @@ public class Materials {
 //        for (Material material : generated) {
 //            if (material == Blaze) {
 //                material.handleMaterial = "blaze";
-//            } /*else if (aMaterial.contains(SubTag.MAGICAL) && aMaterial.contains(SubTag.CRYSTAL) && Loader.isModLoaded(MOD_ID_TC)) {
+//            } /*else if (aMaterial.contains(SubTag.MAGICAL) && aMaterial.contains(SubTag.CRYSTAL) && Utils.isModLoaded(MOD_ID_TC)) {
 //                    aMaterial.mHandleMaterial = Thaumium;
 //                }*/ else if (material.getMass() > Element.Tc.getMass() * 2) {
 //                material.handleMaterial = Tungstensteel.;

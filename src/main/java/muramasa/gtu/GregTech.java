@@ -10,6 +10,7 @@ import muramasa.gtu.api.network.MachineNetworkEvent;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.RegistrationEvent;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.events.OreGenHandler;
 import muramasa.gtu.common.network.GuiHandler;
 import muramasa.gtu.integration.ctx.GregTechTweaker;
@@ -48,7 +49,7 @@ public class GregTech {
 
         GregTechRegistry.addRegistrar(new ForestryRegistrar());
         GregTechRegistry.addRegistrar(new GalacticraftRegistrar());
-        if (Loader.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
+        if (Utils.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
     }
 
     @Mod.EventHandler
