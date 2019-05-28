@@ -32,19 +32,30 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimpl
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemFluidCell extends StandardItem {
 
-    protected int capacity;
-
+    private int capacity;
+    @Nonnull private final ItemStack emptyStack;
+    
     public ItemFluidCell(ItemType type, int capacity) {
         super(type);
         setMaxStackSize(1);
         this.capacity = capacity;
+        this.emptyStack = type.asItemStack();
     }
 
+    public ItemFluidCell(ItemType type, int capacity, int stackSize) {
+        super(type);
+        setMaxStackSize(stackSize);
+        this.capacity = capacity;
+        this.emptyStack = type.asItemStack();
+    }
+
+    //TODO: Shall we eliminate JEI clutter with every filled cell being displayed?
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         ItemFlag.LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));

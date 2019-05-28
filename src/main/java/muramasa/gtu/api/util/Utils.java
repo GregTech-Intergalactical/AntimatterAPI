@@ -22,6 +22,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
@@ -29,6 +30,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Utils {
 
@@ -449,5 +452,16 @@ public class Utils {
 
             Ref.MC.getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, pos, Ref.MC.objectMouseOver.sideHit));
         }
+    }
+    
+    private static final ConcurrentMap<String, Boolean> isModLoadedCache = new ConcurrentHashMap<>();
+
+    public static boolean isModLoaded(String modid) {
+        if (isModLoadedCache.containsKey(modid)) {
+            return isModLoadedCache.get(modid);
+        }
+        boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
+        isModLoadedCache.put(modid, isLoaded);
+        return isLoaded;
     }
 }
