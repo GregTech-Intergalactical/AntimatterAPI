@@ -18,7 +18,7 @@ import static muramasa.gtu.api.materials.RecipeFlag.*;
 
 public class Materials {
 	
-	//TODO: Re-think about plasmas? Do we need them? And if we do, which materials?s
+	//TODO: Re-think about plasmas? Do we need them? And if we do, which materials?
 
     public static LinkedHashMap<String, Material> MATERIAL_LOOKUP = new LinkedHashMap<>();
 
@@ -35,7 +35,7 @@ public class Materials {
     public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, DENSE_PLATE, FOIL, ROD, ORE);
     public static Material Manganese = new Material("manganese", 0xfafafa, DULL, Mn).asMetal(1519, 0, ORE);
     public static Material Molybdenum = new Material("molybdenum", 0xb4b4dc, SHINY, Mo).asMetal(2896, 0, ORE).addTools(7.0F, 512, 2);
-    public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297); //TODO: Bastnasite or Monazite for Ore Form
+    public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD);
     public static Material Neutronium = new Material("neutronium", 0xfafafa, DULL, Nt).asMetal(10000, 10000, SCREW, RING, GEAR, FRAME).addTools(24.0F, 655360, 6); //TODO Vibranium
     public static Material Nickel = new Material("nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE).asPlasma();
     public static Material Osmium = new Material("osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, FINE_WIRE).addTools(16.0F, 1080, 4);
