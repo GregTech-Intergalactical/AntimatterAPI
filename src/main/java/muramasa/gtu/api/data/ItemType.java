@@ -6,7 +6,6 @@ import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
-import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -264,7 +263,7 @@ public class ItemType implements IGregTechObject {
     }
 
     public String getDisplayName() {
-        return GTLoc.get("item.standard." + getName() + ".name");
+        return Utils.trans("item.standard." + getName() + ".name");
     }
 
     public String getTooltip() {

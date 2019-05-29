@@ -29,7 +29,7 @@ public class GregTechTweaker {
     @ZenMethod
     public static CTMaterial getMaterial(String name) {
         Material material = Materials.get(name);
-        if (material == null) throw new NullPointerException("material for name " + name + " does not exist");
+        if (material == null) throw new IllegalArgumentException("material for name " + name + " does not exist");
         return new CTMaterial(material);
     }
 
@@ -53,7 +53,7 @@ public class GregTechTweaker {
     @ZenMethod
     public static CTStructureBuilder addStructure(String name) {
         Machine machine = Machines.get(name);
-        if (machine == null) throw new NullPointerException("machine for name " + name + " does not exist");
+        if (machine == null) throw new IllegalArgumentException("machine for name " + name + " does not exist");
         return new CTStructureBuilder(machine);
     }
 

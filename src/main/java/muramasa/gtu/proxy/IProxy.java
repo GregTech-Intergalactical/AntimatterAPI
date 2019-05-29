@@ -14,4 +14,6 @@ public interface IProxy {
     void postInit(FMLPostInitializationEvent e);
 
     void serverStarting(FMLServerStartingEvent e);
+
+    String trans(String unlocalized);
 }

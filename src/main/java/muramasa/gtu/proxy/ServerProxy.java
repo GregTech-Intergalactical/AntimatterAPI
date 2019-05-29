@@ -1,5 +1,6 @@
 package muramasa.gtu.proxy;
 
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -25,5 +26,10 @@ public class ServerProxy implements IProxy {
     @Override
     public void serverStarting(FMLServerStartingEvent e) {
         //NOOP
+    }
+
+    @Override
+    public String trans(String unlocalized) { //TODO server side localization?
+        return new TextComponentTranslation(unlocalized).toString();
     }
 }
