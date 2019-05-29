@@ -270,7 +270,7 @@ public class Materials {
     public static Material Tungstate = new Material("tungstate", 0x373223, DULL).asDust(ORE).add(Tungsten, 1, Lithium, 2, Oxygen, 4);
     public static Material Uraninite = new Material("uraninite", 0x232323, METALLIC).asDust(ORE).add(Uranium, 1, Oxygen, 2);
     public static Material Uvarovite = new Material("uvarovite", 0xb4ffb4, DIAMOND).asDust().add(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12);
-    public static Material Wood = new Material("wood", 0x643200, NONE).asDust(GEAR).addTools(2.0F, 16, 0).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
+    public static Material Wood = new Material("wood", 0x643200, NONE).asDust(GEAR, ROD, PLATE).addTools(2.0F, 16, 0).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
     public static Material Stone = new Material("stone", 0xcdcdcd, ROUGH).asDust(GEAR).addTools(4.0F, 32, 1);
     public static Material Wulfenite = new Material("wulfenite", 0xff8000, DULL).asDust(ORE).add(Lead, 1, Molybdenum, 1, Oxygen, 4);
     public static Material YellowLimonite = new Material("yellow_limonite", 0xc8c800, METALLIC).asDust(ORE).add(Iron, 1, Hydrogen, 1, Oxygen, 2);
