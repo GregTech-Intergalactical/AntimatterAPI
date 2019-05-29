@@ -34,14 +34,14 @@ import org.apache.logging.log4j.Logger;
 public class GregTech {
 
     @SidedProxy(clientSide = Ref.CLIENT, serverSide = Ref.SERVER)
-    public static IProxy proxy;
+    public static IProxy PROXY;
 
     @Mod.Instance
     public static GregTech INSTANCE;
 
     public static SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Ref.MODID);
 
-    public static Logger logger;
+    public static Logger LOGGER;
 
     static {
         NETWORK.registerMessage(FluidStackMessage.FluidStackMessageHandler.class, FluidStackMessage.class, MachineNetworkEvent.FLUID.ordinal(), Side.CLIENT);
@@ -53,8 +53,8 @@ public class GregTech {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        logger = e.getModLog();
-        proxy.preInit(e);
+        LOGGER = e.getModLog();
+        PROXY.preInit(e);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
         GTCapabilities.register();
@@ -81,12 +81,12 @@ public class GregTech {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
-        proxy.init(e);
+        PROXY.init(e);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
-        proxy.postInit(e);
+        PROXY.postInit(e);
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.CRAFTING_RECIPE);
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL_RECIPE);
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.MACHINE_RECIPE);
@@ -94,6 +94,6 @@ public class GregTech {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent e) {
-        proxy.serverStarting(e);
+        PROXY.serverStarting(e);
     }
 }

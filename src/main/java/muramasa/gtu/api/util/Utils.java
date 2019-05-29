@@ -1,5 +1,6 @@
 package muramasa.gtu.api.util;
 
+import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -310,6 +311,10 @@ public class Utils {
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
         return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? toRotate.getOpposite() : toRotate;
+    }
+
+    public static String trans(String unlocalized) {
+        return GregTech.PROXY.trans(unlocalized);
     }
 
     //TODO replace with doRaytrace in block?
