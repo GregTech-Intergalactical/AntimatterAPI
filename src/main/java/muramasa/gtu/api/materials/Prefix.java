@@ -50,9 +50,6 @@ public class Prefix implements IGregTechObject {
     public static Prefix Gear = new Prefix("gear", true, GEAR);
     //public static Prefix GearSmall = new Prefix("gear_small", true, SGEAR);
     public static Prefix Lens = new Prefix("lens", true, LENS);
-    public static Prefix Cell = new Prefix("cell", true, LIQUID);
-    public static Prefix CellGas = new Prefix("cell_gas", true, GAS);
-    public static Prefix CellPlasma = new Prefix("cell_plasma", true, PLASMA);
 //    public static Prefix TurbineBlade = new Prefix("turbine_blade", true, TOOLS);
 
     private String name, namePre, namePost;
