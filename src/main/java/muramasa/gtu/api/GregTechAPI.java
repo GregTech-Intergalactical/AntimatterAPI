@@ -40,7 +40,7 @@ public class GregTechAPI {
 
     /** JEI Registry Section **/
     public static void registerJEICategory(RecipeMap map, GuiData gui) {
-        if (Loader.isModLoaded(Ref.MOD_JEI)) {
+        if (Utils.isModLoaded(Ref.MOD_JEI)) {
             GregTechJEIPlugin.registerCategory(map, gui);
         }
     }

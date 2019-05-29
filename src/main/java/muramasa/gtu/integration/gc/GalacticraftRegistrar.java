@@ -6,6 +6,7 @@ import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.RecipeFlag;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
+import muramasa.gtu.api.util.Utils;
 import net.minecraftforge.fml.common.Loader;
 
 import static muramasa.gtu.api.materials.ItemFlag.ORE;
@@ -22,7 +23,7 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
 
     @Override
     public boolean isEnabled() {
-        return Loader.isModLoaded(Ref.MOD_GC) && Loader.isModLoaded(Ref.MOD_GC_PLANETS);
+        return Utils.isModLoaded(Ref.MOD_GC) && Utils.isModLoaded(Ref.MOD_GC_PLANETS);
     }
 
 
@@ -42,7 +43,7 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
 
 //    @Override
 //    public void onMachineRecipeRegistration() {
-        /*if (Loader.isModLoaded("GalacticraftMars")) {
+        /*if (Utils.isModLoaded("GalacticraftMars")) {
             GT_ModHandler.addCraftingRecipe(ItemList.Ingot_Heavy1.get(1L, new Object[0]), GT_ModHandler.RecipeBits.NOT_REMOVABLE, new Object[]{"BhB", "CAS", "B B", 'B', OrePrefixes.bolt.get(Materials.StainlessSteel), 'C', OrePrefixes.compressed.get(Materials.Bronze), 'A', OrePrefixes.compressed.get(Materials.Aluminium), 'S', OrePrefixes.compressed.get(Materials.Steel)});
             GT_ModHandler.addCraftingRecipe(ItemList.Ingot_Heavy2.get(1L, new Object[0]), GT_ModHandler.RecipeBits.NOT_REMOVABLE, new Object[]{" BB", "hPC", " BB", 'B', OrePrefixes.bolt.get(Materials.Tungsten), 'C', OrePrefixes.compressed.get(Materials.MeteoricIron), 'P', GT_ModHandler.getModItem("GalacticraftCore", "item.heavyPlating", 1L)});
             GT_ModHandler.addCraftingRecipe(ItemList.Ingot_Heavy3.get(1L, new Object[0]), GT_ModHandler.RecipeBits.NOT_REMOVABLE, new Object[]{" BB", "hPC", " BB", 'B', OrePrefixes.bolt.get(Materials.TungstenSteel), 'C', OrePrefixes.compressed.get(Materials.Desh), 'P', GT_ModHandler.getModItem("GalacticraftMars", "item.null", 1L, 3)});
