@@ -21,20 +21,18 @@ public abstract class Cover {
 
     private int internalId;
 
-    protected ItemStack catalystUsed = ItemStack.EMPTY;
-
     public abstract String getName();
 
     public int getInternalId() {
         return internalId;
     }
 
-    public ItemStack getCatalystUsed() {
-        return catalystUsed;
-    }
-
     public final void onRegister() {
         internalId = lastInternalId++;
+    }
+
+    public ItemStack getDroppedStack() {
+        return ItemStack.EMPTY;
     }
 
     public final Cover getNewInstance(ItemStack stack) {
@@ -45,7 +43,6 @@ public abstract class Cover {
     }
 
     public Cover onPlace(ItemStack stack) {
-        catalystUsed = stack;
         return this;
     }
 
