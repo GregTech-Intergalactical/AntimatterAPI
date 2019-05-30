@@ -115,7 +115,7 @@ public class ClientProxy implements IProxy {
             Ref.MC.getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
         }
 
-        IItemColor toolItemHandler = MaterialTool::getRGB;
+        IItemColor toolItemHandler = (stack, i) -> ((MaterialTool) stack.getItem()).getRGB(stack, i);
         for (ToolType type : ToolType.values()) {
             Ref.MC.getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
         }
