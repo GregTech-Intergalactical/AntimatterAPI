@@ -2,12 +2,14 @@ package muramasa.gtu.api.cover.impl;
 
 import muramasa.gtu.GregTech;
 import muramasa.gtu.api.cover.Cover;
+import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.interfaces.IComponent;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -19,6 +21,11 @@ public class CoverMonitor extends Cover {
     @Override
     public String getName() {
         return "monitor";
+    }
+
+    @Override
+    public ItemStack getDroppedStack() {
+        return ItemType.ComputerMonitor.get(1);
     }
 
     @Override
