@@ -4,12 +4,15 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.fluid.GTFluid;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+
+import static com.google.common.collect.ImmutableMap.of;
 
 import static muramasa.gtu.api.materials.Element.*;
 import static muramasa.gtu.api.materials.GenerationFlag.*;
@@ -35,7 +38,7 @@ public class Materials {
     public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, DENSE_PLATE, FOIL, ROD, ORE);
     public static Material Manganese = new Material("manganese", 0xfafafa, DULL, Mn).asMetal(1519, 0, ORE);
     public static Material Molybdenum = new Material("molybdenum", 0xb4b4dc, SHINY, Mo).asMetal(2896, 0, ORE).addTools(7.0F, 512, 2);
-    public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD);
+    public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD); //TODO: Bastnasite or Monazite for Ore Form
     public static Material Neutronium = new Material("neutronium", 0xfafafa, DULL, Nt).asMetal(10000, 10000, SCREW, RING, GEAR, FRAME).addTools(24.0F, 655360, 6); //TODO Vibranium
     public static Material Nickel = new Material("nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE).asPlasma();
     public static Material Osmium = new Material("osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, FINE_WIRE).addTools(16.0F, 1080, 4);
@@ -270,13 +273,13 @@ public class Materials {
     public static Material Tungstate = new Material("tungstate", 0x373223, DULL).asDust(ORE).add(Tungsten, 1, Lithium, 2, Oxygen, 4);
     public static Material Uraninite = new Material("uraninite", 0x232323, METALLIC).asDust(ORE).add(Uranium, 1, Oxygen, 2);
     public static Material Uvarovite = new Material("uvarovite", 0xb4ffb4, DIAMOND).asDust().add(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12);
-    public static Material Wood = new Material("wood", 0x643200, NONE).asDust(GEAR, ROD, PLATE).addTools(2.0F, 16, 0).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
+    public static Material Wood = new Material("wood", 0x643200, NONE).asDust(GEAR, PLATE, ROD).addTools(2.0F, 16, 0).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
     public static Material Stone = new Material("stone", 0xcdcdcd, ROUGH).asDust(GEAR).addTools(4.0F, 32, 1);
     public static Material Wulfenite = new Material("wulfenite", 0xff8000, DULL).asDust(ORE).add(Lead, 1, Molybdenum, 1, Oxygen, 4);
     public static Material YellowLimonite = new Material("yellow_limonite", 0xc8c800, METALLIC).asDust(ORE).add(Iron, 1, Hydrogen, 1, Oxygen, 2);
     //public static Material WoodSealed = new Material("sealed_wood", 0x502800, NONE).asDust().addTools(3.0F, 24, 0).add(Wood, 1); TODO: Perhaps with IE integration or when we have some utility stuff
-    public static Material Blaze = new Material("blaze", 0xffc800, NONE).asDust().add(DarkAsh, 1, Sulfur, 1/*, Magic, 1*/);
-    public static Material Flint = new Material("flint", 0x002040, FLINT).asDust().addTools(2.5F, 64, 1).add(SiliconDioxide, 1);
+    public static Material Blaze = new Material("blaze", 0xffc800, NONE).asDust().addTools(3.0F, 64, 1, of(Enchantments.FIRE_ASPECT, 2, Enchantments.SHARPNESS, 1)).add(DarkAsh, 1, Sulfur, 1/*, Magic, 1*/);
+    public static Material Flint = new Material("flint", 0x002040, FLINT).asDust().addTools(2.0F, 48, 1, of(Enchantments.FIRE_ASPECT, 1)).add(SiliconDioxide, 1);
     public static Material Marble = new Material("marble", 0xc8c8c8, NONE).asDust().add(Magnesium, 1, Calcite, 7);
     public static Material PotassiumFeldspar = new Material("potassium_feldspar", 0x782828, FINE).asDust().add(Potassium, 1, Aluminium, 1, Silicon, 3, Oxygen, 8);
     public static Material Biotite = new Material("biotite", 0x141e14, METALLIC).asDust().add(Potassium, 1, Magnesium, 3, Aluminium, 3, Fluorine, 2, Silicon, 3, Oxygen, 10);
@@ -303,8 +306,8 @@ public class Materials {
     /** Gems **/
     //public static Material CertusQuartz = new Material("certus_quartz", 0xd2d2e6, QUARTZ).asGemBasic(false, PLATE, ORE).addTools(5.0F, 32, 1); TODO: Only when AE2 is loaded
     public static Material Dilithium = new Material("dilithium", 0xfffafa, DIAMOND).asGemBasic(true);
-    public static Material NetherQuartz = new Material("nether_quartz", 0xe6d2d2, QUARTZ).asGemBasic(false, ORE).addTools(1.0F, 32, 1);
-    public static Material NetherStar = new Material("nether_star", 0xffffff, NONE).asGemBasic(false).addTools(6.0F, 3620, 4); //Made Nether Stars usable
+    public static Material NetherQuartz = new Material("nether_quartz", 0xe6d2d2, QUARTZ).asGemBasic(false, ORE);
+    public static Material NetherStar = new Material("nether_star", 0xffffff, NONE).asGemBasic(false).addTools(6.0F, 3620, 4, of(Enchantments.SILK_TOUCH, 1)); //Made Nether Stars usable
     public static Material Quartzite = new Material("quartzite", 0xd2e6d2, QUARTZ).asGemBasic(false, ORE).add(Silicon, 1, Oxygen, 2);
 
     //Brittle Gems
@@ -331,8 +334,8 @@ public class Materials {
     public static Material EnderPearl = new Material("enderpearl", 0x6cdcc8, SHINY).asGemBasic(false).add(Beryllium, 1, Potassium, 4, Nitrogen, 5/*, Magic, 6*/);
     public static Material EnderEye = new Material("endereye", 0xa0fae6, SHINY).asGemBasic(true, ROD, PLATE).add(EnderPearl, 1, Blaze, 1);
     public static Material Phosphorus = new Material("phosphorus", 0xffff00, FLINT).asGemBasic(false, ORE).add(Calcium, 3, Phosphate, 2);
-    public static Material GarnetRed = new Material("red_garnet", 0xc85050, RUBY).asGemBasic(true).addTools(7.0F, 128, 2).add(Pyrope, 3, Almandine, 5, Spessartine, 8);
-    public static Material GarnetYellow = new Material("yellow_garnet", 0xc8c850, RUBY).asGemBasic(true).addTools(7.0F, 128, 2).add(Andradite, 5, Grossular, 8, Uvarovite, 3);
+    public static Material GarnetRed = new Material("red_garnet", 0xc85050, RUBY).asGemBasic(true).add(Pyrope, 3, Almandine, 5, Spessartine, 8);
+    public static Material GarnetYellow = new Material("yellow_garnet", 0xc8c850, RUBY).asGemBasic(true).add(Andradite, 5, Grossular, 8, Uvarovite, 3);
     //public static Material Monazite = new Material("monazite", 0x324632, DIAMOND).asGemBasic(false, ORE).add(RareEarth, 1, Phosphate, 1);
 
     /** **/

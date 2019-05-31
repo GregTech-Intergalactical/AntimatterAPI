@@ -1,12 +1,13 @@
 package muramasa.gtu.api.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.texture.Texture;
+import net.minecraft.block.SoundType;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class StoneType implements IGregTechObject {
 
@@ -20,8 +21,10 @@ public class StoneType implements IGregTechObject {
     public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_diorite"));
     public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_andesite"));
     
-    public static StoneType SAND = new StoneType("sand", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sand"));
-    public static StoneType SANDSTONE = new StoneType("sandstone", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sandstone"));
+    public static StoneType GRAVEL = new StoneType("gravel", Materials.Flint, false, new ResourceLocation("minecraft", "blocks/gravel"), SoundType.GROUND);
+    
+    public static StoneType SAND = new StoneType("sand", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sand"), SoundType.SAND);
+    public static StoneType SANDSTONE = new StoneType("sandstone", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sandstone_normal"));
     
     public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new ResourceLocation("minecraft", "blocks/netherrack"));
     public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new ResourceLocation("minecraft", "blocks/end_stone"));
@@ -35,16 +38,22 @@ public class StoneType implements IGregTechObject {
     private Material material;
     private ResourceLocation loc;
     private int internalId;
-
-    public StoneType(String name, Material material, boolean generate, ResourceLocation loc) {
+    private SoundType soundType;
+    
+    public StoneType(String name, Material material, boolean generate, ResourceLocation loc, SoundType soundType) {
         this.name = name;
         this.material = material;
         this.loc = loc;
         this.internalId = lastInternalId++;
+        this.soundType = soundType;
         if (generate) {
             generating.add(this);
         }
         all.add(this);
+    }
+    
+    public StoneType(String name, Material material, boolean generate, ResourceLocation loc) {
+    	this(name, material, generate, loc, SoundType.STONE);
     }
 
     @Override
@@ -62,6 +71,10 @@ public class StoneType implements IGregTechObject {
 
     public int getInternalId() {
         return internalId;
+    }
+    
+    public SoundType getSoundType() {
+    	return soundType;
     }
 
     public static Collection<StoneType> getGenerating() {

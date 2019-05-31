@@ -16,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -164,8 +165,15 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
+        return true;
     }
+    
+    //TODO: Correspond Item Enchantability to Material mining level
+    @Override
+    public int getItemEnchantability() {
+        return 10;
+    }
+
 
     @Override
     public String getToolMaterialName() {
@@ -257,8 +265,12 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
         return can;
     }
 
+    //TODO: Move setEnchantments to another method. We can handle enchantments based on what ToolType it is too
     public ItemStack get(Material primary, Material secondary) {
         ItemStack stack = new ItemStack(this);
+        if (primary != null && !primary.getEnchantments().isEmpty()) {
+        	EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+        }
         validateTag(stack);
         NBTTagCompound tag = getTag(stack);
         tag.setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, primary != null ? primary.getName() : "NULL");
@@ -269,6 +281,9 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     public ItemStack get(Material primary, Material secondary, long... electricStats) {
         ItemStack stack = get(primary, secondary);
+        if (primary != null && !primary.getEnchantments().isEmpty()) {
+        	EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+        }
         if (type.isPowered() && electricStats.length >= 1) {
             NBTTagCompound tag = getTag(stack);
             tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, electricStats[0]); //TODO temp, should be 0
