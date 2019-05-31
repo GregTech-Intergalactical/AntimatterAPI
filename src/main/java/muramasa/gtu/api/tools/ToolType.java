@@ -28,11 +28,11 @@ public enum ToolType implements IGregTechObject {
     CROWBAR("Crowbar", "Removes Covers", null, Sets.newHashSet("crowbar"), Sounds.BREAK, false, 0, 2.0f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
     MORTAR("Mortar", "Grinds Ingots into Dust", null, Sets.newHashSet("mortar"), null, false, 0, 2.0f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
     WIRE_CUTTER("Wire Cutter", "", null, Sets.newHashSet("wire_cutter"), null, false, 0, 1.25f, -2.4f, 1.0f, 1.0f, 100, 200, 400),
-    SCOOP("Scoop", "Harvests Bees from Hives", null, Sets.newHashSet("scoop"), null, false, 0, 1.0f, -3.0f, 1.0f, 1.0f, 200, 200, 200),
-    BRANCH_CUTTER("Branch Cutter", "", null, Sets.newHashSet("branch_cutter"), null, false, 0, 2.5f, -3.0f, 0.25f, 0.25f, 100, 200, 800),
-    UNIVERSAL_SPADE("Universal Spade", "", null, Sets.newHashSet("shovel"), null, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 100, 400),
+    SCOOP("Scoop", "Harvests Bees from Hives", null, Sets.newHashSet("scoop"), null, false, 0, 1.0f, -3.0f, 1.0f, 1.0f, 200, 200, 200), //TODO: Forestry
+    BRANCH_CUTTER("Branch Cutter", "", null, Sets.newHashSet("branch_cutter"), null, false, 0, 2.5f, -3.0f, 0.25f, 0.25f, 100, 200, 800), //TODO: Merge functionality with axe?
+    UNIVERSAL_SPADE("Universal Spade", "", null, Sets.newHashSet("shovel"), null, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 100, 400), //TODO: Universal tool? Rename?
     KNIFE("Knife", "", null, Sets.newHashSet("knife", "sword"), null, false, 0, 2.0f, -2.4f, 0.5f, 1.0f, 100, 200, 100),
-    SCYTHE("Scythe", "", null, Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800),
+    SCYTHE("Scythe", "", null, Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800), //TODO: Sort of a dupe with BRANCH_CUTTER
     PLUNGER("Plunger", "", null, Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
     DRILL("Electric Drill", "", null, Sets.newHashSet("drill", "pickaxe"), Sounds.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
     CHAINSAW("Electric Chainsaw", "", ToolChainsaw.class, Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 6.0f, 4.0f, 800, 3200, 12800),
