@@ -167,9 +167,8 @@ public class Material {
     }
     
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-    	addTools(toolSpeed, toolDurability, toolQuality);
     	this.toolEnchantment = toolEnchantment;
-    	return this;
+    	return addTools(toolSpeed, toolDurability, toolQuality);
     }
 
     public boolean has(IMaterialFlag... flags) {
@@ -577,6 +576,7 @@ public class Material {
         return MaterialItem.get(Prefix.Lens, this, amount);
     }
 
+    /*
     public ItemStack getCell(int amount) {
         return MaterialItem.get(Prefix.Cell, this, amount);
     }
@@ -587,7 +587,7 @@ public class Material {
 
     public ItemStack getCellP(int amount) {
         return MaterialItem.get(Prefix.CellPlasma, this, amount);
-    }
+    }*/
 
     public ItemStack getOre(int amount) {
         return new ItemStack(GregTechRegistry.getOre(this), amount);
