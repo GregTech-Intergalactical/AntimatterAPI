@@ -2,8 +2,12 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.cover.impl.CoverEnergy;
+import muramasa.gtu.api.cover.impl.CoverFluid;
+import muramasa.gtu.api.cover.impl.CoverItem;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.ItemFlag;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
@@ -26,17 +30,17 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCover(GregTechAPI.CoverPlate);
                 GregTechAPI.registerCover(GregTechAPI.CoverMonitor);
 
-                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorLV.get(1), GregTechAPI.CoverItem);
-                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorMV.get(1), GregTechAPI.CoverItem);
-                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorHV.get(1), GregTechAPI.CoverItem);
-                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorEV.get(1), GregTechAPI.CoverItem);
-                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorIV.get(1), GregTechAPI.CoverItem);
-                GregTechAPI.registerCoverCatalyst(ItemType.PumpLV.get(1), GregTechAPI.CoverFluid);
-                GregTechAPI.registerCoverCatalyst(ItemType.PumpMV.get(1), GregTechAPI.CoverFluid);
-                GregTechAPI.registerCoverCatalyst(ItemType.PumpHV.get(1), GregTechAPI.CoverFluid);
-                GregTechAPI.registerCoverCatalyst(ItemType.PumpEV.get(1), GregTechAPI.CoverFluid);
-                GregTechAPI.registerCoverCatalyst(ItemType.PumpIV.get(1), GregTechAPI.CoverFluid);
-                GregTechAPI.registerCoverCatalyst(ItemType.EnergyPort.get(1), GregTechAPI.CoverEnergy);
+                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorLV.get(1), new CoverItem(Tier.LV));
+                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorMV.get(1), new CoverItem(Tier.MV));
+                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorHV.get(1), new CoverItem(Tier.HV));
+                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorEV.get(1), new CoverItem(Tier.EV));
+                GregTechAPI.registerCoverCatalyst(ItemType.ConveyorIV.get(1), new CoverItem(Tier.IV));
+                GregTechAPI.registerCoverCatalyst(ItemType.PumpLV.get(1), new CoverFluid(Tier.LV));
+                GregTechAPI.registerCoverCatalyst(ItemType.PumpMV.get(1), new CoverFluid(Tier.MV));
+                GregTechAPI.registerCoverCatalyst(ItemType.PumpHV.get(1), new CoverFluid(Tier.HV));
+                GregTechAPI.registerCoverCatalyst(ItemType.PumpEV.get(1), new CoverFluid(Tier.EV));
+                GregTechAPI.registerCoverCatalyst(ItemType.PumpIV.get(1), new CoverFluid(Tier.IV));
+                GregTechAPI.registerCoverCatalyst(ItemType.EnergyPort.get(1), new CoverEnergy(Tier.LV)); //TODO Tiered energy ports?
                 ItemFlag.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverCatalyst(m.getPlate(1), GregTechAPI.CoverPlate));
                 GregTechAPI.registerCoverCatalyst(ItemType.ComputerMonitor.get(1), GregTechAPI.CoverMonitor);
                 break;

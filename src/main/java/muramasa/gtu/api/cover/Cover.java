@@ -35,11 +35,9 @@ public abstract class Cover {
         return ItemStack.EMPTY;
     }
 
-    public final Cover getNewInstance(ItemStack stack) {
-        int id = internalId;
-        Cover cover = onPlace(stack);
-        cover.internalId = id;
-        return cover;
+    public final Cover onNewInstance(ItemStack stack, int newId) {
+        internalId = newId;
+        return onPlace(stack);
     }
 
     public Cover onPlace(ItemStack stack) {
@@ -60,11 +58,11 @@ public abstract class Cover {
     }
 
     public boolean isEqual(Cover cover) {
-        return internalId == cover.getInternalId();
+        return getName().equals(cover.getName());
     }
 
     public boolean isEmpty() {
-        return internalId == GregTechAPI.CoverNone.internalId;
+        return getName().equals(GregTechAPI.CoverNone.getName());
     }
 
     public Texture[] getTextures() {
