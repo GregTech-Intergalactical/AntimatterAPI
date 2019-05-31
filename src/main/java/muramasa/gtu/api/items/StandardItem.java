@@ -5,9 +5,6 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.gui.SlotType;
-import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -70,7 +67,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            tooltip.add("" + Machines.HATCH_FLUID_O.getGui().getSlots(SlotType.FL_OUT, Tier.UV).size());
+            GregTechAPI.getRegisteredCovers().forEach(c -> tooltip.add(c.getName() + " - " + c.getInternalId()));
         }
     }
 

@@ -8,6 +8,7 @@ import muramasa.gtu.api.cover.impl.*;
 import muramasa.gtu.api.data.Casing;
 import muramasa.gtu.api.data.Coil;
 import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.recipe.RecipeMap;
@@ -49,11 +50,12 @@ public class GregTechAPI {
     private static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
     private static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
 
+    /** IMPORTANT: These should only be used to compare instances. **/
     public static Cover CoverNone = new CoverNone();
     public static Cover CoverPlate = new CoverPlate();
-    public static Cover CoverItem = new CoverItem();
-    public static Cover CoverFluid = new CoverFluid();
-    public static Cover CoverEnergy = new CoverEnergy();
+    public static Cover CoverItem = new CoverItem(Tier.LV);
+    public static Cover CoverFluid = new CoverFluid(Tier.LV);
+    public static Cover CoverEnergy = new CoverEnergy(Tier.LV);
     public static Cover CoverMonitor = new CoverMonitor();
 
     /**
@@ -88,7 +90,7 @@ public class GregTechAPI {
         if (coverHandler == null) return false;
         Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
         if (cover == null) return false;
-        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.getNewInstance(Utils.ca(1, stack)))) {
+        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack), getCover(cover.getName()).getInternalId()))) {
             stack.shrink(1);
             return true;
         }

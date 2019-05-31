@@ -11,7 +11,7 @@ public class MachineCoverHandler extends CoverHandler {
         //TODO add valid covers to Machine class
         super(tile, GregTechAPI.CoverPlate, GregTechAPI.CoverItem, GregTechAPI.CoverFluid, GregTechAPI.CoverEnergy);
         covers = new Cover[] {
-            GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverItem, GregTechAPI.CoverNone, GregTechAPI.CoverNone
+            GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone
         };
     }
 
