@@ -5,11 +5,14 @@ import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.util.GTLoc;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+
+import com.google.common.collect.ImmutableMap;
 
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
@@ -42,6 +45,7 @@ public class Material {
     private float toolSpeed;
     private int toolDurability, toolQuality;
     private Material handleMaterial;
+    private ImmutableMap<Enchantment, Integer> toolEnchantment;
 
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
@@ -158,7 +162,14 @@ public class Material {
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
         this.handleMaterial = this;
+        this.toolEnchantment = ImmutableMap.of();
         return this;
+    }
+    
+    public Material addTools(float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+    	addTools(toolSpeed, toolDurability, toolQuality);
+    	this.toolEnchantment = toolEnchantment;
+    	return this;
     }
 
     public boolean has(IMaterialFlag... flags) {
@@ -320,6 +331,10 @@ public class Material {
 
     public int getToolQuality() {
         return toolQuality;
+    }
+    
+    public ImmutableMap getEnchantments() {
+    	return toolEnchantment;
     }
 
     public Material getHandleMaterial() {
