@@ -56,7 +56,6 @@ public class GregTechAPI {
     public static Cover CoverItem = new CoverItem(Tier.LV);
     public static Cover CoverFluid = new CoverFluid(Tier.LV);
     public static Cover CoverEnergy = new CoverEnergy(Tier.LV);
-    public static Cover CoverMonitor = new CoverMonitor();
 
     /**
      * Registers a cover behaviour. This must be done during preInit.

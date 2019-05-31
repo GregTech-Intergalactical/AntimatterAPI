@@ -28,7 +28,6 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCover(GregTechAPI.CoverFluid);
                 GregTechAPI.registerCover(GregTechAPI.CoverEnergy);
                 GregTechAPI.registerCover(GregTechAPI.CoverPlate);
-                GregTechAPI.registerCover(GregTechAPI.CoverMonitor);
 
                 GregTechAPI.registerCoverCatalyst(ItemType.ConveyorLV.get(1), new CoverItem(Tier.LV));
                 GregTechAPI.registerCoverCatalyst(ItemType.ConveyorMV.get(1), new CoverItem(Tier.MV));
@@ -42,7 +41,6 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCoverCatalyst(ItemType.PumpIV.get(1), new CoverFluid(Tier.IV));
                 GregTechAPI.registerCoverCatalyst(ItemType.EnergyPort.get(1), new CoverEnergy(Tier.LV)); //TODO Tiered energy ports?
                 ItemFlag.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverCatalyst(m.getPlate(1), GregTechAPI.CoverPlate));
-                GregTechAPI.registerCoverCatalyst(ItemType.ComputerMonitor.get(1), GregTechAPI.CoverMonitor);
                 break;
             case MATERIAL_INIT:
                 Materials.init();
