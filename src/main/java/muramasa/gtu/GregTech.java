@@ -16,6 +16,7 @@ import muramasa.gtu.common.network.GuiHandler;
 import muramasa.gtu.integration.ctx.GregTechTweaker;
 import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
+import muramasa.gtu.integration.top.TheOneProbePlugin;
 import muramasa.gtu.loaders.ContentLoader;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraftforge.common.MinecraftForge;
@@ -83,6 +84,7 @@ public class GregTech {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         PROXY.init(e);
+        if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
     }
 
     @Mod.EventHandler
