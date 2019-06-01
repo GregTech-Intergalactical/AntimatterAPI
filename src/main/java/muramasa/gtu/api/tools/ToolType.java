@@ -33,7 +33,7 @@ public enum ToolType implements IGregTechObject {
     UNIVERSAL_SPADE("Universal Spade", "", null, Sets.newHashSet("shovel"), null, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 100, 400), //TODO: Universal tool? Rename?
     KNIFE("Knife", "", null, Sets.newHashSet("knife", "sword"), null, false, 0, 2.0f, -2.4f, 0.5f, 1.0f, 100, 200, 100),
     SCYTHE("Scythe", "", null, Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800), //TODO: Sort of a dupe with BRANCH_CUTTER
-    PLUNGER("Plunger", "", null, Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
+    PLUNGER("Plunger", "", ToolPlunger.class, Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
     DRILL("Electric Drill", "", null, Sets.newHashSet("drill", "pickaxe"), Sounds.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
     CHAINSAW("Electric Chainsaw", "", ToolChainsaw.class, Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 6.0f, 4.0f, 800, 3200, 12800),
     WRENCH_P("Electric Wrench", "", null, Sets.newHashSet("wrench"), Sounds.WRENCH, true, 1, 2.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
