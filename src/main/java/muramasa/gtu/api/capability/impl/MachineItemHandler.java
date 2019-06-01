@@ -24,20 +24,20 @@ public class MachineItemHandler {
         inputHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.IT_IN, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentUpdateType.ITEM_INPUT, slot, stacks.get(slot).isEmpty());
+                tile.onContentsChanged(ContentUpdateType.ITEM_INPUT, slot);
             }
         };
         outputHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.IT_OUT, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentUpdateType.ITEM_OUTPUT, slot, stacks.get(slot).isEmpty());
+                tile.onContentsChanged(ContentUpdateType.ITEM_OUTPUT, slot);
             }
         };
         if (tile.getType().hasFlag(MachineFlag.FLUID)) {
             cellHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.CELL_IN, tile.getTier()).size() + tile.getType().getGui().getSlots(SlotType.CELL_OUT, tile.getTier()).size()) {
                 @Override
                 protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(ContentUpdateType.ITEM_CELL, slot, stacks.get(slot).isEmpty());
+                    tile.onContentsChanged(ContentUpdateType.ITEM_CELL, slot);
                 }
             };
         }
