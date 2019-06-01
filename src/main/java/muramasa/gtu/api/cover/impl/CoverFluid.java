@@ -1,9 +1,17 @@
 package muramasa.gtu.api.cover.impl;
 
 import muramasa.gtu.api.cover.Cover;
-import net.minecraft.tileentity.TileEntity;
+import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.machines.Tier;
+import net.minecraft.item.ItemStack;
 
 public class CoverFluid extends Cover {
+
+    protected Tier tier;
+
+    public CoverFluid(Tier tier) {
+        this.tier = tier;
+    }
 
     @Override
     public String getName() {
@@ -11,7 +19,14 @@ public class CoverFluid extends Cover {
     }
 
     @Override
-    public void onUpdate(TileEntity tile) {
-        //TODO
+    public ItemStack getDroppedStack() {
+        switch (tier.getName()) {
+            case "lv": return ItemType.PumpLV.get(1);
+            case "mv": return ItemType.PumpMV.get(1);
+            case "hv": return ItemType.PumpHV.get(1);
+            case "ev": return ItemType.PumpEV.get(1);
+            case "iv": return ItemType.PumpIV.get(1);
+            default: return ItemType.PumpLV.get(1);
+        }
     }
 }

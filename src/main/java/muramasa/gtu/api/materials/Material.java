@@ -5,6 +5,7 @@ import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import net.minecraft.enchantment.Enchantment;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -239,7 +240,7 @@ public class Material {
     }
 
     public String getDisplayName() {
-        return GTLoc.get("material." + getName() + ".name");
+        return Utils.trans("material." + getName() + ".name");
     }
 
     public int getRGB() {

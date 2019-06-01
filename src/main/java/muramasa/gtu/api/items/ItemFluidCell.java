@@ -1,6 +1,7 @@
 package muramasa.gtu.api.items;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.capability.impl.FluidHandlerItemCell;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
@@ -28,7 +29,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -38,20 +38,22 @@ import java.util.List;
 
 public class ItemFluidCell extends StandardItem {
 
-    private int capacity;
+    private int capacity, maxTemp;
     @Nonnull private final ItemStack emptyStack;
     
-    public ItemFluidCell(ItemType type, int capacity) {
+    public ItemFluidCell(ItemType type, int capacity, int maxTemp) {
         super(type);
         setMaxStackSize(1);
         this.capacity = capacity;
+        this.maxTemp = maxTemp;
         this.emptyStack = type.asItemStack();
     }
 
-    public ItemFluidCell(ItemType type, int capacity, int stackSize) {
+    public ItemFluidCell(ItemType type, int capacity, int maxTemp, int stackSize) {
         super(type);
         setMaxStackSize(stackSize);
         this.capacity = capacity;
+        this.maxTemp = maxTemp;
         this.emptyStack = type.asItemStack();
     }
 
@@ -66,7 +68,7 @@ public class ItemFluidCell extends StandardItem {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        return new FluidHandlerItemStackSimple(stack, capacity);
+        return new FluidHandlerItemCell(stack, capacity, maxTemp);
     }
 
     @Override
@@ -98,11 +100,13 @@ public class ItemFluidCell extends StandardItem {
                 cellHandler.fill(fluidHandler.drain(capacity, true), true);
             }
         } else if (world.getBlockState(pos).getBlock() instanceof BlockStorage) {
+            //TODO temp for testing, remove at some point
             Material mat = ((BlockStorage) world.getBlockState(pos).getBlock()).getMaterial();
             if (mat != null && mat.has(GenerationFlag.LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             }
         } else{
+            //TODO temp for testing, remove at some point
             Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
             if (mat != null && mat.has(GenerationFlag.LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
