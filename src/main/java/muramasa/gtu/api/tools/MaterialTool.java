@@ -322,10 +322,9 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
         return newDamage;
     }
 
-    public static int getRGB(ItemStack stack, int i) {
-        MaterialTool tool = (MaterialTool) stack.getItem();
-        if (tool.type == ToolType.PLUNGER) return i == 0 ? -1 : tool.getSecondary(stack).getRGB();
-        return i == 0 ? tool.getPrimary(stack).getRGB() : tool.getSecondary(stack).getRGB();
+    public int getRGB(ItemStack stack, int i) {
+        Material mat = i == 0 ? getPrimary(stack) : getSecondary(stack);
+        return mat != null ? mat.getRGB() : 0xffffff;
     }
 
     /** NBT Section **/

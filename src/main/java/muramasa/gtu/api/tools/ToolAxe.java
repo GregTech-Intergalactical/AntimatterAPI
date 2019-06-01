@@ -30,8 +30,11 @@ public class ToolAxe extends MaterialTool {
             for (int y = origin.getY() + 1; y < origin.getY() + Ref.MAX_AXE_TIMBER; y++) {
                 tempPos = new BlockPos(origin.getX(), y, origin.getZ());
                 state = world.getBlockState(tempPos);
-                if (world.getBlockState(tempPos).getBlock().isAir(state, world, tempPos)) break;
-                if (state.getMaterial() == Material.WOOD) set.add(tempPos);
+                if (state.getBlock().isAir(state, world, tempPos)) {
+                    break;
+                } else if (state.getMaterial() == Material.WOOD) {
+                    set.add(tempPos);
+                }
             }
             return set;
 //            return Utils.getCubicPosArea(new int3(0, Ref.MAX_AXE_TIMBER / 2, 0), null, origin, player, true);

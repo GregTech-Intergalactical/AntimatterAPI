@@ -2,7 +2,7 @@ package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.interfaces.IGregTechObject;
-import muramasa.gtu.api.util.GTLoc;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collection;
@@ -80,9 +80,9 @@ public class Prefix implements IGregTechObject {
 
     public String getDisplayName(Material material) { //TODO cache, server side crash with local?
         if (!hasLocName) {
-            namePre = GTLoc.get("prefix.pre." + getName() + ".name");
+            namePre = Utils.trans("prefix.pre." + getName() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = GTLoc.get("prefix.post." + getName() + ".name");
+            namePost = Utils.trans("prefix.post." + getName() + ".name");
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }

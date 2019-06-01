@@ -27,6 +27,7 @@ import muramasa.gtu.common.blocks.pipe.BlockPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -114,7 +115,7 @@ public class ClientProxy implements IProxy {
             Ref.MC.getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));
         }
 
-        IItemColor toolItemHandler = MaterialTool::getRGB;
+        IItemColor toolItemHandler = (stack, i) -> ((MaterialTool) stack.getItem()).getRGB(stack, i);
         for (ToolType type : ToolType.values()) {
             Ref.MC.getItemColors().registerItemColorHandler(toolItemHandler, GregTechRegistry.getMaterialTool(type));
         }
@@ -128,6 +129,11 @@ public class ClientProxy implements IProxy {
     @Override
     public void serverStarting(FMLServerStartingEvent e) {
         //NOOP
+    }
+
+    @Override
+    public String trans(String unlocalized) {
+        return I18n.format(unlocalized);
     }
 
     @SubscribeEvent

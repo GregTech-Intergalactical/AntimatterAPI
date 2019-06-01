@@ -13,7 +13,7 @@ import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.util.GTLoc;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
@@ -71,7 +71,7 @@ public class Machine implements IGregTechObject {
     }
 
     public String getDisplayName(Tier tier) {
-        return GTLoc.get("machine." + name + "." + tier.getName() + ".name");
+        return Utils.trans("machine." + name + "." + tier.getName() + ".name");
     }
 
     public RecipeMap getRecipeMap() {

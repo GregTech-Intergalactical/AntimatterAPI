@@ -10,7 +10,6 @@ import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.registration.IHasItemBlock;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.util.GTLoc;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
@@ -202,7 +201,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     public String getItemStackDisplayName(Block block, ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-            return tier.getRarityColor() + GTLoc.get("machine." + getType().getName() + "." + tier.getName() + ".name");
+            return tier.getRarityColor() + Utils.trans("machine." + getType().getName() + "." + tier.getName() + ".name");
         }
         return getUnlocalizedName();
     }

@@ -21,31 +21,26 @@ public abstract class Cover {
 
     private int internalId;
 
-    protected ItemStack catalystUsed = ItemStack.EMPTY;
-
     public abstract String getName();
 
     public int getInternalId() {
         return internalId;
     }
 
-    public ItemStack getCatalystUsed() {
-        return catalystUsed;
-    }
-
     public final void onRegister() {
         internalId = lastInternalId++;
     }
 
-    public final Cover getNewInstance(ItemStack stack) {
-        int id = internalId;
-        Cover cover = onPlace(stack);
-        cover.internalId = id;
-        return cover;
+    public ItemStack getDroppedStack() {
+        return ItemStack.EMPTY;
+    }
+
+    public final Cover onNewInstance(ItemStack stack, int newId) {
+        internalId = newId;
+        return onPlace(stack);
     }
 
     public Cover onPlace(ItemStack stack) {
-        catalystUsed = stack;
         return this;
     }
 
@@ -63,11 +58,11 @@ public abstract class Cover {
     }
 
     public boolean isEqual(Cover cover) {
-        return internalId == cover.getInternalId();
+        return getName().equals(cover.getName());
     }
 
     public boolean isEmpty() {
-        return internalId == GregTechAPI.CoverNone.internalId;
+        return getName().equals(GregTechAPI.CoverNone.getName());
     }
 
     public Texture[] getTextures() {
