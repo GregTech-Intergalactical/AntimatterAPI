@@ -40,15 +40,15 @@ public class Prefix implements IGregTechObject {
     public static Prefix GemExquisite = new Prefix("gem_exquisite", true, GEM_VARIANTS);
     public static Prefix Foil = new Prefix("foil", true, FOIL);
     public static Prefix Rod = new Prefix("rod", true, ROD);
-    //public static Prefix RodLong = new Prefix("rod_long", true, LONG_ROD);
-    //public static Prefix Bolt = new Prefix("bolt", true, BOLT);
+    public static Prefix RodLong = new Prefix("rod_long", true, LONG_ROD);
+    public static Prefix Bolt = new Prefix("bolt", true, BOLT);
     public static Prefix Screw = new Prefix("screw", true, SCREW);
     public static Prefix Ring = new Prefix("ring", true, RING);
-    //public static Prefix Spring = new Prefix("spring", true, SPRING);
+    public static Prefix Spring = new Prefix("spring", true, SPRING);
     public static Prefix WireFine = new Prefix("wire_fine", true, FINE_WIRE);
     public static Prefix TurbineRotor = new Prefix("rotor", true, TURBINE_ROTOR);
     public static Prefix Gear = new Prefix("gear", true, GEAR);
-    //public static Prefix GearSmall = new Prefix("gear_small", true, SGEAR);
+    public static Prefix GearSmall = new Prefix("gear_small", true, SMALL_GEAR);
     public static Prefix Lens = new Prefix("lens", true, LENS);
 //    public static Prefix TurbineBlade = new Prefix("turbine_blade", true, TOOLS);
 

@@ -28,7 +28,9 @@ public enum GenerationFlag implements IMaterialFlag {
     LONG_ROD(), //Add Long Rods
     RING(), //Add Rings
     FOIL(), //Add Foils
+    BOLT(), //Add Bolts
     SCREW(), //Add Screws
+    SMALL_GEAR(),
     GEAR(), //Add Gears
     FINE_WIRE(), //Add Fine Wire
     TURBINE_ROTOR(), //Add Turbine Rotors

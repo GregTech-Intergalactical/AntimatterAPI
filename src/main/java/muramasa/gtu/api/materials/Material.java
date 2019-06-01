@@ -4,7 +4,6 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
-import muramasa.gtu.api.util.GTLoc;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -537,10 +536,9 @@ public class Material {
         return MaterialItem.get(Prefix.Rod, this, amount);
     }
 
-    /*
     public ItemStack getBolt(int amount) {
         return MaterialItem.get(Prefix.Bolt, this, amount);
-    }*/
+    }
 
     public ItemStack getScrew(int amount) {
         return MaterialItem.get(Prefix.Screw, this, amount);
@@ -550,10 +548,9 @@ public class Material {
         return MaterialItem.get(Prefix.Ring, this, amount);
     }
 
-    /*
     public ItemStack getSpring(int amount) {
         return MaterialItem.get(Prefix.Spring, this, amount);
-    }*/
+    }
 
     public ItemStack getWireF(int amount) {
         return MaterialItem.get(Prefix.WireFine, this, amount);
@@ -567,27 +564,32 @@ public class Material {
         return MaterialItem.get(Prefix.Gear, this, amount);
     }
 
-    /*
+    
     public ItemStack getGearS(int amount) {
         return MaterialItem.get(Prefix.GearSmall, this, amount);
-    }*/
+    }
 
     public ItemStack getLens(int amount) {
         return MaterialItem.get(Prefix.Lens, this, amount);
     }
 
-    /*
+    //TODO: Change with merged with master, cell registry?
     public ItemStack getCell(int amount) {
-        return MaterialItem.get(Prefix.Cell, this, amount);
+    	return ItemStack.EMPTY;
+        //return MaterialItem.get(Prefix.Cell, this, amount);
     }
 
+    //TODO: Change with merged with master, cell registry?
     public ItemStack getCellG(int amount) {
-        return MaterialItem.get(Prefix.CellGas, this, amount);
+    	return ItemStack.EMPTY;
+        //return MaterialItem.get(Prefix.CellGas, this, amount);
     }
 
+    //TODO: Change with merged with master, cell registry?
     public ItemStack getCellP(int amount) {
-        return MaterialItem.get(Prefix.CellPlasma, this, amount);
-    }*/
+    	return ItemStack.EMPTY;
+        //return MaterialItem.get(Prefix.CellPlasma, this, amount);
+    }
 
     public ItemStack getOre(int amount) {
         return new ItemStack(GregTechRegistry.getOre(this), amount);
