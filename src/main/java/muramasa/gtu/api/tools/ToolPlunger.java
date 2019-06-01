@@ -5,8 +5,8 @@ import net.minecraft.item.ItemStack;
 
 public class ToolPlunger extends MaterialTool {
 
-    public ToolPlunger(ToolType type) {
-        super(type);
+    public ToolPlunger() {
+        super(ToolType.PLUNGER);
     }
 
     @Override
