@@ -111,8 +111,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     @Override
-    public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
-        if (empty) return;
+    public void onContentsChanged(ContentUpdateType type, int slot) {
         switch (type) {
             case ITEM_INPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();

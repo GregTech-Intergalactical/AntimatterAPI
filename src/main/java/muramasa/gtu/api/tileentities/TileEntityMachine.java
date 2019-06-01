@@ -60,7 +60,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     /** Events **/
-    public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
+    public void onContentsChanged(ContentUpdateType type, int slot) {
         //NOOP
     }
 

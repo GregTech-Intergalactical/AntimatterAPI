@@ -45,9 +45,9 @@ public class TileEntityItemFluidMachine extends TileEntityItemMachine {
     }
 
     @Override
-    public void onContentsChanged(ContentUpdateType type, int slot, boolean empty) {
-        super.onContentsChanged(type, slot, empty);
-        if (empty && type == ContentUpdateType.ITEM_CELL) {
+    public void onContentsChanged(ContentUpdateType type, int slot) {
+        super.onContentsChanged(type, slot);
+        if (type == ContentUpdateType.ITEM_CELL) {
             if (slot == 0) { //Input slot
 //                ItemStack stack = itemHandler.getCellInput();
 //                if (stack.getItem() instanceof MaterialItem) {

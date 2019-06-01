@@ -23,7 +23,7 @@ public class FluidTankWrapper implements IFluidHandler {
                 @Override
                 protected void onContentsChanged() {
                     dirty = true;
-                    machine.onContentsChanged(input ? ContentUpdateType.FLUID_INPUT : ContentUpdateType.FLUID_OUTPUT, 0, fluid == null);
+                    machine.onContentsChanged(input ? ContentUpdateType.FLUID_INPUT : ContentUpdateType.FLUID_OUTPUT, 0);
                 }
             };
             tanks[i].setCanFill(true);
