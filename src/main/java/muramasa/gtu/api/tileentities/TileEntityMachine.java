@@ -10,6 +10,7 @@ import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
+import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.common.blocks.BlockMachine;
@@ -42,21 +43,14 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     private MachineState machineState = MachineState.IDLE;
     private EnumFacing facing;
 
-    public final void init(Tier tier, EnumFacing facing) {
-        this.type = ((BlockMachine) getBlockType()).getType();
-        this.tier = tier;
-        setFacing(facing);
-    }
-
     @Override
-    public void onFirstTick() { //Using first tick as this fires on both client & server, unlike onLoad
+    public void onLoad() {
         type = ((BlockMachine) getBlockType()).getType();
         if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
         if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
         if (getType().hasFlag(ENERGY)) energyHandler = new MachineEnergyHandler(this);
         if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
         if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
-        markDirty();
     }
 
     /** Events **/
@@ -70,7 +64,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     public Tier getTier() {
-        return tier != null ? tier : Tier.LV;
+        return tier != null ? tier : (tier = Tier.get(getState().getValue(GTProperties.TIER)));
     }
 
     public int getTypeId() {
@@ -82,7 +76,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     public EnumFacing getFacing() {
-        return facing;
+        return facing != null ? facing : EnumFacing.NORTH;
     }
 
     public MachineState getMachineState() {
@@ -112,7 +106,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         return energyHandler;
     }
 
-    @Nullable //TODO was CoverHandler, validate does not break
+    @Nullable
     public MachineCoverHandler getCoverHandler() {
         return coverHandler;
     }
@@ -131,6 +125,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         return true;
     }
 
+    //TODO
     public void toggleDisabled() {
         setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
     }
@@ -189,7 +184,6 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        if (tag.hasKey(Ref.KEY_MACHINE_TILE_TIER)) tier = Tier.get(tag.getString(Ref.KEY_MACHINE_TILE_TIER));
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_FACING)) facing = EnumFacing.VALUES[tag.getInteger(Ref.KEY_MACHINE_TILE_FACING)];
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_STATE)) machineState = MachineState.VALUES[tag.getInteger(Ref.KEY_MACHINE_TILE_STATE)];//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
         if (tag.hasKey(Ref.KEY_MACHINE_TILE_ITEMS)) itemData = (NBTTagCompound) tag.getTag(Ref.KEY_MACHINE_TILE_ITEMS);
@@ -199,8 +193,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag); //TODO get tile data tag
-        tag.setString(Ref.KEY_MACHINE_TILE_TIER, getTier().getName());
-        tag.setInteger(Ref.KEY_MACHINE_TILE_FACING, facing.getIndex());
+        tag.setInteger(Ref.KEY_MACHINE_TILE_FACING, getFacing().getIndex());
         if (machineState != null) tag.setInteger(Ref.KEY_MACHINE_TILE_STATE, machineState.ordinal());
         if (itemHandler != null) tag.setTag(Ref.KEY_MACHINE_TILE_ITEMS, itemHandler.serialize());
         if (fluidHandler != null) tag.setTag(Ref.KEY_MACHINE_TILE_FLUIDS, fluidHandler.serialize());

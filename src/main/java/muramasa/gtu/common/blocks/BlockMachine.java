@@ -66,7 +66,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(TYPE, FACING, TEXTURE, COVER).build();
+        return new BlockStateContainer.Builder(this).add(TIER).add(TYPE, FACING, TEXTURE, COVER).build();
     }
 
     @Override
@@ -88,8 +88,13 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(TIER, meta);
+    }
+
+    @Override
     public int getMetaFromState(IBlockState state) {
-        return 0;
+        return state.getValue(TIER);
     }
 
     @Override
@@ -143,13 +148,22 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        ItemStack stack = placer.getHeldItem(hand);
+        if (!stack.isEmpty() && stack.hasTagCompound()) {
+            int tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER)).getInternalId();
+            return getDefaultState().withProperty(TIER, tier);
+        }
+        return getDefaultState();
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if (stack.hasTagCompound()) {
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityMachine) {
-                String machineTier = stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER);
                 EnumFacing facing = EnumFacing.getFacingFromVector((float)placer.getLookVec().x, (float)placer.getLookVec().y, (float)placer.getLookVec().z).getOpposite();
-                ((TileEntityMachine) tile).init(Tier.get(machineTier), facing);
+                ((TileEntityMachine) tile).setFacing(facing);
             }
         }
     }
@@ -159,7 +173,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            return Machines.get(machine.getType(), machine.getTier()).asItemStack();
+            return Machines.get(machine.getType(), Tier.get(state.getValue(TIER))).asItemStack();
         }
         return Machines.get(Machines.INVALID, Tier.LV).asItemStack();
     }

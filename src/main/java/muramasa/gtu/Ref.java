@@ -66,7 +66,6 @@ public class Ref {
     public static final String KEY_CABLE_STACK_INSULATED = "csi";
     public static final String KEY_ITEM_PIPE_STACK_RESTRICTIVE = "ipsr";
 
-    public static final String KEY_MACHINE_TILE_TIER = "m2";
     public static final String KEY_MACHINE_TILE_FACING = "mf";
     public static final String KEY_MACHINE_TILE_STATE = "ms";
     public static final String KEY_MACHINE_TILE_TINT = "mc";

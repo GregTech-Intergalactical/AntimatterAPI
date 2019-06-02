@@ -1,8 +1,13 @@
 package muramasa.gtu.api.properties;
 
+import muramasa.gtu.api.machines.Tier;
+import net.minecraft.block.properties.PropertyInteger;
+
 public class GTProperties {
 
     /** Machine Properties **/
+    public static final PropertyInteger TIER = PropertyInteger.create("tier", 0, Tier.getAll().size());
+
     public static final UnlistedInteger TYPE = new UnlistedInteger();
     public static final UnlistedInteger FACING = new UnlistedInteger();
     public static final UnlistedTextureData TEXTURE = new UnlistedTextureData();

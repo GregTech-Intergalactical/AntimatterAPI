@@ -13,7 +13,7 @@ public class Tier implements IGregTechObject {
     private static HashMap<String, Tier> tierLookup = new HashMap<>();
     private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
 
-    public static int lastInternalId = 0;
+    private static int lastInternalId = 0;
 
     /** Electricity Tiers **/
     public static Tier ULV = new Tier("ulv", 8, TextFormatting.WHITE); //Tier 1
@@ -28,6 +28,7 @@ public class Tier implements IGregTechObject {
     public static Tier MAX = new Tier("max", 2147483647, TextFormatting.LIGHT_PURPLE); //Tier 15
 
     /** Special Tiers **/
+    //TODO make these Tier 0 and 1?
     public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
     public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
 
@@ -43,6 +44,9 @@ public class Tier implements IGregTechObject {
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture("blocks/machine/base/" + name);
+        if (tierLookup.size() >= 16) { //TODO 1.13: remove this limit
+            throw new IllegalStateException("Cannot have more than 16 Machine Tiers");
+        }
         tierLookup.put(name, this);
         tierLookupArray.add(internalId, this);
     }
