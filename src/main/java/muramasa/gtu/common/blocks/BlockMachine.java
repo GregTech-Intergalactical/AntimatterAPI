@@ -1,6 +1,8 @@
 package muramasa.gtu.common.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.capability.IConfigHandler;
+import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineFlag;
@@ -10,6 +12,7 @@ import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.registration.IHasItemBlock;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
@@ -121,10 +124,19 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
             TileEntityMachine machine = (TileEntityMachine) tile;
             if (machine.getType().hasFlag(MachineFlag.GUI)) {
                 //TODO if cover returns false, open normal gui if present
-                if (machine.getType().hasFlag(MachineFlag.COVERABLE) && !machine.getCoverHandler().get(side).isEmpty()) return false;
+                if (machine.getType().hasFlag(MachineFlag.COVERABLE) && !machine.getCoverHandler().get(side).isEmpty())
+                    return false;
                 GuiData gui = machine.getType().getGui();
                 player.openGui(gui.getInstance(), gui.getId(), world, pos.getX(), pos.getY(), pos.getZ());
                 return true;
+            } else if (machine.getType().hasFlag(MachineFlag.COVERABLE)) {
+                ICoverHandler coverHandler = machine.getCoverHandler();
+                if (coverHandler == null) return false;
+                return coverHandler.onInteract(player, hand, side, ToolType.get(player.getHeldItem(hand)));
+            } else if (machine.getType().hasFlag(MachineFlag.CONFIGURABLE)) {
+                IConfigHandler configHandler = machine.getConfigHandler();
+                if (configHandler == null) return false;
+                return configHandler.onInteract(player, hand, side, ToolType.get(player.getHeldItem(hand)));
             }
         }
         return false;

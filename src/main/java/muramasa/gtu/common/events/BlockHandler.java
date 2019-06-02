@@ -1,11 +1,11 @@
 package muramasa.gtu.common.events;
 
-import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.IConfigHandler;
-import muramasa.gtu.api.capability.ICoverHandler;
-import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.GregTech;
+import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.machines.MachineFlag;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -18,22 +18,14 @@ public class BlockHandler {
 
     @SubscribeEvent
     public static void onBlockInteract(PlayerInteractEvent.RightClickBlock e) {
-        //TODO move to BlockMachine onBlockActivated
-        if (e.getHand() == EnumHand.OFF_HAND || ToolType.get(e.getItemStack()) != null) return;
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
-        if (tile == null) return;
-        if (tile.hasCapability(GTCapabilities.COVERABLE, e.getFace())) {
-            ToolType type = ToolType.get(e.getItemStack());
-            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, e.getFace());
-            if (coverHandler == null) return;
-            boolean swing = coverHandler.onInteract(e.getEntityPlayer(), e.getHand(), e.getFace(), type);
-            if (swing) e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
-        } else if (tile.hasCapability(GTCapabilities.CONFIGURABLE, e.getFace())) {
-            ToolType type = ToolType.get(e.getItemStack());
-            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, e.getFace());
-            if (configHandler == null) return;
-            boolean swing = configHandler.onInteract(e.getEntityPlayer(), e.getHand(), e.getFace(), type);
-            if (swing) e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
+        if (tile instanceof IComponent && !e.getEntityPlayer().isSneaking()) {
+            TileEntityMultiMachine controller = ((IComponent) tile).getComponentHandler().getFirstController();
+            if (controller == null) return;
+            if (!controller.getType().hasFlag(MachineFlag.GUI)) return;
+            GuiData gui = controller.getType().getGui();
+            e.getEntityPlayer().openGui(GregTech.INSTANCE, gui.getId(), e.getEntityPlayer().getEntityWorld(), controller.getPos().getX(), controller.getPos().getY(), controller.getPos().getZ());
+            e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
         }
     }
 
