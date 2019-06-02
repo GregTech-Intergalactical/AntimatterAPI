@@ -41,7 +41,6 @@ public class BlockCable extends BlockPipe {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityCable) {
             TileEntityCable cable = (TileEntityCable) tile;
-            exState = exState.withProperty(SIZE, cable.getSize().ordinal());
             exState = exState.withProperty(CONNECTIONS, cable.getConnections());
             exState = exState.withProperty(TEXTURE, cable.isInsulated() ? Textures.PIPE_DATA[2] : getBlockData());
         }
@@ -69,9 +68,8 @@ public class BlockCable extends BlockPipe {
         if (stack.hasTagCompound()) {
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityCable) {
-                PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
                 boolean insulated = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED);
-                ((TileEntityCable) tile).init(getType(), size, insulated);
+                ((TileEntityCable) tile).init(insulated);
             }
         }
     }

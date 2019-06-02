@@ -57,7 +57,7 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CONNECTIONS, SIZE, TEXTURE).build();
+        return new BlockStateContainer.Builder(this).add(SIZE).add(CONNECTIONS, TEXTURE).build();
     }
 
     @Override
@@ -66,11 +66,20 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityPipe) {
             TileEntityPipe pipe = (TileEntityPipe) tile;
-            exState = exState.withProperty(SIZE, pipe.getSize().ordinal());
             exState = exState.withProperty(CONNECTIONS, pipe.getConnections());
             exState = exState.withProperty(TEXTURE, getBlockData());
         }
         return exState;
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(SIZE, meta);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(SIZE);
     }
 
     @Override
@@ -88,11 +97,6 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
             return size != null ? size.getAABB() : PipeSize.TINY.getAABB();
         }
         return FULL_BLOCK_AABB;
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
     }
 
     @Override
@@ -116,14 +120,12 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.hasTagCompound()) {
-            TileEntity tile = Utils.getTile(world, pos);
-            if (tile instanceof TileEntityPipe) {
-                PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-                ((TileEntityPipe) tile).init(getType(), size);
-            }
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        ItemStack stack = placer.getHeldItem(hand);
+        if (!stack.isEmpty() && stack.hasTagCompound()) {
+            return getDefaultState().withProperty(SIZE, stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE));
         }
+        return getDefaultState();
     }
 
     @Override

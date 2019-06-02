@@ -1,7 +1,6 @@
 package muramasa.gtu.api.tileentities.pipe;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.types.Cable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,8 +11,7 @@ public class TileEntityCable extends TileEntityPipe {
 
     protected boolean insulated;
 
-    public final void init(Cable type, PipeSize size, boolean insulated) {
-        super.init(type, size);
+    public final void init(boolean insulated) {
         this.insulated = insulated;
     }
 
