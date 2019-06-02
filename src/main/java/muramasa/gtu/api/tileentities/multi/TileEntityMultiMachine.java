@@ -34,6 +34,7 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         super.onFirstTick();
         componentHandler = new ControllerComponentHandler(getType(), this);
         configHandler = new ControllerConfigHandler(this);
+        checkStructure();
     }
 
     public boolean checkStructure() {
