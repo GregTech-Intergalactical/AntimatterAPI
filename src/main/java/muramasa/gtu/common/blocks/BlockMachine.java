@@ -57,6 +57,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
         setCreativeTab(Ref.TAB_MACHINES);
+        setDefaultState(getDefaultState().withProperty(TIER, 0));
         this.type = type;
     }
 
