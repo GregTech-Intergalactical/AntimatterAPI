@@ -47,6 +47,7 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(Ref.TAB_MACHINES);
+        setDefaultState(getDefaultState().withProperty(SIZE, 0));
     }
 
     public abstract Pipe getType();
