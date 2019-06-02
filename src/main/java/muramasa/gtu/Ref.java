@@ -73,7 +73,6 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
 
-    public static final String KEY_PIPE_SIZE = "ps";
     public static final String KEY_PIPE_CONNECTIONS = "pc";
     public static final String KEY_CABLE_INSULATED = "ci";
 

@@ -53,9 +53,8 @@ public class BlockItemPipe extends BlockPipe {
         if (stack.hasTagCompound()) {
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityItemPipe) {
-                PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
                 boolean restrictive = stack.getTagCompound().getBoolean(Ref.KEY_ITEM_PIPE_STACK_RESTRICTIVE);
-                ((TileEntityItemPipe) tile).init(getType(), size, restrictive);
+                ((TileEntityItemPipe) tile).init(restrictive);
             }
         }
     }

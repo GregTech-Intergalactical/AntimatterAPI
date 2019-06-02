@@ -1,6 +1,5 @@
 package muramasa.gtu.api.tileentities.pipe;
 
-import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.types.ItemPipe;
 import net.minecraft.tileentity.TileEntity;
 
@@ -8,8 +7,7 @@ public class TileEntityItemPipe extends TileEntityPipe {
 
     protected boolean restrictive;
 
-    public final void init(ItemPipe type, PipeSize size, boolean restrictive) {
-        super.init(type, size);
+    public final void init(boolean restrictive) {
         this.restrictive = restrictive;
     }
 

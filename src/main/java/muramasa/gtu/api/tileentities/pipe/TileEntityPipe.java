@@ -6,6 +6,7 @@ import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.capability.impl.PipeConfigHandler;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.types.Pipe;
+import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.tileentities.TileEntityTickable;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.blocks.pipe.BlockPipe;
@@ -26,19 +27,14 @@ public abstract class TileEntityPipe extends TileEntityTickable {
 
     protected byte connections, disabledConnections;
 
-    public TileEntityPipe() {
+    @Override
+    public void onLoad() {
+        type = ((BlockPipe) getBlockType()).getType();
         configHandler = new PipeConfigHandler(this);
-    }
-
-    public final void init(Pipe type, PipeSize size) {
-        this.type = type;
-        this.size = size;
     }
 
     @Override
     public void onFirstTick() {
-        type = ((BlockPipe) getBlockType()).getType();
-        size = size != null ? size : PipeSize.NORMAL;
         if (isServerSide()) refreshConnections();
     }
 
@@ -47,8 +43,7 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     }
 
     public PipeSize getSize() {
-        if (size == null) size = PipeSize.NORMAL;
-        return size;
+        return size != null ? size : (size = PipeSize.VALUES[getState().getValue(GTProperties.SIZE)]);
     }
 
     public byte getConnections() {
@@ -117,14 +112,12 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        if (tag.hasKey(Ref.KEY_PIPE_SIZE)) size = PipeSize.VALUES[tag.getInteger(Ref.KEY_PIPE_SIZE)];
         if (tag.hasKey(Ref.KEY_PIPE_CONNECTIONS)) connections = tag.getByte(Ref.KEY_PIPE_CONNECTIONS);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
-        tag.setInteger(Ref.KEY_PIPE_SIZE, size.ordinal());
         tag.setInteger(Ref.KEY_PIPE_CONNECTIONS, connections);
         return tag;
     }
