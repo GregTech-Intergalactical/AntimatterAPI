@@ -25,11 +25,10 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     protected int textureOverride = -1;
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
+    public void onLoad() {
+        super.onLoad();
         if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
         componentHandler = new HatchComponentHandler(this);
-        markDirty();
     }
 
     @Override

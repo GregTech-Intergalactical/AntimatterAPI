@@ -30,11 +30,10 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
     protected ControllerComponentHandler componentHandler;
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
+    public void onLoad() {
+        super.onLoad();
         componentHandler = new ControllerComponentHandler(getType(), this);
         configHandler = new ControllerConfigHandler(this);
-        checkStructure();
     }
 
     public boolean checkStructure() {
