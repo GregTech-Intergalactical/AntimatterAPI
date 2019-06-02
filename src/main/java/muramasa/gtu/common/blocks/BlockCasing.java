@@ -1,18 +1,12 @@
 package muramasa.gtu.common.blocks;
 
-import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Casing;
 import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.gui.GuiData;
-import muramasa.gtu.api.interfaces.IComponent;
-import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
-import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import muramasa.gtu.client.render.overrides.ItemOverrideCasing;
@@ -22,14 +16,10 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -73,19 +63,6 @@ public class BlockCasing extends BlockBaked implements IHasModelOverride {
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof IComponent) {
-            TileEntityMultiMachine controller = ((IComponent) tile).getComponentHandler().getFirstController();
-            if (controller == null) return false;
-            if (!controller.getType().hasFlag(MachineFlag.GUI)) return false;
-            GuiData gui = controller.getType().getGui();
-            player.openGui(GregTech.INSTANCE, gui.getId(), player.getEntityWorld(), controller.getPos().getX(), controller.getPos().getY(), controller.getPos().getZ());
-        }
-        return false;
     }
 
     @Nullable
