@@ -35,6 +35,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ContentLoader {
             GregTechRegistry.register(type.getNewInstance());
         }
         for (ToolType type : ToolType.values()) {
-            GregTechRegistry.register(type.getInstance());
+            GregTechRegistry.register(type.getInstance());          
         }
 
         //Blocks
