@@ -21,7 +21,7 @@ public enum ToolType implements IGregTechObject {
     AXE("Axe", "", "craftingToolAxe", ToolAxe.class, Sets.newHashSet("axe"), null, false, 0, 3.0f, -3.0f, 2.0f, 1.0f, 50, 200, 100),
     HOE("Hoe", "", "craftingToolHoe", null, Sets.newHashSet("hoe"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
     SAW("Saw", "", "craftingToolSaw", null, Sets.newHashSet("saw"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 200),
-    HAMMER("Hammer", "", "craftingToolHammer", null, Sets.newHashSet("hammer"), Sounds.HAMMER, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 200, 400),
+    HAMMER("Hammer", "", "craftingToolForgeHammer", null, Sets.newHashSet("hammer"), Sounds.HAMMER, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 200, 400),
     WRENCH("Wrench", "", "craftingToolWrench", null, Sets.newHashSet("wrench"), Sounds.WRENCH, false, 0, 3.0f, -2.4f, 1.0f, 1.0f, 50, 200, 800),
     FILE("File", "", "craftingToolFile", null, Sets.newHashSet("file"), null, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
     SCREWDRIVER("Screwdriver", "Adjusts Covers and Machines", "craftingToolScrewdriver", null, Sets.newHashSet("screwdriver"), Sounds.WRENCH, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 200, 200, 400),
