@@ -35,7 +35,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +104,6 @@ public class ContentLoader {
         GregTechRegistry.getRegisteredItems().forEach(i -> e.getRegistry().register(i));
         GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(new ItemBlockGT(b)));
 
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.COVER);
+        GregTechRegistry.callRegistrationEvent(RegistrationEvent.ITEM);
     }
 }
