@@ -1,7 +1,7 @@
 package muramasa.gtu.api.fluid;
 
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.Ref;
 import net.minecraft.util.ResourceLocation;
@@ -12,21 +12,21 @@ import net.minecraftforge.fluids.FluidStack;
 public class GTFluid extends Fluid {
 
     private String name;
-    private ItemFlag flag;
+    private GenerationFlag flag;
 
-    public GTFluid(Material mat, ItemFlag flag) {
+    public GTFluid(Material mat, GenerationFlag flag) {
         super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
         setColor(mat.getRGB());
         switch (flag) {
             case LIQUID:
                 setViscosity(1000);
-                setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
+                setTemperature(mat.getLiquidTemperature());
                 break;
             case GAS:
                 setViscosity(200);
                 setDensity(-100);
                 setGaseous(true);
-                setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
+                setTemperature(mat.getGasTemperature());
                 break;
             case PLASMA:
                 setViscosity(10);

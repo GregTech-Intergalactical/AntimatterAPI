@@ -7,7 +7,7 @@ import muramasa.gtu.api.registration.RegistrationEvent;
 import net.minecraft.item.ItemStack;
 
 import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.materials.ItemFlag.ORE;
+import static muramasa.gtu.api.materials.GenerationFlag.ORE;
 import static muramasa.gtu.api.materials.TextureSet.DIAMOND;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
 

@@ -10,8 +10,7 @@ import net.minecraft.item.ItemStack;
 import java.util.Arrays;
 
 import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.data.Materials.Naquadria;
-import static muramasa.gtu.api.materials.ItemFlag.LIQUID;
+import static muramasa.gtu.api.materials.GenerationFlag.LIQUID;
 
 public class CombLoader {
 
@@ -39,13 +38,13 @@ public class CombLoader {
         //TODO duplicate recipes
         comb = ItemType.CombStone.get(1);
         addSpecialCent(comb, new int[]{70, 20, 20}, Stone.getDust(1), Salt.getDust(1), RockSalt.getDust(1));
-        addProcessMain(comb, Soapstone);
+        //addProcessMain(comb, Soapstone);
         addProcess(comb, Talc);
         addProcess(comb, ForestryRegistrar.Apatite);
         addProcess(comb, Phosphate);
         addProcess(comb, Phosphorus);
         comb = ItemType.CombCertus.get(1);
-        addProcessMain(comb, CertusQuartz);
+        //addProcessMain(comb, CertusQuartz);
         addProcess(comb, Quartzite);
         addProcess(comb, Barite);
         //TODO duplicate recipes
@@ -54,15 +53,15 @@ public class CombLoader {
         addProcess(comb, Cinnabar);
         comb = ItemType.CombLapis.get(1);
         addProcessMain(comb, Lapis);
-        addProcess(comb, Sodalite);
-        addProcess(comb, Lazurite);
+        //addProcess(comb, Sodalite);
+        //addProcess(comb, Lazurite);
         addProcess(comb, Calcite);
         comb = ItemType.CombRuby.get(1);
         addProcessMain(comb, Ruby);
         addProcess(comb, Redstone);
         comb = ItemType.CombSapphire.get(1);
         addProcessMain(comb, Sapphire);
-        addProcess(comb, GreenSapphire);
+        //addProcess(comb, GreenSapphire);
         addProcess(comb, Almandine);
         addProcess(comb, Pyrope);
         comb = ItemType.CombDiamond.get(1);
@@ -83,9 +82,9 @@ public class CombLoader {
         addSpecialCent(comb, new int[]{50, 20, 20}, Stone.getDust(1), GraniteBlack.getDust(1), GraniteRed.getDust(1));
         addProcessMain(comb, Salt);
         addProcess(comb, RockSalt);
-        addProcess(comb, Lepidolite);
+        //addProcess(comb, Lepidolite);
         addProcess(comb, Spodumene);
-        addProcess(comb, Monazite);
+        //addProcess(comb, Monazite);
         comb = ItemType.CombCopper.get(1);
         addSpecialCent(comb, new int[]{70}, Copper.getDustT(1));
         addProcessMain(comb, Copper);
@@ -129,7 +128,7 @@ public class CombLoader {
         addProcess(comb, Pentlandite);
         addProcess(comb, Cobaltite);
         addProcess(comb, Wulfenite);
-        addProcess(comb, Powellite);
+        //addProcess(comb, Powellite);
         comb = ItemType.CombZinc.get(1);
         addProcessMain(comb, Zinc);
         addProcess(comb, Sphalerite);
@@ -187,7 +186,7 @@ public class CombLoader {
         comb = ItemType.CombNaquadah.get(1);
         addProcessMain(comb, 10, Naquadah);
         addProcess(comb, 10, NaquadahEnriched);
-        addProcess(comb, 10, Naquadria);
+        //addProcess(comb, 10, Naquadria);
 
         /*
         GT_Values.RA.addAssemblerRecipe(GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Redstone, 2L), GT_OreDictUnificator.get(OrePrefixes.ingot, Materials.Copper, 5L), Materials.Glass.getMolten(72L), GT_ModHandler.getModItem(aTextForestry, "thermionicTubes", 4L, 0), 64, 32);

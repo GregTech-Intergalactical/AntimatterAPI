@@ -9,13 +9,15 @@ import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.registration.IHasModelOverride;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -164,8 +166,15 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
-        return false;
+        return true;
     }
+    
+    //TODO: Correspond Item Enchantability to Material mining level
+    @Override
+    public int getItemEnchantability() {
+        return 10;
+    }
+
 
     @Override
     public String getToolMaterialName() {
@@ -176,7 +185,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
         Material primary = getPrimary(toRepair);
         if (primary != null) {
-            ItemStack mat = primary.has(ItemFlag.BGEM) ? primary.getGem(1) : primary.getIngot(1);
+            ItemStack mat = primary.has(GenerationFlag.BASIC_GEM) ? primary.getGem(1) : primary.getIngot(1);
             if (!mat.isEmpty() && OreDictionary.itemMatches(mat, repair, false)) return true;
         }
         return super.getIsRepairable(toRepair, repair);
@@ -259,6 +268,18 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     public ItemStack get(Material primary, Material secondary) {
         ItemStack stack = new ItemStack(this);
+        if (primary != null && !primary.getEnchantments().isEmpty()) {
+        	//Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
+        	primary.getEnchantments().forEach(
+        			//TODO: canApply normally just takes canApplyAtEnchantingTable, 
+        			//      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
+        			(enchantment, level) -> {
+        				if (enchantment.canApply(stack)) {
+        					stack.addEnchantment(enchantment, level);
+        				}
+        			});        	
+        	//EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+        }
         validateTag(stack);
         NBTTagCompound tag = getTag(stack);
         tag.setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, primary != null ? primary.getName() : "NULL");
@@ -269,6 +290,18 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     public ItemStack get(Material primary, Material secondary, long... electricStats) {
         ItemStack stack = get(primary, secondary);
+        if (primary != null && !primary.getEnchantments().isEmpty()) {
+        	//Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
+        	primary.getEnchantments().forEach(
+        			//TODO: canApply normally just takes canApplyAtEnchantingTable, 
+        			//      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
+        			(enchantment, level) -> {
+        				if (enchantment.canApply(stack)) {
+        					stack.addEnchantment(enchantment, level);
+        				}
+        			});        	
+        	//EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+        }
         if (type.isPowered() && electricStats.length >= 1) {
             NBTTagCompound tag = getTag(stack);
             tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, electricStats[0]); //TODO temp, should be 0

@@ -1,9 +1,12 @@
 package muramasa.gtu.api.materials;
 
+import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.interfaces.IMaterialFlag;
+import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import net.minecraft.enchantment.Enchantment;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -11,7 +14,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 
-import static muramasa.gtu.api.materials.ItemFlag.*;
+import com.google.common.collect.ImmutableMap;
+
+import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
 
 public class Material {
@@ -36,12 +41,13 @@ public class Material {
 
     /** Fluid/Gas/Plasma Members **/
     private Fluid liquid, gas, plasma;
-    private int fuelPower;
-
+    private int fuelPower, liquidTemperature, gasTemperature;
+    
     /** Tool Members **/
     private float toolSpeed;
     private int toolDurability, toolQuality;
     private Material handleMaterial;
+    private ImmutableMap<Enchantment, Integer> toolEnchantment;
 
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
@@ -61,38 +67,38 @@ public class Material {
         this.set = set;
         Materials.MATERIAL_LOOKUP.put(name, this);
     }
+    
+    public Material asDust(IMaterialFlag... flags) {
+        return asDust(295, flags);
+    }
 
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
-        add(DUST, DUSTS, DUSTT);
+        add(DUST, SMALL_DUST, TINY_DUST);
         add(flags);
         this.meltingPoint = meltingPoint;
-        if (meltingPoint > 0) {
+        if (meltingPoint > 295) {
 //            asFluid();//TODO disabled due to Sodium having a fluid
         }
         return this;
     }
 
-    public Material asDust(IMaterialFlag... flags) {
-        return asDust(0, flags);
-    }
-
     public Material asSolid(IMaterialFlag... flags) {
-        return asSolid(0, 0, flags);
+        return asSolid(295, 0, flags);
     }
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
         asDust(meltingPoint, flags);
-        add(INGOT, NUGGET, BLOCK, LIQUID);
+        add(INGOT, NUGGET, BLOCK, LIQUID); //TODO: Shall we generate blocks for every solid?
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
-            add(HINGOT);
+            add(HOT_INGOT);
         }
         return this;
     }
 
     public Material asMetal(IMaterialFlag... flags) {
-        return asMetal(0, 0, flags);
+        return asMetal(295, 0, flags);
     }
 
     public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
@@ -103,7 +109,7 @@ public class Material {
 
     public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
         asDust(flags);
-        add(BGEM, BLOCK);
+        add(BASIC_GEM, BLOCK);
         if (transparent) {
             this.transparent = true;
             add(PLATE, LENS);
@@ -111,9 +117,10 @@ public class Material {
         return this;
     }
 
+    //TODO: Shall we do gem variants, at all?
     public Material asGem(boolean transparent, IMaterialFlag... flags) {
         asGemBasic(transparent, flags);
-        add(GEM);
+        add(GEM_VARIANTS);
         return this;
     }
 
@@ -124,6 +131,7 @@ public class Material {
     public Material asFluid(int fuelPower) {
         add(LIQUID);
         this.fuelPower = fuelPower;
+        this.liquidTemperature = meltingPoint > 295 ? meltingPoint : 295;
         return this;
     }
 
@@ -133,6 +141,7 @@ public class Material {
 
     public Material asGas(int fuelPower) {
         add(GAS);
+        this.gasTemperature = meltingPoint > 295 ? meltingPoint : 295;
         this.fuelPower = fuelPower;
         return this;
     }
@@ -149,20 +158,26 @@ public class Material {
 
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) {
-            add(TOOLS, PLATE, ROD, BOLT);
-        } else if (has(BGEM)) {
+            add(TOOLS, PLATE, ROD, SCREW);
+        } else if (has(BASIC_GEM)) {
             add(TOOLS, ROD);
         }
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
         this.handleMaterial = this;
+        this.toolEnchantment = ImmutableMap.of();
         return this;
+    }
+    
+    public Material addTools(float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+    	this.toolEnchantment = toolEnchantment;
+    	return addTools(toolSpeed, toolDurability, toolQuality);
     }
 
     public boolean has(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 if ((itemMask & flag.getBit()) == 0) return false;
             } else if (flag instanceof RecipeFlag) {
                 if ((recipeMask & flag.getBit()) == 0) return false;
@@ -173,9 +188,9 @@ public class Material {
 
     public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 if (flag == ORE) {
-                    add(CRUSHED, CRUSHEDP, CRUSHEDC, DUSTIP, DUSTP);
+                    add(CRUSHED, PURIFIED_CRUSHED, CENTRIFUGED_CRUSHED, IMPURE_DUST, PURE_DUST, DUST);
                 }
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
@@ -187,7 +202,7 @@ public class Material {
 
     public void remove(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof ItemFlag) {
+            if (flag instanceof GenerationFlag) {
                 itemMask &= ~flag.getBit();
             } else if (flag instanceof RecipeFlag) {
                 recipeMask &= ~flag.getBit();
@@ -320,6 +335,10 @@ public class Material {
     public int getToolQuality() {
         return toolQuality;
     }
+    
+    public ImmutableMap<Enchantment, Integer> getEnchantments() {
+    	return toolEnchantment;
+    }
 
     public Material getHandleMaterial() {
         return handleMaterial;
@@ -336,6 +355,15 @@ public class Material {
 
     public Fluid getPlasma() {
         return plasma;
+    }
+    
+    public int getLiquidTemperature() {
+    	return liquidTemperature;
+    }
+
+    
+    public int getGasTemperature() {
+    	return gasTemperature;
     }
 
     public int getFuelPower() {
@@ -542,14 +570,15 @@ public class Material {
         return MaterialItem.get(Prefix.WireFine, this, amount);
     }
 
-    public ItemStack getRotor(int amount) {
-        return MaterialItem.get(Prefix.Rotor, this, amount);
+    public ItemStack getTurbineRotor(int amount) {
+        return MaterialItem.get(Prefix.TurbineRotor, this, amount);
     }
 
     public ItemStack getGear(int amount) {
         return MaterialItem.get(Prefix.Gear, this, amount);
     }
 
+    
     public ItemStack getGearS(int amount) {
         return MaterialItem.get(Prefix.GearSmall, this, amount);
     }
@@ -558,16 +587,22 @@ public class Material {
         return MaterialItem.get(Prefix.Lens, this, amount);
     }
 
+    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCell(int amount) {
-        return MaterialItem.get(Prefix.Cell, this, amount);
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellTin, Materials.Water.getLiquid());
+        //return MaterialItem.get(Prefix.Cell, this, amount);
     }
 
+    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCellG(int amount) {
-        return MaterialItem.get(Prefix.CellGas, this, amount);
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellSteel, Materials.Oxygen.getGas());
+        //return MaterialItem.get(Prefix.CellGas, this, amount);
     }
 
+    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCellP(int amount) {
-        return MaterialItem.get(Prefix.CellPlasma, this, amount);
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellTungstensteel, Materials.Iron.getPlasma());
+        //return MaterialItem.get(Prefix.CellPlasma, this, amount);
     }
 
     public ItemStack getOre(int amount) {

@@ -4,7 +4,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.impl.FluidHandlerItemCell;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.util.Utils;
@@ -60,9 +60,9 @@ public class ItemFluidCell extends StandardItem {
     //TODO: Shall we eliminate JEI clutter with every filled cell being displayed?
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        ItemFlag.LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));
-        ItemFlag.GAS.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getGas())));
-        ItemFlag.PLASMA.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getPlasma())));
+        GenerationFlag.LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));
+        GenerationFlag.GAS.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getGas())));
+        GenerationFlag.PLASMA.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getPlasma())));
     }
 
     @Nullable
@@ -102,13 +102,13 @@ public class ItemFluidCell extends StandardItem {
         } else if (world.getBlockState(pos).getBlock() instanceof BlockStorage) {
             //TODO temp for testing, remove at some point
             Material mat = ((BlockStorage) world.getBlockState(pos).getBlock()).getMaterial();
-            if (mat != null && mat.has(ItemFlag.LIQUID)) {
+            if (mat != null && mat.has(GenerationFlag.LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             }
         } else{
             //TODO temp for testing, remove at some point
             Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
-            if (mat != null && mat.has(ItemFlag.LIQUID)) {
+            if (mat != null && mat.has(GenerationFlag.LIQUID)) {
                 player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
             } else {
                 player.setHeldItem(hand, getCellWithFluid(type, Materials.Diesel.getLiquid()));
