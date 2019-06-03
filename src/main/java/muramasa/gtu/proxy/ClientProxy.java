@@ -4,7 +4,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.types.Cable;
 import muramasa.gtu.api.pipe.types.FluidPipe;
@@ -101,7 +101,7 @@ public class ClientProxy implements IProxy {
 
         IBlockColor oreBlockHandler = (state, world, pos, i) -> i == 1 ? ((BlockOre) state.getBlock()).getMaterial().getRGB() : -1;
         IItemColor oreItemHandler = (stack, i) -> i == 1 ? ((BlockOre) Block.getBlockFromItem(stack.getItem())).getMaterial().getRGB() : -1;
-        for (Material material : ItemFlag.ORE.getMats()) {
+        for (Material material : GenerationFlag.ORE.getMats()) {
             Block block = GregTechRegistry.getOre(material);
             Ref.MC.getBlockColors().registerBlockColorHandler(oreBlockHandler, block);
             Ref.MC.getItemColors().registerItemColorHandler(oreItemHandler, Item.getItemFromBlock(block));
@@ -109,7 +109,7 @@ public class ClientProxy implements IProxy {
 
         IBlockColor storageBlockHandler = (state, world, pos, i) -> i == 0 ? ((BlockStorage) state.getBlock()).getMaterial().getRGB() : -1;
         IItemColor storageItemHandler = (stack, i) -> i == 0 ? ((BlockStorage) Block.getBlockFromItem(stack.getItem())).getMaterial().getRGB() : -1;
-        for (Material material : ItemFlag.BLOCK.getMats()) {
+        for (Material material : GenerationFlag.BLOCK.getMats()) {
             Block block = GregTechRegistry.getStorage(material);
             Ref.MC.getBlockColors().registerBlockColorHandler(storageBlockHandler, block);
             Ref.MC.getItemColors().registerItemColorHandler(storageItemHandler, Item.getItemFromBlock(block));

@@ -5,7 +5,7 @@ import muramasa.gtu.api.data.*;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.pipe.types.Cable;
@@ -35,6 +35,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class ContentLoader {
             GregTechRegistry.register(type.getNewInstance());
         }
         for (ToolType type : ToolType.values()) {
-            GregTechRegistry.register(type.getInstance());
+            GregTechRegistry.register(type.getInstance());          
         }
 
         //Blocks
@@ -65,8 +66,8 @@ public class ContentLoader {
         FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
         Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
         Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
-        ItemFlag.ORE.getMats().forEach(m -> GregTechRegistry.register(new BlockOre(m)));
-        ItemFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
+        GenerationFlag.ORE.getMats().forEach(m -> GregTechRegistry.register(new BlockOre(m)));
+        GenerationFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
         StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }
 

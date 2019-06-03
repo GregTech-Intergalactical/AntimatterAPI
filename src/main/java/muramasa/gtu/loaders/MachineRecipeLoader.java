@@ -53,17 +53,16 @@ public class MachineRecipeLoader {
         RB.get(BLAST_FURNACE).ii(Nickel.getIngot(4), Chrome.getIngot(1)).io(Nichrome.getIngotH(5), DarkAsh.getDustS(2)).add(Math.max(Nichrome.getMass() / 32L, 1L) * Nichrome.getBlastTemp(), 480, Nichrome.getBlastTemp());
         RB.get(BLAST_FURNACE).ii(Ruby.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(400, 100, 1200);
         RB.get(BLAST_FURNACE).ii(Ruby.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(320, 100, 1200);
-        RB.get(BLAST_FURNACE).ii(GreenSapphire.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(400, 100, 1200);
-        RB.get(BLAST_FURNACE).ii(GreenSapphire.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(320, 100, 1200);
+        //RB.get(BLAST_FURNACE).ii(GreenSapphire.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(400, 100, 1200);
+        //RB.get(BLAST_FURNACE).ii(GreenSapphire.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(320, 100, 1200);
         RB.get(BLAST_FURNACE).ii(Sapphire.getDust(1)).io(Aluminium.getNugget(3)).add(400, 100, 1200);
         RB.get(BLAST_FURNACE).ii(Sapphire.getGem(1)).io(Aluminium.getNugget(3)).add(320, 100, 1200);
         RB.get(BLAST_FURNACE).ii(Ilmenite.getDust(1), Carbon.getDust(1)).io(WroughtIron.getNugget(4), Rutile.getDustT(4)).add(800, 500, 1700);
-        RB.get(BLAST_FURNACE).ii(Magnesium.getDust(2)).fi(Titaniumtetrachloride.getLiquid(1000)).io(Titanium.getIngotH(1), Magnesiumchloride.getDust(2)).add(800, 480, Titanium.getBlastTemp() + 200);
+        RB.get(BLAST_FURNACE).ii(Magnesium.getDust(2)).fi(Titaniumtetrachloride.getLiquid(1000)).io(Titanium.getIngotH(1), MagnesiumChloride.getDust(2)).add(800, 480, Titanium.getBlastTemp() + 200);
 
         RB.get(BLAST_FURNACE).ii(Galena.getDust(1)).fi(Oxygen.getGas(2000)).io(Silver.getNugget(4), Lead.getNugget(4)).add(400, 500, 1500);
         RB.get(BLAST_FURNACE).ii(Magnetite.getDust(1)).fi(Oxygen.getGas(2000)).io(WroughtIron.getNugget(4), DarkAsh.getDustS(1)).add(400, 500, 1000);
         RB.get(BLAST_FURNACE).ii(Iron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustS(1)).add(500, 120, 1000);
-        RB.get(BLAST_FURNACE).ii(PigIron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustS(1)).add(100, 120, 1000);
         RB.get(BLAST_FURNACE).ii(WroughtIron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustS(1)).add(100, 120, 1000);
         RB.get(BLAST_FURNACE).ii(Copper.getDust(1)).fi(Oxygen.getGas(1000)).io(AnnealedCopper.getIngot(1)).add(500, 120, 1200);
         RB.get(BLAST_FURNACE).ii(Copper.getIngot(1)).fi(Oxygen.getGas(1000)).io(AnnealedCopper.getIngot(1)).add(500, 120, 1200);

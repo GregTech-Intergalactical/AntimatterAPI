@@ -7,7 +7,7 @@ import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.StandardItem;
-import muramasa.gtu.api.materials.ItemFlag;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.pipe.types.Cable;
@@ -118,7 +118,7 @@ public class GregTechRegistry {
     }
 
     public static BlockOre getOre(Material material) {
-        if (!material.has(ItemFlag.ORE)) {
+        if (!material.has(GenerationFlag.ORE)) {
             if (Ref.RECIPE_EXCEPTIONS) {
                 throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getName() + ") M(" + material.getName() + ")");
             } else {
