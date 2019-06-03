@@ -7,8 +7,8 @@ import muramasa.gtu.api.cover.impl.CoverFluid;
 import muramasa.gtu.api.cover.impl.CoverItem;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 
@@ -22,7 +22,11 @@ public class InternalRegistrar implements IGregTechRegistrar {
     @Override
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
-            case COVER:
+            case ITEM:
+                GregTechAPI.registerFluidCell(ItemType.CellTin.get(1));
+                GregTechAPI.registerFluidCell(ItemType.CellSteel.get(1));
+                GregTechAPI.registerFluidCell(ItemType.CellTungstensteel.get(1));
+
                 GregTechAPI.registerCover(GregTechAPI.CoverNone);
                 GregTechAPI.registerCover(GregTechAPI.CoverItem);
                 GregTechAPI.registerCover(GregTechAPI.CoverFluid);

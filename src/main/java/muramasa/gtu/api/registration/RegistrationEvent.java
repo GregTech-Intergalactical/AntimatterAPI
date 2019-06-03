@@ -2,7 +2,7 @@ package muramasa.gtu.api.registration;
 
 public enum RegistrationEvent {
 
-    COVER,
+    ITEM,
     MATERIAL,
     MATERIAL_INIT,
     CRAFTING_RECIPE,
