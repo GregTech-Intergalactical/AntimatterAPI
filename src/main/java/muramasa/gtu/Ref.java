@@ -38,13 +38,16 @@ public class Ref {
     public static final int MB_INGOT = 144;
     public static final int MB_LIQUID = 1000;
 
+    /** Debug Options **/
+    public static boolean SHOW_STACK_ORE_DICT = true;
+    public static boolean RECIPE_EXCEPTIONS = true;
+
     /** Config Values **/
     public static boolean HARDCORE_CABLES = true;
     public static boolean showAllItems = true;
     public static boolean enableAllModItem = true;
     public static boolean ENABLE_ALL_REGISTRARS = true;
     public static boolean BASIC_MACHINE_MODELS = false;
-    public static boolean RECIPE_EXCEPTIONS = true;
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
     public static boolean mDisableOldChemicalRecipes = false;
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;
