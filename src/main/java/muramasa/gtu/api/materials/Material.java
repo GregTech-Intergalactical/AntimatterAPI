@@ -30,7 +30,7 @@ public class Material {
     /** Element Members **/
     private Element element;
 
-    /** Ingot Members **/
+    /** Solid Members **/
     private int meltingPoint, blastFurnaceTemp;
     private boolean needsBlastFurnace;
 
@@ -39,8 +39,8 @@ public class Material {
 
     /** Fluid/Gas/Plasma Members **/
     private Fluid liquid, gas, plasma;
-    private int fuelPower;
-
+    private int fuelPower, liquidTemperature, gasTemperature;
+    
     /** Tool Members **/
     private float toolSpeed;
     private int toolDurability, toolQuality;
@@ -67,21 +67,21 @@ public class Material {
     }
     
     public Material asDust(IMaterialFlag... flags) {
-        return asDust(0, flags);
+        return asDust(295, flags);
     }
 
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
         add(DUST, SMALL_DUST, TINY_DUST);
         add(flags);
         this.meltingPoint = meltingPoint;
-        if (meltingPoint > 0) {
+        if (meltingPoint > 295) {
 //            asFluid();//TODO disabled due to Sodium having a fluid
         }
         return this;
     }
 
     public Material asSolid(IMaterialFlag... flags) {
-        return asSolid(0, 0, flags);
+        return asSolid(295, 0, flags);
     }
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
@@ -96,7 +96,7 @@ public class Material {
     }
 
     public Material asMetal(IMaterialFlag... flags) {
-        return asMetal(0, 0, flags);
+        return asMetal(295, 0, flags);
     }
 
     public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
@@ -129,6 +129,7 @@ public class Material {
     public Material asFluid(int fuelPower) {
         add(LIQUID);
         this.fuelPower = fuelPower;
+        this.liquidTemperature = meltingPoint > 295 ? meltingPoint : 295;
         return this;
     }
 
@@ -138,6 +139,7 @@ public class Material {
 
     public Material asGas(int fuelPower) {
         add(GAS);
+        this.gasTemperature = meltingPoint > 295 ? meltingPoint : 295;
         this.fuelPower = fuelPower;
         return this;
     }
@@ -351,6 +353,15 @@ public class Material {
 
     public Fluid getPlasma() {
         return plasma;
+    }
+    
+    public int getLiquidTemperature() {
+    	return liquidTemperature;
+    }
+
+    
+    public int getGasTemperature() {
+    	return gasTemperature;
     }
 
     public int getFuelPower() {
