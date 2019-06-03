@@ -20,13 +20,13 @@ public class GTFluid extends Fluid {
         switch (flag) {
             case LIQUID:
                 setViscosity(1000);
-                setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
+                setTemperature(mat.getLiquidTemperature());
                 break;
             case GAS:
                 setViscosity(200);
                 setDensity(-100);
                 setGaseous(true);
-                setTemperature(mat.getMeltingPoint() <= 0 ? 1000 : mat.getMeltingPoint());
+                setTemperature(mat.getGasTemperature());
                 break;
             case PLASMA:
                 setViscosity(10);
