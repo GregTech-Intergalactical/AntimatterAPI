@@ -18,9 +18,9 @@ import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
 import muramasa.gtu.integration.top.TheOneProbePlugin;
 import muramasa.gtu.loaders.ContentLoader;
+import muramasa.gtu.loaders.OreDictLoader;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -85,6 +85,7 @@ public class GregTech {
     public void init(FMLInitializationEvent e) {
         PROXY.init(e);
         if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
+        OreDictLoader.init();
     }
 
     @Mod.EventHandler

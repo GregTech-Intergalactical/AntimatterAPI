@@ -17,14 +17,10 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RecipeHelper {
 	
@@ -218,6 +214,15 @@ public class RecipeHelper {
                 iterator.remove();
             }
         }
+    }
+
+    public static List<String> getOreNames(ItemStack stack) {
+        ArrayList<String> names = new ArrayList<>();
+        int[] oreIds = OreDictionary.getOreIDs(stack);
+        for (int i = 0; i < oreIds.length; i++) {
+            names.add(OreDictionary.getOreName(oreIds[i]));
+        }
+        return names;
     }
 
     public static ItemStack getFirstOreDict(String name) {
