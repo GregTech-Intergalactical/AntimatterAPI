@@ -1,7 +1,9 @@
 package muramasa.gtu.api.materials;
 
+import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.interfaces.IMaterialFlag;
+import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import net.minecraft.enchantment.Enchantment;
@@ -334,7 +336,7 @@ public class Material {
         return toolQuality;
     }
     
-    public ImmutableMap getEnchantments() {
+    public ImmutableMap<Enchantment, Integer> getEnchantments() {
     	return toolEnchantment;
     }
 
@@ -585,21 +587,21 @@ public class Material {
         return MaterialItem.get(Prefix.Lens, this, amount);
     }
 
-    //TODO: Change with merged with master, cell registry?
+    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCell(int amount) {
-    	return ItemStack.EMPTY;
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellTin, Materials.Water.getLiquid());
         //return MaterialItem.get(Prefix.Cell, this, amount);
     }
 
-    //TODO: Change with merged with master, cell registry?
+    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCellG(int amount) {
-    	return ItemStack.EMPTY;
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellSteel, Materials.Oxygen.getGas());
         //return MaterialItem.get(Prefix.CellGas, this, amount);
     }
 
-    //TODO: Change with merged with master, cell registry?
+    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCellP(int amount) {
-    	return ItemStack.EMPTY;
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellTungstensteel, Materials.Iron.getPlasma());
         //return MaterialItem.get(Prefix.CellPlasma, this, amount);
     }
 

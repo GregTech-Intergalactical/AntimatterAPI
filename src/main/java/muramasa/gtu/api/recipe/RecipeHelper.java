@@ -2,6 +2,7 @@ package muramasa.gtu.api.recipe;
 
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -179,19 +180,19 @@ public class RecipeHelper {
     private @Nullable static String getToolNameByCharacter(char character) {
         switch (character) {
             case 'd':
-                return "craftingToolScrewdriver";
+                return ToolType.SCREWDRIVER.getOreDict();
             case 'f':
-                return "craftingToolFile";
+                return ToolType.FILE.getOreDict();
             case 'h':
-                return "craftingToolForgeHammer";
+                return ToolType.HAMMER.getOreDict();
             case 'm':
-                return "craftingToolMortar";
+                return ToolType.MORTAR.getOreDict();
             case 's':
-                return "craftingToolSaw";
+                return ToolType.SAW.getOreDict();
             case 'w':
-                return "craftingToolWrench";
+                return ToolType.WRENCH.getOreDict();
             case 'x':
-                return "craftingToolWireCutter";
+                return ToolType.WIRE_CUTTER.getOreDict();
             default:
             	//Becomes empty
                 return null;

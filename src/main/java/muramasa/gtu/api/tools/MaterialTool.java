@@ -16,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -265,11 +266,19 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
         return can;
     }
 
-    //TODO: Move setEnchantments to another method. We can handle enchantments based on what ToolType it is too
     public ItemStack get(Material primary, Material secondary) {
         ItemStack stack = new ItemStack(this);
         if (primary != null && !primary.getEnchantments().isEmpty()) {
-        	EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+        	//Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
+        	primary.getEnchantments().forEach(
+        			//TODO: canApply normally just takes canApplyAtEnchantingTable, 
+        			//      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
+        			(enchantment, level) -> {
+        				if (enchantment.canApply(stack)) {
+        					stack.addEnchantment(enchantment, level);
+        				}
+        			});        	
+        	//EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
         }
         validateTag(stack);
         NBTTagCompound tag = getTag(stack);
@@ -282,7 +291,16 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
     public ItemStack get(Material primary, Material secondary, long... electricStats) {
         ItemStack stack = get(primary, secondary);
         if (primary != null && !primary.getEnchantments().isEmpty()) {
-        	EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+        	//Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
+        	primary.getEnchantments().forEach(
+        			//TODO: canApply normally just takes canApplyAtEnchantingTable, 
+        			//      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
+        			(enchantment, level) -> {
+        				if (enchantment.canApply(stack)) {
+        					stack.addEnchantment(enchantment, level);
+        				}
+        			});        	
+        	//EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
         }
         if (type.isPowered() && electricStats.length >= 1) {
             NBTTagCompound tag = getTag(stack);

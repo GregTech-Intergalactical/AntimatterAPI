@@ -20,7 +20,6 @@ import muramasa.gtu.integration.top.TheOneProbePlugin;
 import muramasa.gtu.loaders.ContentLoader;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
