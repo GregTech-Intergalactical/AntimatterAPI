@@ -138,7 +138,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-    	return this.damage(stack, ConfigurationHolder.toolCraftingDurability);
+    	return damage(stack, getType().getDamageCrafting());
     }
 
     @Override

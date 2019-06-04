@@ -45,8 +45,5 @@ public class ConfigurationHolder {
 	@Config.Comment("Disable vanilla stones from generating? Default: false")
 	@Config.RequiresWorldRestart
 	public static boolean disableVanillaStoneGen = false;
-	
-	@Config.Comment("How much durability does one crafting operation take away from a GT tool? Default: 100")
-	public static int toolCraftingDurability = 100;
 
 }
