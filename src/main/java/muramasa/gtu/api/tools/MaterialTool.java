@@ -3,23 +3,20 @@ package muramasa.gtu.api.tools;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-
-import muramasa.gtu.ConfigurationHolder;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.network.GregTechNetwork;
+import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -40,8 +37,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -138,6 +133,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
+        GregTechNetwork.playSoundOnClient(type.getUseSound());
     	return damage(stack, getType().getDamageCrafting());
     }
 

@@ -6,6 +6,8 @@ import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.network.GregTechNetwork;
+import muramasa.gtu.api.network.SoundMessage;
 import muramasa.gtu.api.pipe.types.Cable;
 import muramasa.gtu.api.pipe.types.FluidPipe;
 import muramasa.gtu.api.pipe.types.ItemPipe;
@@ -15,6 +17,7 @@ import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.tools.MaterialTool;
 import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
@@ -41,6 +44,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -129,6 +133,11 @@ public class ClientProxy implements IProxy {
     @Override
     public void serverStarting(FMLServerStartingEvent e) {
         //NOOP
+    }
+
+    @Override
+    public void playSound(SoundType type) {
+        GregTechNetwork.NETWORK.sendToAllAround(new SoundMessage(type.getInternalId()), new NetworkRegistry.TargetPoint(Ref.MC.world.provider.getDimension(), Ref.MC.player.posX, Ref.MC.player.posY, Ref.MC.player.posZ, Ref.TOOL_SOUND_RANGE));
     }
 
     @Override

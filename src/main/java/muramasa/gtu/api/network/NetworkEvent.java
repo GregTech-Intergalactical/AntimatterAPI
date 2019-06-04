@@ -1,7 +1,8 @@
 package muramasa.gtu.api.network;
 
-public enum MachineNetworkEvent {
+public enum NetworkEvent {
 
+    SOUND,
     FLUID,
     TEXTURE
 }

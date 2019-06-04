@@ -4,7 +4,7 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.api.util.Sounds;
+import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -46,7 +46,7 @@ public class CoverHandler implements ICoverHandler {
         side = Utils.rotateFacing(side, getTileFacing());
         if (!isValid(side, cover) || covers[side.getIndex()] == cover) return false;
         covers[side.getIndex()] = cover;
-        Sounds.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
+        SoundType.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
         Utils.markTileForRenderUpdate(getTile());
         return true;
     }

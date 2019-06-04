@@ -3,10 +3,10 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Element;
-import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.util.Sounds;
+import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
 import net.minecraft.block.BlockCauldron;
@@ -94,7 +94,7 @@ public class MaterialItem extends Item implements IHasModelOverride {
                 MaterialItem item = (MaterialItem) player.getHeldItem(hand).getItem();
                 player.setHeldItem(hand, get(Prefix.DustPure, item.getMaterial(), stack.getCount()));
                 world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockCauldron.LEVEL, --level));
-                Sounds.BUCKET_EMPTY.play(world, pos);
+                SoundType.BUCKET_EMPTY.play(world, pos);
                 return EnumActionResult.SUCCESS;
             }
         }
