@@ -1,5 +1,6 @@
 package muramasa.gtu.proxy;
 
+import muramasa.gtu.api.util.SoundType;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -14,6 +15,8 @@ public interface IProxy {
     void postInit(FMLPostInitializationEvent e);
 
     void serverStarting(FMLServerStartingEvent e);
+
+    void playSound(SoundType type);
 
     String trans(String unlocalized);
 }

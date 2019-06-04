@@ -53,6 +53,7 @@ public class Ref {
     public static boolean ENABLE_ITEM_REPLACEMENTS = true;
     public static boolean DISABLE_VANILLA_ORE_GENERATION = true;
     public static boolean DISABLE_VANILLA_STONE_GENERATION = false;
+    public static int TOOL_SOUND_RANGE = 10;
 
     /** Tools **/
     public static boolean AXE_TIMBER = true;
