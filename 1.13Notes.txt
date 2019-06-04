@@ -1,1 +1,2 @@
-ItemTiers (ToolMaterial) https://github.com/Krevik/Kathairis/blob/master/src/main/java/io/github/krevik/kathairis/init/ModItemTiers.java
+ItemTiers (ToolMaterial): https://github.com/Krevik/Kathairis/blob/master/src/main/java/io/github/krevik/kathairis/init/ModItemTiers.java
+GUI Opening: https://github.com/sinkillerj/ProjectE/blob/mc1.13.x/src/main/java/moze_intel/projecte/gameObjs/blocks/AlchemicalChest.java#L74
