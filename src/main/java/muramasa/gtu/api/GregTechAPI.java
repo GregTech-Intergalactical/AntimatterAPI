@@ -19,9 +19,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class GregTechAPI {
 
@@ -44,6 +50,35 @@ public class GregTechAPI {
         if (Utils.isModLoaded(Ref.MOD_JEI)) {
             GregTechJEIPlugin.registerCategory(map, gui);
         }
+    }
+
+    /** Fluid Cell Registry **/
+    private static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
+
+    public static void registerFluidCell(ItemStack stack) {
+        if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
+        FLUID_CELL_REGISTRY.add(stack);
+    }
+
+    public static List<ItemStack> getFluidCells() {
+        List<ItemStack> cells = new ArrayList<>();
+        FLUID_CELL_REGISTRY.forEach(c -> cells.add(c.copy()));
+        return cells;
+    }
+
+    public static Collection<ItemStack> getFluidCells(Fluid fluid) {
+        return getFluidCells(fluid, -1);
+    }
+
+    public static Collection<ItemStack> getFluidCells(Fluid fluid, int amount) {
+        Collection<ItemStack> cells = getFluidCells();
+        for (ItemStack stack : cells) {
+            IFluidHandlerItem fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandler == null) continue;
+            amount = amount != -1 ? amount : Integer.MAX_VALUE;
+            fluidHandler.fill(new FluidStack(fluid, amount), true);
+        }
+        return cells;
     }
 
     /** Cover Registry Section **/
