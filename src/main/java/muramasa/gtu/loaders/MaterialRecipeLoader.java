@@ -536,9 +536,10 @@ public class MaterialRecipeLoader {
         for (Material m : TOOLS.getMats()) {
 
             if (!m.has(INGOT)) continue; //TODO temp
-            RecipeHelper.addShaped(ToolType.HAMMER.get(m), "XX ", "XXS", "XX ", 'X', m.getIngot(1), 'S', Materials.Wood.getRod(1));
-            RecipeHelper.addShaped(ToolType.WRENCH.get(m), "XwX", "XXX", " X ", 'X', m.getIngot(1), 'w', ToolType.HAMMER.get());
-
+            RecipeHelper.addShaped(Ref.MODID + "_wrench" + m.getName(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', m.getIngot(1));
+            RecipeHelper.addShaped(Ref.MODID + "_hammer" + m.getName(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
+            RecipeHelper.addShaped(Ref.MODID + "_sword" + m.getName(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
+            
             /*
             if (m.has(INGOT) && m.has(Plate) && !m.has(RUBBERTOOLS) && m == m.mMacerateInto) {
                 ItemStack aStainlessScrew = Materials.StainlessSteel.getScrew(1), aTitaniumScrew = Materials.Titanium.getScrew(1), aTungstensteelScrew = Materials.TungstenSteel.getScrew(1), aStainlessPlate = Materials.StainlessSteel.getPlate(1), aTitaniumPlate = Materials.Titanium.getPlate(1), aTungstensteelPlate = Materials.TungstenSteel.getPlate(1), aStainlessSmallGear = Materials.StainlessSteel.getGearS(1), aTitaniumSmallGear = Materials.Titanium.getGearS(1), aTungstensteelSmallGear = Materials.TungstenSteel.getGearS(1), aTitaniumSpring = Materials.Titanium.getSpring(1);
