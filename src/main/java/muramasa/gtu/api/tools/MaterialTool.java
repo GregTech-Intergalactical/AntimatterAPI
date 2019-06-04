@@ -133,7 +133,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-        GregTechNetwork.playSoundOnClient(type.getUseSound());
+        if (type.getUseSound() != null) GregTechNetwork.playSoundOnClient(type.getUseSound());
     	return damage(stack, getType().getDamageCrafting());
     }
 
