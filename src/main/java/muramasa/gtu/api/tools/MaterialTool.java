@@ -3,6 +3,8 @@ package muramasa.gtu.api.tools;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+
+import muramasa.gtu.ConfigurationHolder;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IConfigHandler;
@@ -38,6 +40,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -57,7 +61,6 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
         setCreativeTab(Ref.TAB_ITEMS);
         setMaxDamage(1);
         setMaxStackSize(1);
-        setContainerItem(this);
         this.type = type;
     }
 
@@ -134,8 +137,8 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
     }
 
     @Override
-    public ItemStack getContainerItem(ItemStack itemStack) {
-        return itemStack;
+    public ItemStack getContainerItem(ItemStack stack) {
+    	return this.damage(stack, ConfigurationHolder.toolCraftingDurability);
     }
 
     @Override
@@ -290,24 +293,34 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     public ItemStack get(Material primary, Material secondary, long... electricStats) {
         ItemStack stack = get(primary, secondary);
-        if (primary != null && !primary.getEnchantments().isEmpty()) {
-        	//Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
-        	primary.getEnchantments().forEach(
-        			//TODO: canApply normally just takes canApplyAtEnchantingTable, 
-        			//      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
-        			(enchantment, level) -> {
-        				if (enchantment.canApply(stack)) {
-        					stack.addEnchantment(enchantment, level);
-        				}
-        			});        	
-        	//EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
-        }
         if (type.isPowered() && electricStats.length >= 1) {
             NBTTagCompound tag = getTag(stack);
             tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, electricStats[0]); //TODO temp, should be 0
             tag.setLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, electricStats[0]);
         }
         return stack;
+    }
+    
+    //TODO: Find a way to play sound at client when this is fired in getContainerItem + boolean return version?
+    public ItemStack damage(ItemStack stack, int damage) {
+    	stack = stack.copy();
+    	stack.setCount(1);
+    	NBTTagCompound tag = getTag(stack);
+    	int newDamage = tag.getInteger(Ref.KEY_TOOL_DATA_DURABILITY) - damage;
+    	if (type.isPowered()) {
+    		long newEnergy = getEnergy(stack) - damage;
+            if (newEnergy > 0) tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, newEnergy);
+            if (newEnergy < 0) tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
+    	}
+    	else {
+    		if (newDamage > 0) {
+    			tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, newDamage);
+            } else {
+                newDamage = 0;
+                stack.setCount(0);
+            }
+    	}
+    	return stack;
     }
 
     public int damage(ItemStack stack, int damage, EntityLivingBase living, boolean playSound) {
