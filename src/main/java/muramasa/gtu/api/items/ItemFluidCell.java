@@ -3,12 +3,9 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.impl.FluidHandlerItemCell;
 import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
-import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.common.blocks.BlockStorage;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -57,6 +54,14 @@ public class ItemFluidCell extends StandardItem {
         this.emptyStack = type.asItemStack();
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getMaxTemp() {
+        return maxTemp;
+    }
+
     //TODO: Shall we eliminate JEI clutter with every filled cell being displayed?
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
@@ -74,9 +79,8 @@ public class ItemFluidCell extends StandardItem {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         FluidStack fluid = getContents(stack);
-        if (fluid != null) {
-            tooltip.add(fluid.getLocalizedName() + " - " + fluid.amount);
-        }
+        if (fluid != null) tooltip.add(fluid.getLocalizedName() + " - " + fluid.amount);
+        tooltip.add("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K");
     }
 
     @Override
@@ -98,20 +102,6 @@ public class ItemFluidCell extends StandardItem {
             } else {
                 System.out.println("drain tile");
                 cellHandler.fill(fluidHandler.drain(capacity, true), true);
-            }
-        } else if (world.getBlockState(pos).getBlock() instanceof BlockStorage) {
-            //TODO temp for testing, remove at some point
-            Material mat = ((BlockStorage) world.getBlockState(pos).getBlock()).getMaterial();
-            if (mat != null && mat.has(GenerationFlag.LIQUID)) {
-                player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
-            }
-        } else{
-            //TODO temp for testing, remove at some point
-            Material mat = Materials.getAll().toArray(new Material[0])[Ref.RNG.nextInt(Materials.getCount())];
-            if (mat != null && mat.has(GenerationFlag.LIQUID)) {
-                player.setHeldItem(hand, getCellWithFluid(type, mat.getLiquid()));
-            } else {
-                player.setHeldItem(hand, getCellWithFluid(type, Materials.Diesel.getLiquid()));
             }
         }
         return EnumActionResult.SUCCESS;

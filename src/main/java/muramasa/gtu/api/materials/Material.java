@@ -1,20 +1,19 @@
 package muramasa.gtu.api.materials;
 
+import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
-import net.minecraft.enchantment.Enchantment;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-
-import com.google.common.collect.ImmutableMap;
 
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
@@ -587,22 +586,16 @@ public class Material {
         return MaterialItem.get(Prefix.Lens, this, amount);
     }
 
-    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCell(int amount) {
-    	return ItemFluidCell.getCellWithFluid(ItemType.CellTin, Materials.Water.getLiquid());
-        //return MaterialItem.get(Prefix.Cell, this, amount);
+    	return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getLiquid());
     }
 
-    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCellG(int amount) {
-    	return ItemFluidCell.getCellWithFluid(ItemType.CellSteel, Materials.Oxygen.getGas());
-        //return MaterialItem.get(Prefix.CellGas, this, amount);
+        return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getGas());
     }
 
-    //TODO: Change with merged with master, cell registry? Temporary placeholder!
     public ItemStack getCellP(int amount) {
-    	return ItemFluidCell.getCellWithFluid(ItemType.CellTungstensteel, Materials.Iron.getPlasma());
-        //return MaterialItem.get(Prefix.CellPlasma, this, amount);
+        return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getPlasma());
     }
 
     public ItemStack getOre(int amount) {

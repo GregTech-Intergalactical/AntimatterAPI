@@ -67,7 +67,7 @@ public class StandardItem extends Item implements IHasModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-            GregTechAPI.getRegisteredCovers().forEach(c -> tooltip.add(c.getName() + " - " + c.getInternalId()));
+
         }
     }
 
