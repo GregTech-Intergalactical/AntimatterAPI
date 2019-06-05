@@ -1,8 +1,8 @@
 package muramasa.gtu.api.network;
 
 import io.netty.buffer.ByteBuf;
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.util.SoundType;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -34,7 +34,7 @@ public class SoundMessage implements IMessage {
         @Override
         public IMessage onMessage(SoundMessage message, MessageContext ctx) {
             SoundType type = SoundType.get(message.soundId);
-            if (type != null) Ref.MC.player.playSound(type.getEvent(), type.getVolume(), type.getPitch());
+            if (type != null) Minecraft.getMinecraft().player.playSound(type.getEvent(), type.getVolume(), type.getPitch());
             return null;
         }
     }

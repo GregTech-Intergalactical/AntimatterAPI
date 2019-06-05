@@ -1,7 +1,6 @@
 package muramasa.gtu;
 
 import muramasa.gtu.client.creativetab.GregTechTab;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -11,7 +10,6 @@ import java.util.Random;
 public class Ref {
 
     /** Global Objects **/
-    public static Minecraft MC = Minecraft.getMinecraft();
     public static Random RNG = new Random();
 
     /** Mod Data **/

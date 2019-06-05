@@ -28,7 +28,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockOre extends Block implements IHasItemBlock, IHasModelOverride {
 
-    private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore"));
     private static PropertyInteger STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId());
 //    private static PropertyInteger SET = PropertyInteger.create("material_set", 0, MaterialSet.values().length);
 
@@ -94,6 +93,7 @@ public class BlockOre extends Block implements IHasItemBlock, IHasModelOverride 
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(Block block, ItemStack stack) {
         return Prefix.Ore.getDisplayName(((BlockOre) block).getMaterial());
     }
@@ -104,6 +104,6 @@ public class BlockOre extends Block implements IHasItemBlock, IHasModelOverride 
         for (StoneType type : StoneType.getAll()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.getInternalId(), new ModelResourceLocation(Ref.MODID + ":block_ore", "stone_type=" + type.getInternalId()));
         }
-        ModelLoader.setCustomStateMapper(this, stateMapRedirect);
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore")));
     }
 }

@@ -40,8 +40,6 @@ import static muramasa.gtu.api.properties.GTProperties.*;
 
 public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHasModelOverride {
 
-    private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe"));
-
     public BlockPipe(String name, TextureData data) {
         super(data);
         setUnlocalizedName(name);
@@ -166,19 +164,21 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(Block block, ItemStack stack) {
         return getType().getDisplayName(stack);
     }
 
     @Override
-    public List<String> addInformation(ItemStack stack) {
-        return getType().getTooltip(stack);
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, List<String> tooltip) {
+        tooltip.addAll(getType().getTooltip(stack));
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_pipe", "inventory"));
-        ModelLoader.setCustomStateMapper(this, stateMapRedirect);
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
     }
 }

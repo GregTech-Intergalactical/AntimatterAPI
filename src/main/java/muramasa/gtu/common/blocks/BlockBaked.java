@@ -18,6 +18,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,14 +59,17 @@ public abstract class BlockBaked extends Block {
         return data;
     }
 
+    @SideOnly(Side.CLIENT)
     public ModelResourceLocation getModel() {
         return model;
     }
 
+    @SideOnly(Side.CLIENT)
     public List<Texture> getTextures() {
         return Collections.emptyList();
     }
 
+    @SideOnly(Side.CLIENT)
     public ItemOverrideList getOverride(IBakedModel baked) {
         return new ItemOverrideTextureData(baked);
     }
