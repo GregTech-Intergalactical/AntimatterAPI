@@ -6,10 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class RecipeMap {
 
@@ -23,9 +20,9 @@ public class RecipeMap {
     public static RecipeMap NAQUADAH_FUELS = new RecipeMap("naquadah_fuels", "Fuel Value: ", " EU", 20);
     public static RecipeMap PLASMA_FUELS = new RecipeMap("plasma_fuels", "Fuel Value: ", " EU", 100);
 
-    private LinkedHashMap<String, List<Recipe>> LOOKUP;
+    private HashMap<IRecipeObject, List<Recipe>> LOOKUP;
     private String categoryId, categoryName;
-    private String specialPre = "", specialPost = "";
+    private String specialPre = "", specialPost = ""; //TODO move to lang
 
     public RecipeMap(String jeiCategoryId, int initialSize) {
         this.categoryId = "gt.recipe_map." + jeiCategoryId;
@@ -57,23 +54,24 @@ public class RecipeMap {
     }
 
     void add(Recipe recipe) {
-        String input;
+//        IRecipeObject input;
         List<Recipe> existing;
-        if (recipe.hasInputItems() && recipe.hasInputFluids()) {
+        //TODO
+        /*if (recipe.hasInputItems() && recipe.hasInputFluids()) {
             for (int i = 0; i < recipe.getInputItems().length; i++) {
                 input = Utils.getString(recipe.getInputItems()[i], recipe.getInputFluids()[0]);
                 if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
                 else LOOKUP.put(input, Lists.newArrayList(recipe));
             }
-        } else if (recipe.hasInputItems() && !recipe.hasInputFluids()){
+        } else*/ if (recipe.hasInputItems() && !recipe.hasInputFluids()){
             for (int i = 0; i < recipe.getInputItems().length; i++) {
-                input = Utils.getString(recipe.getInputItems()[i]);
+                ItemStackInput input = new ItemStackInput(recipe.getInputItems()[i]);
                 if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
                 else LOOKUP.put(input, Lists.newArrayList(recipe));
             }
         } else if (!recipe.hasInputItems() && recipe.hasInputFluids()) {
             for (int i = 0; i < recipe.getInputFluids().length; i++) {
-                input = Utils.getString(recipe.getInputFluids()[i]);
+                FluidStackInput input = new FluidStackInput(recipe.getInputFluids()[i]);
                 if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
                 else LOOKUP.put(input, Lists.newArrayList(recipe));
             }
@@ -84,7 +82,23 @@ public class RecipeMap {
     //TODO take into account machine tier
     public static Recipe findRecipeItem(RecipeMap map, ItemStack[] items) {
         if (map == null || !Utils.areItemsValid(items)) return null;
-        List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0]));
+
+        ItemStackInput wrapperTest = new ItemStackInput(items[0]);
+
+        System.out.println(map.categoryName);
+
+        map.LOOKUP.keySet().forEach(i -> {
+            if (i.hashCode() == wrapperTest.hashCode()) {
+                System.out.println(i.getInternal() + " - " + map.LOOKUP.containsKey(new ItemStackInput(items[0])) + " - (" + i.hashCode() + " / " + wrapperTest.hashCode() + ")");
+                System.out.println("equality: " + (i == wrapperTest));
+                System.out.println("cont: " + map.LOOKUP.containsKey(i));
+            }
+        });
+
+        //System.out.println(map.LOOKUP.containsKey(new ItemStackWrapper(items[0])));
+
+        List<Recipe> matches = map.LOOKUP.get(new ItemStackInput(items[0]));
+        System.out.println("matches: " + matches);
         if (matches == null) return null;
         int size = matches.size();
         Recipe match;
@@ -99,7 +113,7 @@ public class RecipeMap {
     @Nullable
     public static Recipe findRecipeFluid(RecipeMap map, FluidStack[] fluids) {
         if (map == null || !Utils.areFluidsValid(fluids)) return null;
-        List<Recipe> matches = map.LOOKUP.get(Utils.getString(fluids[0]));
+        List<Recipe> matches = map.LOOKUP.get(new FluidStackInput(fluids[0]));
         if (matches == null) return null;
         int size = matches.size();
         Recipe match;
@@ -112,17 +126,18 @@ public class RecipeMap {
     }
 
     @Nullable
+    //TODO
     public static Recipe findRecipeItemFluid(RecipeMap map, ItemStack[] items, FluidStack[] fluids) {
-        if (map == null || !Utils.areItemsValid(items) || !Utils.areFluidsValid(fluids)) return null;
-        List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0], fluids[0]));
-        if (matches == null) return null;
-        int size = matches.size();
-        Recipe match;
-        for (int i = 0; i < size; i++) {
-            match = matches.get(i);
-            if (!Utils.doItemsMatchAndSizeValid(match.getInputItems(), items) || !Utils.doFluidsMatchAndSizeValid(match.getInputFluids(), fluids)) continue;
-            return match;
-        }
+//        if (map == null || !Utils.areItemsValid(items) || !Utils.areFluidsValid(fluids)) return null;
+//        List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0], fluids[0]));
+//        if (matches == null) return null;
+//        int size = matches.size();
+//        Recipe match;
+//        for (int i = 0; i < size; i++) {
+//            match = matches.get(i);
+//            if (!Utils.doItemsMatchAndSizeValid(match.getInputItems(), items) || !Utils.doFluidsMatchAndSizeValid(match.getInputFluids(), fluids)) continue;
+//            return match;
+//        }
         return null;
     }
 }
