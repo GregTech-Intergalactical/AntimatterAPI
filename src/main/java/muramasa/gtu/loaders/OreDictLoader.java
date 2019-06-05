@@ -11,12 +11,13 @@ public class OreDictLoader {
 
     public static void init() {
         //Register materialItem entries (prefixMaterialName)
+        String[] prefix, mat;
         for (MaterialItem item : MaterialItem.getAll()) {
-            String[] prefix = item.getPrefix().getName().split("_");
+            prefix = item.getPrefix().getName().split("_");
             for (int i = 1; i < prefix.length; i++) {
                 prefix[i] = prefix[i].substring(0, 1).toUpperCase() + prefix[i].substring(1);
             }
-            String[] mat = item.getMaterial().getName().split("_");
+            mat = item.getMaterial().getName().split("_");
             for (int i = 0; i < mat.length; i++) {
                 mat[i] = mat[i].substring(0, 1).toUpperCase() + mat[i].substring(1);
             }
