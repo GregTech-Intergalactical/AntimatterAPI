@@ -26,7 +26,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
-import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -41,24 +40,6 @@ public class Utils {
 
     static {
         DECIMAL_SYMBOLS.setGroupingSeparator(' ');
-    }
-
-    public static String getString(ItemStack stack) {
-        if (stack.isEmpty() || stack.getItem().getRegistryName() == null) {
-            throw new InvalidParameterException("Cannot get recipe string for a empty item or if the registry name is null");
-        }
-        return stack.getItem().getRegistryName().toString();
-    }
-
-    public static String getString(FluidStack fluid) {
-        if (fluid == null || fluid.getFluid() == null) {
-            throw new InvalidParameterException("Cannot get recipe string for a null fluid or fluidstack");
-        }
-        return fluid.getUnlocalizedName();
-    }
-
-    public static String getString(ItemStack stack, FluidStack fluid) {
-        return getString(stack) + getString(fluid);
     }
 
     /** Returns true of A is not empty, has the same Item and damage is equal to B **/
