@@ -73,13 +73,6 @@ public class BlockCasing extends BlockBaked implements IHasModelOverride {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
-        GTModelLoader.register("block_casing", this);
-    }
-
-    @Override
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
         for (Casing type : Casing.getAll()) {
@@ -91,7 +84,16 @@ public class BlockCasing extends BlockBaked implements IHasModelOverride {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ItemOverrideList getOverride(IBakedModel baked) {
         return new ItemOverrideCasing();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
+        GTModelLoader.register("block_casing", this);
     }
 }

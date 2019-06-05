@@ -1,6 +1,7 @@
 package muramasa.gtu.api.texture;
 
 import muramasa.gtu.Ref;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 
@@ -32,7 +33,7 @@ public class Texture {
     }
 
     public TextureAtlasSprite getSprite() {
-        TextureAtlasSprite sprite = Ref.MC.getTextureMapBlocks().getTextureExtry(loc.toString());
-        return sprite != null ? sprite : Ref.MC.getTextureMapBlocks().getTextureExtry(ERROR.getLoc().toString());
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
+        return sprite != null ? sprite : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(ERROR.getLoc().toString());
     }
 }

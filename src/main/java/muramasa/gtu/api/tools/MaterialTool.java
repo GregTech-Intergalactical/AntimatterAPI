@@ -3,6 +3,7 @@ package muramasa.gtu.api.tools;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IConfigHandler;
@@ -10,7 +11,6 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
@@ -133,7 +133,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-        if (type.getUseSound() != null) GregTechNetwork.playSoundOnClient(type.getUseSound());
+        if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
     	return damage(stack, getType().getDamageCrafting());
     }
 

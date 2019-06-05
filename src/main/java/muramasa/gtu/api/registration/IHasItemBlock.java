@@ -3,7 +3,6 @@ package muramasa.gtu.api.registration;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collections;
 import java.util.List;
 
 public interface IHasItemBlock {
@@ -12,7 +11,7 @@ public interface IHasItemBlock {
         return stack.getUnlocalizedName();
     }
 
-    default List<String> addInformation(ItemStack stack) {
-        return Collections.emptyList();
+    default void addInformation(ItemStack stack, List<String> tooltip) {
+        //NOOP
     }
 }

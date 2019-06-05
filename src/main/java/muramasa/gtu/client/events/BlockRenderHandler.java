@@ -1,4 +1,4 @@
-package muramasa.gtu.common.events;
+package muramasa.gtu.client.events;
 
 public class BlockRenderHandler  {
 

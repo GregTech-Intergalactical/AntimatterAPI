@@ -1,15 +1,13 @@
-package muramasa.gtu.common.events;
+package muramasa.gtu.client.events;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber
-public class ItemHandler {
+public class TooltipHandler {
 
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent e) {

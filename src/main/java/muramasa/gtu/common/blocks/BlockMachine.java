@@ -20,7 +20,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,8 +43,6 @@ import java.util.List;
 import static muramasa.gtu.api.properties.GTProperties.*;
 
 public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverride {
-
-    private static StateMapperRedirect stateMapRedirect = new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine"));
 
     private String type;
 
@@ -225,6 +222,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(Block block, ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
@@ -234,7 +232,8 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, List<String> tooltip) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             if (getType().hasFlag(MachineFlag.BASIC)) {
                 Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
@@ -248,6 +247,6 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_machine", "inventory"));
-        ModelLoader.setCustomStateMapper(this, stateMapRedirect);
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine")));
     }
 }
