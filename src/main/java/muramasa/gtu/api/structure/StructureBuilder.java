@@ -1,6 +1,6 @@
 package muramasa.gtu.api.structure;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.int3;
 import net.minecraft.util.Tuple;
 

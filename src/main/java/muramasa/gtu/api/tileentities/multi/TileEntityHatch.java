@@ -6,7 +6,7 @@ import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.capability.impl.HatchComponentHandler;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.machines.ContentUpdateType;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.TextureData;

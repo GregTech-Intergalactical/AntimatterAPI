@@ -1,6 +1,6 @@
 package muramasa.gtu.api.texture;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 
 import java.util.Locale;
 

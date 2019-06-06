@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class GregTechAPI {
+public final class GregTechAPI {
 
     /** Item Registry Section **/
     public static void addItemReplacement(Prefix prefix, Material material, ItemStack stack) {
@@ -53,7 +53,7 @@ public class GregTechAPI {
     }
 
     /** Fluid Cell Registry **/
-    private static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
+    private final static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
 
     public static void registerFluidCell(ItemStack stack) {
         if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
@@ -82,15 +82,15 @@ public class GregTechAPI {
     }
 
     /** Cover Registry Section **/
-    private static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
-    private static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
+    private final static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
+    private final static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
 
     /** IMPORTANT: These should only be used to compare instances. **/
-    public static Cover CoverNone = new CoverNone();
-    public static Cover CoverPlate = new CoverPlate();
-    public static Cover CoverItem = new CoverItem(Tier.LV);
-    public static Cover CoverFluid = new CoverFluid(Tier.LV);
-    public static Cover CoverEnergy = new CoverEnergy(Tier.LV);
+    public final static Cover CoverNone = new CoverNone();
+    public final static Cover CoverPlate = new CoverPlate();
+    public final static Cover CoverItem = new CoverItem(Tier.LV);
+    public final static Cover CoverFluid = new CoverFluid(Tier.LV);
+    public final static Cover CoverEnergy = new CoverEnergy(Tier.LV);
 
     /**
      * Registers a cover behaviour. This must be done during preInit.

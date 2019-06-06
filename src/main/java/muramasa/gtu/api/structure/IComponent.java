@@ -1,4 +1,4 @@
-package muramasa.gtu.api.interfaces;
+package muramasa.gtu.api.structure;
 
 import muramasa.gtu.api.capability.IComponentHandler;
 

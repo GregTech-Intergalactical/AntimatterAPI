@@ -1,6 +1,6 @@
 package muramasa.gtu.integration.ctx;
 
-import muramasa.gtu.api.interfaces.IMaterialFlag;
+import muramasa.gtu.api.materials.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.TextureSet;
 import stanhebben.zenscript.annotations.ZenMethod;

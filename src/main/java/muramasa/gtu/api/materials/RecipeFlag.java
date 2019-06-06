@@ -1,7 +1,5 @@
 package muramasa.gtu.api.materials;
 
-import muramasa.gtu.api.interfaces.IMaterialFlag;
-
 import java.util.ArrayList;
 import java.util.Locale;
 

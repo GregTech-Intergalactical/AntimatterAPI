@@ -2,7 +2,7 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.api.interfaces.IMaterialFlag;
+import muramasa.gtu.api.materials.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialStack;
 import muramasa.gtu.api.recipe.RecipeBuilder;

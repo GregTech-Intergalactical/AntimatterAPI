@@ -1,6 +1,6 @@
 package muramasa.gtu.api.data;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

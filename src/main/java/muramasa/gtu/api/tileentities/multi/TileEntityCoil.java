@@ -3,7 +3,7 @@ package muramasa.gtu.api.tileentities.multi;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.data.Coil;
-import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.tileentities.TileEntityBase;
 import muramasa.gtu.api.blocks.BlockCoil;
 
