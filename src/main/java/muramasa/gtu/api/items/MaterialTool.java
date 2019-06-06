@@ -1,4 +1,4 @@
-package muramasa.gtu.api.tools;
+package muramasa.gtu.api.items;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -11,8 +11,11 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -45,7 +48,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends ItemSword implements IModelOverride {
+public class MaterialTool extends ItemSword implements IModelOverride, IColorHandler {
 
     protected ToolType type;
 
@@ -423,7 +426,11 @@ public class MaterialTool extends ItemSword implements IModelOverride {
         }
     }
 
-    /** Item Model Section **/
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        return getRGB(stack, i);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {

@@ -72,7 +72,7 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
-        GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(b));
+        GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(b));
 
         //TODO auto register all type tiles??? probably
         GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "tile_machine"));
@@ -101,8 +101,8 @@ public class ContentLoader {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
-        GregTechRegistry.getRegisteredItems().forEach(i -> e.getRegistry().register(i));
-        GregTechRegistry.getRegisteredBlocks().forEach(b -> e.getRegistry().register(new ItemBlockGT(b)));
+        GregTechRegistry.ITEMS.forEach(i -> e.getRegistry().register(i));
+        GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(new ItemBlockGT(b)));
 
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.ITEM);
     }

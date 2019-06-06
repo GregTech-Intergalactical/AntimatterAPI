@@ -2,6 +2,7 @@ package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
 import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.util.SoundType;

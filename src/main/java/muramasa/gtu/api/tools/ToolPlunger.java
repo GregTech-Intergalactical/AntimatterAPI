@@ -1,5 +1,6 @@
 package muramasa.gtu.api.tools;
 
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
 import net.minecraft.item.ItemStack;
 

@@ -5,8 +5,11 @@ import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.pipe.CableStack;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.types.Cable;
+import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,9 +23,10 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.properties.GTProperties.*;
+import static muramasa.gtu.api.properties.GTProperties.CONNECTIONS;
+import static muramasa.gtu.api.properties.GTProperties.TEXTURE;
 
-public class BlockCable extends BlockPipe {
+public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
 
     private Cable type;
 
@@ -71,6 +75,28 @@ public class BlockCable extends BlockPipe {
                 boolean insulated = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED);
                 ((TileEntityCable) tile).init(insulated);
             }
+        }
+    }
+
+    @Override
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityCable) {
+            if (((TileEntityCable) tile).isInsulated()) {
+                return i == 2 ? getRGB() : -1;
+            } else {
+                return i == 0 || i == 2 ? getRGB() : -1;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_CABLE_STACK_INSULATED) && stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
+            return i == 2 ? ((BlockPipe) block).getRGB() : -1;
+        } else {
+            return i == 0 || i == 1 || i == 2 ? ((BlockPipe) block).getRGB() : -1;
         }
     }
 }
