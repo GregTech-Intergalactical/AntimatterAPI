@@ -1,4 +1,4 @@
-package muramasa.gtu.api.interfaces;
+package muramasa.gtu.api.registration;
 
 import net.minecraft.item.ItemStack;
 

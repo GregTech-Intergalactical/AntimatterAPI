@@ -1,7 +1,7 @@
 package muramasa.gtu.api.pipe;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.pipe.types.Pipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

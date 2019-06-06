@@ -7,7 +7,7 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.data.Casing;
-import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityBase;

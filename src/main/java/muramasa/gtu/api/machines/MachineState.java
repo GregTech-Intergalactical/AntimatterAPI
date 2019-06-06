@@ -1,6 +1,6 @@
 package muramasa.gtu.api.machines;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 
 import java.util.Locale;
 

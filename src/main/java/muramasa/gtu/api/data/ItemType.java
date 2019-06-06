@@ -2,7 +2,7 @@ package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.registration.GregTechRegistry;

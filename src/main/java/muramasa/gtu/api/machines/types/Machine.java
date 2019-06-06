@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;

@@ -1,7 +1,7 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 

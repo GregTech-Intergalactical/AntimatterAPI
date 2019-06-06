@@ -3,7 +3,6 @@ package muramasa.gtu.api.materials;
 import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.interfaces.IMaterialFlag;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;

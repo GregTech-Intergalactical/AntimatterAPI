@@ -3,7 +3,7 @@ package muramasa.gtu.api.data;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.block.SoundType;

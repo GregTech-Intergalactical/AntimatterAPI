@@ -106,7 +106,7 @@ public class BlockOre extends Block implements IItemBlock, IModelOverride, IColo
     }
 
     @Override
-    public int getItemColor(ItemStack stack,@Nullable Block block, int i) {
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
         return i == 1 ? ((BlockOre) block).getMaterial().getRGB() : -1;
     }
 

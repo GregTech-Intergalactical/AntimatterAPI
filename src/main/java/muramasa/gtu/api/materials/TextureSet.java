@@ -1,6 +1,6 @@
 package muramasa.gtu.api.materials;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
 
 import java.util.Collection;

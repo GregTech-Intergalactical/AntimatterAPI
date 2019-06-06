@@ -1,8 +1,5 @@
-package muramasa.gtu.api.interfaces;
+package muramasa.gtu.api.materials;
 
-import muramasa.gtu.api.materials.GenerationFlag;
-import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.RecipeFlag;
 import org.apache.commons.lang3.EnumUtils;
 
 import java.util.ArrayList;
