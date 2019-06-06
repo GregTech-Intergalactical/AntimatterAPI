@@ -5,10 +5,12 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Element;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -33,7 +35,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MaterialItem extends Item implements IModelOverride {
+public class MaterialItem extends Item implements IModelOverride, IColorHandler {
 
     private static LinkedHashMap<String, MaterialItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
@@ -101,13 +103,6 @@ public class MaterialItem extends Item implements IModelOverride {
         return EnumActionResult.FAIL;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onModelRegistration() {
-        String set = getMaterial().getSet().getName();
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
-    }
-
     public static boolean hasPrefix(ItemStack stack, Prefix prefix) {
         return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getPrefix() == prefix;
     }
@@ -173,5 +168,17 @@ public class MaterialItem extends Item implements IModelOverride {
 
     public static Collection<MaterialItem> getAll() {
         return TYPE_LOOKUP.values();
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        return i == 0 ? material.getRGB() : -1;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelRegistration() {
+        String set = getMaterial().getSet().getName();
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
     }
 }

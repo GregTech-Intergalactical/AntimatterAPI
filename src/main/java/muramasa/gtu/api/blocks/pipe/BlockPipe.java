@@ -1,16 +1,17 @@
 package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
 import muramasa.gtu.api.pipe.types.Pipe;
+import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
-import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -35,12 +36,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModelOverride {
+public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModelOverride, IColorHandler {
 
     public BlockPipe(String name, TextureData data) {
         super(data);
@@ -174,6 +174,16 @@ public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModel
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         tooltip.addAll(getType().getTooltip(stack));
+    }
+
+    @Override
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        return i == 0 || i == 1 || i == 2 ? getRGB() : -1;
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        return i == 0 || i == 1 || i == 2 ? ((BlockPipe) block).getRGB() : -1;
     }
 
     @Override

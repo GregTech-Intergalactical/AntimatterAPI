@@ -1,6 +1,7 @@
 package muramasa.gtu.api.tools;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.items.MaterialTool;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

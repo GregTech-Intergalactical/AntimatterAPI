@@ -9,8 +9,9 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
@@ -43,7 +44,7 @@ import java.util.List;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public class BlockMachine extends Block implements IItemBlock, IModelOverride {
+public class BlockMachine extends Block implements IItemBlock, IModelOverride, IColorHandler {
 
     private String type;
 
@@ -241,6 +242,12 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride {
                 tooltip.add("Capacity: " + TextFormatting.BLUE + (tier.getVoltage() * 64));
             }
         }
+    }
+
+    @Override
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        TileEntity tile = Utils.getTile(world, pos);
+        return tile instanceof TileEntityMachine && i == 0 ? ((TileEntityMachine) tile).getTextureData().getTint() : -1;
     }
 
     @Override

@@ -2,7 +2,7 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
-import muramasa.gtu.api.tools.MaterialTool;
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;

@@ -3,8 +3,9 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,12 +15,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockStorage extends Block implements IItemBlock, IModelOverride {
+import javax.annotation.Nullable;
+
+public class BlockStorage extends Block implements IItemBlock, IModelOverride, IColorHandler {
 
     private Material material;
 
@@ -55,6 +59,16 @@ public class BlockStorage extends Block implements IItemBlock, IModelOverride {
     @Override
     public String getDisplayName(ItemStack stack) {
         return Prefix.Block.getDisplayName(material);
+    }
+
+    @Override
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int i) {
+        return i == 0 ? getMaterial().getRGB() : -1;
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        return i == 0 ? ((BlockStorage) block).getMaterial().getRGB() : -1;
     }
 
     @Override

@@ -14,7 +14,7 @@ import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.pipe.types.Cable;
 import muramasa.gtu.api.pipe.types.FluidPipe;
 import muramasa.gtu.api.pipe.types.ItemPipe;
-import muramasa.gtu.api.tools.MaterialTool;
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
@@ -33,9 +33,9 @@ import java.util.Set;
 public class GregTechRegistry {
 
     /** Item/Block/Tile Registration **/
-    private static Set<Item> ITEMS = new LinkedHashSet<>();
-    private static Set<Block> BLOCKS = new LinkedHashSet<>();
-    private static Set<Class> TILES = new LinkedHashSet<>();
+    public static Set<Item> ITEMS = new LinkedHashSet<>();
+    public static Set<Block> BLOCKS = new LinkedHashSet<>();
+    public static Set<Class> TILES = new LinkedHashSet<>();
 
     public static void register(Item item) {
         ITEMS.add(item);
@@ -47,14 +47,6 @@ public class GregTechRegistry {
 
     public static void register(Class tile) {
         TILES.add(tile);
-    }
-
-    public static Collection<Item> getRegisteredItems() {
-        return ITEMS;
-    }
-
-    public static Collection<Block> getRegisteredBlocks() {
-        return BLOCKS;
     }
 
     /** Registrar Section **/

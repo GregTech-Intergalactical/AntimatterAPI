@@ -3,7 +3,7 @@ package muramasa.gtu.client.events;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.tileentities.TileEntityBase;
-import muramasa.gtu.api.tools.MaterialTool;
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

@@ -4,6 +4,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
@@ -26,7 +27,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockOre extends Block implements IItemBlock, IModelOverride {
+import javax.annotation.Nullable;
+
+public class BlockOre extends Block implements IItemBlock, IModelOverride, IColorHandler {
 
     private static PropertyInteger STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId());
 //    private static PropertyInteger SET = PropertyInteger.create("material_set", 0, MaterialSet.values().length);
@@ -95,6 +98,16 @@ public class BlockOre extends Block implements IItemBlock, IModelOverride {
     @Override
     public String getDisplayName(ItemStack stack) {
         return Prefix.Ore.getDisplayName(material);
+    }
+
+    @Override
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        return i == 1 ? getMaterial().getRGB() : -1;
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack,@Nullable Block block, int i) {
+        return i == 1 ? ((BlockOre) block).getMaterial().getRGB() : -1;
     }
 
     @Override
