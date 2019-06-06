@@ -7,7 +7,7 @@ import muramasa.gtu.api.capability.impl.HatchComponentHandler;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.structure.IComponent;
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -37,7 +37,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
-    public void onContentsChanged(ContentUpdateType type, int slot) {
+    public void onContentsChanged(ContentEvent type, int slot) {
         if (componentHandler == null) return;
         TileEntityMultiMachine controller = componentHandler.getFirstController();
         if (controller == null) return;

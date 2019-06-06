@@ -1,6 +1,6 @@
 package muramasa.gtu.api.capability.impl;
 
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,7 +23,7 @@ public class FluidTankWrapper implements IFluidHandler {
                 @Override
                 protected void onContentsChanged() {
                     dirty = true;
-                    machine.onContentsChanged(input ? ContentUpdateType.FLUID_INPUT : ContentUpdateType.FLUID_OUTPUT, 0);
+                    machine.onContentsChanged(input ? ContentEvent.FLUID_INPUT : ContentEvent.FLUID_OUTPUT, 0);
                 }
             };
             tanks[i].setCanFill(true);

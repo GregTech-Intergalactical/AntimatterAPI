@@ -1,6 +1,6 @@
 package muramasa.gtu.api.gui.server;
 
-import muramasa.gtu.api.gui.GuiUpdateType;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,9 +18,9 @@ public class ContainerBasicMachine extends ContainerMachine {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         int curProgress = tile.getCurProgress();
-        if (Math.abs(curProgress - lastProgress) >= GuiUpdateType.PROGRESS.getUpdateThreshold()) {
+        if (Math.abs(curProgress - lastProgress) >= GuiEvent.PROGRESS.getUpdateThreshold()) {
             int progress = (int) (((float) curProgress / (float) tile.getMaxProgress()) * Short.MAX_VALUE);
-            listeners.forEach(l -> l.sendWindowProperty(this, GuiUpdateType.PROGRESS.ordinal(), progress));
+            listeners.forEach(l -> l.sendWindowProperty(this, GuiEvent.PROGRESS.ordinal(), progress));
             lastProgress = curProgress;
         }
     }
@@ -29,7 +29,7 @@ public class ContainerBasicMachine extends ContainerMachine {
     @Override
     public void updateProgressBar(int id, int data) {
         super.updateProgressBar(id, data);
-        if (id == GuiUpdateType.PROGRESS.ordinal()) {
+        if (id == GuiEvent.PROGRESS.ordinal()) {
             ((TileEntityBasicMachine) tile).setClientProgress((float)data / (float)Short.MAX_VALUE);
         }
     }

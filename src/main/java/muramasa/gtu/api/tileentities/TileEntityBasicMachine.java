@@ -1,6 +1,6 @@
 package muramasa.gtu.api.tileentities;
 
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
 import net.minecraft.util.EnumFacing;
@@ -111,7 +111,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     @Override
-    public void onContentsChanged(ContentUpdateType type, int slot) {
+    public void onContentsChanged(ContentEvent type, int slot) {
         switch (type) {
             case ITEM_INPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();

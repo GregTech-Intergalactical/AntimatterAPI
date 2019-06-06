@@ -1,6 +1,6 @@
 package muramasa.gtu.api.tileentities;
 
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
@@ -45,9 +45,9 @@ public class TileEntityItemFluidMachine extends TileEntityItemMachine {
     }
 
     @Override
-    public void onContentsChanged(ContentUpdateType type, int slot) {
+    public void onContentsChanged(ContentEvent type, int slot) {
         super.onContentsChanged(type, slot);
-        if (type == ContentUpdateType.ITEM_CELL) {
+        if (type == ContentEvent.ITEM_CELL) {
             if (slot == 0) { //Input slot
 //                ItemStack stack = itemHandler.getCellInput();
 //                if (stack.getItem() instanceof MaterialItem) {
