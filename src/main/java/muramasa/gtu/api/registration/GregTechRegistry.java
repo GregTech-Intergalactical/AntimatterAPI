@@ -1,6 +1,7 @@
 package muramasa.gtu.api.registration;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.data.Casing;
 import muramasa.gtu.api.data.Coil;
 import muramasa.gtu.api.data.ItemType;
@@ -15,10 +16,9 @@ import muramasa.gtu.api.pipe.types.FluidPipe;
 import muramasa.gtu.api.pipe.types.ItemPipe;
 import muramasa.gtu.api.tools.MaterialTool;
 import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.common.blocks.*;
-import muramasa.gtu.common.blocks.pipe.BlockCable;
-import muramasa.gtu.common.blocks.pipe.BlockFluidPipe;
-import muramasa.gtu.common.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.api.blocks.pipe.BlockCable;
+import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
+import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
 import muramasa.gtu.loaders.InternalRegistrar;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

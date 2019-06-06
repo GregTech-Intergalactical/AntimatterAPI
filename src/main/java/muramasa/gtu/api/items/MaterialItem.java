@@ -5,7 +5,7 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Element;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MaterialItem extends Item implements IHasModelOverride {
+public class MaterialItem extends Item implements IModelOverride {
 
     private static LinkedHashMap<String, MaterialItem> TYPE_LOOKUP = new LinkedHashMap<>();
 
@@ -103,7 +103,7 @@ public class MaterialItem extends Item implements IHasModelOverride {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         String set = getMaterial().getSet().getName();
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
     }

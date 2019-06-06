@@ -1,10 +1,10 @@
-package muramasa.gtu.common.blocks;
+package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.IHasItemBlock;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +19,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockStorage extends Block implements IHasItemBlock, IHasModelOverride {
+public class BlockStorage extends Block implements IItemBlock, IModelOverride {
 
     private Material material;
 
@@ -53,13 +53,13 @@ public class BlockStorage extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
-    public String getItemStackDisplayName(Block block, ItemStack stack) {
-        return Prefix.Block.getDisplayName(((BlockStorage) block).getMaterial());
+    public String getDisplayName(ItemStack stack) {
+        return Prefix.Block.getDisplayName(material);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         String set = material.getSet().getName();
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName())));

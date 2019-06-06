@@ -1,9 +1,9 @@
-package muramasa.gtu.common.blocks;
+package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Casing;
 import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockCasing extends BlockBaked implements IHasModelOverride {
+public class BlockCasing extends BlockBaked implements IModelOverride {
 
     private Casing type;
 
@@ -91,7 +91,7 @@ public class BlockCasing extends BlockBaked implements IHasModelOverride {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
         GTModelLoader.register("block_casing", this);

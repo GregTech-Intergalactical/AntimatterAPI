@@ -5,7 +5,7 @@ import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.data.Coil;
 import muramasa.gtu.api.interfaces.IComponent;
 import muramasa.gtu.api.tileentities.TileEntityBase;
-import muramasa.gtu.common.blocks.BlockCoil;
+import muramasa.gtu.api.blocks.BlockCoil;
 
 import java.util.List;
 

@@ -13,7 +13,7 @@ import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

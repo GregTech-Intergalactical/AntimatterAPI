@@ -1,8 +1,8 @@
-package muramasa.gtu.common.blocks;
+package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Coil;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
 import net.minecraft.block.Block;
@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockCoil extends Block implements IHasModelOverride {
+public class BlockCoil extends Block implements IModelOverride {
 
     private Coil type;
 
@@ -64,7 +64,7 @@ public class BlockCoil extends Block implements IHasModelOverride {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName())));
     }

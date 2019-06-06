@@ -14,7 +14,7 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
 import java.util.ArrayList;

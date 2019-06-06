@@ -2,7 +2,7 @@ package muramasa.gtu.client.render.overrides;
 
 import com.google.common.collect.ImmutableList;
 import muramasa.gtu.client.render.bakedmodels.BakedTextureDataItem;
-import muramasa.gtu.common.blocks.BlockBaked;
+import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;

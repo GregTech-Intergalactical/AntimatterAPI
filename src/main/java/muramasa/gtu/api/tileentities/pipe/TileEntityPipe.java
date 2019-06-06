@@ -9,7 +9,7 @@ import muramasa.gtu.api.pipe.types.Pipe;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.tileentities.TileEntityTickable;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.common.blocks.pipe.BlockPipe;
+import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

@@ -1,20 +1,21 @@
-package muramasa.gtu.common.blocks.pipe;
+package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
 import muramasa.gtu.api.pipe.types.Pipe;
-import muramasa.gtu.api.registration.IHasItemBlock;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
-import muramasa.gtu.common.blocks.BlockBaked;
+import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,11 +35,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+
 import java.util.List;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHasModelOverride {
+public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModelOverride {
 
     public BlockPipe(String name, TextureData data) {
         super(data);
@@ -164,20 +166,19 @@ public abstract class BlockPipe extends BlockBaked implements IHasItemBlock, IHa
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(Block block, ItemStack stack) {
+    public String getDisplayName(ItemStack stack) {
         return getType().getDisplayName(stack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, List<String> tooltip) {
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         tooltip.addAll(getType().getTooltip(stack));
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_pipe", "inventory"));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
     }

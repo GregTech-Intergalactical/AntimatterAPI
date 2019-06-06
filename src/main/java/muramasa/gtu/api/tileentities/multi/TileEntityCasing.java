@@ -11,7 +11,7 @@ import muramasa.gtu.api.interfaces.IComponent;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityBase;
-import muramasa.gtu.common.blocks.BlockCasing;
+import muramasa.gtu.api.blocks.BlockCasing;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

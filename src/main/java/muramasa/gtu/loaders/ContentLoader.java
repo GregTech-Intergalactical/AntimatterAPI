@@ -1,6 +1,7 @@
 package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.data.*;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.machines.MachineFlag;
@@ -23,11 +24,10 @@ import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.common.blocks.*;
-import muramasa.gtu.common.blocks.pipe.BlockCable;
-import muramasa.gtu.common.blocks.pipe.BlockFluidPipe;
-import muramasa.gtu.common.blocks.pipe.BlockItemPipe;
-import muramasa.gtu.common.items.ItemBlockGT;
+import muramasa.gtu.api.blocks.pipe.BlockCable;
+import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
+import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.api.blocks.ItemBlockGT;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
