@@ -14,21 +14,23 @@ public class ContainerBase extends Container {
         }
     }
 
+    //TODO this is broken, needs rewrite
     private void addPlayerSlots(IInventory playerInv) {
-        for (int row = 0; row < 3; ++row) { // Slots for the main inventory
+        for (int row = 0; row < 3; ++row) { //Inventory slots
             for (int col = 0; col < 9; ++col) {
                 int x = col * 18 + 8;
                 int y = row * 18 + 84;
                 this.addSlotToContainer(new Slot(playerInv, col + row * 9 + 10, x, y));
             }
         }
-        for (int row = 0; row < 9; ++row) { // Slots for the hotbar
+        for (int row = 0; row < 9; ++row) { //Hotbar slots
             int x = row * 18 + 8;
             int y = 58 + 84;
             this.addSlotToContainer(new Slot(playerInv, row, x, y));
         }
     }
 
+    //TODO This is broken, needs rewrite
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;

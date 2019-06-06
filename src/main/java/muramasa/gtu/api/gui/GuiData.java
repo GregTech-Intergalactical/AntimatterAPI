@@ -14,6 +14,8 @@ import java.util.List;
 
 public class GuiData {
 
+    //TODO This whole class needs rethought
+
     private static final String ANY = "any";
 
     private String name;

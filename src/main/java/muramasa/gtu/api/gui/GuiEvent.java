@@ -1,13 +1,13 @@
 package muramasa.gtu.api.gui;
 
-public enum GuiUpdateType {
+public enum GuiEvent {
 
     PROGRESS(1.0f),
     MACHINE_STATE(1.0f);
 
     private float updateThreshold;
 
-    GuiUpdateType(float updateThreshold) {
+    GuiEvent(float updateThreshold) {
         this.updateThreshold = updateThreshold;
     }
 

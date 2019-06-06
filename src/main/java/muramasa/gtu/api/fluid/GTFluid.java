@@ -1,9 +1,9 @@
 package muramasa.gtu.api.fluid;
 
-import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.Ref;
+import muramasa.gtu.api.materials.RecipeFlag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -11,22 +11,23 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class GTFluid extends Fluid {
 
-    private String name;
+    private Material material;
     private GenerationFlag flag;
+    private String localizedName;
 
-    public GTFluid(Material mat, GenerationFlag flag) {
-        super(mat.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
-        setColor(mat.getRGB());
+    public GTFluid(Material material, GenerationFlag flag) {
+        super(material.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
+        setColor(material.getRGB());
         switch (flag) {
             case LIQUID:
                 setViscosity(1000);
-                setTemperature(mat.getLiquidTemperature());
+                setTemperature(material.getLiquidTemperature());
                 break;
             case GAS:
                 setViscosity(200);
                 setDensity(-100);
                 setGaseous(true);
-                setTemperature(mat.getGasTemperature());
+                setTemperature(material.getGasTemperature());
                 break;
             case PLASMA:
                 setViscosity(10);
@@ -38,23 +39,26 @@ public class GTFluid extends Fluid {
             default:
                 throw new IllegalArgumentException("Cannot create a fluid with the flag: " + flag.getName());
         }
-        name = mat.getName();
+        this.material = material;
         this.flag = flag;
         FluidRegistry.registerFluid(this);
     }
 
     @Override
     public String getLocalizedName(FluidStack stack) {
-        switch (flag) {
-            case LIQUID:
-                return "Molten " + Materials.get(name).getDisplayName();
-            case GAS:
-                return Materials.get(name).getDisplayName() + " Gas";
-            case PLASMA:
-                return Materials.get(name).getDisplayName() + " Plasma";
-            default:
-                return "FLUID NAME ERROR";
+        if (localizedName == null) {
+            switch (flag) {
+                case LIQUID:
+                    localizedName = (material.has(RecipeFlag.METAL) ? "Molten " : "Liquid ") + material.getName();
+                case GAS:
+                    localizedName = material.getDisplayName() + " Gas";
+                case PLASMA:
+                    localizedName = material.getDisplayName() + " Plasma";
+                default:
+                    return "FLUID NAME ERROR";
+            }
         }
+        return localizedName;
     }
 
     public String getState() {

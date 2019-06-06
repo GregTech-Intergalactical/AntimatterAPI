@@ -1,6 +1,6 @@
 package muramasa.gtu.api.machines;
 
-public enum ContentUpdateType {
+public enum ContentEvent {
 
     ITEM_INPUT,
     ITEM_OUTPUT,

@@ -6,7 +6,7 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.SlotType;
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
@@ -54,7 +54,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     /** Events **/
-    public void onContentsChanged(ContentUpdateType type, int slot) {
+    public void onContentsChanged(ContentEvent type, int slot) {
         //NOOP
     }
 

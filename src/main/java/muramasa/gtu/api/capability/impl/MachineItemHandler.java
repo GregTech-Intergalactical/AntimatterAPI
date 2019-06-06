@@ -1,7 +1,7 @@
 package muramasa.gtu.api.capability.impl;
 
 import muramasa.gtu.api.gui.SlotType;
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
@@ -24,20 +24,20 @@ public class MachineItemHandler {
         inputHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.IT_IN, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentUpdateType.ITEM_INPUT, slot);
+                tile.onContentsChanged(ContentEvent.ITEM_INPUT, slot);
             }
         };
         outputHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.IT_OUT, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentUpdateType.ITEM_OUTPUT, slot);
+                tile.onContentsChanged(ContentEvent.ITEM_OUTPUT, slot);
             }
         };
         if (tile.getType().hasFlag(MachineFlag.FLUID)) {
             cellHandler = new ItemStackHandler(tile.getType().getGui().getSlots(SlotType.CELL_IN, tile.getTier()).size() + tile.getType().getGui().getSlots(SlotType.CELL_OUT, tile.getTier()).size()) {
                 @Override
                 protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(ContentUpdateType.ITEM_CELL, slot);
+                    tile.onContentsChanged(ContentEvent.ITEM_CELL, slot);
                 }
             };
         }
