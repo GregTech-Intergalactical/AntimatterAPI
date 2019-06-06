@@ -1,4 +1,4 @@
-package muramasa.gtu.common.blocks.pipe;
+package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Textures;

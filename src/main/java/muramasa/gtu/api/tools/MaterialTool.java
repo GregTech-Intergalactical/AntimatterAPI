@@ -11,7 +11,7 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends ItemSword implements IHasModelOverride {
+public class MaterialTool extends ItemSword implements IModelOverride {
 
     protected ToolType type;
 
@@ -426,7 +426,7 @@ public class MaterialTool extends ItemSword implements IHasModelOverride {
     /** Item Model Section **/
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_tool", "tool_type=" + type.getName()));
     }
 }

@@ -1,4 +1,4 @@
-package muramasa.gtu.common.blocks;
+package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.properties.GTProperties;

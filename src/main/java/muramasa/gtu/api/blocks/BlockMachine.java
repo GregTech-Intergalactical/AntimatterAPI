@@ -1,4 +1,4 @@
-package muramasa.gtu.common.blocks;
+package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.IConfigHandler;
@@ -9,8 +9,8 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.registration.IHasItemBlock;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
@@ -20,6 +20,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,7 +43,7 @@ import java.util.List;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverride {
+public class BlockMachine extends Block implements IItemBlock, IModelOverride {
 
     private String type;
 
@@ -222,8 +223,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(Block block, ItemStack stack) {
+    public String getDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
             return tier.getRarityColor() + Utils.trans("machine." + getType().getName() + "." + tier.getName() + ".name");
@@ -233,7 +233,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, List<String> tooltip) {
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             if (getType().hasFlag(MachineFlag.BASIC)) {
                 Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
@@ -245,7 +245,7 @@ public class BlockMachine extends Block implements IHasItemBlock, IHasModelOverr
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_machine", "inventory"));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine")));
     }

@@ -2,7 +2,7 @@ package muramasa.gtu.client.render.models;
 
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedTextureData;
-import muramasa.gtu.common.blocks.BlockBaked;
+import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

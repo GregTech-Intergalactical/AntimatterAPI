@@ -4,7 +4,7 @@ import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.Texture;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 
 import java.util.List;
 

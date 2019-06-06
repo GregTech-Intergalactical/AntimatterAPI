@@ -10,7 +10,7 @@ import muramasa.gtu.api.pipe.types.Cable;
 import muramasa.gtu.api.pipe.types.FluidPipe;
 import muramasa.gtu.api.pipe.types.ItemPipe;
 import muramasa.gtu.api.registration.GregTechRegistry;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.tools.MaterialTool;
@@ -24,9 +24,9 @@ import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.models.ModelFluidCell;
 import muramasa.gtu.client.render.models.ModelMachine;
 import muramasa.gtu.client.render.models.ModelPipe;
-import muramasa.gtu.common.blocks.BlockOre;
-import muramasa.gtu.common.blocks.BlockStorage;
-import muramasa.gtu.common.blocks.pipe.BlockPipe;
+import muramasa.gtu.api.blocks.BlockOre;
+import muramasa.gtu.api.blocks.BlockStorage;
+import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -174,10 +174,10 @@ public class ClientProxy implements IProxy {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
         for (Item item : GregTechRegistry.getRegisteredItems()) {
-            if (item instanceof IHasModelOverride) ((IHasModelOverride) item).initModel();
+            if (item instanceof IModelOverride) ((IModelOverride) item).onModelRegistration();
         }
         for (Block block : GregTechRegistry.getRegisteredBlocks()) {
-            if (block instanceof IHasModelOverride) ((IHasModelOverride) block).initModel();
+            if (block instanceof IModelOverride) ((IModelOverride) block).onModelRegistration();
         }
 
         ModelMachine modelMachine = new ModelMachine();

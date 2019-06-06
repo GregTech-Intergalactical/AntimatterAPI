@@ -5,7 +5,7 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.registration.IHasModelOverride;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
@@ -35,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class StandardItem extends Item implements IHasModelOverride {
+public class StandardItem extends Item implements IModelOverride {
 
     protected ItemType type;
 
@@ -113,7 +113,7 @@ public class StandardItem extends Item implements IHasModelOverride {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getName()));
     }
 }

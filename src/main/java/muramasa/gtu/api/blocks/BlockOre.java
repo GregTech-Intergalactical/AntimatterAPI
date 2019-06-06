@@ -1,11 +1,11 @@
-package muramasa.gtu.common.blocks;
+package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.StoneType;
-import muramasa.gtu.api.registration.IHasItemBlock;
-import muramasa.gtu.api.registration.IHasModelOverride;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyInteger;
@@ -26,7 +26,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockOre extends Block implements IHasItemBlock, IHasModelOverride {
+public class BlockOre extends Block implements IItemBlock, IModelOverride {
 
     private static PropertyInteger STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId());
 //    private static PropertyInteger SET = PropertyInteger.create("material_set", 0, MaterialSet.values().length);
@@ -93,14 +93,13 @@ public class BlockOre extends Block implements IHasItemBlock, IHasModelOverride 
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(Block block, ItemStack stack) {
-        return Prefix.Ore.getDisplayName(((BlockOre) block).getMaterial());
+    public String getDisplayName(ItemStack stack) {
+        return Prefix.Ore.getDisplayName(material);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         for (StoneType type : StoneType.getAll()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.getInternalId(), new ModelResourceLocation(Ref.MODID + ":block_ore", "stone_type=" + type.getInternalId()));
         }
