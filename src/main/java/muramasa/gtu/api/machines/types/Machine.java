@@ -2,19 +2,21 @@ package muramasa.gtu.api.machines.types;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
-import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tileentities.*;
+import muramasa.gtu.api.tileentities.multi.*;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.api.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
 import java.util.ArrayList;
@@ -48,6 +50,21 @@ public class Machine implements IGregTechObject {
 
     //TODO get valid covers
 
+    static {
+        GregTechRegistry.register(TileEntityMachine.class);
+        GregTechRegistry.register(TileEntityBasicMachine.class);
+        GregTechRegistry.register(TileEntityItemMachine.class);
+        GregTechRegistry.register(TileEntityFluidMachine.class);
+        GregTechRegistry.register(TileEntityItemFluidMachine.class);
+        GregTechRegistry.register(TileEntitySteamMachine.class);
+        GregTechRegistry.register(TileEntityMultiMachine.class);
+        GregTechRegistry.register(TileEntityBasicItemMultiMachine.class);
+        GregTechRegistry.register(TileEntityItemMultiMachine.class);
+        GregTechRegistry.register(TileEntityFluidMultiMachine.class);
+        GregTechRegistry.register(TileEntityItemFluidMultiMachine.class);
+        GregTechRegistry.register(TileEntityHatch.class);
+    }
+
     public Machine(String name) {
         this(name, new BlockMachine(name), TileEntityMachine.class);
     }
@@ -66,12 +83,12 @@ public class Machine implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 
     public String getDisplayName(Tier tier) {
-        return Utils.trans("machine." + name + "." + tier.getName() + ".name");
+        return Utils.trans("machine." + name + "." + tier.getId() + ".name");
     }
 
     public RecipeMap getRecipeMap() {
@@ -90,7 +107,7 @@ public class Machine implements IGregTechObject {
     }
 
     public Texture[] getOverlayTextures(MachineState state) {
-        String stateDir = state == MachineState.IDLE ? "" : state.getName() + "/";
+        String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
             new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BOTTOM),
             new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.TOP),
@@ -102,7 +119,7 @@ public class Machine implements IGregTechObject {
     }
 
     public ModelResourceLocation getOverlayModel(TextureType side) {
-        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getId());
     }
 
     public Machine addFlags(MachineFlag... flags) {

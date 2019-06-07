@@ -57,7 +57,7 @@ public class StoneType implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 

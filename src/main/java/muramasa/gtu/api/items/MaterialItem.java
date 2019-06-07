@@ -5,7 +5,9 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Element;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
@@ -31,24 +33,20 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MaterialItem extends Item implements IModelOverride, IColorHandler {
-
-    private static LinkedHashMap<String, MaterialItem> TYPE_LOOKUP = new LinkedHashMap<>();
+public class MaterialItem extends Item implements IGregTechObject, IModelOverride, IColorHandler {
 
     private Material material;
     private Prefix prefix;
 
     public MaterialItem(Prefix prefix, Material material) {
-        setUnlocalizedName(prefix.getName() + "_" + material.getName());
-        setRegistryName(prefix.getName() + "_" + material.getName());
-        setCreativeTab(Ref.TAB_MATERIALS);
-        TYPE_LOOKUP.put(prefix.getName() + material.getName(), this);
         this.material = material;
         this.prefix = prefix;
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
+        setCreativeTab(Ref.TAB_MATERIALS);
+        GregTechRegistry.register(MaterialItem.class, this);
     }
 
     public Prefix getPrefix() {
@@ -57,6 +55,11 @@ public class MaterialItem extends Item implements IModelOverride, IColorHandler 
 
     public Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public String getId() {
+        return prefix.getId() + "_" + material.getId();
     }
 
     @Override
@@ -130,44 +133,40 @@ public class MaterialItem extends Item implements IModelOverride, IColorHandler 
         if (replacement == null) {
             if (!prefix.allowGeneration(material)) {
                 if (Ref.RECIPE_EXCEPTIONS) {
-                    throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 } else {
-                    System.err.println("GET ERROR - DOES NOT GENERATE: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    System.err.println("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 }
             }
-            MaterialItem item = TYPE_LOOKUP.get(prefix.getName() + material.getName());
+            MaterialItem item = GregTechRegistry.get(MaterialItem.class, prefix.getId() + "_" + material.getId());
             if (item == null) {
                 if (Ref.RECIPE_EXCEPTIONS) {
-                    throw new IllegalStateException("GET ERROR - MAT ITEM NULL: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    throw new IllegalStateException("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 } else {
-                    System.err.println("GET ERROR - MAT ITEM NULL: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    System.err.println("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 }
             }
             if (count == 0) {
                 if (Ref.RECIPE_EXCEPTIONS) {
-                    System.out.println("ITEM: " + item.getPrefix().getName() + " - " + item.getMaterial().getName());
-                    throw new IllegalStateException("GET ERROR - COUNT 0: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    System.out.println("ITEM: " + item.getPrefix().getId() + " - " + item.getMaterial().getId());
+                    throw new IllegalStateException("GET ERROR - COUNT 0: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 } else {
-                    System.err.println("GET ERROR - COUNT 0: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    System.err.println("GET ERROR - COUNT 0: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 }
             }
             ItemStack mat = new ItemStack(item, count);
             if (mat.isEmpty()) {
                 if (Ref.RECIPE_EXCEPTIONS) {
-                    System.out.println("ITEM: " + item.getPrefix().getName() + " - " + item.getMaterial().getName());
-                    throw new IllegalStateException("GET ERROR - MAT STACK EMPTY: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    System.out.println("ITEM: " + item.getPrefix().getId() + " - " + item.getMaterial().getId());
+                    throw new IllegalStateException("GET ERROR - MAT STACK EMPTY: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 } else {
-                    System.err.println("GET ERROR - MAT STACK EMPTY: P(" + prefix.getName() + ") M(" + material.getName() + ")");
+                    System.err.println("GET ERROR - MAT STACK EMPTY: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 }
             }
             return mat;
         } else {
             return Utils.ca(count, replacement);
         }
-    }
-
-    public static Collection<MaterialItem> getAll() {
-        return TYPE_LOOKUP.values();
     }
 
     @Override
@@ -178,7 +177,7 @@ public class MaterialItem extends Item implements IModelOverride, IColorHandler 
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        String set = getMaterial().getSet().getName();
+        String set = getMaterial().getSet().getId();
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
     }
 }

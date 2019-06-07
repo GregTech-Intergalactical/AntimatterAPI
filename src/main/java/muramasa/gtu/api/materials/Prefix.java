@@ -1,11 +1,11 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
@@ -13,7 +13,6 @@ import static muramasa.gtu.api.materials.GenerationFlag.*;
 
 public class Prefix implements IGregTechObject {
 
-    private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
     private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
 
     public static Prefix Ore = new Prefix("ore", true, false, ORE);
@@ -65,7 +64,7 @@ public class Prefix implements IGregTechObject {
 //        }
         generationBits |= flag.getBit();
         this.doesGenerate = true;
-        PREFIX_LOOKUP.put(name, this);
+        GregTechRegistry.register(Prefix.class, this);
     }
 
     public Prefix(String name, boolean visible, boolean generatesItems, GenerationFlag flag) {
@@ -74,15 +73,15 @@ public class Prefix implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name.toLowerCase(Locale.ENGLISH);
     }
 
-    public String getDisplayName(Material material) { //TODO cache, server side crash with local?
+    public String getDisplayName(Material material) { //TODO cache
         if (!hasLocName) {
-            namePre = Utils.trans("prefix.pre." + getName() + ".name");
+            namePre = Utils.trans("prefix.pre." + getId() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = Utils.trans("prefix.post." + getName() + ".name");
+            namePost = Utils.trans("prefix.post." + getId() + ".name");
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }
@@ -94,27 +93,19 @@ public class Prefix implements IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && (material.getItemMask() & generationBits) != 0 && !ITEM_REPLACEMENT.containsKey(getName() + material.getName());
+        return doesGenerate && (material.getItemMask() & generationBits) != 0 && !ITEM_REPLACEMENT.containsKey(getId() + material.getId());
     }
 
     public void addReplacement(Material material, ItemStack stack) {
-        ITEM_REPLACEMENT.put(getName() + material.getName(), stack);
+        ITEM_REPLACEMENT.put(getId() + material.getId(), stack);
     }
 
     public ItemStack getReplacement(Material material) {
-        return ITEM_REPLACEMENT.get(getName() + material.getName());
+        return ITEM_REPLACEMENT.get(getId() + material.getId());
     }
 
     @Override
     public String toString() {
-        return getName();
-    }
-
-    public static Prefix get(String name) {
-        return PREFIX_LOOKUP.get(name);
-    }
-
-    public static Collection<Prefix> getAll() {
-        return PREFIX_LOOKUP.values();
+        return getId();
     }
 }

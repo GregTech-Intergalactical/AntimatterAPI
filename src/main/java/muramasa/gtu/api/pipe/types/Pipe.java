@@ -32,7 +32,7 @@ public class Pipe {
     }
 
     public String getName() {
-        return material != null ? material.getName() : name;
+        return material != null ? material.getId() : name;
     }
 
     public String getDisplayName() {

@@ -29,8 +29,8 @@ public class BlockStorage extends Block implements IItemBlock, IModelOverride, I
 
     public BlockStorage(Material material) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName("block_" + material.getName());
-        setRegistryName("block_" + material.getName());
+        setUnlocalizedName("block_" + material.getId());
+        setRegistryName("block_" + material.getId());
         setCreativeTab(Ref.TAB_BLOCKS);
         this.material = material;
     }
@@ -74,8 +74,8 @@ public class BlockStorage extends Block implements IItemBlock, IModelOverride, I
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        String set = material.getSet().getName();
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName())));
+        String set = material.getSet().getId();
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getId()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getId())));
     }
 }

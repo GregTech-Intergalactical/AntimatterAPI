@@ -1,29 +1,22 @@
 package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.fluid.GTFluid;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.fluid.GTFluid;
+import muramasa.gtu.api.registration.GregTechRegistry;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
 import static com.google.common.collect.ImmutableMap.of;
-
 import static muramasa.gtu.api.materials.Element.*;
 import static muramasa.gtu.api.materials.GenerationFlag.*;
-import static muramasa.gtu.api.materials.TextureSet.*;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
+import static muramasa.gtu.api.materials.TextureSet.*;
 
 public class Materials {
-	
-	//TODO: Re-think about plasmas? Do we need them? And if we do, which materials?
-
-    public static LinkedHashMap<String, Material> MATERIAL_LOOKUP = new LinkedHashMap<>();
 
     public static Material Aluminium = new Material("aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700, RING, FOIL, GEAR, FRAME, ORE).addTools(10.0F, 140, 2);
     public static Material Beryllium = new Material("beryllium", 0x64b464, METALLIC, Be).asMetal(1560, 0, ORE).addTools(14.0F, 64, 2);
@@ -139,7 +132,7 @@ public class Materials {
     public static Material Lubricant = new Material("lubricant", 0xffc400, NONE).asFluid();
     //public static Material WoodTar = new Material("wood_tar", 0x28170b, NONE).asFluid(); TODO: not sure if needed
     public static Material WoodVinegar = new Material("wood_vinegar", 0xd45500, NONE).asFluid();
-    public static Material LiquidAir = new Material("liquid_air", 0xa9d0f5, NONE).asFluid()/*.setTemp(79, 0)*/.add(Nitrogen, 40, Oxygen, 11, Argon, 1/*, NobleGases, 1*/); //TODO Rrename to liquid oxygen    
+    public static Material LiquidAir = new Material("liquid_air", 0xa9d0f5, NONE).asFluid()/*.setTemp(79, 0)*/.add(Nitrogen, 40, Oxygen, 11, Argon, 1/*, NobleGases, 1*/); //TODO Rrename to liquid oxygen <- Nope, add fluid to Oxygen
     public static Material DistilledWater = new Material("distilled_water", 0x5C5CFF, NONE).asFluid().add(Hydrogen, 2, Oxygen, 1);
     public static Material Glyceryl = new Material("glyceryl", 0x009696, NONE).asFluid().add(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9);
     public static Material Titaniumtetrachloride = new Material("titaniumtetrachloride", 0xd40d5c, NONE).asFluid().add(Titanium, 1, Chlorine, 4);
@@ -664,38 +657,19 @@ public class Materials {
 
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
-//        for (Material mat : MATERIAL_LOOKUP.values()) {
-//            if (mat.has(LIQUID) && mat.getLiquid() == null) {
-//                mat.setLiquid(new GTFluid(mat, LIQUID));
-//            }
-//            if (mat.has(GAS) && mat.getGas() == null) {
-//                mat.setGas(new GTFluid(mat, GAS));
-//            }
-//            if (mat.has(PLASMA) && mat.getPlasma() == null) {
-//                mat.setPlasma(new GTFluid(mat, PLASMA));
-//            }
-//        }
 
-        for (Material mat : LIQUID.getMats()) {
-            if (mat.getLiquid() == null) mat.setLiquid(new GTFluid(mat, LIQUID));
-        }
-        for (Material mat : GAS.getMats()) {
-            if (mat.getGas() == null) mat.setGas(new GTFluid(mat, GAS));
-        }
-        for (Material mat : PLASMA.getMats()) {
-            if (mat.getPlasma() == null) mat.setPlasma(new GTFluid(mat, PLASMA));
-        }
+        LIQUID.getMats().forEach(m -> {
+            if (m.getLiquid() == null) m.setLiquid(new GTFluid(m, LIQUID));
+        });
+        GAS.getMats().forEach(m -> {
+            if (m.getGas() == null) m.setGas(new GTFluid(m, GAS));
+        });
+        PLASMA.getMats().forEach(m -> {
+            if (m.getPlasma() == null) m.setPlasma(new GTFluid(m, PLASMA));
+        });
     }
 
     public static Material get(String name) {
-        return MATERIAL_LOOKUP.get(name);
-    }
-
-    public static int getCount() {
-        return MATERIAL_LOOKUP.size();
-    }
-
-    public static Collection<Material> getAll() {
-        return MATERIAL_LOOKUP.values();
+        return GregTechRegistry.get(Material.class, name);
     }
 }

@@ -6,7 +6,7 @@ import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 public class HatchComponentHandler extends ComponentHandler {
 
     public HatchComponentHandler(TileEntityHatch componentTile) {
-        super(componentTile.getType().getName(), componentTile);
+        super(componentTile.getType().getId(), componentTile);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class CoverFluid extends Cover {
 
     @Override
     public ItemStack getDroppedStack() {
-        switch (tier.getName()) {
+        switch (tier.getId()) {
             case "lv": return ItemType.PumpLV.get(1);
             case "mv": return ItemType.PumpMV.get(1);
             case "hv": return ItemType.PumpHV.get(1);

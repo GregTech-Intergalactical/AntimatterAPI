@@ -114,7 +114,7 @@ public class ItemFluidCell extends StandardItem {
     }
 
     public static ItemStack getCellWithFluid(ItemType cellType, Fluid fluid) {
-        ItemStack stack = new ItemStack(GregTechRegistry.getItem(cellType.getName()));
+        ItemStack stack = new ItemStack(GregTechRegistry.getItem(cellType.getId()));
         IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         handler.fill(new FluidStack(fluid, handler.getTankProperties()[0].getCapacity()), true);
         return stack;

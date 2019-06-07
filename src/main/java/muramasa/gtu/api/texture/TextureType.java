@@ -13,7 +13,7 @@ public enum TextureType implements IGregTechObject {
     BACK,
     SIDE;
 
-    public String getName() {
+    public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 }

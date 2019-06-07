@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class Texture {
 
+    //TODO move to Data
     public static final Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
 
     private ResourceLocation loc;

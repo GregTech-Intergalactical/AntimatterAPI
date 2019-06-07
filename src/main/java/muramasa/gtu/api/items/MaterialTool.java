@@ -11,7 +11,9 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
@@ -48,22 +50,28 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends ItemSword implements IModelOverride, IColorHandler {
+public class MaterialTool extends ItemSword implements IGregTechObject, IModelOverride, IColorHandler {
 
     protected ToolType type;
 
     public MaterialTool(ToolType type) {
         super(ToolMaterial.WOOD);
-        setUnlocalizedName(type.getName());
-        setRegistryName(type.getName());
+        this.type = type;
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
         setCreativeTab(Ref.TAB_ITEMS);
         setMaxDamage(1);
         setMaxStackSize(1);
-        this.type = type;
+        GregTechRegistry.register(MaterialTool.class, this);
     }
 
     public ToolType getType() {
         return type;
+    }
+
+    @Override
+    public String getId() {
+        return type.getName();
     }
 
     @Override
@@ -284,8 +292,8 @@ public class MaterialTool extends ItemSword implements IModelOverride, IColorHan
         }
         validateTag(stack);
         NBTTagCompound tag = getTag(stack);
-        tag.setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, primary != null ? primary.getName() : "NULL");
-        tag.setString(Ref.KEY_TOOL_DATA_SECONDARY_MAT, secondary != null ? secondary.getName() : "NULL");
+        tag.setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, primary != null ? primary.getId() : "NULL");
+        tag.setString(Ref.KEY_TOOL_DATA_SECONDARY_MAT, secondary != null ? secondary.getId() : "NULL");
         tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, getMaxDurability(stack));
         return stack;
     }

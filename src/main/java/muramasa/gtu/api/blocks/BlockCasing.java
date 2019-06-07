@@ -1,8 +1,9 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.data.Casing;
 import muramasa.gtu.api.data.Textures;
+import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
@@ -30,23 +31,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockCasing extends BlockBaked implements IModelOverride {
+public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOverride {
 
-    private Casing type;
+    private static int lastInternalId = 0;
 
-    public BlockCasing(Casing type) {
-        super(TextureData.get().base(type.getTexture()), new ModelResourceLocation(Ref.MODID + ":layered"));
-        setUnlocalizedName("casing_" + type.getName());
-        setRegistryName("casing_" + type.getName());
+    private String name;
+    private int internalId;
+
+    public BlockCasing(String name) {
+        super();
+        this.name = name;
+        this.internalId = lastInternalId++;
+        setData(TextureData.get().base(getTexture()));
+        setModel(LAYERED);
+        setUnlocalizedName("casing_" + getId());
+        setRegistryName("casing_" + getId());
         setHardness(1.0F);
         setResistance(10.0F);
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
-        this.type = type;
+        GregTechRegistry.register(BlockCasing.class, this);
     }
 
-    public Casing getType() {
-        return type;
+    @Override
+    public String getId() {
+        return name;
+    }
+
+    public int getInternalId() {
+        return internalId;
     }
 
     @Override
@@ -71,13 +84,15 @@ public class BlockCasing extends BlockBaked implements IModelOverride {
         return "wrench";
     }
 
+    public Texture getTexture() {
+        return new Texture("blocks/casing/" + name);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        for (Casing type : Casing.getAll()) {
-            textures.add(type.getTexture());
-        }
+        GregTechRegistry.getAll(BlockCasing.class).forEach(c -> textures.add(c.getTexture()));
         textures.addAll(Arrays.asList(Textures.LARGE_TURBINE));
         textures.addAll(Arrays.asList(Textures.LARGE_TURBINE_ACTIVE));
         return textures;
@@ -92,8 +107,8 @@ public class BlockCasing extends BlockBaked implements IModelOverride {
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "casing_type=" + type.getName())));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_casing", "id=" + getId()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_casing", "id=" + getId())));
         GTModelLoader.register("block_casing", this);
     }
 }

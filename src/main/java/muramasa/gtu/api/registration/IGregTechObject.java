@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 
 public interface IGregTechObject {
 
-    String getName();
+    String getId();
 
     default ItemStack asItemStack() {
         return ItemStack.EMPTY;

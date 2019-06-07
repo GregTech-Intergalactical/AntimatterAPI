@@ -71,7 +71,7 @@ public class Cable extends Pipe {
         amps = new int[] {
             baseAmps, baseAmps * 2, baseAmps * 4, baseAmps * 8, baseAmps * 12, baseAmps * 16
         };
-        TYPE_LOOKUP.put("cable_" + material.getName(), this);
+        TYPE_LOOKUP.put("cable_" + material.getId(), this);
     }
 
     public int getLoss() {
@@ -114,7 +114,7 @@ public class Cable extends Pipe {
         List<String> tooltip = new LinkedList<>();
         if (stack.hasTagCompound()) {
             PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-            tooltip.add("Max Voltage: " + TextFormatting.GREEN + getVoltage() + " (" + getTier().getName().toUpperCase(Locale.ENGLISH) + ")");
+            tooltip.add("Max Voltage: " + TextFormatting.GREEN + getVoltage() + " (" + getTier().getId().toUpperCase(Locale.ENGLISH) + ")");
             tooltip.add("Max Amperage: " + TextFormatting.YELLOW + getAmps(size));
             boolean insulated = stack.getTagCompound().getBoolean(Ref.KEY_CABLE_STACK_INSULATED);
             tooltip.add("Loss/Meter/Ampere: " + TextFormatting.RED + (insulated ? getLossInsulated() : getLoss()) + TextFormatting.GRAY + " EU-Volt");
