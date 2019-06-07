@@ -2,6 +2,7 @@ package muramasa.gtu;
 
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
+import muramasa.gtu.api.data.Data;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Structures;
@@ -68,6 +69,7 @@ public class GregTech {
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL);
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL_INIT);
 
+        Data.init();
         Machines.init();
         Guis.init();
         Structures.init();

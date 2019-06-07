@@ -33,16 +33,16 @@ public class TextureSet implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 
     public Texture getBlockTexture(Prefix prefix) {
-        return new Texture("blocks/material_set/" + name + "/" + prefix.getName());
+        return new Texture("blocks/material_set/" + name + "/" + prefix.getId());
     }
 
     public Texture getItemTexture(Prefix prefix) {
-        return new Texture("items/material_set/" + name + "/" + prefix.getName());
+        return new Texture("items/material_set/" + name + "/" + prefix.getId());
     }
 
     public static TextureSet get(String name) {

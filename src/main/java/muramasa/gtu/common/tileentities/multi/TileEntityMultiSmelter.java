@@ -1,7 +1,7 @@
 package muramasa.gtu.common.tileentities.multi;
 
+import muramasa.gtu.api.blocks.BlockCoil;
 import muramasa.gtu.api.capability.IComponentHandler;
-import muramasa.gtu.api.data.Coil;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
 import muramasa.gtu.api.tileentities.multi.TileEntityItemMultiMachine;
@@ -26,7 +26,7 @@ public class TileEntityMultiSmelter extends TileEntityItemMultiMachine {
     @Override
     public boolean onStructureValid(StructureResult result) {
         List<IComponentHandler> coils = getComponents("coil");
-        Coil firstType = ((TileEntityCoil) coils.get(0).getTile()).getType();
+        BlockCoil firstType = ((TileEntityCoil) coils.get(0).getTile()).getType();
         if (coils.stream().allMatch(c -> ((TileEntityCoil) c.getTile()).getType() == firstType)) {
             setCoilValues(firstType);
             return true;
@@ -36,8 +36,8 @@ public class TileEntityMultiSmelter extends TileEntityItemMultiMachine {
         }
     }
 
-    public void setCoilValues(Coil coil) {
-        switch (coil.getName()) {
+    public void setCoilValues(BlockCoil coil) {
+        switch (coil.getId()) {
             case "kanthal":
                 level = 2;
                 break;

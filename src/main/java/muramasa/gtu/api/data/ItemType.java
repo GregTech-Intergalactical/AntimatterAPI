@@ -2,12 +2,11 @@ package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
@@ -31,19 +30,19 @@ public class ItemType implements IGregTechObject {
 
     public static ItemType CellTin = new ItemType("fluid_cell_tin") {
         @Override
-        public Item getNewInstance() {
+        public StandardItem getNewInstance() {
             return new ItemFluidCell(this, 1000, Materials.Tin.getMeltingPoint());
         }
     };
     public static ItemType CellSteel = new ItemType("fluid_cell_steel") {
         @Override
-        public Item getNewInstance() {
+        public StandardItem getNewInstance() {
             return new ItemFluidCell(this, 16000, Materials.Steel.getMeltingPoint());
         }
     };
     public static ItemType CellTungstensteel = new ItemType("fluid_cell_tungstensteel") {
         @Override
-        public Item getNewInstance() {
+        public StandardItem getNewInstance() {
             return new ItemFluidCell(this, 64000, Materials.TungstenSteel.getMeltingPoint());
         }
     };
@@ -258,12 +257,12 @@ public class ItemType implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 
     public String getDisplayName() {
-        return Utils.trans("item.standard." + getName() + ".name");
+        return Utils.trans("item.standard." + getId() + ".name");
     }
 
     public String getTooltip() {
@@ -303,7 +302,7 @@ public class ItemType implements IGregTechObject {
         return GregTechAPI.getCoverFromCatalyst(stack) != null;
     }
 
-    public Item getNewInstance() {
+    public StandardItem getNewInstance() {
         return new StandardItem(this);
     }
 

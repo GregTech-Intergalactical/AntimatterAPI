@@ -25,7 +25,7 @@ public class PipeStack implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return type.getName() + "_" + size.getName();
     }
 

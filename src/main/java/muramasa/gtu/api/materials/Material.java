@@ -2,10 +2,10 @@ package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
 
-public class Material {
+public class Material implements IGregTechObject {
 
     public static final long M = 3628800;
 
@@ -63,7 +63,17 @@ public class Material {
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;
-        Materials.MATERIAL_LOOKUP.put(name, this);
+        GregTechRegistry.register(Material.class, this);
+    }
+
+    @Override
+    public String getId() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return getId();
     }
     
     public Material asDust(IMaterialFlag... flags) {
@@ -232,17 +242,8 @@ public class Material {
     }
 
     /** Basic Getters**/
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
     public String getDisplayName() {
-        return Utils.trans("material." + getName() + ".name");
+        return Utils.trans("material." + getId() + ".name");
     }
 
     public int getRGB() {
@@ -606,17 +607,17 @@ public class Material {
     }
 
     public FluidStack getLiquid(int amount) {
-        if (liquid == null) throw new NullPointerException(getName() + ": Liquid is null");
+        if (liquid == null) throw new NullPointerException(getId() + ": Liquid is null");
         return new FluidStack(liquid, amount);
     }
 
     public FluidStack getGas(int amount) {
-        if (gas == null) throw new NullPointerException(getName() + ": Gas is null");
+        if (gas == null) throw new NullPointerException(getId() + ": Gas is null");
         return new FluidStack(getGas(), amount);
     }
 
     public FluidStack getPlasma(int amount) {
-        if (plasma == null) throw new NullPointerException(getName() + ": Plasma is null");
+        if (plasma == null) throw new NullPointerException(getId() + ": Plasma is null");
         return new FluidStack(getPlasma(), amount);
     }
 }

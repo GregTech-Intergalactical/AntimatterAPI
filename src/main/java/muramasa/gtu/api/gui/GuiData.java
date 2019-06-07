@@ -34,7 +34,7 @@ public class GuiData {
     }
 
     public GuiData(Machine type, Object instance, int id) {
-        this.name = type.getName();
+        this.name = type.getId();
         this.instance = instance;
         this.id = id;
     }
@@ -49,7 +49,7 @@ public class GuiData {
 
     public ResourceLocation getTexture(Tier tier) {
         if (hasSlots(tier)) {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + "_" + tier.getName() + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + "_" + tier.getId() + ".png");
         } else {
             return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
         }
@@ -97,7 +97,7 @@ public class GuiData {
 
     /** Adds a slot for the given Tier **/
     public GuiData add(Tier tier, SlotType type, int x, int y) {
-        return add(tier.getName(), new SlotData(type, x, y));
+        return add(tier.getId(), new SlotData(type, x, y));
     }
 
     /** Copies ALL slots from an existing GuiData **/
@@ -119,7 +119,7 @@ public class GuiData {
     /** Copies ALL slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine type) {
         for (SlotData slot : type.getGui().getAnySlots()) {
-            add(toTier.getName(), slot);
+            add(toTier.getId(), slot);
         }
         return this;
     }
@@ -127,7 +127,7 @@ public class GuiData {
     /** Copies fromTier slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine type, Tier fromTier) {
         for (SlotData slot : type.getGui().getSlots(fromTier)) {
-            add(toTier.getName(), slot);
+            add(toTier.getId(), slot);
         }
         return this;
     }
@@ -150,7 +150,7 @@ public class GuiData {
     }
 
     public boolean hasSlots(Tier tier) {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
+        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         return slots != null && slots.size() > 0;
     }
 
@@ -167,14 +167,14 @@ public class GuiData {
     }
 
     public List<SlotData> getSlots(Tier tier) {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
+        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         return slots != null ? slots : new ArrayList<>();
     }
 
     public List<SlotData> getSlots(SlotType type, Tier tier) {
         ArrayList<SlotData> types = new ArrayList<>();
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
+        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
         for (SlotData slot : slots) {

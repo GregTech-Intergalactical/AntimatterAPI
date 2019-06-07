@@ -536,9 +536,9 @@ public class MaterialRecipeLoader {
         for (Material m : TOOLS.getMats()) {
 
             if (!m.has(INGOT)) continue; //TODO temp
-            RecipeHelper.addShaped(Ref.MODID + "_wrench" + m.getName(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', m.getIngot(1));
-            RecipeHelper.addShaped(Ref.MODID + "_hammer" + m.getName(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
-            RecipeHelper.addShaped(Ref.MODID + "_sword" + m.getName(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
+            RecipeHelper.addShaped(Ref.MODID + "_wrench" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', m.getIngot(1));
+            RecipeHelper.addShaped(Ref.MODID + "_hammer" + m.getId(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
+            RecipeHelper.addShaped(Ref.MODID + "_sword" + m.getId(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
             
             /*
             if (m.has(INGOT) && m.has(Plate) && !m.has(RUBBERTOOLS) && m == m.mMacerateInto) {

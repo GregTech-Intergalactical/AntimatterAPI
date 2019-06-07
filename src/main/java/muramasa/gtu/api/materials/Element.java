@@ -155,7 +155,7 @@ public enum Element implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 

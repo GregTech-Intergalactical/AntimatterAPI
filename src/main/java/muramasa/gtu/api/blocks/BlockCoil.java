@@ -1,10 +1,11 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.data.Coil;
+import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.client.render.StateMapperRedirect;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
+import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -21,23 +22,31 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockCoil extends Block implements IModelOverride {
+public class BlockCoil extends Block implements IGregTechObject, IModelOverride {
 
-    private Coil type;
+    private String name;
+    private int heatCapacity;
 
-    public BlockCoil(Coil type) {
+    public BlockCoil(String name, int heatCapacity) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName("coil_" + type.getName());
-        setRegistryName("coil_" + type.getName());
+        this.name = name;
+        this.heatCapacity = heatCapacity;
+        setUnlocalizedName("coil_".concat(getId()));
+        setRegistryName("coil_".concat(getId()));
         setHardness(1.0F);
         setResistance(10.0F);
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
-        this.type = type;
+        GregTechRegistry.register(BlockCoil.class, this);
     }
 
-    public Coil getType() {
-        return type;
+    @Override
+    public String getId() {
+        return name;
+    }
+
+    public int getHeatCapacity() {
+        return heatCapacity;
     }
 
     @Override
@@ -65,7 +74,7 @@ public class BlockCoil extends Block implements IModelOverride {
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_coil", "coil_type=" + type.getName())));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_coil", "id=" + getId()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_coil", "id=" + getId())));
     }
 }

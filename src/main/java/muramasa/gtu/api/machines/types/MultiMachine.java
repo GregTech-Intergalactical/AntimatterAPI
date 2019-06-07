@@ -22,7 +22,7 @@ public class MultiMachine extends Machine {
 
     @Override
     public Texture getBaseTexture(Tier tier) {
-        return tiers.size() > 1 ? new Texture("blocks/machine/base/" + name + "_" + tier.getName()) : new Texture("blocks/machine/base/" + name);
+        return tiers.size() > 1 ? new Texture("blocks/machine/base/" + name + "_" + tier.getId()) : new Texture("blocks/machine/base/" + name);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class Tier implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name;
     }
 

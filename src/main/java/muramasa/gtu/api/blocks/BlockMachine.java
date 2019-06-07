@@ -75,6 +75,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
+            int x = machine.getTypeId();
             exState = exState
                 .withProperty(TYPE, machine.getTypeId())
                 .withProperty(FACING, machine.getFacing().getIndex())
@@ -227,7 +228,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     public String getDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-            return tier.getRarityColor() + Utils.trans("machine." + getType().getName() + "." + tier.getName() + ".name");
+            return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".name");
         }
         return getUnlocalizedName();
     }
@@ -238,7 +239,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             if (getType().hasFlag(MachineFlag.BASIC)) {
                 Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-                tooltip.add("Voltage IN: " + TextFormatting.GREEN + tier.getVoltage() + " (" + tier.getName().toUpperCase() + ")");
+                tooltip.add("Voltage IN: " + TextFormatting.GREEN + tier.getVoltage() + " (" + tier.getId().toUpperCase() + ")");
                 tooltip.add("Capacity: " + TextFormatting.BLUE + (tier.getVoltage() * 64));
             }
         }

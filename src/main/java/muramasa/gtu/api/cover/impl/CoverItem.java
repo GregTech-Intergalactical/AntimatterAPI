@@ -20,7 +20,7 @@ public class CoverItem extends Cover {
 
     @Override
     public ItemStack getDroppedStack() {
-        switch (tier.getName()) { //TODO maybe a better way to do this? but for now, it works.
+        switch (tier.getId()) { //TODO maybe a better way to do this? but for now, it works.
             case "lv": return ItemType.ConveyorLV.get(1);
             case "mv": return ItemType.ConveyorMV.get(1);
             case "hv": return ItemType.ConveyorHV.get(1);

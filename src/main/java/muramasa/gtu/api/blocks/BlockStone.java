@@ -20,8 +20,8 @@ public class BlockStone extends Block implements IModelOverride {
 
     public BlockStone(StoneType type) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName("stone_" + type.getName());
-        setRegistryName("stone_" + type.getName());
+        setUnlocalizedName("stone_" + type.getId());
+        setRegistryName("stone_" + type.getId());
         setCreativeTab(Ref.TAB_BLOCKS);
         this.type = type;
     }
@@ -38,7 +38,7 @@ public class BlockStone extends Block implements IModelOverride {
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_stone", "stone_type=" + type.getName()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_stone", "stone_type=" + type.getName())));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_stone", "stone_type=" + type.getId()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_stone", "stone_type=" + type.getId())));
     }
 }

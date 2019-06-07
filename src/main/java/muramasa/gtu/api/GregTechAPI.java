@@ -5,8 +5,6 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.cover.impl.*;
-import muramasa.gtu.api.data.Casing;
-import muramasa.gtu.api.data.Coil;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
@@ -34,15 +32,6 @@ public final class GregTechAPI {
     /** Item Registry Section **/
     public static void addItemReplacement(Prefix prefix, Material material, ItemStack stack) {
         prefix.addReplacement(material, stack);
-    }
-
-    /** Block Registry Section **/
-    public static void addCasing(String name) {
-        new Casing(name);
-    }
-
-    public static void addCoil(String name, int heatingCapacity) {
-        new Coil(name, heatingCapacity);
     }
 
     /** JEI Registry Section **/

@@ -1,9 +1,18 @@
 package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.blocks.*;
-import muramasa.gtu.api.data.*;
+import muramasa.gtu.api.blocks.BlockOre;
+import muramasa.gtu.api.blocks.BlockStone;
+import muramasa.gtu.api.blocks.BlockStorage;
+import muramasa.gtu.api.blocks.GTItemBlock;
+import muramasa.gtu.api.blocks.pipe.BlockCable;
+import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
+import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.items.MaterialTool;
+import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.GenerationFlag;
@@ -24,10 +33,6 @@ import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.api.blocks.pipe.BlockCable;
-import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
-import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
-import muramasa.gtu.api.blocks.ItemBlockGT;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -43,29 +48,35 @@ import java.util.List;
 public class ContentLoader {
 
     public static void init() {
+
         //Items
-        for (Prefix prefix : Prefix.getAll()) {
-            for (Material material : Materials.getAll()) {
-                if (!prefix.allowGeneration(material)) continue;
-                GregTechRegistry.register(new MaterialItem(prefix, material));
-            }
-        }
+        List<Prefix> prefixes = GregTechRegistry.getAll(Prefix.class);
+        List<Material> materials = GregTechRegistry.getAll(Material.class);
+        prefixes.forEach(p -> materials.forEach(m -> {
+            if (p.allowGeneration(m)) new MaterialItem(p, m);
+        }));
         for (ItemType type : ItemType.getAll()) {
             if (!type.isEnabled()) continue;
-            GregTechRegistry.register(type.getNewInstance());
+            GregTechRegistry.register(StandardItem.class, type.getNewInstance());
         }
         for (ToolType type : ToolType.values()) {
-            GregTechRegistry.register(type.getInstance());          
+            GregTechRegistry.register(MaterialTool.class, type.getInstance());
         }
 
         //Blocks
-        Machines.getAll().forEach(type -> GregTechRegistry.register(type.getBlock()));
+        GenerationFlag.ORE.getMats().forEach(BlockOre::new);
+
+
+
+
+
+        //Machines.getAll().forEach(type -> GregTechRegistry.register(type.getBlock()));
         Cable.getAll().forEach(type -> GregTechRegistry.register(new BlockCable(type)));
         ItemPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockItemPipe(type)));
         FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
-        Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
-        Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
-        GenerationFlag.ORE.getMats().forEach(m -> GregTechRegistry.register(new BlockOre(m)));
+        //Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
+//        Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
+
         GenerationFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
         StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }
@@ -73,6 +84,10 @@ public class ContentLoader {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e) {
         GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(b));
+
+//        GregTechRegistry.TILES.forEach(t -> {
+//            GameRegistry.registerTileEntity(t, new ResourceLocation(Ref.MODID));
+//        });
 
         //TODO auto register all type tiles??? probably
         GameRegistry.registerTileEntity(TileEntityMachine.class, new ResourceLocation(Ref.MODID, "tile_machine"));
@@ -84,12 +99,13 @@ public class ContentLoader {
         GameRegistry.registerTileEntity(TileEntityMultiMachine.class, new ResourceLocation(Ref.MODID, "tile_multi_machine"));
         GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "tile_hatch"));
         List<String> registeredTiles = new LinkedList<>();
-        for (Machine type : Machines.getAll()) {
-            if (type.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(type.getTileClass().getName())) {
-                GameRegistry.registerTileEntity(type.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + type.getName()));
-                registeredTiles.add(type.getTileClass().getName());
+
+        GregTechRegistry.getAll(Machine.class).forEach(m -> {
+            if (m.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(m.getTileClass().getName())) {
+                GameRegistry.registerTileEntity(m.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + m.getId()));
+                registeredTiles.add(m.getTileClass().getName());
             }
-        }
+        });
 
         GameRegistry.registerTileEntity(TileEntityPipe.class, new ResourceLocation(Ref.MODID, "block_pipe"));
         GameRegistry.registerTileEntity(TileEntityItemPipe.class, new ResourceLocation(Ref.MODID, "block_item_pipe"));
@@ -102,8 +118,7 @@ public class ContentLoader {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
         GregTechRegistry.ITEMS.forEach(i -> e.getRegistry().register(i));
-        GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(new ItemBlockGT(b)));
-
+        GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(new GTItemBlock(b)));
         GregTechRegistry.callRegistrationEvent(RegistrationEvent.ITEM);
     }
 }

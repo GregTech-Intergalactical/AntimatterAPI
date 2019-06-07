@@ -204,7 +204,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     public List<String> getInfo() {
         List<String> info = super.getInfo();
         info.add("Tile: " + getClass().getName());
-        info.add("Machine: " + getType().getName() + " Tier: " + getTier().getName());
+        info.add("Machine: " + getType().getId() + " Tier: " + getTier().getId());
         String slots = "";
         if (getType().hasFlag(ITEM)) {
             int inputs = getType().getGui().getSlots(SlotType.IT_IN, getTier()).size();

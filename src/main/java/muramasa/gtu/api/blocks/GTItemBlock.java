@@ -5,9 +5,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-public class ItemBlockGT extends ItemBlock {
+public class GTItemBlock extends ItemBlock {
 
-    public ItemBlockGT(Block block) {
+    public GTItemBlock(Block block) {
         super(block);
         setRegistryName(block.getRegistryName());
     }

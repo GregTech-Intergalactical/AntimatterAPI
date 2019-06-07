@@ -1,10 +1,16 @@
 package muramasa.gtu.api.items;
 
+import com.google.common.base.CaseFormat;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -35,19 +41,24 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class StandardItem extends Item implements IModelOverride {
+public class StandardItem extends Item implements IGregTechObject, IModelOverride {
 
     protected ItemType type;
 
     public StandardItem(ItemType type) {
-        setUnlocalizedName(type.getName());
-        setRegistryName(type.getName());
-        setCreativeTab(Ref.TAB_ITEMS);
         this.type = type;
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
+        setCreativeTab(Ref.TAB_ITEMS);
     }
 
     public ItemType getType() {
         return type;
+    }
+
+    @Override
+    public String getId() {
+        return type.getId();
     }
 
     @Override
@@ -67,7 +78,7 @@ public class StandardItem extends Item implements IModelOverride {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (type == ItemType.DebugScanner) {
-
+            tooltip.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, Prefix.IngotHot.getId() + "_" + Materials.Uranium235.getId()));
         }
     }
 
@@ -106,7 +117,7 @@ public class StandardItem extends Item implements IModelOverride {
                 }
             }
         } else {
-
+            GregTechRegistry.getAll(BlockCasing.class).forEach(t -> System.out.println(t.getId()));
         }
         return EnumActionResult.FAIL; //TODO FAIL?
     }
@@ -114,6 +125,6 @@ public class StandardItem extends Item implements IModelOverride {
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getName()));
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getId()));
     }
 }

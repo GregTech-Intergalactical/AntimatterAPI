@@ -1,7 +1,6 @@
 package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
-import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.GregTechRegistry;
@@ -14,7 +13,7 @@ import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Set;
 
-public enum ToolType implements IGregTechObject {
+public enum ToolType {
 
     SWORD("Sword", "", "craftingToolSword", null, Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
     PICKAXE("Pickaxe" , "", "craftingToolPickaxe", null, Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),
@@ -69,7 +68,6 @@ public enum ToolType implements IGregTechObject {
         this.damageCrafting = damageCrafting;
     }
 
-    @Override
     public String getName() {
         return name().toLowerCase(Locale.ENGLISH);
     }
@@ -154,7 +152,7 @@ public enum ToolType implements IGregTechObject {
     }
 
     public ItemStack get(Material primary, Material secondary) {
-        return GregTechRegistry.getMaterialTool(this).get(primary, secondary);
+        return GregTechRegistry.get(MaterialTool.class, getName()).get(primary, secondary);
     }
 
     @Nullable
