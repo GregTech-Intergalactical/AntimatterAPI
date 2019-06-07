@@ -23,7 +23,7 @@ public class BlockItemPipe extends BlockPipe {
     private ItemPipe type;
 
     public BlockItemPipe(ItemPipe type) {
-        super("item_pipe_" + type.getName(), Textures.PIPE_DATA[0]);
+        super("item_pipe_" + type.getId(), Textures.PIPE_DATA[0]);
         this.type = type;
     }
 

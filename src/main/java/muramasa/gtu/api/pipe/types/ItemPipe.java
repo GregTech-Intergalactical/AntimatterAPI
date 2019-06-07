@@ -36,12 +36,12 @@ public class ItemPipe extends Pipe {
           32768 / baseSlots, 32768 / baseSlots, 32768 / baseSlots, 32768 / baseSlots, 16384 / baseSlots, 8192 / baseSlots
         };
         setValidSizes(PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
-        TYPE_LOOKUP.put("item_pipe_" + getName(), this);
+        TYPE_LOOKUP.put("item_pipe_" + getId(), this);
     }
 
     public ItemPipe(String name, int rgb, int baseSlots) {
         this(null, baseSlots);
-        this.name = name;
+        this.id = name;
         this.rgb = rgb;
     }
 
@@ -61,7 +61,7 @@ public class ItemPipe extends Pipe {
             String name = (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + (restrictive ? "Restrictive " : "") + getDisplayName() + " Item Pipe";
             return name;
         }
-        return getName();
+        return getId();
     }
 
     @Override

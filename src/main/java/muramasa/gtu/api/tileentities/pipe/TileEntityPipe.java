@@ -125,7 +125,7 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
-        info.add("Pipe Type: " + getType().getName());
+        info.add("Pipe Type: " + getType().getId());
         info.add("Pipe Size: " + getSize().getName());
         return info;
     }

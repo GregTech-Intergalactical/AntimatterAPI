@@ -11,15 +11,15 @@ public class Pipe {
 
     protected PipeSize[] validSizes;
     protected Material material;
-    protected String name;
+    protected String id;
     protected int rgb;
 
     public Pipe(Material material) {
         this.material = material;
     }
 
-    public Pipe(String name, int rgb) {
-        this.name = name;
+    public Pipe(String id, int rgb) {
+        this.id = id;
         this.rgb = rgb;
     }
 
@@ -31,12 +31,14 @@ public class Pipe {
         this.validSizes = validSizes;
     }
 
-    public String getName() {
-        return material != null ? material.getId() : name;
+
+    //TODO GTObject?
+    public String getId() {
+        return material != null ? material.getId() : id;
     }
 
     public String getDisplayName() {
-        return material != null ? material.getDisplayName() : name;
+        return material != null ? material.getDisplayName() : id;
     }
 
     public int getRGB() {
@@ -44,7 +46,7 @@ public class Pipe {
     }
 
     public String getDisplayName(ItemStack stack) {
-        return getName();
+        return getId();
     }
 
     public List<String> getTooltip(ItemStack stack) {

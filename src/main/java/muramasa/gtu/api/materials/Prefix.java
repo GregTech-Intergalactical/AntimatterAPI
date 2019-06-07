@@ -7,7 +7,6 @@ import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 
 import java.util.LinkedHashMap;
-import java.util.Locale;
 
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 
@@ -51,13 +50,13 @@ public class Prefix implements IGregTechObject {
     public static Prefix Lens = new Prefix("lens", true, LENS);
 //    public static Prefix TurbineBlade = new Prefix("turbine_blade", true, TOOLS);
 
-    private String name, namePre, namePost;
+    private String id, namePre, namePost;
 
     private boolean doesGenerate, hasLocName, visible;
     private long generationBits;
 
-    public Prefix(String name, boolean visible, GenerationFlag flag) {
-        this.name = name;
+    public Prefix(String id, boolean visible, GenerationFlag flag) {
+        this.id = id;
         this.visible = visible;
 //        for (GenerationFlag flag : flags) {
 //            generationBits |= flag.getBit();
@@ -67,21 +66,21 @@ public class Prefix implements IGregTechObject {
         GregTechRegistry.register(Prefix.class, this);
     }
 
-    public Prefix(String name, boolean visible, boolean generatesItems, GenerationFlag flag) {
-        this(name, visible, flag);
+    public Prefix(String id, boolean visible, boolean generatesItems, GenerationFlag flag) {
+        this(id, visible, flag);
         this.doesGenerate = generatesItems;
     }
 
     @Override
     public String getId() {
-        return name.toLowerCase(Locale.ENGLISH);
+        return id;
     }
 
     public String getDisplayName(Material material) { //TODO cache
         if (!hasLocName) {
-            namePre = Utils.trans("prefix.pre." + getId() + ".name");
+            namePre = Utils.trans("prefix.pre." + getId() + ".id");
             namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = Utils.trans("prefix.post." + getId() + ".name");
+            namePost = Utils.trans("prefix.post." + getId() + ".id");
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }

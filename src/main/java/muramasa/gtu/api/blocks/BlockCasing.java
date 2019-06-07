@@ -35,12 +35,12 @@ public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOv
 
     private static int lastInternalId = 0;
 
-    private String name;
+    private String id;
     private int internalId;
 
-    public BlockCasing(String name) {
+    public BlockCasing(String id) {
         super();
-        this.name = name;
+        this.id = id;
         this.internalId = lastInternalId++;
         setData(TextureData.get().base(getTexture()));
         setModel(LAYERED);
@@ -55,7 +55,7 @@ public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOv
 
     @Override
     public String getId() {
-        return name;
+        return id;
     }
 
     public int getInternalId() {
@@ -85,14 +85,14 @@ public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOv
     }
 
     public Texture getTexture() {
-        return new Texture("blocks/casing/" + name);
+        return new Texture("blocks/casing/" + id);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        GregTechRegistry.getAll(BlockCasing.class).forEach(c -> textures.add(c.getTexture()));
+        GregTechRegistry.all(BlockCasing.class).forEach(c -> textures.add(c.getTexture()));
         textures.addAll(Arrays.asList(Textures.LARGE_TURBINE));
         textures.addAll(Arrays.asList(Textures.LARGE_TURBINE_ACTIVE));
         return textures;

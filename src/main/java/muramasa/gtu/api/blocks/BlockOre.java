@@ -44,13 +44,13 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         GregTechRegistry.register(BlockOre.class, this);
     }
 
+    public Material getMaterial() {
+        return material;
+    }
+
     @Override
     public String getId() {
         return material.getId();
-    }
-
-    public Material getMaterial() {
-        return material;
     }
 
     public IBlockState getOreState(Material material, StoneType type) {

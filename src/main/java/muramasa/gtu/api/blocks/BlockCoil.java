@@ -24,12 +24,12 @@ import javax.annotation.Nullable;
 
 public class BlockCoil extends Block implements IGregTechObject, IModelOverride {
 
-    private String name;
+    private String id;
     private int heatCapacity;
 
-    public BlockCoil(String name, int heatCapacity) {
+    public BlockCoil(String id, int heatCapacity) {
         super(net.minecraft.block.material.Material.IRON);
-        this.name = name;
+        this.id = id;
         this.heatCapacity = heatCapacity;
         setUnlocalizedName("coil_".concat(getId()));
         setRegistryName("coil_".concat(getId()));
@@ -42,7 +42,7 @@ public class BlockCoil extends Block implements IGregTechObject, IModelOverride 
 
     @Override
     public String getId() {
-        return name;
+        return id;
     }
 
     public int getHeatCapacity() {

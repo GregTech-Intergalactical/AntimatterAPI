@@ -133,7 +133,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
                 if (machine.getType().hasFlag(MachineFlag.COVERABLE) && !machine.getCoverHandler().get(side).isEmpty())
                     return false;
                 GuiData gui = machine.getType().getGui();
-                player.openGui(gui.getInstance(), gui.getId(), world, pos.getX(), pos.getY(), pos.getZ());
+                player.openGui(gui.getInstance(), gui.getGuiId(), world, pos.getX(), pos.getY(), pos.getZ());
                 return true;
             } else if (machine.getType().hasFlag(MachineFlag.COVERABLE)) {
                 ICoverHandler coverHandler = machine.getCoverHandler();
@@ -228,7 +228,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     public String getDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-            return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".name");
+            return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".id");
         }
         return getUnlocalizedName();
     }

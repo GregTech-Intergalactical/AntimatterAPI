@@ -31,7 +31,7 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
     private Cable type;
 
     public BlockCable(Cable type) {
-        super("cable_" + type.getName(), Textures.PIPE_DATA[1]);
+        super("cable_" + type.getId(), Textures.PIPE_DATA[1]);
         this.type = type;
     }
 

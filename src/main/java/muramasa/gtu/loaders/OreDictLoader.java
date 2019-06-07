@@ -11,7 +11,7 @@ public class OreDictLoader {
     public static void init() {
         //Register materialItem entries (prefixMaterialName)
         //TODO use CaseFormat
-        GregTechRegistry.getAll(MaterialItem.class).forEach(item -> {
+        GregTechRegistry.all(MaterialItem.class).forEach(item -> {
             String[] prefix = item.getPrefix().getId().split("_");
             for (int i = 1; i < prefix.length; i++) {
                 prefix[i] = prefix[i].substring(0, 1).toUpperCase() + prefix[i].substring(1);
@@ -24,6 +24,6 @@ public class OreDictLoader {
         });
 
         //Register craftingTool entries (craftingToolType)
-        GregTechRegistry.getAll(MaterialTool.class).forEach(t -> OreDictionary.registerOre(t.getType().getOreDict(), new ItemStack(t, 1, OreDictionary.WILDCARD_VALUE)));
+        GregTechRegistry.all(MaterialTool.class).forEach(t -> OreDictionary.registerOre(t.getType().getOreDict(), new ItemStack(t, 1, OreDictionary.WILDCARD_VALUE)));
     }
 }

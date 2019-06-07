@@ -49,12 +49,12 @@ public class FluidPipe extends Pipe {
             baseCapacity / 6, baseCapacity / 6, baseCapacity / 3, baseCapacity, baseCapacity * 2, baseCapacity * 4
         };
         setValidSizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
-        TYPE_LOOKUP.put("fluid_pipe_" + getName(), this);
+        TYPE_LOOKUP.put("fluid_pipe_" + getId(), this);
     }
 
     public FluidPipe(String name, int rgb, int baseCapacity, int heatResistance, boolean gasProof) {
         this(null, baseCapacity, heatResistance, gasProof);
-        this.name = name;
+        this.id = name;
         this.rgb = rgb;
     }
 
@@ -80,7 +80,7 @@ public class FluidPipe extends Pipe {
             PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
             return (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + getDisplayName() + " Fluid Pipe";
         }
-        return getName();
+        return getId();
     }
 
     @Override

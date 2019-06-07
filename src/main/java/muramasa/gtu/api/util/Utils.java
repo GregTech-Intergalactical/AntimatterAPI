@@ -44,7 +44,7 @@ public class Utils {
 
     public static String getString(ItemStack stack) {
         if (stack.isEmpty() || stack.getItem().getRegistryName() == null) {
-            throw new InvalidParameterException("Cannot get recipe string for a empty item or if the registry name is null");
+            throw new InvalidParameterException("Cannot get recipe string for a empty item or if the registry id is null");
         }
         return stack.getItem().getRegistryName().toString();
     }
