@@ -243,26 +243,26 @@ public class ItemType implements IGregTechObject {
     public static ItemType CombPlutonium = new ItemType("comb_plutonium", "").optional(Ref.MOD_FR);
     public static ItemType CombNaquadah = new ItemType("comb_naquadah", "").optional(Ref.MOD_FR);
 
-    private String name, tooltip;
+    private String id, tooltip;
     private boolean enabled = true;
 
-    public ItemType(String name, String tooltip) {
-        this.name = name;
+    public ItemType(String id, String tooltip) {
+        this.id = id;
         this.tooltip = tooltip;
-        TYPE_LOOKUP.put(name, this);
+        TYPE_LOOKUP.put(id, this);
     }
 
-    public ItemType(String name) {
-        this(name, "");
+    public ItemType(String id) {
+        this(id, "");
     }
 
     @Override
     public String getId() {
-        return name;
+        return id;
     }
 
     public String getDisplayName() {
-        return Utils.trans("item.standard." + getId() + ".name");
+        return Utils.trans("item.standard." + getId() + ".id");
     }
 
     public String getTooltip() {

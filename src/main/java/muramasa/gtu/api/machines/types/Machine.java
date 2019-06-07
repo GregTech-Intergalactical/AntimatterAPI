@@ -35,7 +35,7 @@ public class Machine implements IGregTechObject {
     protected int internalId;
     protected BlockMachine block;
     protected Class tileClass;
-    protected String name;
+    protected String id;
     protected ArrayList<Tier> tiers;
     protected int machineMask;
 
@@ -65,13 +65,13 @@ public class Machine implements IGregTechObject {
         GregTechRegistry.register(TileEntityHatch.class);
     }
 
-    public Machine(String name) {
-        this(name, new BlockMachine(name), TileEntityMachine.class);
+    public Machine(String id) {
+        this(id, new BlockMachine(id), TileEntityMachine.class);
     }
 
-    public Machine(String name, BlockMachine block, Class tileClass) {
+    public Machine(String id, BlockMachine block, Class tileClass) {
         internalId = lastInternalId++;
-        this.name = name;
+        this.id = id;
         this.block = block;
         this.tileClass = tileClass;
         setTiers(Tier.LV);
@@ -84,11 +84,11 @@ public class Machine implements IGregTechObject {
 
     @Override
     public String getId() {
-        return name;
+        return id;
     }
 
     public String getDisplayName(Tier tier) {
-        return Utils.trans("machine." + name + "." + tier.getId() + ".name");
+        return Utils.trans("machine." + id + "." + tier.getId() + ".id");
     }
 
     public RecipeMap getRecipeMap() {
@@ -109,17 +109,17 @@ public class Machine implements IGregTechObject {
     public Texture[] getOverlayTextures(MachineState state) {
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BOTTOM),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.TOP),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.FRONT),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BACK),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.SIDE),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.SIDE),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
         };
     }
 
     public ModelResourceLocation getOverlayModel(TextureType side) {
-        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getId());
+        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + id + "/" + side.getId());
     }
 
     public Machine addFlags(MachineFlag... flags) {
@@ -154,7 +154,7 @@ public class Machine implements IGregTechObject {
     }
 
     public void addRecipeMap() {
-        recipeMap = new RecipeMap(name, 10);
+        recipeMap = new RecipeMap(id, 10);
         addFlags(RECIPE);
     }
 

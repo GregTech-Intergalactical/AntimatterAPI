@@ -36,7 +36,7 @@ public class MaterialRecipeLoader {
         for (Material m : ELEMENTAL.getMats()) {
 //            ItemStack aDataOrb = ItemType.Tool_DataOrb.get(1);
 //            Behaviour_DataOrb.setDataTitle(aDataOrb, "Elemental-Scan");
-//            Behaviour_DataOrb.setDataName(aDataOrb, m.mElement.name());
+//            Behaviour_DataOrb.setDataName(aDataOrb, m.mElement.id());
 //            ItemStack aRepOutput = ((m.has(LIQUID) || m.has(GAS)) && !m.has(Dust)) ? m.getCell(1) : m.getDust(1);
 //            Fluid aFluid = m.mFluid != null ? m.mFluid : m.mGas;
 //            int aMass = m.getMass();

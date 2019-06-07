@@ -3,9 +3,7 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.*;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -23,20 +21,26 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockStorage extends Block implements IItemBlock, IModelOverride, IColorHandler {
+public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     private Material material;
 
     public BlockStorage(Material material) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName("block_" + material.getId());
-        setRegistryName("block_" + material.getId());
-        setCreativeTab(Ref.TAB_BLOCKS);
         this.material = material;
+        setUnlocalizedName("block_" + getId());
+        setRegistryName("block_" + getId());
+        setCreativeTab(Ref.TAB_BLOCKS);
+        GregTechRegistry.register(BlockStorage.class, this);
     }
 
     public Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public String getId() {
+        return material.getId();
     }
 
     @Override

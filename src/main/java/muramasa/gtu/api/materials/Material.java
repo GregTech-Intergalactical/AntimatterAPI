@@ -1,6 +1,7 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
@@ -24,7 +25,7 @@ public class Material implements IGregTechObject {
     /** Basic Members **/
     private int rgb;
     private long itemMask, recipeMask;
-    private String name;
+    private String id;
     private TextureSet set;
 
     /** Element Members **/
@@ -53,13 +54,13 @@ public class Material implements IGregTechObject {
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<Material> byProducts = new ArrayList<>();
 
-    public Material(String name, int rgb, TextureSet set, Element element) {
-        this(name, rgb, set);
+    public Material(String id, int rgb, TextureSet set, Element element) {
+        this(id, rgb, set);
         this.element = element;
     }
 
-    public Material(String name, int rgb, TextureSet set) {
-        this.name = name;
+    public Material(String id, int rgb, TextureSet set) {
+        this.id = id;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;
@@ -68,7 +69,7 @@ public class Material implements IGregTechObject {
 
     @Override
     public String getId() {
-        return name;
+        return id;
     }
 
     @Override
@@ -243,7 +244,7 @@ public class Material implements IGregTechObject {
 
     /** Basic Getters**/
     public String getDisplayName() {
-        return Utils.trans("material." + getId() + ".name");
+        return Utils.trans("material." + getId() + ".id");
     }
 
     public int getRGB() {
@@ -603,7 +604,7 @@ public class Material implements IGregTechObject {
     }
 
     public ItemStack getBlock(int amount) {
-        return new ItemStack(GregTechRegistry.getStorage(this), amount);
+        return new ItemStack(GregTechRegistry.get(BlockStorage.class, id), amount);
     }
 
     public FluidStack getLiquid(int amount) {

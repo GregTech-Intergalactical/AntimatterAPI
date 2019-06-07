@@ -205,8 +205,8 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         return getComponents(object.getId());
     }
 
-    public List<IComponentHandler> getComponents(String name) {
-        ArrayList<IComponentHandler> list = components.get(name);
+    public List<IComponentHandler> getComponents(String id) {
+        ArrayList<IComponentHandler> list = components.get(id);
         return list != null ? list : Collections.emptyList();
     }
 

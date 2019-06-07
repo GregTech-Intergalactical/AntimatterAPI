@@ -24,7 +24,7 @@ public class BlockHandler {
             if (controller == null) return;
             if (!controller.getType().hasFlag(MachineFlag.GUI)) return;
             GuiData gui = controller.getType().getGui();
-            e.getEntityPlayer().openGui(GregTech.INSTANCE, gui.getId(), e.getEntityPlayer().getEntityWorld(), controller.getPos().getX(), controller.getPos().getY(), controller.getPos().getZ());
+            e.getEntityPlayer().openGui(GregTech.INSTANCE, gui.getGuiId(), e.getEntityPlayer().getEntityWorld(), controller.getPos().getX(), controller.getPos().getY(), controller.getPos().getZ());
             e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
         }
     }

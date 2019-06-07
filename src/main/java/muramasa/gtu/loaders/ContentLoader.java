@@ -50,8 +50,8 @@ public class ContentLoader {
     public static void init() {
 
         //Items
-        List<Prefix> prefixes = GregTechRegistry.getAll(Prefix.class);
-        List<Material> materials = GregTechRegistry.getAll(Material.class);
+        List<Prefix> prefixes = GregTechRegistry.all(Prefix.class);
+        List<Material> materials = GregTechRegistry.all(Material.class);
         prefixes.forEach(p -> materials.forEach(m -> {
             if (p.allowGeneration(m)) new MaterialItem(p, m);
         }));
@@ -65,19 +65,20 @@ public class ContentLoader {
 
         //Blocks
         GenerationFlag.ORE.getMats().forEach(BlockOre::new);
+        GenerationFlag.BLOCK.getMats().forEach(BlockStorage::new);
 
 
 
 
 
-        //Machines.getAll().forEach(type -> GregTechRegistry.register(type.getBlock()));
+        //Machines.all().forEach(type -> GregTechRegistry.register(type.getBlock()));
         Cable.getAll().forEach(type -> GregTechRegistry.register(new BlockCable(type)));
         ItemPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockItemPipe(type)));
         FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
-        //Casing.getAll().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
-//        Coil.getAll().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
+        //Casing.all().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
+//        Coil.all().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
 
-        GenerationFlag.BLOCK.getMats().forEach(m -> GregTechRegistry.register(new BlockStorage(m)));
+
         StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }
 
@@ -100,7 +101,7 @@ public class ContentLoader {
         GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "tile_hatch"));
         List<String> registeredTiles = new LinkedList<>();
 
-        GregTechRegistry.getAll(Machine.class).forEach(m -> {
+        GregTechRegistry.all(Machine.class).forEach(m -> {
             if (m.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(m.getTileClass().getName())) {
                 GameRegistry.registerTileEntity(m.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + m.getId()));
                 registeredTiles.add(m.getTileClass().getName());

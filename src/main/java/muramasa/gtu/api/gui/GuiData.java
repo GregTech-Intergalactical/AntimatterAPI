@@ -18,9 +18,9 @@ public class GuiData {
 
     private static final String ANY = "any";
 
-    private String name;
+    private String id;
     private Object instance = GregTech.INSTANCE;
-    private int id = 0;
+    private int guiId = 0;
     private boolean enablePlayerSlots = true;
 
     private int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
@@ -29,29 +29,29 @@ public class GuiData {
     private LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     private TObjectIntHashMap<SlotType> COUNT_LOOKUP = new TObjectIntHashMap<>();
 
-    public GuiData(String name) {
-        this.name = name;
+    public GuiData(String id) {
+        this.id = id;
     }
 
     public GuiData(Machine type, Object instance, int id) {
-        this.name = type.getId();
+        this.id = type.getId();
         this.instance = instance;
-        this.id = id;
+        this.guiId = id;
     }
 
     public Object getInstance() {
         return instance;
     }
 
-    public int getId() {
-        return id;
+    public int getGuiId() {
+        return guiId;
     }
 
     public ResourceLocation getTexture(Tier tier) {
         if (hasSlots(tier)) {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + "_" + tier.getId() + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + id + "_" + tier.getId() + ".png");
         } else {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + id + ".png");
         }
     }
 

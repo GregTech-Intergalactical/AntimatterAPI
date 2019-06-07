@@ -29,7 +29,7 @@ public class RecipeMap {
 
     public RecipeMap(String jeiCategoryId, int initialSize) {
         this.categoryId = "gt.recipe_map." + jeiCategoryId;
-        this.categoryName = Utils.trans("jei.category." + jeiCategoryId + ".name");
+        this.categoryName = Utils.trans("jei.category." + jeiCategoryId + ".id");
         LOOKUP = new LinkedHashMap<>(initialSize);
     }
 

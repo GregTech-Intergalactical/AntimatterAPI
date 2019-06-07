@@ -19,7 +19,7 @@ public class BlockFluidPipe extends BlockPipe {
     private FluidPipe type;
 
     public BlockFluidPipe(FluidPipe type) {
-        super("fluid_pipe_" + type.getName(), Textures.PIPE_DATA[0]);
+        super("fluid_pipe_" + type.getId(), Textures.PIPE_DATA[0]);
         this.type = type;
     }
 

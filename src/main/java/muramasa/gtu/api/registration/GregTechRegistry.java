@@ -3,7 +3,6 @@ package muramasa.gtu.api.registration;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
 import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
@@ -51,7 +50,7 @@ public class GregTechRegistry {
         return (T) OBJECTS.get(c.getName()).get(name);
     }
 
-    public static <T> List<T> getAll(Class<T> c) {
+    public static <T> List<T> all(Class<T> c) {
         return OBJECTS.get(c.getName()).values().stream().map(c::cast).collect(Collectors.toList());
     }
 
@@ -84,15 +83,15 @@ public class GregTechRegistry {
     }
 
     public static BlockCable getCable(Cable type) {
-        return (BlockCable) getBlock("cable_" + type.getName());
+        return (BlockCable) getBlock("cable_" + type.getId());
     }
 
     public static BlockItemPipe getItemPipe(ItemPipe type) {
-        return (BlockItemPipe) getBlock("item_pipe_" + type.getName());
+        return (BlockItemPipe) getBlock("item_pipe_" + type.getId());
     }
 
     public static BlockFluidPipe getFluidPipe(FluidPipe type) {
-        return (BlockFluidPipe) getBlock("fluid_pipe_" + type.getName());
+        return (BlockFluidPipe) getBlock("fluid_pipe_" + type.getId());
     }
 
     public static BlockOre getOre(Material material) {
@@ -108,10 +107,6 @@ public class GregTechRegistry {
 
     public static BlockStone getStone(StoneType type) {
         return (BlockStone) getBlock("stone_" + type.getId());
-    }
-
-    public static BlockStorage getStorage(Material material) {
-        return (BlockStorage) getBlock("block_" + material.getId());
     }
 
     public static Item getItem(String path) {

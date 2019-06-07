@@ -117,7 +117,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                 }
             }
         } else {
-            GregTechRegistry.getAll(BlockCasing.class).forEach(t -> System.out.println(t.getId()));
+            GregTechRegistry.all(BlockCasing.class).forEach(t -> System.out.println(t.getId()));
         }
         return EnumActionResult.FAIL; //TODO FAIL?
     }
