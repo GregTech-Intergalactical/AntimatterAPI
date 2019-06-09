@@ -1,8 +1,8 @@
 package muramasa.gtu.api.cover.impl;
 
 import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.common.Data;
 import net.minecraft.item.ItemStack;
 
 public class CoverItem extends Cover {
@@ -21,12 +21,12 @@ public class CoverItem extends Cover {
     @Override
     public ItemStack getDroppedStack() {
         switch (tier.getId()) { //TODO maybe a better way to do this? but for now, it works.
-            case "lv": return ItemType.ConveyorLV.get(1);
-            case "mv": return ItemType.ConveyorMV.get(1);
-            case "hv": return ItemType.ConveyorHV.get(1);
-            case "ev": return ItemType.ConveyorEV.get(1);
-            case "iv": return ItemType.ConveyorIV.get(1);
-            default: return ItemType.ConveyorLV.get(1);
+            case "lv": return Data.ConveyorLV.get(1);
+            case "mv": return Data.ConveyorMV.get(1);
+            case "hv": return Data.ConveyorHV.get(1);
+            case "ev": return Data.ConveyorEV.get(1);
+            case "iv": return Data.ConveyorIV.get(1);
+            default: return Data.ConveyorLV.get(1);
         }
     }
 }

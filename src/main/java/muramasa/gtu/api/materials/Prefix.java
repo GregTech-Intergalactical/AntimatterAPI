@@ -78,9 +78,9 @@ public class Prefix implements IGregTechObject {
 
     public String getDisplayName(Material material) { //TODO cache
         if (!hasLocName) {
-            namePre = Utils.trans("prefix.pre." + getId() + ".id");
+            namePre = Utils.trans("prefix.pre." + getId() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = Utils.trans("prefix.post." + getId() + ".id");
+            namePost = Utils.trans("prefix.post." + getId() + ".name");
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }

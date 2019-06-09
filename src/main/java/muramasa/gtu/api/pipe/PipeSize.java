@@ -34,7 +34,7 @@ public enum PipeSize {
     }
 
     public String getDisplayName() {
-        return Utils.trans("pipe." + getName() + ".id");
+        return Utils.trans("pipe." + getName() + ".name");
     }
 
     public int getCableThickness() {

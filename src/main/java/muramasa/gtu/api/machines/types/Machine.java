@@ -88,7 +88,7 @@ public class Machine implements IGregTechObject {
     }
 
     public String getDisplayName(Tier tier) {
-        return Utils.trans("machine." + id + "." + tier.getId() + ".id");
+        return Utils.trans("machine." + id + "." + tier.getId() + ".name");
     }
 
     public RecipeMap getRecipeMap() {

@@ -17,6 +17,7 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.client.creativetab.GregTechTab;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -76,10 +77,14 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (type.isPowered()) {
-            items.add(get(Materials.Cobalt, Materials.TungstenSteel, 1600000));
-        } else {
-            items.add(get(Materials.Cobalt, Materials.Wood));
+        if (tab instanceof GregTechTab) {
+            if (((GregTechTab) tab).getTabName().equals("items")) {
+                if (type.isPowered()) {
+                    items.add(get(Materials.Cobalt, Materials.TungstenSteel, 1600000));
+                } else {
+                    items.add(get(Materials.Cobalt, Materials.Wood));
+                }
+            }
         }
     }
 

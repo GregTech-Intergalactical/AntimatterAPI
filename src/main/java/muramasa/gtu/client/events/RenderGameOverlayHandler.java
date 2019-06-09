@@ -1,10 +1,10 @@
 package muramasa.gtu.client.events;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.tileentities.TileEntityBase;
 import muramasa.gtu.api.items.MaterialTool;
+import muramasa.gtu.api.tileentities.TileEntityBase;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.common.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
@@ -74,7 +74,7 @@ public class RenderGameOverlayHandler extends Gui {
                 drawModalRectWithCustomSizedTexture(x + 89, y, iconU, 10, 4, 5, 182, 15);
                 GL11.glPopAttrib();
                 GL11.glPopMatrix();
-            } else if (ItemType.DebugScanner.isEqual(stack)) {
+            } else if (Data.DebugScanner.isEqual(stack)) {
 
             }
         }

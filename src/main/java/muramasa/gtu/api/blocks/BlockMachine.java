@@ -228,7 +228,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     public String getDisplayName(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
             Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-            return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".id");
+            return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".name");
         }
         return getUnlocalizedName();
     }

@@ -658,15 +658,9 @@ public class Materials {
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
 
-        LIQUID.getMats().forEach(m -> {
-            if (m.getLiquid() == null) m.setLiquid(new GTFluid(m, LIQUID));
-        });
-        GAS.getMats().forEach(m -> {
-            if (m.getGas() == null) m.setGas(new GTFluid(m, GAS));
-        });
-        PLASMA.getMats().forEach(m -> {
-            if (m.getPlasma() == null) m.setPlasma(new GTFluid(m, PLASMA));
-        });
+        LIQUID.getMats().forEach(m -> m.setLiquid(new GTFluid(m, LIQUID)));
+        GAS.getMats().forEach(m -> m.setGas(new GTFluid(m, GAS)));
+        PLASMA.getMats().forEach(m -> m.setPlasma(new GTFluid(m, PLASMA)));
     }
 
     public static Material get(String name) {
