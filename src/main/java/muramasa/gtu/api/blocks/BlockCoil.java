@@ -1,7 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
@@ -37,7 +37,7 @@ public class BlockCoil extends Block implements IGregTechObject, IModelOverride 
         setResistance(10.0F);
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
-        GregTechRegistry.register(BlockCoil.class, this);
+        GregTechAPI.register(BlockCoil.class, this);
     }
 
     @Override

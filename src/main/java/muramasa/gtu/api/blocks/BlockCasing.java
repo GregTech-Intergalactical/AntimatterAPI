@@ -1,8 +1,8 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.Texture;
@@ -50,7 +50,7 @@ public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOv
         setResistance(10.0F);
         setCreativeTab(Ref.TAB_BLOCKS);
         setSoundType(SoundType.METAL);
-        GregTechRegistry.register(BlockCasing.class, this);
+        GregTechAPI.register(BlockCasing.class, this);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOv
     @SideOnly(Side.CLIENT)
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        GregTechRegistry.all(BlockCasing.class).forEach(c -> textures.add(c.getTexture()));
+        GregTechAPI.all(BlockCasing.class).forEach(c -> textures.add(c.getTexture()));
         textures.addAll(Arrays.asList(Textures.LARGE_TURBINE));
         textures.addAll(Arrays.asList(Textures.LARGE_TURBINE_ACTIVE));
         return textures;

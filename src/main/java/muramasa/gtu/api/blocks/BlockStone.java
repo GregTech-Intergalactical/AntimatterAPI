@@ -1,8 +1,8 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.StoneType;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
@@ -23,7 +23,7 @@ public class BlockStone extends Block implements IGregTechObject, IModelOverride
         setUnlocalizedName("stone_" + getId());
         setRegistryName("stone_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
-        GregTechRegistry.register(BlockStone.class, this);
+        GregTechAPI.register(BlockStone.class, this);
     }
 
     public StoneType getType() {

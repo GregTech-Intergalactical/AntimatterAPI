@@ -1,6 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.registration.*;
@@ -31,7 +32,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         setUnlocalizedName("block_" + getId());
         setRegistryName("block_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
-        GregTechRegistry.register(BlockStorage.class, this);
+        GregTechAPI.register(BlockStorage.class, this);
     }
 
     public Material getMaterial() {

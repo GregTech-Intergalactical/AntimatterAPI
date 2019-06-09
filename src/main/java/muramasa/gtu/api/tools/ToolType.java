@@ -1,9 +1,9 @@
 package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.util.SoundType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -41,6 +41,12 @@ public enum ToolType {
     SCREWDRIVER_P("Electric Screwdriver", "", "craftingToolScrewdriver", null, Sets.newHashSet("screwdriver"), SoundType.WRENCH, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
     BUZZSAW("Electric Buzzsaw", "", "craftingToolBuzzsaw", null, Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("Turbine Rotor", "", "craftingToolTurbine", null, Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
+
+    public static ToolType[] VALUES;
+
+    static {
+        VALUES = values();
+    }
 
     private String displayName, tooltip, oreDict;
     private Class toolClass;
@@ -88,7 +94,7 @@ public enum ToolType {
         return useSound;
     }
 
-    public MaterialTool getInstance() {
+    public MaterialTool instantiate() {
         if (toolClass != null) {
             try {
                 return (MaterialTool) toolClass.newInstance();
@@ -152,7 +158,7 @@ public enum ToolType {
     }
 
     public ItemStack get(Material primary, Material secondary) {
-        return GregTechRegistry.get(MaterialTool.class, getName()).get(primary, secondary);
+        return GregTechAPI.get(MaterialTool.class, getName()).get(primary, secondary);
     }
 
     @Nullable

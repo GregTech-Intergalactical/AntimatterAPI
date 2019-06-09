@@ -2,10 +2,10 @@ package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
@@ -65,7 +65,7 @@ public class Material implements IGregTechObject {
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;
-        GregTechRegistry.register(Material.class, this);
+        GregTechAPI.register(Material.class, this);
     }
 
     @Override
@@ -608,7 +608,7 @@ public class Material implements IGregTechObject {
                 System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
             }
         }
-        return new ItemStack(GregTechRegistry.get(BlockOre.class, id), amount);
+        return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
     }
 
     public ItemStack getBlock(int amount) {
@@ -619,7 +619,7 @@ public class Material implements IGregTechObject {
                 System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
             }
         }
-        return new ItemStack(GregTechRegistry.get(BlockStorage.class, id), amount);
+        return new ItemStack(GregTechAPI.get(BlockStorage.class, id), amount);
     }
 
     public FluidStack getLiquid(int amount) {

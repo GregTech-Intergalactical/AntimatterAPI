@@ -5,13 +5,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
@@ -63,7 +63,7 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
         setCreativeTab(Ref.TAB_ITEMS);
         setMaxDamage(1);
         setMaxStackSize(1);
-        GregTechRegistry.register(MaterialTool.class, this);
+        GregTechAPI.register(MaterialTool.class, this);
     }
 
     public ToolType getType() {

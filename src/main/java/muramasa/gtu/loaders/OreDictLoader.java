@@ -1,8 +1,8 @@
 package muramasa.gtu.loaders;
 
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.MaterialTool;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -11,7 +11,7 @@ public class OreDictLoader {
     public static void init() {
         //Register materialItem entries (prefixMaterialName)
         //TODO use CaseFormat
-        GregTechRegistry.all(MaterialItem.class).forEach(item -> {
+        GregTechAPI.all(MaterialItem.class).forEach(item -> {
             String[] prefix = item.getPrefix().getId().split("_");
             for (int i = 1; i < prefix.length; i++) {
                 prefix[i] = prefix[i].substring(0, 1).toUpperCase() + prefix[i].substring(1);
@@ -24,6 +24,6 @@ public class OreDictLoader {
         });
 
         //Register craftingTool entries (craftingToolType)
-        GregTechRegistry.all(MaterialTool.class).forEach(t -> OreDictionary.registerOre(t.getType().getOreDict(), new ItemStack(t, 1, OreDictionary.WILDCARD_VALUE)));
+        GregTechAPI.all(MaterialTool.class).forEach(t -> OreDictionary.registerOre(t.getType().getOreDict(), new ItemStack(t, 1, OreDictionary.WILDCARD_VALUE)));
     }
 }

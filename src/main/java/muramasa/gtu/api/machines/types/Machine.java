@@ -2,6 +2,7 @@ package muramasa.gtu.api.machines.types;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
@@ -9,7 +10,6 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.RecipeMap;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
@@ -51,18 +51,18 @@ public class Machine implements IGregTechObject {
     //TODO get valid covers
 
     static {
-        GregTechRegistry.register(TileEntityMachine.class);
-        GregTechRegistry.register(TileEntityBasicMachine.class);
-        GregTechRegistry.register(TileEntityItemMachine.class);
-        GregTechRegistry.register(TileEntityFluidMachine.class);
-        GregTechRegistry.register(TileEntityItemFluidMachine.class);
-        GregTechRegistry.register(TileEntitySteamMachine.class);
-        GregTechRegistry.register(TileEntityMultiMachine.class);
-        GregTechRegistry.register(TileEntityBasicItemMultiMachine.class);
-        GregTechRegistry.register(TileEntityItemMultiMachine.class);
-        GregTechRegistry.register(TileEntityFluidMultiMachine.class);
-        GregTechRegistry.register(TileEntityItemFluidMultiMachine.class);
-        GregTechRegistry.register(TileEntityHatch.class);
+        GregTechAPI.register(TileEntityMachine.class);
+        GregTechAPI.register(TileEntityBasicMachine.class);
+        GregTechAPI.register(TileEntityItemMachine.class);
+        GregTechAPI.register(TileEntityFluidMachine.class);
+        GregTechAPI.register(TileEntityItemFluidMachine.class);
+        GregTechAPI.register(TileEntitySteamMachine.class);
+        GregTechAPI.register(TileEntityMultiMachine.class);
+        GregTechAPI.register(TileEntityBasicItemMultiMachine.class);
+        GregTechAPI.register(TileEntityItemMultiMachine.class);
+        GregTechAPI.register(TileEntityFluidMultiMachine.class);
+        GregTechAPI.register(TileEntityItemFluidMultiMachine.class);
+        GregTechAPI.register(TileEntityHatch.class);
     }
 
     public Machine(String id) {

@@ -3,12 +3,10 @@ package muramasa.gtu.api.items;
 import com.google.common.base.CaseFormat;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
@@ -49,7 +47,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_ITEMS);
-        GregTechRegistry.register(this);
+        GregTechAPI.register(this);
     }
 
     public StandardItem(String id, String tooltip) {
@@ -122,7 +120,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             }
         } else {
             if (Data.DebugScanner.isEqual(stack)) {
-                GregTechRegistry.all(BlockCasing.class).forEach(t -> System.out.println(t.getId()));
+
             }
         }
         return EnumActionResult.FAIL; //TODO FAIL?

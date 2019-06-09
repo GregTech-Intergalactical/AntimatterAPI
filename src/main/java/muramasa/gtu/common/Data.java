@@ -1,6 +1,7 @@
 package muramasa.gtu.common;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
@@ -9,18 +10,17 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.pipe.PipeSize;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mod.EventBusSubscriber
@@ -31,21 +31,19 @@ public class Data {
     public static void init() {
 
         //Items
-        List<Prefix> prefixes = GregTechRegistry.all(Prefix.class);
-        List<Material> materials = GregTechRegistry.all(Material.class);
+        List<Prefix> prefixes = GregTechAPI.all(Prefix.class);
+        List<Material> materials = GregTechAPI.all(Material.class);
         prefixes.forEach(p -> materials.forEach(m -> {
             if (p.allowGeneration(m)) new MaterialItem(p, m);
         }));
 
-        for (ToolType type : ToolType.values()) {
-            GregTechRegistry.register(MaterialTool.class, type.getInstance());
-        }
+        Arrays.stream(ToolType.VALUES).forEach(ToolType::instantiate);
 
         //Blocks
         GenerationFlag.ORE.getMats().forEach(BlockOre::new);
         GenerationFlag.BLOCK.getMats().forEach(BlockStorage::new);
 
-        StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
+        StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
     }
 
     public static StandardItem DebugScanner = new StandardItem("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
@@ -310,38 +308,38 @@ public class Data {
     public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2");
     public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3");
 
-    public static BlockCable RedAlloy = new BlockCable(Materials.RedAlloy, 0, 1, 1, Tier.ULV); //ULV
-    public static BlockCable Cobalt = new BlockCable(Materials.Cobalt, 2, 4, 2, Tier.LV); //LV
-    public static BlockCable Lead = new BlockCable(Materials.Lead, 2, 4, 2, Tier.LV);
-    public static BlockCable Tin = new BlockCable(Materials.Tin, 1, 2, 1, Tier.LV);
-    public static BlockCable Zinc = new BlockCable(Materials.Zinc, 1, 2, 1, Tier.LV);
-    public static BlockCable SolderingAlloy = new BlockCable(Materials.SolderingAlloy, 1, 2, 1, Tier.LV);
-    public static BlockCable Iron = new BlockCable(Materials.Iron, HC ? 3 : 4, HC ? 6 : 8, 2, Tier.MV); //MV
-    public static BlockCable Nickel = new BlockCable(Materials.Nickel, HC ? 3 : 5, HC ? 6 : 10, 3, Tier.MV);
-    public static BlockCable Cupronickel = new BlockCable(Materials.Cupronickel, HC ? 3 : 4, HC ? 6 : 8, 2, Tier.MV);
-    public static BlockCable Copper = new BlockCable(Materials.Copper, HC ? 2 : 3, HC ? 4 : 6, 1, Tier.MV);
-    public static BlockCable AnnealedCopper = new BlockCable(Materials.AnnealedCopper, HC ? 1 : 2, HC ? 2 : 4, 1, Tier.MV);
-    public static BlockCable Kanthal = new BlockCable(Materials.Kanthal, HC ? 3 : 8, HC ? 6 : 16, 4, Tier.HV); //HV
-    public static BlockCable Gold = new BlockCable(Materials.Gold, HC ? 2 : 6, HC ? 4 : 12, 3, Tier.HV);
-    public static BlockCable Electrum = new BlockCable(Materials.Electrum, HC ? 2 : 5, HC ? 4 : 10, 2, Tier.HV);
-    public static BlockCable Silver = new BlockCable(Materials.Silver, HC ? 1 : 4, HC ? 2 : 8, 1, Tier.HV);
-    public static BlockCable Nichrome = new BlockCable(Materials.Nichrome, HC ? 4 : 32, HC ? 8 : 64, 3, Tier.EV); //EV
-    public static BlockCable Steel = new BlockCable(Materials.Steel, HC ? 2 : 16, HC ? 4 : 32, 2, Tier.EV);
-    public static BlockCable Titanium = new BlockCable(Materials.Titanium, HC ? 2 : 12, HC ? 4 : 24, 4, Tier.EV);
-    public static BlockCable Aluminium = new BlockCable(Materials.Aluminium, HC ? 1 : 8, HC ? 2 : 16, 1, Tier.EV);
-    public static BlockCable Graphene = new BlockCable(Materials.Graphene, HC ? 1 : 16, HC ? 2 : 32, 1, Tier.IV); //IV
-    public static BlockCable Osmium = new BlockCable(Materials.Osmium, HC ? 2 : 32, HC ? 4 : 64, 4, Tier.IV);
-    public static BlockCable Platinum = new BlockCable(Materials.Platinum, HC ? 1 : 16, HC ? 2 : 32, 2, Tier.IV);
-    public static BlockCable TungstenSteel = new BlockCable(Materials.TungstenSteel, HC ? 1 : 14, HC ? 4 : 28, 3, Tier.IV);
-    public static BlockCable Tungsten = new BlockCable(Materials.Tungsten, HC ? 2 : 12, HC ? 4 : 24, 1, Tier.IV);
-    public static BlockCable HSSG = new BlockCable(Materials.HSSG, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV); //LUV
-    public static BlockCable NiobiumTitanium = new BlockCable(Materials.NiobiumTitanium, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV);
-    public static BlockCable VanadiumGallium = new BlockCable(Materials.VanadiumGallium, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV);
-    public static BlockCable YttriumBariumCuprate = new BlockCable(Materials.YttriumBariumCuprate, HC ? 4 : 256, HC ? 8 : 512, 4, Tier.LUV);
-    public static BlockCable Naquadah = new BlockCable(Materials.Naquadah, HC ? 2 : 64, HC ? 4 : 128, 2, Tier.ZPM); //ZPM
-    public static BlockCable NaquadahAlloy = new BlockCable(Materials.NaquadahAlloy, HC ? 4 : 64, HC ? 8 : 128, 2, Tier.ZPM);
-    public static BlockCable Duranium = new BlockCable(Materials.Duranium, HC ? 8 : 64, HC ? 16 : 128, 1, Tier.ZPM);
-    public static BlockCable Superconductor = new BlockCable(Materials.Superconductor, 1, 1, 4, Tier.MAX); //MAX
+    public static BlockCable CABLE_RED_ALLOY = new BlockCable(Materials.RedAlloy, 0, 1, 1, Tier.ULV); //ULV
+    public static BlockCable CABLE_COBALT = new BlockCable(Materials.Cobalt, 2, 4, 2, Tier.LV); //LV
+    public static BlockCable CABLE_LEAD = new BlockCable(Materials.Lead, 2, 4, 2, Tier.LV);
+    public static BlockCable CABLE_TIN = new BlockCable(Materials.Tin, 1, 2, 1, Tier.LV);
+    public static BlockCable CABLE_ZINC = new BlockCable(Materials.Zinc, 1, 2, 1, Tier.LV);
+    public static BlockCable CABLE_SOLDERING_ALLOY = new BlockCable(Materials.SolderingAlloy, 1, 2, 1, Tier.LV);
+    public static BlockCable CABLE_IRON = new BlockCable(Materials.Iron, HC ? 3 : 4, HC ? 6 : 8, 2, Tier.MV); //MV
+    public static BlockCable CABLE_NICKEL = new BlockCable(Materials.Nickel, HC ? 3 : 5, HC ? 6 : 10, 3, Tier.MV);
+    public static BlockCable CABLE_CUPRONICKEL = new BlockCable(Materials.Cupronickel, HC ? 3 : 4, HC ? 6 : 8, 2, Tier.MV);
+    public static BlockCable CABLE_COPPER = new BlockCable(Materials.Copper, HC ? 2 : 3, HC ? 4 : 6, 1, Tier.MV);
+    public static BlockCable CABLE_ANNEALED_COPPER = new BlockCable(Materials.AnnealedCopper, HC ? 1 : 2, HC ? 2 : 4, 1, Tier.MV);
+    public static BlockCable CABLE_KANTHAL = new BlockCable(Materials.Kanthal, HC ? 3 : 8, HC ? 6 : 16, 4, Tier.HV); //HV
+    public static BlockCable CABLE_GOLD = new BlockCable(Materials.Gold, HC ? 2 : 6, HC ? 4 : 12, 3, Tier.HV);
+    public static BlockCable CABLE_ELECTRUM = new BlockCable(Materials.Electrum, HC ? 2 : 5, HC ? 4 : 10, 2, Tier.HV);
+    public static BlockCable CABLE_SILVER = new BlockCable(Materials.Silver, HC ? 1 : 4, HC ? 2 : 8, 1, Tier.HV);
+    public static BlockCable CABLE_NICHROME = new BlockCable(Materials.Nichrome, HC ? 4 : 32, HC ? 8 : 64, 3, Tier.EV); //EV
+    public static BlockCable CABLE_STEEL = new BlockCable(Materials.Steel, HC ? 2 : 16, HC ? 4 : 32, 2, Tier.EV);
+    public static BlockCable CABLE_TITANIUM = new BlockCable(Materials.Titanium, HC ? 2 : 12, HC ? 4 : 24, 4, Tier.EV);
+    public static BlockCable CABLE_ALUMINIUM = new BlockCable(Materials.Aluminium, HC ? 1 : 8, HC ? 2 : 16, 1, Tier.EV);
+    public static BlockCable CABLE_GRAPHENE = new BlockCable(Materials.Graphene, HC ? 1 : 16, HC ? 2 : 32, 1, Tier.IV); //IV
+    public static BlockCable CABLE_OSMIUM = new BlockCable(Materials.Osmium, HC ? 2 : 32, HC ? 4 : 64, 4, Tier.IV);
+    public static BlockCable CABLE_PLATINUM = new BlockCable(Materials.Platinum, HC ? 1 : 16, HC ? 2 : 32, 2, Tier.IV);
+    public static BlockCable CABLE_TUNGSTENSTEEL = new BlockCable(Materials.TungstenSteel, HC ? 1 : 14, HC ? 4 : 28, 3, Tier.IV);
+    public static BlockCable CABLE_TUNGSTEN = new BlockCable(Materials.Tungsten, HC ? 2 : 12, HC ? 4 : 24, 1, Tier.IV);
+    public static BlockCable CABLE_HSSG = new BlockCable(Materials.HSSG, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV); //LUV
+    public static BlockCable CABLE_NIOBIUM_TITANIUM = new BlockCable(Materials.NiobiumTitanium, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV);
+    public static BlockCable CABLE_VANADIUM_GALLIUM = new BlockCable(Materials.VanadiumGallium, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV);
+    public static BlockCable CABLE_YTTRIUM_BARIUM_CUPRATE = new BlockCable(Materials.YttriumBariumCuprate, HC ? 4 : 256, HC ? 8 : 512, 4, Tier.LUV);
+    public static BlockCable CABLE_NAQUADAH = new BlockCable(Materials.Naquadah, HC ? 2 : 64, HC ? 4 : 128, 2, Tier.ZPM); //ZPM
+    public static BlockCable CABLE_NAQUADAH_ALLOY = new BlockCable(Materials.NaquadahAlloy, HC ? 4 : 64, HC ? 8 : 128, 2, Tier.ZPM);
+    public static BlockCable CABLE_DURANIUM = new BlockCable(Materials.Duranium, HC ? 8 : 64, HC ? 16 : 128, 1, Tier.ZPM);
+    public static BlockCable CABLE_SUPERCONDUCTOR = new BlockCable(Materials.Superconductor, 1, 1, 4, Tier.MAX); //MAX
 
     public static BlockFluidPipe FLUID_PIPE_WOOD = new BlockFluidPipe(Materials.Wood, 30, 350, false).setSizes(PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(10, 10, 30, 60, 60, 60);
     public static BlockFluidPipe FLUID_PIPE_COPPER = new BlockFluidPipe(Materials.Copper, 10, 1000, true);
