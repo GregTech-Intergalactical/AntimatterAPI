@@ -2,7 +2,6 @@ package muramasa.gtu.api.machines.types;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
@@ -14,8 +13,7 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
-import muramasa.gtu.api.tileentities.*;
-import muramasa.gtu.api.tileentities.multi.*;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
@@ -49,21 +47,6 @@ public class Machine implements IGregTechObject {
     protected Int2ObjectArrayMap<Structure> structures;
 
     //TODO get valid covers
-
-    static {
-        GregTechAPI.register(TileEntityMachine.class);
-        GregTechAPI.register(TileEntityBasicMachine.class);
-        GregTechAPI.register(TileEntityItemMachine.class);
-        GregTechAPI.register(TileEntityFluidMachine.class);
-        GregTechAPI.register(TileEntityItemFluidMachine.class);
-        GregTechAPI.register(TileEntitySteamMachine.class);
-        GregTechAPI.register(TileEntityMultiMachine.class);
-        GregTechAPI.register(TileEntityBasicItemMultiMachine.class);
-        GregTechAPI.register(TileEntityItemMultiMachine.class);
-        GregTechAPI.register(TileEntityFluidMultiMachine.class);
-        GregTechAPI.register(TileEntityItemFluidMultiMachine.class);
-        GregTechAPI.register(TileEntityHatch.class);
-    }
 
     public Machine(String id) {
         this(id, new BlockMachine(id), TileEntityMachine.class);

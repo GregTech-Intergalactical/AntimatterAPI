@@ -12,6 +12,7 @@ import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
@@ -42,6 +43,8 @@ public class Data {
         //Blocks
         GenerationFlag.ORE.getMats().forEach(BlockOre::new);
         GenerationFlag.BLOCK.getMats().forEach(BlockStorage::new);
+
+        GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
 
         StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
     }
