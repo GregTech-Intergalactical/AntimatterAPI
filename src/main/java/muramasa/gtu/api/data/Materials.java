@@ -1,10 +1,10 @@
 package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.fluid.GTFluid;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -669,6 +669,6 @@ public class Materials {
     }
 
     public static Material get(String name) {
-        return GregTechRegistry.get(Material.class, name);
+        return GregTechAPI.get(Material.class, name);
     }
 }

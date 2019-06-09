@@ -10,7 +10,6 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.recipe.RecipeMap;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.tileentities.*;
 import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
@@ -62,8 +61,8 @@ public class GregTech {
 
     static {
         GregTechNetwork.init();
-        GregTechRegistry.addRegistrar(new ForestryRegistrar());
-        GregTechRegistry.addRegistrar(new GalacticraftRegistrar());
+        GregTechAPI.addRegistrar(new ForestryRegistrar());
+        GregTechAPI.addRegistrar(new GalacticraftRegistrar());
         if (Utils.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
     }
 
@@ -86,8 +85,8 @@ public class GregTech {
         GregTechAPI.registerJEICategory(RecipeMap.NAQUADAH_FUELS, Guis.MULTI_DISPLAY_COMPACT);
         GregTechAPI.registerJEICategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
 
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL);
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL_INIT);
+        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
+        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);
 
         Machines.init();
         Guis.init();
@@ -106,21 +105,21 @@ public class GregTech {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         PROXY.postInit(e);
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.CRAFTING_RECIPE);
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MATERIAL_RECIPE);
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.MACHINE_RECIPE);
+        GregTechAPI.onRegistration(RegistrationEvent.CRAFTING_RECIPE);
+        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_RECIPE);
+        GregTechAPI.onRegistration(RegistrationEvent.MACHINE_RECIPE);
     }
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> e) {
-        GregTechRegistry.ITEMS.forEach(i -> e.getRegistry().register(i));
-        GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(new GTItemBlock(b)));
-        GregTechRegistry.callRegistrationEvent(RegistrationEvent.ITEM);
+        GregTechAPI.ITEMS.forEach(i -> e.getRegistry().register(i));
+        GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(new GTItemBlock(b)));
+        GregTechAPI.onRegistration(RegistrationEvent.ITEM);
     }
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> e) {
-        GregTechRegistry.BLOCKS.forEach(b -> e.getRegistry().register(b));
+        GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(b));
 
 //        GregTechRegistry.TILES.forEach(t -> {
 //            GameRegistry.registerTileEntity(t, new ResourceLocation(Ref.MODID));
@@ -137,7 +136,7 @@ public class GregTech {
         GameRegistry.registerTileEntity(TileEntityHatch.class, new ResourceLocation(Ref.MODID, "tile_hatch"));
         List<String> registeredTiles = new LinkedList<>();
 
-        GregTechRegistry.all(Machine.class).forEach(m -> {
+        GregTechAPI.all(Machine.class).forEach(m -> {
             if (m.hasFlag(MachineFlag.MULTI) && !registeredTiles.contains(m.getTileClass().getName())) {
                 GameRegistry.registerTileEntity(m.getTileClass(), new ResourceLocation(Ref.MODID, "tile_" + m.getId()));
                 registeredTiles.add(m.getTileClass().getName());

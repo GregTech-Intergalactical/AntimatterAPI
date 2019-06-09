@@ -5,7 +5,6 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Element;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
@@ -46,7 +45,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_MATERIALS);
-        GregTechRegistry.register(MaterialItem.class, this);
+        GregTechAPI.register(MaterialItem.class, this);
     }
 
     public Prefix getPrefix() {
@@ -138,7 +137,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
                     System.err.println("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
                 }
             }
-            MaterialItem item = GregTechRegistry.get(MaterialItem.class, prefix.getId() + "_" + material.getId());
+            MaterialItem item = GregTechAPI.get(MaterialItem.class, prefix.getId() + "_" + material.getId());
             if (item == null) {
                 if (Ref.RECIPE_EXCEPTIONS) {
                     throw new IllegalStateException("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");

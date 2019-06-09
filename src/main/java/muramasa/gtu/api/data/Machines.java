@@ -1,11 +1,11 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.*;
 import muramasa.gtu.api.recipe.RecipeMap;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.tileentities.TileEntityFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityItemMachine;
@@ -109,13 +109,13 @@ public class Machines {
     }
 
     public static void add(Machine machine) {
-        GregTechRegistry.register(Machine.class, machine);
-        GregTechRegistry.register(machine.getBlock());
+        GregTechAPI.register(Machine.class, machine);
+        GregTechAPI.register(machine.getBlock());
         ID_LOOKUP.add(machine.getInternalId(), machine);
     }
 
     public static Machine get(String name) {
-        Machine machine = GregTechRegistry.get(Machine.class, name);
+        Machine machine = GregTechAPI.get(Machine.class, name);
         return machine != null ? machine : INVALID;
     }
 

@@ -1,6 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
@@ -41,7 +42,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         setRegistryName("ore_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
         setDefaultState(getDefaultState().withProperty(STONE, StoneType.STONE.getInternalId()));
-        GregTechRegistry.register(BlockOre.class, this);
+        GregTechAPI.register(BlockOre.class, this);
     }
 
     public Material getMaterial() {

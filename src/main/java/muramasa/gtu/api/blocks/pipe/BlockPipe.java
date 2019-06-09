@@ -1,6 +1,7 @@
 package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
@@ -51,7 +52,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
         setRegistryName(type.concat("_").concat(getId()));
         setCreativeTab(Ref.TAB_MACHINES);
         setDefaultState(getDefaultState().withProperty(SIZE, 0));
-        GregTechRegistry.register(this);
+        GregTechAPI.register(this);
     }
 
     @Override

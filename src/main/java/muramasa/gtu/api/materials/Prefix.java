@@ -1,7 +1,7 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -63,7 +63,7 @@ public class Prefix implements IGregTechObject {
 //        }
         generationBits |= flag.getBit();
         this.doesGenerate = true;
-        GregTechRegistry.register(Prefix.class, this);
+        GregTechAPI.register(Prefix.class, this);
     }
 
     public Prefix(String id, boolean visible, boolean generatesItems, GenerationFlag flag) {
