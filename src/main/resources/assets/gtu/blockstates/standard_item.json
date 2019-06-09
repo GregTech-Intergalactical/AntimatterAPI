@@ -8,6 +8,12 @@
 	  "energy_port": {
 		"textures": {"layer0": "gtu:items/standard/energy_port"}
 	  },
+	  "item_port": {
+		"textures": {"layer0": "gtu:items/standard/item_port"}
+	  },
+	  "fluid_port": {
+		"textures": {"layer0": "gtu:items/standard/fluid_port"}
+	  },
 	  "sticky_resin": {
 		"textures": {"layer0": "gtu:items/standard/sticky_resin"}
 	  },

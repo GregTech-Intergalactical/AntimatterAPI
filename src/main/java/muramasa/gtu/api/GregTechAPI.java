@@ -13,6 +13,12 @@ import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
+import muramasa.gtu.api.tileentities.*;
+import muramasa.gtu.api.tileentities.multi.*;
+import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
+import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
+import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
+import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.integration.jei.GregTechJEIPlugin;
 import muramasa.gtu.loaders.InternalRegistrar;
@@ -36,8 +42,30 @@ public final class GregTechAPI {
 
     public static Set<Item> ITEMS = new LinkedHashSet<>();
     public static Set<Block> BLOCKS = new LinkedHashSet<>();
-    public static Set<Class> TILES = new LinkedHashSet<>();
-    public static HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+    public static Set<Class> TILES = new HashSet<>();
+    private static HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+
+    static {
+        register(TileEntityMachine.class);
+        register(TileEntityBasicMachine.class);
+        register(TileEntityItemMachine.class);
+        register(TileEntityFluidMachine.class);
+        register(TileEntityItemFluidMachine.class);
+        register(TileEntitySteamMachine.class);
+        register(TileEntityMultiMachine.class);
+        register(TileEntityBasicItemMultiMachine.class);
+        register(TileEntityItemMultiMachine.class);
+        register(TileEntityFluidMultiMachine.class);
+        register(TileEntityItemFluidMultiMachine.class);
+        register(TileEntityHatch.class);
+
+        register(TileEntityPipe.class);
+        register(TileEntityItemPipe.class);
+        register(TileEntityFluidPipe.class);
+        register(TileEntityCable.class);
+        register(TileEntityCasing.class);
+        register(TileEntityCoil.class);
+    }
 
     public static void register(Object o) {
         if (o instanceof Item) ITEMS.add((Item) o);

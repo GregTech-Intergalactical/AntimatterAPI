@@ -21,6 +21,6 @@ public class HatchMachine extends Machine {
 
     public HatchMachine(String name, Class tileClass, MachineFlag... flags) {
         this(name, flags);
-        setTileClass(tileClass);
+        this.tileClass = tileClass;
     }
 }
