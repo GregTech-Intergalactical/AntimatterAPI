@@ -1,13 +1,12 @@
 package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
-import muramasa.gtu.api.pipe.types.Pipe;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.*;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
@@ -16,7 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -36,24 +34,43 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModelOverride, IColorHandler {
+public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
-    public BlockPipe(String name, TextureData data) {
+    protected String id;
+    protected Material material;
+    protected PipeSize[] sizes;
+
+    public BlockPipe(String type, Material material, TextureData data) {
         super(data);
-        setUnlocalizedName(name);
-        setRegistryName(name);
+        this.id = material.getId();
+        this.material = material;
+        sizes = PipeSize.VALUES;
+        setUnlocalizedName(type.concat("_").concat(getId()));
+        setRegistryName(type.concat("_").concat(getId()));
         setCreativeTab(Ref.TAB_MACHINES);
         setDefaultState(getDefaultState().withProperty(SIZE, 0));
+        GregTechAPI.register(this);
     }
 
-    public abstract Pipe getType();
+    @Override
+    public String getId() {
+        return id;
+    }
 
     public int getRGB() {
-        return getType().getRGB();
+        return material.getRGB();
+    }
+
+    public PipeSize[] getSizes() {
+        return sizes;
+    }
+
+    public T setSizes(PipeSize... sizes) {
+        this.sizes = sizes;
+        return (T)this;
     }
 
     @Override
@@ -112,7 +129,7 @@ public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModel
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
-        return "wire_cutter";
+        return "wrench";
     }
 
     @Override
@@ -134,7 +151,7 @@ public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModel
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityPipe) {
             TileEntityPipe pipe = (TileEntityPipe) tile;
-            return new PipeStack(pipe.getBlockType(), pipe.getType(), pipe.getSize()).asItemStack();
+            return new PipeStack(pipe.getType(), pipe.getSize()).asItemStack();
         }
         return ItemStack.EMPTY;
     }
@@ -163,17 +180,6 @@ public abstract class BlockPipe extends BlockBaked implements IItemBlock, IModel
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
-    }
-
-    @Override
-    public String getDisplayName(ItemStack stack) {
-        return getType().getDisplayName(stack);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        tooltip.addAll(getType().getTooltip(stack));
     }
 
     @Override

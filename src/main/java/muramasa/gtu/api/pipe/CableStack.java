@@ -1,16 +1,15 @@
 package muramasa.gtu.api.pipe;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.pipe.types.Cable;
-import net.minecraft.block.Block;
+import muramasa.gtu.api.blocks.pipe.BlockCable;
 import net.minecraft.item.ItemStack;
 
 public class CableStack extends PipeStack {
 
     private boolean insulated;
 
-    public CableStack(Block block, Cable type, PipeSize size, boolean insulated) {
-        super(block, type, size);
+    public CableStack(BlockCable block, PipeSize size, boolean insulated) {
+        super(block, size);
         this.insulated = insulated;
     }
 

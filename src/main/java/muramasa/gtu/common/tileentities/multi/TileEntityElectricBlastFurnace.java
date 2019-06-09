@@ -39,7 +39,7 @@ public class TileEntityElectricBlastFurnace extends TileEntityItemFluidMultiMach
 
     @Override
     public boolean onStructureValid(StructureResult result) {
-        heatingCapacity = getComponents("coil").stream().mapToInt(c -> ((TileEntityCoil) c.getTile()).getHeatingCapacity()).sum();
+        heatingCapacity = getComponents("coil").stream().mapToInt(c -> ((TileEntityCoil) c.getTile()).getHeatCapacity()).sum();
         return true;
     }
 }

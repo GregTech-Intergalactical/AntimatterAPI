@@ -22,7 +22,7 @@ public class StructureElement {
     public StructureElement(IGregTechObject... objects) {
         this.elementIds = new String[objects.length];
         for (int i = 0; i < objects.length; i++) {
-            this.elementIds[i] = objects[i].getName();
+            this.elementIds[i] = objects[i].getId();
         }
     }
 

@@ -4,7 +4,7 @@
     "model": "gtu:generated"
   },
   "variants": {
-    "casing_type": {
+    "id": {
 	  "ulv": {
         "textures": {"all": "gtu:blocks/casing/ulv"}
       },

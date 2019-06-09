@@ -1,10 +1,13 @@
 package muramasa.gtu.api.items;
 
+import com.google.common.base.CaseFormat;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.data.ItemType;
+import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -12,9 +15,9 @@ import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.common.Data;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,7 +25,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -35,39 +37,50 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class StandardItem extends Item implements IModelOverride {
+public class StandardItem extends Item implements IGregTechObject, IModelOverride {
 
-    protected ItemType type;
+    protected String id, tooltip = "";
+    protected boolean enabled = true;
 
-    public StandardItem(ItemType type) {
-        setUnlocalizedName(type.getName());
-        setRegistryName(type.getName());
+    public StandardItem(String id) {
+        this.id = id;
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
         setCreativeTab(Ref.TAB_ITEMS);
-        this.type = type;
+        GregTechAPI.register(this);
     }
 
-    public ItemType getType() {
-        return type;
+    public StandardItem(String id, String tooltip) {
+        this(id);
+        this.tooltip = tooltip;
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        items.add(new ItemStack(this));
+    public String getId() {
+        return id;
+    }
+
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public boolean isEnabled() {
+        return enabled || Ref.enableAllModItem;
     }
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return ((StandardItem) stack.getItem()).getType().getDisplayName();
+        return Utils.trans("item.standard." + getId() + ".name");
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(((StandardItem) stack.getItem()).getType().getTooltip());
+        tooltip.add(this.tooltip);
         if (Utils.hasNoConsumeTag(stack)) {
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
-        if (type == ItemType.DebugScanner) {
-
+        if (Data.DebugScanner.equals(this)) {
+            tooltip.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, Prefix.IngotHot.getId() + "_" + Materials.Uranium235.getId()));
         }
     }
 
@@ -78,7 +91,7 @@ public class StandardItem extends Item implements IModelOverride {
         if (tile != null) {
             if (GregTechAPI.placeCover(tile, stack, side, hitX, hitY, hitZ)) {
                 return EnumActionResult.SUCCESS;
-            } else if (ItemType.DebugScanner.isEqual(stack)) {
+            } else if (Data.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
                         if (!((TileEntityMultiMachine) tile).validStructure) {
@@ -106,14 +119,55 @@ public class StandardItem extends Item implements IModelOverride {
                 }
             }
         } else {
+            if (Data.DebugScanner.isEqual(stack)) {
 
+            }
         }
         return EnumActionResult.FAIL; //TODO FAIL?
+    }
+
+//    public ItemType required(String... mods) {
+//        for (int i = 0; i < mods.length; i++) {
+//            if (!Utils.isModLoaded(mods[i])) {
+//                enabled = false;
+//                break;
+//            }
+//        }
+//        return this;
+//    }
+//
+//    public ItemType optional(String... mods) {
+//        enabled = false;
+//        for (int i = 0; i < mods.length; i++) {
+//            if (Utils.isModLoaded(mods[i])) {
+//                enabled = true;
+//                break;
+//            }
+//        }
+//        return this;
+//    }
+
+    public boolean isEqual(ItemStack stack) {
+        return stack.getItem() == this;
+    }
+
+    public static boolean doesShowExtendedHighlight(ItemStack stack) {
+        return GregTechAPI.getCoverFromCatalyst(stack) != null;
+    }
+
+    public ItemStack get(int count) {
+        if (count == 0) return Utils.addNoConsumeTag(new ItemStack(this, 1));
+        return new ItemStack(this, count);
+    }
+
+    @Override
+    public ItemStack asItemStack() {
+        return get(1);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + getType().getName()));
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":standard_item", "id=" + id));
     }
 }

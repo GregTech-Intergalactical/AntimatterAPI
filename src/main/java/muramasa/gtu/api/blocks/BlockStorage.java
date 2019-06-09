@@ -1,11 +1,10 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.*;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -23,20 +22,26 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockStorage extends Block implements IItemBlock, IModelOverride, IColorHandler {
+public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     private Material material;
 
     public BlockStorage(Material material) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName("block_" + material.getName());
-        setRegistryName("block_" + material.getName());
-        setCreativeTab(Ref.TAB_BLOCKS);
         this.material = material;
+        setUnlocalizedName("block_" + getId());
+        setRegistryName("block_" + getId());
+        setCreativeTab(Ref.TAB_BLOCKS);
+        GregTechAPI.register(BlockStorage.class, this);
     }
 
     public Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public String getId() {
+        return material.getId();
     }
 
     @Override
@@ -74,8 +79,8 @@ public class BlockStorage extends Block implements IItemBlock, IModelOverride, I
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        String set = material.getSet().getName();
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getName())));
+        String set = material.getSet().getId();
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getId()));
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getId())));
     }
 }

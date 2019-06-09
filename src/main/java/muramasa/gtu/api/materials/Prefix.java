@@ -1,19 +1,17 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 
 public class Prefix implements IGregTechObject {
 
-    private static LinkedHashMap<String, Prefix> PREFIX_LOOKUP = new LinkedHashMap<>();
     private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
 
     public static Prefix Ore = new Prefix("ore", true, false, ORE);
@@ -52,37 +50,37 @@ public class Prefix implements IGregTechObject {
     public static Prefix Lens = new Prefix("lens", true, LENS);
 //    public static Prefix TurbineBlade = new Prefix("turbine_blade", true, TOOLS);
 
-    private String name, namePre, namePost;
+    private String id, namePre, namePost;
 
     private boolean doesGenerate, hasLocName, visible;
     private long generationBits;
 
-    public Prefix(String name, boolean visible, GenerationFlag flag) {
-        this.name = name;
+    public Prefix(String id, boolean visible, GenerationFlag flag) {
+        this.id = id;
         this.visible = visible;
 //        for (GenerationFlag flag : flags) {
 //            generationBits |= flag.getBit();
 //        }
         generationBits |= flag.getBit();
         this.doesGenerate = true;
-        PREFIX_LOOKUP.put(name, this);
+        GregTechAPI.register(Prefix.class, this);
     }
 
-    public Prefix(String name, boolean visible, boolean generatesItems, GenerationFlag flag) {
-        this(name, visible, flag);
+    public Prefix(String id, boolean visible, boolean generatesItems, GenerationFlag flag) {
+        this(id, visible, flag);
         this.doesGenerate = generatesItems;
     }
 
     @Override
-    public String getName() {
-        return name.toLowerCase(Locale.ENGLISH);
+    public String getId() {
+        return id;
     }
 
-    public String getDisplayName(Material material) { //TODO cache, server side crash with local?
+    public String getDisplayName(Material material) { //TODO cache
         if (!hasLocName) {
-            namePre = Utils.trans("prefix.pre." + getName() + ".name");
+            namePre = Utils.trans("prefix.pre." + getId() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = Utils.trans("prefix.post." + getName() + ".name");
+            namePost = Utils.trans("prefix.post." + getId() + ".name");
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }
@@ -94,27 +92,19 @@ public class Prefix implements IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && (material.getItemMask() & generationBits) != 0 && !ITEM_REPLACEMENT.containsKey(getName() + material.getName());
+        return doesGenerate && (material.getItemMask() & generationBits) != 0 && !ITEM_REPLACEMENT.containsKey(getId() + material.getId());
     }
 
     public void addReplacement(Material material, ItemStack stack) {
-        ITEM_REPLACEMENT.put(getName() + material.getName(), stack);
+        ITEM_REPLACEMENT.put(getId() + material.getId(), stack);
     }
 
     public ItemStack getReplacement(Material material) {
-        return ITEM_REPLACEMENT.get(getName() + material.getName());
+        return ITEM_REPLACEMENT.get(getId() + material.getId());
     }
 
     @Override
     public String toString() {
-        return getName();
-    }
-
-    public static Prefix get(String name) {
-        return PREFIX_LOOKUP.get(name);
-    }
-
-    public static Collection<Prefix> getAll() {
-        return PREFIX_LOOKUP.values();
+        return getId();
     }
 }

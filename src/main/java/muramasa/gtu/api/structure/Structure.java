@@ -50,7 +50,7 @@ public class Structure {
     }
 
     public Structure addReq(IGregTechObject object, int value, BiPredicate<Integer, Integer> method) {
-        requirements.put(object.getName(), new Tuple<>(value, method));
+        requirements.put(object.getId(), new Tuple<>(value, method));
         return this;
     }
 
