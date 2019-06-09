@@ -32,7 +32,7 @@ public class MachineStack implements IGregTechObject {
 
     @Override
     public ItemStack asItemStack() {
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(type.getBlock()));
+        ItemStack stack = new ItemStack(type.getBlock());
         stack.setTagCompound(new NBTTagCompound());
         stack.getTagCompound().setString(Ref.KEY_MACHINE_STACK_TIER, tier.getId());
         return stack;

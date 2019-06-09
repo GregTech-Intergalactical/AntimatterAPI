@@ -5,7 +5,6 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.capability.impl.PipeConfigHandler;
 import muramasa.gtu.api.pipe.PipeSize;
-import muramasa.gtu.api.pipe.types.Pipe;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.tileentities.TileEntityTickable;
 import muramasa.gtu.api.util.Utils;
@@ -20,16 +19,16 @@ import java.util.List;
 
 public abstract class TileEntityPipe extends TileEntityTickable {
 
-    protected Pipe type;
+    protected BlockPipe type;
     protected PipeSize size;
     protected CoverHandler coverHandler;
     protected PipeConfigHandler configHandler;
 
     protected byte connections, disabledConnections;
 
+    //TODO needed in load?
     @Override
     public void onLoad() {
-        type = ((BlockPipe) getBlockType()).getType();
         configHandler = new PipeConfigHandler(this);
     }
 
@@ -38,8 +37,8 @@ public abstract class TileEntityPipe extends TileEntityTickable {
         if (isServerSide()) refreshConnections();
     }
 
-    public Pipe getType() {
-        return type;
+    public BlockPipe getType() {
+        return type != null ? type : (type = (BlockPipe) getBlockType());
     }
 
     public PipeSize getSize() {

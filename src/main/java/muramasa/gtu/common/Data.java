@@ -1,5 +1,6 @@
 package muramasa.gtu.common;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
@@ -10,12 +11,11 @@ import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.items.StandardItem;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.pipe.types.Cable;
-import muramasa.gtu.api.pipe.types.FluidPipe;
-import muramasa.gtu.api.pipe.types.ItemPipe;
+import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.util.text.TextFormatting;
@@ -25,6 +25,8 @@ import java.util.List;
 
 @Mod.EventBusSubscriber
 public class Data {
+
+    private static boolean HC = Ref.HARDCORE_CABLES;
 
     public static void init() {
 
@@ -42,18 +44,6 @@ public class Data {
         //Blocks
         GenerationFlag.ORE.getMats().forEach(BlockOre::new);
         GenerationFlag.BLOCK.getMats().forEach(BlockStorage::new);
-
-
-
-
-
-        //Machines.all().forEach(type -> GregTechRegistry.register(type.getBlock()));
-        Cable.getAll().forEach(type -> GregTechRegistry.register(new BlockCable(type)));
-        ItemPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockItemPipe(type)));
-        FluidPipe.getAll().forEach(type -> GregTechRegistry.register(new BlockFluidPipe(type)));
-        //Casing.all().forEach(type -> GregTechRegistry.register(new BlockCasing(type)));
-//        Coil.all().forEach(type -> GregTechRegistry.register(new BlockCoil(type)));
-
 
         StoneType.getGenerating().forEach(type -> GregTechRegistry.register(new BlockStone(type)));
     }
@@ -319,4 +309,60 @@ public class Data {
     public static BlockCasing CASING_FUSION_1 = new BlockCasing("fusion_1");
     public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2");
     public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3");
+
+    public static BlockCable RedAlloy = new BlockCable(Materials.RedAlloy, 0, 1, 1, Tier.ULV); //ULV
+    public static BlockCable Cobalt = new BlockCable(Materials.Cobalt, 2, 4, 2, Tier.LV); //LV
+    public static BlockCable Lead = new BlockCable(Materials.Lead, 2, 4, 2, Tier.LV);
+    public static BlockCable Tin = new BlockCable(Materials.Tin, 1, 2, 1, Tier.LV);
+    public static BlockCable Zinc = new BlockCable(Materials.Zinc, 1, 2, 1, Tier.LV);
+    public static BlockCable SolderingAlloy = new BlockCable(Materials.SolderingAlloy, 1, 2, 1, Tier.LV);
+    public static BlockCable Iron = new BlockCable(Materials.Iron, HC ? 3 : 4, HC ? 6 : 8, 2, Tier.MV); //MV
+    public static BlockCable Nickel = new BlockCable(Materials.Nickel, HC ? 3 : 5, HC ? 6 : 10, 3, Tier.MV);
+    public static BlockCable Cupronickel = new BlockCable(Materials.Cupronickel, HC ? 3 : 4, HC ? 6 : 8, 2, Tier.MV);
+    public static BlockCable Copper = new BlockCable(Materials.Copper, HC ? 2 : 3, HC ? 4 : 6, 1, Tier.MV);
+    public static BlockCable AnnealedCopper = new BlockCable(Materials.AnnealedCopper, HC ? 1 : 2, HC ? 2 : 4, 1, Tier.MV);
+    public static BlockCable Kanthal = new BlockCable(Materials.Kanthal, HC ? 3 : 8, HC ? 6 : 16, 4, Tier.HV); //HV
+    public static BlockCable Gold = new BlockCable(Materials.Gold, HC ? 2 : 6, HC ? 4 : 12, 3, Tier.HV);
+    public static BlockCable Electrum = new BlockCable(Materials.Electrum, HC ? 2 : 5, HC ? 4 : 10, 2, Tier.HV);
+    public static BlockCable Silver = new BlockCable(Materials.Silver, HC ? 1 : 4, HC ? 2 : 8, 1, Tier.HV);
+    public static BlockCable Nichrome = new BlockCable(Materials.Nichrome, HC ? 4 : 32, HC ? 8 : 64, 3, Tier.EV); //EV
+    public static BlockCable Steel = new BlockCable(Materials.Steel, HC ? 2 : 16, HC ? 4 : 32, 2, Tier.EV);
+    public static BlockCable Titanium = new BlockCable(Materials.Titanium, HC ? 2 : 12, HC ? 4 : 24, 4, Tier.EV);
+    public static BlockCable Aluminium = new BlockCable(Materials.Aluminium, HC ? 1 : 8, HC ? 2 : 16, 1, Tier.EV);
+    public static BlockCable Graphene = new BlockCable(Materials.Graphene, HC ? 1 : 16, HC ? 2 : 32, 1, Tier.IV); //IV
+    public static BlockCable Osmium = new BlockCable(Materials.Osmium, HC ? 2 : 32, HC ? 4 : 64, 4, Tier.IV);
+    public static BlockCable Platinum = new BlockCable(Materials.Platinum, HC ? 1 : 16, HC ? 2 : 32, 2, Tier.IV);
+    public static BlockCable TungstenSteel = new BlockCable(Materials.TungstenSteel, HC ? 1 : 14, HC ? 4 : 28, 3, Tier.IV);
+    public static BlockCable Tungsten = new BlockCable(Materials.Tungsten, HC ? 2 : 12, HC ? 4 : 24, 1, Tier.IV);
+    public static BlockCable HSSG = new BlockCable(Materials.HSSG, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV); //LUV
+    public static BlockCable NiobiumTitanium = new BlockCable(Materials.NiobiumTitanium, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV);
+    public static BlockCable VanadiumGallium = new BlockCable(Materials.VanadiumGallium, HC ? 2 : 128, HC ? 4 : 256, 4, Tier.LUV);
+    public static BlockCable YttriumBariumCuprate = new BlockCable(Materials.YttriumBariumCuprate, HC ? 4 : 256, HC ? 8 : 512, 4, Tier.LUV);
+    public static BlockCable Naquadah = new BlockCable(Materials.Naquadah, HC ? 2 : 64, HC ? 4 : 128, 2, Tier.ZPM); //ZPM
+    public static BlockCable NaquadahAlloy = new BlockCable(Materials.NaquadahAlloy, HC ? 4 : 64, HC ? 8 : 128, 2, Tier.ZPM);
+    public static BlockCable Duranium = new BlockCable(Materials.Duranium, HC ? 8 : 64, HC ? 16 : 128, 1, Tier.ZPM);
+    public static BlockCable Superconductor = new BlockCable(Materials.Superconductor, 1, 1, 4, Tier.MAX); //MAX
+
+    public static BlockFluidPipe FLUID_PIPE_WOOD = new BlockFluidPipe(Materials.Wood, 30, 350, false).setSizes(PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(10, 10, 30, 60, 60, 60);
+    public static BlockFluidPipe FLUID_PIPE_COPPER = new BlockFluidPipe(Materials.Copper, 10, 1000, true);
+    public static BlockFluidPipe FLUID_PIPE_BRONZE = new BlockFluidPipe(Materials.Bronze, 20, 2000, true);
+    public static BlockFluidPipe FLUID_PIPE_STEEL = new BlockFluidPipe(Materials.Steel, 40, 2500, true);
+    public static BlockFluidPipe FLUID_PIPE_STAINLESS_STEEL = new BlockFluidPipe(Materials.StainlessSteel, 60, 3000, true);
+    public static BlockFluidPipe FLUID_PIPE_TITANIUM = new BlockFluidPipe(Materials.Titanium, 80, 5000, true);
+    public static BlockFluidPipe FLUID_PIPE_TUNGSTENSTEEL = new BlockFluidPipe(Materials.TungstenSteel, 100, 7500, true);
+    public static BlockFluidPipe FLUID_PIPE_PLASTIC = new BlockFluidPipe(Materials.Plastic, 60, 250, true);
+    public static BlockFluidPipe FLUID_PIPE_POLYTETRAFLUOROETHYLENE = new BlockFluidPipe(Materials.Polytetrafluoroethylene, 480, 600, true);
+    public static BlockFluidPipe FLUID_PIPE_HIGH_PRESSURE = new BlockFluidPipe(Materials.HighPressure, 7200, 1500, true).setSizes(PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(4800, 4800, 4800, 7200, 9600, 9600);
+    public static BlockFluidPipe FLUID_PIPE_PLASMA = new BlockFluidPipe(Materials.PlasmaContainment, 240, 100000, true).setSizes(PipeSize.NORMAL).setCapacities(240, 240, 240, 240, 240, 240);
+
+    public static BlockItemPipe ITEM_PIPE_CUPRONICKEL = new BlockItemPipe(Materials.Cupronickel, 1);
+    public static BlockItemPipe ITEM_PIPE_COBALT_BRASS = new BlockItemPipe(Materials.CobaltBrass, 1);
+    public static BlockItemPipe ITEM_PIPE_BRASS = new BlockItemPipe(Materials.Brass, 1);
+    public static BlockItemPipe ITEM_PIPE_ELECTRUM = new BlockItemPipe(Materials.Electrum, 2);
+    public static BlockItemPipe ITEM_PIPE_ROSE_GOLD = new BlockItemPipe(Materials.RoseGold, 2);
+    public static BlockItemPipe ITEM_PIPE_STERLING_SILVER = new BlockItemPipe(Materials.SterlingSilver, 2);
+    public static BlockItemPipe ITEM_PIPE_PLATINUM = new BlockItemPipe(Materials.Platinum, 4);
+    public static BlockItemPipe ITEM_PIPE_ULTIMET = new BlockItemPipe(Materials.Ultimet, 4);
+    public static BlockItemPipe ITEM_PIPE_POLYVINYL_CHLORIDE = new BlockItemPipe(Materials.PolyvinylChloride, 4);
+    public static BlockItemPipe ITEM_PIPE_OSMIUM = new BlockItemPipe(Materials.Osmium, 8);
 }

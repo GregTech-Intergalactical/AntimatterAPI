@@ -2,13 +2,7 @@ package muramasa.gtu.api.registration;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.blocks.pipe.BlockCable;
-import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
-import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
 import muramasa.gtu.api.data.StoneType;
-import muramasa.gtu.api.pipe.types.Cable;
-import muramasa.gtu.api.pipe.types.FluidPipe;
-import muramasa.gtu.api.pipe.types.ItemPipe;
 import muramasa.gtu.loaders.InternalRegistrar;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -67,18 +61,6 @@ public class GregTechRegistry {
     @Nullable
     public static IGregTechRegistrar getRegistrar(String id) {
         return REGISTRARS.get(id);
-    }
-
-    public static BlockCable getCable(Cable type) {
-        return (BlockCable) getBlock(Ref.MODID, "cable_" + type.getId());
-    }
-
-    public static BlockItemPipe getItemPipe(ItemPipe type) {
-        return (BlockItemPipe) getBlock(Ref.MODID, "item_pipe_" + type.getId());
-    }
-
-    public static BlockFluidPipe getFluidPipe(FluidPipe type) {
-        return (BlockFluidPipe) getBlock(Ref.MODID, "fluid_pipe_" + type.getId());
     }
 
     public static BlockStone getStone(StoneType type) {
