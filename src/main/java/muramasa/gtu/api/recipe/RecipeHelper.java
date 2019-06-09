@@ -34,12 +34,12 @@ public class RecipeHelper {
 	 */
 
     public static void addShaped(ItemStack output, Object... data) {
-        if (output.getItem().getRegistryName() == null) throw new NullPointerException("addShaped: output registry name null");
+        if (output.getItem().getRegistryName() == null) throw new NullPointerException("addShaped: output registry id null");
         GameRegistry.addShapedRecipe(output.getItem().getRegistryName(), new ResourceLocation(Ref.MODID, "shaped"), output, data);
     }
 
     public static void addShapeless(ItemStack output, ItemStack... inputs) {
-        if (output.getItem().getRegistryName() == null) throw new NullPointerException("addShapeless: output registry name null");
+        if (output.getItem().getRegistryName() == null) throw new NullPointerException("addShapeless: output registry id null");
         GameRegistry.addShapelessRecipe(output.getItem().getRegistryName(), new ResourceLocation(Ref.MODID, "shapeless"), output, Ingredient.fromStacks(inputs));
     }
     
@@ -86,7 +86,7 @@ public class RecipeHelper {
             if (recipe[i] instanceof Character) {
             	String toolName = getToolNameByCharacter((char) recipe[i]);
                 if (toolName == null) {
-                    throw new IllegalArgumentException("Tool name is not found for char " + recipe[i]);
+                    throw new IllegalArgumentException("Tool id is not found for char " + recipe[i]);
                 }
                 recipe[i] = toolName;
             } else if (!(recipe[i] instanceof ItemStack

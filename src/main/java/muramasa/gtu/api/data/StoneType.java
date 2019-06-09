@@ -1,13 +1,13 @@
 package muramasa.gtu.api.data;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.block.SoundType;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class StoneType implements IGregTechObject {
 
@@ -34,14 +34,14 @@ public class StoneType implements IGregTechObject {
     public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new ResourceLocation("gregtech", "blocks/stone/marble"));
     public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new ResourceLocation("gregtech", "blocks/stone/basalt"));
 
-    private String name;
+    private String id;
     private Material material;
     private ResourceLocation loc;
     private int internalId;
     private SoundType soundType;
     
-    public StoneType(String name, Material material, boolean generate, ResourceLocation loc, SoundType soundType) {
-        this.name = name;
+    public StoneType(String id, Material material, boolean generate, ResourceLocation loc, SoundType soundType) {
+        this.id = id;
         this.material = material;
         this.loc = loc;
         this.internalId = lastInternalId++;
@@ -52,13 +52,13 @@ public class StoneType implements IGregTechObject {
         all.add(this);
     }
     
-    public StoneType(String name, Material material, boolean generate, ResourceLocation loc) {
-    	this(name, material, generate, loc, SoundType.STONE);
+    public StoneType(String id, Material material, boolean generate, ResourceLocation loc) {
+    	this(id, material, generate, loc, SoundType.STONE);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public Material getMaterial() {

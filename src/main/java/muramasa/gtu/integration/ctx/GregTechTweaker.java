@@ -29,19 +29,19 @@ public class GregTechTweaker {
     @ZenMethod
     public static CTMaterial getMaterial(String name) {
         Material material = Materials.get(name);
-        if (material == null) throw new IllegalArgumentException("material for name " + name + " does not exist");
+        if (material == null) throw new IllegalArgumentException("material for id " + name + " does not exist");
         return new CTMaterial(material);
     }
 
     @ZenMethod
     public static CTMaterial addMaterial(String name, int rgb, String textureSet) {
-        if (Materials.get(name) != null) throw new IllegalArgumentException("material for name " + name + " already exists");
+        if (Materials.get(name) != null) throw new IllegalArgumentException("material for id " + name + " already exists");
         return new CTMaterial(name, rgb, textureSet);
     }
 
     @ZenMethod
     public static void addTextureSet(String name) {
-        if (TextureSet.get(name) != null) throw new IllegalArgumentException("TextureSet for name" + name + "already exists");
+        if (TextureSet.get(name) != null) throw new IllegalArgumentException("TextureSet for id" + name + "already exists");
         new TextureSet(name);
     }
 
@@ -53,7 +53,7 @@ public class GregTechTweaker {
     @ZenMethod
     public static CTStructureBuilder addStructure(String name) {
         Machine machine = Machines.get(name);
-        if (machine == null) throw new IllegalArgumentException("machine for name " + name + " does not exist");
+        if (machine == null) throw new IllegalArgumentException("machine for id " + name + " does not exist");
         return new CTStructureBuilder(machine);
     }
 

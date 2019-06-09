@@ -1,11 +1,12 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.data.Casing;
+import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
 import muramasa.gtu.api.tileentities.multi.TileEntityFluidMultiMachine;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int3;
+import muramasa.gtu.common.Data;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityLargeTurbine extends TileEntityFluidMultiMachine {
@@ -29,8 +30,8 @@ public class TileEntityLargeTurbine extends TileEntityFluidMultiMachine {
             for (int y = 0; y < 3; y++) {
                 working.set(topCorner).right(x).down(y);
                 if (!((tile = Utils.getTile(getWorld(), working.asBP())) instanceof TileEntityCasing)) continue;
-                Casing type = ((TileEntityCasing) tile).getType();
-                if (type == Casing.TURBINE_4) {
+                BlockCasing type = ((TileEntityCasing) tile).getType();
+                if (type == Data.CASING_TURBINE_4) {
                     ((TileEntityCasing) tile).setTextureOverride(override);
                 }
             }

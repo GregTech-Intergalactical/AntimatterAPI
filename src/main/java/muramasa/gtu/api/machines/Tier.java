@@ -33,21 +33,21 @@ public class Tier implements IGregTechObject {
     public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
 
     private int internalId;
-    private String name;
+    private String id;
     private long voltage;
     private TextFormatting rarityColor;
     private Texture baseTexture;
 
-    public Tier(String name, long voltage, TextFormatting rarityColor) {
+    public Tier(String id, long voltage, TextFormatting rarityColor) {
         internalId = lastInternalId++;
-        this.name = name;
+        this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
-        this.baseTexture = new Texture("blocks/machine/base/" + name);
+        this.baseTexture = new Texture("blocks/machine/base/" + id);
         if (tierLookup.size() >= 16) { //TODO 1.13: remove this limit
             throw new IllegalStateException("Cannot have more than 16 Machine Tiers");
         }
-        tierLookup.put(name, this);
+        tierLookup.put(id, this);
         tierLookupArray.add(internalId, this);
     }
 
@@ -56,8 +56,8 @@ public class Tier implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public long getVoltage() {

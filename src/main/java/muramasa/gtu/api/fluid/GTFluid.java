@@ -16,7 +16,7 @@ public class GTFluid extends Fluid {
     private String localizedName;
 
     public GTFluid(Material material, GenerationFlag flag) {
-        super(material.getName() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
+        super(material.getId() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
         setColor(material.getRGB());
         switch (flag) {
             case LIQUID:
@@ -49,7 +49,7 @@ public class GTFluid extends Fluid {
         if (localizedName == null) {
             switch (flag) {
                 case LIQUID:
-                    localizedName = (material.has(RecipeFlag.METAL) ? "Molten " : "Liquid ") + material.getName();
+                    localizedName = (material.has(RecipeFlag.METAL) ? "Molten " : "Liquid ") + material.getId();
                 case GAS:
                     localizedName = material.getDisplayName() + " Gas";
                 case PLASMA:

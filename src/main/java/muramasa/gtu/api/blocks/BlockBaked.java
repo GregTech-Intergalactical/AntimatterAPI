@@ -26,17 +26,35 @@ import java.util.List;
 
 public abstract class BlockBaked extends Block {
 
+    protected static ModelResourceLocation BASIC = new ModelResourceLocation(Ref.MODID + ":basic");
+    protected static ModelResourceLocation LAYERED = new ModelResourceLocation(Ref.MODID + ":layered");
+
     private TextureData data;
     private ModelResourceLocation model;
 
-    public BlockBaked(TextureData data, ModelResourceLocation model) {
+    public BlockBaked() {
         super(Material.ROCK);
-        this.data = data;
-        this.model = model;
+        this.data = TextureData.get().base(Texture.ERROR);
+        model = BASIC;
     }
 
     public BlockBaked(TextureData data) {
-        this(data, new ModelResourceLocation(Ref.MODID + ":basic"));
+        super(Material.ROCK);
+        this.data = data;
+        model = BASIC;
+    }
+
+    public BlockBaked(TextureData data, ModelResourceLocation model) {
+        this(data);
+        this.model = model;
+    }
+
+    public void setData(TextureData data) {
+        this.data = data;
+    }
+
+    public void setModel(ModelResourceLocation model) {
+        this.model = model;
     }
 
     @Override

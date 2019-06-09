@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
@@ -12,9 +13,11 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.client.creativetab.GregTechTab;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -48,18 +51,19 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends ItemSword implements IModelOverride, IColorHandler {
+public class MaterialTool extends ItemSword implements IGregTechObject, IModelOverride, IColorHandler {
 
     protected ToolType type;
 
     public MaterialTool(ToolType type) {
         super(ToolMaterial.WOOD);
-        setUnlocalizedName(type.getName());
-        setRegistryName(type.getName());
+        this.type = type;
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
         setCreativeTab(Ref.TAB_ITEMS);
         setMaxDamage(1);
         setMaxStackSize(1);
-        this.type = type;
+        GregTechAPI.register(MaterialTool.class, this);
     }
 
     public ToolType getType() {
@@ -67,11 +71,20 @@ public class MaterialTool extends ItemSword implements IModelOverride, IColorHan
     }
 
     @Override
+    public String getId() {
+        return type.getName();
+    }
+
+    @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (type.isPowered()) {
-            items.add(get(Materials.Cobalt, Materials.TungstenSteel, 1600000));
-        } else {
-            items.add(get(Materials.Cobalt, Materials.Wood));
+        if (tab instanceof GregTechTab) {
+            if (((GregTechTab) tab).getTabName().equals("items")) {
+                if (type.isPowered()) {
+                    items.add(get(Materials.Cobalt, Materials.TungstenSteel, 1600000));
+                } else {
+                    items.add(get(Materials.Cobalt, Materials.Wood));
+                }
+            }
         }
     }
 
@@ -284,8 +297,8 @@ public class MaterialTool extends ItemSword implements IModelOverride, IColorHan
         }
         validateTag(stack);
         NBTTagCompound tag = getTag(stack);
-        tag.setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, primary != null ? primary.getName() : "NULL");
-        tag.setString(Ref.KEY_TOOL_DATA_SECONDARY_MAT, secondary != null ? secondary.getName() : "NULL");
+        tag.setString(Ref.KEY_TOOL_DATA_PRIMARY_MAT, primary != null ? primary.getId() : "NULL");
+        tag.setString(Ref.KEY_TOOL_DATA_SECONDARY_MAT, secondary != null ? secondary.getId() : "NULL");
         tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, getMaxDurability(stack));
         return stack;
     }

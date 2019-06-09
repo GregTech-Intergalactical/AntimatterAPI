@@ -1,22 +1,18 @@
 package muramasa.gtu.api.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.pipe.types.Pipe;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class PipeStack implements IGregTechObject {
 
-    private Block block;
-    private Pipe type;
+    private BlockPipe block;
     private PipeSize size;
 
-    public PipeStack(Block block, Pipe type, PipeSize size) {
+    public PipeStack(BlockPipe block, PipeSize size) {
         this.block = block;
-        this.type = type;
         this.size = size;
     }
 
@@ -25,13 +21,13 @@ public class PipeStack implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
-        return type.getName() + "_" + size.getName();
+    public String getId() {
+        return block.getId() + "_" + size.getName();
     }
 
     @Override
     public ItemStack asItemStack() {
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(block));
+        ItemStack stack = new ItemStack(block);
         stack.setTagCompound(new NBTTagCompound());
         stack.getTagCompound().setInteger(Ref.KEY_PIPE_STACK_SIZE, size.ordinal());
         return stack;

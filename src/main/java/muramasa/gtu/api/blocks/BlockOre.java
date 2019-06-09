@@ -1,12 +1,11 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.*;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyInteger;
@@ -29,7 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockOre extends Block implements IItemBlock, IModelOverride, IColorHandler {
+public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     private static PropertyInteger STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId());
 //    private static PropertyInteger SET = PropertyInteger.create("material_set", 0, MaterialSet.values().length);
@@ -38,15 +37,21 @@ public class BlockOre extends Block implements IItemBlock, IModelOverride, IColo
 
     public BlockOre(Material material) {
         super(net.minecraft.block.material.Material.ROCK);
-        setUnlocalizedName("ore_" + material.getName());
-        setRegistryName("ore_" + material.getName());
+        this.material = material;
+        setUnlocalizedName("ore_" + getId());
+        setRegistryName("ore_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
         setDefaultState(getDefaultState().withProperty(STONE, StoneType.STONE.getInternalId()));
-        this.material = material;
+        GregTechAPI.register(BlockOre.class, this);
     }
 
     public Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public String getId() {
+        return material.getId();
     }
 
     public IBlockState getOreState(Material material, StoneType type) {

@@ -1,7 +1,7 @@
 package muramasa.gtu.proxy;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
@@ -28,7 +28,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -47,10 +46,10 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void init(FMLInitializationEvent e) {
-        GregTechRegistry.ITEMS.forEach(i -> {
+        GregTechAPI.ITEMS.forEach(i -> {
             if (i instanceof IColorHandler) MC.getItemColors().registerItemColorHandler((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
         });
-        GregTechRegistry.BLOCKS.forEach(b -> {
+        GregTechAPI.BLOCKS.forEach(b -> {
             if (b instanceof IColorHandler) {
                 MC.getBlockColors().registerBlockColorHandler(((IColorHandler) b)::getBlockColor, b);
                 MC.getItemColors().registerItemColorHandler((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), Item.getItemFromBlock(b));
@@ -60,11 +59,6 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
-        //NOOP
-    }
-
-    @Override
-    public void serverStarting(FMLServerStartingEvent e) {
         //NOOP
     }
 
@@ -97,10 +91,10 @@ public class ClientProxy implements IProxy {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
-        GregTechRegistry.ITEMS.forEach(i -> {
+        GregTechAPI.ITEMS.forEach(i -> {
             if (i instanceof IModelOverride) ((IModelOverride) i).onModelRegistration();
         });
-        GregTechRegistry.BLOCKS.forEach(b -> {
+        GregTechAPI.BLOCKS.forEach(b -> {
             if (b instanceof IModelOverride) ((IModelOverride) b).onModelRegistration();
         });
 
