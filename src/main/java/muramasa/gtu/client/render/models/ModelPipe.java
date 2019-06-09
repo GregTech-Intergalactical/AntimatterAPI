@@ -22,7 +22,7 @@ public class ModelPipe implements IModel {
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
         IBakedModel[][] BAKED = new IBakedModel[PipeSize.VALUES.length][10];
-        for (PipeSize size : PipeSize.values()) {
+        for (PipeSize size : PipeSize.VALUES) {
             BAKED[size.ordinal()][0] = new BakedBase(ModelUtils.load("pipe/" + size.getName() + "/base").bake(state, format, getter));
             BAKED[size.ordinal()][1] = new BakedBase(ModelUtils.load("pipe/" + size.getName() + "/single").bake(state, format, getter));
             BAKED[size.ordinal()][2] = new BakedBase(ModelUtils.load("pipe/" + size.getName() + "/line").bake(state, format, getter));

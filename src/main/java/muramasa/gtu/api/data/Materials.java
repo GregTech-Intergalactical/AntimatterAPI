@@ -398,6 +398,11 @@ public class Materials {
     public static Material GalliumArsenide = new Material("gallium_arsenide", 0xa0a0a0, DULL).asSolid(295, 1200).add(Arsenic, 1, Gallium, 1);
     public static Material EpoxidFiberReinforced = new Material("fiber_reinforced_epoxy_resin", 0xa07010, DULL).asSolid(400, 0).addTools(3.0F, 64, 1).add(Epoxid, 1);
 
+    /** Reference Materials **/
+    public static Material Superconductor = new Material("superconductor", 0xffffff, NONE);
+    public static Material HighPressure = new Material("high_pressure", 0xc80000, NONE);
+    public static Material PlasmaContainment = new Material("plasma_containment", 0xffff00, NONE);
+
 //    public static void init() {
 //        for (Material material : generated) {
 //            if (material == Blaze) {
