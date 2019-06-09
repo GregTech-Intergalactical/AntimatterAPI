@@ -1,17 +1,11 @@
 package muramasa.gtu.api.registration;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
 import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
-import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.data.StoneType;
-import muramasa.gtu.api.items.StandardItem;
-import muramasa.gtu.api.materials.GenerationFlag;
-import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.pipe.types.Cable;
 import muramasa.gtu.api.pipe.types.FluidPipe;
 import muramasa.gtu.api.pipe.types.ItemPipe;
@@ -21,10 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GregTechRegistry {
@@ -32,7 +23,7 @@ public class GregTechRegistry {
     public static Set<Item> ITEMS = new LinkedHashSet<>();
     public static Set<Block> BLOCKS = new LinkedHashSet<>();
     public static Set<Class> TILES = new LinkedHashSet<>();
-    public static HashMap<String, HashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+    public static HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
 
     public static void register(Object o) {
         if (o instanceof Item) ITEMS.add((Item) o);
@@ -41,7 +32,7 @@ public class GregTechRegistry {
     }
 
     public static void register(Class c, IGregTechObject o) {
-        if (!OBJECTS.containsKey(c.getName())) OBJECTS.put(c.getName(), new HashMap<>());
+        if (!OBJECTS.containsKey(c.getName())) OBJECTS.put(c.getName(), new LinkedHashMap<>());
         OBJECTS.get(c.getName()).put(o.getId(), o);
         register(o);
     }
@@ -78,50 +69,27 @@ public class GregTechRegistry {
         return REGISTRARS.get(id);
     }
 
-    public static StandardItem getStandardItem(ItemType type) {
-        return (StandardItem) getItem(type.getId());
-    }
-
     public static BlockCable getCable(Cable type) {
-        return (BlockCable) getBlock("cable_" + type.getId());
+        return (BlockCable) getBlock(Ref.MODID, "cable_" + type.getId());
     }
 
     public static BlockItemPipe getItemPipe(ItemPipe type) {
-        return (BlockItemPipe) getBlock("item_pipe_" + type.getId());
+        return (BlockItemPipe) getBlock(Ref.MODID, "item_pipe_" + type.getId());
     }
 
     public static BlockFluidPipe getFluidPipe(FluidPipe type) {
-        return (BlockFluidPipe) getBlock("fluid_pipe_" + type.getId());
-    }
-
-    public static BlockOre getOre(Material material) {
-        if (!material.has(GenerationFlag.ORE)) {
-            if (Ref.RECIPE_EXCEPTIONS) {
-                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + material.getId() + ")");
-            } else {
-                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + material.getId() + ")");
-            }
-        }
-        return (BlockOre) getBlock("ore_" + material.getId());
+        return (BlockFluidPipe) getBlock(Ref.MODID, "fluid_pipe_" + type.getId());
     }
 
     public static BlockStone getStone(StoneType type) {
-        return (BlockStone) getBlock("stone_" + type.getId());
+        return (BlockStone) getBlock(Ref.MODID, "stone_" + type.getId());
     }
 
-    public static Item getItem(String path) {
-        return getItem(new ResourceLocation(Ref.MODID, path));
+    public static Item getItem(String domain, String path) {
+        return Item.getByNameOrId(new ResourceLocation(domain, path).toString());
     }
 
-    public static Block getBlock(String path) {
-        return getBlock(new ResourceLocation(Ref.MODID, path));
-    }
-
-    public static Item getItem(ResourceLocation loc) {
-        return Item.getByNameOrId(loc.toString());
-    }
-
-    public static Block getBlock(ResourceLocation loc) {
-        return Block.getBlockFromName(loc.toString());
+    public static Block getBlock(String domain, String path) {
+        return Block.getBlockFromName(new ResourceLocation(domain, path).toString());
     }
 }

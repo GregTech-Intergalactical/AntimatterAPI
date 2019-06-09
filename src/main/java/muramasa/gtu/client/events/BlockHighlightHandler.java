@@ -1,8 +1,8 @@
 package muramasa.gtu.client.events;
 
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.RenderHelper;
@@ -37,7 +37,7 @@ public class BlockHighlightHandler {
         if (tile.hasCapability(GTCapabilities.CONFIGURABLE, null) || tile.hasCapability(GTCapabilities.COVERABLE, null)) {
             ItemStack stack = event.getPlayer().getHeldItemMainhand();
             if (stack.isEmpty()) return;
-            if (ToolType.doesShowExtendedHighlight(stack) || ItemType.doesShowExtendedHighlight(stack) || MaterialItem.doesShowExtendedHighlight(stack)) {
+            if (ToolType.doesShowExtendedHighlight(stack) || StandardItem.doesShowExtendedHighlight(stack) || MaterialItem.doesShowExtendedHighlight(stack)) {
                 drawGrid(event);
             }
         }

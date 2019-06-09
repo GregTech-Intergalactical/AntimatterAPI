@@ -16,10 +16,10 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 
 import static muramasa.gtu.api.data.Machines.*;
-import static muramasa.gtu.api.data.ItemType.*;
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
 import static muramasa.gtu.api.recipe.RecipeMap.*;
+import static muramasa.gtu.common.Data.*;
 
 //TODO EXCLUDED FROM COMPILE
 

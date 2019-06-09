@@ -94,7 +94,7 @@ public final class GregTechAPI {
         return COVER_REGISTRY.get(name);
     }
 
-    public static void registerCoverCatalyst(ItemStack stack, Cover cover) {
+    public static void registerCoverStack(ItemStack stack, Cover cover) {
         CATALYST_TO_COVER.put(stack.getItem(), cover);
     }
 

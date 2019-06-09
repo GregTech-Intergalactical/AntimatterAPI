@@ -1,13 +1,14 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStorage;
-import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.common.Data;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -244,7 +245,7 @@ public class Material implements IGregTechObject {
 
     /** Basic Getters**/
     public String getDisplayName() {
-        return Utils.trans("material." + getId() + ".id");
+        return Utils.trans("material." + getId() + ".name");
     }
 
     public int getRGB() {
@@ -588,22 +589,36 @@ public class Material implements IGregTechObject {
     }
 
     public ItemStack getCell(int amount) {
-    	return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getLiquid());
+    	return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
     }
 
     public ItemStack getCellG(int amount) {
-        return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getGas());
+        return Utils.ca(amount, Data.CellTin.fill(getGas()));
     }
 
     public ItemStack getCellP(int amount) {
-        return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getPlasma());
+        return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
     }
 
     public ItemStack getOre(int amount) {
-        return new ItemStack(GregTechRegistry.getOre(this), amount);
+        if (!has(ORE)) {
+            if (Ref.RECIPE_EXCEPTIONS) {
+                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
+            } else {
+                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
+            }
+        }
+        return new ItemStack(GregTechRegistry.get(BlockOre.class, id), amount);
     }
 
     public ItemStack getBlock(int amount) {
+        if (!has(BLOCK)) {
+            if (Ref.RECIPE_EXCEPTIONS) {
+                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
+            } else {
+                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
+            }
+        }
         return new ItemStack(GregTechRegistry.get(BlockStorage.class, id), amount);
     }
 

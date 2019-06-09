@@ -1,8 +1,8 @@
 package muramasa.gtu.api.cover.impl;
 
 import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.common.Data;
 import net.minecraft.item.ItemStack;
 
 public class CoverEnergy extends Cover {
@@ -20,6 +20,6 @@ public class CoverEnergy extends Cover {
 
     @Override
     public ItemStack getDroppedStack() {
-        return ItemType.EnergyPort.get(1);
+        return Data.EnergyPort.get(1);
     }
 }

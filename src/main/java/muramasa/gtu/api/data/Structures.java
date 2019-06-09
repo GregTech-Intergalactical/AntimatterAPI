@@ -11,7 +11,7 @@ import muramasa.gtu.api.util.int3;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 
-import static muramasa.gtu.api.data.Data.*;
+import static muramasa.gtu.common.Data.*;
 import static muramasa.gtu.api.data.Machines.*;
 
 public class Structures {
