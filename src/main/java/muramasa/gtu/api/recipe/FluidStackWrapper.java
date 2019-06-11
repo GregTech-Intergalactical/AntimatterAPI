@@ -2,11 +2,11 @@ package muramasa.gtu.api.recipe;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidStackInput implements IRecipeObject<FluidStack> {
+public class FluidStackWrapper implements IRecipeObject<FluidStack> {
 
     private FluidStack stack;
 
-    public FluidStackInput(FluidStack fluid) {
+    public FluidStackWrapper(FluidStack fluid) {
         this.stack = fluid;
     }
 
