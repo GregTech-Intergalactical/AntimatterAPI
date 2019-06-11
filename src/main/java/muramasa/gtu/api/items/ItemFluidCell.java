@@ -2,10 +2,12 @@ package muramasa.gtu.api.items;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.impl.FluidHandlerItemCell;
+import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -52,6 +55,13 @@ public class ItemFluidCell extends StandardItem {
 
     public int getMaxTemp() {
         return maxTemp;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        GenerationFlag.LIQUID.getMats().forEach(m -> items.add(fill(m.getLiquid())));
+        GenerationFlag.GAS.getMats().forEach(m -> items.add(fill(m.getGas())));
+        GenerationFlag.PLASMA.getMats().forEach(m -> items.add(fill(m.getPlasma())));
     }
 
     @Nullable
