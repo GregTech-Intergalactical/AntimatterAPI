@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 public class ItemStackWrapper implements IRecipeObject<ItemStack> {
 
     private ItemStack stack;
-    private boolean size = false, damage = false, nbt = false;
+    private boolean count = false, damage = false, nbt = false;
 
     public ItemStackWrapper(ItemStack stack) {
         this.stack = stack;
@@ -22,13 +22,12 @@ public class ItemStackWrapper implements IRecipeObject<ItemStack> {
     public boolean equals(Object obj) {
         if (!(obj instanceof ItemStackWrapper)) return false;
         ItemStackWrapper wrapper = (ItemStackWrapper) obj;
-
         if ((stack.getItem() != wrapper.stack.getItem()) ||
-            (size && stack.getCount() != wrapper.stack.getCount()) ||
+            (count && stack.getCount() != wrapper.stack.getCount()) ||
             (damage && stack.getItemDamage() != wrapper.stack.getItemDamage()) ||
-            (nbt && !ItemStack.areItemStackTagsEqual(stack, wrapper.stack))
-        ) return false;
-
+            (nbt && !ItemStack.areItemStackTagsEqual(stack, wrapper.stack))) {
+            return false;
+        }
         return true;
     }
 
@@ -37,9 +36,9 @@ public class ItemStackWrapper implements IRecipeObject<ItemStack> {
         final int prime = 31;
         int result = 1;
         result = prime * result + Item.getIdFromItem(stack.getItem());
-        result = prime * result + (size ? stack.getCount() : 0);
-        result = prime * result + (damage ? stack.getItemDamage() : 0);
-        result = prime * result + (nbt && stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0);
+        if (count) result = prime * result + stack.getCount();
+        if (damage) result = prime * result + stack.getItemDamage();
+        if (nbt) result = prime * result + (stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0);
         return result;
     }
 }
