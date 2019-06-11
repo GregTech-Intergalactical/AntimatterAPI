@@ -54,16 +54,8 @@ public class RecipeMap {
     }
 
     void add(Recipe recipe) {
-//        IRecipeObject input;
         List<Recipe> existing;
-        //TODO
-        /*if (recipe.hasInputItems() && recipe.hasInputFluids()) {
-            for (int i = 0; i < recipe.getInputItems().length; i++) {
-                input = Utils.getString(recipe.getInputItems()[i], recipe.getInputFluids()[0]);
-                if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
-                else LOOKUP.put(input, Lists.newArrayList(recipe));
-            }
-        } else*/ if (recipe.hasInputItems() && !recipe.hasInputFluids()){
+        if (recipe.hasInputItems() && !recipe.hasInputFluids()) {
             for (int i = 0; i < recipe.getInputItems().length; i++) {
                 ItemStackWrapper input = new ItemStackWrapper(recipe.getInputItems()[i]);
                 if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
@@ -106,22 +98,6 @@ public class RecipeMap {
             if (!Utils.doFluidsMatchAndSizeValid(match.getInputFluids(), fluids)) continue;
             return match;
         }
-        return null;
-    }
-
-    @Nullable
-    //TODO
-    public static Recipe findRecipeItemFluid(RecipeMap map, ItemStack[] items, FluidStack[] fluids) {
-//        if (map == null || !Utils.areItemsValid(items) || !Utils.areFluidsValid(fluids)) return null;
-//        List<Recipe> matches = map.LOOKUP.get(Utils.getString(items[0], fluids[0]));
-//        if (matches == null) return null;
-//        int size = matches.size();
-//        Recipe match;
-//        for (int i = 0; i < size; i++) {
-//            match = matches.get(i);
-//            if (!Utils.doItemsMatchAndSizeValid(match.getInputItems(), items) || !Utils.doFluidsMatchAndSizeValid(match.getInputFluids(), fluids)) continue;
-//            return match;
-//        }
         return null;
     }
 }
