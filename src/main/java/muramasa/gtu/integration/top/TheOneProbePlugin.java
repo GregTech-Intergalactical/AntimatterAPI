@@ -9,5 +9,4 @@ public class TheOneProbePlugin {
 		ITheOneProbe oneProbe = TheOneProbe.theOneProbeImp;
 		oneProbe.registerProvider(new EnergyStorageInfoProvider());
 	}
-
 }

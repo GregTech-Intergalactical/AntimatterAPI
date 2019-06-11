@@ -1,6 +1,6 @@
 package muramasa.gtu.api.machines;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.Ref;
 import net.minecraft.item.Item;
@@ -26,15 +26,15 @@ public class MachineStack implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
-        return type.getName() + "_" + tier.getName();
+    public String getId() {
+        return type.getId() + "_" + tier.getId();
     }
 
     @Override
     public ItemStack asItemStack() {
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(type.getBlock()));
+        ItemStack stack = new ItemStack(type.getBlock());
         stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound().setString(Ref.KEY_MACHINE_STACK_TIER, tier.getName());
+        stack.getTagCompound().setString(Ref.KEY_MACHINE_STACK_TIER, tier.getId());
         return stack;
     }
 }

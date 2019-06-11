@@ -1,11 +1,13 @@
 package muramasa.gtu.api.texture;
 
 import muramasa.gtu.Ref;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 
 public class Texture {
 
+    //TODO move to Data
     public static final Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
 
     private ResourceLocation loc;
@@ -32,7 +34,7 @@ public class Texture {
     }
 
     public TextureAtlasSprite getSprite() {
-        TextureAtlasSprite sprite = Ref.MC.getTextureMapBlocks().getTextureExtry(loc.toString());
-        return sprite != null ? sprite : Ref.MC.getTextureMapBlocks().getTextureExtry(ERROR.getLoc().toString());
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
+        return sprite != null ? sprite : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(ERROR.getLoc().toString());
     }
 }

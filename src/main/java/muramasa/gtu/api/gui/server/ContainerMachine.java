@@ -1,7 +1,7 @@
 package muramasa.gtu.api.gui.server;
 
 import muramasa.gtu.api.capability.impl.MachineItemHandler;
-import muramasa.gtu.api.gui.GuiUpdateType;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.gui.SlotData;
 import muramasa.gtu.api.gui.slot.SlotInput;
 import muramasa.gtu.api.gui.slot.SlotOutput;
@@ -25,8 +25,8 @@ public class ContainerMachine extends ContainerBase {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         int curState = tile.getMachineState().ordinal();
-        if (Math.abs(curState - lastState) >= GuiUpdateType.MACHINE_STATE.getUpdateThreshold()) {
-            listeners.forEach(l -> l.sendWindowProperty(this, GuiUpdateType.MACHINE_STATE.ordinal(), curState));
+        if (Math.abs(curState - lastState) >= GuiEvent.MACHINE_STATE.getUpdateThreshold()) {
+            listeners.forEach(l -> l.sendWindowProperty(this, GuiEvent.MACHINE_STATE.ordinal(), curState));
             lastState = curState;
         }
         if (tile.getFluidHandler() != null && ((tile.getFluidHandler().getInputWrapper() != null && tile.getFluidHandler().getInputWrapper().dirty) || (tile.getFluidHandler().getOutputWrapper() != null && tile.getFluidHandler().getOutputWrapper().dirty))) {
@@ -39,7 +39,7 @@ public class ContainerMachine extends ContainerBase {
     @Override
     public void updateProgressBar(int id, int data) {
         super.updateProgressBar(id, data);
-        if (id == GuiUpdateType.MACHINE_STATE.ordinal()) {
+        if (id == GuiEvent.MACHINE_STATE.ordinal()) {
             tile.setMachineState(MachineState.VALUES[data]);
         }
     }

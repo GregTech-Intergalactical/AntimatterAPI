@@ -14,11 +14,13 @@ import java.util.List;
 
 public class GuiData {
 
+    //TODO This whole class needs rethought
+
     private static final String ANY = "any";
 
-    private String name;
+    private String id;
     private Object instance = GregTech.INSTANCE;
-    private int id = 0;
+    private int guiId = 0;
     private boolean enablePlayerSlots = true;
 
     private int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
@@ -27,29 +29,29 @@ public class GuiData {
     private LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     private TObjectIntHashMap<SlotType> COUNT_LOOKUP = new TObjectIntHashMap<>();
 
-    public GuiData(String name) {
-        this.name = name;
+    public GuiData(String id) {
+        this.id = id;
     }
 
     public GuiData(Machine type, Object instance, int id) {
-        this.name = type.getName();
+        this.id = type.getId();
         this.instance = instance;
-        this.id = id;
+        this.guiId = id;
     }
 
     public Object getInstance() {
         return instance;
     }
 
-    public int getId() {
-        return id;
+    public int getGuiId() {
+        return guiId;
     }
 
     public ResourceLocation getTexture(Tier tier) {
         if (hasSlots(tier)) {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + "_" + tier.getName() + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + id + "_" + tier.getId() + ".png");
         } else {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + name + ".png");
+            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + id + ".png");
         }
     }
 
@@ -95,7 +97,7 @@ public class GuiData {
 
     /** Adds a slot for the given Tier **/
     public GuiData add(Tier tier, SlotType type, int x, int y) {
-        return add(tier.getName(), new SlotData(type, x, y));
+        return add(tier.getId(), new SlotData(type, x, y));
     }
 
     /** Copies ALL slots from an existing GuiData **/
@@ -117,7 +119,7 @@ public class GuiData {
     /** Copies ALL slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine type) {
         for (SlotData slot : type.getGui().getAnySlots()) {
-            add(toTier.getName(), slot);
+            add(toTier.getId(), slot);
         }
         return this;
     }
@@ -125,7 +127,7 @@ public class GuiData {
     /** Copies fromTier slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine type, Tier fromTier) {
         for (SlotData slot : type.getGui().getSlots(fromTier)) {
-            add(toTier.getName(), slot);
+            add(toTier.getId(), slot);
         }
         return this;
     }
@@ -148,7 +150,7 @@ public class GuiData {
     }
 
     public boolean hasSlots(Tier tier) {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
+        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         return slots != null && slots.size() > 0;
     }
 
@@ -165,14 +167,14 @@ public class GuiData {
     }
 
     public List<SlotData> getSlots(Tier tier) {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
+        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         return slots != null ? slots : new ArrayList<>();
     }
 
     public List<SlotData> getSlots(SlotType type, Tier tier) {
         ArrayList<SlotData> types = new ArrayList<>();
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getName());
+        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
         for (SlotData slot : slots) {

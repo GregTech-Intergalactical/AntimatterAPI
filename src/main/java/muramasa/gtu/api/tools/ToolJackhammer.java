@@ -1,6 +1,7 @@
 package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int3;
 import net.minecraft.entity.player.EntityPlayer;

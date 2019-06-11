@@ -5,44 +5,123 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.cover.impl.*;
-import muramasa.gtu.api.data.Casing;
-import muramasa.gtu.api.data.Coil;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechRegistrar;
+import muramasa.gtu.api.registration.RegistrationEvent;
+import muramasa.gtu.api.tileentities.*;
+import muramasa.gtu.api.tileentities.multi.*;
+import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
+import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
+import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
+import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.integration.jei.GregTechJEIPlugin;
+import muramasa.gtu.loaders.InternalRegistrar;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class GregTechAPI {
+public final class GregTechAPI {
+
+    public static Set<Item> ITEMS = new LinkedHashSet<>();
+    public static Set<Block> BLOCKS = new LinkedHashSet<>();
+    public static Set<Class> TILES = new HashSet<>();
+    private static HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+
+    static {
+        register(TileEntityMachine.class);
+        register(TileEntityBasicMachine.class);
+        register(TileEntityItemMachine.class);
+        register(TileEntityFluidMachine.class);
+        register(TileEntityItemFluidMachine.class);
+        register(TileEntitySteamMachine.class);
+        register(TileEntityMultiMachine.class);
+        register(TileEntityBasicItemMultiMachine.class);
+        register(TileEntityItemMultiMachine.class);
+        register(TileEntityFluidMultiMachine.class);
+        register(TileEntityItemFluidMultiMachine.class);
+        register(TileEntityHatch.class);
+
+        register(TileEntityPipe.class);
+        register(TileEntityItemPipe.class);
+        register(TileEntityFluidPipe.class);
+        register(TileEntityCable.class);
+        register(TileEntityCasing.class);
+        register(TileEntityCoil.class);
+    }
+
+    public static void register(Object o) {
+        if (o instanceof Item) ITEMS.add((Item) o);
+        else if (o instanceof Block) BLOCKS.add((Block) o);
+        else if (o instanceof Class) TILES.add((Class) o);
+    }
+
+    public static void register(Class c, IGregTechObject o) {
+        if (!OBJECTS.containsKey(c.getName())) OBJECTS.put(c.getName(), new LinkedHashMap<>());
+        OBJECTS.get(c.getName()).put(o.getId(), o);
+        register(o);
+    }
+
+    public static <T> T get(Class<T> c, String name) {
+        return (T) OBJECTS.get(c.getName()).get(name);
+    }
+
+    public static <T> List<T> all(Class<T> c) {
+        return OBJECTS.get(c.getName()).values().stream().map(c::cast).collect(Collectors.toList());
+    }
+
+    /** Registrar Section **/
+    private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
+
+    public static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
+
+    public static void addRegistrar(IGregTechRegistrar registrar) {
+        if (registrar.isEnabled() || Ref.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
+    }
+
+    public static void onRegistration(RegistrationEvent event) {
+        INTERNAL_REGISTRAR.onRegistrationEvent(event);
+        REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
+    }
+
+    public static boolean isRegistrarEnabled(String id) {
+        IGregTechRegistrar registrar = getRegistrar(id);
+        return registrar != null && registrar.isEnabled();
+    }
+
+    @Nullable
+    public static IGregTechRegistrar getRegistrar(String id) {
+        return REGISTRARS.get(id);
+    }
+
+    public static Item getItem(String domain, String path) {
+        return Item.getByNameOrId(new ResourceLocation(domain, path).toString());
+    }
+
+    public static Block getBlock(String domain, String path) {
+        return Block.getBlockFromName(new ResourceLocation(domain, path).toString());
+    }
 
     /** Item Registry Section **/
     public static void addItemReplacement(Prefix prefix, Material material, ItemStack stack) {
         prefix.addReplacement(material, stack);
-    }
-
-    /** Block Registry Section **/
-    public static void addCasing(String name) {
-        new Casing(name);
-    }
-
-    public static void addCoil(String name, int heatingCapacity) {
-        new Coil(name, heatingCapacity);
     }
 
     /** JEI Registry Section **/
@@ -53,7 +132,7 @@ public class GregTechAPI {
     }
 
     /** Fluid Cell Registry **/
-    private static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
+    private final static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
 
     public static void registerFluidCell(ItemStack stack) {
         if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
@@ -82,15 +161,15 @@ public class GregTechAPI {
     }
 
     /** Cover Registry Section **/
-    private static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
-    private static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
+    private final static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
+    private final static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
 
     /** IMPORTANT: These should only be used to compare instances. **/
-    public static Cover CoverNone = new CoverNone();
-    public static Cover CoverPlate = new CoverPlate();
-    public static Cover CoverItem = new CoverItem(Tier.LV);
-    public static Cover CoverFluid = new CoverFluid(Tier.LV);
-    public static Cover CoverEnergy = new CoverEnergy(Tier.LV);
+    public final static Cover CoverNone = new CoverNone();
+    public final static Cover CoverPlate = new CoverPlate();
+    public final static Cover CoverItem = new CoverItem(Tier.LV);
+    public final static Cover CoverFluid = new CoverFluid(Tier.LV);
+    public final static Cover CoverEnergy = new CoverEnergy(Tier.LV);
 
     /**
      * Registers a cover behaviour. This must be done during preInit.
@@ -105,7 +184,7 @@ public class GregTechAPI {
         return COVER_REGISTRY.get(name);
     }
 
-    public static void registerCoverCatalyst(ItemStack stack, Cover cover) {
+    public static void registerCoverStack(ItemStack stack, Cover cover) {
         CATALYST_TO_COVER.put(stack.getItem(), cover);
     }
 

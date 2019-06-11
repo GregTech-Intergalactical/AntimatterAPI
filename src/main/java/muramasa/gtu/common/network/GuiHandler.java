@@ -30,11 +30,11 @@ public class GuiHandler implements IGuiHandler {
         if (tile instanceof TileEntityMachine) {
             Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
-            if (machine.getGui().getId() == Ref.GUI_ID_MACHINE) {
+            if (machine.getGui().getGuiId() == Ref.GUI_ID_MACHINE) {
                 return new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory);
-            } else if (machine.getGui().getId() == Ref.GUI_ID_MULTI_MACHINE) {
+            } else if (machine.getGui().getGuiId() == Ref.GUI_ID_MULTI_MACHINE) {
                 return new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory);
-            } else if (machine.getGui().getId() == Ref.GUI_ID_HATCH) {
+            } else if (machine.getGui().getGuiId() == Ref.GUI_ID_HATCH) {
                 return new ContainerHatch((TileEntityHatch) tile, player.inventory);
             }
         }
@@ -48,11 +48,11 @@ public class GuiHandler implements IGuiHandler {
         if (tile instanceof TileEntityMachine) {
             Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
-            if (machine.getGui().getId() == Ref.GUI_ID_MACHINE) {
+            if (machine.getGui().getGuiId() == Ref.GUI_ID_MACHINE) {
                 return new GuiBasicMachine((TileEntityBasicMachine) tile, new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory));
-            } else if (machine.getGui().getId() == Ref.GUI_ID_MULTI_MACHINE) {
+            } else if (machine.getGui().getGuiId() == Ref.GUI_ID_MULTI_MACHINE) {
                 return new GuiMultiMachine((TileEntityMultiMachine) tile, new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory));
-            } else if (machine.getGui().getId() == Ref.GUI_ID_HATCH) {
+            } else if (machine.getGui().getGuiId() == Ref.GUI_ID_HATCH) {
                 return new GuiHatch((TileEntityHatch) tile, new ContainerHatch((TileEntityHatch) tile, player.inventory));
             }
         }

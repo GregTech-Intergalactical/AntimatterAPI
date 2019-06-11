@@ -1,6 +1,6 @@
 package muramasa.gtu.api.structure;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.int2;
 import muramasa.gtu.api.util.int3;
@@ -50,7 +50,7 @@ public class Structure {
     }
 
     public Structure addReq(IGregTechObject object, int value, BiPredicate<Integer, Integer> method) {
-        requirements.put(object.getName(), new Tuple<>(value, method));
+        requirements.put(object.getId(), new Tuple<>(value, method));
         return this;
     }
 

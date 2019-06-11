@@ -2,13 +2,10 @@ package muramasa.gtu.api.items;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.impl.FluidHandlerItemCell;
-import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.materials.GenerationFlag;
-import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -29,29 +25,25 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemFluidCell extends StandardItem {
 
+    protected Material material;
     private int capacity, maxTemp;
-    @Nonnull private final ItemStack emptyStack;
     
-    public ItemFluidCell(ItemType type, int capacity, int maxTemp) {
-        super(type);
-        setMaxStackSize(1);
+    public ItemFluidCell(Material material, int capacity) {
+        super("cell_".concat(material.getId()));
+        this.material = material;
         this.capacity = capacity;
-        this.maxTemp = maxTemp;
-        this.emptyStack = type.asItemStack();
+        this.maxTemp = material.getMeltingPoint();
+        setMaxStackSize(1);
     }
 
-    public ItemFluidCell(ItemType type, int capacity, int maxTemp, int stackSize) {
-        super(type);
+    public ItemFluidCell(Material material, int capacity, int stackSize) {
+        this(material, capacity);
         setMaxStackSize(stackSize);
-        this.capacity = capacity;
-        this.maxTemp = maxTemp;
-        this.emptyStack = type.asItemStack();
     }
 
     public int getCapacity() {
@@ -60,14 +52,6 @@ public class ItemFluidCell extends StandardItem {
 
     public int getMaxTemp() {
         return maxTemp;
-    }
-
-    //TODO: Shall we eliminate JEI clutter with every filled cell being displayed?
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        GenerationFlag.LIQUID.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getLiquid())));
-        GenerationFlag.GAS.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getGas())));
-        GenerationFlag.PLASMA.getMats().forEach(m -> items.add(getCellWithFluid(type, m.getPlasma())));
     }
 
     @Nullable
@@ -113,8 +97,8 @@ public class ItemFluidCell extends StandardItem {
         return handler.getTankProperties()[0].getContents();
     }
 
-    public static ItemStack getCellWithFluid(ItemType cellType, Fluid fluid) {
-        ItemStack stack = new ItemStack(GregTechRegistry.getItem(cellType.getName()));
+    public ItemStack fill(Fluid fluid) {
+        ItemStack stack = new ItemStack(this);
         IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         handler.fill(new FluidStack(fluid, handler.getTankProperties()[0].getCapacity()), true);
         return stack;
@@ -122,7 +106,7 @@ public class ItemFluidCell extends StandardItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initModel() {
+    public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":fluid_cell", "inventory"));
     }
 }

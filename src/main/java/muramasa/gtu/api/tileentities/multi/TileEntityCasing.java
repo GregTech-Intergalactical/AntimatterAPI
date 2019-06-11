@@ -6,12 +6,11 @@ import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.capability.impl.CoverHandler;
-import muramasa.gtu.api.data.Casing;
-import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityBase;
-import muramasa.gtu.common.blocks.BlockCasing;
+import muramasa.gtu.api.blocks.BlockCasing;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,19 +20,19 @@ import java.util.List;
 
 public class TileEntityCasing extends TileEntityBase implements IComponent, IBakedTile {
 
-    private Casing type;
+    private BlockCasing type;
 
     protected IComponentHandler componentHandler = new ComponentHandler("null", this) {
         @Override
         public String getId() {
-            return getType().getName();
+            return getType().getId();
         }
     };
     protected ICoverHandler coverHandler = new CoverHandler(this);
     protected int textureOverride = -1;
 
-    public Casing getType() {
-        return type == null ? (type = ((BlockCasing) getState().getBlock()).getType()) : type;
+    public BlockCasing getType() {
+        return type == null ? (type = ((BlockCasing) getState().getBlock())) : type;
     }
 
     @Override
@@ -81,7 +80,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
-        info.add("Casing Type: " + getType().getName());
+        info.add("Casing Type: " + getType().getId());
         return info;
     }
 }

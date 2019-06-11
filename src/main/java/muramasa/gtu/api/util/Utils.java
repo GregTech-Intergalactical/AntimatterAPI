@@ -9,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -22,7 +21,6 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nullable;
@@ -35,6 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class Utils {
 
+    private static final ConcurrentMap<String, Boolean> MOD_LOADED_CACHE = new ConcurrentHashMap<>();
     private static DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
     private static DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
 
@@ -254,15 +253,6 @@ public class Utils {
         }
     }
 
-    public static World getClientWorld() {
-        return Ref.MC.world;
-    }
-
-    /** Gets the Server version of the client world **/
-    public static World getServerWorld() {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getClientWorld().provider.getDimension());
-    }
-
     /** Syncs NBT between Client & Server **/
     public static void markTileForNBTSync(TileEntity tile) {
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
@@ -436,18 +426,16 @@ public class Utils {
             }
             stack.onBlockDestroyed(world, state, pos, player);
 
-            Ref.MC.getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, pos, Ref.MC.objectMouseOver.sideHit));
+            GregTech.PROXY.sendDiggingPacket(pos);
         }
     }
-    
-    private static final ConcurrentMap<String, Boolean> isModLoadedCache = new ConcurrentHashMap<>();
 
     public static boolean isModLoaded(String modid) {
-        if (isModLoadedCache.containsKey(modid)) {
-            return isModLoadedCache.get(modid);
+        if (MOD_LOADED_CACHE.containsKey(modid)) {
+            return MOD_LOADED_CACHE.get(modid);
         }
         boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
-        isModLoadedCache.put(modid, isLoaded);
+        MOD_LOADED_CACHE.put(modid, isLoaded);
         return isLoaded;
     }
 }

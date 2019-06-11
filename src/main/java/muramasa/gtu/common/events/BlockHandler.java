@@ -2,7 +2,7 @@ package muramasa.gtu.common.events;
 
 import muramasa.gtu.GregTech;
 import muramasa.gtu.api.gui.GuiData;
-import muramasa.gtu.api.interfaces.IComponent;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
@@ -24,7 +24,7 @@ public class BlockHandler {
             if (controller == null) return;
             if (!controller.getType().hasFlag(MachineFlag.GUI)) return;
             GuiData gui = controller.getType().getGui();
-            e.getEntityPlayer().openGui(GregTech.INSTANCE, gui.getId(), e.getEntityPlayer().getEntityWorld(), controller.getPos().getX(), controller.getPos().getY(), controller.getPos().getZ());
+            e.getEntityPlayer().openGui(GregTech.INSTANCE, gui.getGuiId(), e.getEntityPlayer().getEntityWorld(), controller.getPos().getX(), controller.getPos().getY(), controller.getPos().getZ());
             e.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
         }
     }

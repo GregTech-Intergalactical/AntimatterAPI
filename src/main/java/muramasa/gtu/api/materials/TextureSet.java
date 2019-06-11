@@ -1,6 +1,6 @@
 package muramasa.gtu.api.materials;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
 
 import java.util.Collection;
@@ -25,24 +25,24 @@ public class TextureSet implements IGregTechObject {
     public static TextureSet FINE = new TextureSet("fine");
     public static TextureSet FLINT = new TextureSet("flint");
 
-    private String name;
+    private String id;
 
-    public TextureSet(String name) {
-        this.name = name;
-        LOOKUP.put(name, this);
+    public TextureSet(String id) {
+        this.id = id;
+        LOOKUP.put(id, this);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public Texture getBlockTexture(Prefix prefix) {
-        return new Texture("blocks/material_set/" + name + "/" + prefix.getName());
+        return new Texture("blocks/material_set/" + id + "/" + prefix.getId());
     }
 
     public Texture getItemTexture(Prefix prefix) {
-        return new Texture("items/material_set/" + name + "/" + prefix.getName());
+        return new Texture("items/material_set/" + id + "/" + prefix.getId());
     }
 
     public static TextureSet get(String name) {

@@ -1,6 +1,6 @@
 package muramasa.gtu.api.machines;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 
 import java.util.Locale;
 
@@ -54,7 +54,7 @@ public enum MachineState implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 }

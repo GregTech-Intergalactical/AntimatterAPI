@@ -4,7 +4,7 @@
     "model": "gtu:generated"
   },
   "variants": {
-    "coil_type": {
+    "id": {
       "cupronickel": {
         "textures": {"all": "gtu:blocks/coil/cupronickel"}
       },

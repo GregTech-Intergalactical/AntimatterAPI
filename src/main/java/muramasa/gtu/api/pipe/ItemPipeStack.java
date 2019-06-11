@@ -1,16 +1,15 @@
 package muramasa.gtu.api.pipe;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.pipe.types.Pipe;
-import net.minecraft.block.Block;
+import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
 import net.minecraft.item.ItemStack;
 
 public class ItemPipeStack extends PipeStack {
 
     private boolean restrictive;
 
-    public ItemPipeStack(Block block, Pipe type, PipeSize size, boolean restrictive) {
-        super(block, type, size);
+    public ItemPipeStack(BlockItemPipe block, PipeSize size, boolean restrictive) {
+        super(block, size);
         this.restrictive = restrictive;
     }
 
