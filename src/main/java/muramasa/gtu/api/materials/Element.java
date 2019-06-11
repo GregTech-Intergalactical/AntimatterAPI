@@ -1,6 +1,6 @@
 package muramasa.gtu.api.materials;
 
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.registration.IGregTechObject;
 
 import java.util.Locale;
 
@@ -155,7 +155,7 @@ public enum Element implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 

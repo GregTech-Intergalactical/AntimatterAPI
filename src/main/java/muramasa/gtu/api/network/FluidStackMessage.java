@@ -1,9 +1,9 @@
 package muramasa.gtu.api.network;
 
 import io.netty.buffer.ByteBuf;
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
@@ -86,10 +86,10 @@ public class FluidStackMessage implements IMessage {
 
         @Override
         public IMessage onMessage(FluidStackMessage message, MessageContext ctx) {
-            BlockPos pos = Ref.MC.objectMouseOver.getBlockPos();
+            BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
             if (pos == null) return null; //Even tho IDEA says this is never null, it has caused NPEs
-            if (!Ref.MC.world.isBlockLoaded(pos)) return null;
-            TileEntity tile = Utils.getTile(Ref.MC.world, pos);
+            if (!Minecraft.getMinecraft().world.isBlockLoaded(pos)) return null;
+            TileEntity tile = Utils.getTile(Minecraft.getMinecraft().world, pos);
             if (tile instanceof TileEntityMachine) {
                 TileEntityMachine machine = (TileEntityMachine) tile;
                 if (machine.getFluidHandler() == null) return null;

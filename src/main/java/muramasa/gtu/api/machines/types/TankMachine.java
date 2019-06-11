@@ -4,7 +4,7 @@ import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 

@@ -2,19 +2,19 @@ package muramasa.gtu.api.machines.types;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
-import muramasa.gtu.api.interfaces.IGregTechObject;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.common.blocks.BlockMachine;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class Machine implements IGregTechObject {
     protected int internalId;
     protected BlockMachine block;
     protected Class tileClass;
-    protected String name;
+    protected String id;
     protected ArrayList<Tier> tiers;
     protected int machineMask;
 
@@ -48,13 +48,13 @@ public class Machine implements IGregTechObject {
 
     //TODO get valid covers
 
-    public Machine(String name) {
-        this(name, new BlockMachine(name), TileEntityMachine.class);
+    public Machine(String id) {
+        this(id, new BlockMachine(id), TileEntityMachine.class);
     }
 
-    public Machine(String name, BlockMachine block, Class tileClass) {
+    public Machine(String id, BlockMachine block, Class tileClass) {
         internalId = lastInternalId++;
-        this.name = name;
+        this.id = id;
         this.block = block;
         this.tileClass = tileClass;
         setTiers(Tier.LV);
@@ -66,12 +66,12 @@ public class Machine implements IGregTechObject {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public String getDisplayName(Tier tier) {
-        return Utils.trans("machine." + name + "." + tier.getName() + ".name");
+        return Utils.trans("machine." + id + "." + tier.getId() + ".name");
     }
 
     public RecipeMap getRecipeMap() {
@@ -90,19 +90,19 @@ public class Machine implements IGregTechObject {
     }
 
     public Texture[] getOverlayTextures(MachineState state) {
-        String stateDir = state == MachineState.IDLE ? "" : state.getName() + "/";
+        String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BOTTOM),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.TOP),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.FRONT),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.BACK),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.SIDE),
-            new Texture("blocks/machine/overlay/" + name + "/" + stateDir + TextureType.SIDE),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
         };
     }
 
     public ModelResourceLocation getOverlayModel(TextureType side) {
-        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + name + "/" + side.getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + id + "/" + side.getId());
     }
 
     public Machine addFlags(MachineFlag... flags) {
@@ -137,7 +137,7 @@ public class Machine implements IGregTechObject {
     }
 
     public void addRecipeMap() {
-        recipeMap = new RecipeMap(name, 10);
+        recipeMap = new RecipeMap(id, 10);
         addFlags(RECIPE);
     }
 

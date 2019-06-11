@@ -1,13 +1,14 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.gtu.api.data.ItemType;
-import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.interfaces.IMaterialFlag;
-import muramasa.gtu.api.items.ItemFluidCell;
+import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockOre;
+import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.registration.GregTechRegistry;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.common.Data;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -18,14 +19,14 @@ import java.util.ArrayList;
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
 
-public class Material {
+public class Material implements IGregTechObject {
 
     public static final long M = 3628800;
 
     /** Basic Members **/
     private int rgb;
     private long itemMask, recipeMask;
-    private String name;
+    private String id;
     private TextureSet set;
 
     /** Element Members **/
@@ -54,17 +55,27 @@ public class Material {
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<Material> byProducts = new ArrayList<>();
 
-    public Material(String name, int rgb, TextureSet set, Element element) {
-        this(name, rgb, set);
+    public Material(String id, int rgb, TextureSet set, Element element) {
+        this(id, rgb, set);
         this.element = element;
     }
 
-    public Material(String name, int rgb, TextureSet set) {
-        this.name = name;
+    public Material(String id, int rgb, TextureSet set) {
+        this.id = id;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;
-        Materials.MATERIAL_LOOKUP.put(name, this);
+        GregTechAPI.register(Material.class, this);
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return getId();
     }
     
     public Material asDust(IMaterialFlag... flags) {
@@ -233,17 +244,8 @@ public class Material {
     }
 
     /** Basic Getters**/
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
     public String getDisplayName() {
-        return Utils.trans("material." + getName() + ".name");
+        return Utils.trans("material." + getId() + ".name");
     }
 
     public int getRGB() {
@@ -587,37 +589,51 @@ public class Material {
     }
 
     public ItemStack getCell(int amount) {
-    	return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getLiquid());
+    	return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
     }
 
     public ItemStack getCellG(int amount) {
-        return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getGas());
+        return Utils.ca(amount, Data.CellTin.fill(getGas()));
     }
 
     public ItemStack getCellP(int amount) {
-        return ItemFluidCell.getCellWithFluid(ItemType.CellTin, getPlasma());
+        return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
     }
 
     public ItemStack getOre(int amount) {
-        return new ItemStack(GregTechRegistry.getOre(this), amount);
+        if (!has(ORE)) {
+            if (Ref.RECIPE_EXCEPTIONS) {
+                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
+            } else {
+                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
+            }
+        }
+        return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
     }
 
     public ItemStack getBlock(int amount) {
-        return new ItemStack(GregTechRegistry.getStorage(this), amount);
+        if (!has(BLOCK)) {
+            if (Ref.RECIPE_EXCEPTIONS) {
+                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
+            } else {
+                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
+            }
+        }
+        return new ItemStack(GregTechAPI.get(BlockStorage.class, id), amount);
     }
 
     public FluidStack getLiquid(int amount) {
-        if (liquid == null) throw new NullPointerException(getName() + ": Liquid is null");
+        if (liquid == null) throw new NullPointerException(getId() + ": Liquid is null");
         return new FluidStack(liquid, amount);
     }
 
     public FluidStack getGas(int amount) {
-        if (gas == null) throw new NullPointerException(getName() + ": Gas is null");
+        if (gas == null) throw new NullPointerException(getId() + ": Gas is null");
         return new FluidStack(getGas(), amount);
     }
 
     public FluidStack getPlasma(int amount) {
-        if (plasma == null) throw new NullPointerException(getName() + ": Plasma is null");
+        if (plasma == null) throw new NullPointerException(getId() + ": Plasma is null");
         return new FluidStack(getPlasma(), amount);
     }
 }

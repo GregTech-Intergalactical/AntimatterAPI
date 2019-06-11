@@ -4,7 +4,7 @@ import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.Texture;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class MultiMachine extends Machine {
 
     @Override
     public Texture getBaseTexture(Tier tier) {
-        return tiers.size() > 1 ? new Texture("blocks/machine/base/" + name + "_" + tier.getName()) : new Texture("blocks/machine/base/" + name);
+        return tiers.size() > 1 ? new Texture("blocks/machine/base/" + id + "_" + tier.getId()) : new Texture("blocks/machine/base/" + id);
     }
 
     @Override

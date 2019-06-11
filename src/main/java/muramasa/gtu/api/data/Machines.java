@@ -1,5 +1,6 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
@@ -12,14 +13,12 @@ import muramasa.gtu.common.tileentities.multi.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 import static muramasa.gtu.api.machines.Tier.*;
 
 public class Machines {
 
-    private static LinkedHashMap<String, Machine> TYPE_LOOKUP = new LinkedHashMap<>();
     private static ArrayList<Machine> ID_LOOKUP = new ArrayList<>();
 
     public static Machine INVALID = new Machine("invalid");
@@ -110,12 +109,13 @@ public class Machines {
     }
 
     public static void add(Machine machine) {
-        TYPE_LOOKUP.put(machine.getName(), machine);
+        GregTechAPI.register(Machine.class, machine);
+        GregTechAPI.register(machine.getBlock());
         ID_LOOKUP.add(machine.getInternalId(), machine);
     }
 
     public static Machine get(String name) {
-        Machine machine = TYPE_LOOKUP.get(name);
+        Machine machine = GregTechAPI.get(Machine.class, name);
         return machine != null ? machine : INVALID;
     }
 
@@ -126,14 +126,6 @@ public class Machines {
 
     public static MachineStack get(Machine type, Tier tier) {
         return new MachineStack(type, tier);
-    }
-
-    public static Collection<Machine> getAll() {
-        return TYPE_LOOKUP.values();
-    }
-
-    public static int getCount() {
-        return TYPE_LOOKUP.size();
     }
 
     public static Collection<Machine> getTypes(MachineFlag... flags) {

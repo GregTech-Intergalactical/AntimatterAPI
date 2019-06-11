@@ -4,7 +4,6 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
-import muramasa.gtu.api.data.ItemType;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.gui.SlotData;
 import muramasa.gtu.api.gui.SlotType;
@@ -13,6 +12,7 @@ import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.int4;
 import muramasa.gtu.Ref;
+import muramasa.gtu.common.Data;
 import muramasa.gtu.integration.jei.renderer.FluidStackRenderer;
 import muramasa.gtu.integration.jei.wrapper.RecipeWrapper;
 import net.minecraft.client.Minecraft;
@@ -49,7 +49,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();
         background = guiHelper.drawableBuilder(gui.getTexture(gui.getHighestTier()), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(gui.getHighestTier()), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
-        icon = guiHelper.createDrawableIngredient(ItemType.DebugScanner.get(1));
+        icon = guiHelper.createDrawableIngredient(Data.DebugScanner.get(1));
         this.gui = gui;
     }
 

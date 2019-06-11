@@ -5,8 +5,8 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.interfaces.IComponent;
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.structure.IComponent;
+import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
@@ -202,11 +202,11 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
 
     /** Returns a list of Components **/
     public List<IComponentHandler> getComponents(IGregTechObject object) {
-        return getComponents(object.getName());
+        return getComponents(object.getId());
     }
 
-    public List<IComponentHandler> getComponents(String name) {
-        ArrayList<IComponentHandler> list = components.get(name);
+    public List<IComponentHandler> getComponents(String id) {
+        ArrayList<IComponentHandler> list = components.get(id);
         return list != null ? list : Collections.emptyList();
     }
 

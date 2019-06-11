@@ -1,9 +1,9 @@
 package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
-import muramasa.gtu.api.interfaces.IGregTechObject;
+import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.registration.GregTechRegistry;
 import muramasa.gtu.api.util.SoundType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Set;
 
-public enum ToolType implements IGregTechObject {
+public enum ToolType {
 
     SWORD("Sword", "", "craftingToolSword", null, Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
     PICKAXE("Pickaxe" , "", "craftingToolPickaxe", null, Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),
@@ -42,6 +42,12 @@ public enum ToolType implements IGregTechObject {
     BUZZSAW("Electric Buzzsaw", "", "craftingToolBuzzsaw", null, Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("Turbine Rotor", "", "craftingToolTurbine", null, Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
 
+    public static ToolType[] VALUES;
+
+    static {
+        VALUES = values();
+    }
+
     private String displayName, tooltip, oreDict;
     private Class toolClass;
     private Set<String> toolClasses;
@@ -68,7 +74,6 @@ public enum ToolType implements IGregTechObject {
         this.damageCrafting = damageCrafting;
     }
 
-    @Override
     public String getName() {
         return name().toLowerCase(Locale.ENGLISH);
     }
@@ -89,7 +94,7 @@ public enum ToolType implements IGregTechObject {
         return useSound;
     }
 
-    public MaterialTool getInstance() {
+    public MaterialTool instantiate() {
         if (toolClass != null) {
             try {
                 return (MaterialTool) toolClass.newInstance();
@@ -153,7 +158,7 @@ public enum ToolType implements IGregTechObject {
     }
 
     public ItemStack get(Material primary, Material secondary) {
-        return GregTechRegistry.getMaterialTool(this).get(primary, secondary);
+        return GregTechAPI.get(MaterialTool.class, getName()).get(primary, secondary);
     }
 
     @Nullable

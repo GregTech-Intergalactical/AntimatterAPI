@@ -15,6 +15,6 @@ public class GTProperties {
 
 
     /** Pipe Properties **/
-    public static final PropertyInteger SIZE = PropertyInteger.create("size", 0, PipeSize.values().length);
+    public static final PropertyInteger SIZE = PropertyInteger.create("size", 0, PipeSize.VALUES.length);
     public static final UnlistedByte CONNECTIONS = new UnlistedByte();
 }

@@ -2,7 +2,7 @@ package muramasa.gtu.client.render;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.client.render.models.ModelTextureData;
-import muramasa.gtu.common.blocks.BlockBaked;
+import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;

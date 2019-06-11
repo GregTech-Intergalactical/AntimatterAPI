@@ -6,14 +6,14 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.SlotType;
-import muramasa.gtu.api.machines.ContentUpdateType;
+import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -54,7 +54,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     /** Events **/
-    public void onContentsChanged(ContentUpdateType type, int slot) {
+    public void onContentsChanged(ContentEvent type, int slot) {
         //NOOP
     }
 
@@ -204,7 +204,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     public List<String> getInfo() {
         List<String> info = super.getInfo();
         info.add("Tile: " + getClass().getName());
-        info.add("Machine: " + getType().getName() + " Tier: " + getTier().getName());
+        info.add("Machine: " + getType().getId() + " Tier: " + getTier().getId());
         String slots = "";
         if (getType().hasFlag(ITEM)) {
             int inputs = getType().getGui().getSlots(SlotType.IT_IN, getTier()).size();

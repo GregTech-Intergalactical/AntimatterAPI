@@ -5,7 +5,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedMachineItem;
-import muramasa.gtu.common.blocks.BlockMachine;
+import muramasa.gtu.api.blocks.BlockMachine;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;

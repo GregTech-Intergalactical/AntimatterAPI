@@ -4,7 +4,7 @@
     "model": "gtu:generated"
   },
   "variants": {
-    "stone_type": {
+    "id": {
       "granite_red": {
         "textures": {"all": "gtu:blocks/stone/granite_red"}
       },
