@@ -1,7 +1,7 @@
 [
 {
   "modid": "gtu",
-  "name": "GregTech Unofficial",
+  "name": "GregTech",
   "description": "A continuation of GregTech 5 Unofficial",
   "version": "${version}",
   "mcversion": "${mcversion}",
