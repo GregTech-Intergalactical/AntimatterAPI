@@ -9,7 +9,8 @@ public class TileEntityItemFluidMachine extends TileEntityItemMachine {
 
     @Override
     public Recipe findRecipe() {
-        return RecipeMap.findRecipeItemFluid(getType().getRecipeMap(), itemHandler.getInputs(), fluidHandler.getInputs());
+        return RecipeMap.findRecipeItem(getType().getRecipeMap(), itemHandler.getInputs());
+        //return RecipeMap.findRecipeItemFluid(getType().getRecipeMap(), itemHandler.getInputs(), fluidHandler.getInputs());
     }
 
     @Override

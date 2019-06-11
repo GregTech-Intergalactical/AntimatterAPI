@@ -50,10 +50,13 @@ public class GTFluid extends Fluid {
             switch (flag) {
                 case LIQUID:
                     localizedName = (material.has(RecipeFlag.METAL) ? "Molten " : "Liquid ") + material.getId();
+                    break;
                 case GAS:
                     localizedName = material.getDisplayName() + " Gas";
+                    break;
                 case PLASMA:
                     localizedName = material.getDisplayName() + " Plasma";
+                    break;
                 default:
                     return "FLUID NAME ERROR";
             }
