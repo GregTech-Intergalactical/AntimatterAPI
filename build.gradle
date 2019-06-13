@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.00.01"
+version = "0.1.0"
 group = "com.muramasa.gtu" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "gtu"
 
