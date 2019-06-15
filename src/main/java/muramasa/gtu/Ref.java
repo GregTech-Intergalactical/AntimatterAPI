@@ -100,4 +100,6 @@ public class Ref {
     public static final String MOD_AE = "appliedenergistics2";
     public static final String MOD_GC = "GalacticraftCore";
     public static final String MOD_GC_PLANETS = "GalacticraftPlanets";
+    public static final String MOD_TE = "thermalexpansion";
+    public static final String MOD_TF = "thermalfoundation";
 }

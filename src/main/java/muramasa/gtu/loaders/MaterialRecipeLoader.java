@@ -1,7 +1,7 @@
 package muramasa.gtu.loaders;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.materials.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialStack;
@@ -9,7 +9,6 @@ import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.api.materials.GenerationFlag.*;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
-import static muramasa.gtu.api.recipe.RecipeMap.*;
+import static muramasa.gtu.api.recipe.RecipeMap.PLASMA_FUELS;
 import static muramasa.gtu.common.Data.*;
 
 //TODO EXCLUDED FROM COMPILE
@@ -208,10 +207,10 @@ public class MaterialRecipeLoader {
 
         for (Material m : DUST.getMats()) {
             ItemStack aDust = m.getDust(1), aDustS = m.getDustS(1), aDustT = m.getDustT(1);
-            RecipeHelper.addShaped(Utils.ca(4, aDustS), " X", "  ", 'X', aDust);
-            RecipeHelper.addShaped(Utils.ca(9, aDustT), "X ", "  ", 'X', aDust);
-            RecipeHelper.addShapeless(aDust, aDustS, aDustS, aDustS, aDustS);
-            RecipeHelper.addShapeless(aDust, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT, aDustT);
+            //RecipeHelper.addShaped("dust_small_to_dust_" + m.getId(), Utils.ca(4, aDustS), "  X", "   ", "   ", 'X', aDust);
+            //RecipeHelper.addShaped("dust_tiny_to_dust_" + m.getId(), Utils.ca(9, aDustT), "X  ", "   ", "   ", 'X', aDust);
+            //RecipeHelper.addShapeless("dust_small_to_dust_" + m.getId(), aDust, aDustS.copy(), aDustS.copy(), aDustS.copy(), aDustS.copy());
+            //RecipeHelper.addShapeless("dust_tiny_to_dust_" + m.getId(), aDust, aDustT.copy(), aDustT.copy(), aDustT.copy(), aDustT.copy(), aDustT.copy(), aDustT.copy(), aDustT.copy(), aDustT.copy(), aDustT.copy());
             if (m.getFuelPower() > 0) {
                 //RecipeAdder.addFuel(aDust, null, m.mFuelPower, m.mFuelType);
             }
@@ -536,9 +535,9 @@ public class MaterialRecipeLoader {
         for (Material m : TOOLS.getMats()) {
 
             if (!m.has(INGOT)) continue; //TODO temp
-            RecipeHelper.addShaped(Ref.MODID + "_wrench" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', m.getIngot(1));
-            RecipeHelper.addShaped(Ref.MODID + "_hammer" + m.getId(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
-            RecipeHelper.addShaped(Ref.MODID + "_sword" + m.getId(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
+            //RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IXI", "III", " I ", 'I', m.getIngot(1), 'X', "craftingToolForgeHammer");
+            //RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
+            //RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
             
             /*
             if (m.has(INGOT) && m.has(Plate) && !m.has(RUBBERTOOLS) && m == m.mMacerateInto) {
