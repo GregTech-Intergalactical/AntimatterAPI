@@ -3,7 +3,6 @@ package muramasa.gtu.api.items;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
@@ -144,13 +143,14 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public boolean hasContainerItem(ItemStack stack) {
-        return true;
+        return false;
     }
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-        if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
-    	return damage(stack, getType().getDamageCrafting());
+//        if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
+//    	return damage(stack, getType().getDamageCrafting());
+        return stack;
     }
 
     @Override

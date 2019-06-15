@@ -1,5 +1,6 @@
 package muramasa.gtu.api.materials;
 
+import com.google.common.base.CaseFormat;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -85,6 +86,10 @@ public class Prefix implements IGregTechObject {
             hasLocName = true;
         }
         return namePre + material.getDisplayName() + namePost;
+    }
+
+    public String oreName(Material material) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, getId().concat("_").concat(material.getId()));
     }
 
     public boolean isVisible() {
