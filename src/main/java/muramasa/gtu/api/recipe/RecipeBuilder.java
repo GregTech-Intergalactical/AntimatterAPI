@@ -37,6 +37,13 @@ public class RecipeBuilder {
             else System.out.println("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return;
         }
+
+        if (Unifier.USE_MOD_PRIORITY && itemsOutput != null) {
+            for (int i = 0; i < itemsOutput.length; i++) {
+                itemsOutput[i] = Unifier.get(itemsOutput[i]);
+            }
+        }
+
         //TODO validate item/fluid inputs/outputs do not exceed machine gui values
         //TODO get a recipe build method to machine type so it can be overriden?
         Recipe recipe = new Recipe(
