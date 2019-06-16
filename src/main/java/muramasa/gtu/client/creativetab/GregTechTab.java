@@ -2,6 +2,7 @@ package muramasa.gtu.client.creativetab;
 
 import muramasa.gtu.Ref;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
@@ -9,23 +10,22 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class GregTechTab extends CreativeTabs {
 
-    private final String tabName;
-    private ItemStack tabStack;
+    private final String name;
+    private ItemStack stack = new ItemStack(Items.IRON_INGOT);
 
-    public GregTechTab(String label, ItemStack stack) {
-        super(Ref.MODID + "." + label);
-        tabName = label;
-        tabStack = stack;
+    public GregTechTab(String name) {
+        super(Ref.MODID + "." + name);
+        this.name = name;
     }
 
-    public String getTabName() {
-        return tabName;
+    public String getName() {
+        return name;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {
-        return tabStack;
+        return stack;
     }
 
     @SideOnly(Side.CLIENT)
@@ -34,7 +34,7 @@ public class GregTechTab extends CreativeTabs {
         super.displayAllRelevantItems(items);
     }
 
-    public void setTabStack(ItemStack stack) {
-        tabStack = stack;
+    public void setStack(ItemStack stack) {
+        this.stack = stack;
     }
 }

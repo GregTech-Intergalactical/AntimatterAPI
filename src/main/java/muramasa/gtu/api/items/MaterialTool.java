@@ -76,7 +76,7 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab instanceof GregTechTab && ((GregTechTab) tab).getTabName().equals("items")) {
+        if (tab instanceof GregTechTab && ((GregTechTab) tab).getName().equals("items")) {
             items.add(type.isPowered() ? get(null, null, 1600000) : get(null, null));
         }
     }

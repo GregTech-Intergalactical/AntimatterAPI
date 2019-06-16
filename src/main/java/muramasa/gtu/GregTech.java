@@ -5,6 +5,7 @@ import muramasa.gtu.api.blocks.GTItemBlock;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.data.Structures;
 import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.recipe.RecipeMap;
@@ -78,7 +79,11 @@ public class GregTech {
         Guis.init();
         Structures.init();
         Data.init();
-        System.out.println("GREGTECH PREINIT FINISHED");
+
+        Ref.TAB_ITEMS.setStack(Data.DebugScanner.get(1));
+        Ref.TAB_MATERIALS.setStack(Materials.Aluminium.getIngot(1));
+        Ref.TAB_MACHINES.setStack(Data.DebugScanner.get(1));
+        Ref.TAB_BLOCKS.setStack(Data.DebugScanner.get(1));
     }
 
     @Mod.EventHandler

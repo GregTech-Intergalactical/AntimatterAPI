@@ -64,7 +64,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab) {
-            if (((GregTechTab) tab).getTabName().equals("materials")) {
+            if (((GregTechTab) tab).getName().equals("materials")) {
                 if (getPrefix().isVisible()) {
                     items.add(new ItemStack(this));
                 }

@@ -1,9 +1,6 @@
 package muramasa.gtu;
 
 import muramasa.gtu.client.creativetab.GregTechTab;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 import java.util.Random;
 
@@ -21,10 +18,10 @@ public class Ref {
     public static final String SERVER = "muramasa.gtu.proxy.ServerProxy";
 
     /** Creative Tabs **/
-    public static GregTechTab TAB_MATERIALS = new GregTechTab("materials", new ItemStack(Items.IRON_INGOT));
-    public static GregTechTab TAB_ITEMS = new GregTechTab("items", new ItemStack(Items.BLAZE_ROD));
-    public static GregTechTab TAB_BLOCKS = new GregTechTab("blocks", new ItemStack(Blocks.IRON_BLOCK));
-    public static GregTechTab TAB_MACHINES = new GregTechTab("machines", new ItemStack(Blocks.FURNACE));
+    public static GregTechTab TAB_MATERIALS = new GregTechTab("materials");
+    public static GregTechTab TAB_ITEMS = new GregTechTab("items");
+    public static GregTechTab TAB_BLOCKS = new GregTechTab("blocks");
+    public static GregTechTab TAB_MACHINES = new GregTechTab("machines");
 
     /** GUI IDs **/
     public static final int GUI_ID_MACHINE = 0;

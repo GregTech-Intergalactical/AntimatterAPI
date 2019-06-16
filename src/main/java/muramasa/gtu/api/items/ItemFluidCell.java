@@ -61,7 +61,7 @@ public class ItemFluidCell extends StandardItem {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab instanceof GregTechTab && ((GregTechTab) tab).getTabName().equals("items")) {
+        if (tab instanceof GregTechTab && ((GregTechTab) tab).getName().equals("items")) {
             if (Configs.JEI.SHOW_ALL_FLUID_CELLS) {
                 GenerationFlag.LIQUID.getMats().forEach(m -> items.add(fill(m.getLiquid())));
                 GenerationFlag.GAS.getMats().forEach(m -> items.add(fill(m.getGas())));
