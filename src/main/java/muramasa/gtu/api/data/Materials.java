@@ -1,6 +1,6 @@
 package muramasa.gtu.api.data;
 
-import muramasa.gtu.Ref;
+import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.fluid.GTFluid;
 import muramasa.gtu.api.materials.Material;
@@ -422,7 +422,7 @@ public class Materials {
     public static void init() {
         //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
 
-        if (Ref.ENABLE_ITEM_REPLACEMENTS) {
+        if (Configs.DATA.ENABLE_ITEM_REPLACEMENTS) {
             Prefix.Ingot.addReplacement(Iron, new ItemStack(Items.IRON_INGOT));
             Prefix.Ingot.addReplacement(Gold, new ItemStack(Items.GOLD_INGOT));
             Prefix.Nugget.addReplacement(Iron, new ItemStack(Items.IRON_NUGGET));

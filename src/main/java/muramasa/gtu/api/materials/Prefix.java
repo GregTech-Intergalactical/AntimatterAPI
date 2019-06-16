@@ -1,7 +1,7 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.base.CaseFormat;
-import muramasa.gtu.Ref;
+import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
@@ -93,7 +93,7 @@ public class Prefix implements IGregTechObject {
     }
 
     public boolean isVisible() {
-        return visible || Ref.showAllItems;
+        return visible || Configs.JEI.SHOW_ALL_MATERIAL_ITEMS;
     }
 
     public boolean allowGeneration(Material material) {
