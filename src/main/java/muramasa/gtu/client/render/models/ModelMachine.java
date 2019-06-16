@@ -1,5 +1,6 @@
 package muramasa.gtu.client.render.models;
 
+import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.cover.Cover;
@@ -38,7 +39,7 @@ public class ModelMachine implements IModel {
         BakedMachine.BASE = BASE.bake(state, format, getter);
         Collection<Machine> machines = Machines.getTypes(BASIC, MULTI, HATCH);
         machines.add(Machines.INVALID);
-        if (!Ref.BASIC_MACHINE_MODELS) {
+        if (!Configs.MISC.BASIC_MACHINE_MODELS) {
             //TODO merge overlays into single model
             BakedMachine.OVERLAYS = new IBakedModel[Machine.getLastInternalId()][6];
             IBakedModel overlay;
@@ -72,11 +73,11 @@ public class ModelMachine implements IModel {
         BakedMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
-            ModelResourceLocation loc = Ref.BASIC_MACHINE_MODELS ? Cover.getBasicModel() : cover.getModel();
+            ModelResourceLocation loc = Configs.MISC.BASIC_MACHINE_MODELS ? Cover.getBasicModel() : cover.getModel();
             BakedMachine.COVERS[cover.getInternalId()] = ModelUtils.tex(ModelUtils.load(loc), "base", cover.getTextures()[0]).bake(state, format, getter);
         }
 
-        return Ref.BASIC_MACHINE_MODELS ? new BakedMachineBasic() : new BakedMachine();
+        return Configs.MISC.BASIC_MACHINE_MODELS ? new BakedMachineBasic() : new BakedMachine();
     }
 
     @Override

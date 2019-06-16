@@ -1,5 +1,6 @@
 package muramasa.gtu.api.recipe;
 
+import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.Utils;
@@ -38,7 +39,7 @@ public class RecipeBuilder {
             return;
         }
 
-        if (Unifier.USE_MOD_PRIORITY && itemsOutput != null) {
+        if (Configs.RECIPE.ENABLE_RECIPE_UNIFICATION && itemsOutput != null) {
             for (int i = 0; i < itemsOutput.length; i++) {
                 itemsOutput[i] = Unifier.get(itemsOutput[i]);
             }

@@ -1,6 +1,6 @@
 package muramasa.gtu.api.tools;
 
-import muramasa.gtu.Ref;
+import muramasa.gtu.Configs;
 import muramasa.gtu.api.items.MaterialTool;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -24,11 +24,11 @@ public class ToolAxe extends MaterialTool {
 
     @Override
     public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
-        if (Ref.AXE_TIMBER && player.isSneaking()) {
+        if (Configs.GAMEPLAY.AXE_TIMBER && player.isSneaking()) {
             Set<BlockPos> set = new HashSet<>();
             BlockPos tempPos;
             IBlockState state;
-            for (int y = origin.getY() + 1; y < origin.getY() + Ref.MAX_AXE_TIMBER; y++) {
+            for (int y = origin.getY() + 1; y < origin.getY() + Configs.GAMEPLAY.AXE_TIMBER_MAX; y++) {
                 tempPos = new BlockPos(origin.getX(), y, origin.getZ());
                 state = world.getBlockState(tempPos);
                 if (state.getBlock().isAir(state, world, tempPos)) {

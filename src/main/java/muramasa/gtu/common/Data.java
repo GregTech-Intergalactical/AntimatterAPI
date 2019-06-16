@@ -1,6 +1,6 @@
 package muramasa.gtu.common;
 
-import muramasa.gtu.Ref;
+import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
@@ -27,7 +27,7 @@ import java.util.List;
 @Mod.EventBusSubscriber
 public class Data {
 
-    private static boolean HC = Ref.HARDCORE_CABLES;
+    private static boolean HC = Configs.GAMEPLAY.HARDCORE_CABLES;
 
     public static void init() {
 

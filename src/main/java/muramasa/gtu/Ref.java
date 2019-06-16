@@ -33,29 +33,14 @@ public class Ref {
 
     /** Global Data **/
     public static final int[] V = new int[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
-    public static final int MB_INGOT = 144;
-    public static final int MB_LIQUID = 1000;
 
     /** Debug Options **/
     public static boolean SHOW_STACK_ORE_DICT = true;
     public static boolean RECIPE_EXCEPTIONS = true;
 
     /** Config Values **/
-    public static boolean HARDCORE_CABLES = true;
-    public static boolean showAllItems = true;
-    public static boolean enableAllModItem = true;
-    public static boolean ENABLE_ALL_REGISTRARS = true;
-    public static boolean BASIC_MACHINE_MODELS = false;
-    public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false;
-    public static boolean mDisableOldChemicalRecipes = false;
-    public static boolean ENABLE_ITEM_REPLACEMENTS = true;
-    public static boolean DISABLE_VANILLA_ORE_GENERATION = true;
-    public static boolean DISABLE_VANILLA_STONE_GENERATION = false;
-    public static int TOOL_SOUND_RANGE = 10;
-
-    /** Tools **/
-    public static boolean AXE_TIMBER = true;
-    public static int MAX_AXE_TIMBER = 20;
+    public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false; //TODO 5U remnant, determine if needed
+    public static boolean mDisableOldChemicalRecipes = false; //TODO 5U remnant, determine if needed
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";
@@ -63,7 +48,6 @@ public class Ref {
 
     public static final String KEY_MACHINE_STACK_TIER = "st2";
 
-    public static final String KEY_PIPE_STACK_TYPE = "pst";
     public static final String KEY_PIPE_STACK_SIZE = "pss";
     public static final String KEY_CABLE_STACK_INSULATED = "csi";
     public static final String KEY_ITEM_PIPE_STACK_RESTRICTIVE = "ipsr";

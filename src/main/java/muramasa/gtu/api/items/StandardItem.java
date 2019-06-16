@@ -1,6 +1,7 @@
 package muramasa.gtu.api.items;
 
 import com.google.common.base.CaseFormat;
+import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
@@ -65,7 +66,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
     }
 
     public boolean isEnabled() {
-        return enabled || Ref.enableAllModItem;
+        return enabled || Configs.DATA.ENABLE_ALL_MATERIAL_ITEMS;
     }
 
     @Override

@@ -1,7 +1,8 @@
 package muramasa.gtu.common.events;
 
-import muramasa.gtu.Ref;
+import muramasa.gtu.Configs;
 import net.minecraft.world.gen.feature.WorldGenMinable;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,16 +14,16 @@ import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.Ev
 
 public class OreGenHandler {
 
-    private static EnumSet<OreGenEvent.GenerateMinable.EventType> PREVENTED_TYPES = EnumSet.of(
-        COAL, IRON, GOLD, DIAMOND, REDSTONE, LAPIS, QUARTZ
-    );
+    private static EnumSet<OreGenEvent.GenerateMinable.EventType> PREVENTED_TYPES = EnumSet.noneOf(OreGenEvent.GenerateMinable.EventType.class);
 
-    public OreGenHandler() {
-        if (Ref.DISABLE_VANILLA_STONE_GENERATION) PREVENTED_TYPES.addAll(Arrays.asList(ANDESITE, DIORITE, GRANITE));
+    public static void init() {
+        if (Configs.WORLD.DISABLE_VANILLA_ORE_GEN) PREVENTED_TYPES.addAll(Arrays.asList(COAL, IRON, GOLD, DIAMOND, REDSTONE, LAPIS, QUARTZ));
+        if (Configs.WORLD.DISABLE_VANILLA_STONE_GEN) PREVENTED_TYPES.addAll(Arrays.asList(ANDESITE, DIORITE, GRANITE));
+        if (PREVENTED_TYPES.size() > 0) MinecraftForge.EVENT_BUS.register(OreGenHandler.class);
     }
 
     @SubscribeEvent
-    public void onOreGenMineable(OreGenEvent.GenerateMinable e) {
+    public static void onOreGenMineable(OreGenEvent.GenerateMinable e) {
         e.setResult(e.getGenerator() instanceof WorldGenMinable && PREVENTED_TYPES.contains(e.getType()) ? Event.Result.DENY : e.getResult());
     }
 }

@@ -1,5 +1,6 @@
 package muramasa.gtu.api;
 
+import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.ICoverHandler;
@@ -93,7 +94,7 @@ public final class GregTechAPI {
     public static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
 
     public static void addRegistrar(IGregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Ref.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
+        if (registrar.isEnabled() || Configs.MISC.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
     }
 
     public static void onRegistration(RegistrationEvent event) {
