@@ -12,7 +12,7 @@ public class ItemStackWrapper implements IRecipeObject<ItemStack> {
     public ItemStackWrapper(ItemStack stack) {
         this.stack = stack;
         this.count = stack.getCount() > 1;
-        this.damage = stack.getMaxDamage() > 0;
+        this.damage = stack.getItemDamage() > 0;
         this.nbt = stack.hasTagCompound();
     }
 
