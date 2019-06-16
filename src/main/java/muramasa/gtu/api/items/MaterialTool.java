@@ -148,8 +148,9 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
+        damage(stack, getType().getDamageCrafting(), null, false);
         if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
-    	return damage(stack, getType().getDamageCrafting());
+    	return stack;
     }
 
     @Override
@@ -241,7 +242,7 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
         int durability = getDurability(stack);
-        return durability < getMaxDurability(stack) && durability > 0;
+        return durability > 0 && durability < getMaxDurability(stack);
     }
 
     @Override
@@ -284,16 +285,12 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
     public ItemStack get(Material primary, Material secondary) {
         ItemStack stack = new ItemStack(this);
         if (primary != null && !primary.getEnchantments().isEmpty()) {
-        	//Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
-        	primary.getEnchantments().forEach(
-        			//TODO: canApply normally just takes canApplyAtEnchantingTable, 
-        			//      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
-        			(enchantment, level) -> {
-        				if (enchantment.canApply(stack)) {
-        					stack.addEnchantment(enchantment, level);
-        				}
-        			});        	
-        	//EnchantmentHelper.setEnchantments(primary.getEnchantments(), stack);
+            //TODO: canApply normally just takes canApplyAtEnchantingTable,
+            //      this isn't a problem for vanilla but maybe for modded enchants that may only be applicable on anvils
+            //      Added check to stop pickaxes getting looting, swords getting fortune that sort of stuff
+        	primary.getEnchantments().forEach((enchantment, level) -> {
+                if (enchantment.canApply(stack)) stack.addEnchantment(enchantment, level);
+            });
         }
         validateTag(stack);
         NBTTagCompound tag = getTag(stack);
@@ -312,42 +309,20 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
         }
         return stack;
     }
-    
-    //TODO: Find a way to play sound at client when this is fired in getContainerItem + boolean return version?
-    public ItemStack damage(ItemStack stack, int damage) {
-    	stack = stack.copy();
-    	stack.setCount(1);
-    	NBTTagCompound tag = getTag(stack);
-    	int newDamage = tag.getInteger(Ref.KEY_TOOL_DATA_DURABILITY) - damage;
-    	if (type.isPowered()) {
-    		long newEnergy = getEnergy(stack) - damage;
-            if (newEnergy > 0) tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, newEnergy);
-            if (newEnergy < 0) tag.setLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
-    	}
-    	else {
-    		if (newDamage > 0) {
-    			tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, newDamage);
-            } else {
-                newDamage = 0;
-                stack.setCount(0);
-            }
-    	}
-    	return stack;
-    }
 
-    public int damage(ItemStack stack, int damage, EntityLivingBase living, boolean playSound) {
+    public int damage(ItemStack stack, int damage, @Nullable EntityLivingBase living, boolean playSound) {
         NBTTagCompound tag = getTag(stack);
         if (living instanceof EntityPlayer && ((EntityPlayer) living).capabilities.isCreativeMode) {
             return tag.getInteger(Ref.KEY_TOOL_DATA_DURABILITY);
         }
         int newDamage = tag.getInteger(Ref.KEY_TOOL_DATA_DURABILITY) - damage;
         if (type.isPowered()) {
-            if (living.getEntityWorld().rand.nextInt(25) == 0) {
+            if (Ref.RNG.nextInt(25) == 0) {
                 if (newDamage > 0) {
                     tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, newDamage);
                 } else {
                     newDamage = 0;
-                    stack.damageItem(2, living);
+                    stack.shrink(1);
                 }
             }
             long newEnergy = getEnergy(stack) - damage;
@@ -358,10 +333,11 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
                 tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, newDamage);
             } else {
                 newDamage = 0;
-                stack.damageItem(2, living);
+                stack = ItemStack.EMPTY;
+                stack.shrink(1);
             }
         }
-        if (playSound) type.playUseSound(living.world, living.getPosition());
+        if (playSound && living != null && type.getUseSound() != null) type.getUseSound().play(living.world, living.getPosition());
         return newDamage;
     }
 
