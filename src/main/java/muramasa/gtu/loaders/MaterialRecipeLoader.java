@@ -8,6 +8,7 @@ import muramasa.gtu.api.materials.MaterialStack;
 import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -535,9 +536,9 @@ public class MaterialRecipeLoader {
         for (Material m : TOOLS.getMats()) {
 
             if (!m.has(INGOT)) continue; //TODO temp
-            //RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IXI", "III", " I ", 'I', m.getIngot(1), 'X', "craftingToolForgeHammer");
-            //RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
-            //RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
+            RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', m.getIngot(1));
+            RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', m.getIngot(1), 'S', "stickWood");
+            RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', m.getPlate(1), 'S', "stickWood");
             
             /*
             if (m.has(INGOT) && m.has(Plate) && !m.has(RUBBERTOOLS) && m == m.mMacerateInto) {

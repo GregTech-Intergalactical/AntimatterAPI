@@ -65,7 +65,7 @@ public class StructureBuilder {
                     e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     //TODO log this and return null;
-                    if (e == null) throw new NullPointerException("StructureBuilder failed to parseData slice: " + slices.get(y)[x]);
+                    if (e == null) throw new NullPointerException("StructureBuilder failed to parse slice: " + slices.get(y)[x]);
                     if (e.exclude) continue;
                     elements.add(new Tuple<>(new int3(x, y, z), e));
                 }

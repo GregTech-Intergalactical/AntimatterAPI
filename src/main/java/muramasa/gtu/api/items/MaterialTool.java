@@ -3,6 +3,7 @@ package muramasa.gtu.api.items;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.GTCapabilities;
@@ -60,7 +61,6 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_ITEMS);
-        setMaxDamage(1);
         setMaxStackSize(1);
         GregTechAPI.register(MaterialTool.class, this);
     }
@@ -79,9 +79,9 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
         if (tab instanceof GregTechTab) {
             if (((GregTechTab) tab).getTabName().equals("items")) {
                 if (type.isPowered()) {
-                    items.add(get(Materials.Cobalt, Materials.TungstenSteel, 1600000));
+                    items.add(get(null, null, 1600000));
                 } else {
-                    items.add(get(Materials.Cobalt, Materials.Wood));
+                    items.add(get(null, null));
                 }
             }
         }
@@ -143,14 +143,13 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public boolean hasContainerItem(ItemStack stack) {
-        return false;
+        return true;
     }
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-//        if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
-//    	return damage(stack, getType().getDamageCrafting());
-        return stack;
+        if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
+    	return damage(stack, getType().getDamageCrafting());
     }
 
     @Override
@@ -241,7 +240,8 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return getDurability(stack) < getMaxDurability(stack);
+        int durability = getDurability(stack);
+        return durability < getMaxDurability(stack) && durability > 0;
     }
 
     @Override
