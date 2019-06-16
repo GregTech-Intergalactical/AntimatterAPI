@@ -76,14 +76,8 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab instanceof GregTechTab) {
-            if (((GregTechTab) tab).getTabName().equals("items")) {
-                if (type.isPowered()) {
-                    items.add(get(null, null, 1600000));
-                } else {
-                    items.add(get(null, null));
-                }
-            }
+        if (tab instanceof GregTechTab && ((GregTechTab) tab).getTabName().equals("items")) {
+            items.add(type.isPowered() ? get(null, null, 1600000) : get(null, null));
         }
     }
 
@@ -333,7 +327,6 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
                 tag.setInteger(Ref.KEY_TOOL_DATA_DURABILITY, newDamage);
             } else {
                 newDamage = 0;
-                stack = ItemStack.EMPTY;
                 stack.shrink(1);
             }
         }
