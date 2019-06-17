@@ -1,8 +1,8 @@
-package muramasa.gtu.api.recipe;
+package muramasa.gtu.api.Unification;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidStackWrapper implements IRecipeObject<FluidStack> {
+public class FluidStackWrapper {
 
     private FluidStack fluid;
     private boolean nbt;
@@ -12,8 +12,7 @@ public class FluidStackWrapper implements IRecipeObject<FluidStack> {
         this.nbt = fluid.tag != null;
     }
 
-    @Override
-    public FluidStack getInternal() {
+    public FluidStack getFluid() {
         return fluid;
     }
 

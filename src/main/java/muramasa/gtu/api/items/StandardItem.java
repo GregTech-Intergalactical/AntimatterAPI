@@ -157,6 +157,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
     }
 
     public ItemStack get(int count) {
+        //TODO replace consumeTag with flag system
         if (count == 0) return Utils.addNoConsumeTag(new ItemStack(this, 1));
         return new ItemStack(this, count);
     }
