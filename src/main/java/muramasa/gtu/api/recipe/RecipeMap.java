@@ -1,12 +1,13 @@
 package muramasa.gtu.api.recipe;
 
-import com.google.common.collect.Lists;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class RecipeMap {
 
@@ -20,7 +21,7 @@ public class RecipeMap {
     public static RecipeMap NAQUADAH_FUELS = new RecipeMap("naquadah_fuels", "Fuel Value: ", " EU", 20);
     public static RecipeMap PLASMA_FUELS = new RecipeMap("plasma_fuels", "Fuel Value: ", " EU", 100);
 
-    private HashMap<IRecipeObject, List<Recipe>> LOOKUP;
+    private HashMap<IRecipeObject, Recipe> LOOKUP;
     private String categoryId, categoryName;
     private String specialPre = "", specialPost = ""; //TODO move to lang
 
@@ -44,60 +45,35 @@ public class RecipeMap {
         return categoryName;
     }
 
+    //TODO validate there are no duplicates
     public Collection<Recipe> getRecipes(boolean filterHidden) {
-        List<Recipe> recipes = new ArrayList<>();
-        LOOKUP.values().forEach(l -> l.forEach(r -> {
-            //TODO remove contains check, duplicate recipes are present in LOOKUP
-            if (!recipes.contains(r) && !(r.isHidden() && filterHidden)) recipes.add(r);
-        }));
-        return recipes;
+        return LOOKUP.values();
     }
 
     void add(Recipe recipe) {
-        List<Recipe> existing;
+        IRecipeObject input = null;
         if (recipe.hasInputItems() && !recipe.hasInputFluids()) {
-            for (int i = 0; i < recipe.getInputItems().length; i++) {
-                ItemStackWrapper input = new ItemStackWrapper(recipe.getInputItems()[i]);
-                if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
-                else LOOKUP.put(input, Lists.newArrayList(recipe));
-            }
+            input = new RecipeInputItem(recipe.getInputItems());
         } else if (!recipe.hasInputItems() && recipe.hasInputFluids()) {
-            for (int i = 0; i < recipe.getInputFluids().length; i++) {
-                FluidStackWrapper input = new FluidStackWrapper(recipe.getInputFluids()[i]);
-                if ((existing = LOOKUP.get(input)) != null) existing.add(recipe);
-                else LOOKUP.put(input, Lists.newArrayList(recipe));
-            }
+            input = new RecipeInputFluid(recipe.getInputFluids());
         }
+        if (LOOKUP.containsKey(input)) {
+            Utils.printError("Duplicate recipe detected, skipping!: " + recipe);
+            return;
+        }
+        LOOKUP.put(input, recipe);
     }
 
     @Nullable
     //TODO take into account machine tier
     public static Recipe findRecipeItem(RecipeMap map, ItemStack[] items) {
         if (map == null || !Utils.areItemsValid(items)) return null;
-        List<Recipe> matches = map.LOOKUP.get(new ItemStackWrapper(items[0]));
-        if (matches == null) return null;
-        int size = matches.size();
-        Recipe match;
-        for (int i = 0; i < size; i++) {
-            match = matches.get(i);
-            if (!Utils.doItemsMatchAndSizeValid(match.getInputItems(), items)) continue;
-            return match;
-        }
-        return null;
+        return map.LOOKUP.get(new RecipeInputItem(items));
     }
 
     @Nullable
     public static Recipe findRecipeFluid(RecipeMap map, FluidStack[] fluids) {
-        if (map == null || !Utils.areFluidsValid(fluids)) return null;
-        List<Recipe> matches = map.LOOKUP.get(new FluidStackWrapper(fluids[0]));
-        if (matches == null) return null;
-        int size = matches.size();
-        Recipe match;
-        for (int i = 0; i < size; i++) {
-            match = matches.get(i);
-            if (!Utils.doFluidsMatchAndSizeValid(match.getInputFluids(), fluids)) continue;
-            return match;
-        }
-        return null;
+        if (map == null || Utils.areFluidsValid(fluids)) return null;
+        return map.LOOKUP.get(new RecipeInputFluid(fluids));
     }
 }

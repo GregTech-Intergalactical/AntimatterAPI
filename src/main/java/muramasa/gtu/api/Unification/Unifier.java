@@ -1,4 +1,4 @@
-package muramasa.gtu.api.recipe;
+package muramasa.gtu.api.Unification;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;

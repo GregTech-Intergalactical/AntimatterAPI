@@ -112,6 +112,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     @Override
     public void onContentsChanged(ContentEvent type, int slot) {
+        //TODO seems to fire before the inventory has actually changed?
         switch (type) {
             case ITEM_INPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
