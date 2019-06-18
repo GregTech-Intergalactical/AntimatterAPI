@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 public class RecipeMap {
 
@@ -47,7 +48,7 @@ public class RecipeMap {
 
     //TODO validate there are no duplicates
     public Collection<Recipe> getRecipes(boolean filterHidden) {
-        return LOOKUP.values();
+        return LOOKUP.values().stream().filter(r -> !(r.isHidden() && filterHidden)).collect(Collectors.toList());
     }
 
     void add(Recipe recipe) {
@@ -73,7 +74,7 @@ public class RecipeMap {
 
     @Nullable
     public static Recipe findRecipeFluid(RecipeMap map, FluidStack[] fluids) {
-        if (map == null || Utils.areFluidsValid(fluids)) return null;
+        if (map == null || !Utils.areFluidsValid(fluids)) return null;
         return map.LOOKUP.get(new RecipeInputFluid(fluids));
     }
 }

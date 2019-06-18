@@ -7,7 +7,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -209,23 +208,6 @@ public class Utils {
             }
         }
         return matchCount >= a.length;
-    }
-
-    public static int getItemHash(ItemStack item) {
-        //int hash = 1;
-        int hash = 0;
-        hash = 31 * hash + Item.getIdFromItem(item.getItem());
-        if (item.getItemDamage() > 0) hash = 31 * hash + item.getItemDamage();
-        //if (item.hasTagCompound()) hash = 31 * hash + item.getTagCompound().hashCode();
-        return hash;
-    }
-
-    public static int getFluidHash(FluidStack fluid) {
-        //int hash = 1;
-        int hash = 0;
-        hash = 31 * hash + fluid.getFluid().hashCode();
-        //if (fluid.tag != null) hash = 31 * hash + fluid.tag.hashCode();
-        return hash;
     }
 
     @Nullable

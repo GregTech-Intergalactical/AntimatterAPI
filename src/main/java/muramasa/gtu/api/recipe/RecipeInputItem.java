@@ -1,34 +1,30 @@
 package muramasa.gtu.api.recipe;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 
 public class RecipeInputItem implements IRecipeObject {
 
-    private ItemStack[] items;
-    private int[] itemHash;
-    private Int2IntArrayMap hashMap = new Int2IntArrayMap();
-    private int objectHash;
+    private ItemWrapper[] items;
+    private Int2IntArrayMap map = new Int2IntArrayMap();
+    private int hash = 1;
 
     public RecipeInputItem(ItemStack... items) {
-        this.items = items;
-        this.itemHash = new int[items.length];
+        this.items = new ItemWrapper[items.length];
         for (int i = 0; i < items.length; i++) {
-            int hash = Utils.getItemHash(items[i]);
-            itemHash[i] = hash;
-            hashMap.put(itemHash[i], i);
-            objectHash += hash;
-            //objectHash ^= hash; //TODO broken?
+            this.items[i] = new ItemWrapper(items[i]);
+            map.put(this.items[i].getHash(), i);
+            hash += this.items[i].getHash();
+            //hash ^= hash; //TODO broken?
         }
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof RecipeInputItem)) return false;
-        RecipeInputItem input = (RecipeInputItem) obj;
+        RecipeInputItem other = (RecipeInputItem) obj;
         for (int i = 0; i < items.length; i++) {
-            int recipeCount = input.items[input.hashMap.get(itemHash[i])].getCount();
+            int recipeCount = other.items[other.map.get(items[i].getHash())].getCount();
             int invCount = items[i].getCount();
             if (invCount < recipeCount) return false;
         }
@@ -37,6 +33,6 @@ public class RecipeInputItem implements IRecipeObject {
 
     @Override
     public int hashCode() {
-        return objectHash;
+        return hash;
     }
 }

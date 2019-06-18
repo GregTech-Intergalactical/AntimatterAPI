@@ -1,7 +1,6 @@
 package muramasa.gtu.api.recipe;
 
 import com.google.common.collect.Lists;
-import muramasa.gtu.api.Unification.Unifier;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.item.Item;

@@ -1,4 +1,4 @@
-package muramasa.gtu.api.Unification;
+package muramasa.gtu.api.recipe;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
@@ -12,10 +12,12 @@ import java.util.Set;
 
 public class Unifier {
 
-    private static Set<ItemStackWrapper> UNIFICATION_BLACKLIST = new HashSet<>();
+    private static Set<ItemWrapper> UNIFICATION_BLACKLIST = new HashSet<>();
 
     static {
-        if (Configs.RECIPE.MOD_PRIORITY.length == 0 || Configs.RECIPE.MOD_PRIORITY[0].equals(Ref.MODID)) Configs.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
+        if (Configs.RECIPE.MOD_PRIORITY.length == 0 || Configs.RECIPE.MOD_PRIORITY[0].equals(Ref.MODID)) {
+            Configs.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
+        }
     }
 
     public static ItemStack get(ItemStack stack) {
@@ -27,7 +29,7 @@ public class Unifier {
             for (int j = 0; j < matchingStacks.size(); j++) {
                 if (matchingStacks.get(j).getItem().getRegistryName() == null) continue;
                 if (matchingStacks.get(j).getItem().getRegistryName().getResourceDomain().equals(Configs.RECIPE.MOD_PRIORITY[i]) &&
-                    !UNIFICATION_BLACKLIST.contains(new ItemStackWrapper(matchingStacks.get(j)))) {
+                    !UNIFICATION_BLACKLIST.contains(new ItemWrapper(matchingStacks.get(j)))) {
                     return matchingStacks.get(j).copy();
                 }
             }
