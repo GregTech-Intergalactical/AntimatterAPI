@@ -2,7 +2,6 @@ package muramasa.gtu.api.recipe;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.Unification.Unifier;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
