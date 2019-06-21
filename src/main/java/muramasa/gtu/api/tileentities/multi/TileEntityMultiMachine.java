@@ -5,11 +5,14 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.machines.MachineFlag;
+import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
 import muramasa.gtu.api.structure.StructureResult;
-import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -19,7 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TileEntityMultiMachine extends TileEntityBasicMachine implements IComponent {
+public class TileEntityMultiMachine extends TileEntityRecipeMachine implements IComponent {
 
     //TODO set protected
     public boolean validStructure;
@@ -64,6 +67,54 @@ public class TileEntityMultiMachine extends TileEntityBasicMachine implements IC
         clearComponents();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");
+    }
+
+    @Override
+    public Recipe findRecipe() {
+        if (hasFlag(MachineFlag.ITEM)) return RecipeMap.findRecipeItem(getType().getRecipeMap(), getMaxInputVoltage(), getStoredItems());
+        else if (hasFlag(MachineFlag.FLUID)) return RecipeMap.findRecipeFluid(getType().getRecipeMap(), getMaxInputVoltage(), getStoredFluids());
+        return null;
+    }
+
+    @Override
+    public void consumeInputs() {
+        if (activeRecipe.hasInputItems()) consumeItems(activeRecipe.getInputItems());
+        if (activeRecipe.hasInputFluids()) consumeFluids(activeRecipe.getInputFluids());
+    }
+
+    @Override
+    public boolean canOutput() {
+        if ((hasFlag(MachineFlag.ITEM) && !canItemsFit(activeRecipe.getOutputItems())) ||
+            (hasFlag(MachineFlag.FLUID) && !canFluidsFit(activeRecipe.getOutputFluids()))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void addOutputs() {
+        if (hasFlag(MachineFlag.ITEM)) outputItems(activeRecipe.getOutputItems());
+        if (hasFlag(MachineFlag.FLUID)) outputFluids(activeRecipe.getOutputFluids());
+    }
+
+    @Override
+    public boolean canRecipeContinue() {
+        if ((hasFlag(MachineFlag.ITEM) && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), getStoredItems())) ||
+            (hasFlag(MachineFlag.FLUID) && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), getStoredFluids()))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean consumeResourceForRecipe() {
+        //TODO breaks generators like combustion engine
+//        if (getStoredEnergy() >= activeRecipe.getPower()) {
+//            consumeEnergy(activeRecipe.getPower());
+//            return true;
+//        }
+//        return false;
+        return true;
     }
 
     /** Returns list of items across all input hatches. Merges equal filters empty **/

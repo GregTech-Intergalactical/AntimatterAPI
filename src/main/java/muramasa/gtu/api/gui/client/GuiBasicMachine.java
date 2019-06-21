@@ -2,12 +2,12 @@ package muramasa.gtu.api.gui.client;
 
 import muramasa.gtu.api.gui.server.ContainerMachine;
 import muramasa.gtu.api.machines.MachineFlag;
-import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import net.minecraft.client.gui.GuiButton;
 
 public class GuiBasicMachine extends GuiMachine {
 
-    public GuiBasicMachine(TileEntityBasicMachine tile, ContainerMachine container) {
+    public GuiBasicMachine(TileEntityRecipeMachine tile, ContainerMachine container) {
         super(tile, container);
     }
 
@@ -28,7 +28,7 @@ public class GuiBasicMachine extends GuiMachine {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        int progressTime = (int)(20 * ((TileEntityBasicMachine) tile).getClientProgress());
+        int progressTime = (int)(20 * ((TileEntityRecipeMachine) tile).getClientProgress());
         drawTexturedModalRect(guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
 
         if (tile.getMachineState().getOverlayId() == 2) {

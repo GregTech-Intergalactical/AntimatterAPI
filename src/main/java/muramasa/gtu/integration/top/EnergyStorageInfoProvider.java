@@ -4,7 +4,7 @@ import mcjty.theoneprobe.api.*;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IEnergyStorage;
-import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,8 +23,8 @@ public class EnergyStorageInfoProvider implements IProbeInfoProvider {
 		if (state.getBlock().hasTileEntity(state)) {
             TileEntity tile = Utils.getTile(world, data.getPos());
             if (tile == null) return;
-			if (tile instanceof TileEntityBasicMachine) {
-				TileEntityBasicMachine machine = (TileEntityBasicMachine) tile;
+			if (tile instanceof TileEntityRecipeMachine) {
+				TileEntityRecipeMachine machine = (TileEntityRecipeMachine) tile;
 				if (machine.getMaxProgress() > 0) {
 					int progressScaled = machine.getMaxProgress() == 0 ? 0 : (int) Math.floor(machine.getCurProgress() / (machine.getMaxProgress() * 1.0) * 100);
 					IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));

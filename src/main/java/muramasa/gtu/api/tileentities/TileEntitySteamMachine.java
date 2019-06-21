@@ -1,6 +1,6 @@
 package muramasa.gtu.api.tileentities;
 
-public class TileEntitySteamMachine extends TileEntityItemFluidMachine {
+public class TileEntitySteamMachine extends TileEntityRecipeMachine {
 
     @Override
     public boolean consumeResourceForRecipe() {

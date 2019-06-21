@@ -1,21 +1,12 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.tileentities.multi.TileEntityFluidMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 
-public class TileEntityFusionReactor extends TileEntityFluidMultiMachine {
+public class TileEntityFusionReactor extends TileEntityMultiMachine {
 
     @Override
     public void onRecipeFound() {
         consumeEnergy(activeRecipe.getSpecialValue());
         System.out.println("Consumed Starting Energy");
-    }
-
-    @Override
-    public boolean consumeResourceForRecipe() {
-        if (getStoredEnergy() >= activeRecipe.getPower()) {
-            consumeEnergy(activeRecipe.getPower());
-            return true;
-        }
-        return false;
     }
 }

@@ -1,11 +1,11 @@
 package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.api.structure.StructureResult;
-import muramasa.gtu.api.tileentities.multi.TileEntityBasicItemMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityBasicMultiMachine;
 import muramasa.gtu.api.util.int3;
 import net.minecraft.init.Blocks;
 
-public class TileEntityPrimitiveBlastFurnace extends TileEntityBasicItemMultiMachine {
+public class TileEntityPrimitiveBlastFurnace extends TileEntityBasicMultiMachine {
 
     @Override
     public boolean onStructureValid(StructureResult result) {

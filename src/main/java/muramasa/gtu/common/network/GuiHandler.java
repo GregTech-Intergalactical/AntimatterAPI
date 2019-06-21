@@ -9,7 +9,7 @@ import muramasa.gtu.api.gui.server.ContainerHatch;
 import muramasa.gtu.api.gui.server.ContainerMultiMachine;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.tileentities.TileEntityBasicMachine;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
@@ -31,7 +31,7 @@ public class GuiHandler implements IGuiHandler {
             Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
             if (machine.getGui().getGuiId() == Ref.GUI_ID_MACHINE) {
-                return new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory);
+                return new ContainerBasicMachine((TileEntityRecipeMachine) tile, player.inventory);
             } else if (machine.getGui().getGuiId() == Ref.GUI_ID_MULTI_MACHINE) {
                 return new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory);
             } else if (machine.getGui().getGuiId() == Ref.GUI_ID_HATCH) {
@@ -49,7 +49,7 @@ public class GuiHandler implements IGuiHandler {
             Machine machine = ((TileEntityMachine) tile).getType();
             if (!machine.hasFlag(MachineFlag.GUI)) return null;
             if (machine.getGui().getGuiId() == Ref.GUI_ID_MACHINE) {
-                return new GuiBasicMachine((TileEntityBasicMachine) tile, new ContainerBasicMachine((TileEntityBasicMachine) tile, player.inventory));
+                return new GuiBasicMachine((TileEntityRecipeMachine) tile, new ContainerBasicMachine((TileEntityRecipeMachine) tile, player.inventory));
             } else if (machine.getGui().getGuiId() == Ref.GUI_ID_MULTI_MACHINE) {
                 return new GuiMultiMachine((TileEntityMultiMachine) tile, new ContainerMultiMachine((TileEntityMultiMachine) tile, player.inventory));
             } else if (machine.getGui().getGuiId() == Ref.GUI_ID_HATCH) {
