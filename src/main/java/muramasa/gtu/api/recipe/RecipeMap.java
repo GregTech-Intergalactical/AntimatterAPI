@@ -67,13 +67,13 @@ public class RecipeMap {
 
     @Nullable
     //TODO take into account machine tier
-    public static Recipe findRecipeItem(RecipeMap map, ItemStack[] items) {
+    public static Recipe findRecipeItem(RecipeMap map, long voltage, ItemStack[] items) {
         if (map == null || !Utils.areItemsValid(items)) return null;
         return map.LOOKUP.get(new RecipeInputItem(items));
     }
 
     @Nullable
-    public static Recipe findRecipeFluid(RecipeMap map, FluidStack[] fluids) {
+    public static Recipe findRecipeFluid(RecipeMap map, long voltage, FluidStack[] fluids) {
         if (map == null || !Utils.areFluidsValid(fluids)) return null;
         return map.LOOKUP.get(new RecipeInputFluid(fluids));
     }

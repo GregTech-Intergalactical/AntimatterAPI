@@ -1,7 +1,7 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.tileentities.multi.TileEntityItemMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 
-public class TileEntityImplosionCompressor extends TileEntityItemMultiMachine {
+public class TileEntityImplosionCompressor extends TileEntityMultiMachine {
 
 }

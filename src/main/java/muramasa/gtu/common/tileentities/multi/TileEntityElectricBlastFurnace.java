@@ -3,10 +3,10 @@ package muramasa.gtu.common.tileentities.multi;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
-import muramasa.gtu.api.tileentities.multi.TileEntityItemFluidMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
 
-public class TileEntityElectricBlastFurnace extends TileEntityItemFluidMultiMachine {
+public class TileEntityElectricBlastFurnace extends TileEntityMultiMachine {
 
     private int heatingCapacity;
 

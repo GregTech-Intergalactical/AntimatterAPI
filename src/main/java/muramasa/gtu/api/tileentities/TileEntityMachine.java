@@ -2,18 +2,19 @@ package muramasa.gtu.api.tileentities;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.ContentEvent;
+import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.api.blocks.BlockMachine;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -75,6 +76,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         return getTier().getInternalId();
     }
 
+    public boolean hasFlag(MachineFlag flag) {
+        return getType().hasFlag(flag);
+    }
+
     public EnumFacing getFacing() {
         return facing != null ? facing : EnumFacing.NORTH;
     }
@@ -114,6 +119,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Nullable
     public MachineConfigHandler getConfigHandler() {
         return configHandler;
+    }
+
+    public long getMaxInputVoltage() {
+        return energyHandler != null ? energyHandler.getMaxInsert() : 0;
     }
 
     /** Setters **/

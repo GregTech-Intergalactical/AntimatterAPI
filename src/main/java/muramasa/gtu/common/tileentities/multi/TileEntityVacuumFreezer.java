@@ -1,10 +1,10 @@
 package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.tileentities.multi.TileEntityItemFluidMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
 
-public class TileEntityVacuumFreezer extends TileEntityItemFluidMultiMachine {
+public class TileEntityVacuumFreezer extends TileEntityMultiMachine {
 
     @Override
     public void onRecipeFound() {

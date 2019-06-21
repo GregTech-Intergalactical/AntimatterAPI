@@ -48,16 +48,11 @@ public final class GregTechAPI {
 
     static {
         register(TileEntityMachine.class);
-        register(TileEntityBasicMachine.class);
-        register(TileEntityItemMachine.class);
-        register(TileEntityFluidMachine.class);
-        register(TileEntityItemFluidMachine.class);
+        register(TileEntityRecipeMachine.class);
         register(TileEntitySteamMachine.class);
         register(TileEntityMultiMachine.class);
-        register(TileEntityBasicItemMultiMachine.class);
-        register(TileEntityItemMultiMachine.class);
-        register(TileEntityFluidMultiMachine.class);
-        register(TileEntityItemFluidMultiMachine.class);
+        register(TileEntityBasicMultiMachine.class);
+        register(TileEntityTank.class);
         register(TileEntityHatch.class);
 
         register(TileEntityPipe.class);

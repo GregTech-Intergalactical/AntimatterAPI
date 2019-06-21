@@ -3,6 +3,8 @@ package muramasa.gtu.api.tileentities;
 import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.util.EnumFacing;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 import static muramasa.gtu.api.machines.MachineFlag.RECIPE;
 import static muramasa.gtu.api.machines.MachineState.*;
 
-public abstract class TileEntityBasicMachine extends TileEntityMachine {
+public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Logic **/
     protected Recipe activeRecipe;
@@ -34,6 +36,8 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
 
     /** Recipe Methods **/
     public Recipe findRecipe() {
+        if (itemHandler != null) return RecipeMap.findRecipeItem(getType().getRecipeMap(), getMaxInputVoltage(), itemHandler.getInputs());
+        else if (fluidHandler != null) return RecipeMap.findRecipeFluid(getType().getRecipeMap(), getMaxInputVoltage(), fluidHandler.getInputs());
         return null;
     }
 
@@ -68,19 +72,29 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     }
 
     public void consumeInputs() {
-        //NOOP
+        if (itemHandler != null) itemHandler.consumeInputs(activeRecipe.getInputItems());
+        if (fluidHandler != null) fluidHandler.consumeInputs(activeRecipe.getInputFluids());
     }
 
     public boolean canOutput() {
-        return true; //NOOP
+        if ((itemHandler != null && !itemHandler.canOutputsFit(activeRecipe.getOutputItems())) ||
+            (fluidHandler != null && !fluidHandler.canOutputsFit(activeRecipe.getOutputFluids()))) {
+            return false;
+        }
+        return true;
     }
 
     public void addOutputs() {
-        //NOOP
+        if (itemHandler != null) itemHandler.addOutputs(activeRecipe.getOutputItems());
+        if (fluidHandler != null) fluidHandler.addOutputs(activeRecipe.getOutputFluids());
     }
 
     public boolean canRecipeContinue() {
-        return true; //NOOP
+        if ((itemHandler != null && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.getInputs())) ||
+            (fluidHandler != null && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), fluidHandler.getInputs()))) {
+            return false;
+        }
+        return true;
     }
 
     public boolean consumeResourceForRecipe() {
@@ -95,10 +109,6 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
     public void resetMachine() {
         setMachineState(IDLE);
         activeRecipe = null;
-    }
-
-    public long getMaxInputVoltage() {
-        return energyHandler != null ? energyHandler.getMaxInsert() : 0;
     }
 
     /** Events **/
@@ -146,6 +156,7 @@ public abstract class TileEntityBasicMachine extends TileEntityMachine {
         return super.setFacing(side.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : side);
     }
 
+    //TODO move to TileEntityMachine?
     @Override
     public void setMachineState(MachineState newState) {
         if (getMachineState().getOverlayId() != newState.getOverlayId() && (newState.getOverlayId() == 0 || newState.getOverlayId() == 1)) {

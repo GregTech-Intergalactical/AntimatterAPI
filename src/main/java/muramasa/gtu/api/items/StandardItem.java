@@ -10,7 +10,6 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.tileentities.TileEntityItemFluidMachine;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
@@ -31,7 +30,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -104,13 +102,13 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                         if (handler != null) {
                             System.out.println(handler.toString());
                         }
-                    } else if (tile instanceof TileEntityItemFluidMachine) {
+                    } /*else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {
                             System.out.println(fluid.getLocalizedName() + " - " + fluid.amount);
                         }
                         tile.markDirty();
-                    } else {
+                    }*/ else {
                         for (Cover c : GregTechAPI.getRegisteredCovers()) {
                             System.out.println(c.getName() + " - " + c.getInternalId());
                         }

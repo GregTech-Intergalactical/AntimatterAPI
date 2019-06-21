@@ -4,12 +4,12 @@ import muramasa.gtu.api.blocks.BlockCoil;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
-import muramasa.gtu.api.tileentities.multi.TileEntityItemMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
 
 import java.util.List;
 
-public class TileEntityMultiSmelter extends TileEntityItemMultiMachine {
+public class TileEntityMultiSmelter extends TileEntityMultiMachine {
 
     private int level = 1, discount = 1;
 
