@@ -24,6 +24,7 @@ public class TextureSet implements IGregTechObject {
     public static TextureSet QUARTZ = new TextureSet("quartz");
     public static TextureSet FINE = new TextureSet("fine");
     public static TextureSet FLINT = new TextureSet("flint");
+    public static TextureSet LIGNITE = new TextureSet("lignite");
 
     private String id;
 

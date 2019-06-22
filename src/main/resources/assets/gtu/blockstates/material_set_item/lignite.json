@@ -1,0 +1,109 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gtu:item/generated"
+  },
+  "variants": {
+    "lignite": {
+      "chunk": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/chunk", "layer1": "gtu:items/material_set/lignite/overlay/chunk"}
+      },
+      "crushed": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/crushed", "layer1": "gtu:items/material_set/lignite/overlay/crushed"}
+      },
+      "crushed_centrifuged": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/crushed_centrifuged"}
+      },
+      "crushed_purified": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/crushed_purified"}
+      },
+      "dust": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/dust"}
+      },
+	  "dust_pure": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/dust_pure", "layer1": "gtu:items/material_set/lignite/overlay/dust_pure"}
+      },
+	  "dust_impure": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/dust_impure", "layer1": "gtu:items/material_set/lignite/overlay/dust_impure"}
+      },
+      "dust_small": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/dust_small"}
+      },
+      "dust_tiny": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/dust_tiny"}
+      },
+      "nugget": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/nugget"}
+      },
+      "ingot": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/ingot"}
+      },
+      "ingot_hot": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/ingot_hot", "layer1": "gtu:items/material_set/lignite/overlay/ingot_hot"}
+      },
+      "plate": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/plate"}
+      },
+      "plate_dense": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/plate_dense"}
+      },
+	  "gem": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gem"}
+      },
+	  "gem_chipped": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gem_chipped"}
+      },
+	  "gem_flawed": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gem_flawed"}
+      },
+	  "gem_flawless": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gem_flawless"}
+      },
+	  "gem_exquisite": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gem_exquisite"}
+      },
+      "foil": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/foil"}
+      },
+      "rod": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/rod"}
+      },
+      "bolt": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/bolt"}
+      },
+      "screw": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/screw"}
+      },
+      "ring": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/ring"}
+      },
+      "spring": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/spring"}
+      },
+      "wire_fine": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/wire_fine"}
+      },
+      "rotor": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/rotor"}
+      },
+      "gear": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gear"}
+      },
+      "gear_small": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/gear_small"}
+      },
+      "lens": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/lens"}
+      },
+      "cell": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/overlay/cell", "layer1": "gtu:items/material_set/lignite/cell"}
+      },
+	  "cell_gas": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/overlay/cell_gas", "layer1": "gtu:items/material_set/lignite/cell_gas"}
+      },
+      "cell_plasma": {
+        "textures": {"layer0": "gtu:items/material_set/lignite/overlay/cell_plasma", "layer1": "gtu:items/material_set/lignite/cell_plasma"}
+      }
+    }
+  }
+}
