@@ -96,9 +96,7 @@ public class GregTech {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         PROXY.postInit(e);
-        GregTechAPI.onRegistration(RegistrationEvent.CRAFTING_RECIPE);
-        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_RECIPE);
-        GregTechAPI.onRegistration(RegistrationEvent.MACHINE_RECIPE);
+        GregTechAPI.onRegistration(RegistrationEvent.RECIPE);
     }
 
     @SubscribeEvent

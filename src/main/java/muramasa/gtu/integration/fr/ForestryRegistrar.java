@@ -43,7 +43,7 @@ public class ForestryRegistrar implements IGregTechRegistrar {
                 Plutonium.add(ORE);
                 Naquadria.add(ORE);
                 break;
-            case MACHINE_RECIPE:
+            case RECIPE:
                 CombLoader.init();
                 break;
         }
