@@ -76,8 +76,9 @@ public class Machines {
 
     public static Machine QUANTUM_TANK = new TankMachine("quantum_tank");
 
-    public static Machine CHARCOAL_PIT = new MultiMachine("charcoal_pit", TileEntityCharcoalPit.class, LV);
+    public static Machine COKE_OVEN = new MultiMachine("coke_oven", TileEntityCokeOven.class, LV).addFlags(ITEM);
     public static Machine PRIMITIVE_BLAST_FURNACE = new MultiMachine("primitive_blast_furnace", TileEntityPrimitiveBlastFurnace.class, LV).addFlags(ITEM);
+    public static Machine CHARCOAL_PIT = new MultiMachine("charcoal_pit", TileEntityCharcoalPit.class, LV);
     public static Machine BRONZE_BLAST_FURNACE = new MultiMachine("bronze_blast_furnace", TileEntityBronzeBlastFurnace.class, LV).addFlags(ITEM);
     public static Machine BLAST_FURNACE = new MultiMachine("electric_blast_furnace", TileEntityElectricBlastFurnace.class, LV).addFlags(ITEM, FLUID);
     public static Machine IMPLOSION_COMPRESSOR = new MultiMachine("implosion_compressor", TileEntityImplosionCompressor.class, HV).addFlags(ITEM);

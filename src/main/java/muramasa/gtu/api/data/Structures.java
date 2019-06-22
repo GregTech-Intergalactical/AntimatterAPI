@@ -38,6 +38,11 @@ public class Structures {
     public static void init() {
         StructureBuilder.addGlobalElement("A", AIR);
         StructureBuilder.addGlobalElement("X", X);
+        COKE_OVEN.setStructure(new StructureBuilder()
+            .of("CCC", "CCC", "CCC").of("CCC", "CAM", "CCC").of(0)
+            .at("C", CASING_FIRE_BRICK).at("M", COKE_OVEN)
+            .build().offset(2, -1).min(25, CASING_FIRE_BRICK)
+        );
         PRIMITIVE_BLAST_FURNACE.setStructure(new StructureBuilder()
             .of("CCC", "CCC", "CCC").of("CCC", "CBM", "CCC").of("CCC", "CBC", "CCC").of("CCC", "CAC", "CCC")
             .at("C", CASING_FIRE_BRICK).at("B", AIR_OR_LAVA).at("M", PRIMITIVE_BLAST_FURNACE)

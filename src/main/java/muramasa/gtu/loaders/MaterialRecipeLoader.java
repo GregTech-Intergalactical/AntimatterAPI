@@ -5,6 +5,7 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialStack;
+import muramasa.gtu.api.recipe.RecipeAdder;
 import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.recipe.RecipeMap;
@@ -230,7 +231,7 @@ public class MaterialRecipeLoader {
             if (m.getDirectSmeltInto() != m && !m.has(NOSMELT) && !(m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace()) && !m.has(NOBBF)) {
                 //TODO requires special handling
                 if (m.getDirectSmeltInto().has(INGOT)) { //TODO INGOT check was added to avoid DOES NOT GENERATE: P(INGOT) M(mercury)
-                    RB.get(PRIMITIVE_BLAST_FURNACE).ii(m.getDust(2), Materials.Coal.getGem(2)).io(m.getDirectSmeltInto().getIngot(aMixedOreYieldCount)).add(2400);
+                    RecipeAdder.addBlastRecipe(new ItemStack[]{m.getDust(2)}, new ItemStack[]{m.getDirectSmeltInto().getIngot(aMixedOreYieldCount)}, 2, 2400);
                 }
                 //RecipeAdder.addPrimitiveBlastRecipe(Utils.ca(2, aDust), null, 2, m.mDirectSmelting.getIngot(aMixedOreYieldCount), null, 2400);
             }
