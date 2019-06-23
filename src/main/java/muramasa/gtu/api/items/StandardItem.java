@@ -1,13 +1,10 @@
 package muramasa.gtu.api.items;
 
-import com.google.common.base.CaseFormat;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -79,7 +76,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (Data.DebugScanner.equals(this)) {
-            tooltip.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, Prefix.IngotHot.getId() + "_" + Materials.Uranium235.getId()));
+
         }
     }
 

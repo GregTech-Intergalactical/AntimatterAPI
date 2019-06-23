@@ -68,7 +68,7 @@ public class RecipeHelper {
             } else if (dataList.get(i) instanceof ItemStack) {
                 Item item = ((ItemStack) dataList.get(i)).getItem();
                 if (ALWAYS_USE_ORE_DICT && item instanceof MaterialItem) {
-                    dataList.set(i, ((MaterialItem) item).getPrefix().oreName(((MaterialItem) item).getMaterial()));
+                    dataList.set(i, ((MaterialItem) item).getType().oreName(((MaterialItem) item).getMaterial()));
                 }
             } /*else if (dataList.get(i) instanceof Character) {
                 String replacement = REPLACEMENTS.get(dataList.get(i));

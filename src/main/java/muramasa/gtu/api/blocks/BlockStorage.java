@@ -3,7 +3,7 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
@@ -65,7 +65,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public String getDisplayName(ItemStack stack) {
-        return Prefix.Block.getDisplayName(material);
+        return MaterialType.BLOCK.getDisplayName(material);
     }
 
     @Override

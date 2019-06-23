@@ -3,7 +3,7 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.impl.FluidHandlerItemCell;
-import muramasa.gtu.api.materials.GenerationFlag;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
@@ -63,9 +63,9 @@ public class ItemFluidCell extends StandardItem {
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab && ((GregTechTab) tab).getName().equals("items")) {
             if (Configs.JEI.SHOW_ALL_FLUID_CELLS) {
-                GenerationFlag.LIQUID.getMats().forEach(m -> items.add(fill(m.getLiquid())));
-                GenerationFlag.GAS.getMats().forEach(m -> items.add(fill(m.getGas())));
-                GenerationFlag.PLASMA.getMats().forEach(m -> items.add(fill(m.getPlasma())));
+                MaterialType.LIQUID.getMats().forEach(m -> items.add(fill(m.getLiquid())));
+                MaterialType.GAS.getMats().forEach(m -> items.add(fill(m.getGas())));
+                MaterialType.PLASMA.getMats().forEach(m -> items.add(fill(m.getPlasma())));
             } else {
                 items.add(new ItemStack(this));
             }

@@ -13,9 +13,8 @@ import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.materials.GenerationFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.util.text.TextFormatting;
@@ -32,17 +31,17 @@ public class Data {
     public static void init() {
 
         //Items
-        List<Prefix> prefixes = GregTechAPI.all(Prefix.class);
+        List<MaterialType> types = GregTechAPI.all(MaterialType.class);
         List<Material> materials = GregTechAPI.all(Material.class);
-        prefixes.forEach(p -> materials.forEach(m -> {
-            if (p.allowGeneration(m)) new MaterialItem(p, m);
+        types.forEach(t -> materials.forEach(m -> {
+            if (t.allowGeneration(m)) new MaterialItem(t, m);
         }));
 
         Arrays.stream(ToolType.VALUES).forEach(ToolType::instantiate);
 
         //Blocks
-        GenerationFlag.ORE.getMats().forEach(BlockOre::new);
-        GenerationFlag.BLOCK.getMats().forEach(BlockStorage::new);
+        MaterialType.ORE.getMats().forEach(BlockOre::new);
+        MaterialType.BLOCK.getMats().forEach(BlockStorage::new);
 
         GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
 
