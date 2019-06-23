@@ -6,15 +6,20 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.cover.impl.*;
+import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
-import muramasa.gtu.api.tileentities.*;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
+import muramasa.gtu.api.tileentities.TileEntitySteamMachine;
+import muramasa.gtu.api.tileentities.TileEntityTank;
 import muramasa.gtu.api.tileentities.multi.*;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
@@ -46,6 +51,14 @@ public final class GregTechAPI {
     public static Set<Class> TILES = new HashSet<>();
     private static HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
 
+    public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", new RecipeBuilder());
+    //    public static RecipeMap SMELTING = new RecipeMap("smelting", new RecipeBuilder());
+    public static RecipeMap STEAM_FUELS = new RecipeMap("steam_fuels", new RecipeBuilder());
+    public static RecipeMap GAS_FUELS = new RecipeMap("gas_fuels", new RecipeBuilder());
+    public static RecipeMap COMBUSTION_FUELS = new RecipeMap("combustion_fuels", new RecipeBuilder());
+    public static RecipeMap NAQUADAH_FUELS = new RecipeMap("naquadah_fuels", new RecipeBuilder());
+    public static RecipeMap PLASMA_FUELS = new RecipeMap("plasma_fuels", new RecipeBuilder());
+
     static {
         register(TileEntityMachine.class);
         register(TileEntityRecipeMachine.class);
@@ -61,6 +74,14 @@ public final class GregTechAPI {
         register(TileEntityCable.class);
         register(TileEntityCasing.class);
         register(TileEntityCoil.class);
+
+        registerJEICategory(ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
+//        GregTechAPI.registerJEICategory(RecipeMap.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(COMBUSTION_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(NAQUADAH_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
     }
 
     public static void register(Object o) {

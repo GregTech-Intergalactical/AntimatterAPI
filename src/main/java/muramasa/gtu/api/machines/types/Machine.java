@@ -8,6 +8,7 @@ import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import static muramasa.gtu.api.machines.MachineFlag.RECIPE;
 
 public class Machine implements IGregTechObject {
 
@@ -74,10 +73,6 @@ public class Machine implements IGregTechObject {
         return Utils.trans("machine." + id + "." + tier.getId() + ".name");
     }
 
-    public RecipeMap getRecipeMap() {
-        return recipeMap;
-    }
-
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
@@ -105,12 +100,19 @@ public class Machine implements IGregTechObject {
         return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + id + "/" + side.getId());
     }
 
-    public Machine addFlags(MachineFlag... flags) {
+    public RecipeMap getRecipeMap() {
+        return recipeMap;
+    }
+
+    public RecipeBuilder getRecipeBuilder() {
+        return recipeMap.RB();
+    }
+
+    public void addFlags(MachineFlag... flags) {
         for (MachineFlag flag : flags) {
             machineMask |= flag.getBit();
             flag.add(this);
         }
-        return this;
     }
 
     public void setFlags(MachineFlag... flags) {
@@ -126,24 +128,13 @@ public class Machine implements IGregTechObject {
         this.tileClass = tileClass;
     }
 
-    public Machine setTiers(Tier... tiers) {
+    public void setTiers(Tier... tiers) {
         this.tiers = new ArrayList<>(Arrays.asList(tiers));
-        return this;
     }
 
-    public void addGUI(Object instance, int id) {
+    public void setGUI(Object instance, int id) {
         guiData = new GuiData(this, instance, id);
         addFlags(MachineFlag.GUI);
-    }
-
-    public void addRecipeMap() {
-        recipeMap = new RecipeMap(id, 10);
-        addFlags(RECIPE);
-    }
-
-    public Machine setRecipeMap(RecipeMap recipeMap) {
-        this.recipeMap = recipeMap;
-        return this;
     }
 
     public void setStructure(Structure structure) {

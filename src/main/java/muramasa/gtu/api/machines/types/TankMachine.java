@@ -14,6 +14,6 @@ public class TankMachine extends Machine {
         super(name, new BlockMachine(name), TileEntityTank.class);
         setTiers(Tier.getStandard());
         setFlags(BASIC, ITEM, FLUID, COVERABLE, CONFIGURABLE);
-        addGUI(GregTech.INSTANCE, Ref.GUI_ID_MACHINE);
+        setGUI(GregTech.INSTANCE, Ref.GUI_ID_MACHINE);
     }
 }

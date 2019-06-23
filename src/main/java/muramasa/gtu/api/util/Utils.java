@@ -439,6 +439,11 @@ public class Utils {
         return isLoaded;
     }
 
+    public static void onInvalidData(String msg) {
+        if (Ref.DATA_EXCEPTIONS) throw new IllegalStateException(msg);
+        GregTech.LOGGER.error(msg);
+    }
+
     public static void printError(String msg) {
         GregTech.LOGGER.error("====================================================");
         GregTech.LOGGER.error(msg);

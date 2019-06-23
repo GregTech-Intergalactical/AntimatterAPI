@@ -602,7 +602,7 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) {
-            if (Ref.RECIPE_EXCEPTIONS) {
+            if (Ref.DATA_EXCEPTIONS) {
                 throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
             } else {
                 System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
@@ -613,7 +613,7 @@ public class Material implements IGregTechObject {
 
     public ItemStack getBlock(int amount) {
         if (!has(BLOCK)) {
-            if (Ref.RECIPE_EXCEPTIONS) {
+            if (Ref.DATA_EXCEPTIONS) {
                 throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
             } else {
                 System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
