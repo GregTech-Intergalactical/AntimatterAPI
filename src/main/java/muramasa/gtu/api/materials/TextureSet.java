@@ -1,7 +1,10 @@
 package muramasa.gtu.api.materials;
 
+import com.google.common.collect.ImmutableList;
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +47,13 @@ public class TextureSet implements IGregTechObject {
 
     public Texture getItemTexture(Prefix prefix) {
         return new Texture("items/material_set/" + id + "/" + prefix.getId());
+    }
+
+    public ImmutableList<ResourceLocation> getItemTextures(Prefix prefix) {
+        return ImmutableList.of(
+            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/" + prefix.getId()),
+            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/overlay/" + prefix.getId())
+        );
     }
 
     public static TextureSet get(String name) {

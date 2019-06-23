@@ -1,6 +1,5 @@
 package muramasa.gtu.proxy;
 
-import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialItem;
@@ -102,10 +101,7 @@ public class ClientProxy implements IProxy {
         e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_flowing"));
 
         //Register Material Item textures
-        GregTechAPI.all(MaterialItem.class).forEach(i -> {
-            ResourceLocation loc = i.getMaterial().getSet().getItemTexture(i.getPrefix()).getLoc();
-            e.getMap().registerSprite(loc);
-        });
+        GregTechAPI.all(MaterialItem.class).forEach(i -> i.getMaterial().getSet().getItemTextures(i.getPrefix()).forEach(r -> e.getMap().registerSprite(r)));
     }
 
     @SubscribeEvent
@@ -135,7 +131,7 @@ public class ClientProxy implements IProxy {
         HashMap<String, IBakedModel> PREFIX_SET_MAP = new HashMap<>();
         GregTechAPI.all(Prefix.class).forEach(p -> {
             TextureSet.getAll().forEach(t -> {
-                IModel model = new ItemLayerModel(ImmutableList.of(t.getItemTexture(p).getLoc()));
+                IModel model = new ItemLayerModel(t.getItemTextures(p));
                 IBakedModel baked = new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter()));
                 PREFIX_SET_MAP.put(p.getId().concat("_").concat(t.getId()), baked);
             });
