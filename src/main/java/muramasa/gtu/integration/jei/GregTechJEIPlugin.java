@@ -19,9 +19,7 @@ import muramasa.gtu.integration.jei.wrapper.RecipeWrapper;
 import net.minecraft.util.Tuple;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 
@@ -48,7 +46,12 @@ public class GregTechJEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
+
+        //TODO redo JEI categories to revolve around maps instead of machines
+        Set<String> registeredMachineCats = new HashSet<>();
+
         for (Machine type : MachineFlag.RECIPE.getTypes()) {
+            if (registeredMachineCats.contains(type.getRecipeMap().getCategoryId())) continue;
             if (type.hasFlag(BASIC)) {
                 if (REGISTRY.containsKey(type.getRecipeMap().getCategoryId())) continue;
                 registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.LV)));
@@ -59,8 +62,11 @@ public class GregTechJEIPlugin implements IModPlugin {
                     registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Guis.MULTI_DISPLAY));
                 }
             }
+            registeredMachineCats.add(type.getRecipeMap().getCategoryId());
         }
-        REGISTRY.forEach((k, v) -> registry.addRecipeCategories(new RecipeMapCategory(v.getFirst(), v.getSecond())));
+        REGISTRY.forEach((k, v) -> {
+            if (!registeredMachineCats.contains(v.getFirst().getCategoryId())) registry.addRecipeCategories(new RecipeMapCategory(v.getFirst(), v.getSecond()));
+        });
     }
 
     @Override

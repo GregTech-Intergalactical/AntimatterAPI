@@ -5,23 +5,27 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.recipe.RecipeBuilder;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 
 import java.util.ArrayList;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 
-public class BasicMachine<B extends RecipeBuilder> extends RecipeMachine<B> {
+public class BasicMachine extends Machine {
 
-    public BasicMachine(String name, B builder, Class tileClass, Object... data) {
-        super(name, new BlockMachine(name), builder, tileClass);
-        setFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE, RECIPE);
+    public BasicMachine(String name, Class tileClass, Object... data) {
+        super(name, new BlockMachine(name), tileClass);
+        setFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
         setGUI(GregTech.INSTANCE, Ref.GUI_ID_MACHINE);
 
         ArrayList<Tier> tiers = new ArrayList<>();
         ArrayList<MachineFlag> flags = new ArrayList<>();
         for (int i = 0; i < data.length; i++) {
+            if (data[i] instanceof RecipeMap) {
+                recipeMap = (RecipeMap) data[i];
+                flags.add(RECIPE);
+            }
             if (data[i] instanceof Tier) tiers.add((Tier) data[i]);
             if (data[i] instanceof MachineFlag) flags.add((MachineFlag) data[i]);
         }
@@ -29,7 +33,7 @@ public class BasicMachine<B extends RecipeBuilder> extends RecipeMachine<B> {
         addFlags(flags.toArray(new MachineFlag[0]));
     }
 
-    public BasicMachine(String name, B builder, Object... data) {
-        this(name, builder, TileEntityRecipeMachine.class, data);
+    public BasicMachine(String name, Object... data) {
+        this(name, TileEntityRecipeMachine.class, data);
     }
 }

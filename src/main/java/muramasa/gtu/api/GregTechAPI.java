@@ -7,11 +7,11 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.cover.impl.*;
 import muramasa.gtu.api.data.Guis;
+import muramasa.gtu.api.data.RecipeMaps;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
@@ -46,18 +46,14 @@ import java.util.stream.Collectors;
 
 public final class GregTechAPI {
 
-    public static Set<Item> ITEMS = new LinkedHashSet<>();
-    public static Set<Block> BLOCKS = new LinkedHashSet<>();
-    public static Set<Class> TILES = new HashSet<>();
-    private static HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+    public static final Set<Item> ITEMS = new LinkedHashSet<>();
+    public static final Set<Block> BLOCKS = new LinkedHashSet<>();
+    public static final Set<Class> TILES = new HashSet<>();
+    private static final HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
 
-    public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", new RecipeBuilder());
-    //    public static RecipeMap SMELTING = new RecipeMap("smelting", new RecipeBuilder());
-    public static RecipeMap STEAM_FUELS = new RecipeMap("steam_fuels", new RecipeBuilder());
-    public static RecipeMap GAS_FUELS = new RecipeMap("gas_fuels", new RecipeBuilder());
-    public static RecipeMap COMBUSTION_FUELS = new RecipeMap("combustion_fuels", new RecipeBuilder());
-    public static RecipeMap NAQUADAH_FUELS = new RecipeMap("naquadah_fuels", new RecipeBuilder());
-    public static RecipeMap PLASMA_FUELS = new RecipeMap("plasma_fuels", new RecipeBuilder());
+    private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
+    private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
+    private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
 
     static {
         register(TileEntityMachine.class);
@@ -75,13 +71,13 @@ public final class GregTechAPI {
         register(TileEntityCasing.class);
         register(TileEntityCoil.class);
 
-        registerJEICategory(ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
-//        GregTechAPI.registerJEICategory(RecipeMap.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(COMBUSTION_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(NAQUADAH_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
+//        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.COMBUSTION_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.NAQUADAH_FUELS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
     }
 
     public static void register(Object o) {
@@ -105,12 +101,6 @@ public final class GregTechAPI {
     }
 
     /** Registrar Section **/
-    private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
-
-    public static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
-
-    private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
-
     public static void onRegistration(RegistrationEvent event) {
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
@@ -118,7 +108,9 @@ public final class GregTechAPI {
     }
 
     public static void onEvent(RegistrationEvent event, Runnable runnable) {
-        if (!CALLBACKS.containsKey(event.name())) CALLBACKS.put(event.name(), new ArrayList<>());
+        if (!CALLBACKS.containsKey(event.name())) {
+            CALLBACKS.put(event.name(), new ArrayList<>());
+        }
         CALLBACKS.get(event.name()).add(runnable);
     }
 
