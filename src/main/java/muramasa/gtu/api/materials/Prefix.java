@@ -15,8 +15,8 @@ public class Prefix implements IGregTechObject {
 
     private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
 
-    public static Prefix Ore = new Prefix("ore", true, false, ORE);
-    public static Prefix Block = new Prefix("block", true, false, BLOCK);
+    public static Prefix Ore = new Prefix("ore", true, false, ORE).setType(1);
+    public static Prefix Block = new Prefix("block", true, false, BLOCK).setType(1);
 
 //    public static Prefix Chunk = new Prefix("chunk", true, ORE);
     public static Prefix Crushed = new Prefix("crushed", false, CRUSHED);
@@ -52,7 +52,7 @@ public class Prefix implements IGregTechObject {
 //    public static Prefix TurbineBlade = new Prefix("turbine_blade", true, TOOLS);
 
     private String id, namePre, namePost;
-
+    private int type = 0; //0 = item, 1 = block //TODO, maybe find a better way to differentiate types of prefixes?
     private boolean doesGenerate, hasLocName, visible;
     private long generationBits;
 
@@ -72,9 +72,18 @@ public class Prefix implements IGregTechObject {
         this.doesGenerate = generatesItems;
     }
 
+    public Prefix setType(int type) {
+        this.type = type;
+        return this;
+    }
+
     @Override
     public String getId() {
         return id;
+    }
+
+    public int getType() {
+        return type;
     }
 
     public String getDisplayName(Material material) { //TODO cache

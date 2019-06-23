@@ -56,6 +56,13 @@ public class TextureSet implements IGregTechObject {
         );
     }
 
+    public Texture[] getBlockTextures(Prefix prefix) {
+        return new Texture[] {
+            new Texture("blocks/material_set/" + id + "/" + prefix.getId()),
+            new Texture("blocks/material_set/" + id + "/overlay/" + prefix.getId())
+        };
+    }
+
     public static TextureSet get(String name) {
         return LOOKUP.get(name);
     }
