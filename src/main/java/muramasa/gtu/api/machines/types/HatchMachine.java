@@ -5,14 +5,13 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
-import muramasa.gtu.api.blocks.BlockMachine;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 
 public class HatchMachine extends Machine {
 
     public HatchMachine(String name, MachineFlag... flags) {
-        super(name, new BlockMachine(name), TileEntityHatch.class);
+        super(name, TileEntityHatch.class);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, CONFIGURABLE, COVERABLE);
         addFlags(flags);

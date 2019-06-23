@@ -5,16 +5,12 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 public class MaterialType implements IMaterialFlag, IGregTechObject {
 
     private static int lastInternalId;
-    //TODO move to GregTechAPI?
-    private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
 
     //Item Types
     public static MaterialType DUST = new MaterialType("dust", true);
@@ -118,15 +114,7 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && (material.getItemMask() & bit) != 0 && !ITEM_REPLACEMENT.containsKey(getId() + material.getId());
-    }
-
-    public void addReplacement(Material material, ItemStack stack) {
-        ITEM_REPLACEMENT.put(getId() + material.getId(), stack);
-    }
-
-    public ItemStack getReplacement(Material material) {
-        return ITEM_REPLACEMENT.get(getId() + material.getId());
+        return doesGenerate && (material.getItemMask() & bit) != 0 && GregTechAPI.getReplacement(this, material) == null;
     }
 
     @Override

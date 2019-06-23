@@ -50,10 +50,10 @@ public final class GregTechAPI {
     public static final Set<Block> BLOCKS = new LinkedHashSet<>();
     public static final Set<Class> TILES = new HashSet<>();
     private static final HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
-
     private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
     private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
+    private static final LinkedHashMap<String, ItemStack> REPLACEMENTS = new LinkedHashMap<>();
 
     static {
         register(TileEntityMachine.class);
@@ -88,14 +88,16 @@ public final class GregTechAPI {
 
     public static void register(Class c, IGregTechObject o) {
         if (!OBJECTS.containsKey(c.getName())) OBJECTS.put(c.getName(), new LinkedHashMap<>());
-        OBJECTS.get(c.getName()).put(o.getId(), o);
+        if (!OBJECTS.get(c.getName()).containsKey(o.getId())) OBJECTS.get(c.getName()).put(o.getId(), o);
         register(o);
     }
 
+    @Nullable
     public static <T> T get(Class<T> c, String name) {
         return (T) OBJECTS.get(c.getName()).get(name);
     }
 
+    @Nullable
     public static <T> List<T> all(Class<T> c) {
         return OBJECTS.get(c.getName()).values().stream().map(c::cast).collect(Collectors.toList());
     }
@@ -126,17 +128,25 @@ public final class GregTechAPI {
         return registrar != null && registrar.isEnabled();
     }
 
+    @Nullable
     public static Item getItem(String domain, String path) {
         return Item.getByNameOrId(new ResourceLocation(domain, path).toString());
     }
 
+    @Nullable
     public static Block getBlock(String domain, String path) {
         return Block.getBlockFromName(new ResourceLocation(domain, path).toString());
     }
 
     /** Item Registry Section **/
-    public static void addItemReplacement(MaterialType type, Material material, ItemStack stack) {
-        type.addReplacement(material, stack);
+    public static void addReplacement(MaterialType type, Material material, ItemStack stack) {
+        REPLACEMENTS.put(type.getId() + material.getId(), stack);
+    }
+
+    @Nullable
+    public static ItemStack getReplacement(MaterialType type, Material material) {
+        ItemStack stack = REPLACEMENTS.get(type.getId() + material.getId());
+        return stack != null ? stack.copy() : null;
     }
 
     /** JEI Registry Section **/

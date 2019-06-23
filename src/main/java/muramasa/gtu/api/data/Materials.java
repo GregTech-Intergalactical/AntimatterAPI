@@ -4,6 +4,7 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.fluid.GTFluid;
 import muramasa.gtu.api.materials.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -424,14 +425,20 @@ public class Materials {
         //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
 
         if (Configs.DATA.ENABLE_ITEM_REPLACEMENTS) {
-            INGOT.addReplacement(Iron, new ItemStack(Items.IRON_INGOT));
-            INGOT.addReplacement(Gold, new ItemStack(Items.GOLD_INGOT));
-            NUGGET.addReplacement(Iron, new ItemStack(Items.IRON_NUGGET));
-            NUGGET.addReplacement(Gold, new ItemStack(Items.GOLD_NUGGET));
-            GEM.addReplacement(Diamond, new ItemStack(Items.DIAMOND));
-            GEM.addReplacement(Coal, new ItemStack(Items.COAL));
-            GEM.addReplacement(Charcoal, new ItemStack(Items.COAL, 1, 1));
-            DUST.addReplacement(Redstone, new ItemStack(Items.REDSTONE));
+            GregTechAPI.addReplacement(INGOT, Iron, new ItemStack(Items.IRON_INGOT));
+            GregTechAPI.addReplacement(INGOT, Gold, new ItemStack(Items.GOLD_INGOT));
+            GregTechAPI.addReplacement(NUGGET, Iron, new ItemStack(Items.IRON_NUGGET));
+            GregTechAPI.addReplacement(NUGGET, Gold, new ItemStack(Items.GOLD_NUGGET));
+            GregTechAPI.addReplacement(GEM, Coal, new ItemStack(Items.COAL));
+            GregTechAPI.addReplacement(GEM, Charcoal, new ItemStack(Items.COAL, 1, 1));
+            GregTechAPI.addReplacement(GEM, Emerald, new ItemStack(Items.EMERALD));
+            GregTechAPI.addReplacement(GEM, Diamond, new ItemStack(Items.DIAMOND));
+            GregTechAPI.addReplacement(DUST, Redstone, new ItemStack(Items.REDSTONE));
+            GregTechAPI.addReplacement(BLOCK, Coal, new ItemStack(Blocks.COAL_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Iron, new ItemStack(Blocks.IRON_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Gold, new ItemStack(Blocks.GOLD_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Emerald, new ItemStack(Blocks.EMERALD_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Diamond, new ItemStack(Blocks.DIAMOND_BLOCK));
         }
 
         ELECSEPI.add(Bastnasite/*, Monazite*/);

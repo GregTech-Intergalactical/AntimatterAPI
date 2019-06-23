@@ -46,12 +46,12 @@ import static muramasa.gtu.api.properties.GTProperties.*;
 
 public class BlockMachine extends Block implements IItemBlock, IModelOverride, IColorHandler {
 
-    private String type;
+    private Machine type;
 
-    public BlockMachine(String type) {
+    public BlockMachine(Machine type) {
         super(net.minecraft.block.material.Material.IRON);
-        setUnlocalizedName(type);
-        setRegistryName(type);
+        setUnlocalizedName(type.getId());
+        setRegistryName(type.getId());
         setHardness(1.0F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
@@ -61,7 +61,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     }
 
     public Machine getType() {
-        return Machines.get(type);
+        return type;
     }
 
     @Override

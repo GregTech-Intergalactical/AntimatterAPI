@@ -105,7 +105,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
         return EnumActionResult.FAIL;
     }
 
-    public static boolean hasPrefix(ItemStack stack, MaterialType type) {
+    public static boolean hasType(ItemStack stack, MaterialType type) {
         return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getType() == type;
     }
 
@@ -124,11 +124,11 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return hasPrefix(stack, MaterialType.PLATE);
+        return hasType(stack, MaterialType.PLATE);
     }
 
     public static ItemStack get(MaterialType type, Material material, int count) {
-        ItemStack replacement = type.getReplacement(material);
+        ItemStack replacement = GregTechAPI.getReplacement(type, material);
         if (replacement != null) return Utils.ca(count, replacement);
 
         if (!type.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + type.getId() + ") M(" + material.getId() + ")");
