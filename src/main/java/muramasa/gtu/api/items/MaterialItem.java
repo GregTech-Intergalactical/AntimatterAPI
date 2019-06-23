@@ -148,7 +148,6 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        String set = getMaterial().getSet().getId();
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":material_set_item/" + set, set + "=" + prefix));
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + prefix.getId() + "_" + material.getId(), "inventory"));
     }
 }
