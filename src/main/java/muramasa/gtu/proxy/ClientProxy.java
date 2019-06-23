@@ -130,23 +130,23 @@ public class ClientProxy implements IProxy {
         ModelUtils.onModelBake(e);
 
         //Generate Material Item TextureSet models
-        HashMap<String, IBakedModel> PREFIX_SET_MAP = new HashMap<>();
+        HashMap<String, IBakedModel> TYPE_SET_MAP = new HashMap<>();
         GregTechAPI.all(MaterialType.class).forEach(t -> TextureSet.getAll().forEach(s -> {
             if (t.getTextureType() == 0) {
                 IModel model = new ItemLayerModel(s.getItemTextures(t));
                 IBakedModel baked = new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter()));
-                PREFIX_SET_MAP.put("item_".concat(t.getId().concat("_").concat(s.getId())), baked);
+                TYPE_SET_MAP.put("item_".concat(t.getId().concat("_").concat(s.getId())), baked);
             } else if (t.getTextureType() == 1) {
                 if (t == MaterialType.BLOCK) {
                     IModel model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", s.getBlockTexture(t));
                     IBakedModel baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
-                    PREFIX_SET_MAP.put("block_".concat(t.getId().concat("_").concat(s.getId())), baked);
+                    TYPE_SET_MAP.put("block_".concat(t.getId().concat("_").concat(s.getId())), baked);
                 }
                 //TODO 1.14
                 /* else if (t == MaterialType.ORE) {
                     IModel model = ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, s.getBlockTextures(t));
                     IBakedModel baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
-                    PREFIX_SET_MAP.put("block_".concat(t.getId().concat("_").concat(s.getId())), baked);
+                    TYPE_SET_MAP.put("block_".concat(t.getId().concat("_").concat(s.getId())), baked);
                 }*/
             }
         }));
@@ -154,7 +154,7 @@ public class ClientProxy implements IProxy {
         //Inject models for Material Items
         GregTechAPI.all(MaterialItem.class).forEach(i -> {
             ModelResourceLocation model = new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId() + "#inventory");
-            IBakedModel baked = PREFIX_SET_MAP.get("item_".concat(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId())));
+            IBakedModel baked = TYPE_SET_MAP.get("item_".concat(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId())));
             if (baked == null) {
                 System.out.println("oh no");
             }
@@ -164,8 +164,8 @@ public class ClientProxy implements IProxy {
         GregTechAPI.all(BlockStorage.class).forEach(b -> {
             ModelResourceLocation normal = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId() + "#normal");
             ModelResourceLocation inventory = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId() + "#inventory");
-            e.getModelRegistry().putObject(normal, PREFIX_SET_MAP.get("block_".concat(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId()))));
-            e.getModelRegistry().putObject(inventory, new BakedBlock(PREFIX_SET_MAP.get("block_".concat(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId())))));
+            e.getModelRegistry().putObject(normal, TYPE_SET_MAP.get("block_".concat(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId()))));
+            e.getModelRegistry().putObject(inventory, new BakedBlock(TYPE_SET_MAP.get("block_".concat(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId())))));
         });
 
         //GregTechAPI.all(BlockOre.class).forEach(b -> {

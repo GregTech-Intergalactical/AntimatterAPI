@@ -2,7 +2,6 @@ package muramasa.gtu.api.machines.types;
 
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.RecipeMap;
@@ -16,7 +15,7 @@ import static muramasa.gtu.api.machines.MachineFlag.*;
 public class MultiMachine extends Machine {
 
     public MultiMachine(String name, Class tileClass, Object... data) {
-        super(name, new BlockMachine(name), tileClass);
+        super(name, tileClass);
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
         setGUI(GregTech.INSTANCE, Ref.GUI_ID_MULTI_MACHINE);
 

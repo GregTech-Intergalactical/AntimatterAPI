@@ -8,7 +8,7 @@ import net.minecraftforge.oredict.OreDictionary;
 public class OreDictLoader {
 
     public static void init() {
-        //Register materialItem entries (prefixMaterialName)
+        //Register materialItem entries (materialTypeMaterialName)
         GregTechAPI.all(MaterialItem.class).forEach(i -> OreDictionary.registerOre(i.getType().oreName(i.getMaterial()), i));
 
         //Register craftingTool entries (craftingToolType)

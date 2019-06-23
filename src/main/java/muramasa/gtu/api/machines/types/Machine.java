@@ -48,13 +48,13 @@ public class Machine implements IGregTechObject {
     //TODO get valid covers
 
     public Machine(String id) {
-        this(id, new BlockMachine(id), TileEntityMachine.class);
+        this(id, TileEntityMachine.class);
     }
 
-    public Machine(String id, BlockMachine block, Class tileClass) {
+    public Machine(String id, Class tileClass) {
         internalId = lastInternalId++;
         this.id = id;
-        this.block = block;
+        this.block = new BlockMachine(this);
         this.tileClass = tileClass;
         setTiers(Tier.LV);
         Machines.add(this);
