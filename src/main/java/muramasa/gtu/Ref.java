@@ -33,7 +33,7 @@ public class Ref {
 
     /** Debug Options **/
     public static boolean SHOW_STACK_ORE_DICT = true;
-    public static boolean RECIPE_EXCEPTIONS = true;
+    public static boolean DATA_EXCEPTIONS = true;
 
     /** Config Values **/
     public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false; //TODO 5U remnant, determine if needed

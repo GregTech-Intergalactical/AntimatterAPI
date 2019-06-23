@@ -16,7 +16,7 @@ public class HatchMachine extends Machine {
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, CONFIGURABLE, COVERABLE);
         addFlags(flags);
-        if (hasFlag(GUI)) addGUI(GregTech.INSTANCE, Ref.GUI_ID_HATCH);
+        if (hasFlag(GUI)) setGUI(GregTech.INSTANCE, Ref.GUI_ID_HATCH);
     }
 
     public HatchMachine(String name, Class tileClass, MachineFlag... flags) {

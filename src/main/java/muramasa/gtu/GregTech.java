@@ -8,7 +8,6 @@ import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.data.Structures;
 import muramasa.gtu.api.network.GregTechNetwork;
-import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
@@ -63,14 +62,6 @@ public class GregTech {
 
         OreGenHandler.init();
         MinecraftForge.EVENT_BUS.register(this);
-
-        GregTechAPI.registerJEICategory(RecipeMap.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
-//        GregTechAPI.registerJEICategory(RecipeMap.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechAPI.registerJEICategory(RecipeMap.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechAPI.registerJEICategory(RecipeMap.GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechAPI.registerJEICategory(RecipeMap.COMBUSTION_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechAPI.registerJEICategory(RecipeMap.NAQUADAH_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        GregTechAPI.registerJEICategory(RecipeMap.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);

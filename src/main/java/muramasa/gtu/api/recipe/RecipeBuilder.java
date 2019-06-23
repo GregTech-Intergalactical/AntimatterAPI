@@ -1,8 +1,6 @@
 package muramasa.gtu.api.recipe;
 
 import muramasa.gtu.Configs;
-import muramasa.gtu.Ref;
-import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -19,23 +17,19 @@ public class RecipeBuilder {
 
     public void add() {
         if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
-            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
-            else System.out.println("RECIPE BUILDER ERROR - INPUT STACKS INVALID!");
+            Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT ITEMS INVALID!");
             return;
         }
         if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
-            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
-            else System.out.println("RECIPE BUILDER ERROR - OUTPUT STACKS INVALID!");
+            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
             return;
         }
         if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) {
-            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
-            else System.out.println("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
+            Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
             return;
         }
         if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) {
-            if (Ref.RECIPE_EXCEPTIONS) throw new IllegalArgumentException("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
-            else System.out.println("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
+            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return;
         }
 
@@ -57,6 +51,13 @@ public class RecipeBuilder {
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipeMap.add(recipe);
+
+        itemsInput = itemsOutput = null;
+        fluidsInput = fluidsOutput = null;
+        chances = null;
+        duration = special = 0;
+        power = 0;
+        hidden = false;
     }
 
     public void add(long duration, long power, long special) {
@@ -72,21 +73,6 @@ public class RecipeBuilder {
 
     public void add(int duration) {
         add(duration, 0, 0);
-    }
-
-    public RecipeBuilder get(Machine type) {
-        return get(type.getRecipeMap());
-    }
-
-    public RecipeBuilder get(RecipeMap map) {
-        itemsInput = itemsOutput = null;
-        fluidsInput = fluidsOutput = null;
-        chances = null;
-        duration = special = 0;
-        power = 0;
-        hidden = false;
-        recipeMap = map;
-        return this;
     }
 
     public RecipeBuilder ii(ItemStack... stacks) {
@@ -122,5 +108,9 @@ public class RecipeBuilder {
 
     public RecipeMap getMap() {
         return recipeMap;
+    }
+
+    public void setMap(RecipeMap recipeMap) {
+        this.recipeMap = recipeMap;
     }
 }

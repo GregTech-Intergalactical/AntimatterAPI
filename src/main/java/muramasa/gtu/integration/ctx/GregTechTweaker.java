@@ -46,14 +46,16 @@ public class GregTechTweaker {
     }
 
     @ZenMethod
-    public static CTRecipeBuilder getRecipeMap(String name) {
-        return new CTRecipeBuilder(Machines.get(name).getRecipeMap());
+    public static CTRecipeBuilder getBuilder(String id) {
+        Machine machine = Machines.get(id);
+        if (machine == null) throw new IllegalArgumentException("machine for id " + id + " could not be found");
+        return new CTRecipeBuilder(machine.getRecipeBuilder());
     }
 
     @ZenMethod
-    public static CTStructureBuilder addStructure(String name) {
-        Machine machine = Machines.get(name);
-        if (machine == null) throw new IllegalArgumentException("machine for id " + name + " does not exist");
+    public static CTStructureBuilder addStructure(String id) {
+        Machine machine = Machines.get(id);
+        if (machine == null) throw new IllegalArgumentException("machine for id " + id + " could not be found");
         return new CTStructureBuilder(machine);
     }
 

@@ -5,7 +5,8 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.*;
-import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.recipe.RecipeBuilder;
+import muramasa.gtu.api.recipe.RecipeBuilders;
 import muramasa.gtu.common.tileentities.multi.*;
 
 import java.util.ArrayList;
@@ -20,90 +21,94 @@ public class Machines {
 
     public static Machine INVALID = new Machine("invalid");
 
-    public static Machine ALLOY_SMELTER = new BasicMachine("alloy_smelter", ITEM);
-    public static Machine ASSEMBLER = new BasicMachine("assembler", ITEM);
-    public static Machine BENDER = new BasicMachine("bender", ITEM);
-    public static Machine CANNER = new BasicMachine("canner", ITEM);
-    public static Machine COMPRESSOR = new BasicMachine("compressor", ITEM);
-    public static Machine CUTTER = new BasicMachine("cutter", ITEM);
-    public static Machine FURNACE = new BasicMachine("furnace", ITEM);
-    public static Machine EXTRACTOR = new BasicMachine("extractor", ITEM);
-    public static Machine EXTRUDER = new BasicMachine("extruder", ITEM);
-    public static Machine LATHE = new BasicMachine("lathe", ITEM);
-    public static Machine PULVERIZER = new BasicMachine("pulverizer", ITEM);
-    public static Machine RECYCLER = new BasicMachine("recycler", ITEM);
-    public static Machine SCANNER = new BasicMachine("scanner", ITEM, FLUID);
-    public static Machine WIRE_MILL = new BasicMachine("wire_mill", ITEM);
-    public static Machine CENTRIFUGE = new BasicMachine("centrifuge", ITEM, FLUID);
-    public static Machine ELECTROLYZER = new BasicMachine("electrolyzer", ITEM, FLUID);
-    public static Machine THERMAL_CENTRIFUGE = new BasicMachine("thermal_centrifuge", ITEM);
-    public static Machine ORE_WASHER = new BasicMachine("ore_washer", ITEM, FLUID);
-    public static Machine CHEMICAL_REACTOR = new BasicMachine("chemical_reactor", ITEM, FLUID);
-    public static Machine FLUID_CANNER = new BasicMachine("fluid_canner", ITEM, FLUID);
-    public static Machine DISASSEMBLER = new BasicMachine("disassembler", ITEM);
-    public static Machine MASS_FABRICATOR = new BasicMachine("mass_fabricator", ITEM, FLUID);
-    public static Machine AMP_FABRICATOR = new BasicMachine("amp_fabricator", ITEM);
-    public static Machine REPLICATOR = new BasicMachine("replicator", ITEM, FLUID);
-    public static Machine FERMENTER = new BasicMachine("fermenter", ITEM, FLUID);
-    public static Machine FLUID_EXTRACTOR = new BasicMachine("fluid_extractor", ITEM);
-    public static Machine FLUID_SOLIDIFIER = new BasicMachine("fluid_solidifier", ITEM, FLUID);
-    public static Machine DISTILLERY = new BasicMachine("distillery", ITEM, FLUID);
-    public static Machine CHEMICAL_BATH = new BasicMachine("chemical_bath", ITEM, FLUID);
-    public static Machine AUTOCLAVE = new BasicMachine("autoclave", ITEM, FLUID);
-    public static Machine MIXER = new BasicMachine("mixer", ITEM, FLUID);
-    public static Machine LASER_ENGRAVER = new BasicMachine("laser_engraver", ITEM);
-    public static Machine FORMING_PRESS = new BasicMachine("forming_press", ITEM);
-    public static Machine FORGE_HAMMER = new BasicMachine("forge_hammer", ITEM);
-    public static Machine SIFTER = new BasicMachine("sifter", ITEM);
-    public static Machine ARC_FURNACE = new BasicMachine("arc_furnace", ITEM, FLUID);
-    public static Machine PLASMA_ARC_FURNACE = new BasicMachine("plasma_arc_furnace", ITEM, FLUID);
+    public static BasicMachine ALLOY_SMELTER = new BasicMachine<>("alloy_smelter", new RecipeBuilder(), ITEM);
+    public static BasicMachine ASSEMBLER = new BasicMachine<>("assembler", new RecipeBuilder(), ITEM);
+    public static BasicMachine BENDER = new BasicMachine<>("bender", new RecipeBuilder(), ITEM);
+    public static BasicMachine CANNER = new BasicMachine<>("canner", new RecipeBuilder(), ITEM);
+    public static BasicMachine COMPRESSOR = new BasicMachine<>("compressor", new RecipeBuilder(), ITEM);
+    public static BasicMachine CUTTER = new BasicMachine<>("cutter", new RecipeBuilder(), ITEM);
+    public static BasicMachine FURNACE = new BasicMachine<>("furnace", new RecipeBuilder(), ITEM);
+    public static BasicMachine EXTRACTOR = new BasicMachine<>("extractor", new RecipeBuilder(), ITEM);
+    public static BasicMachine EXTRUDER = new BasicMachine<>("extruder", new RecipeBuilder(), ITEM);
+    public static BasicMachine LATHE = new BasicMachine<>("lathe", new RecipeBuilder(), ITEM);
+    public static BasicMachine PULVERIZER = new BasicMachine<>("pulverizer", new RecipeBuilder(), ITEM);
+    public static BasicMachine RECYCLER = new BasicMachine<>("recycler", new RecipeBuilder(), ITEM);
+    public static BasicMachine SCANNER = new BasicMachine<>("scanner", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine WIRE_MILL = new BasicMachine<>("wire_mill", new RecipeBuilder(), ITEM);
+    public static BasicMachine CENTRIFUGE = new BasicMachine<>("centrifuge", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine ELECTROLYZER = new BasicMachine<>("electrolyzer", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine THERMAL_CENTRIFUGE = new BasicMachine<>("thermal_centrifuge", new RecipeBuilder(), ITEM);
+    public static BasicMachine ORE_WASHER = new BasicMachine<>("ore_washer", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine CHEMICAL_REACTOR = new BasicMachine<>("chemical_reactor", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine FLUID_CANNER = new BasicMachine<>("fluid_canner", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine DISASSEMBLER = new BasicMachine<>("disassembler", new RecipeBuilder(), ITEM);
+    public static BasicMachine MASS_FABRICATOR = new BasicMachine<>("mass_fabricator", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine AMP_FABRICATOR = new BasicMachine<>("amp_fabricator", new RecipeBuilder(), ITEM);
+    public static BasicMachine REPLICATOR = new BasicMachine<>("replicator", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine FERMENTER = new BasicMachine<>("fermenter", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine FLUID_EXTRACTOR = new BasicMachine<>("fluid_extractor", new RecipeBuilder(), ITEM);
+    public static BasicMachine FLUID_SOLIDIFIER = new BasicMachine<>("fluid_solidifier", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine DISTILLERY = new BasicMachine<>("distillery", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine CHEMICAL_BATH = new BasicMachine<>("chemical_bath", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine AUTOCLAVE = new BasicMachine<>("autoclave", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine MIXER = new BasicMachine<>("mixer", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine LASER_ENGRAVER = new BasicMachine<>("laser_engraver", new RecipeBuilder(), ITEM);
+    public static BasicMachine FORMING_PRESS = new BasicMachine<>("forming_press", new RecipeBuilder(), ITEM);
+    public static BasicMachine FORGE_HAMMER = new BasicMachine<>("forge_hammer", new RecipeBuilder(), ITEM);
+    public static BasicMachine SIFTER = new BasicMachine<>("sifter", new RecipeBuilder(), ITEM);
+    public static BasicMachine ARC_FURNACE = new BasicMachine<>("arc_furnace", new RecipeBuilder(), ITEM, FLUID);
+    public static BasicMachine PLASMA_ARC_FURNACE = new BasicMachine<>("plasma_arc_furnace", new RecipeBuilder(), ITEM, FLUID);
 
-    public static Machine COAL_BOILER = new BasicMachine("coal_boiler", ITEM, FLUID).setTiers(Tier.getSteam()); //TODO
-    public static Machine LAVA_BOILER = new BasicMachine("lava_boiler", ITEM, FLUID).setTiers(STEEL); //TODO
-    public static Machine SOLAR_BOILER = new BasicMachine("solar_boiler", ITEM, FLUID).setTiers(BRONZE); //TODO
-    public static Machine STEAM_FURNACE = new BasicMachine("steam_furnace", ITEM, FLUID).setTiers(Tier.getSteam());
-    public static Machine STEAM_PULVERIZER = new BasicMachine("steam_pulverizer", ITEM, FLUID).setTiers(Tier.getSteam());
-    public static Machine STEAM_EXTRACTOR = new BasicMachine("steam_extractor", ITEM, FLUID).setTiers(Tier.getSteam());
-    public static Machine STEAM_FORGE_HAMMER = new BasicMachine("steam_forge_hammer", ITEM, FLUID).setTiers(Tier.getSteam());
-    public static Machine STEAM_COMPRESSOR = new BasicMachine("steam_compressor", ITEM, FLUID).setTiers(Tier.getSteam());
-    public static Machine STEAM_ALLOY_SMELTER = new BasicMachine("steam_alloy_smelter", ITEM, FLUID).setTiers(Tier.getSteam());
+    public static BasicMachine COAL_BOILER = new BasicMachine<>("coal_boiler", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine LAVA_BOILER = new BasicMachine<>("lava_boiler", new RecipeBuilder(), STEEL, ITEM, FLUID); //TODO
+    public static BasicMachine SOLAR_BOILER = new BasicMachine<>("solar_boiler", new RecipeBuilder(), BRONZE, ITEM, FLUID); //TODO
+    public static BasicMachine STEAM_FURNACE = new BasicMachine<>("steam_furnace", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine STEAM_PULVERIZER = new BasicMachine<>("steam_pulverizer", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine STEAM_EXTRACTOR = new BasicMachine<>("steam_extractor", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine STEAM_FORGE_HAMMER = new BasicMachine<>("steam_forge_hammer", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine STEAM_COMPRESSOR = new BasicMachine<>("steam_compressor", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine STEAM_ALLOY_SMELTER = new BasicMachine<>("steam_alloy_smelter", new RecipeBuilder(), BRONZE, STEEL, ITEM, FLUID);
 
-    public static Machine STEAM_GENERATOR = new BasicMachine("steam_generator", ITEM, FLUID).setTiers(LV, MV, HV).setRecipeMap(RecipeMap.STEAM_FUELS);
-    public static Machine GAS_GENERATOR = new BasicMachine("gas_generator", ITEM, FLUID).setTiers(LV, MV, HV).setRecipeMap(RecipeMap.GAS_FUELS);
-    public static Machine COMBUSTION_GENERATOR = new BasicMachine("combustion_generator", ITEM, FLUID).setTiers(LV, MV, HV).setRecipeMap(RecipeMap.COMBUSTION_FUELS);
-    public static Machine NAQUADAH_GENERATOR = new BasicMachine("naquadah_generator", ITEM, FLUID).setTiers(EV, IV, LUV).setRecipeMap(RecipeMap.NAQUADAH_FUELS);
-    public static Machine PLASMA_GENERATOR = new BasicMachine("plasma_generator", ITEM, FLUID).setTiers(IV, LUV, ZPM).setRecipeMap(RecipeMap.PLASMA_FUELS);
+    public static MultiMachine COKE_OVEN = new MultiMachine<>("coke_oven", new RecipeBuilder(), TileEntityCokeOven.class, LV, ITEM);
+    public static MultiMachine<RecipeBuilders.BasicBlasting> PRIMITIVE_BLAST_FURNACE = new MultiMachine<>("primitive_blast_furnace", new RecipeBuilders.BasicBlasting(), TileEntityPrimitiveBlastFurnace.class, LV, ITEM);
+    public static MultiMachine<RecipeBuilders.BasicBlasting> BRONZE_BLAST_FURNACE = new MultiMachine<>("bronze_blast_furnace", new RecipeBuilders.BasicBlasting(), TileEntityBronzeBlastFurnace.class, LV, ITEM);
+    public static MultiMachine CHARCOAL_PIT = new MultiMachine<>("charcoal_pit", new RecipeBuilder(), TileEntityCharcoalPit.class, LV);
+    public static MultiMachine BLAST_FURNACE = new MultiMachine<>("electric_blast_furnace", new RecipeBuilder(), TileEntityElectricBlastFurnace.class, LV, ITEM, FLUID);
+    public static MultiMachine IMPLOSION_COMPRESSOR = new MultiMachine<>("implosion_compressor", new RecipeBuilder(), TileEntityImplosionCompressor.class, HV, ITEM);
+    public static MultiMachine VACUUM_FREEZER = new MultiMachine<>("vacuum_freezer", new RecipeBuilder(), TileEntityVacuumFreezer.class, HV, ITEM, FLUID);
+    public static MultiMachine MULTI_SMELTER = new MultiMachine<>("multi_smelter", new RecipeBuilder(), TileEntityMultiSmelter.class, HV, ITEM);
+    public static MultiMachine LARGE_BOILER = new MultiMachine<>("large_boiler", new RecipeBuilder(), TileEntityLargeBoiler.class, LV, MV, HV, EV, ITEM, FLUID);
+    public static MultiMachine LARGE_TURBINE = new MultiMachine<>("large_turbine", new RecipeBuilder(), TileEntityLargeTurbine.class, HV, EV, IV, UV, FLUID);
+    public static MultiMachine HEAT_EXCHANGER = new MultiMachine<>("heat_exchanger", new RecipeBuilder(), TileEntityHeatExchanger.class, EV, FLUID);
+    public static MultiMachine OIL_DRILLING_RIG = new MultiMachine<>("oil_drilling_rig", new RecipeBuilder(), TileEntityOilDrillingRig.class, EV, IV, LUV, ZPM, FLUID);
+    public static MultiMachine OIL_CRACKING_UNIT = new MultiMachine<>("oil_cracking_unit", new RecipeBuilder(), TileEntityOilCrackingUnit.class, HV, FLUID);
+    public static MultiMachine ADVANCED_MINER = new MultiMachine<>("advanced_miner", new RecipeBuilder(), TileEntityAdvancedMiner.class, LV, ITEM);
+    public static MultiMachine PYROLYSIS_OVEN = new MultiMachine<>("pyrolysis_oven", new RecipeBuilder(), TileEntityPyrolysisOven.class, MV, ITEM, FLUID);
+    public static MultiMachine COMBUSTION_ENGINE = new MultiMachine<>("combustion_engine", new RecipeBuilder(), TileEntityCombustionEngine.class, EV, FLUID);
+    public static MultiMachine FUSION_REACTOR = new MultiMachine<>("fusion_reactor", new RecipeBuilder(), TileEntityFusionReactor.class, LUV, ZPM, UV, FLUID);
 
-    public static Machine QUANTUM_TANK = new TankMachine("quantum_tank");
+    public static HatchMachine HATCH_ITEM_I = new HatchMachine("hatch_item_input", GUI, ITEM);
+    public static HatchMachine HATCH_ITEM_O = new HatchMachine("hatch_item_output", GUI, ITEM);
+    public static HatchMachine HATCH_FLUID_I = new HatchMachine("hatch_fluid_input", GUI, FLUID);
+    public static HatchMachine HATCH_FLUID_O = new HatchMachine("hatch_fluid_output", GUI, FLUID);
+    public static HatchMachine HATCH_MUFFLER = new HatchMachine("hatch_muffler", GUI, ITEM);
+    public static HatchMachine HATCH_DYNAMO = new HatchMachine("hatch_dynamo", ENERGY);
+    public static HatchMachine HATCH_ENERGY = new HatchMachine("hatch_energy", ENERGY);
 
-    public static Machine COKE_OVEN = new MultiMachine("coke_oven", TileEntityCokeOven.class, LV).addFlags(ITEM);
-    public static Machine PRIMITIVE_BLAST_FURNACE = new MultiMachine("primitive_blast_furnace", TileEntityPrimitiveBlastFurnace.class, LV).addFlags(ITEM);
-    public static Machine CHARCOAL_PIT = new MultiMachine("charcoal_pit", TileEntityCharcoalPit.class, LV);
-    public static Machine BRONZE_BLAST_FURNACE = new MultiMachine("bronze_blast_furnace", TileEntityBronzeBlastFurnace.class, LV).addFlags(ITEM);
-    public static Machine BLAST_FURNACE = new MultiMachine("electric_blast_furnace", TileEntityElectricBlastFurnace.class, LV).addFlags(ITEM, FLUID);
-    public static Machine IMPLOSION_COMPRESSOR = new MultiMachine("implosion_compressor", TileEntityImplosionCompressor.class, HV).addFlags(ITEM);
-    public static Machine VACUUM_FREEZER = new MultiMachine("vacuum_freezer", TileEntityVacuumFreezer.class, HV).addFlags(ITEM, FLUID);
-    public static Machine MULTI_SMELTER = new MultiMachine("multi_smelter", TileEntityMultiSmelter.class, HV).addFlags(ITEM);
-    public static Machine LARGE_BOILER = new MultiMachine("large_boiler", TileEntityLargeBoiler.class, LV, MV, HV, EV).addFlags(ITEM, FLUID);
-    public static Machine LARGE_TURBINE = new MultiMachine("large_turbine", TileEntityLargeTurbine.class, HV, EV, IV, UV).addFlags(FLUID);
-    public static Machine HEAT_EXCHANGER = new MultiMachine("heat_exchanger", TileEntityHeatExchanger.class, EV).addFlags(FLUID);
-    public static Machine OIL_DRILLING_RIG = new MultiMachine("oil_drilling_rig", TileEntityOilDrillingRig.class, EV, IV, LUV, ZPM).addFlags(FLUID);
-    public static Machine OIL_CRACKING_UNIT = new MultiMachine("oil_cracking_unit", TileEntityOilCrackingUnit.class, HV).addFlags(FLUID);
-    public static Machine ADVANCED_MINER = new MultiMachine("advanced_miner", TileEntityAdvancedMiner.class, LV).addFlags(ITEM);
-    public static Machine PYROLYSIS_OVEN = new MultiMachine("pyrolysis_oven", TileEntityPyrolysisOven.class, MV).addFlags(ITEM, FLUID);
-    public static Machine COMBUSTION_ENGINE = new MultiMachine("combustion_engine", TileEntityCombustionEngine.class, EV).addFlags(FLUID);
-    public static Machine FUSION_REACTOR = new MultiMachine("fusion_reactor", TileEntityFusionReactor.class, LUV, ZPM, UV).addFlags(FLUID);
+    public static TankMachine QUANTUM_TANK = new TankMachine("quantum_tank");
 
-    public static Machine HATCH_ITEM_I = new HatchMachine("hatch_item_input", GUI, ITEM);
-    public static Machine HATCH_ITEM_O = new HatchMachine("hatch_item_output", GUI, ITEM);
-    public static Machine HATCH_FLUID_I = new HatchMachine("hatch_fluid_input", GUI, FLUID);
-    public static Machine HATCH_FLUID_O = new HatchMachine("hatch_fluid_output", GUI, FLUID);
-    public static Machine HATCH_MUFFLER = new HatchMachine("hatch_muffler", GUI, ITEM);
-    public static Machine HATCH_DYNAMO = new HatchMachine("hatch_dynamo", ENERGY);
-    public static Machine HATCH_ENERGY = new HatchMachine("hatch_energy", ENERGY);
+    public static BasicMachine STEAM_GENERATOR = new BasicMachine<>("steam_generator", new RecipeBuilder(), LV, MV, HV, ITEM, FLUID);
+    public static BasicMachine GAS_GENERATOR = new BasicMachine<>("gas_generator", new RecipeBuilder(), LV, MV, HV, ITEM, FLUID);
+    public static BasicMachine COMBUSTION_GENERATOR = new BasicMachine<>("combustion_generator", new RecipeBuilder(), LV, MV, HV, ITEM, FLUID);
+    public static BasicMachine NAQUADAH_GENERATOR = new BasicMachine<>("naquadah_generator", new RecipeBuilder(), EV, IV, LUV, ITEM, FLUID);
+    public static BasicMachine PLASMA_GENERATOR = new BasicMachine<>("plasma_generator", new RecipeBuilder(), IV, LUV, ZPM, ITEM, FLUID);
 
     public static void init() {
-
+        STEAM_GENERATOR.setRecipeMap(GregTechAPI.STEAM_FUELS);
+        GAS_GENERATOR.setRecipeMap(GregTechAPI.GAS_FUELS);
+        COMBUSTION_GENERATOR.setRecipeMap(GregTechAPI.COMBUSTION_FUELS);
+        NAQUADAH_GENERATOR.setRecipeMap(GregTechAPI.NAQUADAH_FUELS);
+        PLASMA_GENERATOR.setRecipeMap(GregTechAPI.PLASMA_FUELS);
     }
 
     public static void add(Machine machine) {

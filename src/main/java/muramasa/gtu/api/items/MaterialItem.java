@@ -129,43 +129,15 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
 
     public static ItemStack get(Prefix prefix, Material material, int count) {
         ItemStack replacement = prefix.getReplacement(material);
-        if (replacement == null) {
-            if (!prefix.allowGeneration(material)) {
-                if (Ref.RECIPE_EXCEPTIONS) {
-                    throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                } else {
-                    System.err.println("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                }
-            }
-            MaterialItem item = GregTechAPI.get(MaterialItem.class, prefix.getId() + "_" + material.getId());
-            if (item == null) {
-                if (Ref.RECIPE_EXCEPTIONS) {
-                    throw new IllegalStateException("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                } else {
-                    System.err.println("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                }
-            }
-            if (count == 0) {
-                if (Ref.RECIPE_EXCEPTIONS) {
-                    System.out.println("ITEM: " + item.getPrefix().getId() + " - " + item.getMaterial().getId());
-                    throw new IllegalStateException("GET ERROR - COUNT 0: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                } else {
-                    System.err.println("GET ERROR - COUNT 0: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                }
-            }
-            ItemStack mat = new ItemStack(item, count);
-            if (mat.isEmpty()) {
-                if (Ref.RECIPE_EXCEPTIONS) {
-                    System.out.println("ITEM: " + item.getPrefix().getId() + " - " + item.getMaterial().getId());
-                    throw new IllegalStateException("GET ERROR - MAT STACK EMPTY: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                } else {
-                    System.err.println("GET ERROR - MAT STACK EMPTY: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-                }
-            }
-            return mat;
-        } else {
-            return Utils.ca(count, replacement);
-        }
+        if (replacement != null) return Utils.ca(count, replacement);
+
+        if (!prefix.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
+        MaterialItem item = GregTechAPI.get(MaterialItem.class, prefix.getId() + "_" + material.getId());
+        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");
+        if (count == 0) Utils.onInvalidData("GET ERROR - COUNT 0: P(" + prefix.getId() + ") M(" + material.getId() + ")");
+        ItemStack mat = new ItemStack(item, count);
+        if (mat.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: P(" + prefix.getId() + ") M(" + material.getId() + ")");
+        return mat;
     }
 
     @Override

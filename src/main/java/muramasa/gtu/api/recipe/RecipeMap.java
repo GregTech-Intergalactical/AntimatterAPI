@@ -12,30 +12,15 @@ import java.util.stream.Collectors;
 
 public class RecipeMap {
 
-    public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap("ore_byproducts", 100);
-
-//    public static RecipeMap SMELTING = new RecipeMap("smelting", 100);
-
-    public static RecipeMap STEAM_FUELS = new RecipeMap("steam_fuels", "Fuel Value: ", " EU", 1);
-    public static RecipeMap GAS_FUELS = new RecipeMap("gas_fuels", "Fuel Value: ", " EU", 20);
-    public static RecipeMap COMBUSTION_FUELS = new RecipeMap("combustion_fuels", "Fuel Value: ", " EU", 20);
-    public static RecipeMap NAQUADAH_FUELS = new RecipeMap("naquadah_fuels", "Fuel Value: ", " EU", 20);
-    public static RecipeMap PLASMA_FUELS = new RecipeMap("plasma_fuels", "Fuel Value: ", " EU", 100);
-
     private HashMap<IRecipeObject, Recipe> LOOKUP;
-    private String categoryId, categoryName;
-    private String specialPre = "", specialPost = ""; //TODO move to lang
+    private String categoryId;
+    private RecipeBuilder builder;
 
-    public RecipeMap(String jeiCategoryId, int initialSize) {
-        this.categoryId = "gt.recipe_map." + jeiCategoryId;
-        this.categoryName = Utils.trans("jei.category." + jeiCategoryId + ".name");
-        LOOKUP = new LinkedHashMap<>(initialSize);
-    }
-
-    public RecipeMap(String jeiCategoryId, String specialPre, String specialPost, int initialSize) {
-        this(jeiCategoryId, initialSize);
-        this.specialPre = specialPre;
-        this.specialPost = specialPost;
+    public RecipeMap(String categoryId, RecipeBuilder builder) {
+        this.categoryId = "gt.recipe_map." + categoryId;
+        this.builder = builder;
+        this.builder.setMap(this);
+        LOOKUP = new LinkedHashMap<>();
     }
 
     public String getCategoryId() {
@@ -43,7 +28,15 @@ public class RecipeMap {
     }
 
     public String getCategoryName() {
-        return categoryName;
+        return Utils.trans("jei.category." + categoryId + ".name");
+    }
+
+    public String getExtraString(String id) {
+        return Utils.trans("jei.category." + categoryId + "." + id + ".name");
+    }
+
+    public RecipeBuilder RB() {
+        return builder;
     }
 
     //TODO validate there are no duplicates
@@ -69,12 +62,12 @@ public class RecipeMap {
     //TODO take into account machine tier
     public static Recipe findRecipeItem(RecipeMap map, long voltage, ItemStack[] items) {
         if (map == null || !Utils.areItemsValid(items)) return null;
-        return map.LOOKUP.get(new RecipeInputItem(items));
+        return (Recipe) map.LOOKUP.get(new RecipeInputItem(items));
     }
 
     @Nullable
     public static Recipe findRecipeFluid(RecipeMap map, long voltage, FluidStack[] fluids) {
         if (map == null || !Utils.areFluidsValid(fluids)) return null;
-        return map.LOOKUP.get(new RecipeInputFluid(fluids));
+        return (Recipe) map.LOOKUP.get(new RecipeInputFluid(fluids));
     }
 }
