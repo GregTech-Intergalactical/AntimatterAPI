@@ -8,6 +8,7 @@ import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,22 +28,27 @@ public class GregTechTweaker {
     }
 
     @ZenMethod
-    public static CTMaterial getMaterial(String name) {
-        Material material = Materials.get(name);
-        if (material == null) throw new IllegalArgumentException("material for id " + name + " does not exist");
+    public static void addMaterialType(String id, boolean visible) {
+        new MaterialType(id, visible);
+    }
+
+    @ZenMethod
+    public static CTMaterial getMaterial(String id) {
+        Material material = Materials.get(id);
+        if (material == null) throw new IllegalArgumentException("material for id " + id + " does not exist");
         return new CTMaterial(material);
     }
 
     @ZenMethod
-    public static CTMaterial addMaterial(String name, int rgb, String textureSet) {
-        if (Materials.get(name) != null) throw new IllegalArgumentException("material for id " + name + " already exists");
-        return new CTMaterial(name, rgb, textureSet);
+    public static CTMaterial addMaterial(String id, int rgb, String textureSet) {
+        if (Materials.get(id) != null) throw new IllegalArgumentException("material for id " + id + " already exists");
+        return new CTMaterial(id, rgb, textureSet);
     }
 
     @ZenMethod
-    public static void addTextureSet(String name) {
-        if (TextureSet.get(name) != null) throw new IllegalArgumentException("TextureSet for id" + name + "already exists");
-        new TextureSet(name);
+    public static void addTextureSet(String id) {
+        if (TextureSet.get(id) != null) throw new IllegalArgumentException("TextureSet for id" + id + "already exists");
+        new TextureSet(id);
     }
 
     @ZenMethod

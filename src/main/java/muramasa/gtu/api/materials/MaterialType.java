@@ -16,6 +16,7 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     //TODO move to GregTechAPI?
     private static LinkedHashMap<String, ItemStack> ITEM_REPLACEMENT = new LinkedHashMap<>();
 
+    //Item Types
     public static MaterialType DUST = new MaterialType("dust", true);
     public static MaterialType DUST_SMALL = new MaterialType("dust_small", false);
     public static MaterialType DUST_TINY = new MaterialType("dust_tiny", false);
@@ -64,7 +65,7 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
 //    private MaterialType[] subFlags;
     private ArrayList<Material> materials = new ArrayList<>();
 
-    MaterialType(String id, boolean visible) {
+    public MaterialType(String id, boolean visible) {
         this.id = id;
         this.visible = visible;
         //this.subFlags = subFlags;
@@ -74,7 +75,7 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
         GregTechAPI.register(MaterialType.class, this);
     }
 
-    MaterialType(String id, boolean visible, boolean generatesItems) {
+    public MaterialType(String id, boolean visible, boolean generatesItems) {
         this(id, visible);
         this.doesGenerate = generatesItems;
     }
