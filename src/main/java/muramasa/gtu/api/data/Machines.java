@@ -6,7 +6,6 @@ import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.*;
 import muramasa.gtu.api.recipe.RecipeBuilder;
-import muramasa.gtu.api.recipe.RecipeBuilders;
 import muramasa.gtu.common.tileentities.multi.*;
 
 import java.util.ArrayList;
