@@ -1,7 +1,6 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStorage;
@@ -16,7 +15,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 
-import static muramasa.gtu.api.materials.GenerationFlag.*;
+import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.RecipeFlag.METAL;
 
 public class Material implements IGregTechObject {
@@ -83,7 +82,7 @@ public class Material implements IGregTechObject {
     }
 
     public Material asDust(int meltingPoint, IMaterialFlag... flags) {
-        add(DUST, SMALL_DUST, TINY_DUST);
+        add(DUST, DUST_SMALL, DUST_TINY);
         add(flags);
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 295) {
@@ -102,7 +101,7 @@ public class Material implements IGregTechObject {
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
-            add(HOT_INGOT);
+            add(INGOT_HOT);
         }
         return this;
     }
@@ -119,7 +118,7 @@ public class Material implements IGregTechObject {
 
     public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
         asDust(flags);
-        add(BASIC_GEM, BLOCK);
+        add(GEM, BLOCK);
         if (transparent) {
             this.transparent = true;
             add(PLATE, LENS);
@@ -130,7 +129,7 @@ public class Material implements IGregTechObject {
     //TODO: Shall we do gem variants, at all?
     public Material asGem(boolean transparent, IMaterialFlag... flags) {
         asGemBasic(transparent, flags);
-        add(GEM_VARIANTS);
+        add(GEM_CHIPPED, GEM_FLAWED, GEM_FLAWLESS, GEM_EXQUISITE);
         return this;
     }
 
@@ -169,7 +168,7 @@ public class Material implements IGregTechObject {
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) {
             add(TOOLS, PLATE, ROD, SCREW);
-        } else if (has(BASIC_GEM)) {
+        } else if (has(GEM)) {
             add(TOOLS, ROD);
         }
         this.toolSpeed = toolSpeed;
@@ -187,7 +186,7 @@ public class Material implements IGregTechObject {
 
     public boolean has(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof GenerationFlag) {
+            if (flag instanceof MaterialType) {
                 if ((itemMask & flag.getBit()) == 0) return false;
             } else if (flag instanceof RecipeFlag) {
                 if ((recipeMask & flag.getBit()) == 0) return false;
@@ -198,9 +197,9 @@ public class Material implements IGregTechObject {
 
     public void add(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof GenerationFlag) {
+            if (flag instanceof MaterialType) {
                 if (flag == ORE) {
-                    add(CRUSHED, PURIFIED_CRUSHED, CENTRIFUGED_CRUSHED, IMPURE_DUST, PURE_DUST, DUST);
+                    add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
                 }
                 itemMask |= flag.getBit();
             } else if (flag instanceof RecipeFlag) {
@@ -212,7 +211,7 @@ public class Material implements IGregTechObject {
 
     public void remove(IMaterialFlag... flags) {
         for (IMaterialFlag flag : flags) {
-            if (flag instanceof GenerationFlag) {
+            if (flag instanceof MaterialType) {
                 itemMask &= ~flag.getBit();
             } else if (flag instanceof RecipeFlag) {
                 recipeMask &= ~flag.getBit();
@@ -472,120 +471,120 @@ public class Material implements IGregTechObject {
 
     /** Helpful Stack Getters **/
     public ItemStack getCrushed(int amount) {
-        return MaterialItem.get(Prefix.Crushed, this, amount);
+        return MaterialItem.get(CRUSHED, this, amount);
     }
 
     public ItemStack getCrushedC(int amount) {
-        return MaterialItem.get(Prefix.CrushedCentrifuged, this, amount);
+        return MaterialItem.get(CRUSHED_CENTRIFUGED, this, amount);
     }
 
     public ItemStack getCrushedP(int amount) {
-        return MaterialItem.get(Prefix.CrushedPurified, this, amount);
+        return MaterialItem.get(CRUSHED_PURIFIED, this, amount);
     }
 
     public ItemStack getDust(int amount) {
-        return MaterialItem.get(Prefix.Dust, this, amount);
+        return MaterialItem.get(DUST, this, amount);
     }
 
     public ItemStack getDustP(int amount) {
-        return MaterialItem.get(Prefix.DustPure, this, amount);
+        return MaterialItem.get(DUST_PURE, this, amount);
     }
 
     public ItemStack getDustIP(int amount) {
-        return MaterialItem.get(Prefix.DustImpure, this, amount);
+        return MaterialItem.get(DUST_IMPURE, this, amount);
     }
 
     public ItemStack getDustS(int amount) {
-        return MaterialItem.get(Prefix.DustSmall, this, amount);
+        return MaterialItem.get(DUST_SMALL, this, amount);
     }
 
     public ItemStack getDustT(int amount) {
-        return MaterialItem.get(Prefix.DustTiny, this, amount);
+        return MaterialItem.get(DUST_TINY, this, amount);
     }
 
     public ItemStack getNugget(int amount) {
-        return MaterialItem.get(Prefix.Nugget, this, amount);
+        return MaterialItem.get(NUGGET, this, amount);
     }
 
     public ItemStack getIngot(int amount) {
-        return MaterialItem.get(Prefix.Ingot, this, amount);
+        return MaterialItem.get(INGOT, this, amount);
     }
 
     public ItemStack getIngotH(int amount) {
-        return MaterialItem.get(Prefix.IngotHot, this, amount);
+        return MaterialItem.get(INGOT_HOT, this, amount);
     }
 
     public ItemStack getPlate(int amount) {
-        return MaterialItem.get(Prefix.Plate, this, amount);
+        return MaterialItem.get(PLATE, this, amount);
     }
 
     public ItemStack getPlateD(int amount) {
-        return MaterialItem.get(Prefix.PlateDense, this, amount);
+        return MaterialItem.get(PLATE_DENSE, this, amount);
     }
 
     public ItemStack getGem(int amount) {
-        return MaterialItem.get(Prefix.Gem, this, amount);
+        return MaterialItem.get(GEM, this, amount);
     }
 
     public ItemStack getGemChipped(int amount) {
-        return MaterialItem.get(Prefix.GemChipped, this, amount);
+        return MaterialItem.get(GEM_CHIPPED, this, amount);
     }
 
     public ItemStack getGemFlawed(int amount) {
-        return MaterialItem.get(Prefix.GemFlawed, this, amount);
+        return MaterialItem.get(GEM_FLAWED, this, amount);
     }
 
     public ItemStack getGemFlawless(int amount) {
-        return MaterialItem.get(Prefix.GemFlawless, this, amount);
+        return MaterialItem.get(GEM_FLAWLESS, this, amount);
     }
 
     public ItemStack getGemExquisite(int amount) {
-        return MaterialItem.get(Prefix.GemExquisite, this, amount);
+        return MaterialItem.get(GEM_EXQUISITE, this, amount);
     }
 
     public ItemStack getFoil(int amount) {
-        return MaterialItem.get(Prefix.Foil, this, amount);
+        return MaterialItem.get(FOIL, this, amount);
     }
 
     public ItemStack getRod(int amount) {
-        return MaterialItem.get(Prefix.Rod, this, amount);
+        return MaterialItem.get(ROD, this, amount);
     }
 
     public ItemStack getBolt(int amount) {
-        return MaterialItem.get(Prefix.Bolt, this, amount);
+        return MaterialItem.get(BOLT, this, amount);
     }
 
     public ItemStack getScrew(int amount) {
-        return MaterialItem.get(Prefix.Screw, this, amount);
+        return MaterialItem.get(SCREW, this, amount);
     }
 
     public ItemStack getRing(int amount) {
-        return MaterialItem.get(Prefix.Ring, this, amount);
+        return MaterialItem.get(RING, this, amount);
     }
 
     public ItemStack getSpring(int amount) {
-        return MaterialItem.get(Prefix.Spring, this, amount);
+        return MaterialItem.get(SPRING, this, amount);
     }
 
     public ItemStack getWireF(int amount) {
-        return MaterialItem.get(Prefix.WireFine, this, amount);
+        return MaterialItem.get(WIRE_FINE, this, amount);
     }
 
-    public ItemStack getTurbineRotor(int amount) {
-        return MaterialItem.get(Prefix.TurbineRotor, this, amount);
+    public ItemStack getRotor(int amount) {
+        return MaterialItem.get(ROTOR, this, amount);
     }
 
     public ItemStack getGear(int amount) {
-        return MaterialItem.get(Prefix.Gear, this, amount);
+        return MaterialItem.get(GEAR, this, amount);
     }
 
     
     public ItemStack getGearS(int amount) {
-        return MaterialItem.get(Prefix.GearSmall, this, amount);
+        return MaterialItem.get(GEAR_SMALL, this, amount);
     }
 
     public ItemStack getLens(int amount) {
-        return MaterialItem.get(Prefix.Lens, this, amount);
+        return MaterialItem.get(LENS, this, amount);
     }
 
     public ItemStack getCell(int amount) {
@@ -601,24 +600,12 @@ public class Material implements IGregTechObject {
     }
 
     public ItemStack getOre(int amount) {
-        if (!has(ORE)) {
-            if (Ref.DATA_EXCEPTIONS) {
-                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
-            } else {
-                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Ore.getId() + ") M(" + id + ")");
-            }
-        }
+        if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
         return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
     }
 
     public ItemStack getBlock(int amount) {
-        if (!has(BLOCK)) {
-            if (Ref.DATA_EXCEPTIONS) {
-                throw new IllegalStateException("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
-            } else {
-                System.err.println("GET ERROR - DOES NOT GENERATE: P(" + Prefix.Block.getId() + ") M(" + id + ")");
-            }
-        }
+        if (!has(BLOCK)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + BLOCK.getId() + ") M(" + id + ")");
         return new ItemStack(GregTechAPI.get(BlockStorage.class, id), amount);
     }
 

@@ -4,7 +4,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Element;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
@@ -37,19 +37,19 @@ import java.util.List;
 public class MaterialItem extends Item implements IGregTechObject, IModelOverride, IColorHandler {
 
     private Material material;
-    private Prefix prefix;
+    private MaterialType type;
 
-    public MaterialItem(Prefix prefix, Material material) {
+    public MaterialItem(MaterialType type, Material material) {
         this.material = material;
-        this.prefix = prefix;
+        this.type = type;
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_MATERIALS);
         GregTechAPI.register(MaterialItem.class, this);
     }
 
-    public Prefix getPrefix() {
-        return prefix;
+    public MaterialType getType() {
+        return type;
     }
 
     public Material getMaterial() {
@@ -58,14 +58,14 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
 
     @Override
     public String getId() {
-        return prefix.getId() + "_" + material.getId();
+        return type.getId() + "_" + material.getId();
     }
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab instanceof GregTechTab) {
             if (((GregTechTab) tab).getName().equals("materials")) {
-                if (getPrefix().isVisible()) {
+                if (getType().isVisible()) {
                     items.add(new ItemStack(this));
                 }
             }
@@ -75,7 +75,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         MaterialItem item = (MaterialItem) stack.getItem();
-        return item.getPrefix().getDisplayName(item.getMaterial());
+        return item.getType().getDisplayName(item.getMaterial());
     }
 
     @Override
@@ -92,11 +92,11 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
         if (tile != null) {
             return GregTechAPI.placeCover(tile, stack, side, hitX, hitY, hitZ) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
         }
-        if (prefix == Prefix.DustImpure && world.getBlockState(pos).getBlock() instanceof BlockCauldron) {
+        if (type == MaterialType.DUST_IMPURE && world.getBlockState(pos).getBlock() instanceof BlockCauldron) {
             int level = world.getBlockState(pos).getValue(BlockCauldron.LEVEL);
             if (level > 0) {
                 MaterialItem item = (MaterialItem) player.getHeldItem(hand).getItem();
-                player.setHeldItem(hand, get(Prefix.DustPure, item.getMaterial(), stack.getCount()));
+                player.setHeldItem(hand, get(MaterialType.DUST_IMPURE, item.getMaterial(), stack.getCount()));
                 world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockCauldron.LEVEL, --level));
                 SoundType.BUCKET_EMPTY.play(world, pos);
                 return EnumActionResult.SUCCESS;
@@ -105,17 +105,17 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
         return EnumActionResult.FAIL;
     }
 
-    public static boolean hasPrefix(ItemStack stack, Prefix prefix) {
-        return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getPrefix() == prefix;
+    public static boolean hasPrefix(ItemStack stack, MaterialType type) {
+        return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getType() == type;
     }
 
     public static boolean hasMaterial(ItemStack stack, Material material) {
         return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getMaterial() == material;
     }
 
-    public static Prefix getPrefix(ItemStack stack) {
+    public static MaterialType getType(ItemStack stack) {
         if (!(stack.getItem() instanceof MaterialItem)) return null;
-        return ((MaterialItem) stack.getItem()).getPrefix();
+        return ((MaterialItem) stack.getItem()).getType();
     }
 
     public static Material getMaterial(ItemStack stack) {
@@ -124,19 +124,19 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return hasPrefix(stack, Prefix.Plate);
+        return hasPrefix(stack, MaterialType.PLATE);
     }
 
-    public static ItemStack get(Prefix prefix, Material material, int count) {
-        ItemStack replacement = prefix.getReplacement(material);
+    public static ItemStack get(MaterialType type, Material material, int count) {
+        ItemStack replacement = type.getReplacement(material);
         if (replacement != null) return Utils.ca(count, replacement);
 
-        if (!prefix.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-        MaterialItem item = GregTechAPI.get(MaterialItem.class, prefix.getId() + "_" + material.getId());
-        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: P(" + prefix.getId() + ") M(" + material.getId() + ")");
-        if (count == 0) Utils.onInvalidData("GET ERROR - COUNT 0: P(" + prefix.getId() + ") M(" + material.getId() + ")");
+        if (!type.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + type.getId() + ") M(" + material.getId() + ")");
+        MaterialItem item = GregTechAPI.get(MaterialItem.class, type.getId() + "_" + material.getId());
+        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: P(" + type.getId() + ") M(" + material.getId() + ")");
+        if (count == 0) Utils.onInvalidData("GET ERROR - COUNT 0: P(" + type.getId() + ") M(" + material.getId() + ")");
         ItemStack mat = new ItemStack(item, count);
-        if (mat.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: P(" + prefix.getId() + ") M(" + material.getId() + ")");
+        if (mat.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: P(" + type.getId() + ") M(" + material.getId() + ")");
         return mat;
     }
 
@@ -148,6 +148,6 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + prefix.getId() + "_" + material.getId(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + type.getId() + "_" + material.getId(), "inventory"));
     }
 }

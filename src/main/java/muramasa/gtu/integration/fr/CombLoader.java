@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 import static muramasa.gtu.api.data.Materials.*;
 import static muramasa.gtu.api.data.RecipeMaps.*;
-import static muramasa.gtu.api.materials.GenerationFlag.LIQUID;
+import static muramasa.gtu.api.materials.MaterialType.LIQUID;
 
 public class CombLoader {
 

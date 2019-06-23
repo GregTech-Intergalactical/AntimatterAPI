@@ -7,7 +7,7 @@ import muramasa.gtu.api.cover.impl.CoverFluid;
 import muramasa.gtu.api.cover.impl.CoverItem;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.materials.GenerationFlag;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.common.Data;
@@ -44,7 +44,7 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCoverStack(Data.PumpEV.get(1), new CoverFluid(Tier.EV));
                 GregTechAPI.registerCoverStack(Data.PumpIV.get(1), new CoverFluid(Tier.IV));
                 GregTechAPI.registerCoverStack(Data.EnergyPort.get(1), new CoverEnergy(Tier.LV)); //TODO Tiered energy ports?
-                GenerationFlag.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverStack(m.getPlate(1), GregTechAPI.CoverPlate));
+                MaterialType.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverStack(m.getPlate(1), GregTechAPI.CoverPlate));
                 break;
             case MATERIAL_INIT:
                 Materials.init();

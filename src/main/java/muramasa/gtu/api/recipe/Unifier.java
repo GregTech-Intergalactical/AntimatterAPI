@@ -22,7 +22,7 @@ public class Unifier {
 
     public static ItemStack get(ItemStack stack) {
         if (!Configs.RECIPE.ENABLE_RECIPE_UNIFICATION || !(stack.getItem() instanceof MaterialItem)) return stack;
-        String dict = ((MaterialItem) stack.getItem()).getPrefix().oreName(((MaterialItem) stack.getItem()).getMaterial());
+        String dict = ((MaterialItem) stack.getItem()).getType().oreName(((MaterialItem) stack.getItem()).getMaterial());
         NonNullList<ItemStack> matchingStacks = OreDictionary.getOres(dict);
         if (matchingStacks.size() == 0) return stack;
         for (int i = 0; i < Configs.RECIPE.MOD_PRIORITY.length; i++) {

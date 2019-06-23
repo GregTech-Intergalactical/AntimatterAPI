@@ -3,8 +3,8 @@ package muramasa.gtu.api.cover.impl;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
-import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.item.ItemStack;
 
@@ -12,15 +12,15 @@ import java.util.ArrayList;
 
 public class CoverPlate extends CoverMaterial {
 
-    private Prefix prefix;
+    private MaterialType type;
     private Material material;
 
     public CoverPlate() {
         //NOOP
     }
 
-    public CoverPlate(Prefix prefix, Material material) {
-        this.prefix = prefix;
+    public CoverPlate(MaterialType type, Material material) {
+        this.type = type;
         this.material = material;
     }
 
@@ -35,8 +35,8 @@ public class CoverPlate extends CoverMaterial {
     }
 
     @Override
-    public Prefix getPrefix() {
-        return prefix;
+    public MaterialType getType() {
+        return type;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public Cover onPlace(ItemStack stack) {
         Material material = MaterialItem.getMaterial(stack);
-        if (material != null) return new CoverPlate(Prefix.Block, material);
+        if (material != null) return new CoverPlate(MaterialType.BLOCK, material);
         return super.onPlace(stack);
     }
 
@@ -55,7 +55,7 @@ public class CoverPlate extends CoverMaterial {
     public Texture[] getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
         for (TextureSet set : TextureSet.getAll()) {
-            textures.add(set.getBlockTexture(Prefix.Block));
+            textures.add(set.getBlockTexture(MaterialType.BLOCK));
         }
         return textures.toArray(new Texture[0]);
     }

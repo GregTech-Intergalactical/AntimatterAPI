@@ -41,25 +41,25 @@ public class TextureSet implements IGregTechObject {
         return id;
     }
 
-    public Texture getBlockTexture(Prefix prefix) {
-        return new Texture("blocks/material_set/" + id + "/" + prefix.getId());
+    public Texture getBlockTexture(MaterialType type) {
+        return new Texture("blocks/material_set/" + id + "/" + type.getId());
     }
 
-    public Texture getItemTexture(Prefix prefix) {
-        return new Texture("items/material_set/" + id + "/" + prefix.getId());
+    public Texture getItemTexture(MaterialType type) {
+        return new Texture("items/material_set/" + id + "/" + type.getId());
     }
 
-    public ImmutableList<ResourceLocation> getItemTextures(Prefix prefix) {
+    public ImmutableList<ResourceLocation> getItemTextures(MaterialType type) {
         return ImmutableList.of(
-            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/" + prefix.getId()),
-            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/overlay/" + prefix.getId())
+            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/" + type.getId()),
+            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/overlay/" + type.getId())
         );
     }
 
-    public Texture[] getBlockTextures(Prefix prefix) {
+    public Texture[] getBlockTextures(MaterialType type) {
         return new Texture[] {
-            new Texture("blocks/material_set/" + id + "/" + prefix.getId()),
-            new Texture("blocks/material_set/" + id + "/overlay/" + prefix.getId())
+            new Texture("blocks/material_set/" + id + "/" + type.getId()),
+            new Texture("blocks/material_set/" + id + "/overlay/" + type.getId())
         };
     }
 

@@ -4,8 +4,11 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.*;
+import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyInteger;
@@ -102,7 +105,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     public String getDisplayName(ItemStack stack) {
-        return Prefix.Ore.getDisplayName(material);
+        return MaterialType.ORE.getDisplayName(material);
     }
 
     @Override

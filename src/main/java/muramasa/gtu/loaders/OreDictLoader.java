@@ -9,7 +9,7 @@ public class OreDictLoader {
 
     public static void init() {
         //Register materialItem entries (prefixMaterialName)
-        GregTechAPI.all(MaterialItem.class).forEach(i -> OreDictionary.registerOre(i.getPrefix().oreName(i.getMaterial()), i));
+        GregTechAPI.all(MaterialItem.class).forEach(i -> OreDictionary.registerOre(i.getType().oreName(i.getMaterial()), i));
 
         //Register craftingTool entries (craftingToolType)
         GregTechAPI.all(MaterialTool.class).forEach(t -> OreDictionary.registerOre(t.getType().getOreDict(), t));

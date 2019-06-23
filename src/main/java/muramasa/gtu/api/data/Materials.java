@@ -4,7 +4,6 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.fluid.GTFluid;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -12,7 +11,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.gtu.api.materials.Element.*;
-import static muramasa.gtu.api.materials.GenerationFlag.*;
+import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.RecipeFlag.*;
 import static muramasa.gtu.api.materials.TextureSet.*;
 
@@ -22,21 +21,21 @@ public class Materials {
     public static Material Beryllium = new Material("beryllium", 0x64b464, METALLIC, Be).asMetal(1560, 0, ORE).addTools(14.0F, 64, 2);
     public static Material Bismuth = new Material("bismuth", 0x64a0a0, METALLIC, Bi).asMetal(544, 0, ORE);
     public static Material Carbon = new Material("carbon", 0x141414, DULL, C).asSolid(); //TODO: Tools, Carbon Fluid? Removed Tools
-    public static Material Chrome = new Material("chrome", 0xffe6e6, SHINY, Cr).asMetal(2180, 1700, SCREW, RING, PLATE, TURBINE_ROTOR).addTools(11.0F, 256, 3);
+    public static Material Chrome = new Material("chrome", 0xffe6e6, SHINY, Cr).asMetal(2180, 1700, SCREW, RING, PLATE, ROTOR).addTools(11.0F, 256, 3);
     public static Material Cobalt = new Material("cobalt", 0x5050fa, METALLIC, Co).asMetal(1768, 0).addTools(8.0F, 512, 3);
-    public static Material Gold = new Material("gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, FINE_WIRE, GEAR, ORE).addTools(15.0F, 48, 2);
+    public static Material Gold = new Material("gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIRE_FINE, GEAR, ORE).addTools(15.0F, 48, 2);
     public static Material Iridium = new Material("iridium", 0xf0f0f5, DULL, Ir).asMetal(2719, 2719, FRAME, ORE).addTools(8.0F, 2560, 4);
     public static Material Iron = new Material("iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME).asPlasma().addTools(6.0F, 256, 2);
     public static Material Lanthanum = new Material("lanthanum", 0xffffff, METALLIC, La).asSolid(1193, 1193);
-    public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, DENSE_PLATE, FOIL, ROD, ORE);
+    public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, PLATE_DENSE, FOIL, ROD, ORE);
     public static Material Manganese = new Material("manganese", 0xfafafa, DULL, Mn).asMetal(1519, 0, ORE);
     public static Material Molybdenum = new Material("molybdenum", 0xb4b4dc, SHINY, Mo).asMetal(2896, 0, ORE).addTools(7.0F, 512, 2);
     public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD); //TODO: Bastnasite or Monazite for Ore Form
     public static Material Neutronium = new Material("neutronium", 0xfafafa, DULL, Nt).asMetal(10000, 10000, SCREW, RING, GEAR, FRAME).addTools(24.0F, 655360, 6); //TODO Vibranium
     public static Material Nickel = new Material("nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE).asPlasma();
-    public static Material Osmium = new Material("osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, FINE_WIRE).addTools(16.0F, 1080, 4);
+    public static Material Osmium = new Material("osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, WIRE_FINE).addTools(16.0F, 1080, 4);
     public static Material Palladium = new Material("palladium", 0x808080, SHINY, Pd).asMetal(1828, 1828, ORE).addTools(10.0F, 420, 2);
-    public static Material Platinum = new Material("platinum", 0xffffc8, SHINY, Pt).asMetal(2041, 0, PLATE, FOIL, ROD, FINE_WIRE, ORE).addTools(18.0F, 48, 2);
+    public static Material Platinum = new Material("platinum", 0xffffc8, SHINY, Pt).asMetal(2041, 0, PLATE, FOIL, ROD, WIRE_FINE, ORE).addTools(18.0F, 48, 2);
     public static Material Plutonium = new Material("plutonium_244", 0xf03232, METALLIC, Pu).asMetal(912, 0).addTools(6.0F, 280, 3, of(Enchantments.FIRE_ASPECT, 2)); //TODO: Enchantment: Radioactivity
     public static Material Plutonium241 = new Material("plutonium_241", 0xfa4646, SHINY, Pu241).asMetal(912, 0).addTools(6.0F, 280, 3);
     public static Material Silver = new Material("silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE);
@@ -57,7 +56,7 @@ public class Materials {
     public static Material Cadmium = new Material("cadmium", 0x32323c, SHINY, Cd).asDust(594);
     public static Material Cerium = new Material("cerium", 0xffffff, METALLIC, Ce).asSolid(1068, 1068);
     public static Material Chlorine = new Material("chlorine", 0xffffff, NONE, Cr).asGas();
-    public static Material Copper = new Material("copper", 0xff6400, SHINY, Cu).asMetal(1357, 0, PLATE, ROD, FOIL, FINE_WIRE, GEAR, ORE);
+    public static Material Copper = new Material("copper", 0xff6400, SHINY, Cu).asMetal(1357, 0, PLATE, ROD, FOIL, WIRE_FINE, GEAR, ORE);
     public static Material Deuterium = new Material("deuterium", 0xffff00, NONE, D).asGas();
     public static Material Dysprosium = new Material("dysprosium", 0xffffff, METALLIC, D).asMetal(1680, 1680);
     public static Material Europium = new Material("europium", 0xffffff, METALLIC, Eu).asMetal(1099, 1099);
@@ -81,7 +80,7 @@ public class Materials {
     public static Material Sodium = new Material("sodium", 0x000096, METALLIC, Na).asDust(370);
     public static Material Sulfur = new Material("sulfur", 0xc8c800, DULL, S).asDust(388, ORE).asPlasma();
     public static Material Tantalum = new Material("tantalum", 0xffffff, METALLIC, Ta).asSolid(3290, 0);
-    public static Material Tin = new Material("tin", 0xdcdcdc, DULL, Sn).asMetal(505, 505, PLATE, ROD, SCREW, RING, GEAR, FOIL, FINE_WIRE, FRAME, ORE);
+    public static Material Tin = new Material("tin", 0xdcdcdc, DULL, Sn).asMetal(505, 505, PLATE, ROD, SCREW, RING, GEAR, FOIL, WIRE_FINE, FRAME, ORE);
     public static Material Tritium = new Material("tritium", 0xff0000, METALLIC, T).asGas();
     public static Material Vanadium = new Material("vanadium", 0x323232, METALLIC, V).asMetal(2183, 2183);
     public static Material Yttrium = new Material("yttrium", 0xdcfadc, METALLIC, Y).asMetal(1799, 1799);
@@ -339,24 +338,24 @@ public class Materials {
     public static Material Basalt = new Material("basalt", 0x1e1414, ROUGH).asDust().add(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
 
     /** Metals **/
-    public static Material AnnealedCopper = new Material("annealed_copper", 0xff7814, SHINY).asMetal(1357, 0, PLATE, FOIL, ROD, FINE_WIRE).add(Copper, 1);
+    public static Material AnnealedCopper = new Material("annealed_copper", 0xff7814, SHINY).asMetal(1357, 0, PLATE, FOIL, ROD, WIRE_FINE).add(Copper, 1);
     public static Material BatteryAlloy = new Material("battery_alloy", 0x9c7ca0, DULL).asMetal(295, 0, PLATE).add(Lead, 4, Antimony, 1);
     public static Material Brass = new Material("brass", 0xffb400, METALLIC).asMetal(1170, 0, FRAME).add(Zinc, 1, Copper, 3);
     public static Material Bronze = new Material("bronze", 0xff8000, METALLIC).asMetal(1125, 0, GEAR, FRAME).addTools(6.5F, 182, 2, of(Enchantments.UNBREAKING, 1)).add(Tin, 1, Copper, 3);
     public static Material Cupronickel = new Material("cupronickel", 0xe39680, METALLIC).asMetal(1728, 0).add(Copper, 1, Nickel, 1);
-    public static Material Electrum = new Material("electrum", 0xffff64, SHINY).asMetal(1330, 0, PLATE, FOIL, ROD, FINE_WIRE).addTools(13.0F, 48, 2, of(Enchantments.UNBREAKING, 3)).add(Silver, 1, Gold, 1);
+    public static Material Electrum = new Material("electrum", 0xffff64, SHINY).asMetal(1330, 0, PLATE, FOIL, ROD, WIRE_FINE).addTools(13.0F, 48, 2, of(Enchantments.UNBREAKING, 3)).add(Silver, 1, Gold, 1);
     public static Material Invar = new Material("invar", 0xb4b478, METALLIC).asMetal(1700, 0, FRAME).addTools(7.0F, 320, 2, of(Enchantments.BANE_OF_ARTHROPODS, 2)).add(Iron, 2, Nickel, 1);
     public static Material Kanthal = new Material("kanthal", 0xc2d2df, METALLIC).asMetal(1800, 1800).addTools(6.0F, 64, 2, of(Enchantments.BANE_OF_ARTHROPODS, 1)).add(Iron, 1, Aluminium, 1, Chrome, 1);
     public static Material Magnalium = new Material("magnalium", 0xc8beff, DULL).asMetal(870, 0).add(Magnesium, 1, Aluminium, 2);
     public static Material Nichrome = new Material("nichrome", 0xcdcef6, METALLIC).asMetal(2700, 2700).addTools(6.0F, 81, 2, of(Enchantments.BANE_OF_ARTHROPODS, 3)).add(Nickel, 4, Chrome, 1);
-    public static Material NiobiumTitanium = new Material("niobium_titanium", 0x1d1d29, DULL).asMetal(4500, 4500, PLATE, FOIL, ROD, FINE_WIRE).add(Nickel, 4, Chrome, 1);
-    public static Material SolderingAlloy = new Material("soldering_alloy", 0xdcdce6, DULL).asMetal(400, 400, PLATE, FOIL, ROD, FINE_WIRE).add(Tin, 9, Antimony, 1);
+    public static Material NiobiumTitanium = new Material("niobium_titanium", 0x1d1d29, DULL).asMetal(4500, 4500, PLATE, FOIL, ROD, WIRE_FINE).add(Nickel, 4, Chrome, 1);
+    public static Material SolderingAlloy = new Material("soldering_alloy", 0xdcdce6, DULL).asMetal(400, 400, PLATE, FOIL, ROD, WIRE_FINE).add(Tin, 9, Antimony, 1);
     public static Material StainlessSteel = new Material("stainless_steel", 0xc8c8dc, SHINY).asMetal(1700, 1700, SCREW, GEAR, FRAME).addTools(7.0F, 480, 2).add(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1);
     public static Material Steel = new Material("steel", 0x808080, METALLIC).asMetal(1811, 1000, GEAR, PLATE, FOIL, SCREW, ROD, RING, FRAME).addTools(6.0F, 512, 2, of(Enchantments.SHARPNESS, 2)).add(Iron, 50, Carbon, 1);
     public static Material Ultimet = new Material("ultimet", 0xb4b4e6, SHINY).asMetal(2700, 2700).add(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1);
     public static Material VanadiumGallium = new Material("vanadium_gallium", 0x80808c, SHINY).asMetal(4500, 4500, ROD).add(Vanadium, 3, Gallium, 1);
     public static Material WroughtIron = new Material("wrought_iron", 0xc8b4b4, METALLIC).asMetal(1811, 0, RING, FRAME).addTools(Iron.getToolSpeed(), Iron.getToolDurability(), Iron.getToolQuality()).add(Iron, 1);
-    public static Material YttriumBariumCuprate = new Material("yttrium_barium_cuprate", 0x504046, METALLIC).asMetal(4500, 4500, PLATE, FOIL, ROD, FINE_WIRE).add(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7);
+    public static Material YttriumBariumCuprate = new Material("yttrium_barium_cuprate", 0x504046, METALLIC).asMetal(4500, 4500, PLATE, FOIL, ROD, WIRE_FINE).add(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7);
     public static Material SterlingSilver = new Material("sterling_silver", 0xfadce1, SHINY).asMetal(1700, 1700).addTools(10.5F, 128, 2, of(Enchantments.EFFICIENCY, 2)).add(Copper, 1, Silver, 4);
     public static Material RoseGold = new Material("rose_gold", 0xffe61e, SHINY).asMetal(1600, 1600).addTools(14.0F, 128, 2, of(Enchantments.FORTUNE, 3, Enchantments.SMITE, 3)).add(Copper, 1, Gold, 4);
     public static Material BlackBronze = new Material("black_bronze", 0x64327d, DULL).asMetal(2000, 2000).addTools(12.0F, 256, 2, of(Enchantments.SWEEPING, 1)).add(Gold, 1, Silver, 1, Copper, 3);
@@ -366,7 +365,7 @@ public class Materials {
     public static Material BlueSteel = new Material("blue_steel", 0x64648c, METALLIC).asMetal(1400, 1400, FRAME).addTools(7.5F, 1024, 2).add(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4);
     //public static Material DamascusSteel = new Material("damascus_steel", 0x6e6e6e, METALLIC).asMetal(2500, 1500).addTools(8.0F, 1280, 2).add(Steel, 1); //TODO: Sorta a fantasy metal
     public static Material TungstenSteel = new Material("tungstensteel", 0x6464a0, METALLIC).asMetal(3000, 3000, SCREW, GEAR, ROD, RING, FRAME).addTools(8.0F, 2560, 4).add(Steel, 1, Tungsten, 1);
-    public static Material RedAlloy = new Material("red_alloy", 0xc80000, DULL).asMetal(295, 0, PLATE, FOIL, ROD, FINE_WIRE).add(Copper, 1, Redstone, 4);
+    public static Material RedAlloy = new Material("red_alloy", 0xc80000, DULL).asMetal(295, 0, PLATE, FOIL, ROD, WIRE_FINE).add(Copper, 1, Redstone, 4);
     public static Material CobaltBrass = new Material("cobalt_brass", 0xb4b4a0, METALLIC).asMetal(1500, 0, GEAR).addTools(8.0F, 256, 2).add(Brass, 7, Aluminium, 1, Cobalt, 1);
     public static Material IronMagnetic = new Material("magnetic_iron", 0xc8c8c8, MAGNETIC).asMetal(1811, 0).addTools(6.0F, 256, 2).add(Iron, 1);
     public static Material SteelMagnetic = new Material("magnetic_steel", 0x808080, MAGNETIC).asMetal(1000, 1000).addTools(6.0F, 512, 2).add(Steel, 1);
@@ -425,14 +424,14 @@ public class Materials {
         //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
 
         if (Configs.DATA.ENABLE_ITEM_REPLACEMENTS) {
-            Prefix.Ingot.addReplacement(Iron, new ItemStack(Items.IRON_INGOT));
-            Prefix.Ingot.addReplacement(Gold, new ItemStack(Items.GOLD_INGOT));
-            Prefix.Nugget.addReplacement(Iron, new ItemStack(Items.IRON_NUGGET));
-            Prefix.Nugget.addReplacement(Gold, new ItemStack(Items.GOLD_NUGGET));
-            Prefix.Gem.addReplacement(Diamond, new ItemStack(Items.DIAMOND));
-            Prefix.Gem.addReplacement(Coal, new ItemStack(Items.COAL));
-            Prefix.Gem.addReplacement(Charcoal, new ItemStack(Items.COAL, 1, 1));
-            Prefix.Dust.addReplacement(Redstone, new ItemStack(Items.REDSTONE));
+            INGOT.addReplacement(Iron, new ItemStack(Items.IRON_INGOT));
+            INGOT.addReplacement(Gold, new ItemStack(Items.GOLD_INGOT));
+            NUGGET.addReplacement(Iron, new ItemStack(Items.IRON_NUGGET));
+            NUGGET.addReplacement(Gold, new ItemStack(Items.GOLD_NUGGET));
+            GEM.addReplacement(Diamond, new ItemStack(Items.DIAMOND));
+            GEM.addReplacement(Coal, new ItemStack(Items.COAL));
+            GEM.addReplacement(Charcoal, new ItemStack(Items.COAL, 1, 1));
+            DUST.addReplacement(Redstone, new ItemStack(Items.REDSTONE));
         }
 
         ELECSEPI.add(Bastnasite/*, Monazite*/);

@@ -1,5 +1,6 @@
 package muramasa.gtu.api.materials;
 
+import muramasa.gtu.api.GregTechAPI;
 import org.apache.commons.lang3.EnumUtils;
 
 import java.util.ArrayList;
@@ -31,7 +32,8 @@ public interface IMaterialFlag {
     static ArrayList<IMaterialFlag> getFlagsFor(String... flagNames) {
         ArrayList<IMaterialFlag> flags = new ArrayList<>();
         for (String name : flagNames) {
-            if (EnumUtils.isValidEnum(GenerationFlag.class, name.toUpperCase())) flags.add(GenerationFlag.valueOf(name.toUpperCase()));
+            MaterialType type = GregTechAPI.get(MaterialType.class, name);
+            if (type != null) flags.add(type);
             else if (EnumUtils.isValidEnum(RecipeFlag.class, name.toUpperCase())) flags.add(RecipeFlag.valueOf(name.toUpperCase()));
         }
         return flags;

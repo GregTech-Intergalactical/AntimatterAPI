@@ -18,9 +18,9 @@ public class Ref {
     public static final String SERVER = "muramasa.gtu.proxy.ServerProxy";
 
     /** Creative Tabs **/
-    public static GregTechTab TAB_MATERIALS = new GregTechTab("materials");
     public static GregTechTab TAB_ITEMS = new GregTechTab("items");
     public static GregTechTab TAB_BLOCKS = new GregTechTab("blocks");
+    public static GregTechTab TAB_MATERIALS = new GregTechTab("materials");
     public static GregTechTab TAB_MACHINES = new GregTechTab("machines");
 
     /** GUI IDs **/

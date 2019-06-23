@@ -11,7 +11,7 @@ import muramasa.gtu.api.data.RecipeMaps;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.Prefix;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
@@ -108,9 +108,7 @@ public final class GregTechAPI {
     }
 
     public static void onEvent(RegistrationEvent event, Runnable runnable) {
-        if (!CALLBACKS.containsKey(event.name())) {
-            CALLBACKS.put(event.name(), new ArrayList<>());
-        }
+        if (!CALLBACKS.containsKey(event.name())) CALLBACKS.put(event.name(), new ArrayList<>());
         CALLBACKS.get(event.name()).add(runnable);
     }
 
@@ -137,8 +135,8 @@ public final class GregTechAPI {
     }
 
     /** Item Registry Section **/
-    public static void addItemReplacement(Prefix prefix, Material material, ItemStack stack) {
-        prefix.addReplacement(material, stack);
+    public static void addItemReplacement(MaterialType type, Material material, ItemStack stack) {
+        type.addReplacement(material, stack);
     }
 
     /** JEI Registry Section **/
