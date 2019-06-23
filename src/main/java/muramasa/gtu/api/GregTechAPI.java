@@ -109,23 +109,31 @@ public final class GregTechAPI {
 
     public static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
 
-    public static void addRegistrar(IGregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Configs.MISC.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
-    }
+    private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
 
     public static void onRegistration(RegistrationEvent event) {
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
+        if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
     }
 
-    public static boolean isRegistrarEnabled(String id) {
-        IGregTechRegistrar registrar = getRegistrar(id);
-        return registrar != null && registrar.isEnabled();
+    public static void onEvent(RegistrationEvent event, Runnable runnable) {
+        if (!CALLBACKS.containsKey(event.name())) CALLBACKS.put(event.name(), new ArrayList<>());
+        CALLBACKS.get(event.name()).add(runnable);
+    }
+
+    public static void addRegistrar(IGregTechRegistrar registrar) {
+        if (registrar.isEnabled() || Configs.MISC.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
     }
 
     @Nullable
     public static IGregTechRegistrar getRegistrar(String id) {
         return REGISTRARS.get(id);
+    }
+
+    public static boolean isRegistrarEnabled(String id) {
+        IGregTechRegistrar registrar = getRegistrar(id);
+        return registrar != null && registrar.isEnabled();
     }
 
     public static Item getItem(String domain, String path) {
