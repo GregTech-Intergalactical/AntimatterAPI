@@ -16,7 +16,7 @@ public class BasicMachine<B extends RecipeBuilder> extends RecipeMachine<B> {
 
     public BasicMachine(String name, B builder, Class tileClass, Object... data) {
         super(name, new BlockMachine(name), builder, tileClass);
-        setFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
+        setFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE, RECIPE);
         setGUI(GregTech.INSTANCE, Ref.GUI_ID_MACHINE);
 
         ArrayList<Tier> tiers = new ArrayList<>();

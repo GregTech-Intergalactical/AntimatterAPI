@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.util.ResourceLocation;
 
+//TODO 1.14, remove
 public class StateMapperRedirect extends StateMapperBase {
 
     private ModelResourceLocation defaultLocation;

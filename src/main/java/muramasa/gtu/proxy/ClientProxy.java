@@ -10,6 +10,7 @@ import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.events.BlockHighlightHandler;
+import muramasa.gtu.client.events.RenderGameOverlayHandler;
 import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
@@ -29,7 +30,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ItemLayerModel;
@@ -53,7 +53,7 @@ public class ClientProxy implements IProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         MinecraftForge.EVENT_BUS.register(BlockHighlightHandler.class);
-        MinecraftForge.EVENT_BUS.register(RenderGameOverlayEvent.class);
+        MinecraftForge.EVENT_BUS.register(RenderGameOverlayHandler.class);
         MinecraftForge.EVENT_BUS.register(TooltipHandler.class);
         ModelLoaderRegistry.registerLoader(new GTModelLoader());
     }
