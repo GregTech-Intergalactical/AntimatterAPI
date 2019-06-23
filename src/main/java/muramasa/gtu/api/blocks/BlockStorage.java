@@ -4,8 +4,10 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.Prefix;
-import muramasa.gtu.api.registration.*;
-import muramasa.gtu.client.render.StateMapperRedirect;
+import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -79,8 +81,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        String set = material.getSet().getId();
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getId()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":material_set_block/" + set, set + "=" + Prefix.Block.getId())));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_" + getId(), "inventory"));
     }
 }

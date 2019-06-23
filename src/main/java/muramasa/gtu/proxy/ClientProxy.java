@@ -2,6 +2,7 @@ package muramasa.gtu.proxy;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.Prefix;
 import muramasa.gtu.api.materials.TextureSet;
@@ -12,6 +13,7 @@ import muramasa.gtu.client.events.BlockHighlightHandler;
 import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.bakedmodels.BakedBlock;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
 import muramasa.gtu.client.render.models.ModelFluidCell;
 import muramasa.gtu.client.render.models.ModelMachine;
@@ -129,19 +131,42 @@ public class ClientProxy implements IProxy {
 
         //Generate Material Item TextureSet models
         HashMap<String, IBakedModel> PREFIX_SET_MAP = new HashMap<>();
-        GregTechAPI.all(Prefix.class).forEach(p -> {
-            TextureSet.getAll().forEach(t -> {
+        GregTechAPI.all(Prefix.class).forEach(p -> TextureSet.getAll().forEach(t -> {
+            if (p.getType() == 0) {
                 IModel model = new ItemLayerModel(t.getItemTextures(p));
                 IBakedModel baked = new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter()));
-                PREFIX_SET_MAP.put(p.getId().concat("_").concat(t.getId()), baked);
-            });
-        });
+                PREFIX_SET_MAP.put("item_".concat(p.getId().concat("_").concat(t.getId())), baked);
+            } else if (p.getType() == 1) {
+                if (p == Prefix.Block) {
+                    IModel model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", t.getBlockTexture(p));
+                    IBakedModel baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+                    PREFIX_SET_MAP.put("block_".concat(p.getId().concat("_").concat(t.getId())), baked);
+                }
+                //TODO 1.14
+                /* else if (p == Prefix.Ore) {
+                    IModel model = ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, t.getBlockTextures(p));
+                    IBakedModel baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+                    PREFIX_SET_MAP.put("block_".concat(p.getId().concat("_").concat(t.getId())), baked);
+                }*/
+            }
+        }));
 
         //Inject models for Material Items
         GregTechAPI.all(MaterialItem.class).forEach(i -> {
             ModelResourceLocation model = new ModelResourceLocation(Ref.MODID + ":" + i.getPrefix().getId() + "_" + i.getMaterial().getId() + "#inventory");
-            IBakedModel baked = PREFIX_SET_MAP.get(i.getPrefix().getId().concat("_").concat(i.getMaterial().getSet().getId()));
+            IBakedModel baked = PREFIX_SET_MAP.get("item_".concat(i.getPrefix().getId().concat("_").concat(i.getMaterial().getSet().getId())));
             e.getModelRegistry().putObject(model, baked);
         });
+
+        GregTechAPI.all(BlockStorage.class).forEach(b -> {
+            ModelResourceLocation normal = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId() + "#normal");
+            ModelResourceLocation inventory = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId() + "#inventory");
+            e.getModelRegistry().putObject(normal, PREFIX_SET_MAP.get("block_".concat(Prefix.Block.getId().concat("_").concat(b.getMaterial().getSet().getId()))));
+            e.getModelRegistry().putObject(inventory, new BakedBlock(PREFIX_SET_MAP.get("block_".concat(Prefix.Block.getId().concat("_").concat(b.getMaterial().getSet().getId())))));
+        });
+
+        //GregTechAPI.all(BlockOre.class).forEach(b -> {
+            //TODO 1.14. Ores need to use BlockStates in 1.12, and will be flattened in 1.14
+        //});
     }
 }

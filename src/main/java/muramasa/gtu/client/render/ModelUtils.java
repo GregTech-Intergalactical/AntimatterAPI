@@ -41,7 +41,8 @@ public class ModelUtils {
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
-    public static IBakedModel BAKED_MISSING, BAKED_BASIC;
+    public static IModel MODEL_BASIC, MODEL_LAYERED;
+    public static IBakedModel BAKED_MISSING, BAKED_BASIC, BAKED_LAYERED;
 
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -69,8 +70,11 @@ public class ModelUtils {
     }
 
     public static void onModelBake(ModelBakeEvent e) {
+        MODEL_BASIC = load("basic");
+        MODEL_LAYERED = load("layered");
+        BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_BASIC = load("basic").bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
