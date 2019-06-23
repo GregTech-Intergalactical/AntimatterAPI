@@ -8,8 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 
-import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.api.data.Materials.*;
+import static muramasa.gtu.api.data.RecipeMaps.*;
 import static muramasa.gtu.api.materials.GenerationFlag.LIQUID;
 
 public class CombLoader {
@@ -213,14 +213,14 @@ public class CombLoader {
         if (!EASY_COMB_RECIPES) {
             if (materials.length == 0) return;
 //            FluidStack output =  ? materials[0].getByProducts().get(0).getLiquid(144) : new FluidStack[0];
-            CHEMICAL_REACTOR.RB().ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedP(4) : materials[0].getCrushedP(4));
+            CHEMICAL_REACTING.RB().ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedP(4) : materials[0].getCrushedP(4));
             if (!materials[0].getByProducts().isEmpty() && materials[0].getByProducts().get(0).has(LIQUID)) {
-                CHEMICAL_REACTOR.RB().fo(materials[0].getByProducts().get(0).getLiquid(144)).add(96, 24);
+                CHEMICAL_REACTING.RB().fo(materials[0].getByProducts().get(0).getLiquid(144)).add(96, 24);
             }
-            CHEMICAL_REACTOR.RB().add(96, 24);
-            AUTOCLAVE.RB().ii(Utils.ca(16, stack)).fi(UUMatter.getLiquid((int)Math.max(1, ((materials[0].getMass()+9)/10)))).io(materials[0].getCrushedP(1)).add(materials[0].getMass() * 128, 384);
+            CHEMICAL_REACTING.RB().add(96, 24);
+            AUTOCLAVING.RB().ii(Utils.ca(16, stack)).fi(UUMatter.getLiquid((int)Math.max(1, ((materials[0].getMass()+9)/10)))).io(materials[0].getCrushedP(1)).add(materials[0].getMass() * 128, 384);
         } else {
-            CENTRIFUGE.RB().ii(stack).io(materials[0].getDustT(1), ForestryRegistrar.FR_WAX).chances(chance, 30).add(128, 5);
+            CENTRIFUGING.RB().ii(stack).io(materials[0].getDustT(1), ForestryRegistrar.FR_WAX).chances(chance, 30).add(128, 5);
             //TODO RecipeManagers.centrifugeManager.addRecipe(40, stack, ImmutableMap.of(materials[0].getDustT(1), /* TODO chance will be wrong */chance * 0.01f, FR_WAX, 0.3f));
         }
     }
@@ -230,7 +230,7 @@ public class CombLoader {
         chancesCopy[chances.length] = 30;
         ItemStack[] outputsCopy = Arrays.copyOf(outputs, outputs.length + 1);
         outputsCopy[outputs.length] = ForestryRegistrar.FR_WAX;
-        CENTRIFUGE.RB().ii(stack).io(outputs).chances(chances).add(128, 5);
+        CENTRIFUGING.RB().ii(stack).io(outputs).chances(chances).add(128, 5);
         //TODO RecipeManagers.centrifugeManager.addRecipe(40, stack, ImmutableMap.of(aOutput, chance * 0.01f, ItemList.FR_Wax.get(1, new Object[0]), 0.3f,aOutput2,chance2 * 0.01f,aOutput3,chance3*0.01f));
     }
 

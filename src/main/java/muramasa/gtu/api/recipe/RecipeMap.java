@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
-public class RecipeMap {
+public class RecipeMap<B extends RecipeBuilder> {
 
     private HashMap<IRecipeObject, Recipe> LOOKUP;
     private String categoryId;
-    private RecipeBuilder builder;
+    private B builder;
 
-    public RecipeMap(String categoryId, RecipeBuilder builder) {
+    public RecipeMap(String categoryId, B builder) {
         this.categoryId = "gt.recipe_map." + categoryId;
         this.builder = builder;
         this.builder.setMap(this);
@@ -35,7 +35,7 @@ public class RecipeMap {
         return Utils.trans("jei.category." + categoryId + "." + id + ".name");
     }
 
-    public RecipeBuilder RB() {
+    public B RB() {
         return builder;
     }
 
