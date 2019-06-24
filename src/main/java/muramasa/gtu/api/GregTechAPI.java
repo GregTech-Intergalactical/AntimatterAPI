@@ -1,6 +1,7 @@
 package muramasa.gtu.api;
 
 import muramasa.gtu.Configs;
+import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.ICoverHandler;
@@ -88,7 +89,9 @@ public final class GregTechAPI {
 
     public static void register(Class c, IGregTechObject o) {
         if (!OBJECTS.containsKey(c.getName())) OBJECTS.put(c.getName(), new LinkedHashMap<>());
-        if (!OBJECTS.get(c.getName()).containsKey(o.getId())) OBJECTS.get(c.getName()).put(o.getId(), o);
+        if (!OBJECTS.get(c.getName()).containsKey(o.getId()))  {
+            OBJECTS.get(c.getName()).put(o.getId(), o);
+        } else GregTech.LOGGER.error("Object: " + o.getId() + " has already been registered! This is a error!");
         register(o);
     }
 
@@ -97,7 +100,6 @@ public final class GregTechAPI {
         return (T) OBJECTS.get(c.getName()).get(name);
     }
 
-    @Nullable
     public static <T> List<T> all(Class<T> c) {
         return OBJECTS.get(c.getName()).values().stream().map(c::cast).collect(Collectors.toList());
     }

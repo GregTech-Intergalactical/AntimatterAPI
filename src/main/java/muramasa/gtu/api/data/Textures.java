@@ -5,6 +5,8 @@ import muramasa.gtu.api.texture.TextureData;
 
 public class Textures {
 
+    public static final Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
+
     public static final Texture PIPE = new Texture("blocks/pipe/pipe_side");
     public static final Texture WIRE = new Texture("blocks/pipe/wire_side");
     public static final Texture CABLE = new Texture("blocks/pipe/cable_side");

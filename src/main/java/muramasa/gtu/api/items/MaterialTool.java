@@ -84,7 +84,7 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         Material mat = getPrimary(stack);
-        return (mat != null ? mat.getDisplayName() : "NULL") + " " + type.getDisplayName();
+        return (mat != null ? "".concat(mat.getDisplayName()) : "") + type.getDisplayName();
     }
 
     @Override

@@ -32,8 +32,6 @@ public class ModelTextureData implements IModel {
 
     @Override
     public Collection<ResourceLocation> getTextures() {
-        ArrayList<ResourceLocation> locations = new ArrayList<>();
-        block.getTextures().forEach(t -> locations.add(t.getLoc()));
-        return locations;
+        return new ArrayList<>(block.getTextures());
     }
 }

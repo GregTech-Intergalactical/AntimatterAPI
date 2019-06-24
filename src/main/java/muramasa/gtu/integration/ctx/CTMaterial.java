@@ -1,5 +1,6 @@
 package muramasa.gtu.integration.ctx;
 
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.TextureSet;
@@ -13,8 +14,8 @@ public class CTMaterial {
         this.material = material;
     }
 
-    public CTMaterial(String name, int rgb, String setName) {
-        TextureSet set = TextureSet.get(setName);
+    public CTMaterial(String name, int rgb, String setId) {
+        TextureSet set = GregTechAPI.get(TextureSet.class, setId);
         material = new Material(name, rgb, set);
     }
 

@@ -40,12 +40,12 @@ public class ModelPipe implements IModel {
     @Override
     public Collection<ResourceLocation> getTextures() {
         List<ResourceLocation> locs = new LinkedList<>();
-        locs.add(Textures.PIPE.getLoc());
-        locs.add(Textures.WIRE.getLoc());
-        locs.add(Textures.CABLE.getLoc());
+        locs.add(Textures.PIPE);
+        locs.add(Textures.WIRE);
+        locs.add(Textures.CABLE);
         for (int i = 0; i < PipeSize.VALUES.length; i++) {
-            locs.add(Textures.PIPE_FACE[i].getLoc());
-            locs.add(Textures.CABLE_FACE[i].getLoc());
+            locs.add(Textures.PIPE_FACE[i]);
+            locs.add(Textures.CABLE_FACE[i]);
         }
         return locs;
     }

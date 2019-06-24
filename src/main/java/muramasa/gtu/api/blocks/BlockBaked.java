@@ -1,6 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.Texture;
@@ -34,7 +35,7 @@ public abstract class BlockBaked extends Block {
 
     public BlockBaked() {
         super(Material.ROCK);
-        this.data = TextureData.get().base(Texture.ERROR);
+        this.data = TextureData.get().base(Textures.ERROR);
         model = BASIC;
     }
 

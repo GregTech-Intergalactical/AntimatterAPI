@@ -45,9 +45,9 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     public static MaterialType ROTOR = new MaterialType("rotor", true);
 
     //Dummy Types
-    public static MaterialType ORE = new MaterialType("ore", true, false).setTextureType(1); //TODO: dimensional ores, stone types, need separate prefix?
-    public static MaterialType BLOCK = new MaterialType("block", true, false).setTextureType(1);
-    public static MaterialType FRAME = new MaterialType("frame", true, false).setTextureType(1);
+    public static MaterialType ORE = new MaterialType("ore", true, false); //TODO: dimensional ores, stone types, need separate prefix?
+    public static MaterialType BLOCK = new MaterialType("block", true, false);
+    public static MaterialType FRAME = new MaterialType("frame", true, false);
     public static MaterialType GEM_VARIANTS = new MaterialType("gem_variants", false, false);
     public static MaterialType TOOLS = new MaterialType("tools", false, false);
     public static MaterialType LIQUID = new MaterialType("liquid", true, false);
@@ -57,7 +57,7 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     private String id, namePre, namePost;
     private boolean doesGenerate, visible, hasLocName;
     private long bit;
-    private int internalId, textureType;
+    private int internalId;
 //    private MaterialType[] subFlags;
     private ArrayList<Material> materials = new ArrayList<>();
 
@@ -76,11 +76,6 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
         this.doesGenerate = generatesItems;
     }
 
-    public MaterialType setTextureType(int textureType) {
-        this.textureType = textureType;
-        return this;
-    }
-
     public String getId() {
         return id;
     }
@@ -88,10 +83,6 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     @Override
     public String getName() {
         return getId();
-    }
-
-    public int getTextureType() {
-        return textureType;
     }
 
     public boolean isVisible() {

@@ -47,7 +47,6 @@ public class GregTechTweaker {
 
     @ZenMethod
     public static void addTextureSet(String id) {
-        if (TextureSet.get(id) != null) throw new IllegalArgumentException("TextureSet for id" + id + "already exists");
         new TextureSet(id);
     }
 

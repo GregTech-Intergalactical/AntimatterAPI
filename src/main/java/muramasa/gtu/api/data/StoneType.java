@@ -4,7 +4,6 @@ import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.block.SoundType;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,34 +15,34 @@ public class StoneType implements IGregTechObject {
     
     //TODO: more functionality, soundtype etc
 
-    public static StoneType STONE = new StoneType("stone", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone"));
-    public static StoneType GRANITE = new StoneType("granite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_granite"));
-    public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_diorite"));
-    public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, new ResourceLocation("minecraft", "blocks/stone_andesite"));
+    public static StoneType STONE = new StoneType("stone", Materials.Stone, false, new Texture("minecraft", "blocks/stone"));
+    public static StoneType GRANITE = new StoneType("granite", Materials.Stone, false, new Texture("minecraft", "blocks/stone_granite"));
+    public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, new Texture("minecraft", "blocks/stone_diorite"));
+    public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, new Texture("minecraft", "blocks/stone_andesite"));
     
-    public static StoneType GRAVEL = new StoneType("gravel", Materials.Flint, false, new ResourceLocation("minecraft", "blocks/gravel"), SoundType.GROUND);
+    public static StoneType GRAVEL = new StoneType("gravel", Materials.Flint, false, new Texture("minecraft", "blocks/gravel"), SoundType.GROUND);
     
-    public static StoneType SAND = new StoneType("sand", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sand"), SoundType.SAND);
-    public static StoneType SANDSTONE = new StoneType("sandstone", Materials.SiliconDioxide, false, new ResourceLocation("minecraft", "blocks/sandstone_normal"));
+    public static StoneType SAND = new StoneType("sand", Materials.SiliconDioxide, false, new Texture("minecraft", "blocks/sand"), SoundType.SAND);
+    public static StoneType SANDSTONE = new StoneType("sandstone", Materials.SiliconDioxide, false, new Texture("minecraft", "blocks/sandstone_normal"));
     
-    public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new ResourceLocation("minecraft", "blocks/netherrack"));
-    public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new ResourceLocation("minecraft", "blocks/end_stone"));
+    public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new Texture("minecraft", "blocks/netherrack"));
+    public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new Texture("minecraft", "blocks/end_stone"));
 
-    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new ResourceLocation("gregtech", "blocks/stone/granite_red"));
-    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new ResourceLocation("gregtech", "blocks/stone/granite_black"));
-    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new ResourceLocation("gregtech", "blocks/stone/marble"));
-    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new ResourceLocation("gregtech", "blocks/stone/basalt"));
+    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new Texture("gregtech", "blocks/stone/granite_red"));
+    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new Texture("gregtech", "blocks/stone/granite_black"));
+    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new Texture("gregtech", "blocks/stone/marble"));
+    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new Texture("gregtech", "blocks/stone/basalt"));
 
     private String id;
     private Material material;
-    private ResourceLocation loc;
+    private Texture texture;
     private int internalId;
     private SoundType soundType;
     
-    public StoneType(String id, Material material, boolean generate, ResourceLocation loc, SoundType soundType) {
+    public StoneType(String id, Material material, boolean generate, Texture texture, SoundType soundType) {
         this.id = id;
         this.material = material;
-        this.loc = loc;
+        this.texture = texture;
         this.internalId = lastInternalId++;
         this.soundType = soundType;
         if (generate) {
@@ -52,8 +51,8 @@ public class StoneType implements IGregTechObject {
         all.add(this);
     }
     
-    public StoneType(String id, Material material, boolean generate, ResourceLocation loc) {
-    	this(id, material, generate, loc, SoundType.STONE);
+    public StoneType(String id, Material material, boolean generate, Texture texture) {
+    	this(id, material, generate, texture, SoundType.STONE);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class StoneType implements IGregTechObject {
     }
 
     public Texture getTexture() {
-        return new Texture(loc);
+        return texture;
     }
 
     public int getInternalId() {
