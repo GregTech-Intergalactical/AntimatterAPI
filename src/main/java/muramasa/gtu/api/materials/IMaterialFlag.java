@@ -1,28 +1,30 @@
 package muramasa.gtu.api.materials;
 
 import muramasa.gtu.api.GregTechAPI;
-import org.apache.commons.lang3.EnumUtils;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public interface IMaterialFlag {
 
-    String getName();
-
-    void add(Material... mats);
-
-    void remove(Material... mats);
-
     long getBit();
 
-    ArrayList<Material> getMats();
+    Set<Material> getMats();
+
+    default void add(Material... m) {
+        for (int i = 0; i < m.length; i++) getMats().add(m[i]);
+    }
+
+    default void remove(Material... m) {
+        for (int i = 0; i < m.length; i++) getMats().remove(m[i]);
+    }
 
     static ArrayList<Material> getMatsFor(IMaterialFlag... flags) {
         ArrayList<Material> materials = new ArrayList<>();
         for (IMaterialFlag flag : flags) {
-            for (Material mat : flag.getMats()) {
-                if (!materials.contains(mat)) {
-                    materials.add(mat);
+            for (Material m : flag.getMats()) {
+                if (!materials.contains(m)) {
+                    materials.add(m);
                 }
             }
         }
@@ -34,7 +36,8 @@ public interface IMaterialFlag {
         for (String name : flagNames) {
             MaterialType type = GregTechAPI.get(MaterialType.class, name);
             if (type != null) flags.add(type);
-            else if (EnumUtils.isValidEnum(RecipeFlag.class, name.toUpperCase())) flags.add(RecipeFlag.valueOf(name.toUpperCase()));
+            MaterialTag tag = GregTechAPI.get(MaterialTag.class, name);
+            if (tag != null) flags.add(tag);
         }
         return flags;
     }

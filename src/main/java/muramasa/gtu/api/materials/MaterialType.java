@@ -6,11 +6,12 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MaterialType implements IMaterialFlag, IGregTechObject {
 
-    private static int lastInternalId;
+    private static int LAST_INTERNAL_ID;
 
     //Item Types
     public static MaterialType DUST = new MaterialType("dust", true);
@@ -57,16 +58,12 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     private String id, namePre, namePost;
     private boolean doesGenerate, visible, hasLocName;
     private long bit;
-    private int internalId;
-//    private MaterialType[] subFlags;
-    private ArrayList<Material> materials = new ArrayList<>();
+    private Set<Material> materials = new HashSet<>();
 
     public MaterialType(String id, boolean visible) {
         this.id = id;
         this.visible = visible;
-        //this.subFlags = subFlags;
-        internalId = lastInternalId++;
-        bit = 1L << internalId;
+        bit = 1L << LAST_INTERNAL_ID++;
         doesGenerate = true;
         GregTechAPI.register(MaterialType.class, this);
     }
@@ -81,8 +78,13 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     }
 
     @Override
-    public String getName() {
-        return getId();
+    public long getBit() {
+        return bit;
+    }
+
+    @Override
+    public Set<Material> getMats() {
+        return materials;
     }
 
     public boolean isVisible() {
@@ -106,29 +108,5 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
 
     public boolean allowGeneration(Material material) {
         return doesGenerate && (material.getItemMask() & bit) != 0 && GregTechAPI.getReplacement(this, material) == null;
-    }
-
-    @Override
-    public void add(Material... mats) {
-        for (Material material : mats) {
-            if (!materials.contains(material)) materials.add(material);
-        }
-    }
-
-    @Override
-    public void remove(Material... mats) {
-        for (Material material : mats) {
-            if (materials.remove(material));
-        }
-    }
-
-    @Override
-    public long getBit() {
-        return bit;
-    }
-
-    @Override
-    public ArrayList<Material> getMats() {
-        return materials;
     }
 }

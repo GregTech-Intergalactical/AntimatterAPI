@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 
 import static muramasa.gtu.api.materials.MaterialType.*;
-import static muramasa.gtu.api.materials.RecipeFlag.METAL;
+import static muramasa.gtu.api.materials.MaterialTag.METAL;
 
 public class Material implements IGregTechObject {
 
@@ -188,7 +188,7 @@ public class Material implements IGregTechObject {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof MaterialType) {
                 if ((itemMask & flag.getBit()) == 0) return false;
-            } else if (flag instanceof RecipeFlag) {
+            } else if (flag instanceof MaterialTag) {
                 if ((recipeMask & flag.getBit()) == 0) return false;
             }
         }
@@ -202,7 +202,7 @@ public class Material implements IGregTechObject {
                     add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
                 }
                 itemMask |= flag.getBit();
-            } else if (flag instanceof RecipeFlag) {
+            } else if (flag instanceof MaterialTag) {
                 recipeMask |= flag.getBit();
             }
             flag.add(this);
@@ -213,7 +213,7 @@ public class Material implements IGregTechObject {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof MaterialType) {
                 itemMask &= ~flag.getBit();
-            } else if (flag instanceof RecipeFlag) {
+            } else if (flag instanceof MaterialTag) {
                 recipeMask &= ~flag.getBit();
             }
             flag.remove(this);
