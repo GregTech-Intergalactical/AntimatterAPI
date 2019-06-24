@@ -9,19 +9,13 @@ import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -31,10 +25,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+import static muramasa.gtu.api.properties.GTProperties.STONE;
 
-    private static PropertyInteger STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId());
-//    private static PropertyInteger SET = PropertyInteger.create("material_set", 0, MaterialSet.values().length);
+public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     private Material material;
 
@@ -44,12 +37,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         setUnlocalizedName("ore_" + getId());
         setRegistryName("ore_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
-        setDefaultState(getDefaultState().withProperty(STONE, StoneType.STONE.getInternalId()));
         GregTechAPI.register(BlockOre.class, this);
-    }
-
-    public Material getMaterial() {
-        return material;
     }
 
     @Override
@@ -57,7 +45,11 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         return material.getId();
     }
 
-    public IBlockState getOreState(Material material, StoneType type) {
+    public Material getMaterial() {
+        return material;
+    }
+
+    public IBlockState get(StoneType type) {
         return getDefaultState().withProperty(STONE, type.getInternalId());
     }
 
@@ -76,11 +68,6 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         return getDefaultState().withProperty(STONE, meta);
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return super.getActualState(state, worldIn, pos);
-    }
-
     //TODO
     @Override
     public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
@@ -96,11 +83,6 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
-    }
-
-    @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return getDefaultState().withProperty(STONE, StoneType.GRANITE_RED.getInternalId());
     }
 
     @Override
@@ -122,8 +104,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
         for (StoneType type : StoneType.getAll()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), type.getInternalId(), new ModelResourceLocation(Ref.MODID + ":block_ore", "stone_type=" + type.getInternalId()));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":ore_" + getId(), "stone_type=" + type.getInternalId()));
         }
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore")));
     }
 }
