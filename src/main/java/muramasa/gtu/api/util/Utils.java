@@ -429,6 +429,19 @@ public class Utils {
             GregTech.PROXY.sendDiggingPacket(pos);
         }
     }
+    
+    //Subscript 0 doesn't get displayed properly for some reason
+    public static String digitsToSubscript(String string) {
+        char[] chars = string.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            int index = chars[i] - '0';
+            if (index >= 0 && index <= 9) {
+                int newChar = '\u2080' + index;
+                chars[i] = (char) newChar;
+            }
+        }
+        return new String(chars);
+    }
 
     public static boolean isModLoaded(String modid) {
         if (MOD_LOADED_CACHE.containsKey(modid)) {

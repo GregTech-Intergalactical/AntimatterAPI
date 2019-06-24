@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.MaterialTag.METAL;
@@ -30,6 +31,7 @@ public class Material implements IGregTechObject {
 
     /** Element Members **/
     private Element element;
+    private String chemicalFormula;
 
     /** Solid Members **/
     private int meltingPoint, blastFurnaceTemp;
@@ -229,6 +231,11 @@ public class Material implements IGregTechObject {
         }
         return this;
     }
+    
+    public void setChemicalFormula() {
+    	if (element != null) chemicalFormula = element.getDisplayName();
+    	else if (!processInto.isEmpty()) chemicalFormula = chemicalFormula.join("", processInto.stream().map(stack -> stack.toString()).collect(Collectors.joining()));
+    }
 
     public void setLiquid(Fluid fluid) {
         liquid = fluid;
@@ -303,6 +310,10 @@ public class Material implements IGregTechObject {
     /** Element Getters **/
     public Element getElement() {
         return element;
+    }
+    
+    public String getChemicalFormula() {
+    	return chemicalFormula;
     }
 
     /** Solid Getters **/

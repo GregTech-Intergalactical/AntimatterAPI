@@ -674,6 +674,8 @@ public class Materials {
         LIQUID.getMats().forEach(m -> m.setLiquid(new GTFluid(m, LIQUID)));
         GAS.getMats().forEach(m -> m.setGas(new GTFluid(m, GAS)));
         PLASMA.getMats().forEach(m -> m.setPlasma(new GTFluid(m, PLASMA)));
+        
+        GregTechAPI.all(Material.class).forEach(m -> m.setChemicalFormula());
     }
 
     public static Material get(String name) {
