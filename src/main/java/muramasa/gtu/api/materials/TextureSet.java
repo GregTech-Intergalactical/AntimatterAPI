@@ -1,17 +1,10 @@
 package muramasa.gtu.api.materials;
 
-import com.google.common.collect.ImmutableList;
-import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.Collection;
-import java.util.HashMap;
 
 public class TextureSet implements IGregTechObject {
-
-    private static HashMap<String, TextureSet> LOOKUP = new HashMap<>();
 
     public static TextureSet NONE = new TextureSet("none");
     public static TextureSet DULL = new TextureSet("dull");
@@ -33,7 +26,7 @@ public class TextureSet implements IGregTechObject {
 
     public TextureSet(String id) {
         this.id = id;
-        LOOKUP.put(id, this);
+        GregTechAPI.register(TextureSet.class, this);
     }
 
     @Override
@@ -41,33 +34,10 @@ public class TextureSet implements IGregTechObject {
         return id;
     }
 
-    public Texture getBlockTexture(MaterialType type) {
-        return new Texture("blocks/material_set/" + id + "/" + type.getId());
-    }
-
-    public Texture getItemTexture(MaterialType type) {
-        return new Texture("items/material_set/" + id + "/" + type.getId());
-    }
-
-    public ImmutableList<ResourceLocation> getItemTextures(MaterialType type) {
-        return ImmutableList.of(
-            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/" + type.getId()),
-            new ResourceLocation(Ref.MODID, "items/material_set/" + id + "/overlay/" + type.getId())
-        );
-    }
-
-    public Texture[] getBlockTextures(MaterialType type) {
+    public Texture[] getTextures(MaterialType type) {
         return new Texture[] {
-            new Texture("blocks/material_set/" + id + "/" + type.getId()),
-            new Texture("blocks/material_set/" + id + "/overlay/" + type.getId())
+            new Texture("material/" + id + "/" + type.getId()),
+            new Texture("material/" + id + "/" + type.getId() + "_overlay"),
         };
-    }
-
-    public static TextureSet get(String name) {
-        return LOOKUP.get(name);
-    }
-
-    public static Collection<TextureSet> getAll() {
-        return LOOKUP.values();
     }
 }

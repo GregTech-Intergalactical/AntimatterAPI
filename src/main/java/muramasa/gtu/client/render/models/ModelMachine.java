@@ -8,7 +8,6 @@ import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedBase;
@@ -26,6 +25,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -84,24 +84,18 @@ public class ModelMachine implements IModel {
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> locations = new ArrayList<>();
         for (Tier tier : Tier.getAllElectric()) {
-            locations.add(tier.getBaseTexture().getLoc());
+            locations.add(tier.getBaseTexture());
         }
         for (Tier tier : Tier.getSteam()) {
-            locations.add(tier.getBaseTexture().getLoc());
+            locations.add(tier.getBaseTexture());
         }
         for (Machine type : getTypes(BASIC, HATCH, MULTI)) {
-            for (Texture texture : type.getTextures()) {
-                locations.add(texture.getLoc());
-            }
+            locations.addAll(type.getTextures());
         }
-        for (Texture texture : Machines.INVALID.getTextures()) {
-            locations.add(texture.getLoc());
-        }
+        locations.addAll(Machines.INVALID.getTextures());
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
-            for (Texture texture : cover.getTextures()) {
-                locations.add(texture.getLoc());
-            }
+            locations.addAll(Arrays.asList(cover.getTextures()));
         }
 //        Arrays.stream(Tier.getAllElectric()).forEach(t -> locs.add(t.getBaseTexture().getLoc()));
 //        Arrays.stream(Tier.getSteam()).forEach(t -> locs.add(t.getBaseTexture().getLoc()));

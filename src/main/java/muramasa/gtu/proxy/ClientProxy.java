@@ -1,5 +1,6 @@
 package muramasa.gtu.proxy;
 
+import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStorage;
@@ -43,6 +44,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -103,7 +105,7 @@ public class ClientProxy implements IProxy {
         e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_flowing"));
 
         //Register Material Item textures
-        GregTechAPI.all(MaterialItem.class).forEach(i -> i.getMaterial().getSet().getItemTextures(i.getType()).forEach(r -> e.getMap().registerSprite(r)));
+        GregTechAPI.all(MaterialItem.class).forEach(i -> Arrays.stream(i.getMaterial().getSet().getTextures(i.getType())).forEach((r -> e.getMap().registerSprite(r))));
     }
 
     @SubscribeEvent
@@ -130,43 +132,41 @@ public class ClientProxy implements IProxy {
         ModelUtils.onModelBake(e);
 
         //Generate Material Item TextureSet models
+        IModel model;
+        IBakedModel baked;
         HashMap<String, IBakedModel> TYPE_SET_MAP = new HashMap<>();
-        GregTechAPI.all(MaterialType.class).forEach(t -> TextureSet.getAll().forEach(s -> {
-            if (t.getTextureType() == 0) {
-                IModel model = new ItemLayerModel(s.getItemTextures(t));
-                IBakedModel baked = new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter()));
-                TYPE_SET_MAP.put("item_".concat(t.getId().concat("_").concat(s.getId())), baked);
-            } else if (t.getTextureType() == 1) {
+        for (MaterialType t : GregTechAPI.all(MaterialType.class)) {
+            for (TextureSet s : GregTechAPI.all(TextureSet.class)) {
                 if (t == MaterialType.BLOCK) {
-                    IModel model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", s.getBlockTexture(t));
-                    IBakedModel baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
-                    TYPE_SET_MAP.put("block_".concat(t.getId().concat("_").concat(s.getId())), baked);
+                    model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", s.getTextures(t)[0]);
+                    baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+                    TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
+                } else if (t == MaterialType.ORE) {
+                    //TODO 1.14
+                    //model = ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, s.getBlockTextures(t));
+                    //baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+                    //TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
+                } else {
+                    model = new ItemLayerModel(ImmutableList.of(s.getTextures(t)[0], s.getTextures(t)[1]));
+                    baked = new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter()));
+                    TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
                 }
-                //TODO 1.14
-                /* else if (t == MaterialType.ORE) {
-                    IModel model = ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, s.getBlockTextures(t));
-                    IBakedModel baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
-                    TYPE_SET_MAP.put("block_".concat(t.getId().concat("_").concat(s.getId())), baked);
-                }*/
             }
-        }));
+        }
 
         //Inject models for Material Items
-        GregTechAPI.all(MaterialItem.class).forEach(i -> {
-            ModelResourceLocation model = new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId() + "#inventory");
-            IBakedModel baked = TYPE_SET_MAP.get("item_".concat(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId())));
-            if (baked == null) {
-                System.out.println("oh no");
-            }
-            e.getModelRegistry().putObject(model, baked);
-        });
+        for (MaterialItem i : GregTechAPI.all(MaterialItem.class)) {
+            baked = TYPE_SET_MAP.get(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId()));
+            e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId() + "#inventory"), baked);
+        }
 
-        GregTechAPI.all(BlockStorage.class).forEach(b -> {
+        for (BlockStorage b : GregTechAPI.all(BlockStorage.class)) {
             ModelResourceLocation normal = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId() + "#normal");
             ModelResourceLocation inventory = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId() + "#inventory");
-            e.getModelRegistry().putObject(normal, TYPE_SET_MAP.get("block_".concat(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId()))));
-            e.getModelRegistry().putObject(inventory, new BakedBlock(TYPE_SET_MAP.get("block_".concat(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId())))));
-        });
+            baked = TYPE_SET_MAP.get(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId()));
+            e.getModelRegistry().putObject(normal, baked);
+            e.getModelRegistry().putObject(inventory, new BakedBlock(baked));
+        }
 
         //GregTechAPI.all(BlockOre.class).forEach(b -> {
             //TODO 1.14. Ores need to use BlockStates in 1.12, and will be flattened in 1.14

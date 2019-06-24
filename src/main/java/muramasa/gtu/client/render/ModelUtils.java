@@ -146,10 +146,6 @@ public class ModelUtils {
         return model;
     }
 
-    public static IModel tex(IModel model, String element, Texture texture) {
-        return tex(model, element, texture.getLoc());
-    }
-
     public static IModel tex(IModel model, String element, ResourceLocation loc) {
         try {
             return model.retexture(ImmutableMap.of(element, loc.toString()));
