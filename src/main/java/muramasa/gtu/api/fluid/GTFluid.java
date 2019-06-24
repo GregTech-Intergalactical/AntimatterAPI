@@ -1,10 +1,8 @@
 package muramasa.gtu.api.fluid;
 
-import muramasa.gtu.Ref;
-import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.RecipeFlag;
-import net.minecraft.util.ResourceLocation;
+import muramasa.gtu.api.materials.MaterialTag;
+import muramasa.gtu.api.materials.MaterialType;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,49 +12,49 @@ import static muramasa.gtu.api.materials.MaterialType.*;
 public class GTFluid extends Fluid {
 
     private Material material;
-    private MaterialType flag;
+    private MaterialType type;
     private String localizedName;
 
-    public GTFluid(Material material, MaterialType flag) {
-        super(material.getId() + "_" + flag.getName(), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"), new ResourceLocation(Ref.MODID, "blocks/fluid/" + flag.getName() + "_still"));
+    public GTFluid(Material material, MaterialType type) {
+        super(material.getId() + "_" + type.getId(), material.getSet().getTexture(type, 0), material.getSet().getTexture(type, 0));
         setColor(material.getRGB());
-        if (flag == LIQUID) {
+        if (type == LIQUID) {
             setViscosity(1000);
             setTemperature(material.getLiquidTemperature());
-        } else if (flag == GAS) {
+        } else if (type == GAS) {
             setViscosity(200);
             setDensity(-100);
             setGaseous(true);
             setTemperature(material.getGasTemperature());
-        } else if (flag == PLASMA) {
+        } else if (type == PLASMA) {
             setViscosity(10);
             setDensity(55536);
             setLuminosity(15);
             setGaseous(true);
             setTemperature(10000);
         } else {
-            throw new IllegalArgumentException("Cannot create a fluid with the flag: " + flag.getName());
+            throw new IllegalArgumentException("Cannot create a fluid with the type: " + type.getId());
         }
         this.material = material;
-        this.flag = flag;
+        this.type = type;
         FluidRegistry.registerFluid(this);
     }
 
     @Override
     public String getLocalizedName(FluidStack stack) {
         if (localizedName == null) {
-            if (flag == LIQUID) localizedName = (material.has(RecipeFlag.METAL) ? "Molten " : "Liquid ") + material.getId();
-            else if (flag == GAS) localizedName = material.getDisplayName() + " Gas";
-            else if (flag == PLASMA) localizedName = material.getDisplayName() + " Plasma";
+            if (type == LIQUID) localizedName = (material.has(MaterialTag.METAL) ? "Molten " : "Liquid ") + material.getId();
+            else if (type == GAS) localizedName = material.getDisplayName() + " Gas";
+            else if (type == PLASMA) localizedName = material.getDisplayName() + " Plasma";
             else localizedName = "FLUID NAME ERROR";
         }
         return localizedName;
     }
 
     public String getState() {
-        if (flag == LIQUID) return "Liquid";
-        else if (flag == GAS) return "Gas";
-        else if (flag == PLASMA) return "Plasma";
+        if (type == LIQUID) return "Liquid";
+        else if (type == GAS) return "Gas";
+        else if (type == PLASMA) return "Plasma";
         else return "State Unknown";
     }
 }

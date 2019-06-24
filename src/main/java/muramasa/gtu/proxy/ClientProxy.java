@@ -27,7 +27,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -97,15 +96,14 @@ public class ClientProxy implements IProxy {
     @SubscribeEvent
     public static void onRegisterTexture(TextureStitchEvent.Pre e) {
         //Apparently forge does not load fluid textures automatically
-        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_still"));
-        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/liquid_flowing"));
-        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_still"));
-        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/gas_flowing"));
-        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_still"));
-        e.getMap().registerSprite(new ResourceLocation(Ref.MODID, "blocks/fluid/plasma_flowing"));
+        GregTechAPI.all(TextureSet.class).forEach(s -> {
+            e.getMap().registerSprite(s.getTexture(MaterialType.LIQUID, 0));
+            e.getMap().registerSprite(s.getTexture(MaterialType.GAS, 0));
+            e.getMap().registerSprite(s.getTexture(MaterialType.PLASMA, 0));
+        });
 
         //Register Material Item textures
-        GregTechAPI.all(MaterialItem.class).forEach(i -> Arrays.stream(i.getMaterial().getSet().getTextures(i.getType())).forEach((r -> e.getMap().registerSprite(r))));
+        GregTechAPI.all(MaterialItem.class).forEach(i -> Arrays.stream(i.getMaterial().getSet().getTextures(i.getType())).forEach(r -> e.getMap().registerSprite(r)));
     }
 
     @SubscribeEvent
@@ -147,7 +145,7 @@ public class ClientProxy implements IProxy {
                     //baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
                     //TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
                 } else {
-                    model = new ItemLayerModel(ImmutableList.of(s.getTextures(t)[0], s.getTextures(t)[1]));
+                    model = new ItemLayerModel(ImmutableList.of(s.getTexture(t, 0), s.getTexture(t, 1)));
                     baked = new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter()));
                     TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
                 }

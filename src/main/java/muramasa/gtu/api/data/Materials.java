@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.gtu.api.materials.Element.*;
 import static muramasa.gtu.api.materials.MaterialType.*;
-import static muramasa.gtu.api.materials.RecipeFlag.*;
+import static muramasa.gtu.api.materials.MaterialTag.*;
 import static muramasa.gtu.api.materials.TextureSet.*;
 
 public class Materials {

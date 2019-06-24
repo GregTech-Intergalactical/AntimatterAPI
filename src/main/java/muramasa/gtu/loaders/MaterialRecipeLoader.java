@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static muramasa.gtu.api.data.RecipeMaps.*;
 import static muramasa.gtu.api.materials.MaterialType.*;
-import static muramasa.gtu.api.materials.RecipeFlag.*;
+import static muramasa.gtu.api.materials.MaterialTag.*;
 import static muramasa.gtu.common.Data.*;
 
 //TODO EXCLUDED FROM COMPILE

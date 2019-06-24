@@ -34,10 +34,11 @@ public class TextureSet implements IGregTechObject {
         return id;
     }
 
+    public Texture getTexture(MaterialType type, int layer) {
+        return new Texture("material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"));
+    }
+
     public Texture[] getTextures(MaterialType type) {
-        return new Texture[] {
-            new Texture("material/" + id + "/" + type.getId()),
-            new Texture("material/" + id + "/" + type.getId() + "_overlay"),
-        };
+        return new Texture[] {getTexture(type, 0), getTexture(type, 1)};
     }
 }

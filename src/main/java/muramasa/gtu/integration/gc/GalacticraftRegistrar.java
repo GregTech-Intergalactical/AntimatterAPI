@@ -3,7 +3,7 @@ package muramasa.gtu.integration.gc;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.RecipeFlag;
+import muramasa.gtu.api.materials.MaterialTag;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
@@ -34,7 +34,7 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
                 MeteoricSteel = new Material("meteoric_steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
                 break;
             case MATERIAL_INIT:
-                RecipeFlag.CALCITE3X.add(MeteoricIron);
+                MaterialTag.CALCITE3X.add(MeteoricIron);
                 MeteoricIron.addByProduct(Materials.Iron);
                 break;
         }
