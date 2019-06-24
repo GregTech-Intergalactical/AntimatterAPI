@@ -1,5 +1,6 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
@@ -11,7 +12,7 @@ import java.util.Collection;
 public class StoneType implements IGregTechObject {
 
     private static ArrayList<StoneType> generating = new ArrayList<>(), all = new ArrayList<>();
-    public static int lastInternalId = 0;
+    private static int LAST_INTERNAL_ID;
     
     //TODO: more functionality, soundtype etc
 
@@ -28,10 +29,10 @@ public class StoneType implements IGregTechObject {
     public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new Texture("minecraft", "blocks/netherrack"));
     public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new Texture("minecraft", "blocks/end_stone"));
 
-    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new Texture("gregtech", "blocks/stone/granite_red"));
-    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new Texture("gregtech", "blocks/stone/granite_black"));
-    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new Texture("gregtech", "blocks/stone/marble"));
-    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new Texture("gregtech", "blocks/stone/basalt"));
+    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new Texture(Ref.MODID, "blocks/stone/granite_red"));
+    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new Texture(Ref.MODID, "blocks/stone/granite_black"));
+    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new Texture(Ref.MODID, "blocks/stone/marble"));
+    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new Texture(Ref.MODID, "blocks/stone/basalt"));
 
     private String id;
     private Material material;
@@ -43,7 +44,7 @@ public class StoneType implements IGregTechObject {
         this.id = id;
         this.material = material;
         this.texture = texture;
-        this.internalId = lastInternalId++;
+        this.internalId = LAST_INTERNAL_ID++;
         this.soundType = soundType;
         if (generate) {
             generating.add(this);
@@ -93,6 +94,6 @@ public class StoneType implements IGregTechObject {
     }
 
     public static int getLastInternalId() {
-        return lastInternalId;
+        return LAST_INTERNAL_ID;
     }
 }

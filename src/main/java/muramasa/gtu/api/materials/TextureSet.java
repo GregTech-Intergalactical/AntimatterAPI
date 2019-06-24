@@ -6,6 +6,8 @@ import muramasa.gtu.api.texture.Texture;
 
 public class TextureSet implements IGregTechObject {
 
+    private static int LAST_INTERNAL_ID;
+
     public static TextureSet NONE = new TextureSet("none");
     public static TextureSet DULL = new TextureSet("dull");
     public static TextureSet METALLIC = new TextureSet("metallic");
@@ -23,9 +25,11 @@ public class TextureSet implements IGregTechObject {
     public static TextureSet LIGNITE = new TextureSet("lignite");
 
     private String id;
+    private int internalId;
 
     public TextureSet(String id) {
         this.id = id;
+        this.internalId = LAST_INTERNAL_ID++;
         GregTechAPI.register(TextureSet.class, this);
     }
 
@@ -34,11 +38,19 @@ public class TextureSet implements IGregTechObject {
         return id;
     }
 
+    public int getInternalId() {
+        return internalId;
+    }
+
     public Texture getTexture(MaterialType type, int layer) {
         return new Texture("material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"));
     }
 
     public Texture[] getTextures(MaterialType type) {
         return new Texture[] {getTexture(type, 0), getTexture(type, 1)};
+    }
+
+    public static int getLastInternalId() {
+        return LAST_INTERNAL_ID;
     }
 }

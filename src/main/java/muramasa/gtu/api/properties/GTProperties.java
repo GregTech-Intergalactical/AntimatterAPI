@@ -1,5 +1,6 @@
 package muramasa.gtu.api.properties;
 
+import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.pipe.PipeSize;
 import net.minecraft.block.properties.PropertyInteger;
@@ -17,4 +18,7 @@ public class GTProperties {
     /** Pipe Properties **/
     public static final PropertyInteger SIZE = PropertyInteger.create("size", 0, PipeSize.VALUES.length);
     public static final UnlistedByte CONNECTIONS = new UnlistedByte();
+
+    /** Ore Properties **/
+    public static PropertyInteger STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId() - 1);
 }
