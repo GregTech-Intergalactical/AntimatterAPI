@@ -97,11 +97,14 @@ public final class GregTechAPI {
 
     @Nullable
     public static <T> T get(Class<T> c, String name) {
-        return (T) OBJECTS.get(c.getName()).get(name);
+        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c.getName());
+        return map != null ? (T) map.get(name) : null;
     }
 
     public static <T> List<T> all(Class<T> c) {
-        return OBJECTS.get(c.getName()).values().stream().map(c::cast).collect(Collectors.toList());
+        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c.getName());
+        if (map == null) return Collections.emptyList();
+        return map.values().stream().map(c::cast).collect(Collectors.toList());
     }
 
     /** Registrar Section **/

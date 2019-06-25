@@ -20,26 +20,26 @@ public class Materials {
 
     public static Material Aluminium = new Material("aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700, RING, FOIL, GEAR, FRAME, ORE).addTools(10.0F, 140, 2);
     public static Material Beryllium = new Material("beryllium", 0x64b464, METALLIC, Be).asMetal(1560, 0, ORE).addTools(14.0F, 64, 2);
-    public static Material Bismuth = new Material("bismuth", 0x64a0a0, METALLIC, Bi).asMetal(544, 0, ORE);
+    public static Material Bismuth = new Material("bismuth", 0x64a0a0, METALLIC, Bi).asMetal(544, 0, ORE, ORE_SMALL);
     public static Material Carbon = new Material("carbon", 0x141414, DULL, C).asSolid(); //TODO: Tools, Carbon Fluid? Removed Tools
     public static Material Chrome = new Material("chrome", 0xffe6e6, SHINY, Cr).asMetal(2180, 1700, SCREW, RING, PLATE, ROTOR).addTools(11.0F, 256, 3);
     public static Material Cobalt = new Material("cobalt", 0x5050fa, METALLIC, Co).asMetal(1768, 0).addTools(8.0F, 512, 3);
-    public static Material Gold = new Material("gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIRE_FINE, GEAR, ORE).addTools(15.0F, 48, 2);
-    public static Material Iridium = new Material("iridium", 0xf0f0f5, DULL, Ir).asMetal(2719, 2719, FRAME, ORE).addTools(8.0F, 2560, 4);
-    public static Material Iron = new Material("iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME).asPlasma().addTools(6.0F, 256, 2);
+    public static Material Gold = new Material("gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIRE_FINE, GEAR, ORE, ORE_SMALL).addTools(15.0F, 48, 2);
+    public static Material Iridium = new Material("iridium", 0xf0f0f5, DULL, Ir).asMetal(2719, 2719, FRAME, ORE, ORE_SMALL).addTools(8.0F, 2560, 4);
+    public static Material Iron = new Material("iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME, ORE_SMALL).asPlasma().addTools(6.0F, 256, 2);
     public static Material Lanthanum = new Material("lanthanum", 0xffffff, METALLIC, La).asSolid(1193, 1193);
-    public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, PLATE_DENSE, FOIL, ROD, ORE);
+    public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, PLATE_DENSE, FOIL, ROD, ORE, ORE_SMALL);
     public static Material Manganese = new Material("manganese", 0xfafafa, DULL, Mn).asMetal(1519, 0, ORE);
     public static Material Molybdenum = new Material("molybdenum", 0xb4b4dc, SHINY, Mo).asMetal(2896, 0, ORE).addTools(7.0F, 512, 2);
     public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD); //TODO: Bastnasite or Monazite for Ore Form
     public static Material Neutronium = new Material("neutronium", 0xfafafa, DULL, Nt).asMetal(10000, 10000, SCREW, RING, GEAR, FRAME).addTools(24.0F, 655360, 6); //TODO Vibranium
-    public static Material Nickel = new Material("nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE).asPlasma();
+    public static Material Nickel = new Material("nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE, ORE_SMALL).asPlasma();
     public static Material Osmium = new Material("osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, RING, PLATE, FOIL, ROD, WIRE_FINE).addTools(16.0F, 1080, 4);
     public static Material Palladium = new Material("palladium", 0x808080, SHINY, Pd).asMetal(1828, 1828, ORE).addTools(10.0F, 420, 2);
-    public static Material Platinum = new Material("platinum", 0xffffc8, SHINY, Pt).asMetal(2041, 0, PLATE, FOIL, ROD, WIRE_FINE, ORE).addTools(18.0F, 48, 2);
+    public static Material Platinum = new Material("platinum", 0xffffc8, SHINY, Pt).asMetal(2041, 0, PLATE, FOIL, ROD, WIRE_FINE, ORE, ORE_SMALL).addTools(18.0F, 48, 2);
     public static Material Plutonium = new Material("plutonium_244", 0xf03232, METALLIC, Pu).asMetal(912, 0).addTools(6.0F, 280, 3, of(Enchantments.FIRE_ASPECT, 2)); //TODO: Enchantment: Radioactivity
     public static Material Plutonium241 = new Material("plutonium_241", 0xfa4646, SHINY, Pu241).asMetal(912, 0).addTools(6.0F, 280, 3);
-    public static Material Silver = new Material("silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE);
+    public static Material Silver = new Material("silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE, ORE_SMALL);
     public static Material Thorium = new Material("thorium", 0x001e00, SHINY, Th).asMetal(2115, 0, ORE).addTools(6.0F, 512, 2);
     public static Material Titanium = new Material("titanium", 0xdca0f0, METALLIC).asMetal(1941, 1940, ROD).addTools(7.0F, 1600, 3);
     public static Material Tungsten = new Material("tungsten", 0x323232, METALLIC, W).asMetal(3695, 3000, FOIL).addTools(6.0F, 512, 3); //Tungstensteel would be the one with tools
@@ -57,7 +57,7 @@ public class Materials {
     public static Material Cadmium = new Material("cadmium", 0x32323c, SHINY, Cd).asDust(594);
     public static Material Cerium = new Material("cerium", 0xffffff, METALLIC, Ce).asSolid(1068, 1068);
     public static Material Chlorine = new Material("chlorine", 0xffffff, NONE, Cr).asGas();
-    public static Material Copper = new Material("copper", 0xff6400, SHINY, Cu).asMetal(1357, 0, PLATE, ROD, FOIL, WIRE_FINE, GEAR, ORE);
+    public static Material Copper = new Material("copper", 0xff6400, SHINY, Cu).asMetal(1357, 0, PLATE, ROD, FOIL, WIRE_FINE, GEAR, ORE, ORE_SMALL);
     public static Material Deuterium = new Material("deuterium", 0xffff00, NONE, D).asGas();
     public static Material Dysprosium = new Material("dysprosium", 0xffffff, METALLIC, D).asMetal(1680, 1680);
     public static Material Europium = new Material("europium", 0xffffff, METALLIC, Eu).asMetal(1099, 1099);
@@ -79,13 +79,13 @@ public class Materials {
     public static Material Radon = new Material("radon", 0xff00ff, NONE, Rn).asGas();
     public static Material Silicon = new Material("silicon", 0x3c3c50, METALLIC, Si).asMetal(1687, 1687, PLATE, FOIL);
     public static Material Sodium = new Material("sodium", 0x000096, METALLIC, Na).asDust(370);
-    public static Material Sulfur = new Material("sulfur", 0xc8c800, DULL, S).asDust(388, ORE).asPlasma();
+    public static Material Sulfur = new Material("sulfur", 0xc8c800, DULL, S).asDust(388, ORE, ORE_SMALL).asPlasma();
     public static Material Tantalum = new Material("tantalum", 0xffffff, METALLIC, Ta).asSolid(3290, 0);
-    public static Material Tin = new Material("tin", 0xdcdcdc, DULL, Sn).asMetal(505, 505, PLATE, ROD, SCREW, RING, GEAR, FOIL, WIRE_FINE, FRAME, ORE);
+    public static Material Tin = new Material("tin", 0xdcdcdc, DULL, Sn).asMetal(505, 505, PLATE, ROD, SCREW, RING, GEAR, FOIL, WIRE_FINE, FRAME, ORE, ORE_SMALL);
     public static Material Tritium = new Material("tritium", 0xff0000, METALLIC, T).asGas();
     public static Material Vanadium = new Material("vanadium", 0x323232, METALLIC, V).asMetal(2183, 2183);
     public static Material Yttrium = new Material("yttrium", 0xdcfadc, METALLIC, Y).asMetal(1799, 1799);
-    public static Material Zinc = new Material("zinc", 0xfaf0f0, METALLIC, Zn).asMetal(692, 0, PLATE, FOIL, ORE);
+    public static Material Zinc = new Material("zinc", 0xfaf0f0, METALLIC, Zn).asMetal(692, 0, PLATE, FOIL, ORE, ORE_SMALL);
 
     //TODO: We can be more lenient about what fluids we have in, its not as bad as solids above, and we can stop them from showing in JEI (I think...)
     
@@ -241,7 +241,7 @@ public class Materials {
     public static Material RockSalt = new Material("rock_salt", 0xf0c8c8, FINE).asDust(ORE).add(Potassium, 1, Chlorine, 1);
     public static Material RawRubber = new Material("raw_rubber", 0xccc789, DULL).asDust().add(Carbon, 5, Hydrogen, 8);
     public static Material Salt = new Material("salt", 0xfafafa, FINE).asDust(ORE).add(Sodium, 1, Chlorine, 1);
-    public static Material Saltpeter = new Material("saltpeter", 0xe6e6e6, FINE).asDust().add(Potassium, 1, Nitrogen, 1, Oxygen, 3);
+    public static Material Saltpeter = new Material("saltpeter", 0xe6e6e6, FINE).asDust(ORE_SMALL).add(Potassium, 1, Nitrogen, 1, Oxygen, 3);
     public static Material Scheelite = new Material("scheelite", 0xc88c14, DULL).asDust(2500, ORE).add(Tungsten, 1, Calcium, 2, Oxygen, 4);
     public static Material SiliconDioxide = new Material("silicon_dioxide", 0xc8c8c8, QUARTZ).asDust().add(Silicon, 1, Oxygen, 2);
     //public static Material Pyrochlore = new Material("pyrochlore", 0x2b1100, METALLIC).asDust(ORE).add(Calcium, 2, Niobium, 2, Oxygen, 7);
@@ -299,42 +299,41 @@ public class Materials {
     /** Gems **/
     //public static Material CertusQuartz = new Material("certus_quartz", 0xd2d2e6, QUARTZ).asGemBasic(false, PLATE, ORE).addTools(5.0F, 32, 1); TODO: Only when AE2 is loaded
     public static Material Dilithium = new Material("dilithium", 0xfffafa, DIAMOND).asGemBasic(true);
-    public static Material NetherQuartz = new Material("nether_quartz", 0xe6d2d2, QUARTZ).asGemBasic(false, ORE);
+    public static Material NetherQuartz = new Material("nether_quartz", 0xe6d2d2, QUARTZ).asGemBasic(false, ORE, ORE_SMALL);
     public static Material NetherStar = new Material("nether_star", 0xffffff, NONE).asGemBasic(false).addTools(6.0F, 3620, 4, of(Enchantments.SILK_TOUCH, 1)); //Made Nether Stars usable
     public static Material Quartzite = new Material("quartzite", 0xd2e6d2, QUARTZ).asGemBasic(false, ORE).add(Silicon, 1, Oxygen, 2);
 
     //Brittle Gems
-    //public static Material BlueTopaz = new Material("blue_topaz", 0x0000ff, GEM_H).asGem(true).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
+    public static Material BlueTopaz = new Material("blue_topaz", 0x0000ff, GEM_H).asGem(true, ORE_SMALL).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
     public static Material Charcoal = new Material("charcoal", 0x644646, FINE).asGemBasic(false).add(Carbon, 1);
-    public static Material Coal = new Material("coal", 0x464646, ROUGH).asGemBasic(false, ORE).add(Carbon, 1);
+    public static Material Coal = new Material("coal", 0x464646, ROUGH).asGemBasic(false, ORE, ORE_SMALL).add(Carbon, 1);
     public static Material Lignite = new Material("lignite_coal", 0x644646, LIGNITE).asGemBasic(false, ORE).add(Carbon, 3, Water, 1);
     public static Material CoalCoke = new Material("coal_coke", 0x8c8caa, LIGNITE).asGemBasic(false);
     public static Material LigniteCoke = new Material("lignite_coke", 0x8c6464, LIGNITE).asGemBasic(false);
 
-    //Disabled some gems
-    public static Material Diamond = new Material("diamond", 0xc8ffff, DIAMOND).asGem(true, ORE).addTools(8.0F, 1280, 3).add(Carbon, 1);
-    public static Material Emerald = new Material("emerald", 0x50ff50, NONE).asGem(true, ORE).addTools(9.0F, 590, 3).add(Silver, 1, Gold, 1); //Made Emerald better
-    //public static Material GreenSapphire = new Material("green_sapphire", 0x64c882, GEM_H).asGem(true, ORE).addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
-    //public static Material Lazurite = new Material("lazurite", 0x6478ff, LAPIS).asGemBasic(false, ORE).add(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8);
-    public static Material Ruby = new Material("ruby", 0xff6464, RUBY).asGem(true, ORE).addTools(7.0F, 256, 2).add(Chrome, 1, Aluminium, 2, Oxygen, 3);
-    public static Material Sapphire = new Material("sapphire", 0x6464c8, GEM_V).asGem(true, ORE).addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
-    //public static Material Sodalite = new Material("sodalite", 0x1414ff, LAPIS).asGemBasic(false, ORE).add(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1);
-    public static Material Tanzanite = new Material("tanzanite", 0x4000c8, GEM_V).asGem(true).addTools(7.0F, 256, 2).add(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1, Oxygen, 13);
-    public static Material Topaz = new Material("topaz", 0xff8000, GEM_H).asGem(true).addTools(7.0F, 256, 2).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
+    public static Material Diamond = new Material("diamond", 0xc8ffff, DIAMOND).asGem(true, ORE, ORE_SMALL).addTools(8.0F, 1280, 3).add(Carbon, 1);
+    public static Material Emerald = new Material("emerald", 0x50ff50, NONE).asGem(true, ORE, ORE_SMALL).addTools(9.0F, 590, 3).add(Silver, 1, Gold, 1); //Made Emerald better
+    public static Material GreenSapphire = new Material("green_sapphire", 0x64c882, GEM_H).asGem(true, ORE, ORE_SMALL).addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
+    //public static Material Lazurite = new Material("lazurite", 0x6478ff, LAPIS).asGemBasic(false, ORE).add(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8); //TODO I think this is needed?
+    public static Material Ruby = new Material("ruby", 0xff6464, RUBY).asGem(true, ORE, ORE_SMALL).addTools(7.0F, 256, 2).add(Chrome, 1, Aluminium, 2, Oxygen, 3);
+    public static Material Sapphire = new Material("sapphire", 0x6464c8, GEM_V).asGem(true, ORE, ORE_SMALL).addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
+    //public static Material Sodalite = new Material("sodalite", 0x1414ff, LAPIS).asGemBasic(false, ORE).add(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1); //TODO I think this is needed?
+    public static Material Tanzanite = new Material("tanzanite", 0x4000c8, GEM_V).asGem(true, ORE_SMALL).addTools(7.0F, 256, 2).add(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1, Oxygen, 13);
+    public static Material Topaz = new Material("topaz", 0xff8000, GEM_H).asGem(true, ORE_SMALL).addTools(7.0F, 256, 2).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
     public static Material Glass = new Material("glass", 0xfafafa, NONE).asDust(PLATE).add(SiliconDioxide, 1);
-    public static Material Olivine = new Material("olivine", 0x96ff96, RUBY).asGem(true, ORE).addTools(7.0F, 256, 2, of(Enchantments.SILK_TOUCH, 1)).add(Magnesium, 2, Iron, 1, SiliconDioxide, 2);
-    public static Material Opal = new Material("opal", 0x0000ff, RUBY).asGem(true).addTools(7.0F, 256, 2).add(SiliconDioxide, 1);
-    public static Material Amethyst = new Material("amethyst", 0xd232d2, FLINT).asGem(true).addTools(7.0F, 256, 3).add(SiliconDioxide, 4, Iron, 1);
-    public static Material Lapis = new Material("lapis", 0x4646dc, LAPIS).asGemBasic(false, ORE).add(/*Lazurite, 12, Sodalite, 2, */Pyrite, 1, Calcite, 1);
+    public static Material Olivine = new Material("olivine", 0x96ff96, RUBY).asGem(true, ORE, ORE_SMALL).addTools(7.0F, 256, 2, of(Enchantments.SILK_TOUCH, 1)).add(Magnesium, 2, Iron, 1, SiliconDioxide, 2);
+    public static Material Opal = new Material("opal", 0x0000ff, RUBY).asGem(true, ORE_SMALL).addTools(7.0F, 256, 2).add(SiliconDioxide, 1);
+    public static Material Amethyst = new Material("amethyst", 0xd232d2, FLINT).asGem(true, ORE_SMALL).addTools(7.0F, 256, 3).add(SiliconDioxide, 4, Iron, 1);
+    public static Material Lapis = new Material("lapis", 0x4646dc, LAPIS).asGemBasic(false, ORE, ORE_SMALL).add(/*Lazurite, 12, Sodalite, 2, */Pyrite, 1, Calcite, 1);
     public static Material EnderPearl = new Material("enderpearl", 0x6cdcc8, SHINY).asGemBasic(false).add(Beryllium, 1, Potassium, 4, Nitrogen, 5/*, Magic, 6*/);
     public static Material EnderEye = new Material("endereye", 0xa0fae6, SHINY).asGemBasic(true, ROD, PLATE).add(EnderPearl, 1, Blaze, 1);
     public static Material Phosphorus = new Material("phosphorus", 0xffff00, FLINT).asGemBasic(false, ORE).add(Calcium, 3, Phosphate, 2);
-    public static Material GarnetRed = new Material("red_garnet", 0xc85050, RUBY).asGemBasic(true).add(Pyrope, 3, Almandine, 5, Spessartine, 8);
-    public static Material GarnetYellow = new Material("yellow_garnet", 0xc8c850, RUBY).asGemBasic(true).add(Andradite, 5, Grossular, 8, Uvarovite, 3);
+    public static Material GarnetRed = new Material("red_garnet", 0xc85050, RUBY).asGemBasic(true, ORE_SMALL).add(Pyrope, 3, Almandine, 5, Spessartine, 8);
+    public static Material GarnetYellow = new Material("yellow_garnet", 0xc8c850, RUBY).asGemBasic(true, ORE_SMALL).add(Andradite, 5, Grossular, 8, Uvarovite, 3);
     //public static Material Monazite = new Material("monazite", 0x324632, DIAMOND).asGemBasic(false, ORE).add(RareEarth, 1, Phosphate, 1);
 
     /** **/
-    public static Material Redstone = new Material("redstone", 0xc80000, ROUGH).asDust(ORE, LIQUID).add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
+    public static Material Redstone = new Material("redstone", 0xc80000, ROUGH).asDust(ORE, ORE_SMALL, LIQUID).add(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3);
     public static Material Cinnabar = new Material("cinnabar", 0x960000, ROUGH).asDust(ORE).add(Mercury, 1, Sulfur, 1);
     public static Material Basalt = new Material("basalt", 0x1e1414, ROUGH).asDust().add(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4);
 
