@@ -3,6 +3,7 @@ package muramasa.gtu.api.recipe;
 import com.google.common.collect.Lists;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 public class RecipeHelper {
 
@@ -35,11 +38,19 @@ public class RecipeHelper {
     }
 
     public static void addShaped(String path, ItemStack result, Object... data) {
+        if (result != null && !Utils.areItemsValid(result)) {
+            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
+            return;
+        }
         IRecipe recipe = new ShapedOreRecipe(null, Unifier.get(result), parse(data, true)).setRegistryName(path);
         ForgeRegistries.RECIPES.register(recipe);
     }
 
     public static void addShapeless(String path, ItemStack result, Object... data) {
+        if (result != null && !Utils.areItemsValid(result)) {
+            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
+            return;
+        }
         IRecipe recipe = new ShapelessOreRecipe(null, Unifier.get(result), parse(data, false)).setRegistryName(path);
         ForgeRegistries.RECIPES.register(recipe);
     }
@@ -80,6 +91,10 @@ public class RecipeHelper {
     }
 
     public static void addSmelting(ItemStack input, ItemStack output, float xp) {
+        if (input != null && !Utils.areItemsValid(input)) {
+            Utils.onInvalidData("FURNACE RECIPE ERROR: INPUT STACK INVALID!");
+            return;
+        }
         GameRegistry.addSmelting(input, Unifier.get(output), xp);
     }
 
@@ -101,11 +116,13 @@ public class RecipeHelper {
         }
     }
 
-    public static String[] getOreNames(ItemStack stack) {
+    public static ArrayList<String> getOreNames(ItemStack stack) {
+        ArrayList<String> names = new ArrayList<>();
+        if (stack.isEmpty()) return names;
         int[] ids = OreDictionary.getOreIDs(stack);
-        String[] names = new String[ids.length];
-        for (int i = 0; i < ids.length; i++) {
-            names[i] = OreDictionary.getOreName(ids[i]);
+        if (ArrayUtils.isEmpty(ids)) return names;
+        for (int id : ids) {
+            names.add(OreDictionary.getOreName(id));
         }
         return names;
     }

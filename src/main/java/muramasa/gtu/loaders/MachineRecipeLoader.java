@@ -3,6 +3,7 @@ package muramasa.gtu.loaders;
 import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 
 import static muramasa.gtu.api.data.Materials.*;
@@ -30,7 +31,8 @@ public class MachineRecipeLoader {
         /** Temp Testing Recipes **/ //TODO remove
         COMBUSTION_FUELS.RB().fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(1, 0, 1024);
 
-        //FurnaceRecipes.instance().getSmeltingList().forEach((k, v) -> SMELTING.RB().ii(k).io(v).add(60, 2));
+        //How the hell does empty stacks even get into smeltingList?!
+        FurnaceRecipes.instance().getSmeltingList().entrySet().stream().filter((set) -> !set.getKey().isEmpty()).forEach((set) -> SMELTING.RB().ii(set.getKey()).io(set.getValue()).add(60, 2));
 
         IMPLOSION_COMPRESSING.RB().ii(Data.IridiumAlloyIngot.get(1)).io(Data.IridiumReinforcedPlate.get(1), DarkAsh.getDustT(4)).add(20, 30);
 
