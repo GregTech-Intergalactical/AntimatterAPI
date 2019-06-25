@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOre;
+import muramasa.gtu.api.blocks.BlockOreSmall;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.items.MaterialItem;
@@ -109,7 +110,12 @@ public class ClientProxy implements IProxy {
         GregTechAPI.all(MaterialItem.class).forEach(i -> Arrays.stream(i.getMaterial().getSet().getTextures(i.getType())).forEach(r -> e.getMap().registerSprite(r)));
 
         StoneType.getAll().forEach(s -> e.getMap().registerSprite(s.getTexture()));
-        GregTechAPI.all(TextureSet.class).forEach(s -> e.getMap().registerSprite(s.getTexture(MaterialType.ORE, 0)));
+        GregTechAPI.all(TextureSet.class).forEach(s -> {
+            e.getMap().registerSprite(s.getTexture(MaterialType.ORE, 0));
+            e.getMap().registerSprite(s.getTexture(MaterialType.ORE_SMALL, 0));
+            e.getMap().registerSprite(s.getTexture(MaterialType.BLOCK, 0));
+            e.getMap().registerSprite(s.getTexture(MaterialType.FRAME, 0));
+        });
     }
 
     @SubscribeEvent
@@ -142,7 +148,11 @@ public class ClientProxy implements IProxy {
         for (MaterialType t : GregTechAPI.all(MaterialType.class)) {
             for (TextureSet s : GregTechAPI.all(TextureSet.class)) {
                 if (t == MaterialType.BLOCK) {
-                    model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", s.getTextures(t)[0]);
+                    model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", s.getTexture(t, 0));
+                    baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+                    TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
+                } else if (t == MaterialType.FRAME) {
+                    model = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", s.getTexture(t, 0));
                     baked = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
                     TYPE_SET_MAP.put(t.getId().concat("_").concat(s.getId()), baked);
                 } else if (t == MaterialType.ORE) {
@@ -164,12 +174,19 @@ public class ClientProxy implements IProxy {
             e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId(), "inventory"), baked);
         }
         for (BlockStorage b : GregTechAPI.all(BlockStorage.class)) {
-            ModelResourceLocation normal = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId(), "normal");
-            ModelResourceLocation inventory = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId(), "inventory");
-            baked = TYPE_SET_MAP.get(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId()));
-            e.getModelRegistry().putObject(normal, new BakedBlock(baked, b.getMaterial().getSet().getTexture(MaterialType.BLOCK, 0)));
-            e.getModelRegistry().putObject(inventory, new BakedBlock(baked));
+            //ModelResourceLocation normal = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId(), "normal");
+            //ModelResourceLocation inventory = new ModelResourceLocation(Ref.MODID + ":block_" + b.getMaterial().getId(), "inventory");
+            //baked = TYPE_SET_MAP.get(MaterialType.BLOCK.getId().concat("_").concat(b.getMaterial().getSet().getId()));
+            //e.getModelRegistry().putObject(normal, new BakedBlock(baked, b.getMaterial().getSet().getTexture(MaterialType.BLOCK, 0)));
+            //e.getModelRegistry().putObject(inventory, new BakedBlock(baked));
+            ModelResourceLocation block = new ModelResourceLocation(Ref.MODID + ":storage_" + b.getMaterial().getId(), "storage_type=0");
+            ModelResourceLocation frame = new ModelResourceLocation(Ref.MODID + ":storage_" + b.getMaterial().getId(), "storage_type=1");
+            baked = TYPE_SET_MAP.get(MaterialType.BLOCK.getId() + "_" + b.getMaterial().getSet().getId());
+            e.getModelRegistry().putObject(block, new BakedBlock(baked, b.getMaterial().getSet().getTexture(MaterialType.BLOCK, 0)));
+            baked = TYPE_SET_MAP.get(MaterialType.FRAME.getId() + "_" + b.getMaterial().getSet().getId());
+            e.getModelRegistry().putObject(frame, new BakedBlock(baked, b.getMaterial().getSet().getTexture(MaterialType.FRAME, 0)));
         }
+
         //TODO optimize model baking
         for (BlockOre b : GregTechAPI.all(BlockOre.class)) { //TODO 1.14, flatten instead of states
             for (StoneType s : StoneType.getAll()) {
@@ -177,6 +194,14 @@ public class ClientProxy implements IProxy {
                 baked = new BakedBlock(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter()), s.getTexture());
                 String variant = "stone_type=" + s.getInternalId();
                 //String variant = "inventory";
+                e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":ore_" + b.getId(), variant), baked);
+            }
+        }
+        for (BlockOreSmall b : GregTechAPI.all(BlockOreSmall.class)) {
+            for (StoneType s : StoneType.getAll()) {
+                model = ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{s.getTexture(), b.getMaterial().getSet().getTexture(MaterialType.ORE_SMALL, 0)});
+                baked = new BakedBlock(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter()), s.getTexture());
+                String variant = "stone_type=" + s.getInternalId();
                 e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":ore_" + b.getId(), variant), baked);
             }
         }

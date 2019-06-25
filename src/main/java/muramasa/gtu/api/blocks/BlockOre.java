@@ -13,9 +13,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -29,7 +32,7 @@ import static muramasa.gtu.api.properties.GTProperties.STONE;
 
 public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
-    private Material material;
+    protected Material material;
 
     public BlockOre(Material material) {
         super(net.minecraft.block.material.Material.ROCK);
@@ -37,6 +40,11 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         setUnlocalizedName("ore_" + getId());
         setRegistryName("ore_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
+        setDefaultState(getDefaultState().withProperty(STONE, 0));
+        register();
+    }
+
+    protected void register() {
         GregTechAPI.register(BlockOre.class, this);
     }
 
@@ -47,10 +55,6 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     public Material getMaterial() {
         return material;
-    }
-
-    public IBlockState get(StoneType type) {
-        return getDefaultState().withProperty(STONE, type.getInternalId());
     }
 
     @Override
@@ -66,6 +70,15 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(STONE, meta);
+    }
+
+    public IBlockState get(StoneType type) {
+        return getDefaultState().withProperty(STONE, type.getInternalId());
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return getDefaultState().withProperty(STONE, Ref.RNG.nextInt(StoneType.getLastInternalId()));
     }
 
     //TODO
@@ -103,8 +116,8 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        for (StoneType type : StoneType.getAll()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":ore_" + getId(), "stone_type=" + type.getInternalId()));
+        for (StoneType s : StoneType.getAll()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), s.getInternalId(), new ModelResourceLocation(Ref.MODID + ":ore_" + getId(), "stone_type=" + s.getInternalId()));
         }
     }
 }

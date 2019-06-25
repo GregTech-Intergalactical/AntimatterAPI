@@ -47,6 +47,7 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
 
     //Dummy Types
     public static MaterialType ORE = new MaterialType("ore", true, false); //TODO: dimensional ores, stone types, need separate prefix?
+    public static MaterialType ORE_SMALL = new MaterialType("ore_small", false, false);
     public static MaterialType BLOCK = new MaterialType("block", true, false);
     public static MaterialType FRAME = new MaterialType("frame", true, false);
     public static MaterialType GEM_VARIANTS = new MaterialType("gem_variants", false, false);

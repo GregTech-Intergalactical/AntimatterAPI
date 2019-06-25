@@ -41,6 +41,7 @@ public class Data {
 
         //Blocks
         MaterialType.ORE.getMats().forEach(BlockOre::new);
+        MaterialType.ORE_SMALL.getMats().forEach(BlockOreSmall::new);
         MaterialType.BLOCK.getMats().forEach(BlockStorage::new);
 
         GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));

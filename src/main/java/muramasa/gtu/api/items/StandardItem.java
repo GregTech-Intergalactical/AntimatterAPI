@@ -5,6 +5,9 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
+import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.machines.MachineFlag;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -76,7 +79,11 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
         }
         if (Data.DebugScanner.equals(this)) {
-
+            tooltip.add("Blocks: " + GregTechAPI.BLOCKS.size());
+            tooltip.add("Machines: " + Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size());
+            tooltip.add("Ores: " + MaterialType.ORE.getMats().size());
+            tooltip.add("Ores Small: " + MaterialType.ORE_SMALL.getMats().size());
+            tooltip.add("Storage: " + MaterialType.BLOCK.getMats().size());
         }
     }
 
