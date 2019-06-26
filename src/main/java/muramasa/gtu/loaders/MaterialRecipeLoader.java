@@ -8,6 +8,8 @@ import muramasa.gtu.api.materials.MaterialStack;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -55,13 +57,15 @@ public class MaterialRecipeLoader {
         //GregTech_API.registerCover(aDenseStack, new GT_RenderedTexture(merial.mIconSet.mTextures[76], merial.mRGBa, false), null);
         
         ROTOR.getMats().forEach(m -> {
-            ItemStack plates = m.getPlate(4);
+            ItemStack plate = m.getPlate(1);
             ItemStack ring = m.getRing(1);
             ItemStack rotor = m.getRotor(1);
             RecipeHelper.addShaped("rotor_" + m.getId(), rotor, "PhP", "SRf", "PdP", 'P', m.getPlate(1), 'R', ring, 'S', m.getScrew(1));
-            ASSEMBLING.RB().ii(plates, ring).fi(Materials.Lead.getLiquid(48)).io(rotor).add(240, 24);
-            ASSEMBLING.RB().ii(plates, ring).fi(Materials.Tin.getLiquid(32)).io(rotor).add(240, 24);
-            ASSEMBLING.RB().ii(plates, ring).fi(Materials.SolderingAlloy.getLiquid(16)).io(rotor).add(240, 24);          
+            //ItemStack plates = plate.copy();
+            plate.setCount(4);
+            ASSEMBLING.RB().ii(plate, ring).fi(Materials.Lead.getLiquid(48)).io(rotor).add(240, 24);
+            ASSEMBLING.RB().ii(plate, ring).fi(Materials.Tin.getLiquid(32)).io(rotor).add(240, 24);
+            ASSEMBLING.RB().ii(plate, ring).fi(Materials.SolderingAlloy.getLiquid(16)).io(rotor).add(240, 24);          
         });
         
         WIRE_FINE.getMats().forEach(m -> {
@@ -81,10 +85,8 @@ public class MaterialRecipeLoader {
         });
         
         GEAR.getMats().forEach(m -> {
-            RecipeHelper.addShaped("rod_to_gear_" + m.getId(), m.getGear(1), "SPS", "PwP", "SPS", 'P', m.getPlate(1), 'S', m.getRod(1));
-            if (m.has(LIQUID)) {
-                FLUID_SOLIDIFYING.RB().ii(MoldGear.get(0)).fi(m.getLiquid(576)).io(m.getGear(1)).add(128, 8);
-            }
+            if (m.has(PLATE)) RecipeHelper.addShaped("gear_" + m.getId(), m.getGear(1), "SPS", "PwP", "SPS", 'P', m.getPlate(1), 'S', m.getRod(1));
+            if (m.has(LIQUID)) FLUID_SOLIDIFYING.RB().ii(MoldGear.get(0)).fi(m.getLiquid(576)).io(m.getGear(1)).add(128, 8);
             if (m.has(INGOT) && !m.has(NOSMELT)) {
                 int voltage = m.getBlastTemp() >= 2800 ? 64 : 16;
                 if (m.has(NOSMASH)) {
@@ -97,22 +99,35 @@ public class MaterialRecipeLoader {
             }
         });
         
-        SCREW.getMats().forEach(m -> {
-            RecipeHelper.addShaped("bolt_to_screw_" + m.getId(), m.getScrew(1), "fX ", "X  ", "   ", 'X', m.getBolt(1));
-            LATHING.RB().ii(m.getBolt(1)).io(m.getScrew(1)).add(Math.max(m.getMass() / 8, 1), 4);
+        //Screws depends on bolt, so lets do this for now
+        IMaterialFlag.getMatsFor(BOLT, SCREW).forEach(m -> {
+            ItemStack bolt = m.getBolt(1);
+            ItemStack screw = m.getScrew(1);
+            RecipeHelper.addShaped("bolt_to_screw_" + m.getId(), screw, "fX ", "X  ", "   ", 'X', bolt);
+            LATHING.RB().ii(bolt).io(screw).add(Math.max(m.getMass() / 8, 1), 4);  
+            bolt.setCount(2);
+            RecipeHelper.addShaped("rod_to_bolt_" + m.getId(), bolt, "s  ", " X ", "   ", 'X', m.getRod(1));
+            bolt.setCount(4);
+            CUTTING.RB().ii(m.getRod(1)).io(bolt).add(Math.max(m.getMass() * 2, 1), 4);
+            if (!m.has(NOSMELT)) EXTRUDING.RB().ii(m.getIngot(1), ShapeBolt.get(0)).io(m.getSmeltInto().getBolt(8)).add(m.getMass() * 2, m.getBlastTemp() >= 2800 ? 512 : 128);
         });
         
         FOIL.getMats().forEach(m -> {
-            RecipeHelper.addShaped("plate_to_foil_" + m.getId(), m.getFoil(4), "hX ", "   ", "   ", 'X', m.getPlate(1));
-            BENDING.RB().ii(m.getPlate(1)).io(m.getFoil(1)).add(Math.max(m.getMass(), 1), 24);
+            ItemStack plate = m.getPlate(1);
+            ItemStack foil = m.getFoil(1);
+            RecipeHelper.addShaped("plate_to_foil_" + m.getId(), foil, "hX ", "   ", "   ", 'X', plate);
+            foil.setCount(4);
+            BENDING.RB().ii(plate).io(foil).add(Math.max(m.getMass(), 1), 24);
           //GregTech_API.registerCover(aFoilStack, new GT_RenderedTexture(merial.mIconSet.mTextures[70], merial.mRGBa, false), null);
         });
         
-        BOLT.getMats().forEach(m -> {
-            RecipeHelper.addShaped("rod_to_bolt_" + m.getId(), m.getFoil(2), "s  ", " X ", "   ", 'X', m.getRod(1));
-            CUTTING.RB().ii(m.getRod(1)).io(m.getBolt(4)).add(Math.max(m.getMass() * 2, 1), 4);
-            if (!m.has(NOSMELT)) EXTRUDING.RB().ii(m.getIngot(1), ShapeBolt.get(0)).io(m.getSmeltInto().getBolt(8)).add(m.getMass() * 2, m.getBlastTemp() >= 2800 ? 512 : 128);
-        });
+        /*BOLT.getMats().forEach(m -> {
+            
+        });*/
+        
+        /*SCREW.getMats().forEach(m -> {
+        
+        });*/
         
         RING.getMats().forEach(m -> {
             if (!m.has(NOSMASH)) {
@@ -124,14 +139,15 @@ public class MaterialRecipeLoader {
         });
 
         ROD.getMats().forEach(m -> {  
-            ItemStack ingot = m.getIngot(1);
+            if (m == Materials.Wood) return;
+            ItemStack ingotOrGem = m.has(GEM) ? m.getGem(1) : m.getIngot(1);
             ItemStack rod = m.getRod(1);
-            LATHING.RB().ii(m.has(GEM) ? m.getGem(1) : ingot).io(rod, m.getMacerateInto().getDustSmall(2)).add(Math.max(m.getMass() * 5, 1), 16);
+            LATHING.RB().ii(ingotOrGem).io(rod, m.getMacerateInto().getDustSmall(2)).add(Math.max(m.getMass() * 5, 1), 16);
             if (m.has(INGOT)) {
-                RecipeHelper.addShaped("ingot_to_rod_", rod, "f  ", " X ", "   ", 'X', ingot);
+                RecipeHelper.addShaped("ingot_to_rod_", rod, "f  ", " X ", "   ", 'X', ingotOrGem);
                 if (!m.has(NOSMELT)) {
                     int aEU = m.getBlastTemp() >= 2800 ? 384 : 96;
-                    EXTRUDING.RB().ii(m.getIngot(1), ShapeRod.get(0)).io(m.getSmeltInto().getRod(2)).add(m.getMass() * 2, aEU);
+                    EXTRUDING.RB().ii(ingotOrGem, ShapeRod.get(0)).io(m.getSmeltInto().getRod(2)).add(m.getMass() * 2, aEU);
                     //TODO .RB(EXTRUDER).ii(m.getIngot(1), ShapeWire.get(0)).io(m.getSmeltInto().getWire01(2)).add(m.getMass() * 2, aEU);
                 }
             }
@@ -141,9 +157,9 @@ public class MaterialRecipeLoader {
 
         BLOCK.getMats().forEach(m -> { 
             ItemStack block = m.getBlock(1);
-            ItemStack ingotOrGem = m.has(GEM) ? m.getGem(9) : m.getIngot(9);
+            ItemStack ingotOrGem = m.has(GEM) ? m.getGem(1) : m.getIngot(1);
             COMPRESSING.RB().ii(ingotOrGem).io(block).add(300, 2);
-            RecipeHelper.addShapeless("block_3x3_" + m.getId(), block, "XXX", "XXX", "XXX", 'X', ingotOrGem); //TODO: Leave in compressor? Hardcore mode?
+            RecipeHelper.addShapeless("block_3x3_" + m.getId(), block, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem); //TODO: Leave in compressor? Hardcore mode?
             if (m.has(PLATE)) {
                 CUTTING.RB().ii(block).io(m.getPlate(9)).add(Math.max(m.getMass() * 10, 1), 30);
             }
@@ -152,45 +168,48 @@ public class MaterialRecipeLoader {
             }
             if (m.has(INGOT) && !m.has(NOSMELT)) {
                 int voltage = m.has(NOSMASH) ? m.getBlastTemp() >= 2800 ? 16 : 4 : m.getBlastTemp() >= 2800 ? 64 : 16;
+                ingotOrGem.setCount(9);
                 EXTRUDING.RB().ii(ingotOrGem, ShapeBlock.get(0)).io(block).add(10, 8 * voltage);
                 ALLOY_SMELTING.RB().ii(ingotOrGem, MoldBlock.get(0)).io(block).add(5, 4 * voltage);
             }
         });
 
-        for (Material m : PLATE.getMats()) {
+        PLATE.getMats().forEach(m -> { 
+            if (m == Materials.Wood || m == Materials.Glass) return;
             ItemStack plate = m.getPlate(1);
+            ItemStack ingotOrGem = m.has(GEM) ? m.getGem(1) : m.getIngot(1);
             if (m.has(LIQUID)) {
                 FLUID_SOLIDIFYING.RB().ii(MoldPlate.get(0)).fi(m.getLiquid(144)).io(plate).add(32, 8);
             }
-            if (m.getFuelPower() > 0) {
-                //RecipeAdder.addFuel(aPlate, null, m.getFuelPower(), m.mFuelType);
-            }
+            /*if (m.getFuelPower() > 0) {
+                RecipeAdder.addFuel(aPlate, null, m.getFuelPower(), m.mFuelType);
+            }*/
             if (!m.has(NOSMASH)) {
-                //RecipeHelper.addShapedToolRecipe(aPlate, "h  ", "X  ", "X  ", 'X', m.has(BGEM) ? m.getGem(1) : aIngot);
+                RecipeHelper.addShapedMirrored("plate_" + m.getId(), plate, "h", "X", "X", 'X', ingotOrGem);
                 if (m.has(GRINDABLE)) {
-                    //RecipeHelper.addShapedToolRecipe(m.getDust(1), "X  ", "m  ", "   ", 'X', aPlate);
+                    RecipeHelper.addShapeless("plate_grind_to_dust_" + m.getId(), m.getDust(1), ToolType.MORTAR.getOreDict(), plate);
                 }
                 if (m.has(INGOT)) {
                     long duration = Math.max(m.getMass(), 1);
-                    BENDING.RB().ii(m.getIngot(1)).io(plate).add(duration, 24);                     
+                    BENDING.RB().ii(ingotOrGem).io(plate).add(duration, 24);     
+                    ingotOrGem.setCount(3);
                     plate.setCount(2);
-                    HAMMERING.RB().ii(m.getIngot(3)).io(plate).add(duration, 16);  
+                    HAMMERING.RB().ii(ingotOrGem).io(plate).add(duration, 16);  
                 }
             }
             if (!m.has(NOSMELT)) {
                 if (m.has(INGOT)) {
-                    int aEU = m.getBlastTemp() >= 2800 ? 64 : 16;
-                    EXTRUDING.RB().ii(m.getIngot(1), ShapePlate.get(0)).io(m.getSmeltInto().getPlate(1)).add(m.getMass(), 8 * aEU);
-                    ALLOY_SMELTING.RB().ii(m.getIngot(2), MoldPlate.get(0)).io(m.getSmeltInto().getPlate(1)).add(m.getMass() * 2, 2 * aEU);
+                    int eu = m.getBlastTemp() >= 2800 ? 64 : 16;
+                    EXTRUDING.RB().ii(m.getIngot(1), ShapePlate.get(0)).io(m.getSmeltInto().getPlate(1)).add(m.getMass(), 8 * eu);
+                    ALLOY_SMELTING.RB().ii(m.getIngot(2), MoldPlate.get(0)).io(m.getSmeltInto().getPlate(1)).add(m.getMass() * 2, 2 * eu);
                 }
-
                 //TODO WUT?
-//            if (Prefix.block.isIgnored(m) && m != Materials.GraniteRed && m != Materials.GraniteBlack && m != Materials.Glass && m != Materials.Obsidian && m != Materials.Glowstone && m != Materials.Paper) {
+//              if (Prefix.block.isIgnored(m) && m != Materials.GraniteRed && m != Materials.GraniteBlack && m != Materials.Glass && m != Materials.Obsidian && m != Materials.Glowstone && m != Materials.Paper) {
 //                GT_ModHandler.addCompressorRecipe(aDustStack, aPlateStack);
-//            }
+//              }
             }
             //GregTech_API.registerCover(aPlate, new GT_RenderedTexture(m.mIconSet.mTextures[71], m.getRGB(), false), null);
-        }
+        });
 
         for (Material m : DUST.getMats()) {
             ItemStack aDust = m.getDust(1), aDustS = m.getDustSmall(1), aDustT = m.getDustTiny(1);
@@ -362,7 +381,7 @@ public class MaterialRecipeLoader {
         }
 
         for (Material m : GEM_VARIANTS.getMats()) {
-            if (m.isTransparent()) { //TODO Plate > Lens BROKEN
+            if (m.isTransparent()) {
                 LATHING.RB().ii(m.getPlate(1)).io(m.getLens(1), m.getDustSmall(1)).add(Math.max(m.getMass() / 2, 1), 480);
                 //GregTech_API.registerCover(aLensStack, new GT_MultiTexture(Textures.BlockIcons.MACHINE_CASINGS[2][0], new GT_RenderedTexture(Textures.BlockIcons.OVERLAY_LENS, merial.mRGBa, false)), new GT_Cover_Lens(merial.mColor.mIndex));
             }
