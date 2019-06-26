@@ -14,8 +14,11 @@ public class MachineRecipeLoader {
     public static RecipeBuilder RB = new RecipeBuilder();
 
     public static void init() {
+        
+        //TODO: Glass processing recipes here
+        LATHING.RB().ii(Glass.getPlate(1)).io(Glass.getLens(1), Glass.getDustSmall(1)).add(20, 12);
 
-        OreDictionary.getOres("logWood").forEach(i -> COKING.RB().ii(Utils.ca(2, i), Coal.getDust(1)).io(Charcoal.getGem(1)).fo(Creosote.getLiquid(250)).add(3600));
+        OreDictionary.getOres("logWood").forEach(i -> COKING.RB().ii(Utils.ca(2, i), Coal.getDust(1)).io(Charcoal.getGem(1)).fo(Creosote.getLiquid(250)).add(3600)); //Coal?
         COKING.RB().ii(Coal.getGem(1)).io(CoalCoke.getGem(1)).fo(Creosote.getLiquid(500)).add(3600);
         COKING.RB().ii(Lignite.getGem(1)).io(LigniteCoke.getGem(1)).fo(Creosote.getLiquid(750)).add(3600);
 
@@ -32,7 +35,7 @@ public class MachineRecipeLoader {
         COMBUSTION_FUELS.RB().fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(1, 0, 1024);
 
         //How the hell does empty stacks even get into smeltingList?!
-        FurnaceRecipes.instance().getSmeltingList().entrySet().stream().filter((set) -> !set.getKey().isEmpty()).forEach((set) -> SMELTING.RB().ii(set.getKey()).io(set.getValue()).add(60, 2));
+        FurnaceRecipes.instance().getSmeltingList().entrySet().stream().filter((set) -> !set.getKey().isEmpty()).forEach((set) -> SMELTING.RB().ii(set.getKey()).io(set.getValue()).add(140, 2));
 
         IMPLOSION_COMPRESSING.RB().ii(Data.IridiumAlloyIngot.get(1)).io(Data.IridiumReinforcedPlate.get(1), DarkAsh.getDustTiny(4)).add(20, 30);
 

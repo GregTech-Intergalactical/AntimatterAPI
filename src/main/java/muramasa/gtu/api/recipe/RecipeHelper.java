@@ -57,6 +57,18 @@ public class RecipeHelper {
         IRecipe recipe = new ShapedOreRecipe(null, Unifier.get(result), parse(data, true)).setRegistryName(path);
         ForgeRegistries.RECIPES.register(recipe);
     }
+    
+    /**
+     * @see RecipeHelper#addShaped(path, result, data) for char references
+     */
+    public static void addShapedMirrored(String path, ItemStack result, Object... data) {
+        if (result != null && !Utils.areItemsValid(result)) {
+            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
+            return;
+        }
+        IRecipe recipe = new ShapedOreRecipe(null, Unifier.get(result), parse(data, true)).setMirrored(true).setRegistryName(path);
+        ForgeRegistries.RECIPES.register(recipe);
+    }
 
     /**
      * @see RecipeHelper#addShaped(path, result, data) for char references

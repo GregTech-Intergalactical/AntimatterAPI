@@ -3,7 +3,9 @@ package muramasa.gtu.integration.jei.wrapper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.recipe.Recipe;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int4;
 import net.minecraft.client.Minecraft;
 
@@ -47,7 +49,7 @@ public class RecipeWrapper implements IRecipeWrapper {
         }
         if (recipe.getPower() > 0) {
             minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, startY + (lineCount++ * 10), 0x000000);
-            minecraft.fontRenderer.drawString("Voltage: " + "32 (LV)" + "", 10, startY + (lineCount++ * 10), 0x000000);
+            minecraft.fontRenderer.drawString("Voltage: " + Ref.VN[Utils.getVoltageTier(recipe.getPower())], 10, startY + (lineCount++ * 10), 0x000000);
             minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, startY + (lineCount++ * 10), 0x000000);
         }
         if (recipe.getDuration() > 0) {

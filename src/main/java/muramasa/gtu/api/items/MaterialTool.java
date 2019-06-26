@@ -142,8 +142,8 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
-        damage(stack, getType().getDamageCrafting(), null, false);
-        if (type.getUseSound() != null) GregTech.PROXY.playSound(type.getUseSound());
+        stack = stack.copy();
+        damage(stack, getType().getDamageCrafting(), null, true);
     	return stack;
     }
 
@@ -330,7 +330,10 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
                 stack.shrink(1);
             }
         }
-        if (playSound && living != null && type.getUseSound() != null) type.getUseSound().play(living.world, living.getPosition());
+        if (playSound && type.getUseSound() != null) {
+            if (living != null) type.getUseSound().play(living.world, living.getPosition());
+            else GregTech.PROXY.playSound(type.getUseSound());
+        }
         return newDamage;
     }
 

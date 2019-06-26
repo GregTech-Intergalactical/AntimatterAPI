@@ -128,7 +128,7 @@ public class Material implements IGregTechObject {
         return this;
     }
 
-    //TODO: Shall we do gem variants, at all?
+    //TODO: Shall we do gem variants?
     public Material asGem(boolean transparent, IMaterialFlag... flags) {
         asGemBasic(transparent, flags);
         add(GEM_CHIPPED, GEM_FLAWED, GEM_FLAWLESS, GEM_EXQUISITE);
@@ -169,7 +169,7 @@ public class Material implements IGregTechObject {
 
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) {
-            add(TOOLS, PLATE, ROD, SCREW);
+            add(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         } else if (has(GEM)) {
             add(TOOLS, ROD);
         }

@@ -15,15 +15,15 @@ public class MaterialStack {
     @Override
     public String toString() {
         String string = "";
-        /*if (m.getChemicalFormula() == null || m.getChemicalFormula().isEmpty()) {
-            string += "?";
-        } else */if (m.getProcessInto().size() > 1) {
+        if (m.getChemicalFormula() == null || m.getChemicalFormula().isEmpty()) {
+            string += m.getDisplayName() == null ? "|?|" : " |" + m.getDisplayName() + "| ";
+        } else if (m.getProcessInto().size() > 1) {
             string += '(' + m.getChemicalFormula() + ')';
         } else {
             string += m.getChemicalFormula();
         }
         if (s > 1) {
-            string += Utils.digitsToSubscript(Long.toString(s)); //0 looks so messed up...
+            string += Utils.digitsToSubscript(Long.toString(s));
         }
         return string;
     }
