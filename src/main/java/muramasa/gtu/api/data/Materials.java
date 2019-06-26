@@ -26,12 +26,12 @@ public class Materials {
     public static Material Cobalt = new Material("cobalt", 0x5050fa, METALLIC, Co).asMetal(1768, 0).addTools(8.0F, 512, 3);
     public static Material Gold = new Material("gold", 0xffff1e, SHINY, Au).asMetal(1337, 0, FOIL, ROD, WIRE_FINE, GEAR, ORE, ORE_SMALL).addTools(15.0F, 48, 2);
     public static Material Iridium = new Material("iridium", 0xf0f0f5, DULL, Ir).asMetal(2719, 2719, FRAME, ORE, ORE_SMALL).addTools(8.0F, 2560, 4);
-    public static Material Iron = new Material("iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME, ORE_SMALL).asPlasma().addTools(6.0F, 256, 2);
+    public static Material Iron = new Material("iron", 0xc8c8c8, METALLIC, Fe).asMetal(1811, 0, RING, GEAR, FRAME, ORE, ORE_SMALL).asPlasma().addTools(6.0F, 256, 2);
     public static Material Lanthanum = new Material("lanthanum", 0xffffff, METALLIC, La).asSolid(1193, 1193);
     public static Material Lead = new Material("lead", 0x8c648c, DULL, Pb).asMetal(600, 0, PLATE, PLATE_DENSE, FOIL, ROD, ORE, ORE_SMALL);
     public static Material Manganese = new Material("manganese", 0xfafafa, DULL, Mn).asMetal(1519, 0, ORE);
     public static Material Molybdenum = new Material("molybdenum", 0xb4b4dc, SHINY, Mo).asMetal(2896, 0, ORE).addTools(7.0F, 512, 2);
-    public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD); //TODO: Bastnasite or Monazite for Ore Form
+    public static Material Neodymium = new Material("neodymium", 0x646464, METALLIC, Nd).asMetal(1297, 1297, PLATE, ROD, ORE); //TODO: Bastnasite or Monazite for Ore Form
     public static Material Neutronium = new Material("neutronium", 0xfafafa, DULL, Nt).asMetal(10000, 10000, SCREW, BOLT, RING, GEAR, FRAME).addTools(24.0F, 655360, 6); //TODO Vibranium
     public static Material Nickel = new Material("nickel", 0xc8c8fa, METALLIC, Ni).asMetal(1728, 0, ORE, ORE_SMALL).asPlasma();
     public static Material Osmium = new Material("osmium", 0x3232ff, METALLIC, Os).asMetal(3306, 3306, SCREW, BOLT, RING, PLATE, FOIL, ROD, WIRE_FINE).addTools(16.0F, 1080, 4);
@@ -380,7 +380,7 @@ public class Materials {
     public static Material Duranium = new Material("duranium", 0xffffff, METALLIC).asMetal(295, 0).addTools(16.0F, 5120, 5);
     public static Material Naquadah = new Material("naquadah", 0x323232, METALLIC).asMetal(5400, 5400, ORE).addTools(6.0F, 890, 4);
     public static Material NaquadahAlloy = new Material("naquadah_alloy", 0x282828, METALLIC).asMetal(7200, 7200).addTools(8.0F, 5120, 5);
-    public static Material NaquadahEnriched = new Material("naquadah_enriched", 0x323232, SHINY).asMetal(4500, 4500).addTools(6.0F, 1280, 4);
+    public static Material NaquadahEnriched = new Material("naquadah_enriched", 0x323232, SHINY).asMetal(4500, 4500, ORE).addTools(6.0F, 1280, 4);
     public static Material Naquadria = new Material("naquadria", 0x1e1e1e, SHINY).asMetal(9000, 9000).addTools(1.0F, 512, 4);
     public static Material Tritanium = new Material("tritanium", 0xffffff, SHINY).asMetal(295, 0, FRAME).addTools(15.0F, 9400, 6);
     public static Material Vibranium = new Material("vibranium", 0x00ffff, SHINY).asMetal(295, 0, FRAME).addTools(20.0F, 12240, 6);

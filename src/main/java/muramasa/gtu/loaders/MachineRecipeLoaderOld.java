@@ -257,7 +257,7 @@
 //
 //        try {
 //            GT_DummyWorld tWorld = (GT_DummyWorld) GT_Values.DW;
-//            while (tWorld.mRandom.mIterationStep > 0) {
+//            while (tWorld.rand.mIterationStep > 0) {
 //                GT_Values.RA.addFluidExtractionRecipe(GT_Utility.copyAmount(1L, new Object[]{ForgeHooks.getGrassSeed(tWorld)}), GT_Values.NI, Materials.SeedOil.getFluid(5L), 10000, 64, 2);
 //            }
 //        } catch (Throwable e) {

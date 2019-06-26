@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.properties.GTProperties.STONE;
+import static muramasa.gtu.api.properties.GTProperties.ORE_STONE;
 
 public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
@@ -40,7 +40,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         setUnlocalizedName("ore_" + getId());
         setRegistryName("ore_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
-        setDefaultState(getDefaultState().withProperty(STONE, 0));
+        setDefaultState(getDefaultState().withProperty(ORE_STONE, 0));
         register();
     }
 
@@ -59,26 +59,26 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(STONE).build();
+        return new BlockStateContainer.Builder(this).add(ORE_STONE).build();
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(STONE);
+        return state.getValue(ORE_STONE);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(STONE, meta);
+        return getDefaultState().withProperty(ORE_STONE, meta);
     }
 
     public IBlockState get(StoneType type) {
-        return getDefaultState().withProperty(STONE, type.getInternalId());
+        return getDefaultState().withProperty(ORE_STONE, type.getInternalId());
     }
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return getDefaultState().withProperty(STONE, Ref.RNG.nextInt(StoneType.getLastInternalId()));
+        return getDefaultState().withProperty(ORE_STONE, Ref.RNG.nextInt(StoneType.getLastInternalId()));
     }
 
     //TODO

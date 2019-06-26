@@ -51,7 +51,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
         setUnlocalizedName(type.concat("_").concat(getId()));
         setRegistryName(type.concat("_").concat(getId()));
         setCreativeTab(Ref.TAB_MACHINES);
-        setDefaultState(getDefaultState().withProperty(SIZE, 0));
+        setDefaultState(getDefaultState().withProperty(PIPE_SIZE, 0));
         GregTechAPI.register(this);
     }
 
@@ -75,7 +75,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(SIZE).add(CONNECTIONS, TEXTURE).build();
+        return new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE).build();
     }
 
     @Override
@@ -84,7 +84,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityPipe) {
             TileEntityPipe pipe = (TileEntityPipe) tile;
-            exState = exState.withProperty(CONNECTIONS, pipe.getConnections());
+            exState = exState.withProperty(PIPE_CONNECTIONS, pipe.getConnections());
             exState = exState.withProperty(TEXTURE, getBlockData());
         }
         return exState;
@@ -92,12 +92,12 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(SIZE, meta);
+        return getDefaultState().withProperty(PIPE_SIZE, meta);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(SIZE);
+        return state.getValue(PIPE_SIZE);
     }
 
     @Override
@@ -141,7 +141,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         ItemStack stack = placer.getHeldItem(hand);
         if (!stack.isEmpty() && stack.hasTagCompound()) {
-            return getDefaultState().withProperty(SIZE, stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE));
+            return getDefaultState().withProperty(PIPE_SIZE, stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE));
         }
         return getDefaultState();
     }

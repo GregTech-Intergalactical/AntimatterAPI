@@ -34,6 +34,10 @@ public class MaterialTag implements IGregTechObject, IMaterialFlag {
     public static MaterialTag CABLE = new MaterialTag("cable");
     public static MaterialTag ELEMENTAL = new MaterialTag("elemental");
 
+    public static MaterialTag OVERWORLD = new MaterialTag("overworld");
+    public static MaterialTag NETHER = new MaterialTag("nether");
+    public static MaterialTag END = new MaterialTag("end");
+
     //TODO get alloy flag for adding mixer and dust crafting recipes automatically
 
     private String id;

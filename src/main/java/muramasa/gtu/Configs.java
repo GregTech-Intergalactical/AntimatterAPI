@@ -5,7 +5,7 @@ import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.RequiresMcRestart;
 import net.minecraftforge.common.config.Config.RequiresWorldRestart;
 
-@Config(modid = Ref.MODID, name = Ref.NAME, category = "")
+@Config(modid = Ref.MODID, name = "GregTech/" + Ref.NAME, category = "")
 public class Configs {
 
 	public static Jei JEI = new Jei();

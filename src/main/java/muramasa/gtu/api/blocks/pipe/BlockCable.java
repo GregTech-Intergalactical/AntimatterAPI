@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 
-import static muramasa.gtu.api.properties.GTProperties.CONNECTIONS;
+import static muramasa.gtu.api.properties.GTProperties.PIPE_CONNECTIONS;
 import static muramasa.gtu.api.properties.GTProperties.TEXTURE;
 
 //TODO 1.13+: Flatten and avoid CableStacks
@@ -73,7 +73,7 @@ public class BlockCable extends BlockPipe<BlockCable> implements IItemBlock, ICo
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityCable) {
             TileEntityCable cable = (TileEntityCable) tile;
-            exState = exState.withProperty(CONNECTIONS, cable.getConnections());
+            exState = exState.withProperty(PIPE_CONNECTIONS, cable.getConnections());
             exState = exState.withProperty(TEXTURE, cable.isInsulated() ? Textures.PIPE_DATA[2] : getBlockData());
         }
         return exState;

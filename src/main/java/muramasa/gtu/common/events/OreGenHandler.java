@@ -17,9 +17,9 @@ public class OreGenHandler {
     private static EnumSet<OreGenEvent.GenerateMinable.EventType> PREVENTED_TYPES = EnumSet.noneOf(OreGenEvent.GenerateMinable.EventType.class);
 
     public static void init() {
-        if (Configs.WORLD.DISABLE_VANILLA_ORE_GEN) PREVENTED_TYPES.addAll(Arrays.asList(COAL, IRON, GOLD, DIAMOND, REDSTONE, LAPIS, QUARTZ));
+        if (Configs.WORLD.DISABLE_VANILLA_ORE_GEN) PREVENTED_TYPES.addAll(Arrays.asList(COAL, IRON, GOLD, DIAMOND, EMERALD, REDSTONE, LAPIS, QUARTZ));
         if (Configs.WORLD.DISABLE_VANILLA_STONE_GEN) PREVENTED_TYPES.addAll(Arrays.asList(ANDESITE, DIORITE, GRANITE));
-        if (PREVENTED_TYPES.size() > 0) MinecraftForge.EVENT_BUS.register(OreGenHandler.class);
+        if (PREVENTED_TYPES.size() > 0) MinecraftForge.ORE_GEN_BUS.register(OreGenHandler.class);
     }
 
     @SubscribeEvent
