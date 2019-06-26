@@ -185,7 +185,7 @@ public class MaterialRecipeLoader {
                 RecipeAdder.addFuel(aPlate, null, m.getFuelPower(), m.mFuelType);
             }*/
             if (!m.has(NOSMASH)) {
-                RecipeHelper.addShapedMirrored("plate_" + m.getId(), plate, "h", "X", "X", 'X', ingotOrGem);
+                RecipeHelper.addShaped("plate_" + m.getId(), plate, "h", "X", "X", 'X', ingotOrGem);
                 if (m.has(GRINDABLE)) {
                     RecipeHelper.addShapeless("plate_grind_to_dust_" + m.getId(), m.getDust(1), ToolType.MORTAR.getOreDict(), plate);
                 }
