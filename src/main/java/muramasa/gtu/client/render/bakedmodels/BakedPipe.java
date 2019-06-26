@@ -128,8 +128,8 @@ public class BakedPipe implements IBakedModel {
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        int size = state.getValue(GTProperties.SIZE);
-        int connections = exState.getValue(GTProperties.CONNECTIONS);
+        int size = state.getValue(GTProperties.PIPE_SIZE);
+        int connections = exState.getValue(GTProperties.PIPE_CONNECTIONS);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 
         //List<BakedQuad> quads = CACHE.get((size * 100) + connections);

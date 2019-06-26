@@ -42,7 +42,7 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     }
 
     public PipeSize getSize() {
-        return size != null ? size : (size = PipeSize.VALUES[getState().getValue(GTProperties.SIZE)]);
+        return size != null ? size : (size = PipeSize.VALUES[getState().getValue(GTProperties.PIPE_SIZE)]);
     }
 
     public byte getConnections() {

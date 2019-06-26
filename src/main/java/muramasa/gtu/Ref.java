@@ -39,6 +39,16 @@ public class Ref {
     /** Config Values **/
     public static boolean mixedOreYieldsTwoThirdsPureOre = false; //TODO 5U remnant, determine if needed
 
+    public static boolean debugWorldGen = false;
+    public static boolean debugOreVein = true;
+    public static boolean debugStones = true;
+
+    public static int oreveinPercentage = 100; //Control percentage of filled 3x3 chunks. Lower number means less oreveins spawn
+    public static int oreveinAttempts = 64; //Control number of attempts to find a valid orevein. Generally this maximum limit isn't hit, selecting a vein is cheap
+    public static int oreveinMaxPlacementAttempts = 8; //Control number of attempts to place a valid orevein.  If a vein wasn't placed due to height restrictions, completely in the water, etc, another attempt is tried.
+    public static boolean oreveinPlacerOres = true; //Whether or not to place small ores as placer ores for an orevein
+    public static int oreveinPlacerOresMultiplier = 2; //Multiplier to control how many placer ores get generated.
+
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";
     public static final String KEY_STACK_NO_CONSUME = "noconsume";

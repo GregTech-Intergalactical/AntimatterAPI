@@ -10,6 +10,8 @@ import muramasa.gtu.api.data.Structures;
 import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.api.worldgen.GregTechWorldGenerator;
+import muramasa.gtu.api.worldgen.OreLayerGenerator;
 import muramasa.gtu.common.Data;
 import muramasa.gtu.common.events.OreGenHandler;
 import muramasa.gtu.common.network.GuiHandler;
@@ -18,6 +20,7 @@ import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
 import muramasa.gtu.integration.top.TheOneProbePlugin;
 import muramasa.gtu.loaders.OreDictLoader;
+import muramasa.gtu.loaders.WorldGenLoader;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -63,6 +66,9 @@ public class GregTech {
         OreGenHandler.init();
         MinecraftForge.EVENT_BUS.register(this);
 
+        new OreLayerGenerator();
+        new GregTechWorldGenerator();
+
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);
 
@@ -82,6 +88,7 @@ public class GregTech {
         PROXY.init(e);
         if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
         OreDictLoader.init();
+        WorldGenLoader.init();
     }
 
     @Mod.EventHandler

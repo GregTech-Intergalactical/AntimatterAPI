@@ -21,7 +21,11 @@ import static muramasa.gtu.api.materials.MaterialTag.METAL;
 
 public class Material implements IGregTechObject {
 
+    private static int LAST_INTERNAL_ID;
+
     public static final long M = 3628800;
+
+    private int internalId;
 
     /** Basic Members **/
     private int rgb;
@@ -56,17 +60,22 @@ public class Material implements IGregTechObject {
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<Material> byProducts = new ArrayList<>();
 
-    public Material(String id, int rgb, TextureSet set, Element element) {
-        this(id, rgb, set);
-        this.element = element;
-    }
-
     public Material(String id, int rgb, TextureSet set) {
+        this.internalId = LAST_INTERNAL_ID++;
         this.id = id;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;
         GregTechAPI.register(Material.class, this);
+    }
+
+    public Material(String id, int rgb, TextureSet set, Element element) {
+        this(id, rgb, set);
+        this.element = element;
+    }
+
+    public int getInternalId() {
+        return internalId;
     }
 
     @Override
@@ -201,6 +210,7 @@ public class Material implements IGregTechObject {
         for (IMaterialFlag flag : flags) {
             if (flag instanceof MaterialType) {
                 if (flag == ORE) {
+                    add(ORE_SMALL); //TODO this is temp for worldgen testing
                     add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
                 }
                 itemMask |= flag.getBit();
