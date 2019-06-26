@@ -7,7 +7,9 @@ import muramasa.gtu.api.materials.MaterialTag;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.integration.fr.CombLoader;
 
+import static muramasa.gtu.api.data.RecipeMaps.*;
 import static muramasa.gtu.api.materials.MaterialType.ORE;
 import static muramasa.gtu.api.materials.TextureSet.METALLIC;
 
@@ -37,7 +39,15 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
                 MaterialTag.CALCITE3X.add(MeteoricIron);
                 MeteoricIron.addByProduct(Materials.Iron);
                 break;
+            case RECIPE:
+                init();
+                break;
         }
+    }
+    
+    public void init() {
+        //IMPLOSION_COMPRESSING.RB().ii(MeteoricIron.getPlate(1))
+        //RecipeAdder.addImplosionRecipe(GT_Utility.ca(m == Materials.MeteoricIron ? 1 : 2, aPlateStack), 2, Unifier.get(Prefix.compressed, m), Unifier.get(Prefix.dustTiny, Materials.DarkAsh, 1));
     }
 
 //    @Override

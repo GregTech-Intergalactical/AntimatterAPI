@@ -34,30 +34,30 @@ public class MachineRecipeLoader {
         //How the hell does empty stacks even get into smeltingList?!
         FurnaceRecipes.instance().getSmeltingList().entrySet().stream().filter((set) -> !set.getKey().isEmpty()).forEach((set) -> SMELTING.RB().ii(set.getKey()).io(set.getValue()).add(60, 2));
 
-        IMPLOSION_COMPRESSING.RB().ii(Data.IridiumAlloyIngot.get(1)).io(Data.IridiumReinforcedPlate.get(1), DarkAsh.getDustT(4)).add(20, 30);
+        IMPLOSION_COMPRESSING.RB().ii(Data.IridiumAlloyIngot.get(1)).io(Data.IridiumReinforcedPlate.get(1), DarkAsh.getDustTiny(4)).add(20, 30);
 
-        BLASTING.RB().ii(Tungsten.getIngot(1), Steel.getIngot(1)).io(TungstenSteel.getIngotH(2), DarkAsh.getDustS(1)).add(Math.max(TungstenSteel.getMass() / 80L, 1L) * TungstenSteel.getBlastTemp(), 480, TungstenSteel.getBlastTemp());
-        BLASTING.RB().ii(Tungsten.getIngot(1), Carbon.getDust(1)).io(TungstenCarbide.getIngotH(1), Ash.getDustS(2)).add(Math.max(TungstenCarbide.getMass() / 40L, 1L) * TungstenCarbide.getBlastTemp(), 480, TungstenCarbide.getBlastTemp());
-        BLASTING.RB().ii(Vanadium.getIngot(3), Gallium.getIngot(1)).io(VanadiumGallium.getIngotH(4), DarkAsh.getDustS(2)).add(Math.max(VanadiumGallium.getMass() / 40L, 1L) * VanadiumGallium.getBlastTemp(), 480, VanadiumGallium.getBlastTemp());
-        BLASTING.RB().ii(Niobium.getIngot(1), Titanium.getIngot(1)).io(NiobiumTitanium.getIngotH(2), DarkAsh.getDustS(1)).add(Math.max(NiobiumTitanium.getMass() / 80L, 1L) * NiobiumTitanium.getBlastTemp(), 480, NiobiumTitanium.getBlastTemp());
-        BLASTING.RB().ii(Nickel.getIngot(4), Chrome.getIngot(1)).io(Nichrome.getIngotH(5), DarkAsh.getDustS(2)).add(Math.max(Nichrome.getMass() / 32L, 1L) * Nichrome.getBlastTemp(), 480, Nichrome.getBlastTemp());
-        BLASTING.RB().ii(Ruby.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(400, 100, 1200);
-        BLASTING.RB().ii(Ruby.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(320, 100, 1200);
-        //RB.get(BLASTING).ii(GreenSapphire.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(400, 100, 1200);
-        //RB.get(BLASTING).ii(GreenSapphire.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustT(1)).add(320, 100, 1200);
+        BLASTING.RB().ii(Tungsten.getIngot(1), Steel.getIngot(1)).io(TungstenSteel.getIngotHot(2), DarkAsh.getDustSmall(1)).add(Math.max(TungstenSteel.getMass() / 80L, 1L) * TungstenSteel.getBlastTemp(), 480, TungstenSteel.getBlastTemp());
+        BLASTING.RB().ii(Tungsten.getIngot(1), Carbon.getDust(1)).io(TungstenCarbide.getIngotHot(1), Ash.getDustSmall(2)).add(Math.max(TungstenCarbide.getMass() / 40L, 1L) * TungstenCarbide.getBlastTemp(), 480, TungstenCarbide.getBlastTemp());
+        BLASTING.RB().ii(Vanadium.getIngot(3), Gallium.getIngot(1)).io(VanadiumGallium.getIngotHot(4), DarkAsh.getDustSmall(2)).add(Math.max(VanadiumGallium.getMass() / 40L, 1L) * VanadiumGallium.getBlastTemp(), 480, VanadiumGallium.getBlastTemp());
+        BLASTING.RB().ii(Niobium.getIngot(1), Titanium.getIngot(1)).io(NiobiumTitanium.getIngotHot(2), DarkAsh.getDustSmall(1)).add(Math.max(NiobiumTitanium.getMass() / 80L, 1L) * NiobiumTitanium.getBlastTemp(), 480, NiobiumTitanium.getBlastTemp());
+        BLASTING.RB().ii(Nickel.getIngot(4), Chrome.getIngot(1)).io(Nichrome.getIngotHot(5), DarkAsh.getDustSmall(2)).add(Math.max(Nichrome.getMass() / 32L, 1L) * Nichrome.getBlastTemp(), 480, Nichrome.getBlastTemp());
+        BLASTING.RB().ii(Ruby.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(400, 100, 1200);
+        BLASTING.RB().ii(Ruby.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(320, 100, 1200);
+        //RB.get(BLASTING).ii(GreenSapphire.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(400, 100, 1200);
+        //RB.get(BLASTING).ii(GreenSapphire.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(320, 100, 1200);
         BLASTING.RB().ii(Sapphire.getDust(1)).io(Aluminium.getNugget(3)).add(400, 100, 1200);
         BLASTING.RB().ii(Sapphire.getGem(1)).io(Aluminium.getNugget(3)).add(320, 100, 1200);
-        BLASTING.RB().ii(Ilmenite.getDust(1), Carbon.getDust(1)).io(WroughtIron.getNugget(4), Rutile.getDustT(4)).add(800, 500, 1700);
-        BLASTING.RB().ii(Magnesium.getDust(2)).fi(Titaniumtetrachloride.getLiquid(1000)).io(Titanium.getIngotH(1), MagnesiumChloride.getDust(2)).add(800, 480, Titanium.getBlastTemp() + 200);
+        BLASTING.RB().ii(Ilmenite.getDust(1), Carbon.getDust(1)).io(WroughtIron.getNugget(4), Rutile.getDustTiny(4)).add(800, 500, 1700);
+        BLASTING.RB().ii(Magnesium.getDust(2)).fi(Titaniumtetrachloride.getLiquid(1000)).io(Titanium.getIngotHot(1), MagnesiumChloride.getDust(2)).add(800, 480, Titanium.getBlastTemp() + 200);
 
         BLASTING.RB().ii(Galena.getDust(1)).fi(Oxygen.getGas(2000)).io(Silver.getNugget(4), Lead.getNugget(4)).add(400, 500, 1500);
-        BLASTING.RB().ii(Magnetite.getDust(1)).fi(Oxygen.getGas(2000)).io(WroughtIron.getNugget(4), DarkAsh.getDustS(1)).add(400, 500, 1000);
-        BLASTING.RB().ii(Iron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustS(1)).add(500, 120, 1000);
-        BLASTING.RB().ii(WroughtIron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustS(1)).add(100, 120, 1000);
+        BLASTING.RB().ii(Magnetite.getDust(1)).fi(Oxygen.getGas(2000)).io(WroughtIron.getNugget(4), DarkAsh.getDustSmall(1)).add(400, 500, 1000);
+        BLASTING.RB().ii(Iron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustSmall(1)).add(500, 120, 1000);
+        BLASTING.RB().ii(WroughtIron.getIngot(1)).fi(Oxygen.getGas(1000)).io(Steel.getIngot(1), DarkAsh.getDustSmall(1)).add(100, 120, 1000);
         BLASTING.RB().ii(Copper.getDust(1)).fi(Oxygen.getGas(1000)).io(AnnealedCopper.getIngot(1)).add(500, 120, 1200);
         BLASTING.RB().ii(Copper.getIngot(1)).fi(Oxygen.getGas(1000)).io(AnnealedCopper.getIngot(1)).add(500, 120, 1200);
-        BLASTING.RB().ii(Iridium.getIngot(3), Osmium.getIngot(1)).fi(Helium.getGas(1000)).io(Osmiridium.getIngotH(4)).add(500, 1920, 2900);
-        BLASTING.RB().ii(Naquadah.getIngot(1), Osmiridium.getIngot(1)).fi(Argon.getGas(1000)).io(NaquadahAlloy.getIngotH(2)).add(500, 30720, NaquadahAlloy.getBlastTemp());
+        BLASTING.RB().ii(Iridium.getIngot(3), Osmium.getIngot(1)).fi(Helium.getGas(1000)).io(Osmiridium.getIngotHot(4)).add(500, 1920, 2900);
+        BLASTING.RB().ii(Naquadah.getIngot(1), Osmiridium.getIngot(1)).fi(Argon.getGas(1000)).io(NaquadahAlloy.getIngotHot(2)).add(500, 30720, NaquadahAlloy.getBlastTemp());
 
         /** FUSION AGE **/
 

@@ -8,7 +8,6 @@ import static muramasa.gtu.api.data.RecipeBuilders.*;
 public class RecipeMaps {
 
     public static RecipeMap ORE_BY_PRODUCTS = new RecipeMap<>("ore_byproducts", new RecipeBuilder());
-    //    public static RecipeMap SMELTING = new RecipeMap("smelting", new RecipeBuilder());
     public static RecipeMap STEAM_FUELS = new RecipeMap<>("steam_fuels", new RecipeBuilder());
     public static RecipeMap GAS_FUELS = new RecipeMap<>("gas_fuels", new RecipeBuilder());
     public static RecipeMap COMBUSTION_FUELS = new RecipeMap<>("combustion_fuels", new RecipeBuilder());
