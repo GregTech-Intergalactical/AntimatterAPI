@@ -37,6 +37,18 @@ public class RecipeHelper {
         REPLACEMENTS.put('x', ToolType.WIRE_CUTTER.getOreDict());
     }
 
+    /**
+     * The below are the valid chars to use in the recipes
+     * <ul>
+     * <li>d = Screwdriver</li>
+     * <li>f = File</li>
+     * <li>h = Hammer</li>
+     * <li>m = Mortar</li>
+     * <li>s = Saw</li>
+     * <li>w = Wrench</li>
+     * <li>x = Wire Cutter</li>
+     * </ul>
+     */
     public static void addShaped(String path, ItemStack result, Object... data) {
         if (result != null && !Utils.areItemsValid(result)) {
             Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
@@ -46,6 +58,9 @@ public class RecipeHelper {
         ForgeRegistries.RECIPES.register(recipe);
     }
 
+    /**
+     * @see RecipeHelper#addShaped(path, result, data) for char references
+     */
     public static void addShapeless(String path, ItemStack result, Object... data) {
         if (result != null && !Utils.areItemsValid(result)) {
             Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");

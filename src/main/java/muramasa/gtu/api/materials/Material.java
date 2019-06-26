@@ -485,11 +485,11 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(CRUSHED, this, amount);
     }
 
-    public ItemStack getCrushedC(int amount) {
+    public ItemStack getCrushedCentrifuged(int amount) {
         return MaterialItem.get(CRUSHED_CENTRIFUGED, this, amount);
     }
 
-    public ItemStack getCrushedP(int amount) {
+    public ItemStack getCrushedPurified(int amount) {
         return MaterialItem.get(CRUSHED_PURIFIED, this, amount);
     }
 
@@ -497,19 +497,19 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(DUST, this, amount);
     }
 
-    public ItemStack getDustP(int amount) {
+    public ItemStack getDustPure(int amount) {
         return MaterialItem.get(DUST_PURE, this, amount);
     }
 
-    public ItemStack getDustIP(int amount) {
+    public ItemStack getDustImpure(int amount) {
         return MaterialItem.get(DUST_IMPURE, this, amount);
     }
 
-    public ItemStack getDustS(int amount) {
+    public ItemStack getDustSmall(int amount) {
         return MaterialItem.get(DUST_SMALL, this, amount);
     }
 
-    public ItemStack getDustT(int amount) {
+    public ItemStack getDustTiny(int amount) {
         return MaterialItem.get(DUST_TINY, this, amount);
     }
 
@@ -521,7 +521,7 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(INGOT, this, amount);
     }
 
-    public ItemStack getIngotH(int amount) {
+    public ItemStack getIngotHot(int amount) {
         return MaterialItem.get(INGOT_HOT, this, amount);
     }
 
@@ -529,7 +529,7 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(PLATE, this, amount);
     }
 
-    public ItemStack getPlateD(int amount) {
+    public ItemStack getPlateDense(int amount) {
         return MaterialItem.get(PLATE_DENSE, this, amount);
     }
 
@@ -577,7 +577,7 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(SPRING, this, amount);
     }
 
-    public ItemStack getWireF(int amount) {
+    public ItemStack getWireFine(int amount) {
         return MaterialItem.get(WIRE_FINE, this, amount);
     }
 
@@ -589,8 +589,7 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(GEAR, this, amount);
     }
 
-    
-    public ItemStack getGearS(int amount) {
+    public ItemStack getGearSmall(int amount) {
         return MaterialItem.get(GEAR_SMALL, this, amount);
     }
 
@@ -602,11 +601,11 @@ public class Material implements IGregTechObject {
     	return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
     }
 
-    public ItemStack getCellG(int amount) {
+    public ItemStack getCellGas(int amount) {
         return Utils.ca(amount, Data.CellTin.fill(getGas()));
     }
 
-    public ItemStack getCellP(int amount) {
+    public ItemStack getCellPlasma(int amount) {
         return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
     }
 

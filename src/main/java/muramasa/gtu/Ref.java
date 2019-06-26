@@ -36,8 +36,7 @@ public class Ref {
     public static boolean DATA_EXCEPTIONS = true;
 
     /** Config Values **/
-    public static boolean mMixedOreOnlyYieldsTwoThirdsOfPureOre = false; //TODO 5U remnant, determine if needed
-    public static boolean mDisableOldChemicalRecipes = false; //TODO 5U remnant, determine if needed
+    public static boolean mixedOreYieldsTwoThirdsPureOre = false; //TODO 5U remnant, determine if needed
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";

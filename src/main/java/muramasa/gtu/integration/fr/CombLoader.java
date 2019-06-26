@@ -86,7 +86,7 @@ public class CombLoader {
         addProcess(comb, Spodumene);
         //addProcess(comb, Monazite);
         comb = Data.CombCopper.get(1);
-        addSpecialCent(comb, new int[]{70}, Copper.getDustT(1));
+        addSpecialCent(comb, new int[]{70}, Copper.getDustTiny(1));
         addProcessMain(comb, Copper);
         addProcess(comb, Tetrahedrite);
         addProcess(comb, Chalcopyrite);
@@ -94,12 +94,12 @@ public class CombLoader {
         addProcess(comb, Pyrite);
         addProcess(comb, Stibnite);
         comb = Data.CombTin.get(1);
-        addSpecialCent(comb, new int[]{60}, Tin.getDustT(1));
+        addSpecialCent(comb, new int[]{60}, Tin.getDustTiny(1));
         addProcessMain(comb, Tin);
         addProcess(comb, Cassiterite);
         //TODO has ironcomb recipes?
         comb = Data.CombLead.get(1);
-        addSpecialCent(comb, new int[]{45}, Lead.getDustT(1));
+        addSpecialCent(comb, new int[]{45}, Lead.getDustTiny(1));
         addProcessMain(comb, Lead);
         addProcess(comb, Galena);
         comb = Data.CombIron.get(1);
@@ -134,7 +134,7 @@ public class CombLoader {
         addProcess(comb, Sphalerite);
         addProcess(comb, Sulfur);
         comb = Data.CombSilver.get(1);
-        addSpecialCent(comb, new int[]{30}, Silver.getDustT(1));
+        addSpecialCent(comb, new int[]{30}, Silver.getDustTiny(1));
         addProcessMain(comb, Silver);
         addProcess(comb, Galena);
         comb = Data.CombGold.get(1);
@@ -213,15 +213,15 @@ public class CombLoader {
         if (!EASY_COMB_RECIPES) {
             if (materials.length == 0) return;
 //            FluidStack output =  ? materials[0].getByProducts().get(0).getLiquid(144) : new FluidStack[0];
-            CHEMICAL_REACTING.RB().ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedP(4) : materials[0].getCrushedP(4));
+            CHEMICAL_REACTING.RB().ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedPurified(4) : materials[0].getCrushedPurified(4));
             if (!materials[0].getByProducts().isEmpty() && materials[0].getByProducts().get(0).has(LIQUID)) {
                 CHEMICAL_REACTING.RB().fo(materials[0].getByProducts().get(0).getLiquid(144)).add(96, 24);
             }
             CHEMICAL_REACTING.RB().add(96, 24);
-            AUTOCLAVING.RB().ii(Utils.ca(16, stack)).fi(UUMatter.getLiquid((int)Math.max(1, ((materials[0].getMass()+9)/10)))).io(materials[0].getCrushedP(1)).add(materials[0].getMass() * 128, 384);
+            AUTOCLAVING.RB().ii(Utils.ca(16, stack)).fi(UUMatter.getLiquid((int)Math.max(1, ((materials[0].getMass()+9)/10)))).io(materials[0].getCrushedPurified(1)).add(materials[0].getMass() * 128, 384);
         } else {
-            CENTRIFUGING.RB().ii(stack).io(materials[0].getDustT(1), ForestryRegistrar.FR_WAX).chances(chance, 30).add(128, 5);
-            //TODO RecipeManagers.centrifugeManager.addRecipe(40, stack, ImmutableMap.of(materials[0].getDustT(1), /* TODO chance will be wrong */chance * 0.01f, FR_WAX, 0.3f));
+            CENTRIFUGING.RB().ii(stack).io(materials[0].getDustTiny(1), ForestryRegistrar.FR_WAX).chances(chance, 30).add(128, 5);
+            //TODO RecipeManagers.centrifugeManager.addRecipe(40, stack, ImmutableMap.of(materials[0].getDustTiny(1), /* TODO chance will be wrong */chance * 0.01f, FR_WAX, 0.3f));
         }
     }
 
@@ -243,15 +243,15 @@ public class CombLoader {
 //        if (!EASY_COMB_RECIPES) {
 //            if (materials.length == 0) return;
 ////            FluidStack output =  ? materials[0].getByProducts().get(0).getLiquid(144) : new FluidStack[0];
-//            RB.get(Machines.CHEMICAL_REACTOR).ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedP(4) : materials[0].getCrushedP(4));
+//            RB.get(Machines.CHEMICAL_REACTOR).ii(Utils.ca(9, stack), materials[0].getCrushed(1)).fi(Water.getLiquid(1000)).io(materials.length == 2 ? materials[1].getCrushedPurified(4) : materials[0].getCrushedPurified(4));
 //            if (!materials[0].getByProducts().isEmpty() && materials[0].getByProducts().get(0).has(LIQUID)) {
 ////                RB.fo(materials[0].getByProducts().get(0).getLiquid(144)).add(96, 24);
 //            }
 //            RB.add(96, 24);
-////            RB.get(Machines.AUTOCLAVE).ii(Utils.ca(16, stack)).fi(UUMatter.getLiquid(Math.max(1, ((materials[0].getMass()+9)/10)))).io(materials[0].getCrushedP(1)).add(materials[0].getMass() * 128, 384);
+////            RB.get(Machines.AUTOCLAVE).ii(Utils.ca(16, stack)).fi(UUMatter.getLiquid(Math.max(1, ((materials[0].getMass()+9)/10)))).io(materials[0].getCrushedPurified(1)).add(materials[0].getMass() * 128, 384);
 //        } else {
-//            RB.get(Machines.CENTRIFUGE).ii(stack).io(materials[0].getDustT(1), FR_WAX).chances(chance, 30).add(128, 5);
-//            //TODO RecipeManagers.centrifugeManager.addRecipe(40, stack, ImmutableMap.of(materials[0].getDustT(1), /* TODO chance will be wrong */chance * 0.01f, FR_WAX, 0.3f));
+//            RB.get(Machines.CENTRIFUGE).ii(stack).io(materials[0].getDustTiny(1), FR_WAX).chances(chance, 30).add(128, 5);
+//            //TODO RecipeManagers.centrifugeManager.addRecipe(40, stack, ImmutableMap.of(materials[0].getDustTiny(1), /* TODO chance will be wrong */chance * 0.01f, FR_WAX, 0.3f));
 //        }
     }
 }
