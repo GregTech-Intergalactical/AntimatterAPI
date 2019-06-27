@@ -20,6 +20,7 @@ import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -87,16 +88,26 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
         return (mat != null ? "".concat(mat.getDisplayName()) : "") + type.getDisplayName();
     }
 
+    //TODO: Localization
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltips, ITooltipFlag flagIn) {
         Material primary = getPrimary(stack), secondary = getSecondary(stack);
-        if (primary != null) tooltips.add(TextFormatting.WHITE + primary.getDisplayName() + TextFormatting.YELLOW + "(" + getPrimaryQuality(stack) + ")" + TextFormatting.WHITE + " / " + (secondary != null ? secondary.getDisplayName() : "NULL") + TextFormatting.YELLOW + "(" + getSecondaryQuality(stack) + ")");
-        if (type.isPowered()) tooltips.add(TextFormatting.WHITE + "Energy: " + TextFormatting.AQUA + Utils.formatNumber(getEnergy(stack)) + " / " + Utils.formatNumber(getMaxEnergy(stack)));
-        tooltips.add(TextFormatting.WHITE + "Durability: " + TextFormatting.GREEN + getDurability(stack) + " / " + getMaxDurability(stack));
-        tooltips.add(TextFormatting.WHITE + "Attack Damage: " + TextFormatting.BLUE + getAttackDamage(stack));
-        tooltips.add(TextFormatting.WHITE + "Attack Speed: " + TextFormatting.BLUE + getAttackSpeed(stack));
-        if (primary != null) tooltips.add(TextFormatting.WHITE + "Mining Speed: " + TextFormatting.LIGHT_PURPLE + getMiningSpeed(stack));
-        if (!type.getTooltip().equals("")) tooltips.add(TextFormatting.GRAY + "" + TextFormatting.UNDERLINE + type.getTooltip());
+        if (primary == null || secondary == null) { //Under general circumstances, this will only be seen in JEI and creative tab
+            if (Ref.GENERAL_DEBUG) tooltips.add(TextFormatting.WHITE + "Null Material");  
+            return;
+        }
+        if (GuiScreen.isCtrlKeyDown()) {
+            tooltips.add(TextFormatting.WHITE + primary.getDisplayName() + TextFormatting.YELLOW + "(" + getPrimaryQuality(stack) + ")" + TextFormatting.WHITE + " / " + (secondary != null ? secondary.getDisplayName() : "NULL") + TextFormatting.YELLOW + "(" + getSecondaryQuality(stack) + ")");
+            if (type.isPowered()) tooltips.add(TextFormatting.WHITE + "Energy: " + TextFormatting.AQUA + Utils.formatNumber(getEnergy(stack)) + " / " + Utils.formatNumber(getMaxEnergy(stack)));
+            tooltips.add(TextFormatting.WHITE + "Durability: " + TextFormatting.GREEN + getDurability(stack) + " / " + getMaxDurability(stack));
+            tooltips.add(TextFormatting.WHITE + "Attack Damage: " + TextFormatting.BLUE + getAttackDamage(stack));
+            tooltips.add(TextFormatting.WHITE + "Attack Speed: " + TextFormatting.BLUE + getAttackSpeed(stack));
+            tooltips.add(TextFormatting.WHITE + "Mining Speed: " + TextFormatting.LIGHT_PURPLE + getMiningSpeed(stack));
+            if (!type.getTooltip().equals("")) tooltips.add(TextFormatting.GRAY + "" + TextFormatting.UNDERLINE + type.getTooltip());
+        }
+        else {
+            tooltips.add(TextFormatting.UNDERLINE + "Press Ctrl Key for Tool Stats");
+        }
     }
 
     @Override
