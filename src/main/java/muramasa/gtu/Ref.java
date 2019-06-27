@@ -33,6 +33,7 @@ public class Ref {
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX", "", "", "", "", "", ""}; //TODO: Schedule to change? ZPM rename? Tier decisions?
 
     /** Debug Options **/
+    public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;
     public static boolean SHOW_STACK_ORE_DICT = true;
     public static boolean DATA_EXCEPTIONS = true;
 

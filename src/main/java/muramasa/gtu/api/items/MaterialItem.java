@@ -80,7 +80,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        if (getMaterial().getChemicalFormula() != null) tooltip.add(getMaterial().getChemicalFormula());
+        if (getMaterial().getChemicalFormula() != null) tooltip.add(TextFormatting.DARK_AQUA + getMaterial().getChemicalFormula());
         if (Utils.hasChanceTag(stack)) tooltip.add(TextFormatting.WHITE + "Chance: " + Utils.getChanceTag(stack) + "%");
     }
 
