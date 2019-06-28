@@ -33,7 +33,7 @@ public class GuiBase extends GuiContainer {
         }
     }
 
-    // Returns true if the given x,y coordinates are within the given rectangle
+    // Returns true if the given chunkX,y coordinates are within the given rectangle
     public boolean isInRect(int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
         return ((mouseX >= x && mouseX <= x+xSize) && (mouseY >= y && mouseY <= y+ySize));
     }

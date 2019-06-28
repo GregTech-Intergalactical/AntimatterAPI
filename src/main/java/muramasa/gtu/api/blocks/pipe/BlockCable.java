@@ -119,9 +119,9 @@ public class BlockCable extends BlockPipe<BlockCable> implements IItemBlock, ICo
             PipeSize size = PipeSize.VALUES[compound.getInteger(Ref.KEY_PIPE_STACK_SIZE)];
             if (compound.getBoolean(Ref.KEY_CABLE_STACK_INSULATED)) {
                 size = PipeSize.VALUES[Math.max(size.ordinal() - 1, 0)];
-                return  size.getCableThickness() + "x " + material.getDisplayName() + " Cable";
+                return  size.getCableThickness() + "chunkX " + material.getDisplayName() + " Cable";
             } else {
-                return size.getCableThickness() + "x " + material.getDisplayName() + " Wire";
+                return size.getCableThickness() + "chunkX " + material.getDisplayName() + " Wire";
             }
         }
         return stack.getUnlocalizedName();

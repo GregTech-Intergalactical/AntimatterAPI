@@ -46,7 +46,7 @@ public class RecipeHelper {
      * <li>m = Mortar</li>
      * <li>s = Saw</li>
      * <li>w = Wrench</li>
-     * <li>x = Wire Cutter</li>
+     * <li>chunkX = Wire Cutter</li>
      * </ul>
      */
     public static void addShaped(String path, ItemStack result, Object... data) {

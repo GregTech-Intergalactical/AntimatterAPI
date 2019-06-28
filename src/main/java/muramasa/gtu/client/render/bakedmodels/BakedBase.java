@@ -49,7 +49,7 @@ public class BakedBase implements IBakedModel {
 
     @Override
     public boolean isAmbientOcclusion() {
-        return false;
+        return true;
     }
 
     @Override

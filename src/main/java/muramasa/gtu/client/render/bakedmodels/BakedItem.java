@@ -14,6 +14,7 @@ import java.util.List;
 
 public class BakedItem extends BakedBase {
 
+    //TODO remove need for this by using json model templates with the correct transforms
     private IBakedModel baked;
 
     public BakedItem(IBakedModel baked) {

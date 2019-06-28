@@ -1,13 +1,12 @@
 package muramasa.gtu;
 
+import muramasa.gtu.api.util.XSTR;
 import muramasa.gtu.client.creativetab.GregTechTab;
-
-import java.util.Random;
 
 public class Ref {
 
     /** Global Objects **/
-    public static Random RNG = new Random();
+    public static XSTR RNG = new XSTR();
 
     /** Mod Data **/
     public static final String MODID = "gtu";
@@ -42,13 +41,15 @@ public class Ref {
 
     public static boolean debugWorldGen = false;
     public static boolean debugOreVein = true;
+    public static boolean debugSmallOres = true;
     public static boolean debugStones = true;
 
-    public static int oreveinPercentage = 100; //Control percentage of filled 3x3 chunks. Lower number means less oreveins spawn
-    public static int oreveinAttempts = 64; //Control number of attempts to find a valid orevein. Generally this maximum limit isn't hit, selecting a vein is cheap
-    public static int oreveinMaxPlacementAttempts = 8; //Control number of attempts to place a valid orevein.  If a vein wasn't placed due to height restrictions, completely in the water, etc, another attempt is tried.
-    public static boolean oreveinPlacerOres = true; //Whether or not to place small ores as placer ores for an orevein
-    public static int oreveinPlacerOresMultiplier = 2; //Multiplier to control how many placer ores get generated.
+    public static int ORE_VEIN_CHANCE = 100; //Control percentage of filled 3x3 chunks. Lower number means less oreveins spawn
+    public static int ORE_VEIN_FIND_ATTEMPTS = 64; //Control number of attempts to find a valid orevein. Generally this maximum limit isn't hit, selecting a vein is cheap
+    public static int ORE_VEIN_PLACE_ATTEMPTS = 8; //Control number of attempts to place a valid orevein.  If a vein wasn't placed due to height restrictions, completely in the water, etc, another attempt is tried.
+    public static boolean ORE_VEIN_SMALL_ORE_MARKERS = true; //Whether or not to place small ores as placer ores for an orevein
+    public static int ORE_VEIN_SMALL_ORE_MARKERS_MULTI = 2; //Multiplier to control how many placer ores get generated.
+    public static boolean ORE_VEIN_SPECTATOR_DEBUG = true;
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";
