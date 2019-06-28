@@ -7,7 +7,7 @@ package muramasa.gtu.api.util;
  * random sequences of higher quality than java.util.Random - this class also
  * provides a clone() function
  *
- * Usage: XSRandom rand = new XSRandom(); //Instantiation chunkX = rand.nextInt();
+ * Usage: XSRandom rand = new XSRandom(); //Instantiation x = rand.nextInt();
  * //pull a random number
  *
  * To use the class in legacy code, you may also instantiate an XSRandom object
