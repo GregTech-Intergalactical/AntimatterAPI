@@ -13,13 +13,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 public class RecipeHelper {
 
@@ -46,7 +45,7 @@ public class RecipeHelper {
      * <li>m = Mortar</li>
      * <li>s = Saw</li>
      * <li>w = Wrench</li>
-     * <li>chunkX = Wire Cutter</li>
+     * <li>x = Wire Cutter</li>
      * </ul>
      */
     public static void addShaped(String path, ItemStack result, Object... data) {
