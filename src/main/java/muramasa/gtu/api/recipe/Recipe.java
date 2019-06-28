@@ -125,7 +125,7 @@ public class Recipe {
         if (itemsInput != null) {
             builder.append("\nInput Items: {");
             for (int i = 0; i < itemsInput.length; i++) {
-                builder.append(itemsInput[i].getDisplayName() + " x" + itemsInput[i].getCount());
+                builder.append(itemsInput[i].getDisplayName() + " chunkX" + itemsInput[i].getCount());
                 if (i != itemsInput.length - 1) builder.append(", ");
             }
             builder.append("}\n");
@@ -133,7 +133,7 @@ public class Recipe {
         if (itemsOutput != null) {
             builder.append("Output Items: {");
             for (int i = 0; i < itemsOutput.length; i++) {
-                builder.append(itemsOutput[i].getDisplayName() + " x" + itemsOutput[i].getCount());
+                builder.append(itemsOutput[i].getDisplayName() + " chunkX" + itemsOutput[i].getCount());
                 if (i != itemsOutput.length - 1) builder.append(", ");
             }
             builder.append("}\n");
@@ -141,7 +141,7 @@ public class Recipe {
         if (fluidsInput != null) {
             builder.append("Input Fluids: {");
             for (int i = 0; i < fluidsInput.length; i++) {
-                builder.append(fluidsInput[i].getFluid().getName() + " x" + fluidsInput[i].amount);
+                builder.append(fluidsInput[i].getFluid().getName() + " chunkX" + fluidsInput[i].amount);
                 if (i != fluidsInput.length - 1) builder.append(", ");
             }
             builder.append("}\n");
@@ -149,7 +149,7 @@ public class Recipe {
         if (fluidsOutput != null) {
             builder.append("Output Fluids: {");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(fluidsOutput[i].getFluid().getName() + " x" + fluidsOutput[i].amount);
+                builder.append(fluidsOutput[i].getFluid().getName() + " chunkX" + fluidsOutput[i].amount);
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
             builder.append("}\n");

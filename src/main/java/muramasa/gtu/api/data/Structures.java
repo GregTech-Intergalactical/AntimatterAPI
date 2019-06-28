@@ -17,7 +17,7 @@ import static muramasa.gtu.api.data.Machines.*;
 public class Structures {
 
     /** Global Elements **/
-    public static StructureElement X = new StructureElement("x").exclude(); //Used to skip positions for non-cubic structures
+    public static StructureElement X = new StructureElement("chunkX").exclude(); //Used to skip positions for non-cubic structures
     public static StructureElement AIR = new StructureElement("air") { //Air Block Check
         @Override
         public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {

@@ -99,6 +99,16 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     }
 
     @Override
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return Ref.ORE_VEIN_SPECTATOR_DEBUG || super.shouldSideBeRendered(state, world, pos, side);
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return Ref.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
+    }
+
+    @Override
     public String getDisplayName(ItemStack stack) {
         return MaterialType.ORE.getDisplayName(material);
     }

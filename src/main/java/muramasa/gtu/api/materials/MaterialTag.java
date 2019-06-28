@@ -38,6 +38,10 @@ public class MaterialTag implements IGregTechObject, IMaterialFlag {
     public static MaterialTag NETHER = new MaterialTag("nether");
     public static MaterialTag END = new MaterialTag("end");
 
+    public static MaterialTag MOON = new MaterialTag("moon");
+    public static MaterialTag MARS = new MaterialTag("mars");
+    public static MaterialTag ASTEROID = new MaterialTag("asteroid");
+
     //TODO get alloy flag for adding mixer and dust crafting recipes automatically
 
     private String id;

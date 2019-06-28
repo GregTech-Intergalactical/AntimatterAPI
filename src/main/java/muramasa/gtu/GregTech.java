@@ -11,7 +11,6 @@ import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.worldgen.GregTechWorldGenerator;
-import muramasa.gtu.api.worldgen.OreLayerGenerator;
 import muramasa.gtu.common.Data;
 import muramasa.gtu.common.events.OreGenHandler;
 import muramasa.gtu.common.network.GuiHandler;
@@ -66,7 +65,6 @@ public class GregTech {
         OreGenHandler.init();
         MinecraftForge.EVENT_BUS.register(this);
 
-        new OreLayerGenerator();
         new GregTechWorldGenerator();
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
