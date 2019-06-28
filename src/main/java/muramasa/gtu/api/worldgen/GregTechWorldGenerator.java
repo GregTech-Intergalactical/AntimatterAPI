@@ -1,6 +1,8 @@
 package muramasa.gtu.api.worldgen;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.api.util.XSTR;
+import muramasa.gtu.api.util.int2;
 import muramasa.gtu.loaders.WorldGenLoader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -8,19 +10,46 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class GregTechWorldGenerator implements IWorldGenerator {
 
+    public static Int2ObjectArrayMap<List<WorldGenOreLayer>> LAYER = new Int2ObjectArrayMap<>();
+    private static Int2ObjectArrayMap<List<WorldGenOreSmall>> SMALL = new Int2ObjectArrayMap<>();
+    private static Int2ObjectArrayMap<List<WorldGenStone>> STONE = new Int2ObjectArrayMap<>();
+
     private static final Object LIST_LOCK = new Object();
     private static List<WorldGenRunnable> RUNNABLES = new ArrayList<>();
-    private static ArrayList<WorldGenRunnable.NearbySeeds> SEEDS = new ArrayList<>();
+    private static ArrayList<int2> SEEDS = new ArrayList<>(); //List to track which orevein seeds must be checked when doing chunkified worldgen
     private static boolean GENERATING = false;
 
     public GregTechWorldGenerator() {
         GameRegistry.registerWorldGenerator(this, 1073741823);
+    }
+
+    public static void register(WorldGenBase worldGen) {
+        if (worldGen instanceof WorldGenOreLayer) {
+            worldGen.dims.forEach(d -> {
+                LAYER.putIfAbsent(d.getId(), new ArrayList<>());
+                LAYER.get(d.getId()).add((WorldGenOreLayer) worldGen);
+            });
+        }
+        if (worldGen instanceof WorldGenOreSmall) {
+            worldGen.dims.forEach(d -> {
+                SMALL.putIfAbsent(d.getId(), new ArrayList<>());
+                SMALL.get(d.getId()).add((WorldGenOreSmall) worldGen);
+            });
+        }
+        if (worldGen instanceof WorldGenStone) {
+            worldGen.dims.forEach(d -> {
+                STONE.putIfAbsent(d.getId(), new ArrayList<>());
+                STONE.get(d.getId()).add((WorldGenStone) worldGen);
+            });
+        }
+    }
+
+    public static List<WorldGenOreLayer> getLayers(int dimension) {
+        return LAYER.get(dimension);
     }
 
     @Override
@@ -71,17 +100,16 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             int oreVeinMaxSize = 32;
 
             //Generate Stones and Small Ores
-            for (WorldGenStone stone : WorldGenStone.ALL.get(world.provider.getDimension())) {
+            for (WorldGenStone stone : STONE.get(world.provider.getDimension())) {
                 stone.generate(world, rand, chunkX * 16, chunkZ * 16, generator, provider);
             }
-            for (WorldGenOreSmall small : WorldGenOreSmall.ALL.get(world.provider.getDimension())) {
+            for (WorldGenOreSmall small : SMALL.get(world.provider.getDimension())) {
                 small.generate(world, rand, chunkX * 16, chunkZ * 16, generator, provider);
             }
 
             //long leftOverTime = System.nanoTime();
 
             // Determine bounding box on how far out to check for oreveins affecting this chunk
-            // For now, manually reducing oreVeinMaxSize when not in the Underdark for performance
             int wXbox = this.chunkX - (oreVeinMaxSize / 16);
             int eXbox = this.chunkX + (oreVeinMaxSize / 16 + 1); // Need to add 1 since it is compared using a <
             int nZbox = this.chunkZ - (oreVeinMaxSize / 16);
@@ -93,16 +121,18 @@ public class GregTechWorldGenerator implements IWorldGenerator {
                     // Determine if this X/Z is an oreVein seed
                     if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) {
                         //if (debugWorldGen) GregTech.LOGGER.info("Adding seed chunkX="+chunkX+ " z="+z);
-                        SEEDS.add(new NearbySeeds(x, z));
+                        SEEDS.add(new int2(x, z));
                     }
                 }
             }
 
             // Now process each oreseed vs this requested chunk
-            for (; SEEDS.size() != 0; SEEDS.remove(0)) {
+            int count = SEEDS.size();
+            for (int i = 0; i < count; i++) {
                 //if (debugWorldGen) GregTech.LOGGER.info("Processing seed chunkX=" + SEEDS.get(0).mX + " z=" + SEEDS.get(0).mZ);
-                WorldGenOreLayer.worldGenFindVein(world, chunkX, chunkZ, SEEDS.get(0).mX, SEEDS.get(0).mZ, generator, provider);
+                WorldGenOreLayer.worldGenFindVein(world, chunkX, chunkZ, SEEDS.get(i).x, SEEDS.get(i).y, generator, provider);
             }
+            SEEDS.clear();
 
             //long oreGenTime = System.nanoTime();
 
@@ -112,34 +142,6 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             //long endTime = System.nanoTime();
             //long duration = (endTime - startTime);
             //if (Ref.debugWorldGen) GregTech.LOGGER.info("Oregen took " + (oreGenTime - leftOverTime) + " Leftover gen took " + (leftOverTime - startTime) + " Worldgen took " + duration + " ns");
-        }
-
-        // Local class to track which orevein seeds must be checked when doing chunkified worldgen
-        public class NearbySeeds {
-
-            public int mX;
-            public int mZ;
-
-            NearbySeeds(int x, int z) {
-                this.mX = x;
-                this.mZ = z;
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (!(o instanceof NearbySeeds)) return false;
-                NearbySeeds other = (NearbySeeds) o;
-                if (this.mX != other.mX) return false;
-                return this.mZ == other.mZ;
-            }
-
-            @Override
-            public int hashCode() {
-                int result = this.mX;
-                result = 31 * result + this.mZ;
-                return result;
-            }
         }
     }
 }

@@ -1,13 +1,12 @@
 package muramasa.gtu.api.worldgen;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockOreSmall;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialTag;
 import muramasa.gtu.api.util.XSTR;
 import muramasa.gtu.loaders.WorldGenLoader;
 import net.minecraft.block.state.IBlockState;
@@ -17,8 +16,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 public class WorldGenOreLayer extends WorldGenBase {
@@ -29,24 +26,17 @@ public class WorldGenOreLayer extends WorldGenBase {
     public static final int NO_OVERLAP = 3;
     public static final int ORE_PLACED = 4;
     public static final int NO_OVERLAP_AIR_BLOCK = 5;
-    public static Int2ObjectArrayMap<List<WorldGenOreLayer>> ALL = new Int2ObjectArrayMap<>();
     public static int TOTAL_WEIGHT;
 
-    private static Hashtable<Long, WorldGenOreLayer> VALID_VEINS = new Hashtable<>(1024);
-
-    static {
-        ALL.put(0, new ArrayList<>());
-        ALL.put(-1, new ArrayList<>());
-        ALL.put(1, new ArrayList<>());
-    }
+    private static Long2ObjectArrayMap<WorldGenOreLayer> VALID_VEINS = new Long2ObjectArrayMap<>(1024);
 
     public int minY, maxY, weight, density, size;
     public IBlockState primary, secondary, between, sporadic;
     public IBlockState primarySmall, secondarySmall, betweenSmall, sporadicSmall;
     public Material[] materials;
 
-    public WorldGenOreLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, MaterialTag... tags) {
-        super(id, tags);
+    public WorldGenOreLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, DimensionType... dims) {
+        super(id, dims);
         this.minY = minY;
         this.maxY = maxY;
         this.weight = weight;
@@ -58,14 +48,10 @@ public class WorldGenOreLayer extends WorldGenBase {
         BlockOre blockBetween = GregTechAPI.get(BlockOre.class, between.getId());
         BlockOre blockSporadic = GregTechAPI.get(BlockOre.class, sporadic.getId());
 
-        if (blockPrimary == null)
-            throw new IllegalArgumentException(primary.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
-        if (blockSecondary == null)
-            throw new IllegalArgumentException(secondary.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
-        if (blockBetween == null)
-            throw new IllegalArgumentException(between.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
-        if (blockSporadic == null)
-            throw new IllegalArgumentException(sporadic.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
+        if (blockPrimary == null) throw new IllegalArgumentException(primary.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
+        if (blockSecondary == null) throw new IllegalArgumentException(secondary.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
+        if (blockBetween == null) throw new IllegalArgumentException(between.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
+        if (blockSporadic == null) throw new IllegalArgumentException(sporadic.getId() + " in WorldGenOreLayer: " + id + " does not have the ORE tag");
 
         this.primary = GregTechAPI.get(BlockOre.class, primary.getId()).get(StoneType.STONE);
         this.secondary = GregTechAPI.get(BlockOre.class, secondary.getId()).get(StoneType.STONE);
@@ -79,9 +65,8 @@ public class WorldGenOreLayer extends WorldGenBase {
 
         this.materials = new Material[]{primary, secondary, between, secondary};
         TOTAL_WEIGHT += weight;
-        if (dims.contains(MaterialTag.OVERWORLD)) ALL.get(0).add(this);
-        if (dims.contains(MaterialTag.NETHER)) ALL.get(-1).add(this);
-        if (dims.contains(MaterialTag.END)) ALL.get(1).add(this);
+
+        GregTechWorldGenerator.register(this);
     }
 
     // How to evaluate oregen distribution
@@ -114,26 +99,30 @@ public class WorldGenOreLayer extends WorldGenBase {
         // ((this.world.provider.getDimension() & 0xffL)<<56)    Puts the dimension in the top bits of the hash, to make sure to get unique hashes per dimension
         // ((long)oreSeedX & 0x000000000fffffffL) << 28)    Puts the chunk X in the bits 29-55. Cuts off the top few bits of the chunk so we have bits for dimension.
         // ((long)oreSeedZ & 0x000000000fffffffL))    Puts the chunk Z in the bits 0-27. Cuts off the top few bits of the chunk so we have bits for dimension.
-        long oreVeinSeed = (world.getSeed() << 16) ^ (((world.provider.getDimension() & 0xffL) << 56) | (((long) oreSeedX & 0x000000000fffffffL) << 28) | ((long) oreSeedZ & 0x000000000fffffffL)); // Use an RNG that is identical every time it is called for this oreseed.
+        long oreVeinSeed = world.getSeed() << 16 ^ ((world.provider.getDimension() & 0xffL) << 56 | ((long) oreSeedX & 0x000000000fffffffL) << 28 | (long) oreSeedZ & 0x000000000fffffffL); // Use an RNG that is identical every time it is called for this oreseed.
         XSTR oreVeinRNG = new XSTR(oreVeinSeed);
         int oreVeinPercentageRoll = oreVeinRNG.nextInt(100); // Roll the dice, see if we get an orevein here at all
         //if (Ref.debugOreVein) GregTech.LOGGER.info("Finding oreveins for oreVeinSeed="+ oreVeinSeed + " chunkX="+ this.chunkX + " chunkZ="+ this.chunkZ + " oreSeedX="+ oreSeedX + " oreSeedZ="+ oreSeedZ + " worldSeed="+this.world.getSeed());
 
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
-            if (oreVeinPercentageRoll < Ref.ORE_VEIN_CHANCE && WorldGenOreLayer.TOTAL_WEIGHT > 0 && WorldGenOreLayer.ALL.get(world.provider.getDimension()).size() > 0) {
+            List<WorldGenOreLayer> layers = GregTechWorldGenerator.getLayers(world.provider.getDimension());
+            int layerCount = layers.size();
+            if (oreVeinPercentageRoll < Ref.ORE_VEIN_CHANCE && WorldGenOreLayer.TOTAL_WEIGHT > 0 && layerCount > 0) {
                 int placementAttempts = 0;
                 boolean oreVeinFound = false;
                 int i;
 
-                for (i = 0; (i < Ref.ORE_VEIN_FIND_ATTEMPTS) && (!oreVeinFound) && (placementAttempts < Ref.ORE_VEIN_PLACE_ATTEMPTS); i++) {
+                for (i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < Ref.ORE_VEIN_PLACE_ATTEMPTS; i++) {
                     int tRandomWeight = oreVeinRNG.nextInt(WorldGenOreLayer.TOTAL_WEIGHT);
-                    for (WorldGenOreLayer layer : WorldGenOreLayer.ALL.get(world.provider.getDimension())) {
+                    WorldGenOreLayer layer;
+                    for (int j = 0; j < layerCount; j++) {
+                        layer = layers.get(j);
                         tRandomWeight -= layer.weight;
                         if (tRandomWeight <= 0) {
                             // Adjust the seed so that this layer has a series of unique random numbers.  Otherwise multiple attempts at this same oreseed will get the same offset and X/Z values. If an orevein failed, any orevein with the
                             // same minimum heights would fail as well.  This prevents that, giving each orevein a unique height each pass through here.
-                            int placementResult = layer.generateChunkified(world, new XSTR(oreVeinSeed ^ (layer.materials[0].getInternalId())), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, generator, provider);
+                            int placementResult = layer.generateChunkified(world, new XSTR(oreVeinSeed ^ layer.materials[0].getInternalId()), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, generator, provider);
                             switch (placementResult) {
                                 case WorldGenOreLayer.ORE_PLACED:
                                     //if (Ref.debugOreVein) GregTech.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + layer.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
@@ -158,7 +147,7 @@ public class WorldGenOreLayer extends WorldGenBase {
                     }
                 }
                 // Only add an empty orevein if unable to place a vein at the oreseed chunk.
-                if ((!oreVeinFound) && (chunkX == oreSeedX) && (chunkZ == oreSeedZ)) {
+                if (!oreVeinFound && chunkX == oreSeedX && chunkZ == oreSeedZ) {
                     //if (Ref.debugOreVein) GregTech.LOGGER.info("Empty oreVeinSeed="+ oreVeinSeed + " chunkX="+ this.chunkX + " chunkZ="+ this.chunkZ + " oreSeedX="+ oreSeedX + " oreSeedZ="+ oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
                     VALID_VEINS.put(oreVeinSeed, WorldGenLoader.noOresInVein);
                 }
@@ -170,7 +159,7 @@ public class WorldGenOreLayer extends WorldGenBase {
             // oreseed is located in the previously processed table
             //if (Ref.debugOreVein) GregTech.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
             WorldGenOreLayer layer = VALID_VEINS.get(oreVeinSeed);
-            oreVeinRNG.setSeed(oreVeinSeed ^ (layer.materials[0].getInternalId()));  // Reset RNG to only be based on oreseed X/Z and type of vein
+            oreVeinRNG.setSeed(oreVeinSeed ^ layer.materials[0].getInternalId());  // Reset RNG to only be based on oreseed X/Z and type of vein
             int placementResult = layer.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, generator, provider);
             switch (placementResult) {
                 case WorldGenOreLayer.NO_ORE_IN_BOTTOM_LAYER:
@@ -201,7 +190,7 @@ public class WorldGenOreLayer extends WorldGenBase {
         //Block tBlock = world.getBlock(chunkX + 7, tMinY, chunkZ + 9);
 
         if (wX >= eX) {  //No overlap between orevein and this chunk exists in X
-            if (centerState.getBlock().isReplaceableOreGen(centerState, world, centerPos, WorldGenHelper.STONE_PREDICATE)) {
+            if (centerState.getBlock().isReplaceableOreGen(centerState, world, centerPos, WorldGenHelper.ORE_PREDICATE)) {
                 return NO_OVERLAP; // Didn't reach, but could have placed. Save orevein for future use.
             } else {
                 return NO_OVERLAP_AIR_BLOCK;// Didn't reach, but couldn't place in test spot anywys, try for another orevein
@@ -214,7 +203,7 @@ public class WorldGenOreLayer extends WorldGenBase {
         int nZ = Math.max(nZVein, chunkZ + 2);  // Bias placement by 2 blocks to prevent worldgen cascade.
         int sZ = Math.min(sZVein, chunkZ + 2 + 16);
         if (nZ >= sZ) { //No overlap between orevein and this chunk exists in Z
-            if (centerState.getBlock().isReplaceableOreGen(centerState, world, centerPos, WorldGenHelper.STONE_PREDICATE)) {
+            if (centerState.getBlock().isReplaceableOreGen(centerState, world, centerPos, WorldGenHelper.ORE_PREDICATE)) {
                 return NO_OVERLAP; // Didn't reach, but could have placed. Save orevein for future use.
             } else {
                 return NO_OVERLAP_AIR_BLOCK; // Didn't reach, but couldn't place in test spot anywys, try for another orevein
@@ -223,7 +212,7 @@ public class WorldGenOreLayer extends WorldGenBase {
 
         //if (Ref.debugOreVein) GregTech.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.provider.getDimension() + " chunkX="+chunkX/16+ " chunkZ="+chunkZ/16+ " oreseedX="+ seedX/16 + " oreseedZ="+ seedZ/16 + " cY="+tMinY);
         // Adjust the density down the more chunks we are away from the oreseed.  The 5 chunks surrounding the seed should always be max density due to truncation of Math.sqrt().
-        int localDensity = Math.max(1, this.density / ((int) Math.sqrt(2 + Math.pow(chunkX / 16 - seedX / 16, 2) + Math.pow(chunkZ / 16 - seedZ / 16, 2))));
+        int localDensity = Math.max(1, this.density / (int) Math.sqrt(2 + Math.pow(chunkX / 16 - seedX / 16, 2) + Math.pow(chunkZ / 16 - seedZ / 16, 2)));
 
         // To allow for early exit due to no ore placed in the bottom layer (probably because we are in the sky), unroll 1 pass through the loop
         // Now we do bottom-level-first oregen, and work our way upwards.
@@ -233,26 +222,26 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, secondary)) placeCount[1]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
         }
-        if ((placeCount[1] + placeCount[3]) == 0) {
+        if (placeCount[1] + placeCount[3] == 0) {
             //if (Ref.debugOreVein) GregTech.LOGGER.info(" No ore in bottom layer");
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
         }
         // Layers 0 & 1 Secondary and Sporadic
-        for (level = tMinY; level < (tMinY + 2); level++) {
+        for (level = tMinY; level < tMinY + 2; level++) {
             for (int tX = wX; tX < eX; tX++) {
                 int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
                 for (int tZ = nZ; tZ < sZ; tZ++) {
                     int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                    if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                    if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                         if (WorldGenHelper.setStateOre(world, tX, level, tZ, secondary)) placeCount[1]++;
-                    } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                    } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                         if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                     }
                 }
@@ -263,11 +252,11 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if ((rand.nextInt(2) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Between are reduce by 1/2 to compensate
+                if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, between)) placeCount[2]++;
-                } else if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                } else if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, secondary)) placeCount[1]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
@@ -278,9 +267,9 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if ((rand.nextInt(2) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Between are reduce by 1/2 to compensate
+                if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, between)) placeCount[2]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
@@ -291,11 +280,11 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if ((rand.nextInt(2) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Between are reduce by 1/2 to compensate
+                if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, between)) placeCount[2]++;
-                } else if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                } else if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, primary)) placeCount[1]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
@@ -306,11 +295,11 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if ((rand.nextInt(2) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Between are reduce by 1/2 to compensate
+                if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, between)) placeCount[2]++;
-                } else if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                } else if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, primary)) placeCount[1]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
@@ -321,9 +310,9 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, primary)) placeCount[1]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
@@ -334,15 +323,15 @@ public class WorldGenOreLayer extends WorldGenBase {
             int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
-                if (((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {
+                if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, primary)) placeCount[1]++;
-                } else if ((rand.nextInt(7) == 0) && ((rand.nextInt(placeZ) == 0) || (rand.nextInt(placeX) == 0))) {  // Sporadics are reduce by 1/7 to compensate
+                } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     if (WorldGenHelper.setStateOre(world, tX, level, tZ, sporadic)) placeCount[3]++;
                 }
             }
         }
         //Place small ores for the vein
-        if (Ref.ORE_VEIN_SMALL_ORE_MARKERS) {
+        if (false) {
             int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Ref.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
             //Small ores are placed in the whole chunk in which the vein appears.
             for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {

@@ -9,7 +9,7 @@ import muramasa.gtu.api.worldgen.WorldGenOreSmall;
 import muramasa.gtu.api.worldgen.WorldGenStone;
 
 import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.materials.MaterialTag.*;
+import static muramasa.gtu.api.worldgen.DimensionType.*;
 
 public class WorldGenLoader {
 
