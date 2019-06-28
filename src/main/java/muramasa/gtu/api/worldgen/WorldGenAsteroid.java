@@ -41,13 +41,16 @@ public class WorldGenAsteroid extends WorldGenBase {
         if (!(world.provider.getDimension() == 1 || world.provider.getDimension() == -30)) return false; //TODO validate -30 is GC asteroid dim
 
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
+            List<WorldGenOreLayer> layers = GregTechWorldGenerator.getLayers(world.provider.getDimension());
+            int layerCount = layers.size();
             WorldGenOreLayer layerToGen = null;
-            if (WorldGenOreLayer.TOTAL_WEIGHT > 0 && WorldGenOreLayer.ALL.get(world.provider.getDimension()).size() > 0) {
+            if (WorldGenOreLayer.TOTAL_WEIGHT > 0 && layerCount > 0) {
                 int randomWeight;
-                List<WorldGenOreLayer> layers = WorldGenOreLayer.ALL.get(world.provider.getDimension());
+                WorldGenOreLayer layer;
                 for (int i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS; i++) {
                     randomWeight = rand.nextInt(WorldGenOreLayer.TOTAL_WEIGHT);
-                    for (WorldGenOreLayer layer : layers) {
+                    for (int j = 0; j < layerCount; j++) {
+                        layer = layers.get(j);
                         randomWeight -= layer.weight;
                         if (randomWeight <= 0) {
                             layerToGen = layer;
@@ -101,7 +104,7 @@ public class WorldGenAsteroid extends WorldGenBase {
                                         double var45 = (eZ + 0.5D - var24) / (var28 / 2.0D);
                                         pos.setPos(tX, tY, tZ);
                                         IBlockState airState = world.getBlockState(pos);
-                                        if ((var39 * var39 + var42 * var42 + var45 * var45 < 1.0D) && (airState.getBlock().isAir(airState, world, pos))) {
+                                        if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && airState.getBlock().isAir(airState, world, pos)) {
                                             pos.setPos(eX, eY, eZ);
                                             int ranOre = rand.nextInt(50);
                                             if (ranOre < 3) {

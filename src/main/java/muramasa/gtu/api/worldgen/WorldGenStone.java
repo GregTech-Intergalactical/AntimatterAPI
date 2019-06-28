@@ -1,15 +1,12 @@
 package muramasa.gtu.api.worldgen;
 
-import com.google.common.base.Predicate;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.data.StoneType;
-import muramasa.gtu.api.materials.MaterialTag;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.util.XSTR;
+import muramasa.gtu.api.util.int2;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -17,26 +14,11 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 public class WorldGenStone extends WorldGenBase {
 
     static final double sizeConversion[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
-    public static Int2ObjectArrayMap<List<WorldGenStone>> ALL = new Int2ObjectArrayMap<>();
-    //TODO move to helper
-    public static Predicate<IBlockState> PREDICATE = state -> {
-        if (state == null) return false;
-        if ((state.getBlock() == Blocks.STONE && state.getValue(net.minecraft.block.BlockStone.VARIANT).isNatural()) ||
-            (state.getBlock() instanceof BlockStone)
-        ) return true;
-        return false;
-    };
-
-    static {
-        ALL.put(0, new ArrayList<>());
-        ALL.put(-1, new ArrayList<>());
-        ALL.put(1, new ArrayList<>());
-    }
+    //public static LongOpenHashSet SEEDS = new LongOpenHashSet();
 
     public Hashtable<Long, StoneSeeds> validStoneSeeds = new Hashtable<>(1024);
     public BlockStone block;
@@ -44,8 +26,8 @@ public class WorldGenStone extends WorldGenBase {
     public int amount, size, probability, minY, maxY;
     public boolean allowToGenInVoid;
 
-    public WorldGenStone(String id, BlockStone block, int amount, int size, int probability, int minY, int maxY, boolean allowToGenInVoid, MaterialTag... tags) {
-        super(id, tags);
+    public WorldGenStone(String id, BlockStone block, int amount, int size, int probability, int minY, int maxY, boolean allowToGenInVoid, DimensionType... dims) {
+        super(id, dims);
         this.block = block;
         this.stone = block.getDefaultState();
         this.amount = amount;
@@ -54,30 +36,28 @@ public class WorldGenStone extends WorldGenBase {
         this.minY = minY;
         this.maxY = maxY;
         this.allowToGenInVoid = allowToGenInVoid;
-        if (dims.contains(MaterialTag.OVERWORLD)) ALL.get(0).add(this);
-        if (dims.contains(MaterialTag.NETHER)) ALL.get(-1).add(this);
-        if (dims.contains(MaterialTag.END)) ALL.get(1).add(this);
+        GregTechWorldGenerator.register(this);
     }
 
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, IChunkGenerator generator, IChunkProvider provider) {
-        ArrayList<ValidSeeds> stones = new ArrayList<>();
+        ArrayList<int2> stones = new ArrayList<>();
 
         // I think the real size of the balls is mSize/8, but the original code was difficult to understand.
         // Overall there will be less GT stones since they aren't spheres any more. /16 since this code uses it as a radius.
-        double realSize = size / 16;
-        int windowWidth = ((int) realSize) / 16 + 1; // Width of chunks to check for a potential stoneseed
+        int realSize = size / 16;
+        int windowWidth = realSize / 16 + 1; // Width of chunks to check for a potential stoneseed
         // Check stone seeds to see if they have been added
-        for (int x = passedX / 16 - windowWidth; x < (passedX / 16 + windowWidth + 1); x++) {
-            for (int z = passedZ / 16 - windowWidth; z < (passedZ / 16 + windowWidth + 1); z++) {
-                long hash = (((world.provider.getDimension() & 0xffL) << 56) | (((long) x & 0x000000000fffffffL) << 28) | ((long) z & 0x000000000fffffffL));
-                if (!validStoneSeeds.containsKey(hash)) {
-                    // Determine if RNG says to add stone at this chunk
-                    rand.setSeed(world.getSeed() ^ hash + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + ((block.getType() == StoneType.GRANITE_RED || block.getType() == StoneType.GRANITE_BLACK) ? (32768) : (0)));  //Don't judge me. Want different values for different block types
-                    if ((probability <= 1) || (rand.nextInt(probability) == 0)) {
-                        // Add stone at this chunk
+        for (int x = passedX / 16 - windowWidth; x < passedX / 16 + windowWidth + 1; x++) {
+            for (int z = passedZ / 16 - windowWidth; z < passedZ / 16 + windowWidth + 1; z++) {
+                //compute hash for dimension and position
+                long hash = (world.provider.getDimension() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL;
+                if (!validStoneSeeds.containsKey(hash)) { //if this hash does not exist in our lookup, determine if RGB says to add stones in this chunk
+                    rand.setSeed(world.getSeed() ^ hash + block.getType().getInternalId());
+                    if (probability <= 1 || rand.nextInt(probability) == 0) {
+                        //We got a valid RNG roll, allow stone gen at this chunk
                         validStoneSeeds.put(hash, new StoneSeeds(true));
                         // Add to generation list
-                        stones.add(new ValidSeeds(x, z));
+                        stones.add(new int2(x, z));
                         //if (Ref.debugStones) GregTech.LOGGER.info("New stoneseed="+id+ " chunkX="+chunkX+ " z="+z+ " realSize="+realSize);
                     } else {
                         validStoneSeeds.put(hash, new StoneSeeds(false));
@@ -86,22 +66,24 @@ public class WorldGenStone extends WorldGenBase {
                     // This chunk has already been checked, check to see if a boulder exists here
                     if (validStoneSeeds.get(hash).mExists) {
                         // Add to generation list
-                        stones.add(new ValidSeeds(x, z));
+                        stones.add(new int2(x, z));
                     }
                 }
             }
         }
 
-        boolean result = true;
-        if (stones.size() == 0) {
-            result = false;
-        }
-        // Now process each oreseed vs this requested chunk
-        for (; stones.size() != 0; stones.remove(0)) {
-            int x = stones.get(0).mX * 16;
-            int z = stones.get(0).mZ * 16;
+        // Now process each stoneSeed vs this requested chunk
+        int count = stones.size();
+        if (count == 0) return false;
 
-            rand.setSeed(world.getSeed() ^ (((world.provider.getDimension() & 0xffL) << 56) | (((long) x & 0x000000000fffffffL) << 28) | ((long) z & 0x000000000fffffffL)) + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + ((block.getType() == StoneType.GRANITE_RED || block.getType() == StoneType.GRANITE_BLACK) ? (32768) : (0)));  //Don't judge me
+        int2 seed;
+        for (int s = 0; s < count; s++) {
+            seed = stones.get(s);
+
+            int x = seed.x * 16;
+            int z = seed.y * 16;
+
+            rand.setSeed(world.getSeed() ^ ((world.provider.getDimension() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL) + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + (block.getType() == StoneType.GRANITE_RED || block.getType() == StoneType.GRANITE_BLACK ? 32768 : 0));  //Don't judge me
             for (int i = 0; i < amount; i++) { // Not sure why you would want more than one in a chunk! Left alone though.
                 // Locate the stoneseed XYZ. Original code would request an isAir at the seed location, causing a chunk generation request.
                 // To reduce potential worldgen cascade, we just always try to place a ball and use the check inside the for loop to prevent
@@ -134,7 +116,7 @@ public class WorldGenStone extends WorldGenBase {
                 IBlockState state = world.getBlockState(pos);
                 if (state.getBlock().isAir(state, world, pos)) {
                     //if (Ref.debugStones) GregTech.LOGGER.info(id + " tX=" + tX + " tY=" + tY + " tZ=" + tZ + " realSize=" + realSize + " xSize=" + realSize/xSize + " ySize=" + realSize/ySize + " zSize=" + realSize/zSize + " tMinY=" + tMinY + " tMaxY=" + tMaxY + " - Skipped because first requesting chunk would not contain this stone");
-                    long hash = (((world.provider.getDimension() & 0xffL) << 56) | (((long) x & 0x000000000fffffffL) << 28) | ((long) z & 0x000000000fffffffL));
+                    long hash = (world.provider.getDimension() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL;
                     validStoneSeeds.remove(hash);
                     validStoneSeeds.put(hash, new StoneSeeds(false));
                 }
@@ -150,30 +132,28 @@ public class WorldGenStone extends WorldGenBase {
 
                 double rightHandSide = realSize * realSize + 1;  //Precalc the right hand side
                 for (int iY = tMinY; iY < tMaxY; iY++) {  // Do placement from the bottom up layer up.  Maybe better on cache usage?
-                    double yCalc = ((double) (iY - tY) * ySize);
+                    double yCalc = (double) (iY - tY) * ySize;
                     yCalc = yCalc * yCalc; // (y*Sy)^2
                     double leftHandSize = yCalc;
                     if (leftHandSize > rightHandSide) {
                         continue; // If Y alone is larger than the RHS, skip the rest of the loops
                     }
                     for (int iX = wX; iX < eX; iX++) {
-                        double xCalc = ((double) (iX - tX) * xSize);
+                        double xCalc = (double) (iX - tX) * xSize;
                         xCalc = xCalc * xCalc;
                         leftHandSize = yCalc + xCalc;
                         if (leftHandSize > rightHandSide) { // Again, if X and Y is larger than the RHS, skip to the next value
                             continue;
                         }
                         for (int iZ = sZ; iZ < nZ; iZ++) {
-                            double zCalc = ((double) (iZ - tZ) * zSize);
+                            double zCalc = (double) (iZ - tZ) * zSize;
                             zCalc = zCalc * zCalc;
                             leftHandSize = zCalc + xCalc + yCalc;
-                            if (leftHandSize > rightHandSide) {
-                                continue;
-                            } else {
+                            if (leftHandSize <= rightHandSide) {
                                 // Yay! We can actually place a block now. (this part copied from original code)
                                 pos.setPos(iX, iY, iZ);
                                 state = world.getBlockState(pos);
-                                if (state.getBlock().isReplaceableOreGen(state, world, pos, PREDICATE)) {
+                                if (state.getBlock().isReplaceableOreGen(state, world, pos, WorldGenHelper.STONE_PREDICATE)) {
                                     world.setBlockState(pos, stone);
                                 } else if (state.getBlock() instanceof BlockOre) {
                                     world.setBlockState(pos, state.withProperty(GTProperties.ORE_STONE, block.getType().getInternalId()));
@@ -186,7 +166,8 @@ public class WorldGenStone extends WorldGenBase {
                 }
             }
         }
-        return result;
+        stones.clear();
+        return true;
     }
 
     class StoneSeeds {
@@ -194,16 +175,6 @@ public class WorldGenStone extends WorldGenBase {
 
         StoneSeeds(boolean exists) {
             mExists = exists;
-        }
-    }
-
-    class ValidSeeds {
-        public int mX;
-        public int mZ;
-
-        ValidSeeds(int x, int z) {
-            this.mX = x;
-            this.mZ = z;
         }
     }
 }

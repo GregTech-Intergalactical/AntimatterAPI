@@ -10,9 +10,11 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -79,6 +81,11 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         return getDefaultState().withProperty(ORE_STONE, Ref.RNG.nextInt(StoneType.getLastInternalId()));
+    }
+
+    @Override
+    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+        return StoneType.getAll().get(state.getValue(ORE_STONE)).getSoundType();
     }
 
     //TODO

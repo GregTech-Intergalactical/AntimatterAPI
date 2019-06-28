@@ -19,4 +19,19 @@ public class int2 {
         this.y = y;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof int2)) return false;
+        int2 other = (int2) o;
+        return x == other.x && y == other.y;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
+    }
 }

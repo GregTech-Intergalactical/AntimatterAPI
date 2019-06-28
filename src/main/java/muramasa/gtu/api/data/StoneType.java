@@ -8,15 +8,19 @@ import net.minecraft.block.SoundType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StoneType implements IGregTechObject {
 
-    private static ArrayList<StoneType> generating = new ArrayList<>(), all = new ArrayList<>();
+    private static List<StoneType> generating = new LinkedList<>(), all = new LinkedList<>();
     private static int LAST_INTERNAL_ID;
     
     //TODO: more functionality, soundtype etc
 
     public static StoneType STONE = new StoneType("stone", Materials.Stone, false, new Texture("minecraft", "blocks/stone"), SoundType.STONE);
+
+    //TODO evaluate if needed. These are considered "stone" and are replace by ores anyway.
     public static StoneType GRANITE = new StoneType("granite", Materials.Stone, false, new Texture("minecraft", "blocks/stone_granite"), SoundType.STONE);
     public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, false, new Texture("minecraft", "blocks/stone_diorite"), SoundType.STONE);
     public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, false, new Texture("minecraft", "blocks/stone_andesite"), SoundType.STONE);
@@ -72,11 +76,11 @@ public class StoneType implements IGregTechObject {
     	return soundType;
     }
 
-    public static Collection<StoneType> getGenerating() {
+    public static List<StoneType> getGenerating() {
         return generating;
     }
 
-    public static Collection<StoneType> getAll() {
+    public static List<StoneType> getAll() {
         return all;
     }
 

@@ -12,7 +12,7 @@ import static muramasa.gtu.api.properties.GTProperties.ORE_STONE;
 
 public class WorldGenHelper {
 
-    public static Predicate<IBlockState> STONE_PREDICATE = state -> {
+    public static Predicate<IBlockState> ORE_PREDICATE = state -> {
         if (state == null) return false;
         if (state.getBlock() == Blocks.STONE) {
             net.minecraft.block.BlockStone.EnumType stoneType = state.getValue(net.minecraft.block.BlockStone.VARIANT);
@@ -22,6 +22,15 @@ public class WorldGenHelper {
         } else {
             return false;
         }
+    };
+
+    public static Predicate<IBlockState> STONE_PREDICATE = state -> {
+        if (state == null) return false;
+        if (state.getBlock() == Blocks.STONE) {
+            net.minecraft.block.BlockStone.EnumType stoneType = state.getValue(net.minecraft.block.BlockStone.VARIANT);
+            return stoneType.isNatural();
+        }
+        return false;
     };
 
     public static void setState(World world, BlockPos pos, IBlockState state) {
@@ -35,7 +44,7 @@ public class WorldGenHelper {
         if (state.getBlock() instanceof BlockStone) {
             world.setBlockState(pos, ore.withProperty(ORE_STONE, ((BlockStone) state.getBlock()).getType().getInternalId()), 2 | 16);
             return true;
-        } else if (state.getBlock().isReplaceableOreGen(state, world, pos, STONE_PREDICATE)) {
+        } else if (state.getBlock().isReplaceableOreGen(state, world, pos, ORE_PREDICATE)) {
             if (state.getBlock() == Blocks.NETHERRACK) {
                 world.setBlockState(pos, ore.withProperty(ORE_STONE, StoneType.NETHERRACK.getInternalId()), 2 | 16);
             } else if (state.getBlock() == Blocks.END_STONE) {
