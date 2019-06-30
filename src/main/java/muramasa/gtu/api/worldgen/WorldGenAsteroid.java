@@ -37,9 +37,12 @@ public class WorldGenAsteroid extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, IChunkGenerator generator, IChunkProvider provider) {
-        if (!(world.provider.getDimension() == 1 || world.provider.getDimension() == -30)) return false; //TODO validate -30 is GC asteroid dim
+    public WorldGenBase build() {
+        return this;
+    }
 
+    @Override
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, IChunkGenerator generator, IChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
             List<WorldGenOreLayer> layers = GregTechWorldGenerator.getLayers(world.provider.getDimension());
             int layerCount = layers.size();
@@ -51,7 +54,7 @@ public class WorldGenAsteroid extends WorldGenBase {
                     randomWeight = rand.nextInt(WorldGenOreLayer.TOTAL_WEIGHT);
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);
-                        randomWeight -= layer.weight;
+                        randomWeight -= layer.getWeight();
                         if (randomWeight <= 0) {
                             layerToGen = layer;
                             break;
@@ -108,13 +111,13 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             pos.setPos(eX, eY, eZ);
                                             int ranOre = rand.nextInt(50);
                                             if (ranOre < 3) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.primary);
+                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(0, false));
                                             } else if (ranOre < 6) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.secondary);
+                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(1, false));
                                             } else if (ranOre < 8) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.between);
+                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(2, false));
                                             } else if (ranOre < 10) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.sporadic);
+                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(3, false));
                                             } else {
                                                 if (world.provider.getDimension() == -30) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);

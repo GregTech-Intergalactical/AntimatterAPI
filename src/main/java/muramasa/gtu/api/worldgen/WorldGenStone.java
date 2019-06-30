@@ -1,5 +1,7 @@
 package muramasa.gtu.api.worldgen;
 
+import com.google.gson.annotations.Expose;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.data.StoneType;
@@ -17,26 +19,32 @@ import java.util.Hashtable;
 
 public class WorldGenStone extends WorldGenBase {
 
-    static final double sizeConversion[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
+    private static final double SIZE_CONVERSION[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
     //public static LongOpenHashSet SEEDS = new LongOpenHashSet();
 
-    public Hashtable<Long, StoneSeeds> validStoneSeeds = new Hashtable<>(1024);
+    @Expose public String type;
+    @Expose public int amount, size, probability, minY, maxY;
+
     public BlockStone block;
     public IBlockState stone;
-    public int amount, size, probability, minY, maxY;
-    public boolean allowToGenInVoid;
+    public Hashtable<Long, StoneSeeds> validStoneSeeds;
 
-    public WorldGenStone(String id, BlockStone block, int amount, int size, int probability, int minY, int maxY, boolean allowToGenInVoid, DimensionType... dims) {
-        super(id, dims);
-        this.block = block;
-        this.stone = block.getDefaultState();
+    public WorldGenStone(String id, StoneType type, int amount, int size, int probability, int minY, int maxY, boolean allowToGenInVoid, int... dimensions) {
+        super(id, dimensions);
+        this.type = type.getId();
         this.amount = amount;
         this.size = size;
         this.probability = probability;
         this.minY = minY;
         this.maxY = maxY;
-        this.allowToGenInVoid = allowToGenInVoid;
-        GregTechWorldGenerator.register(this);
+    }
+
+    @Override
+    public WorldGenBase build() {
+        this.block = GregTechAPI.get(BlockStone.class, type);
+        this.stone = block.getDefaultState();
+        this.validStoneSeeds = new Hashtable<>(1024);
+        return this;
     }
 
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, IChunkGenerator generator, IChunkProvider provider) {
@@ -93,9 +101,9 @@ public class WorldGenStone extends WorldGenBase {
                 int tZ = z + rand.nextInt(16);
 
                 //Determine the XYZ sizes of the stoneseed
-                double xSize = sizeConversion[rand.nextInt(sizeConversion.length)];
-                double ySize = sizeConversion[rand.nextInt(sizeConversion.length) / 2];  // Skew the ySize towards the larger sizes, more long skinny pipes
-                double zSize = sizeConversion[rand.nextInt(sizeConversion.length)];
+                double xSize = SIZE_CONVERSION[rand.nextInt(SIZE_CONVERSION.length)];
+                double ySize = SIZE_CONVERSION[rand.nextInt(SIZE_CONVERSION.length) / 2];  // Skew the ySize towards the larger sizes, more long skinny pipes
+                double zSize = SIZE_CONVERSION[rand.nextInt(SIZE_CONVERSION.length)];
 
                 //Equation for an ellipsoid centered around 0,0,0
                 // Sx, Sy, and Sz are size controls (size = 1/S_)
@@ -157,9 +165,9 @@ public class WorldGenStone extends WorldGenBase {
                                     world.setBlockState(pos, stone);
                                 } else if (state.getBlock() instanceof BlockOre) {
                                     world.setBlockState(pos, state.withProperty(GTProperties.ORE_STONE, block.getType().getInternalId()));
-                                } else if (allowToGenInVoid && state.getBlock().isAir(state, world, pos)) {
+                                } /*else if (allowToGenInVoid && state.getBlock().isAir(state, world, pos)) {
                                     world.setBlockState(pos, state);
-                                }
+                                }*/
                             }
                         }
                     }

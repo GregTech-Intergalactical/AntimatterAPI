@@ -443,6 +443,23 @@ public class Utils {
         return new String(chars);
     }
 
+    public static Optional<Integer> parseInt(String s) {
+        return Optional.ofNullable(s).map(Integer::parseInt);
+    }
+
+    public static int parseInt(Object o, int original) {
+        if (o instanceof Integer) return (Integer) o;
+        else if (o instanceof Double) return ((Double) o).intValue();
+        else if (o instanceof String) {
+            try {
+                return Integer.parseInt((String) o);
+            } catch (NumberFormatException e) {
+                return original;
+            }
+        }
+        return original;
+    }
+
     public static boolean isModLoaded(String modid) {
         if (MOD_LOADED_CACHE.containsKey(modid)) {
             return MOD_LOADED_CACHE.get(modid);

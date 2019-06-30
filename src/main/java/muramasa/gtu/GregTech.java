@@ -18,8 +18,6 @@ import muramasa.gtu.integration.ctx.GregTechTweaker;
 import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
 import muramasa.gtu.integration.top.TheOneProbePlugin;
-import muramasa.gtu.loaders.OreDictLoader;
-import muramasa.gtu.loaders.WorldGenLoader;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -35,6 +33,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 
 @Mod(modid = Ref.MODID, name = Ref.NAME, version = Ref.VERSION, dependencies = Ref.DEPENDS, useMetadata = true)
 public class GregTech {
@@ -65,7 +65,7 @@ public class GregTech {
         OreGenHandler.init();
         MinecraftForge.EVENT_BUS.register(this);
 
-        new GregTechWorldGenerator();
+        new GregTechWorldGenerator(new File(e.getModConfigurationDirectory(), "GregTech/"));
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);
@@ -85,8 +85,8 @@ public class GregTech {
     public void init(FMLInitializationEvent e) {
         PROXY.init(e);
         if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
-        OreDictLoader.init();
-        WorldGenLoader.init();
+        GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
+        GregTechWorldGenerator.handleJSON();
     }
 
     @Mod.EventHandler

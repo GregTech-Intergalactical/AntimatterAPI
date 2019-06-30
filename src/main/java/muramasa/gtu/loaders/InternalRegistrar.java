@@ -49,7 +49,11 @@ public class InternalRegistrar implements IGregTechRegistrar {
             case MATERIAL_INIT:
                 Materials.init();
                 break;
+            case WORLDGEN:
+                WorldGenLoader.init();
+                break;
             case RECIPE:
+                OreDictLoader.init();
                 CraftingRecipeLoader.init();
                 MaterialRecipeLoader.init();
                 MachineRecipeLoader.init();

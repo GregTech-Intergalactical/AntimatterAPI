@@ -1,5 +1,6 @@
 package muramasa.gtu.api.worldgen;
 
+import com.google.gson.annotations.Expose;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOreSmall;
 import muramasa.gtu.api.materials.Material;
@@ -11,21 +12,26 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class WorldGenOreSmall extends WorldGenBase {
 
-    public String id;
-    public int minY, maxY, amount;
-    public BlockOreSmall block;
-    public IBlockState ore;
+    @Expose private String primary;
+    @Expose private int minY, maxY, amount;
 
-    public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material primary, DimensionType... dims) {
-        super(id, dims);
-        this.id = id;
+    private BlockOreSmall block;
+    private IBlockState ore;
+
+    public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material primary, int... dimensions) {
+        super(id, dimensions);
         this.minY = minY;
         this.maxY = maxY;
         this.amount = amount;
-        this.block = GregTechAPI.get(BlockOreSmall.class, "small_" + primary.getId());
-        if (block == null) throw new IllegalArgumentException(primary.getId() + " in WorldGenOreSmall: " + id + " does not have the ORE_SMALL tag");
+        this.primary = primary.getId();
+    }
+
+    @Override
+    public WorldGenBase build() {
+        this.block = GregTechAPI.get(BlockOreSmall.class, "small_" + primary);
+        if (block == null) throw new IllegalArgumentException(primary + " in WorldGenOreSmall: " + getId() + " does not have the ORE_SMALL tag");
         this.ore = block.getDefaultState();
-        GregTechWorldGenerator.register(this);
+        return this;
     }
 
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, IChunkGenerator generator, IChunkProvider provider) {
