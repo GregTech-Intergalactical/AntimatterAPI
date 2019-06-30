@@ -12,11 +12,17 @@ public interface IMaterialFlag {
     Set<Material> getMats();
 
     default void add(Material... m) {
-        for (int i = 0; i < m.length; i++) getMats().add(m[i]);
+        for (int i = 0; i < m.length; i++) {
+            getMats().add(m[i]);
+            m[i].add(this);
+        }
     }
 
     default void remove(Material... m) {
-        for (int i = 0; i < m.length; i++) getMats().remove(m[i]);
+        for (int i = 0; i < m.length; i++) {
+            getMats().remove(m[i]);
+            m[i].add(this);
+        }
     }
 
     static ArrayList<Material> getMatsFor(IMaterialFlag... flags) {
