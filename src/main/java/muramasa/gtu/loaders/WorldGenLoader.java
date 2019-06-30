@@ -1,55 +1,47 @@
 package muramasa.gtu.loaders;
 
-import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.worldgen.WorldGenAsteroid;
 import muramasa.gtu.api.worldgen.WorldGenOreLayer;
 import muramasa.gtu.api.worldgen.WorldGenOreSmall;
 import muramasa.gtu.api.worldgen.WorldGenStone;
 
+import static muramasa.gtu.Ref.*;
 import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.worldgen.DimensionType.*;
+import static muramasa.gtu.api.data.StoneType.*;
 
 public class WorldGenLoader {
 
     public static WorldGenAsteroid ASTEROID_GEN = new WorldGenAsteroid();
 
     // This is probably not going to work.  Trying to create a fake orevein to put into hashtable when there will be no ores in a vein.
-    public static WorldGenOreLayer noOresInVein = new WorldGenOreLayer( "NoOresInVein", 0, 255, 0, 255, 16, Aluminium, Aluminium, Aluminium, Aluminium);
+    //public static WorldGenOreLayer noOresInVein = new WorldGenOreLayer( "NoOresInVein", 0, 255, 0, 255, 16, Aluminium, Aluminium, Aluminium, Aluminium);
 
     public static void init() {
-
         //TODO probably increase max generation heights for most things
+        //TODO add GC dims to all objects
+        new WorldGenStone("granite_black_tiny", GRANITE_BLACK, 1, 75, 5, 0, 180, false, OVERWORLD);
+        new WorldGenStone("granite_black_small", GRANITE_BLACK, 1, 100, 10, 0, 180, false, OVERWORLD);
+        new WorldGenStone("granite_black_medium", GRANITE_BLACK, 1, 200, 10, 0, 120, false, OVERWORLD);
+        new WorldGenStone("granite_black_large", GRANITE_BLACK, 1, 300, 70, 0, 120, false, OVERWORLD);
+        new WorldGenStone("granite_black_huge", GRANITE_BLACK, 1, 400, 150, 0, 120, false, OVERWORLD);
 
-        BlockStone graniteBlack = GregTechAPI.get(BlockStone.class, StoneType.GRANITE_BLACK.getId());
-        BlockStone graniteRed = GregTechAPI.get(BlockStone.class, StoneType.GRANITE_RED.getId());
-        BlockStone marble = GregTechAPI.get(BlockStone.class, StoneType.MARBLE.getId());
-        BlockStone basalt = GregTechAPI.get(BlockStone.class, StoneType.BASALT.getId());
+        new WorldGenStone("granite_red_tiny", GRANITE_RED, 1, 75, 5, 0, 180, false, OVERWORLD);
+        new WorldGenStone("granite_red_small", GRANITE_RED, 1, 100, 10, 0, 180, false, OVERWORLD);
+        new WorldGenStone("granite_red_medium", GRANITE_RED, 1, 200, 10, 0, 120, false, OVERWORLD);
+        new WorldGenStone("granite_red_large", GRANITE_RED, 1, 300, 70, 0, 120, false, OVERWORLD);
+        new WorldGenStone("granite_red_huge", GRANITE_RED, 1, 400, 150, 0, 120, false, OVERWORLD);
 
-        new WorldGenStone("granite_black_tiny", graniteBlack, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_black_small", graniteBlack, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_black_medium", graniteBlack, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_black_large", graniteBlack, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_black_huge", graniteBlack, 1, 400, 150, 0, 120, false, OVERWORLD);
+        new WorldGenStone("marble_tiny", MARBLE, 1, 75, 5, 0, 180, false, OVERWORLD);
+        new WorldGenStone("marble_small", MARBLE, 1, 100, 10, 0, 180, false, OVERWORLD);
+        new WorldGenStone("marble_medium", MARBLE, 1, 200, 10, 0, 120, false, OVERWORLD);
+        new WorldGenStone("marble_large", MARBLE, 1, 300, 70, 0, 120, false, OVERWORLD);
+        new WorldGenStone("marble_huge", MARBLE, 1, 400, 150, 0, 120, false, OVERWORLD);
 
-        new WorldGenStone("granite_red_tiny", graniteRed, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_red_small", graniteRed, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_red_medium", graniteRed, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_red_large", graniteRed, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_red_huge", graniteRed, 1, 400, 150, 0, 120, false, OVERWORLD);
-
-        new WorldGenStone("marble_tiny", marble, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("marble_small", marble, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("marble_medium", marble, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("marble_large", marble, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("marble_huge", marble, 1, 400, 150, 0, 120, false, OVERWORLD);
-
-        new WorldGenStone("basalt_tiny", basalt, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("basalt_small", basalt, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("basalt_medium", basalt, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("basalt_large", basalt, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("basalt_huge", basalt, 1, 400, 150, 0, 120, false, OVERWORLD);
+        new WorldGenStone("basalt_tiny", BASALT, 1, 75, 5, 0, 180, false, OVERWORLD);
+        new WorldGenStone("basalt_small", BASALT, 1, 100, 10, 0, 180, false, OVERWORLD);
+        new WorldGenStone("basalt_medium", BASALT, 1, 200, 10, 0, 120, false, OVERWORLD);
+        new WorldGenStone("basalt_large", BASALT, 1, 300, 70, 0, 120, false, OVERWORLD);
+        new WorldGenStone("basalt_huge", BASALT, 1, 400, 150, 0, 120, false, OVERWORLD);
 
         new WorldGenOreLayer("naquadah", 10, 60, 10, 5, 32, Naquadah, Naquadah, Naquadah, NaquadahEnriched, END);
         new WorldGenOreLayer("lignite", 50, 130, 160, 8, 32, Lignite, Lignite, Lignite, Coal, OVERWORLD);
@@ -85,36 +77,36 @@ public class WorldGenLoader {
         new WorldGenOreLayer("oilsands", 50, 80, 80, 6, 32, Oilsands, Oilsands, Oilsands, Oilsands, OVERWORLD);
 
         new WorldGenOreSmall("copper", 60, 120, 32, Copper, OVERWORLD, NETHER, END, MOON, MARS);
-        new WorldGenOreSmall("tin", 60, 120, 32, Tin, OVERWORLD, NETHER, END, MOON, MARS, ASTEROID);
+        new WorldGenOreSmall("tin", 60, 120, 32, Tin, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
         new WorldGenOreSmall("bismuth", 80, 120, 8, Bismuth, OVERWORLD, NETHER, MOON, MARS);
         new WorldGenOreSmall("coal", 60, 100, 24, Coal, OVERWORLD);
         new WorldGenOreSmall("iron", 40, 80, 16, Iron, OVERWORLD, NETHER, END, MOON, MARS);
-        new WorldGenOreSmall("lead", 40, 80, 16, Lead, OVERWORLD, NETHER, END, MOON, MARS, ASTEROID);
+        new WorldGenOreSmall("lead", 40, 80, 16, Lead, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
         new WorldGenOreSmall("zinc", 30, 60, 12, Zinc, OVERWORLD, NETHER, END, MOON, MARS);
-        new WorldGenOreSmall("gold", 20, 40, 8, Gold, OVERWORLD, NETHER, END, MOON, MARS, ASTEROID);
-        new WorldGenOreSmall("silver", 20, 40, 8, Silver, OVERWORLD, NETHER, END, MOON, MARS, ASTEROID);
-        new WorldGenOreSmall("nickel", 20, 40, 8, Nickel, OVERWORLD, NETHER, END, MOON, MARS, ASTEROID);
-        new WorldGenOreSmall("lapis", 20, 40, 4, Lapis, OVERWORLD, MOON, ASTEROID);
-        new WorldGenOreSmall("diamond", 5, 10, 2, Diamond, OVERWORLD, NETHER, MOON, MARS, ASTEROID);
-        new WorldGenOreSmall("emerald", 5, 250, 1, Emerald, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("ruby", 5, 250, 1, Ruby, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("sapphire", 5, 250, 1, Sapphire, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("greensapphire", 5, 250, 1, GreenSapphire, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("olivine", 5, 250, 1, Olivine, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("topaz", 5, 250, 1, Topaz, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("tanzanite", 5, 250, 1, Tanzanite, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("amethyst", 5, 250, 1, Amethyst, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("opal", 5, 250, 1, Opal, OVERWORLD, NETHER, MARS, ASTEROID);
-        //new WorldGenOreSmall("jasper", 5, 250, 1, Jasper, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("bluetopaz", 5, 250, 1, BlueTopaz, OVERWORLD, NETHER, MARS, ASTEROID);
-        //new WorldGenOreSmall("amber", 5, 250, 1, Amber, OVERWORLD, NETHER, MARS, ASTEROID);
-        //new WorldGenOreSmall("foolsruby", 5, 250, 1, FoolsRuby, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("garnetred", 5, 250, 1, GarnetRed, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("garnetyellow", 5, 250, 1, GarnetYellow, OVERWORLD, NETHER, MARS, ASTEROID);
-        new WorldGenOreSmall("redstone", 5, 20, 8, Redstone, OVERWORLD, NETHER, MOON, MARS, ASTEROID);
-        new WorldGenOreSmall("platinum", 20, 40, 8, Platinum, END, MARS, ASTEROID);
-        new WorldGenOreSmall("iridium", 20, 40, 8, Iridium, END, MARS, ASTEROID);
-        new WorldGenOreSmall("netherquartz", 30, 120, 64, NetherQuartz, NETHER);
+        new WorldGenOreSmall("gold", 20, 40, 8, Gold, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
+        new WorldGenOreSmall("silver", 20, 40, 8, Silver, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
+        new WorldGenOreSmall("nickel", 20, 40, 8, Nickel, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
+        new WorldGenOreSmall("lapis", 20, 40, 4, Lapis, OVERWORLD, MOON, ASTEROIDS);
+        new WorldGenOreSmall("diamond", 5, 10, 2, Diamond, OVERWORLD, NETHER, MOON, MARS, ASTEROIDS);
+        new WorldGenOreSmall("emerald", 5, 250, 1, Emerald, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("ruby", 5, 250, 1, Ruby, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("sapphire", 5, 250, 1, Sapphire, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("green_sapphire", 5, 250, 1, GreenSapphire, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("olivine", 5, 250, 1, Olivine, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("topaz", 5, 250, 1, Topaz, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("tanzanite", 5, 250, 1, Tanzanite, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("amethyst", 5, 250, 1, Amethyst, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("opal", 5, 250, 1, Opal, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        //new WorldGenOreSmall("jasper", 5, 250, 1, Jasper, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("blue_topaz", 5, 250, 1, BlueTopaz, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        //new WorldGenOreSmall("amber", 5, 250, 1, Amber, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        //new WorldGenOreSmall("foolsruby", 5, 250, 1, FoolsRuby, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("red_garnet", 5, 250, 1, GarnetRed, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("yellow_garnet", 5, 250, 1, GarnetYellow, OVERWORLD, NETHER, MARS, ASTEROIDS);
+        new WorldGenOreSmall("redstone", 5, 20, 8, Redstone, OVERWORLD, NETHER, MOON, MARS, ASTEROIDS);
+        new WorldGenOreSmall("platinum", 20, 40, 8, Platinum, END, MARS, ASTEROIDS);
+        new WorldGenOreSmall("iridium", 20, 40, 8, Iridium, END, MARS, ASTEROIDS);
+        new WorldGenOreSmall("nether_quartz", 30, 120, 64, NetherQuartz, NETHER);
         new WorldGenOreSmall("saltpeter", 10, 60, 8, Saltpeter, NETHER);
         new WorldGenOreSmall("sulfur_n", 10, 60, 32, Sulfur, NETHER);
         new WorldGenOreSmall("sulfur_o", 5, 15, 8, Sulfur, OVERWORLD);

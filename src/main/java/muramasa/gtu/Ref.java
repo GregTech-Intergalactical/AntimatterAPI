@@ -44,10 +44,11 @@ public class Ref {
     public static boolean debugSmallOres = true;
     public static boolean debugStones = true;
 
+    public static int ORE_VEIN_MAX_SIZE = 32;
     public static int ORE_VEIN_CHANCE = 100; //Control percentage of filled 3x3 chunks. Lower number means less oreveins spawn
     public static int ORE_VEIN_FIND_ATTEMPTS = 64; //Control number of attempts to find a valid orevein. Generally this maximum limit isn't hit, selecting a vein is cheap
     public static int ORE_VEIN_PLACE_ATTEMPTS = 8; //Control number of attempts to place a valid orevein.  If a vein wasn't placed due to height restrictions, completely in the water, etc, another attempt is tried.
-    public static boolean ORE_VEIN_SMALL_ORE_MARKERS = true; //Whether or not to place small ores as placer ores for an orevein
+    public static boolean ORE_VEIN_SMALL_ORE_MARKERS = false; //Whether or not to place small ores as placer ores for an orevein
     public static int ORE_VEIN_SMALL_ORE_MARKERS_MULTI = 2; //Multiplier to control how many placer ores get generated.
     public static boolean ORE_VEIN_SPECTATOR_DEBUG = true;
 
@@ -95,4 +96,13 @@ public class Ref {
     public static final String MOD_GC_PLANETS = "GalacticraftPlanets";
     public static final String MOD_TE = "thermalexpansion";
     public static final String MOD_TF = "thermalfoundation";
+    public static final String MOD_UB = "undergroundbiomes";
+
+    /** Dimension IDs **/
+    public static final int OVERWORLD = 0;
+    public static final int NETHER = -1;
+    public static final int END = 1;
+    public static final int MOON = -99; //TODO, Find ID
+    public static final int MARS = -99; //TODO, Find ID
+    public static final int ASTEROIDS = -30; //TODO, Validate ID
 }
