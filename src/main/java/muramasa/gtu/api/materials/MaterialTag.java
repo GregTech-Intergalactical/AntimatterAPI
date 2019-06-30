@@ -1,14 +1,11 @@
 package muramasa.gtu.api.materials;
 
-import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class MaterialTag implements IGregTechObject, IMaterialFlag {
-
-    private static int LAST_INTERNAL_ID;
+public class MaterialTag implements IGregTechObject, IMaterialTag {
 
     public static MaterialTag ELEC = new MaterialTag("elec"); //Add Electrolyzer Recipes - SHOULD NOT SHARE MATS WITH CENT
     public static MaterialTag CENT = new MaterialTag("cent"); //Add Centrifuging Recipes - SHOULD NOT SHARE MATS WITH ELEC
@@ -37,23 +34,16 @@ public class MaterialTag implements IGregTechObject, IMaterialFlag {
     //TODO get alloy flag for adding mixer and dust crafting recipes automatically
 
     private String id;
-    private long bit;
     private Set<Material> materials = new HashSet<>();
 
     public MaterialTag(String id) {
         this.id = id;
-        bit = 1L << LAST_INTERNAL_ID++;
-        GregTechAPI.register(MaterialTag.class, this);
+        register(MaterialTag.class, this);
     }
 
     @Override
     public String getId() {
         return id;
-    }
-
-    @Override
-    public long getBit() {
-        return this.bit;
     }
 
     @Override

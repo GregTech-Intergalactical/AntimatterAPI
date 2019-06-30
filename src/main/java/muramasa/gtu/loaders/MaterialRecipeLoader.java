@@ -2,7 +2,7 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.materials.IMaterialFlag;
+import muramasa.gtu.api.materials.IMaterialTag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.tools.ToolType;
@@ -95,7 +95,7 @@ public class MaterialRecipeLoader {
         });
         
         //Screws depends on bolt, so lets do this for now
-        IMaterialFlag.getMatsFor(BOLT, SCREW).forEach(m -> {
+        IMaterialTag.getMats(BOLT, SCREW).forEach(m -> {
             ItemStack bolt = m.getBolt(1), screw = m.getScrew(1);
             RecipeHelper.addShaped("bolt_to_screw_" + m.getId(), screw, "fX ", "X  ", "   ", 'X', bolt);
             LATHING.RB().ii(bolt).io(screw).add(Math.max(m.getMass() / 8, 1), 4);  
@@ -283,7 +283,7 @@ public class MaterialRecipeLoader {
 //            }
         });
 
-//        IMaterialFlag.getMatsFor(ELEC, CENT).forEach(m -> {
+//        IMaterialFlag.getMats(ELEC, CENT).forEach(m -> {
 //            int inputCount = 0;
 //            int inputCellCount = 0;
 //
