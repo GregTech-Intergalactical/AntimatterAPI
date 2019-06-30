@@ -42,16 +42,16 @@ public class WorldGenAsteroid extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, IChunkGenerator generator, IChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, IBlockState state, IChunkGenerator generator, IChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
             List<WorldGenOreLayer> layers = GregTechWorldGenerator.getLayers(world.provider.getDimension());
             int layerCount = layers.size();
             WorldGenOreLayer layerToGen = null;
-            if (WorldGenOreLayer.TOTAL_WEIGHT > 0 && layerCount > 0) {
+            if (WorldGenOreLayer.getTotalWeight() > 0 && layerCount > 0) {
                 int randomWeight;
                 WorldGenOreLayer layer;
                 for (int i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS; i++) {
-                    randomWeight = rand.nextInt(WorldGenOreLayer.TOTAL_WEIGHT);
+                    randomWeight = rand.nextInt(WorldGenOreLayer.getTotalWeight());
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);
                         randomWeight -= layer.getWeight();
@@ -74,8 +74,8 @@ public class WorldGenAsteroid extends WorldGenBase {
             int tY = 50 + rand.nextInt(200 - 50);
             int tZ = passedZ * 16 + rand.nextInt(16);
 
-            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(tX, tY, tZ);
-            IBlockState state = world.getBlockState(pos);
+            pos.setPos(tX, tY, tZ);
+            state = world.getBlockState(pos);
             if (state.getBlock().isAir(state, world, pos)) {
                 float var6 = rand.nextFloat() * 3.141593F;
                 double var7 = tX + 8 + MathHelper.sin(var6) * mSize / 8.0F;
@@ -111,13 +111,13 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             pos.setPos(eX, eY, eZ);
                                             int ranOre = rand.nextInt(50);
                                             if (ranOre < 3) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(0, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(0, false));
                                             } else if (ranOre < 6) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(1, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(1, false));
                                             } else if (ranOre < 8) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(2, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(2, false));
                                             } else if (ranOre < 10) {
-                                                WorldGenHelper.setStateOre(world, eX, eY, eZ, layerToGen.getState(3, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(3, false));
                                             } else {
                                                 if (world.provider.getDimension() == -30) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);

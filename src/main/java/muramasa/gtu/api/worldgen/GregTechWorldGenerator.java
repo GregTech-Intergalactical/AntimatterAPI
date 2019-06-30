@@ -1,23 +1,19 @@
 package muramasa.gtu.api.worldgen;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.util.XSTR;
 import muramasa.gtu.loaders.WorldGenLoader;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -55,27 +51,27 @@ public class GregTechWorldGenerator implements IWorldGenerator {
         if (worldGen instanceof WorldGenStone) WORLD_GEN_REGISTRY.get("worldgen_stone").add(worldGen);
     }
 
-    public static void handleJSON() {
+    public static void init() {
         try {
-            //Generate default data
-            Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-            File defaultData = new File(CONFIG_DIR, "WorldGenerationDefault.json");
-            if (!defaultData.exists()) CONFIG_DIR.createNewFile();
-            BufferedWriter br = new BufferedWriter(new FileWriter(defaultData));
-            gson.toJson(WORLD_GEN_REGISTRY, br);
-            br.close();
-
-            //Check for override data
-            String jsonData = new String(Files.readAllBytes(new File(CONFIG_DIR, "WorldGenerationOverride.json").toPath()));
-            HashMap<String, HashSet> dataMap = gson.fromJson(jsonData, new TypeToken<HashMap<String, HashSet>>(){}.getType());
-            if (dataMap != null) { //Some override data is present, inject into WORLD_GEN_REGISTRY
-                WORLD_GEN_REGISTRY.forEach((k, v) -> dataMap.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
-                    List<WorldGenBase> list = gson.fromJson(gson.toJsonTree(e.getValue()).getAsJsonArray(), TYPE_REGISTRY.get(k));
-                    list.forEach(w -> {
-                        v.remove(w); v.add(w);
-                    });
-                }));
-            }
+//            //Generate default data
+//            Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
+//            File defaultData = new File(CONFIG_DIR, "WorldGenerationDefault.json");
+//            if (!defaultData.exists()) CONFIG_DIR.createNewFile();
+//            BufferedWriter br = new BufferedWriter(new FileWriter(defaultData));
+//            gson.toJson(WORLD_GEN_REGISTRY, br);
+//            br.close();
+//
+//            //Check for override data
+//            String jsonData = new String(Files.readAllBytes(new File(CONFIG_DIR, "WorldGenerationOverride.json").toPath()));
+//            HashMap<String, HashSet> dataMap = gson.fromJson(jsonData, new TypeToken<HashMap<String, HashSet>>(){}.getType());
+//            if (dataMap != null) { //Some override data is present, inject into WORLD_GEN_REGISTRY
+//                WORLD_GEN_REGISTRY.forEach((k, v) -> dataMap.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
+//                    List<WorldGenBase> list = gson.fromJson(gson.toJsonTree(e.getValue()).getAsJsonArray(), TYPE_REGISTRY.get(k));
+//                    list.forEach(w -> {
+//                        v.remove(w); v.add(w);
+//                    });
+//                }));
+//            }
 
             WORLD_GEN_REGISTRY.get("worldgen_ore_layer").forEach(w -> w.getDimensions().forEach(d -> {
                 if (w.isEnabled()) LAYER.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreLayer) w.build());
@@ -100,16 +96,17 @@ public class GregTechWorldGenerator implements IWorldGenerator {
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator generator, IChunkProvider provider) {
         try {
             XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
+            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
             //Generate Stones and Small Ores
             if (STONE.size() > 0) {
                 for (WorldGenStone stone : STONE.get(world.provider.getDimension())) {
-                    stone.generate(world, rand, chunkX * 16, chunkZ * 16, generator, provider);
+                    stone.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider);
                 }
             }
             if (SMALL.size() > 0) {
                 for (WorldGenOreSmall small : SMALL.get(world.provider.getDimension())) {
-                    small.generate(world, rand, chunkX * 16, chunkZ * 16, generator, provider);
+                    small.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider);
                 }
             }
 
@@ -124,13 +121,13 @@ public class GregTechWorldGenerator implements IWorldGenerator {
                 for (int x = westX; x < eastX; x++) {
                     for (int z = northZ; z < southZ; z++) {
                         if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                            WorldGenOreLayer.worldGenFindVein(world, chunkX, chunkZ, x, z, generator, provider);
+                            WorldGenOreLayer.generate(world, chunkX, chunkZ, x, z, pos, null, generator, provider);
                         }
                     }
                 }
 
                 if (world.provider.getDimension() == Ref.END || world.provider.getDimension() == Ref.ASTEROIDS) {
-                    WorldGenLoader.ASTEROID_GEN.generate(world, rand, chunkX, chunkZ, generator, provider);
+                    WorldGenLoader.ASTEROID_GEN.generate(world, rand, chunkX, chunkZ, pos, null, generator, provider);
                 }
 
                 //if (Ref.debugWorldGen) GregTech.LOGGER.info("Oregen took " + (oreGenTime - leftOverTime) + " Leftover gen took " + (leftOverTime - startTime) + " Worldgen took " + duration + " ns");

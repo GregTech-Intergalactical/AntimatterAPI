@@ -13,35 +13,32 @@ public class WorldGenLoader {
 
     public static WorldGenAsteroid ASTEROID_GEN = new WorldGenAsteroid();
 
-    // This is probably not going to work.  Trying to create a fake orevein to put into hashtable when there will be no ores in a vein.
-    //public static WorldGenOreLayer noOresInVein = new WorldGenOreLayer( "NoOresInVein", 0, 255, 0, 255, 16, Aluminium, Aluminium, Aluminium, Aluminium);
-
     public static void init() {
         //TODO probably increase max generation heights for most things
         //TODO add GC dims to all objects
-        new WorldGenStone("granite_black_tiny", GRANITE_BLACK, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_black_small", GRANITE_BLACK, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_black_medium", GRANITE_BLACK, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_black_large", GRANITE_BLACK, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_black_huge", GRANITE_BLACK, 1, 400, 150, 0, 120, false, OVERWORLD);
+        new WorldGenStone("granite_black_tiny", GRANITE_BLACK, 1, 75, 5, 0, 180, OVERWORLD);
+        new WorldGenStone("granite_black_small", GRANITE_BLACK, 1, 100, 10, 0, 180, OVERWORLD);
+        new WorldGenStone("granite_black_medium", GRANITE_BLACK, 1, 200, 10, 0, 120, OVERWORLD);
+        new WorldGenStone("granite_black_large", GRANITE_BLACK, 1, 300, 70, 0, 120, OVERWORLD);
+        new WorldGenStone("granite_black_huge", GRANITE_BLACK, 1, 400, 150, 0, 120, OVERWORLD);
 
-        new WorldGenStone("granite_red_tiny", GRANITE_RED, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_red_small", GRANITE_RED, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("granite_red_medium", GRANITE_RED, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_red_large", GRANITE_RED, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("granite_red_huge", GRANITE_RED, 1, 400, 150, 0, 120, false, OVERWORLD);
+        new WorldGenStone("granite_red_tiny", GRANITE_RED, 1, 75, 5, 0, 180, OVERWORLD);
+        new WorldGenStone("granite_red_small", GRANITE_RED, 1, 100, 10, 0, 180, OVERWORLD);
+        new WorldGenStone("granite_red_medium", GRANITE_RED, 1, 200, 10, 0, 120, OVERWORLD);
+        new WorldGenStone("granite_red_large", GRANITE_RED, 1, 300, 70, 0, 120, OVERWORLD);
+        new WorldGenStone("granite_red_huge", GRANITE_RED, 1, 400, 150, 0, 120, OVERWORLD);
 
-        new WorldGenStone("marble_tiny", MARBLE, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("marble_small", MARBLE, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("marble_medium", MARBLE, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("marble_large", MARBLE, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("marble_huge", MARBLE, 1, 400, 150, 0, 120, false, OVERWORLD);
+        new WorldGenStone("marble_tiny", MARBLE, 1, 75, 5, 0, 180, OVERWORLD);
+        new WorldGenStone("marble_small", MARBLE, 1, 100, 10, 0, 180, OVERWORLD);
+        new WorldGenStone("marble_medium", MARBLE, 1, 200, 10, 0, 120, OVERWORLD);
+        new WorldGenStone("marble_large", MARBLE, 1, 300, 70, 0, 120, OVERWORLD);
+        new WorldGenStone("marble_huge", MARBLE, 1, 400, 150, 0, 120, OVERWORLD);
 
-        new WorldGenStone("basalt_tiny", BASALT, 1, 75, 5, 0, 180, false, OVERWORLD);
-        new WorldGenStone("basalt_small", BASALT, 1, 100, 10, 0, 180, false, OVERWORLD);
-        new WorldGenStone("basalt_medium", BASALT, 1, 200, 10, 0, 120, false, OVERWORLD);
-        new WorldGenStone("basalt_large", BASALT, 1, 300, 70, 0, 120, false, OVERWORLD);
-        new WorldGenStone("basalt_huge", BASALT, 1, 400, 150, 0, 120, false, OVERWORLD);
+        new WorldGenStone("basalt_tiny", BASALT, 1, 75, 5, 0, 180, OVERWORLD);
+        new WorldGenStone("basalt_small", BASALT, 1, 100, 10, 0, 180, OVERWORLD);
+        new WorldGenStone("basalt_medium", BASALT, 1, 200, 10, 0, 120, OVERWORLD);
+        new WorldGenStone("basalt_large", BASALT, 1, 300, 70, 0, 120, OVERWORLD);
+        new WorldGenStone("basalt_huge", BASALT, 1, 400, 150, 0, 120, OVERWORLD);
 
         new WorldGenOreLayer("naquadah", 10, 60, 10, 5, 32, Naquadah, Naquadah, Naquadah, NaquadahEnriched, END);
         new WorldGenOreLayer("lignite", 50, 130, 160, 8, 32, Lignite, Lignite, Lignite, Coal, OVERWORLD);
