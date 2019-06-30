@@ -1,7 +1,7 @@
 package muramasa.gtu.integration.ctx;
 
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.materials.IMaterialFlag;
+import muramasa.gtu.api.materials.IMaterialTag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.TextureSet;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -104,14 +104,14 @@ public class CTMaterial {
     }
 
     @ZenMethod
-    public CTMaterial addFlags(String... flagNames) {
-        material.add(IMaterialFlag.getFlagsFor(flagNames).toArray(new IMaterialFlag[0]));
+    public CTMaterial addTags(String... ids) {
+        material.add(IMaterialTag.getTags(ids).toArray(new IMaterialTag[0]));
         return this;
     }
 
     @ZenMethod
-    public CTMaterial removeFlags(String... flagNames) {
-        material.remove(IMaterialFlag.getFlagsFor(flagNames).toArray(new IMaterialFlag[0]));
+    public CTMaterial removeTags(String... ids) {
+        material.remove(IMaterialTag.getTags(ids).toArray(new IMaterialTag[0]));
         return this;
     }
 }

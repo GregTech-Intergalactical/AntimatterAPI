@@ -9,9 +9,7 @@ import muramasa.gtu.api.util.Utils;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MaterialType implements IMaterialFlag, IGregTechObject {
-
-    private static int LAST_INTERNAL_ID;
+public class MaterialType implements IMaterialTag, IGregTechObject {
 
     //Item Types
     public static MaterialType DUST = new MaterialType("dust", true);
@@ -58,15 +56,13 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
 
     private String id, namePre, namePost;
     private boolean doesGenerate, visible, hasLocName;
-    private long bit;
     private Set<Material> materials = new HashSet<>();
 
     public MaterialType(String id, boolean visible) {
         this.id = id;
         this.visible = visible;
-        bit = 1L << LAST_INTERNAL_ID++;
         doesGenerate = true;
-        GregTechAPI.register(MaterialType.class, this);
+        register(MaterialType.class, this);
     }
 
     public MaterialType(String id, boolean visible, boolean generatesItems) {
@@ -76,11 +72,6 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
 
     public String getId() {
         return id;
-    }
-
-    @Override
-    public long getBit() {
-        return bit;
     }
 
     @Override
@@ -108,6 +99,6 @@ public class MaterialType implements IMaterialFlag, IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && (material.getItemMask() & bit) != 0 && GregTechAPI.getReplacement(this, material) == null;
+        return doesGenerate && material.has(this) && GregTechAPI.getReplacement(this, material) == null;
     }
 }

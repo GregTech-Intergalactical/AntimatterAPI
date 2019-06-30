@@ -14,10 +14,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.MaterialTag.METAL;
+import static muramasa.gtu.api.materials.MaterialType.*;
 
 public class Material implements IGregTechObject {
 
@@ -25,13 +27,13 @@ public class Material implements IGregTechObject {
 
     public static final long M = 3628800;
 
-    private int internalId;
+    private int internalId; //TODO remove?
 
     /** Basic Members **/
-    private int rgb;
-    private long itemMask, recipeMask;
     private String id;
+    private int rgb;
     private TextureSet set;
+    private Set<IMaterialTag> tags;
 
     /** Element Members **/
     private Element element;
@@ -63,9 +65,10 @@ public class Material implements IGregTechObject {
     public Material(String id, int rgb, TextureSet set) {
         this.internalId = LAST_INTERNAL_ID++;
         this.id = id;
-        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         this.rgb = rgb;
         this.set = set;
+        this.tags = new HashSet<>();
+        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         GregTechAPI.register(Material.class, this);
     }
 
@@ -88,13 +91,13 @@ public class Material implements IGregTechObject {
         return getId();
     }
     
-    public Material asDust(IMaterialFlag... flags) {
-        return asDust(295, flags);
+    public Material asDust(IMaterialTag... tags) {
+        return asDust(295, tags);
     }
 
-    public Material asDust(int meltingPoint, IMaterialFlag... flags) {
+    public Material asDust(int meltingPoint, IMaterialTag... tags) {
         add(DUST, DUST_SMALL, DUST_TINY);
-        add(flags);
+        add(tags);
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 295) {
 //            asFluid();//TODO disabled due to Sodium having a fluid
@@ -102,12 +105,12 @@ public class Material implements IGregTechObject {
         return this;
     }
 
-    public Material asSolid(IMaterialFlag... flags) {
-        return asSolid(295, 0, flags);
+    public Material asSolid(IMaterialTag... tags) {
+        return asSolid(295, 0, tags);
     }
 
-    public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
-        asDust(meltingPoint, flags);
+    public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
+        asDust(meltingPoint, tags);
         add(INGOT, NUGGET, BLOCK, LIQUID); //TODO: Shall we generate blocks for every solid?
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
@@ -117,18 +120,18 @@ public class Material implements IGregTechObject {
         return this;
     }
 
-    public Material asMetal(IMaterialFlag... flags) {
-        return asMetal(295, 0, flags);
+    public Material asMetal(IMaterialTag... tags) {
+        return asMetal(295, 0, tags);
     }
 
-    public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialFlag... flags) {
-        asSolid(meltingPoint, blastFurnaceTemp, flags);
+    public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
+        asSolid(meltingPoint, blastFurnaceTemp, tags);
         add(METAL);
         return this;
     }
 
-    public Material asGemBasic(boolean transparent, IMaterialFlag... flags) {
-        asDust(flags);
+    public Material asGemBasic(boolean transparent, IMaterialTag... tags) {
+        asDust(tags);
         add(GEM, BLOCK);
         if (transparent) {
             this.transparent = true;
@@ -138,8 +141,8 @@ public class Material implements IGregTechObject {
     }
 
     //TODO: Shall we do gem variants?
-    public Material asGem(boolean transparent, IMaterialFlag... flags) {
-        asGemBasic(transparent, flags);
+    public Material asGem(boolean transparent, IMaterialTag... tags) {
+        asGemBasic(transparent, tags);
         add(GEM_CHIPPED, GEM_FLAWED, GEM_FLAWLESS, GEM_EXQUISITE);
         return this;
     }
@@ -195,40 +198,25 @@ public class Material implements IGregTechObject {
     	return addTools(toolSpeed, toolDurability, toolQuality);
     }
 
-    public boolean has(IMaterialFlag... flags) {
-        for (IMaterialFlag flag : flags) {
-            if (flag instanceof MaterialType) {
-                if ((itemMask & flag.getBit()) == 0) return false;
-            } else if (flag instanceof MaterialTag) {
-                if ((recipeMask & flag.getBit()) == 0) return false;
-            }
+    public boolean has(IMaterialTag... tags) {
+        for (IMaterialTag t : tags) {
+            if (!this.tags.contains(t)) return false;
         }
         return true;
     }
 
-    public void add(IMaterialFlag... flags) {
-        for (IMaterialFlag flag : flags) {
-            if (flag instanceof MaterialType) {
-                if (flag == ORE) {
-                    add(ORE_SMALL); //TODO this is temp for worldgen testing
-                    add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
-                }
-                itemMask |= flag.getBit();
-            } else if (flag instanceof MaterialTag) {
-                recipeMask |= flag.getBit();
-            }
-            if (!flag.getMats().contains(this)) flag.add(this);
+    public void add(IMaterialTag... tags) {
+        for (IMaterialTag t : tags) {
+            if (t == ORE) add(ORE_SMALL, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            this.tags.add(t);
+            t.add(this);
         }
     }
 
-    public void remove(IMaterialFlag... flags) {
-        for (IMaterialFlag flag : flags) {
-            if (flag instanceof MaterialType) {
-                itemMask &= ~flag.getBit();
-            } else if (flag instanceof MaterialTag) {
-                recipeMask &= ~flag.getBit();
-            }
-            flag.remove(this);
+    public void remove(IMaterialTag... tags) {
+        for (IMaterialTag t : tags) {
+            this.tags.remove(t);
+            t.remove(this);
         }
     }
 
@@ -264,20 +252,16 @@ public class Material implements IGregTechObject {
         return Utils.trans("material." + getId() + ".name");
     }
 
+    public Set<IMaterialTag> getTags() {
+        return tags;
+    }
+
     public int getRGB() {
         return rgb;
     }
 
     public TextureSet getSet() {
         return set;
-    }
-
-    public long getItemMask() {
-        return itemMask;
-    }
-
-    public long getRecipeMask() {
-        return recipeMask;
     }
 
     public long getDensity() {
