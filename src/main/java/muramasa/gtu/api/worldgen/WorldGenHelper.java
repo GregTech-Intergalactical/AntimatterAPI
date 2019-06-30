@@ -37,8 +37,7 @@ public class WorldGenHelper {
         world.setBlockState(pos, state, 2 | 16);
     }
 
-    public static boolean setStateOre(World world, int x, int y, int z, IBlockState ore) {
-        BlockPos pos = new BlockPos(x, y, z);
+    public static boolean setStateOre(World world, BlockPos pos, IBlockState ore) {
         IBlockState state = world.getBlockState(pos);
 
         if (state.getBlock() instanceof BlockStone) {
