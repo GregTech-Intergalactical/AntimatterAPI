@@ -4,20 +4,16 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.IMaterialFlag;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialStack;
 import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 
 import static muramasa.gtu.api.data.RecipeMaps.*;
-import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.MaterialTag.*;
+import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.common.Data.*;
 
 //TODO EXCLUDED FROM COMPILE
@@ -287,52 +283,55 @@ public class MaterialRecipeLoader {
 //            }
         });
 
-        IMaterialFlag.getMatsFor(ELEC, CENT).forEach(m -> {
-            int inputCount = 0;
-            int inputCellCount = 0;
-
-            ArrayList<ItemStack> outputs = new ArrayList<>();
-            FluidStack firstFluid = null; //The first FLUID MatStack (LIQUID/GAS & !Dust tag combo) uses the Electrolyzers fluid input tack. The preceding are cells.
-
-            Material process;
-            for (MaterialStack stack : m.getProcessInto()) {
-                process = stack.m;
-                if ((process.has(LIQUID) || process.has(GAS)) && !process.has(DUST)) {
-                    if (firstFluid == null) {
-                        if (process.getLiquid() != null) { //If a Material has mFluid & mGas, Prioritise mFluid.
-                            firstFluid = process.getLiquid(stack.s * 1000);
-                        } else {
-                            firstFluid = process.getGas(stack.s * 1000);
-                        }
-                    } else {
-                        outputs.add(process.has(LIQUID) ? process.getCell(stack.s) : process.getCellGas(stack.s));
-                        inputCellCount += stack.s;
-                    }
-                } else {
-                    outputs.add(process.getDust(stack.s));
-                }
-                inputCount += stack.s;
-            }
-            inputCount = Math.min(inputCount, 64); //This should not happen. This means process total is over 64 and the recipe should be adjusted
-            if (outputs.size() > 0) {
-                ItemStack input;
-                if (m.has(LIQUID) && !m.has(DUST)){
-                    input = m.getCell(inputCount);
-                } else if (m.has(GAS) && !m.has(DUST)) {
-                    input = m.getCellGas(inputCount);
-                } else {
-                    input = m.getDust(inputCount);
-                }
-                ItemStack inputCell = inputCellCount > 0 ? CellTin.get(inputCellCount) : ItemStack.EMPTY;
-                if (m.has(ELEC)) {
-                    ELECTROLYZING.RB().ii(input, inputCell).fi(firstFluid).io(outputs.toArray(new ItemStack[0])).add(Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
-                    //RecipeAdder.addElectrolyzerRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
-                } else if (m.has(CENT)) {
-                    CENTRIFUGING.RB().ii(input, inputCell).fi(firstFluid).io(outputs.toArray(new ItemStack[0])).add(Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
-                    //RecipeAdder.addCentrifugeRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
-                }
-            }
-        });
+//        IMaterialFlag.getMatsFor(ELEC, CENT).forEach(m -> {
+//            int inputCount = 0;
+//            int inputCellCount = 0;
+//
+//            ArrayList<ItemStack> outputs = new ArrayList<>();
+//            FluidStack firstFluid = null; //The first FLUID MatStack (LIQUID/GAS & !Dust tag combo) uses the Electrolyzers fluid input tack. The preceding are cells.
+//
+//            Material process;
+//            for (MaterialStack stack : m.getProcessInto()) {
+//                process = stack.m;
+//                if ((process.has(LIQUID) || process.has(GAS)) && !process.has(DUST)) {
+//                    if (firstFluid == null) {
+//                        if (process.getLiquid() != null) { //If a Material has mFluid & mGas, Prioritise mFluid.
+//                            firstFluid = process.getLiquid(stack.s * 1000);
+//                        } else {
+//                            firstFluid = process.getGas(stack.s * 1000);
+//                        }
+//                    } else {
+//                        outputs.add(process.has(LIQUID) ? process.getCell(stack.s) : process.getCellGas(stack.s));
+//                        inputCellCount += stack.s;
+//                    }
+//                } else {
+//                    outputs.add(process.getDust(stack.s));
+//                }
+//                inputCount += stack.s;
+//            }
+//            inputCount = Math.min(inputCount, 64); //This should not happen. This means process total is over 64 and the recipe should be adjusted
+//            if (outputs.size() > 0) {
+//                ItemStack input;
+//                if (m.has(LIQUID) && !m.has(DUST)){
+//                    input = m.getCell(inputCount);
+//                } else if (m.has(GAS) && !m.has(DUST)) {
+//                    input = m.getCellGas(inputCount);
+//                } else {
+//                    input = m.getDust(inputCount);
+//                }
+//                ItemStack inputCell = inputCellCount > 0 ? CellTin.get(inputCellCount) : ItemStack.EMPTY;
+//                if (m.has(ELEC)) {
+//                    if (Utils.areItemsValid(input, inputCell)) {
+//                        System.out.println("oh no");
+//                    }
+//                    ELECTROLYZING.RB().ii(input, inputCell).fi(firstFluid).io(outputs.toArray(new ItemStack[0])).add(Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
+//                    //RecipeAdder.addElectrolyzerRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getProtons() * 2 * inputCellCount)), Math.min(4, outputs.size()) * 30);
+//                } else if (m.has(CENT)) {
+//                    CENTRIFUGING.RB().ii(input, inputCell).fi(firstFluid).io(outputs.toArray(new ItemStack[0])).add(Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
+//                    //RecipeAdder.addCentrifugeRecipe(input, inputCell, null, firstFluid, outputs.size() < 1 ? null : outputs.get(0), outputs.size() < 2 ? null : outputs.get(1), outputs.size() < 3 ? null : outputs.get(2), outputs.size() < 4 ? null : outputs.get(3), outputs.size() < 5 ? null : outputs.get(4), outputs.size() < 6 ? null : outputs.get(5), null, Math.max(1, Math.abs(m.getMass() * 4 * inputCellCount)), Math.min(4, outputs.size()) * 5);
+//                }
+//            }
+//        });
 
         NUGGET.getMats().forEach(m -> {
             if (m.has(LIQUID)) {

@@ -217,7 +217,7 @@ public class Material implements IGregTechObject {
             } else if (flag instanceof MaterialTag) {
                 recipeMask |= flag.getBit();
             }
-            flag.add(this);
+            if (!flag.getMats().contains(this)) flag.add(this);
         }
     }
 
