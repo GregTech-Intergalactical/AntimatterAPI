@@ -7,9 +7,10 @@ import muramasa.gtu.api.registration.RegistrationEvent;
 import net.minecraft.item.ItemStack;
 
 import static muramasa.gtu.api.data.Materials.*;
+import static muramasa.gtu.api.materials.MaterialTag.*;
+import static muramasa.gtu.api.materials.MaterialTag.CRYSTALLIZE;
 import static muramasa.gtu.api.materials.MaterialType.ORE;
 import static muramasa.gtu.api.materials.TextureSet.DIAMOND;
-import static muramasa.gtu.api.materials.MaterialTag.*;
 
 public class ForestryRegistrar implements IGregTechRegistrar {
 
@@ -28,8 +29,6 @@ public class ForestryRegistrar implements IGregTechRegistrar {
         switch (event) {
             case MATERIAL:
                 Apatite = new Material("apatite", 0xc8c8ff, DIAMOND).asGemBasic(false, ORE).add(Calcium, 5, Phosphate, 3, Chlorine, 1);
-                break;
-            case MATERIAL_INIT:
                 ELEC.add(Apatite);
                 NOSMELT.add(Apatite);
                 NOSMASH.add(Apatite);

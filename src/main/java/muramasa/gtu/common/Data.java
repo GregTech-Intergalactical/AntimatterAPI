@@ -1,27 +1,18 @@
 package muramasa.gtu.common;
 
 import muramasa.gtu.Configs;
-import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.*;
+import muramasa.gtu.api.blocks.BlockCasing;
+import muramasa.gtu.api.blocks.BlockCoil;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
 import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.items.ItemFluidCell;
-import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.pipe.PipeSize;
-import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Mod.EventBusSubscriber
 public class Data {
@@ -30,23 +21,6 @@ public class Data {
 
     public static void init() {
 
-        //Items
-        List<MaterialType> types = GregTechAPI.all(MaterialType.class);
-        List<Material> materials = GregTechAPI.all(Material.class);
-        types.forEach(t -> materials.forEach(m -> {
-            if (t.allowGeneration(m)) new MaterialItem(t, m);
-        }));
-
-        Arrays.stream(ToolType.VALUES).forEach(ToolType::instantiate);
-
-        //Blocks
-        MaterialType.ORE.getMats().forEach(BlockOre::new);
-        MaterialType.ORE_SMALL.getMats().forEach(BlockOreSmall::new);
-        MaterialType.BLOCK.getMats().forEach(BlockStorage::new);
-
-        GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
-
-        StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
     }
 
     public static StandardItem DebugScanner = new StandardItem("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
