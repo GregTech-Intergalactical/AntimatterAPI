@@ -1,14 +1,16 @@
 package muramasa.gtu;
 
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.GTItemBlock;
+import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.data.Guis;
-import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.data.Structures;
+import muramasa.gtu.api.data.*;
+import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.machines.types.Machine;
+import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.registration.RegistrationEvent;
+import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.worldgen.GregTechWorldGenerator;
 import muramasa.gtu.common.Data;
@@ -35,6 +37,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 @Mod(modid = Ref.MODID, name = Ref.NAME, version = Ref.VERSION, dependencies = Ref.DEPENDS, useMetadata = true)
 public class GregTech {
@@ -67,13 +71,22 @@ public class GregTech {
 
         new GregTechWorldGenerator(new File(e.getModConfigurationDirectory(), "GregTech/"));
 
-        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
-        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);
-
+        Data.init();
         Machines.init();
         Guis.init();
         Structures.init();
-        Data.init();
+
+        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
+        GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e) {
+        PROXY.init(e);
+
+        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);
+
+        if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
 
         Ref.TAB_ITEMS.setStack(Data.DebugScanner.get(1));
         Ref.TAB_MATERIALS.setStack(Materials.Aluminium.getIngot(1));
@@ -82,21 +95,21 @@ public class GregTech {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent e) {
-        PROXY.init(e);
-        if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
-        GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
-        GregTechWorldGenerator.handleJSON();
-    }
-
-    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         PROXY.postInit(e);
+        GregTechAPI.onRegistration(RegistrationEvent.DATA);
+        GregTechWorldGenerator.init();
         GregTechAPI.onRegistration(RegistrationEvent.RECIPE);
     }
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> e) {
+        List<MaterialType> types = GregTechAPI.all(MaterialType.class);
+        List<Material> materials = GregTechAPI.all(Material.class);
+        types.forEach(t -> materials.forEach(m -> {
+            if (t.allowGeneration(m)) new MaterialItem(t, m);
+        }));
+        Arrays.stream(ToolType.VALUES).forEach(ToolType::instantiate);
         GregTechAPI.ITEMS.forEach(i -> e.getRegistry().register(i));
         GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(new GTItemBlock(b)));
         GregTechAPI.onRegistration(RegistrationEvent.ITEM);
@@ -104,6 +117,11 @@ public class GregTech {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> e) {
+        MaterialType.ORE.getMats().forEach(BlockOre::new);
+        MaterialType.ORE_SMALL.getMats().forEach(BlockOreSmall::new);
+        MaterialType.BLOCK.getMats().forEach(BlockStorage::new);
+        GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
+        StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
         GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(b));
         GregTechAPI.TILES.forEach(c -> GameRegistry.registerTileEntity(c, new ResourceLocation(Ref.MODID, c.getName())));
     }

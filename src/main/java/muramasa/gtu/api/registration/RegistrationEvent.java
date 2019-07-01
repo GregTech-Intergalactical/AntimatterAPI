@@ -4,7 +4,8 @@ public enum RegistrationEvent {
 
     ITEM,
     MATERIAL,
-    MATERIAL_INIT,
     WORLDGEN,
+    MATERIAL_INIT,
+    DATA,
     RECIPE
 }

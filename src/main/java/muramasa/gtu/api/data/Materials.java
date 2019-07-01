@@ -12,8 +12,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.gtu.api.materials.Element.*;
-import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.MaterialTag.*;
+import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.TextureSet.*;
 
 public class Materials {
@@ -404,25 +404,7 @@ public class Materials {
     public static Material HighPressure = new Material("high_pressure", 0xc80000, NONE);
     public static Material PlasmaContainment = new Material("plasma_containment", 0xffff00, NONE);
 
-//    public static void init() {
-//        for (Material material : generated) {
-//            if (material == Blaze) {
-//                material.handleMaterial = "blaze";
-//            } /*else if (aMaterial.contains(SubTag.MAGICAL) && aMaterial.contains(SubTag.CRYSTAL) && Utils.isModLoaded(MOD_ID_TC)) {
-//                    aMaterial.mHandleMaterial = Thaumium;
-//                }*/ else if (material.getMass() > Element.Tc.getMass() * 2) {
-//                material.handleMaterial = Tungstensteel.;
-//            } else if (material.getMass() > Element.Tc.getMass()) {
-//                material.handleMaterial = Steel;
-//            } else {
-//                material.handleMaterial = Wood;
-//            }
-//        }
-//    }
-
-    public static void init() {
-        //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
-
+    static {
         if (Configs.DATA.ENABLE_ITEM_REPLACEMENTS) {
             GregTechAPI.addReplacement(INGOT, Iron, new ItemStack(Items.IRON_INGOT));
             GregTechAPI.addReplacement(INGOT, Gold, new ItemStack(Items.GOLD_INGOT));
@@ -440,7 +422,6 @@ public class Materials {
             GregTechAPI.addReplacement(BLOCK, Diamond, new ItemStack(Blocks.DIAMOND_BLOCK));
             GregTechAPI.addReplacement(ROD, Wood, new ItemStack(Items.STICK));
         }
-
         ELECSEPI.add(Bastnasite/*, Monazite*/);
         ELECSEPG.add(Magnetite, VanadiumMagnetite);
         ELECSEPN.add(YellowLimonite, BrownLimonite, Pyrite, BandedIron, Nickel, Glauconite, Pentlandite, Tin, Antimony, Ilmenite, Manganese, Chrome, Andradite);
@@ -670,12 +651,29 @@ public class Materials {
 
         Materials.Water.setLiquid(FluidRegistry.WATER);
         Materials.Lava.setLiquid(FluidRegistry.LAVA);
+    }
+
+    //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
+    public static void init() {
+//                for (Material material : generated) {
+//            if (material == Blaze) {
+//                material.handleMaterial = "blaze";
+//            } /*else if (aMaterial.contains(SubTag.MAGICAL) && aMaterial.contains(SubTag.CRYSTAL) && Utils.isModLoaded(MOD_ID_TC)) {
+//                    aMaterial.mHandleMaterial = Thaumium;
+//                }*/ else if (material.getMass() > Element.Tc.getMass() * 2) {
+//                material.handleMaterial = Tungstensteel.;
+//            } else if (material.getMass() > Element.Tc.getMass()) {
+//                material.handleMaterial = Steel;
+//            } else {
+//                material.handleMaterial = Wood;
+//            }
+//        }
 
         LIQUID.getMats().forEach(m -> m.setLiquid(new GTFluid(m, LIQUID)));
         GAS.getMats().forEach(m -> m.setGas(new GTFluid(m, GAS)));
         PLASMA.getMats().forEach(m -> m.setPlasma(new GTFluid(m, PLASMA)));
         
-        GregTechAPI.all(Material.class).forEach(m -> m.setChemicalFormula());
+        GregTechAPI.all(Material.class).forEach(Material::setChemicalFormula);
     }
 
     public static Material get(String name) {

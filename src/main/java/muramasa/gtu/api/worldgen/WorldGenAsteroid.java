@@ -29,8 +29,8 @@ public class WorldGenAsteroid extends WorldGenBase {
     private static int gcMaxSize = 400;
     private static int mGCAsteroidProbability = 50;
 
-    private static IBlockState END_STONE_STATE = Blocks.END_STONE.getDefaultState();
-    private static IBlockState GRANITE_RED_STATE = GregTechAPI.get(BlockStone.class, StoneType.GRANITE_RED.getId()).getDefaultState();
+    private static IBlockState END_STONE_STATE = null;
+    private static IBlockState GRANITE_RED_STATE = null;
 
     public WorldGenAsteroid() {
         super("asteroid");
@@ -38,6 +38,8 @@ public class WorldGenAsteroid extends WorldGenBase {
 
     @Override
     public WorldGenBase build() {
+        END_STONE_STATE = Blocks.END_STONE.getDefaultState();
+        GRANITE_RED_STATE = GregTechAPI.get(BlockStone.class, StoneType.GRANITE_RED.getId()).getDefaultState();
         return this;
     }
 

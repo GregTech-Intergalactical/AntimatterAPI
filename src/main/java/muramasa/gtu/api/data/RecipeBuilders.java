@@ -15,13 +15,13 @@ public class RecipeBuilders {
         public static ItemStack[] FUELS;
 
         static {
-            GregTechAPI.onEvent(RegistrationEvent.MATERIAL_INIT, () -> FUELS = new ItemStack[] {
-//                Materials.Coal.getGem(1),
-//                Materials.Coal.getDust(1),
-//                Materials.Charcoal.getGem(1),
-//                Materials.Charcoal.getDust(1),
-//                Materials.CoalCoke.getGem(1),
-//                Materials.LigniteCoke.getGem(1)
+            GregTechAPI.onEvent(RegistrationEvent.DATA, () -> FUELS = new ItemStack[] {
+                Materials.Coal.getGem(1),
+                Materials.Coal.getDust(1),
+                Materials.Charcoal.getGem(1),
+                Materials.Charcoal.getDust(1),
+                Materials.CoalCoke.getGem(1),
+                Materials.LigniteCoke.getGem(1)
             });
         }
 
