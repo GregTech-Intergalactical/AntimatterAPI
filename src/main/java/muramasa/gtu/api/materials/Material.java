@@ -14,8 +14,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static muramasa.gtu.api.materials.MaterialTag.METAL;
@@ -23,17 +21,16 @@ import static muramasa.gtu.api.materials.MaterialType.*;
 
 public class Material implements IGregTechObject {
 
-    private static int LAST_INTERNAL_ID;
+    private static int LAST_INTERNAL_ID; //TODO remove
 
     public static final long M = 3628800;
 
-    private int internalId; //TODO remove?
+    private int internalId; //TODO remove
 
     /** Basic Members **/
     private String id;
     private int rgb;
     private TextureSet set;
-    private Set<IMaterialTag> tags;
 
     /** Element Members **/
     private Element element;
@@ -67,7 +64,6 @@ public class Material implements IGregTechObject {
         this.id = id;
         this.rgb = rgb;
         this.set = set;
-        this.tags = new HashSet<>();
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         GregTechAPI.register(Material.class, this);
     }
@@ -200,7 +196,7 @@ public class Material implements IGregTechObject {
 
     public boolean has(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (!this.tags.contains(t)) return false;
+            if (!t.getMats().contains(this)) return false;
         }
         return true;
     }
@@ -208,14 +204,12 @@ public class Material implements IGregTechObject {
     public void add(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
             if (t == ORE) add(ORE_SMALL, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
-            this.tags.add(t);
             t.add(this);
         }
     }
 
     public void remove(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            this.tags.remove(t);
             t.remove(this);
         }
     }
@@ -250,10 +244,6 @@ public class Material implements IGregTechObject {
     /** Basic Getters**/
     public String getDisplayName() {
         return Utils.trans("material." + getId() + ".name");
-    }
-
-    public Set<IMaterialTag> getTags() {
-        return tags;
     }
 
     public int getRGB() {
