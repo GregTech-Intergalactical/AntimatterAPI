@@ -18,17 +18,13 @@ public interface IMaterialTag {
 
     default void add(Material... m) {
         for (int i = 0; i < m.length; i++) {
-            if (!getMats().contains(m[i])) {
-                getMats().add(m[i]);
-                m[i].add(this);
-            }
+            getMats().add(m[i]);
         }
     }
 
     default void remove(Material... m) {
         for (int i = 0; i < m.length; i++) {
             getMats().remove(m[i]);
-            m[i].add(this);
         }
     }
 
