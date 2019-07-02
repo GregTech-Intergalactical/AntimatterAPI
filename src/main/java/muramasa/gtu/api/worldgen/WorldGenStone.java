@@ -1,12 +1,14 @@
 package muramasa.gtu.api.worldgen;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.properties.GTProperties;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +21,7 @@ public class WorldGenStone extends WorldGenBase {
     private static final double SIZE_CONVERSION[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
 
     @Expose public String type;
-    @Expose public int amount, size, probability, minY, maxY;
+    @Expose public int minY, maxY, amount, size, probability;
 
     public BlockStone block;
     public IBlockState stone;
@@ -36,9 +38,22 @@ public class WorldGenStone extends WorldGenBase {
     }
 
     @Override
+    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
+        super.onDataOverride(dataMap);
+        if (dataMap.containsKey("type")) type = Utils.parseString(dataMap.get("type"), type);
+        if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
+        if (dataMap.containsKey("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
+        if (dataMap.containsKey("amount")) amount = Utils.parseInt(dataMap.get("amount"), amount);
+        if (dataMap.containsKey("size")) size = Utils.parseInt(dataMap.get("size"), size);
+        if (dataMap.containsKey("probability")) probability = Utils.parseInt(dataMap.get("probability"), probability);
+        return this;
+    }
+
+    @Override
     public WorldGenBase build() {
+        super.build();
         this.block = GregTechAPI.get(BlockStone.class, type);
-        if (block == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " was given a null block");
+        if (block == null) throw new IllegalArgumentException("WorldGenOreLayer - " + getId() + ": was given a invalid stone type");
         this.stone = block.getDefaultState();
         this.CHECKED_SEEDS = new LongOpenHashSet();
         return this;

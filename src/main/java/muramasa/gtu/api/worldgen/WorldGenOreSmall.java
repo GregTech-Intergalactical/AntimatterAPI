@@ -1,9 +1,11 @@
 package muramasa.gtu.api.worldgen;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.internal.LinkedTreeMap;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockOreSmall;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -13,7 +15,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class WorldGenOreSmall extends WorldGenBase {
 
-    @Expose private String primary;
+    private String primary;
     @Expose private int minY, maxY, amount;
 
     private BlockOreSmall block;
@@ -28,9 +30,19 @@ public class WorldGenOreSmall extends WorldGenBase {
     }
 
     @Override
+    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
+        super.onDataOverride(dataMap);
+        if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
+        if (dataMap.containsKey("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
+        if (dataMap.containsKey("amount")) amount = Utils.parseInt(dataMap.get("amount"), amount);
+        return this;
+    }
+
+    @Override
     public WorldGenBase build() {
+        super.build();
         this.block = GregTechAPI.get(BlockOreSmall.class, "small_" + primary);
-        if (block == null) throw new IllegalArgumentException("WorldGenOreSmall: " + getId() + " " + primary + " does not have the ORE_SMALL tag");
+        if (block == null) throw new IllegalArgumentException("WorldGenOreSmall - " + getId() + ": " + primary + " does not have the ORE_SMALL tag");
         this.oreSmall = block.getDefaultState();
         return this;
     }

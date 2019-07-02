@@ -46,14 +46,14 @@ public class WorldGenAsteroid extends WorldGenBase {
     @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, IBlockState state, IChunkGenerator generator, IChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
-            List<WorldGenOreLayer> layers = GregTechWorldGenerator.getLayers(world.provider.getDimension());
+            List<WorldGenOreVein> layers = GregTechWorldGenerator.getVeins(world.provider.getDimension());
             int layerCount = layers.size();
-            WorldGenOreLayer layerToGen = null;
-            if (WorldGenOreLayer.getTotalWeight() > 0 && layerCount > 0) {
+            WorldGenOreVein layerToGen = null;
+            if (WorldGenOreVein.TOTAL_WEIGHT > 0 && layerCount > 0) {
                 int randomWeight;
-                WorldGenOreLayer layer;
+                WorldGenOreVein layer;
                 for (int i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS; i++) {
-                    randomWeight = rand.nextInt(WorldGenOreLayer.getTotalWeight());
+                    randomWeight = rand.nextInt(WorldGenOreVein.TOTAL_WEIGHT);
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);
                         randomWeight -= layer.getWeight();
@@ -121,7 +121,7 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             } else if (ranOre < 10) {
                                                 WorldGenHelper.setStateOre(world, pos, layerToGen.getState(3, false));
                                             } else {
-                                                if (world.provider.getDimension() == -30) {
+                                                if (world.provider.getDimension() == Ref.ASTEROIDS) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);
                                                 } else {
                                                     WorldGenHelper.setState(world, pos, END_STONE_STATE);
