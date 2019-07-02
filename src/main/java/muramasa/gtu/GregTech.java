@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -69,7 +70,9 @@ public class GregTech {
         OreGenHandler.init();
         MinecraftForge.EVENT_BUS.register(this);
 
-        new GregTechWorldGenerator(new File(e.getModConfigurationDirectory(), "GregTech/"));
+        Ref.CONFIG = new File(e.getModConfigurationDirectory(), "GregTech/");
+
+        new GregTechWorldGenerator();
 
         Data.init();
         Machines.init();
@@ -99,7 +102,13 @@ public class GregTech {
         PROXY.postInit(e);
         GregTechAPI.onRegistration(RegistrationEvent.DATA);
         GregTechWorldGenerator.init();
+        if (!Ref.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
         GregTechAPI.onRegistration(RegistrationEvent.RECIPE);
+    }
+
+    @Mod.EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent e) {
+        if (Ref.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
     }
 
     @SubscribeEvent

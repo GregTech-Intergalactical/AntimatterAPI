@@ -1,7 +1,10 @@
 package muramasa.gtu.api.worldgen;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.util.XSTR;
 import muramasa.gtu.loaders.WorldGenLoader;
@@ -12,8 +15,10 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.lang.reflect.Type;
+import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -22,74 +27,106 @@ import java.util.*;
  * **/
 public class GregTechWorldGenerator implements IWorldGenerator {
 
-    private static File CONFIG_DIR;
+    private static HashMap<String, HashMap<String, WorldGenBase>> REGISTRY = new HashMap<>();
+    private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
+    private static ImmutableMap<String, Class<?>> TYPE = ImmutableMap.of("vein", WorldGenOreVein.class, "small", WorldGenOreSmall.class, "stone", WorldGenStone.class);
 
-    private static HashMap<String, Set<WorldGenBase>> WORLD_GEN_REGISTRY = new HashMap<>();
-    private static HashMap<String, Type> TYPE_REGISTRY = new HashMap<>();
-
-    public static Int2ObjectArrayMap<List<WorldGenOreLayer>> LAYER = new Int2ObjectArrayMap<>();
+    private static Int2ObjectArrayMap<List<WorldGenOreVein>> LAYER = new Int2ObjectArrayMap<>();
     private static Int2ObjectArrayMap<List<WorldGenOreSmall>> SMALL = new Int2ObjectArrayMap<>();
     private static Int2ObjectArrayMap<List<WorldGenStone>> STONE = new Int2ObjectArrayMap<>();
 
     static {
-        WORLD_GEN_REGISTRY.put("worldgen_ore_layer", new HashSet<>());
-        WORLD_GEN_REGISTRY.put("worldgen_ore_small", new HashSet<>());
-        WORLD_GEN_REGISTRY.put("worldgen_stone", new HashSet<>());
-        TYPE_REGISTRY.put("worldgen_ore_layer", new TypeToken<List<WorldGenOreLayer>>(){}.getType());
-        TYPE_REGISTRY.put("worldgen_ore_small", new TypeToken<List<WorldGenOreSmall>>(){}.getType());
-        TYPE_REGISTRY.put("worldgen_stone", new TypeToken<List<WorldGenStone>>(){}.getType());
+        //veins, singles, stones
+        REGISTRY.put("vein", new HashMap<>());
+        REGISTRY.put("small", new HashMap<>());
+        REGISTRY.put("stone", new HashMap<>());
     }
 
-    public GregTechWorldGenerator(File file) {
-        CONFIG_DIR = file;
+    public GregTechWorldGenerator() {
         GameRegistry.registerWorldGenerator(this, 1073741823);
     }
 
     public static void register(WorldGenBase worldGen) {
-        if (worldGen instanceof WorldGenOreLayer) WORLD_GEN_REGISTRY.get("worldgen_ore_layer").add(worldGen);
-        if (worldGen instanceof WorldGenOreSmall) WORLD_GEN_REGISTRY.get("worldgen_ore_small").add(worldGen);
-        if (worldGen instanceof WorldGenStone) WORLD_GEN_REGISTRY.get("worldgen_stone").add(worldGen);
+        if (worldGen instanceof WorldGenOreVein) REGISTRY.get("vein").put(worldGen.getId(), worldGen);
+        if (worldGen instanceof WorldGenOreSmall) REGISTRY.get("small").put(worldGen.getId(), worldGen);
+        if (worldGen instanceof WorldGenStone) REGISTRY.get("stone").put(worldGen.getId(), worldGen);
     }
 
     public static void init() {
         try {
-//            //Generate default data
-//            Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-//            File defaultData = new File(CONFIG_DIR, "WorldGenerationDefault.json");
-//            if (!defaultData.exists()) CONFIG_DIR.createNewFile();
-//            BufferedWriter br = new BufferedWriter(new FileWriter(defaultData));
-//            gson.toJson(WORLD_GEN_REGISTRY, br);
-//            br.close();
-//
-//            //Check for override data
-//            String jsonData = new String(Files.readAllBytes(new File(CONFIG_DIR, "WorldGenerationOverride.json").toPath()));
-//            HashMap<String, HashSet> dataMap = gson.fromJson(jsonData, new TypeToken<HashMap<String, HashSet>>(){}.getType());
-//            if (dataMap != null) { //Some override data is present, inject into WORLD_GEN_REGISTRY
-//                WORLD_GEN_REGISTRY.forEach((k, v) -> dataMap.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
-//                    List<WorldGenBase> list = gson.fromJson(gson.toJsonTree(e.getValue()).getAsJsonArray(), TYPE_REGISTRY.get(k));
-//                    list.forEach(w -> {
-//                        v.remove(w); v.add(w);
-//                    });
-//                }));
-//            }
+            //Write default data
+            File defaultFile = new File(Ref.CONFIG, "WorldGenerationDefault.json");
+            if (!defaultFile.exists()) defaultFile.createNewFile();
+            BufferedWriter br = new BufferedWriter(new FileWriter(defaultFile));
+            Ref.GSON.toJson(REGISTRY, br);
+            br.close();
 
-            WORLD_GEN_REGISTRY.get("worldgen_ore_layer").forEach(w -> w.getDimensions().forEach(d -> {
-                if (w.isEnabled()) LAYER.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreLayer) w.build());
-            }));
-            WORLD_GEN_REGISTRY.get("worldgen_ore_small").forEach(w -> w.getDimensions().forEach(d -> {
-                if (w.isEnabled()) SMALL.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
-            }));
-            WORLD_GEN_REGISTRY.get("worldgen_stone").forEach(w -> w.getDimensions().forEach(d -> {
-                if (w.isEnabled()) STONE.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
-            }));
+            //Generate default data
+            String defaultData = new String(Files.readAllBytes(defaultFile.toPath()));
+            DEFAULT_DATA = Ref.GSON.fromJson(defaultData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("GregTechWorldGenerator caught an exception when handling json");
+            throw new RuntimeException("GregTechWorldGenerator caught an exception while initializing");
         }
     }
 
-    public static List<WorldGenOreLayer> getLayers(int dimension) {
+    public static void reload() {
+        try {
+            GregTech.LOGGER.info("GregTechWorldGenerator: Started data rebuild!");
+            //Clear compiled maps
+            LAYER.clear(); SMALL.clear(); STONE.clear();
+
+            //Remove custom data
+            REGISTRY.forEach((k, v) -> v.entrySet().removeIf(e -> e.getValue().isCustom()));
+
+            //Inject default data
+            REGISTRY.forEach((k, v) -> DEFAULT_DATA.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
+                e.getValue().forEach((i, j) -> v.get(i).onDataOverride((LinkedTreeMap) j));
+            }));
+
+            //Check for override data
+            String jsonData = new String(Files.readAllBytes(new File(Ref.CONFIG, "WorldGenerationOverride.json").toPath()));
+            HashMap<String, HashMap<String, Object>> dataMap = Ref.GSON.fromJson(jsonData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
+            if (dataMap != null) {
+                //Inject override data
+                REGISTRY.forEach((k, v) -> dataMap.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
+                    e.getValue().forEach((i, j) -> {
+                        if (v.containsKey(i)) v.get(i).onDataOverride((LinkedTreeMap) j);
+                        else v.put(i, ((WorldGenBase) Ref.GSON.fromJson(Ref.GSON.toJsonTree(j).getAsJsonObject(), TYPE.get(k))).asCustom());
+                    });
+                }));
+            }
+
+            WorldGenOreVein.TOTAL_WEIGHT = 0;
+            WorldGenOreVein.VALID_VEINS.clear();
+
+            //Rebuild compiled maps
+            REGISTRY.get("vein").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
+                LAYER.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreVein) w.build());
+            }));
+            REGISTRY.get("small").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
+                SMALL.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
+            }));
+            REGISTRY.get("stone").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
+                STONE.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
+            }));
+            GregTech.LOGGER.info("GregTechWorldGenerator: Finished data rebuild!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("GregTechWorldGenerator caught an exception while reloading");
+        }
+    }
+
+    public static List<WorldGenOreVein> getVeins(int dimension) {
         return LAYER.get(dimension);
+    }
+
+    public static List<WorldGenOreSmall> getSmalls(int dimension) {
+        return SMALL.get(dimension);
+    }
+
+    public static List<WorldGenStone> getStones(int dimension) {
+        return STONE.get(dimension);
     }
 
     @Override
@@ -121,7 +158,7 @@ public class GregTechWorldGenerator implements IWorldGenerator {
                 for (int x = westX; x < eastX; x++) {
                     for (int z = northZ; z < southZ; z++) {
                         if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                            WorldGenOreLayer.generate(world, chunkX, chunkZ, x, z, pos, null, generator, provider);
+                            WorldGenOreVein.generate(world, chunkX, chunkZ, x, z, pos, null, generator, provider);
                         }
                     }
                 }

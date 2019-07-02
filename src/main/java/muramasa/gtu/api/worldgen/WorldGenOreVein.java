@@ -1,6 +1,7 @@
 package muramasa.gtu.api.worldgen;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
@@ -8,6 +9,7 @@ import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockOreSmall;
 import muramasa.gtu.api.data.StoneType;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +20,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 import java.util.List;
 
-public class WorldGenOreLayer extends WorldGenBase {
+public class WorldGenOreVein extends WorldGenBase {
 
     private static final int WRONG_BIOME = 0;
     private static final int WRONG_DIMENSION = 1;
@@ -27,18 +29,18 @@ public class WorldGenOreLayer extends WorldGenBase {
     private static final int ORE_PLACED = 4;
     private static final int NO_OVERLAP_AIR_BLOCK = 5;
 
-    private  static int TOTAL_WEIGHT;
+    public static int TOTAL_WEIGHT;
 
-    private static Long2ObjectArrayMap<WorldGenOreLayer> VALID_VEINS = new Long2ObjectArrayMap<>(1024);
+    public static Long2ObjectArrayMap<WorldGenOreVein> VALID_VEINS = new Long2ObjectArrayMap<>();
 
-    @Expose private int minY, maxY, weight, density, size;
     @Expose private String primary, secondary, between, sporadic;
+    @Expose private int minY, maxY, weight, density, size;
 
     private int primaryId; //TODO remove
 
     private IBlockState[] ore, oreSmall;
 
-    public WorldGenOreLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, int... dimensions) {
+    public WorldGenOreVein(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, int... dimensions) {
         super(id, dimensions);
         this.minY = minY;
         this.maxY = maxY;
@@ -52,26 +54,43 @@ public class WorldGenOreLayer extends WorldGenBase {
     }
 
     @Override
+    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
+        super.onDataOverride(dataMap);
+        if (dataMap.containsKey("primary")) primary = Utils.parseString(dataMap.get("primary"), primary);
+        if (dataMap.containsKey("secondary")) secondary = Utils.parseString(dataMap.get("secondary"), secondary);
+        if (dataMap.containsKey("between")) between = Utils.parseString(dataMap.get("between"), between);
+        if (dataMap.containsKey("sporadic")) sporadic = Utils.parseString(dataMap.get("sporadic"), sporadic);
+        if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
+        if (dataMap.containsKey("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
+        if (dataMap.containsKey("weight")) weight = Utils.parseInt(dataMap.get("weight"), weight);
+        if (dataMap.containsKey("density")) density = Utils.parseInt(dataMap.get("density"), density);
+        if (dataMap.containsKey("size")) size = Utils.parseInt(dataMap.get("size"), size);
+        return this;
+    }
+
+    @Override
     public WorldGenBase build() {
+        super.build();
+
         BlockOre blockPrimary = GregTechAPI.get(BlockOre.class, primary);
         BlockOre blockSecondary = GregTechAPI.get(BlockOre.class, secondary);
         BlockOre blockBetween = GregTechAPI.get(BlockOre.class, between);
         BlockOre blockSporadic = GregTechAPI.get(BlockOre.class, sporadic);
 
-        if (blockPrimary == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + primary + " does not have the ORE tag");
-        if (blockSecondary == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + secondary + " does not have the ORE tag");
-        if (blockBetween == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + between + " does not have the ORE tag");
-        if (blockSporadic == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + sporadic + " does not have the ORE tag");
+        if (blockPrimary == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " does not have the ORE tag");
+        if (blockSecondary == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " does not have the ORE tag");
+        if (blockBetween == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " does not have the ORE tag");
+        if (blockSporadic == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " does not have the ORE tag");
 
         BlockOreSmall blockPrimarySmall = GregTechAPI.get(BlockOreSmall.class, "small_" + primary);
         BlockOreSmall blockSecondarySmall = GregTechAPI.get(BlockOreSmall.class, "small_" + secondary);
         BlockOreSmall blockBetweenSmall = GregTechAPI.get(BlockOreSmall.class, "small_" + between);
         BlockOreSmall blockSporadicSmall = GregTechAPI.get(BlockOreSmall.class, "small_" + sporadic);
 
-        if (blockPrimarySmall == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + primary + " does not have the ORE_SMALL tag");
-        if (blockSecondarySmall == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + secondary + " does not have the ORE_SMALL tag");
-        if (blockBetweenSmall == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + between + " does not have the ORE_SMALL tag");
-        if (blockSporadicSmall == null) throw new IllegalArgumentException("WorldGenOreLayer: " + getId() + " " + sporadic + " does not have the ORE_SMALL tag");
+        if (blockPrimarySmall == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " does not have the ORE_SMALL tag");
+        if (blockSecondarySmall == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " does not have the ORE_SMALL tag");
+        if (blockBetweenSmall == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " does not have the ORE_SMALL tag");
+        if (blockSporadicSmall == null) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " does not have the ORE_SMALL tag");
 
         ore = new IBlockState[] {blockPrimary.get(StoneType.STONE), blockSecondary.get(StoneType.STONE), blockBetween.get(StoneType.STONE), blockSporadic.get(StoneType.STONE)};
         oreSmall = new IBlockState[] {blockPrimarySmall.get(StoneType.STONE), blockSecondarySmall.get(StoneType.STONE), blockBetweenSmall.get(StoneType.STONE), blockSporadicSmall.get(StoneType.STONE)};
@@ -88,10 +107,6 @@ public class WorldGenOreLayer extends WorldGenBase {
 
     public int getWeight() {
         return weight;
-    }
-
-    public static int getTotalWeight() {
-        return TOTAL_WEIGHT;
     }
 
     // How to evaluate oregen distribution
@@ -131,39 +146,39 @@ public class WorldGenOreLayer extends WorldGenBase {
 
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
-            List<WorldGenOreLayer> layers = GregTechWorldGenerator.getLayers(world.provider.getDimension());
-            int layerCount = layers.size();
-            if (oreVeinPercentageRoll < Ref.ORE_VEIN_CHANCE && WorldGenOreLayer.TOTAL_WEIGHT > 0 && layerCount > 0) {
+            List<WorldGenOreVein> veins = GregTechWorldGenerator.getVeins(world.provider.getDimension());
+            int veinCount = veins.size();
+            if (oreVeinPercentageRoll < Ref.ORE_VEIN_CHANCE && WorldGenOreVein.TOTAL_WEIGHT > 0 && veinCount > 0) {
                 int placementAttempts = 0;
                 boolean oreVeinFound = false;
                 int i;
 
                 for (i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < Ref.ORE_VEIN_PLACE_ATTEMPTS; i++) {
-                    int tRandomWeight = oreVeinRNG.nextInt(WorldGenOreLayer.TOTAL_WEIGHT);
-                    WorldGenOreLayer layer;
-                    for (int j = 0; j < layerCount; j++) {
-                        layer = layers.get(j);
-                        tRandomWeight -= layer.weight;
+                    int tRandomWeight = oreVeinRNG.nextInt(WorldGenOreVein.TOTAL_WEIGHT);
+                    WorldGenOreVein vein;
+                    for (int j = 0; j < veinCount; j++) {
+                        vein = veins.get(j);
+                        tRandomWeight -= vein.weight;
                         if (tRandomWeight <= 0) {
-                            // Adjust the seed so that this layer has a series of unique random numbers.  Otherwise multiple attempts at this same oreseed will get the same offset and X/Z values. If an orevein failed, any orevein with the
+                            // Adjust the seed so that this vein has a series of unique random numbers.  Otherwise multiple attempts at this same oreseed will get the same offset and X/Z values. If an orevein failed, any orevein with the
                             // same minimum heights would fail as well.  This prevents that, giving each orevein a unique height each pass through here.
-                            int placementResult = layer.generateChunkified(world, new XSTR(oreVeinSeed ^ layer.primaryId/*layer.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
+                            int placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primaryId/*vein.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
                             switch (placementResult) {
-                                case WorldGenOreLayer.ORE_PLACED:
-                                    //if (Ref.debugOreVein) GregTech.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + layer.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
-                                    VALID_VEINS.put(oreVeinSeed, layer);
+                                case WorldGenOreVein.ORE_PLACED:
+                                    //if (Ref.debugOreVein) GregTech.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
+                                    VALID_VEINS.put(oreVeinSeed, vein);
                                     oreVeinFound = true;
                                     break;
-                                case WorldGenOreLayer.NO_ORE_IN_BOTTOM_LAYER:
+                                case WorldGenOreVein.NO_ORE_IN_BOTTOM_LAYER:
                                     placementAttempts++;
                                     break; // Should do retry in this case until out of chances
-                                case WorldGenOreLayer.NO_OVERLAP:
-                                    //if (Ref.debugOreVein) GregTech.LOGGER.info("Added far oreVeinSeed=" + oreVeinSeed + " " + layer.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
-                                    VALID_VEINS.put(oreVeinSeed, layer);
+                                case WorldGenOreVein.NO_OVERLAP:
+                                    //if (Ref.debugOreVein) GregTech.LOGGER.info("Added far oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
+                                    VALID_VEINS.put(oreVeinSeed, vein);
                                     oreVeinFound = true;
                                     break;
-                                case WorldGenOreLayer.NO_OVERLAP_AIR_BLOCK:
-                                    //if (Ref.debugOreVein) GregTech.LOGGER.info("No overlap and air block in test spot=" + oreVeinSeed + " " + layer.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
+                                case WorldGenOreVein.NO_OVERLAP_AIR_BLOCK:
+                                    //if (Ref.debugOreVein) GregTech.LOGGER.info("No overlap and air block in test spot=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
                                     placementAttempts++;
                                     break; // Should do retry in this case until out of chances
                             }
@@ -183,14 +198,14 @@ public class WorldGenOreLayer extends WorldGenBase {
         } else {
             // oreseed is located in the previously processed table
             //if (Ref.debugOreVein) GregTech.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
-            WorldGenOreLayer layer = VALID_VEINS.get(oreVeinSeed);
-            oreVeinRNG.setSeed(oreVeinSeed ^ layer.primaryId/*layer.material[0].getInternalId()*/);  // Reset RNG to only be based on oreseed X/Z and type of vein
-            int placementResult = layer.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
+            WorldGenOreVein vein = VALID_VEINS.get(oreVeinSeed);
+            oreVeinRNG.setSeed(oreVeinSeed ^ vein.primaryId/*vein.material[0].getInternalId()*/);  // Reset RNG to only be based on oreseed X/Z and type of vein
+            int placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
             switch (placementResult) {
-                case WorldGenOreLayer.NO_ORE_IN_BOTTOM_LAYER:
+                case WorldGenOreVein.NO_ORE_IN_BOTTOM_LAYER:
                     //if (Ref.debugOreVein) GregTech.LOGGER.info(" No ore in bottom layer");
                     break;
-                case WorldGenOreLayer.NO_OVERLAP:
+                case WorldGenOreVein.NO_OVERLAP:
                     //if (Ref.debugOreVein) GregTech.LOGGER.info(" No overlap");
                     break;
             }

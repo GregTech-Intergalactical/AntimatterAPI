@@ -1,12 +1,18 @@
 package muramasa.gtu;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import muramasa.gtu.api.util.XSTR;
 import muramasa.gtu.client.creativetab.GregTechTab;
+
+import java.io.File;
 
 public class Ref {
 
     /** Global Objects **/
+    public static File CONFIG = null;
     public static XSTR RNG = new XSTR();
+    public static Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
 
     /** Mod Data **/
     public static final String MODID = "gtu";
@@ -52,6 +58,7 @@ public class Ref {
     public static boolean ORE_VEIN_SMALL_ORE_MARKERS = true; //Whether or not to place small ores as placer ores for an orevein
     public static int ORE_VEIN_SMALL_ORE_MARKERS_MULTI = 2; //Multiplier to control how many placer ores get generated.
     public static boolean ORE_VEIN_SPECTATOR_DEBUG = true;
+    public static boolean ORE_JSON_RELOADING = true;
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_CHANCE = "chance";

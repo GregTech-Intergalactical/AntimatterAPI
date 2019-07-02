@@ -2,6 +2,7 @@ package muramasa.gtu.api.worldgen;
 
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.Expose;
+import com.google.gson.internal.LinkedTreeMap;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -15,9 +16,10 @@ import java.util.stream.Collectors;
 
 public class WorldGenBase {
 
-    @Expose private String id;
+    private String id;
     @Expose private boolean enabled = true;
     @Expose private Set<Integer> dimensions;
+    private boolean custom;
 
     public WorldGenBase() {
 
@@ -41,7 +43,22 @@ public class WorldGenBase {
         return dimensions;
     }
 
+    public boolean isCustom() {
+        return custom;
+    }
+
+    public WorldGenBase asCustom() {
+        this.custom = true;
+        return this;
+    }
+
+    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
+        if (dataMap.containsKey("enabled")) enabled = (Boolean) dataMap.get("enabled");
+        return this;
+    }
+
     public WorldGenBase build() {
+        if (dimensions == null) throw new IllegalStateException("WorldGenBase - " + id + ": dimensions cannot be null");
         return this;
     }
 
