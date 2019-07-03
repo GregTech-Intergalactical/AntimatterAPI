@@ -31,8 +31,8 @@ public class BlockHandler {
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent e) {
-        TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
-        if (!(tile instanceof IComponent)) return;
-        ((IComponent) tile).getComponentHandler().onComponentRemoved();
+        //TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
+        //if (!(tile instanceof IComponent)) return;
+        //((IComponent) tile).getComponentHandler().onComponentRemoved();
     }
 }

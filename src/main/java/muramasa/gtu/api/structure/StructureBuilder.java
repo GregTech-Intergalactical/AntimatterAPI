@@ -36,22 +36,22 @@ public class StructureBuilder {
     }
 
     public StructureBuilder at(String key, IGregTechObject... objects) {
-        elementLookup.put(key, new StructureElement(objects));
+        elementLookup.put(key, new ComponentElement(objects));
         return this;
     }
 
     public StructureBuilder at(String key, String name, IGregTechObject... objects) {
-        elementLookup.put(key, new StructureElement(name, objects));
+        elementLookup.put(key, new ComponentElement(name, objects));
         return this;
     }
 
     public StructureBuilder at(String key, Collection<? extends IGregTechObject> objects) {
-        elementLookup.put(key, new StructureElement(objects.toArray(new IGregTechObject[0])));
+        elementLookup.put(key, new ComponentElement(objects.toArray(new IGregTechObject[0])));
         return this;
     }
 
     public StructureBuilder at(String key, String name, Collection<? extends IGregTechObject> objects) {
-        elementLookup.put(key, new StructureElement(name, objects.toArray(new IGregTechObject[0])));
+        elementLookup.put(key, new ComponentElement(name, objects.toArray(new IGregTechObject[0])));
         return this;
     }
 

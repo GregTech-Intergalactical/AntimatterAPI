@@ -8,16 +8,14 @@ import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.function.BiPredicate;
 
 import static muramasa.gtu.api.util.Dir.*;
 
 public class Structure {
 
     private ArrayList<Tuple<int3, StructureElement>> elements;
-    private HashMap<String, Tuple<Integer, BiPredicate<Integer, Integer>>> requirements = new HashMap<>();
+    private HashMap<String, IRequirement> requirements = new HashMap<>();
     private int3 size;
     private int2 offset = new int2();
 
@@ -31,36 +29,27 @@ public class Structure {
         return this;
     }
 
-    public static boolean equal(int input1, int input2) {
-        return input1 == input2;
-    }
-
-    public static boolean moreOrEqual(int input1, int input2) {
-        return input1 >= input2;
-    }
-
-    public Structure exact(int value, IGregTechObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o, value, Structure::equal));
+    public Structure exact(int i, IGregTechObject... objects) {
+        Arrays.stream(objects).forEach(o -> addReq(o.getId(), e -> e.containsKey(o.getId()) && e.get(o.getId()).size() == i));
         return this;
     }
 
-    public Structure min(int value, IGregTechObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o, value, Structure::moreOrEqual));
+    public Structure min(int i, IGregTechObject... objects) {
+        Arrays.stream(objects).forEach(o -> addReq(o.getId(), e -> e.containsKey(o.getId()) && e.get(o.getId()).size() >= i));
         return this;
     }
 
-    public Structure addReq(IGregTechObject object, int value, BiPredicate<Integer, Integer> method) {
-        requirements.put(object.getId(), new Tuple<>(value, method));
+    public Structure addReq(String id, IRequirement req) {
+        requirements.put(id, req);
         return this;
     }
 
-    public boolean testRequirement(String componentName, int value) {
-        Tuple<Integer, BiPredicate<Integer, Integer>> tuple = requirements.get(componentName);
-        return tuple != null && tuple.getSecond().test(value, tuple.getFirst());
+    public ArrayList<Tuple<int3, StructureElement>> getElements() {
+        return elements;
     }
 
-    public Collection<String> getRequirements() {
-        return requirements.keySet();
+    public HashMap<String, IRequirement> getRequirements() {
+        return requirements;
     }
 
     public StructureResult evaluate(TileEntityMachine tile) {

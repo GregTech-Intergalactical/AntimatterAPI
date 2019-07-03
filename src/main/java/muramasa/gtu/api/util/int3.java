@@ -9,6 +9,8 @@ import net.minecraft.util.math.BlockPos;
  */
 public class int3 {
 
+    //TODO change this class to wrap a MutableBlockPos
+
     public int x, y, z;
     public EnumFacing facing = EnumFacing.NORTH; //Used for moving in a direction
 
