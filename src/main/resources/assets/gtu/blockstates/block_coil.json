@@ -11,25 +11,25 @@
       "kanthal": {
         "textures": {"all": "gtu:blocks/coil/kanthal"}
       },
-	  "nichrome": {
+			"nichrome": {
         "textures": {"all": "gtu:blocks/coil/nichrome"}
       },
-	  "tungstensteel": {
+			"tungstensteel": {
         "textures": {"all": "gtu:blocks/coil/tungstensteel"}
       },
-	  "hssg": {
+			"hssg": {
         "textures": {"all": "gtu:blocks/coil/hssg"}
       },
-	  "naquadah": {
+			"naquadah": {
         "textures": {"all": "gtu:blocks/coil/naquadah"}
       },
-	  "naquadah_alloy": {
+			"naquadah_alloy": {
         "textures": {"all": "gtu:blocks/coil/naquadah_alloy"}
       },
       "fusion": {
         "textures": {"all": "gtu:blocks/coil/fusion"}
       },
-	  "superconductor": {
+			"superconductor": {
         "textures": {"all": "gtu:blocks/coil/superconductor"}
       }
     }

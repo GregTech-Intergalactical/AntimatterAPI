@@ -8,9 +8,10 @@ import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.recipe.RecipeMap;
-import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.structure.Structure;
+import muramasa.gtu.api.structure.StructureDatabase;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
@@ -20,7 +21,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class TileEntityMultiMachine extends TileEntityRecipeMachine implements IComponent {
 
@@ -30,6 +34,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     protected int efficiency, efficiencyIncrease;
     protected long EUt;
     protected HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
+
     protected ControllerComponentHandler componentHandler;
 
     @Override
@@ -45,9 +50,10 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            components = result.getComponents();
+            //components = result.getComponents();
             if (onStructureValid(result)) {
-                components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
+                StructureDatabase.add(world, pos, result.positions);
+                //components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
                 System.out.println("[Structure Debug] Valid Structure");
                 return (validStructure = true);
             }
@@ -55,6 +61,12 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         System.out.println("[Structure Debug] Invalid Structure" + result.getError());
         clearComponents();
         return (validStructure = false);
+    }
+
+    @Override
+    public void checkRecipe() {
+        if (!validStructure) return;
+        super.checkRecipe();
     }
 
     /** Events **/
