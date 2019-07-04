@@ -24,7 +24,7 @@ public class TileEntityMultiSmelter extends TileEntityMultiMachine {
     }
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed(StructureResult result) {
         List<IComponentHandler> coils = getComponents("coil");
         BlockCoil firstType = ((TileEntityCoil) coils.get(0).getTile()).getType();
         if (coils.stream().allMatch(c -> ((TileEntityCoil) c.getTile()).getType() == firstType)) {

@@ -8,7 +8,7 @@ import net.minecraft.init.Blocks;
 public class TileEntityPrimitiveBlastFurnace extends TileEntityBasicMultiMachine {
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed(StructureResult result) {
         int3 controller = new int3(getPos(), getFacing());
         controller.back(1);
         getWorld().setBlockState(controller.asBP(), Blocks.LAVA.getDefaultState(), 3);

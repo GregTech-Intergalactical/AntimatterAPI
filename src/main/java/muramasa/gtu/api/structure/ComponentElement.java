@@ -17,7 +17,7 @@ public class ComponentElement extends StructureElement {
     }
 
     public ComponentElement(IGregTechObject... objects) {
-        this("", objects);
+        this.objects = objects;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ComponentElement extends StructureElement {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i].getId().equals(component.getId())) {
                     if (testComponent(component)) {
-                        result.addComponent(elementId, component, this);
+                        result.addComponent(elementId, component);
                         return true;
                     }
                     result.withError("Failed Component Requirement: " + component.getId());
