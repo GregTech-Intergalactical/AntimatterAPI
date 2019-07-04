@@ -69,8 +69,6 @@ public final class GregTechAPI {
         register(TileEntityItemPipe.class);
         register(TileEntityFluidPipe.class);
         register(TileEntityCable.class);
-        register(TileEntityCasing.class);
-        register(TileEntityCoil.class);
 
         registerJEICategory(RecipeMaps.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
 //        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);

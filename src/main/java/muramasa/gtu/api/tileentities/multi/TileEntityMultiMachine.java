@@ -15,6 +15,7 @@ import muramasa.gtu.api.structure.StructureCache;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,16 +24,16 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class TileEntityMultiMachine extends TileEntityRecipeMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
-
     protected ControllerComponentHandler componentHandler;
+
+    protected Optional<StructureResult> result = Optional.empty();
 
     @Override
     public void onLoad() {
@@ -47,10 +48,10 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            components = result.components;
             if (onStructureFormed(result)) {
                 StructureCache.add(world, pos, result.positions);
-                components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
+                this.result = Optional.of(result);
+                this.result.get().components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
                 System.out.println("[Structure Debug] Valid Structure");
                 return true;
             }
@@ -76,6 +77,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     public void onStructureInvalidated() {
         clearComponents();
+        result = Optional.empty();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");
     }
@@ -268,14 +270,27 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     public List<IComponentHandler> getComponents(String id) {
-        ArrayList<IComponentHandler> list = components.get(id);
-        return list != null ? list : Collections.emptyList();
+        if (result.isPresent()) {
+            ArrayList<IComponentHandler> list = result.get().components.get(id);
+            return list != null ? list : Collections.emptyList();
+        }
+        return Collections.emptyList();
+    }
+
+    public List<IBlockState> getStates(String id) {
+        if (result.isPresent()) {
+            ArrayList<IBlockState> list = result.get().states.get(id);
+            return list != null ? list : Collections.emptyList();
+        }
+        return Collections.emptyList();
     }
 
     /** Clear the cached component map **/
     public void clearComponents() {
-        components.forEach((k, v) -> v.forEach(c -> c.unlinkController(this)));
-        components.clear();
+        if (result.isPresent()) {
+            result.get().components.forEach((k, v) -> v.forEach(c -> c.unlinkController(this)));
+            result.get().components.clear();
+        }
     }
 
     @Override

@@ -14,7 +14,7 @@ import static muramasa.gtu.common.Data.*;
 public class Structures {
 
     /** Global Elements **/
-    public static StructureElement X = new StructureElement("x"); //Used to skip positions for non-cubic structures
+    public static StructureElement X = new StructureElement("x").exclude(); //Used to skip positions for non-cubic structures
     public static BlockStateElement AIR = new BlockStateElement("air", (w, p, s) -> s.getBlock().isAir(s, w, p)); //Air check
 
     /** Special Case Elements **/
