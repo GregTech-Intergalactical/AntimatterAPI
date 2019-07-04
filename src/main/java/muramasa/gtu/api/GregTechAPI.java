@@ -50,7 +50,7 @@ public final class GregTechAPI {
     public static final Set<Item> ITEMS = new LinkedHashSet<>();
     public static final Set<Block> BLOCKS = new LinkedHashSet<>();
     public static final Set<Class> TILES = new HashSet<>();
-    private static final HashMap<String, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+    private static final HashMap<Class<?>, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
     private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
     private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
@@ -88,21 +88,21 @@ public final class GregTechAPI {
     }
 
     public static void register(Class c, IGregTechObject o) {
-        if (!OBJECTS.containsKey(c.getName())) OBJECTS.put(c.getName(), new LinkedHashMap<>());
-        if (!OBJECTS.get(c.getName()).containsKey(o.getId()))  {
-            OBJECTS.get(c.getName()).put(o.getId(), o);
+        if (!OBJECTS.containsKey(c)) OBJECTS.put(c, new LinkedHashMap<>());
+        if (!OBJECTS.get(c).containsKey(o.getId()))  {
+            OBJECTS.get(c).put(o.getId(), o);
         } else GregTech.LOGGER.error("Object: " + o.getId() + " has already been registered! This is a error!");
         register(o);
     }
 
     @Nullable
-    public static <T> T get(Class<T> c, String name) {
-        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c.getName());
-        return map != null ? (T) map.get(name) : null;
+    public static <T> T get(Class<T> c, String id) {
+        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
+        return map != null ? c.cast(map.get(id)) : null;
     }
 
     public static <T> List<T> all(Class<T> c) {
-        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c.getName());
+        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
         if (map == null) return Collections.emptyList();
         return map.values().stream().map(c::cast).collect(Collectors.toList());
     }
