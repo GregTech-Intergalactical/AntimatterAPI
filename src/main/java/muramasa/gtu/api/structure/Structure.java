@@ -30,12 +30,12 @@ public class Structure {
     }
 
     public Structure exact(int i, IGregTechObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o.getId(), e -> e.containsKey(o.getId()) && e.get(o.getId()).size() == i));
+        Arrays.stream(objects).forEach(o -> addReq(o.getId(), (c, s) -> (c.containsKey(o.getId()) && c.get(o.getId()).size() == i) || (s.containsKey(o.getId()) && s.get(o.getId()).size() == i)));
         return this;
     }
 
     public Structure min(int i, IGregTechObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o.getId(), e -> e.containsKey(o.getId()) && e.get(o.getId()).size() >= i));
+        Arrays.stream(objects).forEach(o -> addReq(o.getId(), (c, s) -> (c.containsKey(o.getId()) && c.get(o.getId()).size() >= i) || (s.containsKey(o.getId()) && s.get(o.getId()).size() >= i)));
         return this;
     }
 

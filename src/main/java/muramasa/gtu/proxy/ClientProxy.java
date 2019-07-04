@@ -52,7 +52,7 @@ import java.util.HashMap;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy implements IProxy {
 
-    static Minecraft MC = Minecraft.getMinecraft();
+    private static Minecraft MC = Minecraft.getMinecraft();
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {

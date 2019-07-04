@@ -51,6 +51,12 @@ public class StructureCache {
         GregTech.LOGGER.info("Removed Structure to Store!");
     }
 
+    private static void invalidateController(World world, BlockPos pos) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).onStructureInvalidated();
+        remove(world, pos);
+    }
+
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload e) {
         LOOKUP.remove(e.getWorld().provider.getDimension());
@@ -61,11 +67,15 @@ public class StructureCache {
         DimensionEntry entry = LOOKUP.get(e.getWorld().provider.getDimension());
         if (entry == null) return;
         BlockPos controllerPos = entry.get(e.getPos());
-        if (controllerPos != null) {
-            TileEntity tile = Utils.getTile(e.getWorld(), controllerPos);
-            if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).onStructureInvalidated();
-            remove(e.getWorld(), controllerPos);
-        }
+        if (controllerPos != null) invalidateController(e.getWorld(), controllerPos);
+    }
+
+    @SubscribeEvent
+    public static void onBlockPlace(BlockEvent.PlaceEvent e) {
+        DimensionEntry entry = LOOKUP.get(e.getWorld().provider.getDimension());
+        if (entry == null) return;
+        BlockPos controllerPos = entry.get(e.getPos());
+        if (controllerPos != null) invalidateController(e.getWorld(), controllerPos);
     }
 
     @SubscribeEvent

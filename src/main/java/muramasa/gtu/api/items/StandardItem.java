@@ -97,7 +97,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             } else if (Data.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
-                        if (!((TileEntityMultiMachine) tile).validStructure) {
+                        if (!((TileEntityMultiMachine) tile).isStructureValid()) {
                             ((TileEntityMultiMachine) tile).checkStructure();
                         }
                         ((TileEntityMultiMachine) tile).checkRecipe();
