@@ -11,7 +11,7 @@ import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.structure.Structure;
-import muramasa.gtu.api.structure.StructureDatabase;
+import muramasa.gtu.api.structure.StructureCache;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
@@ -28,10 +28,7 @@ import java.util.List;
 
 public class TileEntityMultiMachine extends TileEntityRecipeMachine implements IComponent {
 
-    //TODO set protected
-    public boolean validStructure;
-    //TODO move to BasicMachine
-    protected int efficiency, efficiencyIncrease;
+    protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
     protected HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
 
@@ -50,32 +47,34 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            //components = result.getComponents();
-            if (onStructureValid(result)) {
-                StructureDatabase.add(world, pos, result.positions);
-                //components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
+            components = result.components;
+            if (onStructureFormed(result)) {
+                StructureCache.add(world, pos, result.positions);
+                components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
                 System.out.println("[Structure Debug] Valid Structure");
-                return (validStructure = true);
+                return true;
             }
         }
         System.out.println("[Structure Debug] Invalid Structure" + result.getError());
         clearComponents();
-        return (validStructure = false);
+        return false;
     }
 
     @Override
     public void checkRecipe() {
-        if (!validStructure) return;
-        super.checkRecipe();
+        if (isStructureValid()) super.checkRecipe();
+    }
+
+    public boolean isStructureValid() {
+        return StructureCache.has(world, pos);
     }
 
     /** Events **/
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed(StructureResult result) {
         return true;
     }
 
-    public void onStructureInvalid() {
-        validStructure = false;
+    public void onStructureInvalidated() {
         clearComponents();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");

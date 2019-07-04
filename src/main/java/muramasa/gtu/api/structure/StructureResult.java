@@ -17,7 +17,6 @@ public class StructureResult {
 
     //TODO compile list of positions
 
-    public HashMap<String, ArrayList<StructureElement>> elements = new HashMap<>();
     public HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
     public List<BlockPos> positions = new ArrayList<>();
 
@@ -35,33 +34,20 @@ public class StructureResult {
         return "[Structure Debug] " + error;
     }
 
-    public void addElement(String elementId, StructureElement element) {
-        ArrayList<StructureElement> existing = elements.get(elementId);
-        if (existing == null) elements.put(elementId, Lists.newArrayList(element));
-        else existing.add(element);
-    }
-
-    public void addComponent(String elementId, IComponentHandler component, ComponentElement element) {
+    public void addComponent(String elementId, IComponentHandler component) {
         ArrayList<IComponentHandler> existing = components.get(component.getId());
-        if (existing == null) {
-            components.put(component.getId(), Lists.newArrayList(component));
-            addElement(elementId, element);
-        }
+        if (existing == null) components.put(component.getId(), Lists.newArrayList(component));
         else existing.add(component);
         if (!elementId.isEmpty() && !elementId.equals(component.getId())) {
             existing = components.get(elementId);
-            if (existing == null) {
-                components.put(elementId, Lists.newArrayList(component));
-                addElement(elementId, element);
-            }
+            if (existing == null) components.put(elementId, Lists.newArrayList(component));
             else existing.add(component);
         }
         positions.add(component.getTile().getPos());
     }
 
-    public void addState(String elementId, BlockPos pos, BlockStateElement element) {
+    public void addState(String elementId, BlockPos pos) {
         positions.add(pos);
-        addElement(elementId, element);
     }
 
     public boolean evaluate() {

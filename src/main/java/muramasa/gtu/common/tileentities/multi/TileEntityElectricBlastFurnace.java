@@ -38,7 +38,7 @@ public class TileEntityElectricBlastFurnace extends TileEntityMultiMachine {
     }
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed(StructureResult result) {
         heatingCapacity = getComponents("coil").stream().mapToInt(c -> ((TileEntityCoil) c.getTile()).getHeatCapacity()).sum();
         return true;
     }

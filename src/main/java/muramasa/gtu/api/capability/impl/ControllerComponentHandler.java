@@ -22,7 +22,7 @@ public class ControllerComponentHandler extends ComponentHandler {
     @Override
     public void onComponentRemoved() {
         if (componentTile instanceof TileEntityMultiMachine) {
-            ((TileEntityMultiMachine) componentTile).onStructureInvalid();
+            ((TileEntityMultiMachine) componentTile).onStructureInvalidated();
         }
     }
 }

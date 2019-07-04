@@ -4,9 +4,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,9 +19,20 @@ import java.util.HashMap;
 import java.util.List;
 
 @Mod.EventBusSubscriber
-public class StructureDatabase {
+public class StructureCache {
 
     private static Int2ObjectOpenHashMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+
+    public static boolean has(World world, BlockPos pos) {
+        DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
+        return entry != null && entry.get(pos) != null;
+    }
+
+    public static BlockPos get(World world, BlockPos pos) {
+        DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
+        if (entry == null) return null;
+        return entry.get(pos);
+    }
 
     public static void add(World world, BlockPos pos, List<BlockPos> structure) {
         DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
@@ -49,9 +63,22 @@ public class StructureDatabase {
         BlockPos controllerPos = entry.get(e.getPos());
         if (controllerPos != null) {
             TileEntity tile = Utils.getTile(e.getWorld(), controllerPos);
-            if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).onStructureInvalid();
+            if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).onStructureInvalidated();
             remove(e.getWorld(), controllerPos);
         }
+    }
+
+    @SubscribeEvent
+    public static void onBlockClickEvent(PlayerInteractEvent.RightClickBlock e) {
+        if (e.getEntityPlayer().isSneaking()) return;
+        DimensionEntry entry = LOOKUP.get(e.getWorld().provider.getDimension());
+        if (entry == null) return;
+        BlockPos controllerPos = entry.get(e.getPos());
+        if (controllerPos == null) return;
+        IBlockState state = e.getWorld().getBlockState(controllerPos);
+        Vec3d hit = e.getHitVec();
+        state.getBlock().onBlockActivated(e.getWorld(), controllerPos, state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z);
+        e.setCanceled(true);
     }
 
     public static class DimensionEntry {

@@ -12,13 +12,13 @@ import net.minecraft.tileentity.TileEntity;
 public class TileEntityLargeTurbine extends TileEntityMultiMachine {
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed(StructureResult result) {
         applyTextureToFace(0);
         return true;
     }
 
     @Override
-    public void onStructureInvalid() {
+    public void onStructureInvalidated() {
         applyTextureToFace(1);
     }
 

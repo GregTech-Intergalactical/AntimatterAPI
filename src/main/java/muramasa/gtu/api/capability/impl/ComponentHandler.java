@@ -92,7 +92,7 @@ public class ComponentHandler implements IComponentHandler {
             for (int i = 0; i < size; i++) {
                 TileEntity tile = Utils.getTile(componentTile.getWorld(), controllers.get(i));
                 if (tile instanceof TileEntityMultiMachine) {
-                    ((TileEntityMultiMachine) tile).onStructureInvalid();
+                    ((TileEntityMultiMachine) tile).onStructureInvalidated();
                 }
             }
         }
