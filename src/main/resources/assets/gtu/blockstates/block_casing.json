@@ -1,138 +1,267 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "gtu:generated"
+    "model": "gtu:layered"
   },
   "variants": {
     "id": {
 	  "ulv": {
-        "textures": {"all": "gtu:blocks/casing/ulv"}
+        "textures": {
+          "0": "gtu:blocks/casing/ulv",
+          "1": "gtu:blocks/casing/uvl"
+        }
       },
 	  "lv": {
-        "textures": {"all": "gtu:blocks/casing/lv"}
+        "textures": {
+          "0": "gtu:blocks/casing/lv",
+          "1": "gtu:blocks/casing/lv"
+        }
       },
 	  "mv": {
-        "textures": {"all": "gtu:blocks/casing/mv"}
+        "textures": {
+          "0": "gtu:blocks/casing/mv",
+          "1": "gtu:blocks/casing/mv"
+        }
       },
 	  "hv": {
-        "textures": {"all": "gtu:blocks/casing/hv"}
+        "textures": {
+          "0": "gtu:blocks/casing/hv",
+          "1": "gtu:blocks/casing/hv"
+        }
       },
 	  "ev": {
-        "textures": {"all": "gtu:blocks/casing/ev"}
+        "textures": {
+          "0": "gtu:blocks/casing/ev",
+          "1": "gtu:blocks/casing/ev"
+        }
       },
 	  "iv": {
-        "textures": {"all": "gtu:blocks/casing/iv"}
+        "textures": {
+          "0": "gtu:blocks/casing/iv",
+          "1": "gtu:blocks/casing/iv"
+        }
       },
 	  "luv": {
-        "textures": {"all": "gtu:blocks/casing/luv"}
+        "textures": {
+          "0": "gtu:blocks/casing/luv",
+          "1": "gtu:blocks/casing/luv"
+        }
       },
 	  "zpm": {
-        "textures": {"all": "gtu:blocks/casing/zpm"}
+        "textures": {
+          "0": "gtu:blocks/casing/zpm",
+          "1": "gtu:blocks/casing/zpm"
+        }
       },
 	  "uv": {
-        "textures": {"all": "gtu:blocks/casing/uv"}
+        "textures": {
+          "0": "gtu:blocks/casing/uv",
+          "1": "gtu:blocks/casing/uv"
+        }
       },
 	  "max": {
-        "textures": {"all": "gtu:blocks/casing/max"}
+        "textures": {
+          "0": "gtu:blocks/casing/max",
+          "1": "gtu:blocks/casing/max"
+        }
       },
 	  "bronze": {
-        "textures": {"all": "gtu:blocks/casing/bronze"}
+        "textures": {
+          "0": "gtu:blocks/casing/bronze",
+          "1": "gtu:blocks/casing/bronze"
+        }
       },
 	  "bricked_bronze": {
-        "textures": {"all": "gtu:blocks/casing/bricked_bronze"}
+        "textures": {
+          "0": "gtu:blocks/casing/bricked_bronze",
+          "1": "gtu:blocks/casing/bricked_bronze"
+        }
       },
 	  "bronze_plated_brick": {
-        "textures": {"all": "gtu:blocks/casing/bronze_plated_brick"}
+        "textures": {
+          "0": "gtu:blocks/casing/bronze_plated_brick",
+          "1": "gtu:blocks/casing/bronze_plated_brick"
+        }
       },
 	  "fire_brick": {
-        "textures": {"all": "gtu:blocks/casing/fire_brick"}
+        "textures": {
+          "0": "gtu:blocks/casing/fire_brick",
+          "1": "gtu:blocks/casing/fire_brick"
+        }
       },
 	  "steel": {
-        "textures": {"all": "gtu:blocks/casing/steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/steel",
+          "1": "gtu:blocks/casing/steel"
+        }
       },
 	  "bricked_steel": {
-        "textures": {"all": "gtu:blocks/casing/bricked_steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/bricked_steel",
+          "1": "gtu:blocks/casing/bricked_steel"
+        }
       },
 	  "solid_steel": {
-        "textures": {"all": "gtu:blocks/casing/solid_steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/solid_steel",
+          "1": "gtu:blocks/casing/solid_steel"
+        }
       },
 	  "stainless_steel": {
-        "textures": {"all": "gtu:blocks/casing/stainless_steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/stainless_steel",
+          "1": "gtu:blocks/casing/stainless_steel"
+        }
       },
 	  "titanium": {
-        "textures": {"all": "gtu:blocks/casing/titanium"}
+        "textures": {
+          "0": "gtu:blocks/casing/titanium",
+          "1": "gtu:blocks/casing/titanium"
+        }
       },
 	  "tungstensteel": {
-        "textures": {"all": "gtu:blocks/casing/tungstensteel"}
+        "textures": {
+          "0": "gtu:blocks/casing/tungstensteel",
+          "1": "gtu:blocks/casing/tungstensteel"
+        }
       },
 	  "heat_proof": {
-        "textures": {"all": "gtu:blocks/casing/heat_proof"}
+        "textures": {
+          "0": "gtu:blocks/casing/heat_proof",
+          "1": "gtu:blocks/casing/heat_proof"
+        }
       },
 	  "frost_proof": {
-        "textures": {"all": "gtu:blocks/casing/frost_proof"}
+        "textures": {
+          "0": "gtu:blocks/casing/frost_proof",
+          "1": "gtu:blocks/casing/frost_proof"
+        }
       },
 	  "radiation_proof": {
-        "textures": {"all": "gtu:blocks/casing/radiation_proof"}
+        "textures": {
+          "0": "gtu:blocks/casing/radiation_proof",
+          "1": "gtu:blocks/casing/radiation_proof"
+        }
       },
 	  "firebox_bronze": {
-        "textures": {"all": "gtu:blocks/casing/firebox_bronze"}
+        "textures": {
+          "0": "gtu:blocks/casing/firebox_bronze",
+          "1": "gtu:blocks/casing/firebox_bronze"
+        }
       },
 	  "firebox_steel": {
-        "textures": {"all": "gtu:blocks/casing/firebox_steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/firebox_steel",
+          "1": "gtu:blocks/casing/firebox_steel"
+        }
       },
 	  "firebox_titanium": {
-        "textures": {"all": "gtu:blocks/casing/firebox_titanium"}
+        "textures": {
+          "0": "gtu:blocks/casing/firebox_titanium",
+          "1": "gtu:blocks/casing/firebox_titanium"
+        }
       },
 	  "firebox_tungstensteel": {
-        "textures": {"all": "gtu:blocks/casing/firebox_tungstensteel"}
+        "textures": {
+          "0": "gtu:blocks/casing/firebox_tungstensteel",
+          "1": "gtu:blocks/casing/firebox_tungstensteel"
+        }
       },
 	  "gearbox_bronze": {
-        "textures": {"all": "gtu:blocks/casing/gearbox_bronze"}
+        "textures": {
+          "0": "gtu:blocks/casing/gearbox_bronze",
+          "1": "gtu:blocks/casing/gearbox_bronze"
+        }
       },
 	  "gearbox_steel": {
-        "textures": {"all": "gtu:blocks/casing/gearbox_steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/gearbox_steel",
+          "1": "gtu:blocks/casing/gearbox_steel"
+        }
       },
 	  "gearbox_titanium": {
-        "textures": {"all": "gtu:blocks/casing/gearbox_titanium"}
+        "textures": {
+          "0": "gtu:blocks/casing/gearbox_titanium",
+          "1": "gtu:blocks/casing/gearbox_titanium"
+        }
       },
 	  "gearbox_tungstensteel": {
-        "textures": {"all": "gtu:blocks/casing/gearbox_tungstensteel"}
+        "textures": {
+          "0": "gtu:blocks/casing/gearbox_tungstensteel",
+          "1": "gtu:blocks/casing/gearbox_tungstensteel"
+        }
       },
 	  "pipe_bronze": {
-        "textures": {"all": "gtu:blocks/casing/pipe_bronze"}
+        "textures": {
+          "0": "gtu:blocks/casing/pipe_bronze",
+          "1": "gtu:blocks/casing/pipe_bronze"
+        }
       },
 	  "pipe_steel": {
-        "textures": {"all": "gtu:blocks/casing/pipe_steel"}
+        "textures": {
+          "0": "gtu:blocks/casing/pipe_steel",
+          "1": "gtu:blocks/casing/pipe_steel"
+        }
       },
 	  "pipe_titanium": {
-        "textures": {"all": "gtu:blocks/casing/pipe_titanium"}
+        "textures": {
+          "0": "gtu:blocks/casing/pipe_titanium",
+          "1": "gtu:blocks/casing/pipe_titanium"
+        }
       },
 	  "pipe_tungstensteel": {
-        "textures": {"all": "gtu:blocks/casing/pipe_tungstensteel"}
+        "textures": {
+          "0": "gtu:blocks/casing/pipe_tungstensteel",
+          "1": "gtu:blocks/casing/pipe_tungstensteel"
+        }
       },
 	  "engine_intake": {
-        "textures": {"all": "gtu:blocks/casing/engine_intake"}
+        "textures": {
+          "0": "gtu:blocks/casing/engine_intake",
+          "1": "gtu:blocks/casing/engine_intake"
+        }
       },
 	  "turbine_1": {
-        "textures": {"all": "gtu:blocks/casing/turbine_1"}
+        "textures": {
+          "0": "gtu:blocks/casing/turbine_1",
+          "1": "gtu:blocks/casing/turbine_1"
+        }
       },
 	  "turbine_2": {
-        "textures": {"all": "gtu:blocks/casing/turbine_2"}
+        "textures": {
+          "0": "gtu:blocks/casing/turbine_2",
+          "1": "gtu:blocks/casing/turbine_2"
+        }
       },
 	  "turbine_3": {
-        "textures": {"all": "gtu:blocks/casing/turbine_3"}
+        "textures": {
+          "0": "gtu:blocks/casing/turbine_3",
+          "1": "gtu:blocks/casing/turbine_3"
+        }
       },
 	  "turbine_4": {
-        "textures": {"all": "gtu:blocks/casing/turbine_4"}
+        "textures": {
+          "0": "gtu:blocks/casing/turbine_4",
+          "1": "gtu:blocks/casing/turbine_4"
+        }
       },
 	  "fusion_1": {
-        "textures": {"all": "gtu:blocks/casing/fusion_1"}
+        "textures": {
+          "0": "gtu:blocks/casing/fusion_1",
+          "1": "gtu:blocks/casing/fusion_1"
+        }
       },
 	  "fusion_2": {
-        "textures": {"all": "gtu:blocks/casing/fusion_2"}
+        "textures": {
+          "0": "gtu:blocks/casing/fusion_2",
+          "1": "gtu:blocks/casing/fusion_2"
+        }
       },
       "fusion_3": {
-        "textures": {"all": "gtu:blocks/casing/fusion_3"}
+        "textures": {
+          "0": "gtu:blocks/casing/fusion_3",
+          "1": "gtu:blocks/casing/fusion_3"
+        }
       }
     }
   }

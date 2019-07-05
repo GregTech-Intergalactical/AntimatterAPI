@@ -1,36 +1,36 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "gtu:generated"
+    "model": "gtu:basic"
   },
   "variants": {
     "id": {
       "cupronickel": {
-        "textures": {"all": "gtu:blocks/coil/cupronickel"}
+        "textures": {"0": "gtu:blocks/coil/cupronickel"}
       },
       "kanthal": {
-        "textures": {"all": "gtu:blocks/coil/kanthal"}
+        "textures": {"0": "gtu:blocks/coil/kanthal"}
       },
 			"nichrome": {
-        "textures": {"all": "gtu:blocks/coil/nichrome"}
+        "textures": {"0": "gtu:blocks/coil/nichrome"}
       },
 			"tungstensteel": {
-        "textures": {"all": "gtu:blocks/coil/tungstensteel"}
+        "textures": {"0": "gtu:blocks/coil/tungstensteel"}
       },
 			"hssg": {
-        "textures": {"all": "gtu:blocks/coil/hssg"}
+        "textures": {"0": "gtu:blocks/coil/hssg"}
       },
 			"naquadah": {
-        "textures": {"all": "gtu:blocks/coil/naquadah"}
+        "textures": {"0": "gtu:blocks/coil/naquadah"}
       },
 			"naquadah_alloy": {
-        "textures": {"all": "gtu:blocks/coil/naquadah_alloy"}
+        "textures": {"0": "gtu:blocks/coil/naquadah_alloy"}
       },
       "fusion": {
-        "textures": {"all": "gtu:blocks/coil/fusion"}
+        "textures": {"0": "gtu:blocks/coil/fusion"}
       },
 			"superconductor": {
-        "textures": {"all": "gtu:blocks/coil/superconductor"}
+        "textures": {"0": "gtu:blocks/coil/superconductor"}
       }
     }
   }

@@ -53,12 +53,12 @@ public class StructureCache {
 
     private static void invalidateController(World world, BlockPos pos) {
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).onStructureInvalidated();
+        if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
         remove(world, pos);
     }
 
     @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload e) {
+    public static void onWorldUnload(WorldEvent.Unload e) {
         LOOKUP.remove(e.getWorld().provider.getDimension());
     }
 
