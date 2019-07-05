@@ -24,15 +24,13 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     public static MaterialType INGOT_HOT = new MaterialType("ingot_hot", true);
     public static MaterialType NUGGET = new MaterialType("nugget", false);
     public static MaterialType GEM = new MaterialType("gem", true);
-    public static MaterialType GEM_CHIPPED = new MaterialType("gem_chipped", true);
-    public static MaterialType GEM_FLAWED = new MaterialType("gem_flawed", true);
-    public static MaterialType GEM_FLAWLESS = new MaterialType("gem_flawless", true);
-    public static MaterialType GEM_EXQUISITE = new MaterialType("gem_exquisite", true);
+    public static MaterialType GEM_BRITTLE = new MaterialType("gem_brittle", true);
+    public static MaterialType GEM_POLISHED = new MaterialType("gem_polished", true);
     public static MaterialType LENS = new MaterialType("lens", true);
     public static MaterialType PLATE = new MaterialType("plate", true);
     public static MaterialType PLATE_DENSE = new MaterialType("plate_dense", true);
     public static MaterialType ROD = new MaterialType("rod", true);
-    public static MaterialType ROD_LONG = new MaterialType("rog_long", true);
+    public static MaterialType ROD_LONG = new MaterialType("rod_long", true);
     public static MaterialType RING = new MaterialType("ring", true);
     public static MaterialType FOIL = new MaterialType("foil", true);
     public static MaterialType BOLT = new MaterialType("bolt", true);
@@ -46,9 +44,8 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     //Dummy Types
     public static MaterialType ORE = new MaterialType("ore", true, false); //TODO: dimensional ores, stone types, need separate prefix?
     public static MaterialType ORE_SMALL = new MaterialType("ore_small", false, false);
-    public static MaterialType BLOCK = new MaterialType("block", true, false);
+    public static MaterialType BLOCK = new MaterialType("block", false, false);
     public static MaterialType FRAME = new MaterialType("frame", true, false);
-    public static MaterialType GEM_VARIANTS = new MaterialType("gem_variants", false, false);
     public static MaterialType TOOLS = new MaterialType("tools", false, false);
     public static MaterialType LIQUID = new MaterialType("liquid", true, false);
     public static MaterialType GAS = new MaterialType("gas", true, false);

@@ -131,15 +131,14 @@ public class Material implements IGregTechObject {
         add(GEM, BLOCK);
         if (transparent) {
             this.transparent = true;
-            add(PLATE, LENS);
+            add(PLATE, LENS, GEM_BRITTLE, GEM_POLISHED);
         }
         return this;
     }
 
-    //TODO: Shall we do gem variants?
     public Material asGem(boolean transparent, IMaterialTag... tags) {
         asGemBasic(transparent, tags);
-        add(GEM_CHIPPED, GEM_FLAWED, GEM_FLAWLESS, GEM_EXQUISITE);
+        if (!transparent) add(GEM_BRITTLE, GEM_POLISHED); 
         return this;
     }
 
@@ -521,20 +520,12 @@ public class Material implements IGregTechObject {
         return MaterialItem.get(GEM, this, amount);
     }
 
-    public ItemStack getGemChipped(int amount) {
-        return MaterialItem.get(GEM_CHIPPED, this, amount);
+    public ItemStack getGemBrittle(int amount) {
+        return MaterialItem.get(GEM_BRITTLE, this, amount);
     }
 
-    public ItemStack getGemFlawed(int amount) {
-        return MaterialItem.get(GEM_FLAWED, this, amount);
-    }
-
-    public ItemStack getGemFlawless(int amount) {
-        return MaterialItem.get(GEM_FLAWLESS, this, amount);
-    }
-
-    public ItemStack getGemExquisite(int amount) {
-        return MaterialItem.get(GEM_EXQUISITE, this, amount);
+    public ItemStack getGemPolished(int amount) {
+        return MaterialItem.get(GEM_POLISHED, this, amount);
     }
 
     public ItemStack getFoil(int amount) {
@@ -544,6 +535,10 @@ public class Material implements IGregTechObject {
     public ItemStack getRod(int amount) {
         return MaterialItem.get(ROD, this, amount);
     }
+    
+    public ItemStack getRodLong(int amount) {
+        return MaterialItem.get(ROD_LONG, this, amount);
+    }   
 
     public ItemStack getBolt(int amount) {
         return MaterialItem.get(BOLT, this, amount);

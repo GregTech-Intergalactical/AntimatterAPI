@@ -31,16 +31,12 @@ public class BlockOreSmall extends BlockOre {
             DROPS_POOL_GEM_VARIANTS.add(MaterialType.CRUSHED);
             DROPS_POOL_GEM_VARIANTS.add(MaterialType.DUST_IMPURE);
         }
-        DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM_EXQUISITE);
-        for (int i = 0; i < 2; i++) DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM_FLAWLESS);
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 2; i++) DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM_POLISHED);
+        for (int i = 0; i < 8; i++) {
             DROPS_POOL_GEM.add(MaterialType.GEM);
             DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM);
         }
-        for (int i = 0; i < 5; i++) {
-            DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM_FLAWED);
-            DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM_CHIPPED);
-        }
+        for (int i = 0; i < 14; i++) DROPS_POOL_GEM_VARIANTS.add(MaterialType.GEM_BRITTLE);
     }
 
     public BlockOreSmall(Material material) {
@@ -66,7 +62,7 @@ public class BlockOreSmall extends BlockOre {
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         DROP_RAND.setSeed(pos.getX() ^ pos.getY() ^ pos.getZ());
         int i = 0;
-        List<MaterialType> pool = material.has(MaterialType.GEM) ? material.has(MaterialType.GEM_VARIANTS) ? DROPS_POOL_GEM_VARIANTS : DROPS_POOL_GEM : DROPS_POOL;
+        List<MaterialType> pool = material.has(MaterialType.GEM) ? material.has(MaterialType.GEM_BRITTLE) ? DROPS_POOL_GEM_VARIANTS : DROPS_POOL_GEM : DROPS_POOL;
         for (int j = Math.max(1, material.getOreMulti() + (fortune > 0 ? DROP_RAND.nextInt(1 + fortune * material.getOreMulti()) : 0) / 2); i < j; i++) {
             drops.add(MaterialItem.get(pool.get(DROP_RAND.nextInt(pool.size())), material, 1));
         }

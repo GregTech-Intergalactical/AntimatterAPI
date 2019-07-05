@@ -16,10 +16,13 @@ public class RecipeMaps {
 
     public static RecipeMap ALLOY_SMELTING = new RecipeMap<>("alloy_smelting", new RecipeBuilder());
     public static RecipeMap ASSEMBLING = new RecipeMap<>("assembling", new RecipeBuilder());
+    public static RecipeMap AUTOCLAVING = new RecipeMap<>("autoclaving", new RecipeBuilder());
     public static RecipeMap BENDING = new RecipeMap<>("bending", new RecipeBuilder());
     public static RecipeMap CANNING = new RecipeMap<>("canning", new RecipeBuilder());
+    public static RecipeMap CENTRIFUGING = new RecipeMap<>("centrifuging", new RecipeBuilder());
     public static RecipeMap COMPRESSING = new RecipeMap<>("compressing", new RecipeBuilder());
     public static RecipeMap CUTTING = new RecipeMap<>("cutting", new RecipeBuilder());
+    public static RecipeMap DISTILLING = new RecipeMap<>("distilling", new RecipeBuilder());
     public static RecipeMap SMELTING = new RecipeMap<>("smelting", new RecipeBuilder());
     public static RecipeMap EXTRACTING = new RecipeMap<>("extracting", new RecipeBuilder());
     public static RecipeMap EXTRUDING = new RecipeMap<>("extruding", new RecipeBuilder());
@@ -28,7 +31,6 @@ public class RecipeMaps {
     public static RecipeMap RECYCLING = new RecipeMap<>("recycling", new RecipeBuilder());
     public static RecipeMap SCANNING = new RecipeMap<>("scanning", new RecipeBuilder());
     public static RecipeMap WIRE_MILLING = new RecipeMap<>("wire_milling", new RecipeBuilder());
-    public static RecipeMap CENTRIFUGING = new RecipeMap<>("centrifuging", new RecipeBuilder());
     public static RecipeMap ELECTROLYZING = new RecipeMap<>("electrolyzing", new RecipeBuilder());
     public static RecipeMap THERMAL_CENTRIFUGING = new RecipeMap<>("thermal_centrifuging", new RecipeBuilder());
     public static RecipeMap ORE_WASHING = new RecipeMap<>("ore_washing", new RecipeBuilder());
@@ -40,10 +42,8 @@ public class RecipeMaps {
     public static RecipeMap REPLICATING = new RecipeMap<>("replicating", new RecipeBuilder());
     public static RecipeMap FERMENTING = new RecipeMap<>("fermenting", new RecipeBuilder());
     public static RecipeMap FLUID_EXTRACTING = new RecipeMap<>("fluid_extracting", new RecipeBuilder());
-    public static RecipeMap FLUID_SOLIDIFYING = new RecipeMap<>("fluid_solidifying", new RecipeBuilder());
-    public static RecipeMap DISTILLING = new RecipeMap<>("distilling", new RecipeBuilder());
-    public static RecipeMap CHEMICAL_BATHING = new RecipeMap<>("chemical_bathing", new RecipeBuilder());
-    public static RecipeMap AUTOCLAVING = new RecipeMap<>("autoclaving", new RecipeBuilder());
+    public static RecipeMap FLUID_SOLIDIFYING = new RecipeMap<>("fluid_solidifying", new RecipeBuilder());  
+    public static RecipeMap CHEMICAL_BATHING = new RecipeMap<>("chemical_bathing", new RecipeBuilder());  
     public static RecipeMap MIXING = new RecipeMap<>("mixing", new RecipeBuilder());
     public static RecipeMap LASER_ENGRAVING = new RecipeMap<>("laser_engraving", new RecipeBuilder());
     public static RecipeMap PRESSING = new RecipeMap<>("pressing", new RecipeBuilder());
@@ -51,6 +51,7 @@ public class RecipeMaps {
     public static RecipeMap SIFTING = new RecipeMap<>("sifting", new RecipeBuilder());
     public static RecipeMap ARC_SMELTING = new RecipeMap<>("arc_smelting", new RecipeBuilder());
     public static RecipeMap PLASMA_ARC_SMELTING = new RecipeMap<>("plasma_arc_smelting", new RecipeBuilder());
+    public static RecipeMap TUMBLING = new RecipeMap<>("tumbling", new RecipeBuilder());
 
     public static RecipeMap COKING = new RecipeMap<>("coking", new RecipeBuilder());
     public static RecipeMap<BasicBlasting> BASIC_BLASTING = new RecipeMap<>("basic_blasting", new BasicBlasting());
