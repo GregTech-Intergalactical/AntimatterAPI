@@ -41,7 +41,7 @@ public class Materials {
     public static Material Plutonium241 = new Material("plutonium_241", 0xfa4646, SHINY, Pu241).asMetal(912, 0).addTools(6.0F, 280, 3);
     public static Material Silver = new Material("silver", 0xdcdcff, SHINY, Ag).asMetal(1234, 0, ORE, ORE_SMALL);
     public static Material Thorium = new Material("thorium", 0x001e00, SHINY, Th).asMetal(2115, 0, ORE).addTools(6.0F, 512, 2);
-    public static Material Titanium = new Material("titanium", 0xdca0f0, METALLIC).asMetal(1941, 1940, ROD).addTools(7.0F, 1600, 3);
+    public static Material Titanium = new Material("titanium", 0xdca0f0, METALLIC, Ti).asMetal(1941, 1940, ROD).addTools(7.0F, 1600, 3);
     public static Material Tungsten = new Material("tungsten", 0x323232, METALLIC, W).asMetal(3695, 3000, FOIL).addTools(6.0F, 512, 3); //Tungstensteel would be the one with tools
     public static Material Uranium = new Material("uranium_238", 0x32f032, METALLIC, U).asMetal(1405, 0, ORE);
     public static Material Uranium235 = new Material("uranium_235", 0x46fa46, METALLIC, U235).asMetal(1405, 0).addTools(6.0F, 512, 3);
@@ -266,7 +266,7 @@ public class Materials {
     public static Material Tungstate = new Material("tungstate", 0x373223, DULL).asDust(ORE).add(Tungsten, 1, Lithium, 2, Oxygen, 4);
     public static Material Uraninite = new Material("uraninite", 0x232323, METALLIC).asDust(ORE).add(Uranium, 1, Oxygen, 2);
     public static Material Uvarovite = new Material("uvarovite", 0xb4ffb4, DIAMOND).asDust().add(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12);
-    public static Material Wood = new Material("wood", 0x643200, NONE).asDust(GEAR, PLATE, ROD).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
+    public static Material Wood = new Material("wood", 0x643200, NONE).asDust(GEAR).add(Carbon, 1, Oxygen, 1, Hydrogen, 1);
     public static Material Stone = new Material("stone", 0xcdcdcd, ROUGH).asDust(DUST_IMPURE, GEAR);
     public static Material Wulfenite = new Material("wulfenite", 0xff8000, DULL).asDust(ORE).add(Lead, 1, Molybdenum, 1, Oxygen, 4);
     public static Material YellowLimonite = new Material("yellow_limonite", 0xc8c800, METALLIC).asDust(ORE).add(Iron, 1, Hydrogen, 1, Oxygen, 2);
@@ -376,7 +376,7 @@ public class Materials {
     public static Material HSSG = new Material("hssg", 0x999900, METALLIC).asMetal(4500, 4500, GEAR, FRAME).addTools(10.0F, 4000, 3).add(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1);
     public static Material HSSE = new Material("hsse", 0x336600, METALLIC).asMetal(5400, 5400, GEAR, FRAME).addTools(10.0F, 5120, 4).add(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1);
     public static Material HSSS = new Material("hsss", 0x660033, METALLIC).asMetal(5400, 5400).addTools(14.0F, 3000, 4).add(HSSG, 6, Iridium, 2, Osmium, 1);
-    public static Material Osmiridium = new Material("osmiridium", 0x6464ff, METALLIC).asMetal(3333, 2500, FRAME).addTools(11.0F, 1940, 5);
+    public static Material Osmiridium = new Material("osmiridium", 0x6464ff, METALLIC).asMetal(3333, 2500, FRAME).addTools(11.0F, 1940, 5).add(Iridium, 3, Osmium, 1);
     public static Material Duranium = new Material("duranium", 0xffffff, METALLIC).asMetal(295, 0).addTools(16.0F, 5120, 5);
     public static Material Naquadah = new Material("naquadah", 0x323232, METALLIC).asMetal(5400, 5400, ORE).addTools(6.0F, 890, 4);
     public static Material NaquadahAlloy = new Material("naquadah_alloy", 0x282828, METALLIC).asMetal(7200, 7200).addTools(8.0F, 5120, 5);

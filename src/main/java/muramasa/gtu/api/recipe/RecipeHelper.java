@@ -30,6 +30,7 @@ public class RecipeHelper {
         REPLACEMENTS.put('d', ToolType.SCREWDRIVER.getOreDict());
         REPLACEMENTS.put('f', ToolType.FILE.getOreDict());
         REPLACEMENTS.put('h', ToolType.HAMMER.getOreDict());
+        REPLACEMENTS.put('k', ToolType.KNIFE.getOreDict());
         REPLACEMENTS.put('m', ToolType.MORTAR.getOreDict());
         REPLACEMENTS.put('s', ToolType.SAW.getOreDict());
         REPLACEMENTS.put('w', ToolType.WRENCH.getOreDict());
@@ -42,6 +43,7 @@ public class RecipeHelper {
      * <li>d = Screwdriver</li>
      * <li>f = File</li>
      * <li>h = Hammer</li>
+     * <li>k = Knife</li>
      * <li>m = Mortar</li>
      * <li>s = Saw</li>
      * <li>w = Wrench</li>
