@@ -43,22 +43,50 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     public boolean checkStructure() {
-        clearComponents();
         Structure structure = getType().getStructure(getTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            if (onStructureFormed(result)) {
+            this.result = Optional.of(result);
+            if (onStructureFormed()) {
                 StructureCache.add(world, pos, result.positions);
-                this.result = Optional.of(result);
-                this.result.get().components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
+                this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
                 System.out.println("[Structure Debug] Valid Structure");
                 return true;
             }
         }
+        this.result = Optional.empty();
         System.out.println("[Structure Debug] Invalid Structure" + result.getError());
-        clearComponents();
         return false;
+    }
+
+    public void invalidateStructure() {
+        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this))));
+        result = Optional.empty();
+        resetMachine();
+        System.out.println("INVALIDATED STRUCTURE");
+        onStructureInvalidated();
+    }
+
+    /** Returns a list of Components **/
+    public List<IComponentHandler> getComponents(IGregTechObject object) {
+        return getComponents(object.getId());
+    }
+
+    public List<IComponentHandler> getComponents(String id) {
+        if (result.isPresent()) {
+            ArrayList<IComponentHandler> list = result.get().components.get(id);
+            return list != null ? list : Collections.emptyList();
+        }
+        return Collections.emptyList();
+    }
+
+    public List<IBlockState> getStates(String id) {
+        if (result.isPresent()) {
+            ArrayList<IBlockState> list = result.get().states.get(id);
+            return list != null ? list : Collections.emptyList();
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -71,15 +99,12 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     /** Events **/
-    public boolean onStructureFormed(StructureResult result) {
+    public boolean onStructureFormed() {
         return true;
     }
 
     public void onStructureInvalidated() {
-        clearComponents();
-        result = Optional.empty();
-        resetMachine();
-        System.out.println("INVALIDATED STRUCTURE");
+        //NOOP
     }
 
     @Override
@@ -262,35 +287,6 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public long getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents(Machines.HATCH_ENERGY);
         return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().getMaxInsert() : Ref.V[0];
-    }
-
-    /** Returns a list of Components **/
-    public List<IComponentHandler> getComponents(IGregTechObject object) {
-        return getComponents(object.getId());
-    }
-
-    public List<IComponentHandler> getComponents(String id) {
-        if (result.isPresent()) {
-            ArrayList<IComponentHandler> list = result.get().components.get(id);
-            return list != null ? list : Collections.emptyList();
-        }
-        return Collections.emptyList();
-    }
-
-    public List<IBlockState> getStates(String id) {
-        if (result.isPresent()) {
-            ArrayList<IBlockState> list = result.get().states.get(id);
-            return list != null ? list : Collections.emptyList();
-        }
-        return Collections.emptyList();
-    }
-
-    /** Clear the cached component map **/
-    public void clearComponents() {
-        if (result.isPresent()) {
-            result.get().components.forEach((k, v) -> v.forEach(c -> c.unlinkController(this)));
-            result.get().components.clear();
-        }
     }
 
     @Override

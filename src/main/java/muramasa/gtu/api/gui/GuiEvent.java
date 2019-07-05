@@ -3,7 +3,8 @@ package muramasa.gtu.api.gui;
 public enum GuiEvent {
 
     PROGRESS(1.0f),
-    MACHINE_STATE(1.0f);
+    MACHINE_STATE(1.0f),
+    MULTI_ACTIVATE(1.0f);
 
     private float updateThreshold;
 
