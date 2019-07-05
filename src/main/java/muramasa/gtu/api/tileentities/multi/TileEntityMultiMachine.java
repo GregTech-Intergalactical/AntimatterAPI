@@ -5,7 +5,9 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.machines.MachineFlag;
+import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -43,6 +45,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     public boolean checkStructure() {
+        if (!isServerSide()) return false;
         Structure structure = getType().getStructure(getTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
@@ -51,6 +54,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
             if (onStructureFormed()) {
                 StructureCache.add(world, pos, result.positions);
                 this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
+                setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
                 return true;
             }
@@ -89,11 +93,6 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         return Collections.emptyList();
     }
 
-    @Override
-    public void checkRecipe() {
-        if (isStructureValid()) super.checkRecipe();
-    }
-
     public boolean isStructureValid() {
         return StructureCache.has(world, pos);
     }
@@ -105,6 +104,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     public void onStructureInvalidated() {
         //NOOP
+    }
+
+    @Override
+    public void onGuiEvent(GuiEvent event) {
+        if (event == GuiEvent.MULTI_ACTIVATE) checkStructure();
     }
 
     @Override
@@ -292,6 +296,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     @Override
     public ControllerComponentHandler getComponentHandler() {
         return componentHandler;
+    }
+
+    @Override
+    public MachineState getDefaultMachineState() {
+        return MachineState.INVALID_STRUCTURE;
     }
 
     @Override

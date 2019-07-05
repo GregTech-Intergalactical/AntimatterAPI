@@ -107,7 +107,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Helpers **/
     public void resetMachine() {
-        setMachineState(IDLE);
+        setMachineState(getDefaultMachineState());
         activeRecipe = null;
     }
 
@@ -154,16 +154,6 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
     @Override
     public boolean setFacing(EnumFacing side) {
         return super.setFacing(side.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : side);
-    }
-
-    //TODO move to TileEntityMachine?
-    @Override
-    public void setMachineState(MachineState newState) {
-        if (getMachineState().getOverlayId() != newState.getOverlayId() && (newState.getOverlayId() == 0 || newState.getOverlayId() == 1)) {
-            markForRenderUpdate();
-            System.out.println("RENDER UPDATE");
-        }
-        super.setMachineState(newState);
     }
 
     public void setClientProgress(float progress) {
