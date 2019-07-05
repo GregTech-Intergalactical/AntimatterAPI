@@ -4,5 +4,6 @@ public enum NetworkEvent {
 
     SOUND,
     FLUID,
-    TEXTURE
+    TEXTURE,
+    GUI,
 }
