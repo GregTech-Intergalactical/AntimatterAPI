@@ -1,6 +1,7 @@
-package muramasa.gtu.api.data;
+package muramasa.gtu.api.ore;
 
-import muramasa.gtu.Ref;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
@@ -13,10 +14,10 @@ import java.util.List;
 
 public class StoneType implements IGregTechObject {
 
+    private static Int2ObjectArrayMap<StoneType> LOOKUP = new Int2ObjectArrayMap<>();
+
     private static List<StoneType> generating = new LinkedList<>(), all = new LinkedList<>();
     private static int LAST_INTERNAL_ID;
-    
-    //TODO: more functionality, soundtype etc
 
     public static StoneType STONE = new StoneType("stone", Materials.Stone, false, new Texture("minecraft", "blocks/stone"), SoundType.STONE);
 
@@ -32,10 +33,10 @@ public class StoneType implements IGregTechObject {
     public static StoneType NETHERRACK = new StoneType("netherrack", Materials.Netherrack, false, new Texture("minecraft", "blocks/netherrack"), SoundType.STONE);
     public static StoneType ENDSTONE = new StoneType("endstone", Materials.Endstone, false, new Texture("minecraft", "blocks/end_stone"), SoundType.STONE);
 
-    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new Texture(Ref.MODID, "blocks/stone/granite_red"), SoundType.STONE);
-    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new Texture(Ref.MODID, "blocks/stone/granite_black"), SoundType.STONE);
-    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new Texture(Ref.MODID, "blocks/stone/marble"), SoundType.STONE);
-    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new Texture(Ref.MODID, "blocks/stone/basalt"), SoundType.STONE);
+    public static StoneType GRANITE_RED = new StoneType("granite_red", Materials.GraniteRed, true, new Texture("blocks/stone/granite_red"), SoundType.STONE);
+    public static StoneType GRANITE_BLACK = new StoneType("granite_black", Materials.GraniteBlack, true, new Texture("blocks/stone/granite_black"), SoundType.STONE);
+    public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new Texture("blocks/stone/marble"), SoundType.STONE);
+    public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new Texture("blocks/stone/basalt"), SoundType.STONE);
 
     private String id;
     private Material material;
@@ -53,6 +54,7 @@ public class StoneType implements IGregTechObject {
             generating.add(this);
         }
         all.add(this);
+        LOOKUP.put(internalId, this);
     }
 
     @Override
@@ -90,6 +92,10 @@ public class StoneType implements IGregTechObject {
             textures.add(type.getTexture());
         }
         return textures;
+    }
+
+    public static StoneType get(int id) {
+        return LOOKUP.get(id);
     }
 
     public static int getLastInternalId() {

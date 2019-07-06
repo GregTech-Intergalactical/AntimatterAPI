@@ -10,6 +10,7 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.pipe.PipeSize;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
@@ -230,6 +231,8 @@ public class Data {
     public static StandardItem CombUranium = new StandardItem("comb_uranium", "")/*.optional(Ref.MOD_FR)*/;
     public static StandardItem CombPlutonium = new StandardItem("comb_plutonium", "")/*.optional(Ref.MOD_FR)*/;
     public static StandardItem CombNaquadah = new StandardItem("comb_naquadah", "")/*.optional(Ref.MOD_FR)*/;
+
+    public static BlockOre ORE = new BlockOre();
 
     public static BlockCoil COIL_CUPRONICKEL = new BlockCoil("cupronickel", 113); //1808
     public static BlockCoil COIL_KANTHAL = new BlockCoil("kanthal", 169); //2704
