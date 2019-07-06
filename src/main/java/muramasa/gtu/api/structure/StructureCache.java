@@ -85,9 +85,12 @@ public class StructureCache {
         if (entry == null) return;
         BlockPos controllerPos = entry.get(e.getPos());
         if (controllerPos == null) return;
-        IBlockState state = e.getWorld().getBlockState(controllerPos);
         Vec3d hit = e.getHitVec();
-        state.getBlock().onBlockActivated(e.getWorld(), controllerPos, state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z);
+        IBlockState state = e.getWorld().getBlockState(e.getPos());
+        if (!state.getBlock().onBlockActivated(e.getWorld(), e.getPos(), state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z)) {
+            state = e.getWorld().getBlockState(controllerPos);
+            state.getBlock().onBlockActivated(e.getWorld(), controllerPos, state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z);
+        }
         e.setCanceled(true);
     }
 
