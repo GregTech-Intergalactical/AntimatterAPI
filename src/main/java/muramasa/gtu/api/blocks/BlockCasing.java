@@ -42,7 +42,7 @@ public class BlockCasing extends BlockBaked implements IGregTechObject, IModelOv
         super();
         this.id = id;
         this.internalId = lastInternalId++;
-        setData(TextureData.get().base(getTexture()));
+        setData(TextureData.get().base(getTexture()).overlay(getTexture()));
         setModel(LAYERED);
         setUnlocalizedName("casing_" + getId());
         setRegistryName("casing_" + getId());

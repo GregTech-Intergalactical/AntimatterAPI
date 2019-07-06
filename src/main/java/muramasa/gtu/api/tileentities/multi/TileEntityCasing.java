@@ -1,16 +1,17 @@
 package muramasa.gtu.api.tileentities.multi;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.capability.impl.CoverHandler;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.texture.IBakedTile;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityBase;
-import muramasa.gtu.api.blocks.BlockCasing;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -42,7 +43,11 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
 
     @Override
     public TextureData getTextureData() {
-        return TextureData.get().base(getType().getTexture()).overlay(getType().getTexture());
+        if (textureOverride != -1) System.out.println(textureOverride);
+        if (textureOverride == 0) {
+            return new TextureData().base(getType().getDefaultData().getBase()).overlay(Textures.LARGE_TURBINE_ACTIVE[4]);
+        }
+        return null;
     }
 
     @Override
@@ -53,7 +58,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         if (capability == GTCapabilities.COMPONENT || capability == GTCapabilities.COVERABLE) return true;
-       return super.hasCapability(capability, side);
+        return super.hasCapability(capability, side);
     }
 
     @Nullable
@@ -73,7 +78,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         tag = super.writeToNBT(tag);
-        if (textureOverride != -1) tag.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
+        /*if (textureOverride != -1)*/ tag.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
         return tag;
     }
 

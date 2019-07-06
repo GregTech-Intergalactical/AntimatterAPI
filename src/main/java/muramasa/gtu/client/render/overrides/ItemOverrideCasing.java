@@ -19,6 +19,6 @@ public class ItemOverrideCasing extends ItemOverrideTextureData {
 
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
-        return new BakedTextureDataItem(ModelUtils.BAKED_BASIC, ((BlockBaked) Block.getBlockFromItem(stack.getItem())).getBlockData());
+        return new BakedTextureDataItem(ModelUtils.BAKED_BASIC, ((BlockBaked) Block.getBlockFromItem(stack.getItem())).getDefaultData());
     }
 }

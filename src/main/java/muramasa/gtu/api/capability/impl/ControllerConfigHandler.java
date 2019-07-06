@@ -16,7 +16,7 @@ public class ControllerConfigHandler extends MachineConfigHandler {
     public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
         if (type == ToolType.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
-            if (!machine.validStructure) {
+            if (!machine.isStructureValid()) {
                 machine.checkStructure();
                 return true;
             }

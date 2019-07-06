@@ -6,6 +6,7 @@ import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineFlag;
@@ -41,8 +42,12 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     /** Machine Data **/
     private Machine type;
     private Tier tier;
-    private MachineState machineState = MachineState.IDLE;
+    private MachineState machineState;
     private EnumFacing facing;
+
+    public TileEntityMachine() {
+        machineState = getDefaultMachineState();
+    }
 
     @Override
     public void onLoad() {
@@ -56,6 +61,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     /** Events **/
     public void onContentsChanged(ContentEvent type, int slot) {
+        //NOOP
+    }
+
+    public void onGuiEvent(GuiEvent event) {
         //NOOP
     }
 
@@ -86,6 +95,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     public MachineState getMachineState() {
         return machineState;
+    }
+
+    public MachineState getDefaultMachineState() {
+        return MachineState.IDLE;
     }
 
     public int getCurProgress() {
@@ -140,6 +153,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     public void setMachineState(MachineState newState) {
+        if (machineState.getOverlayId() != newState.getOverlayId() && newState.allowRenderUpdate()) {
+            markForRenderUpdate();
+            System.out.println("RENDER UPDATE");
+        }
         machineState = newState;
     }
 

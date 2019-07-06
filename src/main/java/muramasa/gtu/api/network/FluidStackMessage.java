@@ -18,7 +18,9 @@ public class FluidStackMessage implements IMessage {
 
     private int[] inputIds, outputIds, inputAmounts, outputAmounts;
 
-    public FluidStackMessage() {}
+    public FluidStackMessage() {
+        //NOOP
+    }
 
     public FluidStackMessage(@Nullable FluidStack[] inputs, @Nullable FluidStack[] outputs) {
         FluidStack current;

@@ -19,8 +19,8 @@ public class GTProperties {
     public static final UnlistedByte PIPE_CONNECTIONS = new UnlistedByte();
 
     /** Block Ore Properties **/
-    public static PropertyInteger ORE_STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId() - 1);
+    public static final PropertyInteger ORE_STONE = PropertyInteger.create("stone_type", 0, StoneType.getLastInternalId() - 1);
 
     /** Block Storage Properties **/
-    public static PropertyInteger STORAGE_TYPE = PropertyInteger.create("storage_type", 0, 1);
+    public static final PropertyInteger STORAGE_TYPE = PropertyInteger.create("storage_type", 0, 1);
 }

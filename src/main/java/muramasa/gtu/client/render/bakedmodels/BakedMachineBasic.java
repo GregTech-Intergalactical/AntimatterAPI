@@ -13,8 +13,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-import static muramasa.gtu.client.render.ModelUtils.trans;
-
+//TODO if enough people want it
 public class BakedMachineBasic extends BakedMachine {
 
     @Override

@@ -1,8 +1,7 @@
 package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.structure.StructureResult;
-import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
+import muramasa.gtu.api.blocks.BlockCoil;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
 
@@ -38,8 +37,8 @@ public class TileEntityElectricBlastFurnace extends TileEntityMultiMachine {
     }
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
-        heatingCapacity = getComponents("coil").stream().mapToInt(c -> ((TileEntityCoil) c.getTile()).getHeatCapacity()).sum();
+    public boolean onStructureFormed() {
+        heatingCapacity = getStates("coil").stream().mapToInt(s -> ((BlockCoil) s.getBlock()).getHeatCapacity()).sum();
         return true;
     }
 }
