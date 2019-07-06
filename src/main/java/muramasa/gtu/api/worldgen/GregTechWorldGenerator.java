@@ -85,7 +85,9 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             }));
 
             //Check for override data
-            String jsonData = new String(Files.readAllBytes(new File(Ref.CONFIG, "WorldGenerationOverride.json").toPath()));
+            File overrideFile = new File(Ref.CONFIG, "WorldGenerationOverride.json");
+            if (!overrideFile.exists()) overrideFile.createNewFile();
+            String jsonData = new String(Files.readAllBytes(overrideFile.toPath()));
             HashMap<String, HashMap<String, Object>> dataMap = Ref.GSON.fromJson(jsonData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
             if (dataMap != null) {
                 //Inject override data
