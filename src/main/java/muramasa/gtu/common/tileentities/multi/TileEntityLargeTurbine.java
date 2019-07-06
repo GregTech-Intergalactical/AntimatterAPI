@@ -1,7 +1,6 @@
 package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.api.blocks.BlockCasing;
-import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
@@ -12,14 +11,14 @@ import net.minecraft.tileentity.TileEntity;
 public class TileEntityLargeTurbine extends TileEntityMultiMachine {
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed() {
         applyTextureToFace(0);
         return true;
     }
 
     @Override
-    public void onStructureInvalid() {
-        applyTextureToFace(1);
+    public void onStructureInvalidated() {
+        applyTextureToFace(-1);
     }
 
     public void applyTextureToFace(int override) {

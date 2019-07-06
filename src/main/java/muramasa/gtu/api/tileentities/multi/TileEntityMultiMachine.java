@@ -5,32 +5,37 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.machines.MachineFlag;
+import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.recipe.RecipeMap;
-import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.structure.Structure;
+import muramasa.gtu.api.structure.StructureCache;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class TileEntityMultiMachine extends TileEntityRecipeMachine implements IComponent {
 
-    //TODO set protected
-    public boolean validStructure;
-    //TODO move to BasicMachine
-    protected int efficiency, efficiencyIncrease;
+    protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
     protected ControllerComponentHandler componentHandler;
+
+    protected Optional<StructureResult> result = Optional.empty();
 
     @Override
     public void onLoad() {
@@ -40,33 +45,70 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     public boolean checkStructure() {
-        clearComponents();
+        if (!isServerSide()) return false;
         Structure structure = getType().getStructure(getTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            components = result.getComponents();
-            if (onStructureValid(result)) {
-                components.forEach((k, v) -> v.forEach(c -> c.linkController(this)));
+            this.result = Optional.of(result);
+            if (onStructureFormed()) {
+                StructureCache.add(world, pos, result.positions);
+                this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
+                setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
-                return (validStructure = true);
+                return true;
             }
         }
+        this.result = Optional.empty();
         System.out.println("[Structure Debug] Invalid Structure" + result.getError());
-        clearComponents();
-        return (validStructure = false);
+        return false;
+    }
+
+    public void invalidateStructure() {
+        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this))));
+        result = Optional.empty();
+        resetMachine();
+        System.out.println("INVALIDATED STRUCTURE");
+        onStructureInvalidated();
+    }
+
+    /** Returns a list of Components **/
+    public List<IComponentHandler> getComponents(IGregTechObject object) {
+        return getComponents(object.getId());
+    }
+
+    public List<IComponentHandler> getComponents(String id) {
+        if (result.isPresent()) {
+            ArrayList<IComponentHandler> list = result.get().components.get(id);
+            return list != null ? list : Collections.emptyList();
+        }
+        return Collections.emptyList();
+    }
+
+    public List<IBlockState> getStates(String id) {
+        if (result.isPresent()) {
+            ArrayList<IBlockState> list = result.get().states.get(id);
+            return list != null ? list : Collections.emptyList();
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean isStructureValid() {
+        return StructureCache.has(world, pos);
     }
 
     /** Events **/
-    public boolean onStructureValid(StructureResult result) {
+    public boolean onStructureFormed() {
         return true;
     }
 
-    public void onStructureInvalid() {
-        validStructure = false;
-        clearComponents();
-        resetMachine();
-        System.out.println("INVALIDATED STRUCTURE");
+    public void onStructureInvalidated() {
+        //NOOP
+    }
+
+    @Override
+    public void onGuiEvent(GuiEvent event) {
+        if (event == GuiEvent.MULTI_ACTIVATE) checkStructure();
     }
 
     @Override
@@ -251,25 +293,14 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().getMaxInsert() : Ref.V[0];
     }
 
-    /** Returns a list of Components **/
-    public List<IComponentHandler> getComponents(IGregTechObject object) {
-        return getComponents(object.getId());
-    }
-
-    public List<IComponentHandler> getComponents(String id) {
-        ArrayList<IComponentHandler> list = components.get(id);
-        return list != null ? list : Collections.emptyList();
-    }
-
-    /** Clear the cached component map **/
-    public void clearComponents() {
-        components.forEach((k, v) -> v.forEach(c -> c.unlinkController(this)));
-        components.clear();
-    }
-
     @Override
     public ControllerComponentHandler getComponentHandler() {
         return componentHandler;
+    }
+
+    @Override
+    public MachineState getDefaultMachineState() {
+        return MachineState.INVALID_STRUCTURE;
     }
 
     @Override

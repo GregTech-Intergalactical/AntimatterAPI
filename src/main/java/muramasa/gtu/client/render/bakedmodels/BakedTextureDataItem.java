@@ -21,6 +21,6 @@ public class BakedTextureDataItem extends BakedBase {
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return data.apply(baked);
+        return data.apply(baked.getQuads(state, side, rand));
     }
 }

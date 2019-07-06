@@ -10,15 +10,15 @@ public class HatchComponentHandler extends ComponentHandler {
     }
 
     @Override
-    public void linkController(TileEntityMultiMachine controllerTile) {
-        super.linkController(controllerTile);
+    public void onStructureFormed(TileEntityMultiMachine controllerTile) {
+        super.onStructureFormed(controllerTile);
         ((TileEntityHatch) getTile()).setTextureOverride((controllerTile.getTypeId() * 1000) + controllerTile.getTierId());
         getTile().markForRenderUpdate();
     }
 
     @Override
-    public void unlinkController(TileEntityMultiMachine controllerTile) {
-        super.unlinkController(controllerTile);
+    public void onStructureInvalidated(TileEntityMultiMachine controllerTile) {
+        super.onStructureInvalidated(controllerTile);
         ((TileEntityHatch) getTile()).setTextureOverride(-1);
         getTile().markForRenderUpdate();
     }

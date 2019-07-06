@@ -22,6 +22,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,18 +31,20 @@ public abstract class BlockBaked extends Block {
     protected static ModelResourceLocation BASIC = new ModelResourceLocation(Ref.MODID + ":basic");
     protected static ModelResourceLocation LAYERED = new ModelResourceLocation(Ref.MODID + ":layered");
 
-    private TextureData data;
+    private TextureData defaultData;
     private ModelResourceLocation model;
+
+    //TODO cache default bakedmodel here
 
     public BlockBaked() {
         super(Material.ROCK);
-        this.data = TextureData.get().base(Textures.ERROR);
+        this.defaultData = TextureData.get().base(Textures.ERROR);
         model = BASIC;
     }
 
     public BlockBaked(TextureData data) {
         super(Material.ROCK);
-        this.data = data;
+        this.defaultData = data;
         model = BASIC;
     }
 
@@ -51,7 +54,7 @@ public abstract class BlockBaked extends Block {
     }
 
     public void setData(TextureData data) {
-        this.data = data;
+        this.defaultData = data;
     }
 
     public void setModel(ModelResourceLocation model) {
@@ -66,16 +69,22 @@ public abstract class BlockBaked extends Block {
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        return exState.withProperty(GTProperties.TEXTURE, hasTileEntity(state) ? getTileData(state, world, pos) : getBlockData());
+        return exState.withProperty(GTProperties.TEXTURE, getData(state, world, pos));
     }
 
+    private TextureData getData(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TextureData data = hasTileEntity(state) ? getTileData(state, world, pos) : getDefaultData();
+        return data != null ? data : defaultData;
+    }
+
+    @Nullable
     public TextureData getTileData(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = Utils.getTile(world, pos);
         return tile instanceof IBakedTile ? ((IBakedTile) tile).getTextureData() : null;
     }
 
-    public TextureData getBlockData() {
-        return data;
+    public TextureData getDefaultData() {
+        return defaultData;
     }
 
     @SideOnly(Side.CLIENT)

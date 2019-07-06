@@ -74,7 +74,7 @@ public class BlockCable extends BlockPipe<BlockCable> implements IItemBlock, ICo
         if (tile instanceof TileEntityCable) {
             TileEntityCable cable = (TileEntityCable) tile;
             exState = exState.withProperty(PIPE_CONNECTIONS, cable.getConnections());
-            exState = exState.withProperty(TEXTURE, cable.isInsulated() ? Textures.PIPE_DATA[2] : getBlockData());
+            exState = exState.withProperty(TEXTURE, cable.isInsulated() ? Textures.PIPE_DATA[2] : getDefaultData());
         }
         return exState;
     }

@@ -4,18 +4,12 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,22 +41,6 @@ public class BlockCoil extends Block implements IGregTechObject, IModelOverride 
 
     public int getHeatCapacity() {
         return heatCapacity;
-    }
-
-    @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        items.add(new ItemStack(this));
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileEntityCoil();
-    }
-
-    @Override
-    public boolean hasTileEntity(IBlockState state) {
-        return true;
     }
 
     @Nullable

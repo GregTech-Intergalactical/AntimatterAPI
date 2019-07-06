@@ -85,7 +85,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
         if (tile instanceof TileEntityPipe) {
             TileEntityPipe pipe = (TileEntityPipe) tile;
             exState = exState.withProperty(PIPE_CONNECTIONS, pipe.getConnections());
-            exState = exState.withProperty(TEXTURE, getBlockData());
+            exState = exState.withProperty(TEXTURE, getDefaultData());
         }
         return exState;
     }

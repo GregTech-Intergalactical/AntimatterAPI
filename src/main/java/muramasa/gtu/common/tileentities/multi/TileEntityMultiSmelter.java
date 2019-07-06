@@ -1,11 +1,9 @@
 package muramasa.gtu.common.tileentities.multi;
 
 import muramasa.gtu.api.blocks.BlockCoil;
-import muramasa.gtu.api.capability.IComponentHandler;
-import muramasa.gtu.api.structure.StructureResult;
-import muramasa.gtu.api.tileentities.multi.TileEntityCoil;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.block.state.IBlockState;
 
 import java.util.List;
 
@@ -19,19 +17,19 @@ public class TileEntityMultiSmelter extends TileEntityMultiMachine {
 //        this.mEfficiencyIncrease = 10000;
 
         int tier = Utils.getVoltageTier(getMaxInputVoltage());
-        this.EUt = (-4 * (1 << tier - 1) * (1 << tier - 1) * this.level / this.discount);
-        this.maxProgress = Math.max(1, 512 / (1 << tier - 1));
+        EUt = (-4 * (1 << tier - 1) * (1 << tier - 1) * level / discount);
+        maxProgress = Math.max(1, 512 / (1 << tier - 1));
     }
 
     @Override
-    public boolean onStructureValid(StructureResult result) {
-        List<IComponentHandler> coils = getComponents("coil");
-        BlockCoil firstType = ((TileEntityCoil) coils.get(0).getTile()).getType();
-        if (coils.stream().allMatch(c -> ((TileEntityCoil) c.getTile()).getType() == firstType)) {
+    public boolean onStructureFormed() {
+        List<IBlockState> coils = getStates("coil");
+        BlockCoil firstType = ((BlockCoil) coils.get(0).getBlock());
+        if (coils.stream().allMatch(s -> s.getBlock() == firstType)) {
             setCoilValues(firstType);
             return true;
         } else {
-            result.withError("all coils do not match");
+            result.ifPresent(r -> r.withError("all coils do not match"));
             return false;
         }
     }
