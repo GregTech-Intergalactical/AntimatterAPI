@@ -3,7 +3,8 @@ package muramasa.gtu.api.worldgen;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.data.StoneType;
+import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -113,13 +114,13 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             pos.setPos(eX, eY, eZ);
                                             int ranOre = rand.nextInt(50);
                                             if (ranOre < 3) {
-                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(0, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getMaterial(0), MaterialType.ORE);
                                             } else if (ranOre < 6) {
-                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(1, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getMaterial(1), MaterialType.ORE);
                                             } else if (ranOre < 8) {
-                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(2, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getMaterial(2), MaterialType.ORE);
                                             } else if (ranOre < 10) {
-                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getState(3, false));
+                                                WorldGenHelper.setStateOre(world, pos, layerToGen.getMaterial(3), MaterialType.ORE);
                                             } else {
                                                 if (world.provider.getDimension() == Ref.ASTEROIDS) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);

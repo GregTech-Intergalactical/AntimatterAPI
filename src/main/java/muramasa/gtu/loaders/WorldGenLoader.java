@@ -7,7 +7,7 @@ import muramasa.gtu.api.worldgen.WorldGenStone;
 
 import static muramasa.gtu.Ref.*;
 import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.data.StoneType.*;
+import static muramasa.gtu.api.ore.StoneType.*;
 
 public class WorldGenLoader {
 

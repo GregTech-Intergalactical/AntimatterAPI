@@ -1,14 +1,15 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,6 +22,7 @@ import static muramasa.gtu.api.materials.MaterialType.*;
 
 public class Material implements IGregTechObject {
 
+    private static Int2ObjectArrayMap<Material> LOOKUP = new Int2ObjectArrayMap<>();
     private static int LAST_INTERNAL_ID; //TODO remove
 
     public static final long M = 3628800;
@@ -65,6 +67,7 @@ public class Material implements IGregTechObject {
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
+        LOOKUP.put(internalId, this);
         GregTechAPI.register(Material.class, this);
     }
 
@@ -590,7 +593,8 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
+        //TODO return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
+        return new ItemStack(Blocks.DIAMOND_ORE, amount);
     }
 
     public ItemStack getBlock(int amount) {
@@ -611,5 +615,9 @@ public class Material implements IGregTechObject {
     public FluidStack getPlasma(int amount) {
         if (plasma == null) throw new NullPointerException(getId() + ": Plasma is null");
         return new FluidStack(getPlasma(), amount);
+    }
+
+    public static Material get(int id) {
+        return LOOKUP.get(id);
     }
 }
