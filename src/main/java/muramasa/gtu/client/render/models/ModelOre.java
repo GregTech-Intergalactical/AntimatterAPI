@@ -24,7 +24,7 @@ public class ModelOre implements IModel {
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IModel base = ModelUtils.load("basic");
         BakedOre.STONES = new Object2ObjectOpenHashMap<>();
-        StoneType.getAll().forEach(s -> {
+        StoneType.getAllActive().forEach(s -> {
             BakedOre.STONES.put(s.getId(), ModelUtils.tex(base, "0", s.getTexture()).bake(state, format, bakedTextureGetter));
         });
 
@@ -44,7 +44,7 @@ public class ModelOre implements IModel {
     @Override
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> locations = new ArrayList<>();
-        StoneType.getAll().forEach(s -> locations.add(s.getTexture()));
+        StoneType.getAllActive().forEach(s -> locations.add(s.getTexture()));
         OreType.VALUES.forEach(o -> GregTechAPI.all(TextureSet.class).forEach(t -> locations.add(t.getTexture(o.getType(), 0))));
         return locations;
     }

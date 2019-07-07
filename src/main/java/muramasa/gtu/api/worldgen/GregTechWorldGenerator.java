@@ -43,7 +43,7 @@ public class GregTechWorldGenerator implements IWorldGenerator {
     }
 
     public GregTechWorldGenerator() {
-        GameRegistry.registerWorldGenerator(this, 1073741823);
+        GameRegistry.registerWorldGenerator(this, Integer.MAX_VALUE);
     }
 
     public static void register(WorldGenBase worldGen) {

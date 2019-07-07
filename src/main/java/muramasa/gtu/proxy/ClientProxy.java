@@ -106,7 +106,7 @@ public class ClientProxy implements IProxy {
         //Register Material Item textures
         GregTechAPI.all(MaterialItem.class).forEach(i -> Arrays.stream(i.getMaterial().getSet().getTextures(i.getType())).forEach(r -> e.getMap().registerSprite(r)));
 
-        StoneType.getAll().forEach(s -> e.getMap().registerSprite(s.getTexture()));
+        StoneType.getAllActive().forEach(s -> e.getMap().registerSprite(s.getTexture()));
         GregTechAPI.all(TextureSet.class).forEach(s -> {
             e.getMap().registerSprite(s.getTexture(MaterialType.BLOCK, 0));
             e.getMap().registerSprite(s.getTexture(MaterialType.FRAME, 0));
