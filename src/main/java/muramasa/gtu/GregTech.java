@@ -27,6 +27,7 @@ import muramasa.gtu.integration.ctx.GregTechTweaker;
 import muramasa.gtu.integration.fr.ForestryRegistrar;
 import muramasa.gtu.integration.gc.GalacticraftRegistrar;
 import muramasa.gtu.integration.top.TheOneProbePlugin;
+import muramasa.gtu.integration.ubc.UndergroundBiomesRegistrar;
 import muramasa.gtu.proxy.IProxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -63,6 +64,7 @@ public class GregTech {
         GregTechNetwork.init();
         GregTechAPI.addRegistrar(new ForestryRegistrar());
         GregTechAPI.addRegistrar(new GalacticraftRegistrar());
+        GregTechAPI.addRegistrar(new UndergroundBiomesRegistrar());
         if (Utils.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
     }
 
@@ -70,6 +72,8 @@ public class GregTech {
     public void preInit(FMLPreInitializationEvent e) {
         LOGGER = e.getModLog();
         PROXY.preInit(e);
+
+        GregTechAPI.onRegistration(RegistrationEvent.INIT);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(GregTech.INSTANCE, new GuiHandler());
         GTCapabilities.register();
@@ -87,7 +91,6 @@ public class GregTech {
         Structures.init();
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
-        GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
     }
 
     @Mod.EventHandler
@@ -108,6 +111,7 @@ public class GregTech {
     public void postInit(FMLPostInitializationEvent e) {
         PROXY.postInit(e);
         GregTechAPI.onRegistration(RegistrationEvent.DATA);
+        GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
         GregTechWorldGenerator.init();
         if (!Ref.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
         GregTechAPI.onRegistration(RegistrationEvent.RECIPE);
@@ -133,7 +137,7 @@ public class GregTech {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> e) {
-        StoneType.getAll().forEach(BlockOre::new);
+        StoneType.getAllActive().forEach(BlockOre::new);
         MaterialType.BLOCK.getMats().forEach(BlockStorage::new);
         GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
         StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
