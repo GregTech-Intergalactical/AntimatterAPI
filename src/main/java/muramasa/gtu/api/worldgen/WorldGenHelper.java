@@ -21,11 +21,14 @@ public class WorldGenHelper {
 
     public static Object2ObjectOpenHashMap<IBlockState, IBlockState> ORE_MAP = new Object2ObjectOpenHashMap<>();
     public static ObjectOpenHashSet<IBlockState> STONE_SET = new ObjectOpenHashSet<>();
+    public static IBlockState ORE_DEFAULT;
 
     public static Predicate<IBlockState> ORE_PREDICATE = state -> ORE_MAP.containsKey(state);
     public static Predicate<IBlockState> STONE_PREDICATE = state -> STONE_SET.contains(state);
 
     public static void init() {
+        ORE_DEFAULT = BlockOre.get(StoneType.STONE).getDefaultState();
+
         ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), BlockOre.get(StoneType.STONE).getDefaultState());
         ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), BlockOre.get(StoneType.GRANITE).getDefaultState());
         ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), BlockOre.get(StoneType.DIORITE).getDefaultState());
@@ -63,11 +66,12 @@ public class WorldGenHelper {
 //    }
 
     public static boolean setOreState(World world, BlockPos pos, IBlockState existing, Material material, OreType type) {
-
-        //existing.getBlock().isReplaceableOreGen(existing, world, pos, );
-
-        IBlockState toSet = ORE_MAP.get(existing);
-        if (toSet != null) {
+        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
+            IBlockState toSet = ORE_MAP.get(existing);
+            if (toSet == null) {
+                //toSet = ORE_DEFAULT;
+                return false;
+            }
             world.setBlockState(pos, toSet.withProperty(GTProperties.ORE_TYPE, type), 2 | 16);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntityOre) ((TileEntityOre) tile).init(material);

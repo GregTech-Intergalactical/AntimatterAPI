@@ -20,13 +20,13 @@ public class TileEntityOre extends TileEntityBase {
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
-        if (tag.hasKey(Ref.KEY_ORE_TILE)) material = Material.get(tag.getInteger(Ref.KEY_ORE_TILE));
+        if (tag.hasKey(Ref.KEY_ORE_TILE)) material = Material.get(tag.getShort(Ref.KEY_ORE_TILE));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
-        tag.setInteger(Ref.KEY_ORE_TILE, material.getInternalId());
+        tag.setShort(Ref.KEY_ORE_TILE, (short) material.getInternalId());
         return tag;
     }
 }
