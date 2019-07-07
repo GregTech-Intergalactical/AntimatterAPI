@@ -14,6 +14,7 @@ import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.network.GregTechNetwork;
+import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.tools.ToolType;
@@ -132,6 +133,7 @@ public class GregTech {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> e) {
+        StoneType.getAll().forEach(BlockOre::new);
         MaterialType.BLOCK.getMats().forEach(BlockStorage::new);
         GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
         StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));

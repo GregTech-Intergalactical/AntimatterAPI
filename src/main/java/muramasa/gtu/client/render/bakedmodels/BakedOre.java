@@ -1,8 +1,9 @@
 package muramasa.gtu.client.render.bakedmodels;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.TextureSet;
+import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.client.render.overrides.ItemOverrideOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -16,28 +17,28 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-import static muramasa.gtu.api.properties.GTProperties.*;
+import static muramasa.gtu.api.properties.GTProperties.ORE_MATERIAL;
+import static muramasa.gtu.api.properties.GTProperties.ORE_TYPE;
 
 public class BakedOre extends BakedBase {
 
-    public static IBakedModel[] STONES;
-    public static Int2ObjectArrayMap<IBakedModel[]> OVERLAYS;
+    public static Object2ObjectOpenHashMap<String, IBakedModel> STONES;
+    public static IBakedModel[][] OVERLAYS;
     public static ItemOverrideOre ITEM_OVERRIDE = new ItemOverrideOre();
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new LinkedList<>();
-        IExtendedBlockState exState = (IExtendedBlockState) state;
-        if (exState == null) return quads;
+        if (state == null) return quads;
 
-        int stone = exState.getValue(ORE_STONE);
-        quads.addAll(STONES[stone].getQuads(state, side, rand));
+        String stone = ((BlockOre) state.getBlock()).getStoneType().getId();
+        quads.addAll(STONES.get(stone).getQuads(state, side, rand));
 
-        int material = exState.getValue(ORE_MATERIAL);
-        int type = exState.getValue(ORE_TYPE);
+        int type = state.getValue(ORE_TYPE).ordinal();
+        int material = ((IExtendedBlockState) state).getValue(ORE_MATERIAL);
 
         TextureSet set = Material.get(material).getSet();
-        IBakedModel[] array = OVERLAYS.get(type);
+        IBakedModel[] array = OVERLAYS[type];
         IBakedModel overlay = array[set.getInternalId()];
 
         quads.addAll(overlay.getQuads(state, side, rand));

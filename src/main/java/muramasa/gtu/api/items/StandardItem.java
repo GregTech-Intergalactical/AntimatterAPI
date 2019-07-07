@@ -126,8 +126,6 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                     if (!world.isRemote) {
                         TileEntityOre ore = (TileEntityOre) tile;
                         player.sendMessage(new TextComponentString(ore.getMaterial().getId()));
-                        player.sendMessage(new TextComponentString(ore.getStoneType().getId()));
-                        player.sendMessage(new TextComponentString(ore.getType().getId()));
                     }
                 }
             }

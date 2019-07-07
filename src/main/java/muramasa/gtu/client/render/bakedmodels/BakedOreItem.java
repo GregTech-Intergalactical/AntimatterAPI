@@ -11,9 +11,10 @@ import java.util.List;
 
 public class BakedOreItem extends BakedBase {
 
-    private int material, stoneType, materialType;
+    private int material, materialType;
+    private String stoneType;
 
-    public BakedOreItem(int material, int stoneType, int materialType) {
+    public BakedOreItem(int material, String stoneType, int materialType) {
         this.material = material;
         this.stoneType = stoneType;
         this.materialType = materialType;
@@ -22,8 +23,8 @@ public class BakedOreItem extends BakedBase {
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new LinkedList<>();
-        quads.addAll(BakedOre.STONES[stoneType].getQuads(state, side, rand));
-        quads.addAll(BakedOre.OVERLAYS.get(materialType)[Material.get(material).getSet().getInternalId()].getQuads(state, side, rand));
+        quads.addAll(BakedOre.STONES.get(stoneType).getQuads(state, side, rand));
+        quads.addAll(BakedOre.OVERLAYS[materialType][Material.get(material).getSet().getInternalId()].getQuads(state, side, rand));
         return quads;
     }
 }

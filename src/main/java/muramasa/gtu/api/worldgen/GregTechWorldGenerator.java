@@ -64,6 +64,8 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             //Generate default data
             String defaultData = new String(Files.readAllBytes(defaultFile.toPath()));
             DEFAULT_DATA = Ref.GSON.fromJson(defaultData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
+
+            WorldGenHelper.init();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("GregTechWorldGenerator caught an exception while initializing");

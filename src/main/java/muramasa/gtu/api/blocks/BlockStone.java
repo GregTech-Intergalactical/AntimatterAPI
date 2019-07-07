@@ -41,4 +41,8 @@ public class BlockStone extends Block implements IGregTechObject, IModelOverride
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_stone", "id=" + getId()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_stone", "id=" + getId())));
     }
+
+    public static BlockStone get(StoneType stoneType) {
+        return GregTechAPI.get(BlockStone.class, stoneType.getId());
+    }
 }
