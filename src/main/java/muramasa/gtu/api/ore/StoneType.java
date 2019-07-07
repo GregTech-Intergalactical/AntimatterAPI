@@ -4,12 +4,14 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.SoundType;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StoneType implements IGregTechObject {
 
@@ -34,7 +36,7 @@ public class StoneType implements IGregTechObject {
     public static StoneType MARBLE = new StoneType("marble", Materials.Marble, true, new Texture("blocks/stone/marble"), SoundType.STONE);
     public static StoneType BASALT = new StoneType("basalt", Materials.Basalt, true, new Texture("blocks/stone/basalt"), SoundType.STONE);
 
-    private String id;
+    private String id, mod = "";
     private Material material;
     private Texture texture;
     private SoundType soundType;
@@ -48,6 +50,11 @@ public class StoneType implements IGregTechObject {
             generating.add(this);
         }
         all.add(this);
+    }
+
+    public StoneType(String id, String mod, Material material, boolean generate, Texture texture, SoundType soundType) {
+        this(id, material, generate, texture, soundType);
+        this.mod = mod;
     }
 
     @Override
@@ -71,13 +78,13 @@ public class StoneType implements IGregTechObject {
         return generating;
     }
 
-    public static List<StoneType> getAll() {
-        return all;
+    public static List<StoneType> getAllActive() {
+        return all.stream().filter(s -> (s.mod.isEmpty() || Utils.isModLoaded(s.mod))).collect(Collectors.toList());
     }
 
     public static Collection<Texture> getAllTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        for (StoneType type : getAll()) {
+        for (StoneType type : getAllActive()) {
             textures.add(type.getTexture());
         }
         return textures;
