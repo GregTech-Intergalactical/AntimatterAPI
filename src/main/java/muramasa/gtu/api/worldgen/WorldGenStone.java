@@ -5,6 +5,8 @@ import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStone;
+import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.tileentities.TileEntityOre;
@@ -148,10 +150,15 @@ public class WorldGenStone extends WorldGenBase {
                                         if (state.getBlock().isReplaceableOreGen(state, world, pos, WorldGenHelper.STONE_PREDICATE)) {
                                             world.setBlockState(pos, stone);
                                         } else if (state.getBlock() instanceof BlockOre) {
-                                            world.setBlockState(pos, WorldGenHelper.ORE_STATE, 2 | 16);
+                                            Material matToSet = Materials.NULL;
                                             TileEntity tile = Utils.getTile(world, pos);
                                             if (tile instanceof TileEntityOre) {
-                                                world.setTileEntity(pos, new TileEntityOre(((TileEntityOre) tile).getMaterial(), block.getType(), ((TileEntityOre) tile).getType()));
+                                                matToSet = ((TileEntityOre) tile).getMaterial();
+                                            }
+                                            world.setBlockState(pos, BlockOre.get(block.getType()).getDefaultState(), 2 | 16);
+                                            tile = Utils.getTile(world, pos);
+                                            if (tile instanceof TileEntityOre) {
+                                                ((TileEntityOre) tile).init(matToSet);
                                             }
                                         }
                                     }

@@ -21,6 +21,6 @@ public class ItemOverrideOre extends ItemOverrideList {
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
         if (!stack.hasTagCompound()) return ModelUtils.BAKED_MISSING;
-        return new BakedOreItem(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL), stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_STONE), stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_TYPE));
+        return new BakedOreItem(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL), stack.getTagCompound().getString(Ref.KEY_ORE_STACK_STONE), stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_TYPE));
     }
 }

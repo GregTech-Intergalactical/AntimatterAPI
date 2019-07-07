@@ -1,9 +1,9 @@
 package muramasa.gtu.client.render.models;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
+import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedOre;
@@ -23,19 +23,19 @@ public class ModelOre implements IModel {
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IModel base = ModelUtils.load("basic");
-        BakedOre.STONES = new IBakedModel[StoneType.getLastInternalId()];
-        for (int i = 0; i < StoneType.getLastInternalId(); i++) {
-            BakedOre.STONES[i] = ModelUtils.tex(base, "0", StoneType.get(i).getTexture()).bake(state, format, bakedTextureGetter);
-        }
+        BakedOre.STONES = new Object2ObjectOpenHashMap<>();
+        StoneType.getAll().forEach(s -> {
+            BakedOre.STONES.put(s.getId(), ModelUtils.tex(base, "0", s.getTexture()).bake(state, format, bakedTextureGetter));
+        });
 
         IModel overlay = ModelUtils.load("overlay");
-        BakedOre.OVERLAYS = new Int2ObjectArrayMap<>();
-        MaterialType.ORE_TYPES.values().forEach(o -> {
+        BakedOre.OVERLAYS = new IBakedModel[OreType.VALUES.size()][TextureSet.getLastInternalId()];
+        OreType.VALUES.forEach(o -> {
             IBakedModel[] textureSets = new IBakedModel[TextureSet.getLastInternalId()];
-            GregTechAPI.all(TextureSet.class).forEach(t -> {
-                textureSets[t.getInternalId()] = ModelUtils.tex(overlay, "0", t.getTexture(o, 0)).bake(state, format, bakedTextureGetter);
+            GregTechAPI.all(TextureSet.class).forEach(s -> {
+                textureSets[s.getInternalId()] = ModelUtils.tex(overlay, "0", s.getTexture(o.getType(), 0)).bake(state, format, bakedTextureGetter);
             });
-            BakedOre.OVERLAYS.put(o.getInternalId(), textureSets);
+            BakedOre.OVERLAYS[o.ordinal()] = textureSets;
         });
 
         return new BakedOre();
@@ -45,7 +45,7 @@ public class ModelOre implements IModel {
     public Collection<ResourceLocation> getTextures() {
         ArrayList<ResourceLocation> locations = new ArrayList<>();
         StoneType.getAll().forEach(s -> locations.add(s.getTexture()));
-        MaterialType.ORE_TYPES.values().forEach(o -> GregTechAPI.all(TextureSet.class).forEach(t -> locations.add(t.getTexture(o, 0))));
+        OreType.VALUES.forEach(o -> GregTechAPI.all(TextureSet.class).forEach(t -> locations.add(t.getTexture(o.getType(), 0))));
         return locations;
     }
 }

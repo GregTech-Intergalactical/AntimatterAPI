@@ -1,7 +1,6 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.base.CaseFormat;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -11,10 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MaterialType implements IMaterialTag, IGregTechObject {
-
-    private static int LAST_INTERNAL_ID;
-    private static Int2ObjectArrayMap<MaterialType> LOOKUP = new Int2ObjectArrayMap<>();
-    public static Int2ObjectArrayMap<MaterialType> ORE_TYPES = new Int2ObjectArrayMap<>();
 
     //Item Types
     public static MaterialType DUST = new MaterialType("dust", true);
@@ -56,19 +51,12 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     public static MaterialType GAS = new MaterialType("gas", true, false);
     public static MaterialType PLASMA = new MaterialType("plasma", true, false);
 
-    static {
-        ORE_TYPES.put(ORE.getInternalId(), ORE);
-        ORE_TYPES.put(ORE_SMALL.getInternalId(), ORE_SMALL);
-    }
-
     private String id, namePre, namePost;
-    private int internalId;
     private boolean doesGenerate, visible, hasLocName;
     private Set<Material> materials = new HashSet<>();
 
     public MaterialType(String id, boolean visible) {
         this.id = id;
-        this.internalId = LAST_INTERNAL_ID++;
         this.visible = visible;
         doesGenerate = true;
         register(MaterialType.class, this);
@@ -81,10 +69,6 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
 
     public String getId() {
         return id;
-    }
-
-    public int getInternalId() {
-        return internalId;
     }
 
     @Override
@@ -113,13 +97,5 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
 
     public boolean allowGeneration(Material material) {
         return doesGenerate && material.has(this) && GregTechAPI.getReplacement(this, material) == null;
-    }
-
-    public static MaterialType get(int id) {
-        return LOOKUP.get(id);
-    }
-
-    public static int getLastInternalId() {
-        return LAST_INTERNAL_ID;
     }
 }

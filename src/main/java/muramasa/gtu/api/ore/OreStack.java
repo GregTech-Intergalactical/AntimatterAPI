@@ -2,49 +2,37 @@ package muramasa.gtu.api.ore;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.common.Data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class OreStack implements IGregTechObject {
 
+    private BlockOre block;
     private Material material;
     private StoneType stoneType;
-    private MaterialType oreType;
+    private OreType oreType;
 
-    public OreStack(Material material, StoneType stoneType, MaterialType oreType) {
+    public OreStack(BlockOre block, Material material, StoneType stoneType, OreType oreType) {
+        this.block = block;
         this.material = material;
         this.stoneType = stoneType;
         this.oreType = oreType;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public StoneType getStoneType() {
-        return stoneType;
-    }
-
-    public MaterialType getOreType() {
-        return oreType;
-    }
-
     @Override
     public String getId() {
-        return material.getId() + "_" + stoneType.getId() + "_" + oreType.getId();
+        return material.getId() + "_" + stoneType.getId() + "_" + oreType.getName();
     }
 
     @Override
     public ItemStack asItemStack() {
-        ItemStack stack = new ItemStack(Data.ORE);
+        ItemStack stack = new ItemStack(block);
         stack.setTagCompound(new NBTTagCompound());
-        if (stoneType == null || material == null || oreType == null) return stack;
-        stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_STONE, stoneType.getInternalId());
+        if (stoneType == null || material == null) return stack;
+        stack.getTagCompound().setString(Ref.KEY_ORE_STACK_STONE, stoneType.getId());
         stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_MATERIAL, material.getInternalId());
-        stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_TYPE, oreType.getInternalId());
+        stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_TYPE, oreType.ordinal());
         return stack;
     }
 }

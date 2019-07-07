@@ -42,8 +42,11 @@ import static muramasa.gtu.api.properties.GTProperties.*;
 
 public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
-    public BlockOre() {
+    private StoneType stoneType;
+
+    public BlockOre(StoneType stoneType) {
         super(net.minecraft.block.material.Material.ROCK);
+        this.stoneType = stoneType;
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_BLOCKS);
@@ -52,12 +55,16 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     public String getId() {
-        return "block_ore";
+        return "ore_" + stoneType.getId();
+    }
+
+    public StoneType getStoneType() {
+        return stoneType;
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(ORE_MATERIAL, ORE_STONE, ORE_TYPE).build();
+        return new BlockStateContainer.Builder(this).add(ORE_TYPE).add(ORE_MATERIAL).build();
     }
 
     @Override
@@ -66,22 +73,19 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityOre) {
             TileEntityOre ore = (TileEntityOre) tile;
-            exState = exState
-                .withProperty(ORE_MATERIAL, ore.getMaterial().getInternalId())
-                .withProperty(ORE_STONE, ore.getStoneType().getInternalId())
-                .withProperty(ORE_TYPE, ore.getType().getInternalId());
+            exState = exState.withProperty(ORE_MATERIAL, ore.getMaterial().getInternalId());
         }
         return exState;
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
+        return getDefaultState().withProperty(ORE_TYPE, OreType.VALUES.get(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return 0;
+        return state.getValue(ORE_TYPE).ordinal();
     }
 
     @Override
@@ -97,11 +101,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            return ((TileEntityOre) tile).getStoneType().getSoundType();
-        }
-        return SoundType.STONE;
+        return stoneType.getSoundType();
     }
 
     //TODO
@@ -133,12 +133,9 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (MaterialType type : MaterialType.ORE_TYPES.values()) {
-            //if (!type.isVisible()) continue;
-            StoneType.getAll().forEach(s -> type.getMats().forEach(m -> {
-                items.add(new OreStack(m, s, type).asItemStack());
-            }));
-        }
+        OreType.VALUES.forEach(o -> o.getType().getMats().forEach(m -> {
+            items.add(new OreStack(this, m, stoneType, o).asItemStack());
+        }));
     }
 
     /** TileEntity Drops Start **/
@@ -147,7 +144,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityOre) {
             TileEntityOre ore = (TileEntityOre) tile;
-            drops.add(new OreStack(ore.getMaterial(), ore.getStoneType(), ore.getType()).asItemStack());
+            drops.add(new OreStack(this, ore.getMaterial(), ((BlockOre) state.getBlock()).stoneType, state.getValue(ORE_TYPE)).asItemStack());
         }
     }
 
@@ -170,9 +167,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityOre) {
                 Material material = Material.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
-                StoneType stoneType = StoneType.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_STONE));
-                MaterialType materialType = MaterialType.ORE_TYPES.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_TYPE));
-                ((TileEntityOre) tile).init(material, stoneType, materialType);
+                ((TileEntityOre) tile).init(material);
             }
         }
     }
@@ -182,7 +177,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityOre) {
             TileEntityOre ore = (TileEntityOre) tile;
-            return new OreStack(ore.getMaterial(), ore.getStoneType(), ore.getType()).asItemStack();
+            return new OreStack(this, ore.getMaterial(), ((BlockOre) state.getBlock()).stoneType, state.getValue(ORE_TYPE)).asItemStack();
         }
         return ItemStack.EMPTY;
     }
@@ -192,8 +187,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         if (!stack.hasTagCompound()) return stack.getUnlocalizedName();
         if (stack.getTagCompound().hasKey(Ref.KEY_ORE_STACK_STONE)) {
             Material material = Material.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
-            StoneType stoneType = StoneType.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_STONE));
-            MaterialType materialType = MaterialType.ORE_TYPES.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_TYPE));
+            MaterialType materialType = OreType.VALUES.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_TYPE)).getType();
             return stoneType.getId() + "." + material.getId() + "." + materialType.getId() + ".name";
         }
         return stack.getUnlocalizedName();
@@ -216,5 +210,9 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_ore", "inventory"));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore")));
+    }
+
+    public static BlockOre get(StoneType stoneType) {
+        return GregTechAPI.get(BlockOre.class, "ore_" + stoneType.getId());
     }
 }

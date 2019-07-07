@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
@@ -48,7 +49,8 @@ public class WorldGenOreSmall extends WorldGenBase {
         int j = Math.max(1, amount / 2 + rand.nextInt(amount) / 2);
         for (int i = 0; i < j; i++) {
             pos.setPos(passedX + 8 + rand.nextInt(16), minY + rand.nextInt(Math.max(1, maxY - minY)), passedZ + 8 + rand.nextInt(16));
-            WorldGenHelper.setStateOre(world, pos, material, MaterialType.ORE_SMALL);
+            state = world.getBlockState(pos);
+            WorldGenHelper.setOreState(world, pos, state, material, OreType.SMALL);
             //count++;
         }
         //if (Ref.debugSmallOres) GregTech.LOGGER.info("Small Ore:" + id + " @ dim="+world.provider.getDimension()+ " mX="+chunkX/16+ " mZ="+chunkZ/16+ " oreSmall="+count);

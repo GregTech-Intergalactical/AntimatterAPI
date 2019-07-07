@@ -18,6 +18,7 @@ import static muramasa.gtu.api.materials.TextureSet.*;
 
 public class Materials {
 
+    public static Material NULL = new Material("NULL", 0xffffff, DULL);
     public static Material Aluminium = new Material("aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700, RING, FOIL, GEAR, FRAME, ORE).addTools(10.0F, 140, 2);
     public static Material Beryllium = new Material("beryllium", 0x64b464, METALLIC, Be).asMetal(1560, 0, ORE).addTools(14.0F, 64, 2);
     public static Material Bismuth = new Material("bismuth", 0x64a0a0, METALLIC, Bi).asMetal(544, 0, ORE, ORE_SMALL);
