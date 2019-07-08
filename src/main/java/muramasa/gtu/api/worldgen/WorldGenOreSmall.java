@@ -2,9 +2,9 @@ package muramasa.gtu.api.worldgen;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
-import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockOreSmall;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
@@ -15,18 +15,16 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class WorldGenOreSmall extends WorldGenBase {
 
-    private String primary;
     @Expose private int minY, maxY, amount;
 
-    private BlockOreSmall block;
-    private IBlockState oreSmall;
+    private Material material;
 
     public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material primary, int... dimensions) {
         super(id, dimensions);
         this.minY = minY;
         this.maxY = maxY;
         this.amount = amount;
-        this.primary = primary.getId();
+        this.material = primary;
     }
 
     @Override
@@ -41,9 +39,7 @@ public class WorldGenOreSmall extends WorldGenBase {
     @Override
     public WorldGenBase build() {
         super.build();
-        this.block = GregTechAPI.get(BlockOreSmall.class, "small_" + primary);
-        if (block == null) throw new IllegalArgumentException("WorldGenOreSmall - " + getId() + ": " + primary + " does not have the ORE_SMALL tag");
-        this.oreSmall = block.getDefaultState();
+        if (material == null || !material.has(MaterialType.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + material.getId() + " material either doesn't exist or doesn't have the ORE_SMALL tag");
         return this;
     }
 
@@ -53,7 +49,8 @@ public class WorldGenOreSmall extends WorldGenBase {
         int j = Math.max(1, amount / 2 + rand.nextInt(amount) / 2);
         for (int i = 0; i < j; i++) {
             pos.setPos(passedX + 8 + rand.nextInt(16), minY + rand.nextInt(Math.max(1, maxY - minY)), passedZ + 8 + rand.nextInt(16));
-            WorldGenHelper.setStateOre(world, pos, oreSmall);
+            state = world.getBlockState(pos);
+            WorldGenHelper.setOreState(world, pos, state, material, OreType.SMALL);
             //count++;
         }
         //if (Ref.debugSmallOres) GregTech.LOGGER.info("Small Ore:" + id + " @ dim="+world.provider.getDimension()+ " mX="+chunkX/16+ " mZ="+chunkZ/16+ " oreSmall="+count);

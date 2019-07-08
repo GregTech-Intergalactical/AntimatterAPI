@@ -2,7 +2,7 @@ package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.data.StoneType;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.client.render.StateMapperRedirect;
@@ -40,5 +40,9 @@ public class BlockStone extends Block implements IGregTechObject, IModelOverride
     public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_stone", "id=" + getId()));
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_stone", "id=" + getId())));
+    }
+
+    public static BlockStone get(StoneType stoneType) {
+        return GregTechAPI.get(BlockStone.class, stoneType.getId());
     }
 }

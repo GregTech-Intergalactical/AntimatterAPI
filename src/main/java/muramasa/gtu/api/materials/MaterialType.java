@@ -42,7 +42,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     public static MaterialType ROTOR = new MaterialType("rotor", true);
 
     //Dummy Types
-    public static MaterialType ORE = new MaterialType("ore", true, false); //TODO: dimensional ores, stone types, need separate prefix?
+    public static MaterialType ORE = new MaterialType("ore", true, false);
     public static MaterialType ORE_SMALL = new MaterialType("ore_small", false, false);
     public static MaterialType BLOCK = new MaterialType("block", false, false);
     public static MaterialType FRAME = new MaterialType("frame", true, false);

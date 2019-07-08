@@ -2,9 +2,12 @@ package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStorage;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.ore.BlockOre;
+import muramasa.gtu.api.ore.OreType;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
@@ -21,11 +24,9 @@ import static muramasa.gtu.api.materials.MaterialType.*;
 
 public class Material implements IGregTechObject {
 
-    private static int LAST_INTERNAL_ID; //TODO remove
-
     public static final long M = 3628800;
 
-    private int internalId; //TODO remove
+    private int hash;
 
     /** Basic Members **/
     private String id;
@@ -60,11 +61,12 @@ public class Material implements IGregTechObject {
     private ArrayList<Material> byProducts = new ArrayList<>();
 
     public Material(String id, int rgb, TextureSet set) {
-        this.internalId = LAST_INTERNAL_ID++;
         this.id = id;
+        this.hash = id.hashCode();
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
+        Materials.HASH_LOOKUP.put(hash, this);
         GregTechAPI.register(Material.class, this);
     }
 
@@ -73,13 +75,13 @@ public class Material implements IGregTechObject {
         this.element = element;
     }
 
-    public int getInternalId() {
-        return internalId;
-    }
-
     @Override
     public String getId() {
         return id;
+    }
+
+    public int getHash() {
+        return hash;
     }
 
     @Override
@@ -202,7 +204,8 @@ public class Material implements IGregTechObject {
 
     public void add(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (t == ORE) add(ORE_SMALL, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            if (t == ORE) add(ORE_SMALL);
+            if (t == ORE || t == ORE_SMALL) add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
     }
@@ -225,7 +228,7 @@ public class Material implements IGregTechObject {
     
     public void setChemicalFormula() {
     	if (element != null) chemicalFormula = element.getDisplayName();
-    	else if (!processInto.isEmpty()) chemicalFormula = chemicalFormula.join("", processInto.stream().map(stack -> stack.toString()).collect(Collectors.joining()));
+    	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 
     public void setLiquid(Fluid fluid) {
@@ -590,7 +593,7 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
+        return Utils.ca(amount, BlockOre.get(this, StoneType.STONE, OreType.NORMAL));
     }
 
     public ItemStack getBlock(int amount) {

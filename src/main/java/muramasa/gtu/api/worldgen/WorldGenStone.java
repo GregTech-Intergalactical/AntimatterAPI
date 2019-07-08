@@ -4,13 +4,16 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockOre;
 import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.data.StoneType;
-import muramasa.gtu.api.properties.GTProperties;
+import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.ore.BlockOre;
+import muramasa.gtu.api.ore.StoneType;
+import muramasa.gtu.api.tileentities.TileEntityOre;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -147,7 +150,16 @@ public class WorldGenStone extends WorldGenBase {
                                         if (state.getBlock().isReplaceableOreGen(state, world, pos, WorldGenHelper.STONE_PREDICATE)) {
                                             world.setBlockState(pos, stone);
                                         } else if (state.getBlock() instanceof BlockOre) {
-                                            world.setBlockState(pos, state.withProperty(GTProperties.ORE_STONE, block.getType().getInternalId()));
+                                            Material matToSet = Materials.NULL;
+                                            TileEntity tile = Utils.getTile(world, pos);
+                                            if (tile instanceof TileEntityOre) {
+                                                matToSet = ((TileEntityOre) tile).getMaterial();
+                                            }
+                                            world.setBlockState(pos, BlockOre.get(block.getType()).getDefaultState(), 2 | 16);
+                                            tile = Utils.getTile(world, pos);
+                                            if (tile instanceof TileEntityOre) {
+                                                ((TileEntityOre) tile).init(matToSet);
+                                            }
                                         }
                                     }
                                 }

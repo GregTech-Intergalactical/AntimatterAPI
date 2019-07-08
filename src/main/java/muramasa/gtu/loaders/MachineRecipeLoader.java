@@ -48,8 +48,8 @@ public class MachineRecipeLoader {
         BLASTING.RB().ii(Ruby.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(320, 100, 1200);
         //RB.get(BLASTING).ii(GreenSapphire.getDust(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(400, 100, 1200);
         //RB.get(BLASTING).ii(GreenSapphire.getGem(1)).io(Aluminium.getNugget(3), DarkAsh.getDustTiny(1)).add(320, 100, 1200);
-        BLASTING.RB().ii(Sapphire.getDust(1)).io(Aluminium.getNugget(3)).add(400, 100, 1200);
-        BLASTING.RB().ii(Sapphire.getGem(1)).io(Aluminium.getNugget(3)).add(320, 100, 1200);
+        BLASTING.RB().ii(BlueSapphire.getDust(1)).io(Aluminium.getNugget(3)).add(400, 100, 1200);
+        BLASTING.RB().ii(BlueSapphire.getGem(1)).io(Aluminium.getNugget(3)).add(320, 100, 1200);
         BLASTING.RB().ii(Ilmenite.getDust(1), Carbon.getDust(1)).io(WroughtIron.getNugget(4), Rutile.getDustTiny(4)).add(800, 500, 1700);
         BLASTING.RB().ii(Magnesium.getDust(2)).fi(Titaniumtetrachloride.getLiquid(1000)).io(Titanium.getIngotHot(1), MagnesiumChloride.getDust(2)).add(800, 480, Titanium.getBlastTemp() + 200);
 
