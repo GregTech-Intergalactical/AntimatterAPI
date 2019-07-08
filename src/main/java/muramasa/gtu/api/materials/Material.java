@@ -5,11 +5,13 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.ore.BlockOre;
+import muramasa.gtu.api.ore.OreType;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -202,7 +204,8 @@ public class Material implements IGregTechObject {
 
     public void add(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (t == ORE) add(ORE_SMALL, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            if (t == ORE) add(ORE_SMALL);
+            if (t == ORE || t == ORE_SMALL) add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
     }
@@ -225,7 +228,7 @@ public class Material implements IGregTechObject {
     
     public void setChemicalFormula() {
     	if (element != null) chemicalFormula = element.getDisplayName();
-    	else if (!processInto.isEmpty()) chemicalFormula = chemicalFormula.join("", processInto.stream().map(stack -> stack.toString()).collect(Collectors.joining()));
+    	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 
     public void setLiquid(Fluid fluid) {
@@ -590,8 +593,7 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        //TODO return new ItemStack(GregTechAPI.get(BlockOre.class, id), amount);
-        return new ItemStack(Blocks.DIAMOND_ORE, amount);
+        return Utils.ca(amount, BlockOre.get(this, StoneType.STONE, OreType.NORMAL));
     }
 
     public ItemStack getBlock(int amount) {

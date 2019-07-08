@@ -214,6 +214,10 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_ore")));
     }
 
+    public static ItemStack get(Material material, StoneType stoneType, OreType oreType) {
+        return new OreStack(get(stoneType), material, stoneType, oreType).asItemStack();
+    }
+
     public static BlockOre get(StoneType stoneType) {
         return GregTechAPI.get(BlockOre.class, "ore_" + stoneType.getId());
     }
