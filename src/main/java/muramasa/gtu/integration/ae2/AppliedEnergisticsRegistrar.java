@@ -16,6 +16,8 @@ public class AppliedEnergisticsRegistrar implements IGregTechRegistrar {
         //TODO
     }
 
+    //new WorldgenOresSmall("ore.small.certus"            , MD.AE     .mLoaded,  20,  40,   1, MT.CertusQuartz        , GEN_OVERWORLD, GEN_MARS, GEN_PLANETS, GEN_ASTEROIDS, GEN_MOON);
+
     //    @Override
 //    public void onMachineRecipeRegistration() {
         /*
