@@ -2,6 +2,7 @@ package muramasa.gtu.api.ore;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
@@ -38,7 +39,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.properties.GTProperties.*;
+import static muramasa.gtu.api.properties.GTProperties.ORE_SET;
+import static muramasa.gtu.api.properties.GTProperties.ORE_TYPE;
 
 public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
@@ -64,7 +66,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(ORE_TYPE).add(ORE_MATERIAL).build();
+        return new BlockStateContainer.Builder(this).add(ORE_TYPE).add(ORE_SET).build();
     }
 
     @Override
@@ -73,7 +75,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityOre) {
             TileEntityOre ore = (TileEntityOre) tile;
-            exState = exState.withProperty(ORE_MATERIAL, ore.getMaterial().getInternalId());
+            exState = exState.withProperty(ORE_SET, ore.getMaterial().getSet().getInternalId());
         }
         return exState;
     }
@@ -166,7 +168,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_ORE_STACK_STONE)) {
             TileEntity tile = Utils.getTile(world, pos);
             if (tile instanceof TileEntityOre) {
-                Material material = Material.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
+                Material material = Materials.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
                 ((TileEntityOre) tile).init(material);
             }
         }
@@ -186,7 +188,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public String getDisplayName(ItemStack stack) {
         if (!stack.hasTagCompound()) return stack.getUnlocalizedName();
         if (stack.getTagCompound().hasKey(Ref.KEY_ORE_STACK_STONE)) {
-            Material material = Material.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
+            Material material = Materials.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
             MaterialType materialType = OreType.VALUES.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_TYPE)).getType();
             return stoneType.getId() + "." + material.getId() + "." + materialType.getId() + ".name";
         }
@@ -202,7 +204,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
         if (!stack.hasTagCompound()) return -1;
-        return i == 1 ? Material.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL)).getRGB() : -1;
+        return i == 1 ? Materials.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL)).getRGB() : -1;
     }
 
     @Override

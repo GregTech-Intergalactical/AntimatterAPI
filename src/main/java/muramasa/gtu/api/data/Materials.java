@@ -1,5 +1,6 @@
 package muramasa.gtu.api.data;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.fluid.GTFluid;
@@ -17,6 +18,8 @@ import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.TextureSet.*;
 
 public class Materials {
+
+    public static Int2ObjectArrayMap<Material> HASH_LOOKUP = new Int2ObjectArrayMap<>();
 
     public static Material NULL = new Material("NULL", 0xffffff, DULL);
     public static Material Aluminium = new Material("aluminium", 0x80c8f0, DULL, Al).asMetal(933, 1700, RING, FOIL, GEAR, FRAME, ORE).addTools(10.0F, 140, 2);
@@ -679,5 +682,9 @@ public class Materials {
 
     public static Material get(String name) {
         return GregTechAPI.get(Material.class, name);
+    }
+
+    public static Material get(int hash) {
+        return HASH_LOOKUP.get(hash);
     }
 }

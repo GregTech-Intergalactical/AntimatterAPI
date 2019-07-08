@@ -64,7 +64,7 @@ public class GregTech {
         GregTechNetwork.init();
         GregTechAPI.addRegistrar(new ForestryRegistrar());
         GregTechAPI.addRegistrar(new GalacticraftRegistrar());
-        GregTechAPI.addRegistrar(new UndergroundBiomesRegistrar());
+        if (Utils.isModLoaded(Ref.MOD_UB)) GregTechAPI.addRegistrar(new UndergroundBiomesRegistrar());
         if (Utils.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
     }
 

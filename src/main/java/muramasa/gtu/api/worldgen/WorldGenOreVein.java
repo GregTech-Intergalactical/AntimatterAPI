@@ -36,7 +36,7 @@ public class WorldGenOreVein extends WorldGenBase {
     @Expose private String primary, secondary, between, sporadic;
     @Expose private int minY, maxY, weight, density, size;
 
-    private int primaryId; //TODO remove
+    private int primaryHash; //TODO remove
 
     public WorldGenOreVein(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, int... dimensions) {
         super(id, dimensions);
@@ -78,7 +78,7 @@ public class WorldGenOreVein extends WorldGenBase {
         if (materials[0] == null || !materials[0].has(MaterialType.ORE, MaterialType.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " material either doesn't exist or doesn't have the ORE tag");
 
         TOTAL_WEIGHT += weight;
-        primaryId = materials[0].getInternalId(); //TODO remove
+        primaryHash = materials[0].getHash(); //TODO remove
 
         return this;
     }
@@ -144,7 +144,7 @@ public class WorldGenOreVein extends WorldGenBase {
                         if (tRandomWeight <= 0) {
                             // Adjust the seed so that this vein has a series of unique random numbers.  Otherwise multiple attempts at this same oreseed will get the same offset and X/Z values. If an orevein failed, any orevein with the
                             // same minimum heights would fail as well.  This prevents that, giving each orevein a unique height each pass through here.
-                            int placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primaryId/*vein.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
+                            int placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
                             switch (placementResult) {
                                 case WorldGenOreVein.ORE_PLACED:
                                     //if (Ref.debugOreVein) GregTech.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
@@ -181,7 +181,7 @@ public class WorldGenOreVein extends WorldGenBase {
             // oreseed is located in the previously processed table
             //if (Ref.debugOreVein) GregTech.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
             WorldGenOreVein vein = VALID_VEINS.get(oreVeinSeed);
-            oreVeinRNG.setSeed(oreVeinSeed ^ vein.primaryId/*vein.material[0].getInternalId()*/);  // Reset RNG to only be based on oreseed X/Z and type of vein
+            oreVeinRNG.setSeed(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/);  // Reset RNG to only be based on oreseed X/Z and type of vein
             int placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos, state, generator, provider);
             switch (placementResult) {
                 case WorldGenOreVein.NO_ORE_IN_BOTTOM_LAYER:

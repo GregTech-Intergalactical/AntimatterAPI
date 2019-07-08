@@ -68,10 +68,7 @@ public class WorldGenHelper {
     public static boolean setOreState(World world, BlockPos pos, IBlockState existing, Material material, OreType type) {
         if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
             IBlockState toSet = ORE_MAP.get(existing);
-            if (toSet == null) {
-                //toSet = ORE_DEFAULT;
-                return false;
-            }
+            if (toSet == null) toSet = ORE_DEFAULT;
             world.setBlockState(pos, toSet.withProperty(GTProperties.ORE_TYPE, type), 2 | 16);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntityOre) ((TileEntityOre) tile).init(material);

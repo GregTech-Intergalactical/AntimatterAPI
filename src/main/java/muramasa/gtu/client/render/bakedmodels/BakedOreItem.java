@@ -1,6 +1,6 @@
 package muramasa.gtu.client.render.bakedmodels;
 
-import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.data.Materials;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
@@ -20,11 +20,12 @@ public class BakedOreItem extends BakedBase {
         this.materialType = materialType;
     }
 
+    //TODO cache with material hash + stoneType hash + oreType hash
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new LinkedList<>();
         quads.addAll(BakedOre.STONES.get(stoneType).getQuads(state, side, rand));
-        quads.addAll(BakedOre.OVERLAYS[materialType][Material.get(material).getSet().getInternalId()].getQuads(state, side, rand));
+        quads.addAll(BakedOre.OVERLAYS[materialType][Materials.get(material).getSet().getInternalId()].getQuads(state, side, rand));
         return quads;
     }
 }

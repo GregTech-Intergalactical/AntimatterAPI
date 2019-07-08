@@ -31,7 +31,7 @@ public class OreStack implements IGregTechObject {
         stack.setTagCompound(new NBTTagCompound());
         if (stoneType == null || material == null) return stack;
         stack.getTagCompound().setString(Ref.KEY_ORE_STACK_STONE, stoneType.getId());
-        stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_MATERIAL, material.getInternalId());
+        stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_MATERIAL, material.getHash());
         stack.getTagCompound().setInteger(Ref.KEY_ORE_STACK_TYPE, oreType.ordinal());
         return stack;
     }

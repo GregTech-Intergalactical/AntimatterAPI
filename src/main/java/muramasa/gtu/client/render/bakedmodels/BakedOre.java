@@ -1,8 +1,6 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.client.render.overrides.ItemOverrideOre;
 import net.minecraft.block.state.IBlockState;
@@ -17,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-import static muramasa.gtu.api.properties.GTProperties.ORE_MATERIAL;
+import static muramasa.gtu.api.properties.GTProperties.ORE_SET;
 import static muramasa.gtu.api.properties.GTProperties.ORE_TYPE;
 
 public class BakedOre extends BakedBase {
@@ -35,11 +33,10 @@ public class BakedOre extends BakedBase {
         quads.addAll(STONES.get(stone).getQuads(state, side, rand));
 
         int type = state.getValue(ORE_TYPE).ordinal();
-        int material = ((IExtendedBlockState) state).getValue(ORE_MATERIAL);
+        int set = ((IExtendedBlockState) state).getValue(ORE_SET);
 
-        TextureSet set = Material.get(material).getSet();
         IBakedModel[] array = OVERLAYS[type];
-        IBakedModel overlay = array[set.getInternalId()];
+        IBakedModel overlay = array[set];
 
         quads.addAll(overlay.getQuads(state, side, rand));
 
