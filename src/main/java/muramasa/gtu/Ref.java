@@ -18,7 +18,7 @@ public class Ref {
     public static final String MODID = "gtu";
     public static final String NAME = "GregTech";
     public static final String VERSION = "0.1.0";
-    public static final String DEPENDS = "required-before:crafttweaker";
+    public static final String DEPENDS = "before:crafttweaker; after:undergroundbiomes";
     public static final String CLIENT = "muramasa.gtu.proxy.ClientProxy";
     public static final String SERVER = "muramasa.gtu.proxy.ServerProxy";
 
@@ -76,6 +76,12 @@ public class Ref {
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
     public static final String KEY_MACHINE_TILE_ITEMS = "mit";
     public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
+
+    public static final String KEY_ORE_STACK_STONE = "oss";
+    public static final String KEY_ORE_STACK_MATERIAL = "osm";
+    public static final String KEY_ORE_STACK_TYPE = "ost";
+
+    public static final String KEY_ORE_TILE = "od";
 
     public static final String KEY_PIPE_CONNECTIONS = "pc";
     public static final String KEY_CABLE_INSULATED = "ci";

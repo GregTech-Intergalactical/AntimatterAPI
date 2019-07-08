@@ -11,6 +11,7 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tileentities.TileEntityOre;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
@@ -121,6 +122,11 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                     }
                 } else if (tile instanceof TileEntityPipe) {
                     player.sendMessage(new TextComponentString("C: " + ((TileEntityPipe) tile).getConnections() + (((TileEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
+                } else if (tile instanceof TileEntityOre) {
+                    if (!world.isRemote) {
+                        TileEntityOre ore = (TileEntityOre) tile;
+                        player.sendMessage(new TextComponentString(ore.getMaterial().getId()));
+                    }
                 }
             }
         } else {

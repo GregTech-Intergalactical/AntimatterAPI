@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.properties.GTProperties.ORE_STONE;
 import static muramasa.gtu.api.properties.GTProperties.STORAGE_TYPE;
 
 public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
@@ -74,7 +73,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     }
 
     public IBlockState get(MaterialType type) {
-        return getDefaultState().withProperty(ORE_STONE, type == MaterialType.BLOCK ? 0 : 1);
+        return getDefaultState().withProperty(STORAGE_TYPE, type == MaterialType.BLOCK ? 0 : 1);
     }
 
     //TODO

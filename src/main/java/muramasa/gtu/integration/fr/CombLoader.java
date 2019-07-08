@@ -60,7 +60,7 @@ public class CombLoader {
         addProcessMain(comb, Ruby);
         addProcess(comb, Redstone);
         comb = Data.CombSapphire.get(1);
-        addProcessMain(comb, Sapphire);
+        addProcessMain(comb, BlueSapphire);
         //addProcess(comb, GreenSapphire);
         addProcess(comb, Almandine);
         addProcess(comb, Pyrope);
@@ -168,7 +168,7 @@ public class CombLoader {
         addProcess(comb, Lithium);
         comb = Data.CombPlatinum.get(1);
         addProcessMain(comb, 40, Platinum);
-        addProcess(comb, 40, Sheldonite);
+        addProcess(comb, 40, Cooperite);
         addProcess(comb, 40, Palladium);
         comb = Data.CombIridium.get(1);
         addProcessMain(comb, 20, Iridium);

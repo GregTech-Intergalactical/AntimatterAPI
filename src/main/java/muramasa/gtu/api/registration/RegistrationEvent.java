@@ -2,6 +2,7 @@ package muramasa.gtu.api.registration;
 
 public enum RegistrationEvent {
 
+    INIT,
     ITEM,
     MATERIAL,
     WORLDGEN,

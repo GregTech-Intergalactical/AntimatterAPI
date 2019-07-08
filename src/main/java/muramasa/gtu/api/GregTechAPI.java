@@ -17,11 +17,11 @@ import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
-import muramasa.gtu.api.tileentities.TileEntitySteamMachine;
-import muramasa.gtu.api.tileentities.TileEntityTank;
-import muramasa.gtu.api.tileentities.multi.*;
+import muramasa.gtu.api.tileentities.*;
+import muramasa.gtu.api.tileentities.multi.TileEntityBasicMultiMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
+import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
@@ -70,6 +70,7 @@ public final class GregTechAPI {
         register(TileEntityFluidPipe.class);
         register(TileEntityCable.class);
         register(TileEntityCasing.class);
+        register(TileEntityOre.class);
 
         registerJEICategory(RecipeMaps.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
 //        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);

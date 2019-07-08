@@ -2,12 +2,15 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.wynprice.cursemaven:CurseMaven:1.1.0'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.wynprice.cursemaven'
 
 version = "0.1.0"
 group = "com.muramasa.gtu" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -29,10 +32,12 @@ minecraft {
 dependencies {
     // compile against the JEI API but do not include it at runtime
     deobfProvided "mezz.jei:jei_${mc_version}:${jei_version}:api"
-    deobfCompile 'CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.17.536'
-	deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-${top_version}"
     // at runtime, use the full JEI jar
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
+
+    deobfCompile 'CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.17.536'
+	deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-${top_version}"
+    deobfCompile curse.resolve("underground-biomes", "2717845")
 }
 
 repositories {
