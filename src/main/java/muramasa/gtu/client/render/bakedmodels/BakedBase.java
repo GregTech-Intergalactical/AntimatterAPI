@@ -1,5 +1,6 @@
 package muramasa.gtu.client.render.bakedmodels;
 
+import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -18,6 +19,7 @@ import java.util.List;
 public class BakedBase implements IBakedModel {
 
     private IBakedModel bakedModel;
+    private TextureAtlasSprite particle;
 
     public BakedBase() {
 
@@ -25,6 +27,11 @@ public class BakedBase implements IBakedModel {
 
     public BakedBase(IBakedModel bakedModel) {
         this.bakedModel = bakedModel;
+    }
+
+    public BakedBase(IBakedModel bakedModel, Texture texture) {
+        this(bakedModel);
+        particle = texture.getSprite();
     }
 
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
@@ -69,6 +76,6 @@ public class BakedBase implements IBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return ModelUtils.BAKED_MISSING.getParticleTexture();
+        return particle != null ? particle : ModelUtils.BAKED_MISSING.getParticleTexture();
     }
 }

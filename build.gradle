@@ -37,7 +37,7 @@ dependencies {
 
     deobfCompile 'CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.17.536'
 	deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-${top_version}"
-    deobfCompile curse.resolve("underground-biomes", "2717845")
+    deobfCompile curse.resolve("underground-biomes", "2738935")
 }
 
 repositories {

@@ -205,7 +205,7 @@ public class Material implements IGregTechObject {
     public void add(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
             if (t == ORE) add(ORE_SMALL);
-            if (t == ORE || t == ORE_SMALL) add(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            if (t == ORE || t == ORE_SMALL) add(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
     }
@@ -589,6 +589,10 @@ public class Material implements IGregTechObject {
 
     public ItemStack getCellPlasma(int amount) {
         return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
+    }
+
+    public ItemStack getRock(int amount) {
+        return Utils.ca(amount, MaterialItem.get(ROCK, this, amount));
     }
 
     public ItemStack getOre(int amount) {

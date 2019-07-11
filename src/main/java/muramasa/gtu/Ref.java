@@ -83,6 +83,8 @@ public class Ref {
 
     public static final String KEY_ORE_TILE = "od";
 
+    public static final String KEY_ROCK_TILE = "rm";
+
     public static final String KEY_PIPE_CONNECTIONS = "pc";
     public static final String KEY_CABLE_INSULATED = "ci";
 

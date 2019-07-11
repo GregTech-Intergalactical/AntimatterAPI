@@ -115,13 +115,13 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             state = world.getBlockState(pos);
                                             int ranOre = rand.nextInt(50);
                                             if (ranOre < 3) {
-                                                WorldGenHelper.setOreState(world, pos, state, layerToGen.getMaterial(0), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(0), OreType.NORMAL);
                                             } else if (ranOre < 6) {
-                                                WorldGenHelper.setOreState(world, pos, state, layerToGen.getMaterial(1), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(1), OreType.NORMAL);
                                             } else if (ranOre < 8) {
-                                                WorldGenHelper.setOreState(world, pos, state, layerToGen.getMaterial(2), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(2), OreType.NORMAL);
                                             } else if (ranOre < 10) {
-                                                WorldGenHelper.setOreState(world, pos, state, layerToGen.getMaterial(3), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(3), OreType.NORMAL);
                                             } else {
                                                 if (world.provider.getDimension() == Ref.ASTEROIDS) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);

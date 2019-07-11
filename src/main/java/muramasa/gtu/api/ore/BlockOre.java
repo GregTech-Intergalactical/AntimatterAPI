@@ -9,7 +9,7 @@ import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.tileentities.TileEntityOre;
+import muramasa.gtu.api.tileentities.TileEntityMaterial;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
@@ -73,8 +73,8 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            TileEntityOre ore = (TileEntityOre) tile;
+        if (tile instanceof TileEntityMaterial) {
+            TileEntityMaterial ore = (TileEntityMaterial) tile;
             exState = exState.withProperty(ORE_SET, ore.getMaterial().getSet().getInternalId());
         }
         return exState;
@@ -98,7 +98,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Nullable
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileEntityOre();
+        return new TileEntityMaterial();
     }
 
     @Override
@@ -134,18 +134,20 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        OreType.VALUES.forEach(o -> o.getType().getMats().forEach(m -> {
-            items.add(new OreStack(this, m, stoneType, o).asItemStack());
-        }));
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (stoneType == StoneType.STONE) {
+            OreType.VALUES.forEach(o -> o.getType().getMats().forEach(m -> {
+                items.add(new OreStack(this, m, stoneType, o).asItemStack());
+            }));
+        }
     }
 
     /** TileEntity Drops Start **/
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            TileEntityOre ore = (TileEntityOre) tile;
+        if (tile instanceof TileEntityMaterial) {
+            TileEntityMaterial ore = (TileEntityMaterial) tile;
             drops.add(new OreStack(this, ore.getMaterial(), ((BlockOre) state.getBlock()).stoneType, state.getValue(ORE_TYPE)).asItemStack());
         }
     }
@@ -167,9 +169,9 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_ORE_STACK_STONE)) {
             TileEntity tile = Utils.getTile(world, pos);
-            if (tile instanceof TileEntityOre) {
+            if (tile instanceof TileEntityMaterial) {
                 Material material = Materials.get(stack.getTagCompound().getInteger(Ref.KEY_ORE_STACK_MATERIAL));
-                ((TileEntityOre) tile).init(material);
+                ((TileEntityMaterial) tile).init(material);
             }
         }
     }
@@ -177,8 +179,8 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityOre) {
-            TileEntityOre ore = (TileEntityOre) tile;
+        if (tile instanceof TileEntityMaterial) {
+            TileEntityMaterial ore = (TileEntityMaterial) tile;
             return new OreStack(this, ore.getMaterial(), ((BlockOre) state.getBlock()).stoneType, state.getValue(ORE_TYPE)).asItemStack();
         }
         return ItemStack.EMPTY;
@@ -198,7 +200,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
         TileEntity tile = Utils.getTile(world, pos);
-        return tile instanceof TileEntityOre && i == 1 ? ((TileEntityOre) tile).getMaterial().getRGB() : -1;
+        return tile instanceof TileEntityMaterial && i == 1 ? ((TileEntityMaterial) tile).getMaterial().getRGB() : -1;
     }
 
     @Override
@@ -220,5 +222,9 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     public static BlockOre get(StoneType stoneType) {
         return GregTechAPI.get(BlockOre.class, "ore_" + stoneType.getId());
+    }
+
+    public static IBlockState get(StoneType stoneType, OreType oreType) {
+        return get(stoneType).getDefaultState().withProperty(ORE_TYPE, oreType);
     }
 }
