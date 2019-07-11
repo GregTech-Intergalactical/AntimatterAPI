@@ -3,28 +3,39 @@ package muramasa.gtu.api.worldgen;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.internal.LinkedTreeMap;
+import exterminatorjeff.undergroundbiomes.api.event.UBForceReProcessEvent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.util.XSTR;
 import muramasa.gtu.loaders.WorldGenLoader;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Most of GTI WorldGen code is from the GTNewHorizons GT5 fork, refactored for 1.12 and somewhat optimised
  * Written in 1.7 by moronwmachinegun and mitchej123, adapted by Muramasa
  * **/
+@Mod.EventBusSubscriber
 public class GregTechWorldGenerator implements IWorldGenerator {
 
     private static HashMap<String, HashMap<String, WorldGenBase>> REGISTRY = new HashMap<>();
@@ -133,11 +144,27 @@ public class GregTechWorldGenerator implements IWorldGenerator {
         return STONE.get(dimension);
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPopulateChunkPost(PopulateChunkEvent.Post e) {
+        handleOres(e.getRand(), e.getChunkX(), e.getChunkZ(), e.getWorld());
+        MinecraftForge.EVENT_BUS.post(new UBForceReProcessEvent(e.getGenerator(), e.getWorld(), e.getRand(), e.getChunkX(), e.getChunkZ(), false));
+    }
+
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator generator, IChunkProvider provider) {
         try {
             XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
             BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+            int rockAmount = 4;
+            int passedX = chunkX * 16;
+            int passedZ = chunkZ * 16;
+            int j = Math.max(1, rockAmount + rand.nextInt(rockAmount));
+            for (int i = 0; i < j; i++) {
+                pos.setPos(passedX + 8 + rand.nextInt(16), 0, passedZ + 8 + rand.nextInt(16));
+                pos.setY(world.getHeight(pos.getX(), pos.getZ()) - 1);
+                WorldGenHelper.setRock(world, pos, Materials.NULL);
+            }
 
             //Generate Stones and Small Ores
             if (STONE.size() > 0) {
@@ -151,30 +178,37 @@ public class GregTechWorldGenerator implements IWorldGenerator {
                 }
             }
 
-            if (LAYER.size() > 0) {
-                // Determine bounding box on how far out to check for ore veins affecting this chunk
-                int westX = chunkX - (Ref.ORE_VEIN_MAX_SIZE / 16);
-                int eastX = chunkX + (Ref.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
-                int northZ = chunkZ - (Ref.ORE_VEIN_MAX_SIZE / 16);
-                int southZ = chunkZ + (Ref.ORE_VEIN_MAX_SIZE / 16 + 1);
 
-                // Search for oreVein seeds and add to the list;
-                for (int x = westX; x < eastX; x++) {
-                    for (int z = northZ; z < southZ; z++) {
-                        if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                            WorldGenOreVein.generate(world, chunkX, chunkZ, x, z, pos, null, generator, provider);
-                        }
-                    }
-                }
-
-                if (world.provider.getDimension() == Ref.END || world.provider.getDimension() == Ref.ASTEROIDS) {
-                    WorldGenLoader.ASTEROID_GEN.generate(world, rand, chunkX, chunkZ, pos, null, generator, provider);
-                }
-
-                //if (Ref.debugWorldGen) GregTech.LOGGER.info("Oregen took " + (oreGenTime - leftOverTime) + " Leftover gen took " + (leftOverTime - startTime) + " Worldgen took " + duration + " ns");
-            }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void handleOres(Random random, int chunkX, int chunkZ, World world) {
+        XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+        if (LAYER.size() > 0) {
+            // Determine bounding box on how far out to check for ore veins affecting this chunk
+            int westX = chunkX - (Ref.ORE_VEIN_MAX_SIZE / 16);
+            int eastX = chunkX + (Ref.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
+            int northZ = chunkZ - (Ref.ORE_VEIN_MAX_SIZE / 16);
+            int southZ = chunkZ + (Ref.ORE_VEIN_MAX_SIZE / 16 + 1);
+
+            // Search for oreVein seeds and add to the list;
+            for (int x = westX; x < eastX; x++) {
+                for (int z = northZ; z < southZ; z++) {
+                    if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
+                        WorldGenOreVein.generate(world, chunkX, chunkZ, x, z, pos, null);
+                    }
+                }
+            }
+
+            if (world.provider.getDimension() == Ref.END || world.provider.getDimension() == Ref.ASTEROIDS) {
+                WorldGenLoader.ASTEROID_GEN.generate(world, rand, chunkX, chunkZ, pos, null, null, null);
+            }
+
+            //if (Ref.debugWorldGen) GregTech.LOGGER.info("Oregen took " + (oreGenTime - leftOverTime) + " Leftover gen took " + (leftOverTime - startTime) + " Worldgen took " + duration + " ns");
         }
     }
 }

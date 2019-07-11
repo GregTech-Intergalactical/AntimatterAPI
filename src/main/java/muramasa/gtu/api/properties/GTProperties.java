@@ -23,6 +23,9 @@ public class GTProperties {
     public static final UnlistedInteger ORE_SET = new UnlistedInteger();
     public static final PropertyEnum<OreType> ORE_TYPE = PropertyEnum.create("ore_type", OreType.class);
 
+    /** Block Rock Properties **/
+    public static final UnlistedInteger ROCK_MODEL = new UnlistedInteger();
+
     /** Block Storage Properties **/
     public static final PropertyInteger STORAGE_TYPE = PropertyInteger.create("storage_type", 0, 1);
 }

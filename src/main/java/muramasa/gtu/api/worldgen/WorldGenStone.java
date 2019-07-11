@@ -9,7 +9,7 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.ore.StoneType;
-import muramasa.gtu.api.tileentities.TileEntityOre;
+import muramasa.gtu.api.tileentities.TileEntityMaterial;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.state.IBlockState;
@@ -152,13 +152,13 @@ public class WorldGenStone extends WorldGenBase {
                                         } else if (state.getBlock() instanceof BlockOre) {
                                             Material matToSet = Materials.NULL;
                                             TileEntity tile = Utils.getTile(world, pos);
-                                            if (tile instanceof TileEntityOre) {
-                                                matToSet = ((TileEntityOre) tile).getMaterial();
+                                            if (tile instanceof TileEntityMaterial) {
+                                                matToSet = ((TileEntityMaterial) tile).getMaterial();
                                             }
                                             world.setBlockState(pos, BlockOre.get(block.getType()).getDefaultState(), 2 | 16);
                                             tile = Utils.getTile(world, pos);
-                                            if (tile instanceof TileEntityOre) {
-                                                ((TileEntityOre) tile).init(matToSet);
+                                            if (tile instanceof TileEntityMaterial) {
+                                                ((TileEntityMaterial) tile).init(matToSet);
                                             }
                                         }
                                     }

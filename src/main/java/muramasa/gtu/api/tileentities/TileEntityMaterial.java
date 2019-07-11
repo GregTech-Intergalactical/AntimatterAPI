@@ -5,7 +5,7 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileEntityOre extends TileEntityBase {
+public class TileEntityMaterial extends TileEntityBase {
 
     private Material material = Materials.NULL;
 

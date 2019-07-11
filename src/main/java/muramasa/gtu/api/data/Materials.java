@@ -309,8 +309,8 @@ public class Materials {
 
     //Brittle Gems
     public static Material BlueTopaz = new Material("blue_topaz", 0x0000ff, GEM_H).asGem(true, ORE).addTools(7.0F, 256, 3).add(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6);
-    public static Material Charcoal = new Material("charcoal", 0x644646, FINE).asGemBasic(false).add(Carbon, 1);
-    public static Material Coal = new Material("coal", 0x464646, ROUGH).asGemBasic(false, ORE).add(Carbon, 1);
+    public static Material Charcoal = new Material("charcoal", 0x644646, LIGNITE).asGemBasic(false).add(Carbon, 1);
+    public static Material Coal = new Material("coal", 0x464646, LIGNITE).asGemBasic(false, ORE).add(Carbon, 1);
     public static Material Lignite = new Material("lignite_coal", 0x644646, LIGNITE).asGemBasic(false, ORE).add(Carbon, 3, Water, 1);
     public static Material CoalCoke = new Material("coal_coke", 0x8c8caa, LIGNITE).asGemBasic(false);
     public static Material LigniteCoke = new Material("lignite_coke", 0x8c6464, LIGNITE).asGemBasic(false);

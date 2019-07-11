@@ -17,10 +17,7 @@ import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
-import muramasa.gtu.client.render.models.ModelFluidCell;
-import muramasa.gtu.client.render.models.ModelMachine;
-import muramasa.gtu.client.render.models.ModelOre;
-import muramasa.gtu.client.render.models.ModelPipe;
+import muramasa.gtu.client.render.models.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -121,6 +118,9 @@ public class ClientProxy implements IProxy {
         GregTechAPI.BLOCKS.forEach(b -> {
             if (b instanceof IModelOverride) ((IModelOverride) b).onModelRegistration();
         });
+
+        ModelRock modelRock = new ModelRock();
+        GTModelLoader.register("block_rock", modelRock);
 
         ModelOre modelOre = new ModelOre();
         GTModelLoader.register("block_ore", modelOre);
