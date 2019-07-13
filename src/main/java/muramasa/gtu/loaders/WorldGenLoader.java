@@ -1,9 +1,7 @@
 package muramasa.gtu.loaders;
 
-import muramasa.gtu.api.worldgen.WorldGenAsteroid;
-import muramasa.gtu.api.worldgen.WorldGenOreSmall;
-import muramasa.gtu.api.worldgen.WorldGenOreVein;
-import muramasa.gtu.api.worldgen.WorldGenStone;
+import muramasa.gtu.api.worldgen.*;
+import muramasa.gtu.common.Data;
 
 import static muramasa.gtu.Ref.*;
 import static muramasa.gtu.api.data.Materials.*;
@@ -12,6 +10,7 @@ import static muramasa.gtu.api.ore.StoneType.*;
 public class WorldGenLoader {
 
     public static WorldGenAsteroid ASTEROID_GEN = new WorldGenAsteroid();
+    public static WorldGenTree RUBBER_TREE_GEN = new WorldGenTree("rubber_tree", 5, 5, Data.RUBBER_SAPLING, OVERWORLD);
 
     public static void init() {
         //TODO probably increase max generation heights for most things

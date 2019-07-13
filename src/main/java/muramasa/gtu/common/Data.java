@@ -11,6 +11,9 @@ import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.pipe.PipeSize;
+import muramasa.gtu.api.tree.BlockLeavesBase;
+import muramasa.gtu.api.tree.BlockRubberLog;
+import muramasa.gtu.api.tree.BlockRubberSapling;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
 
@@ -230,6 +233,10 @@ public class Data {
     public static StandardItem CombUranium = new StandardItem("comb_uranium", "")/*.optional(Ref.MOD_FR)*/;
     public static StandardItem CombPlutonium = new StandardItem("comb_plutonium", "")/*.optional(Ref.MOD_FR)*/;
     public static StandardItem CombNaquadah = new StandardItem("comb_naquadah", "")/*.optional(Ref.MOD_FR)*/;
+
+    public static BlockRubberSapling RUBBER_SAPLING = new BlockRubberSapling();
+    public static BlockRubberLog RUBBER_LOG = new BlockRubberLog();
+    public static BlockLeavesBase RUBBER_LEAVES = new BlockLeavesBase("rubber_leaves", RUBBER_SAPLING);
 
     public static BlockCoil COIL_CUPRONICKEL = new BlockCoil("cupronickel", 113); //1808
     public static BlockCoil COIL_KANTHAL = new BlockCoil("kanthal", 169); //2704
