@@ -146,20 +146,22 @@ public class GregTechWorldGenerator implements IWorldGenerator {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPopulateChunkPost(PopulateChunkEvent.Post e) {
-        handleOres(e.getRand(), e.getChunkX(), e.getChunkZ(), e.getWorld());
         MinecraftForge.EVENT_BUS.post(new UBForceReProcessEvent(e.getGenerator(), e.getWorld(), e.getRand(), e.getChunkX(), e.getChunkZ(), false));
+        handleOres(e.getRand(), e.getChunkX(), e.getChunkZ(), e.getWorld());
     }
 
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator generator, IChunkProvider provider) {
         try {
             XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
-            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+            WorldGenLoader.RUBBER_TREE_GEN.generate(world, rand, chunkX * 16, chunkZ * 16, new BlockPos.MutableBlockPos(), null, generator, provider);
 
             int rockAmount = 4;
             int passedX = chunkX * 16;
             int passedZ = chunkZ * 16;
             int j = Math.max(1, rockAmount + rand.nextInt(rockAmount));
+            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
             for (int i = 0; i < j; i++) {
                 pos.setPos(passedX + 8 + rand.nextInt(16), 0, passedZ + 8 + rand.nextInt(16));
                 pos.setY(world.getHeight(pos.getX(), pos.getZ()) - 1);
@@ -169,12 +171,12 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             //Generate Stones and Small Ores
             if (STONE.size() > 0) {
                 for (WorldGenStone stone : STONE.get(world.provider.getDimension())) {
-                    stone.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider);
+                    stone.generate(world, rand, chunkX * 16, chunkZ * 16, new BlockPos.MutableBlockPos(), null, generator, provider);
                 }
             }
             if (SMALL.size() > 0) {
                 for (WorldGenOreSmall small : SMALL.get(world.provider.getDimension())) {
-                    small.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider);
+                    small.generate(world, rand, chunkX * 16, chunkZ * 16, new BlockPos.MutableBlockPos(), null, generator, provider);
                 }
             }
 

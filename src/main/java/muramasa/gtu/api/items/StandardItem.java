@@ -30,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -132,25 +131,9 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             }
         } else {
             if (Data.DebugScanner.isEqual(stack)) {
-//                Chunk chunk = world.getChunkFromBlockCoords(pos);
-//                ExtendedBlockStorage[] storage = chunk.getBlockStorageArray();
-//                int maxY = chunk.getTopFilledSegment() + 15;
-//
-//                player.sendMessage(new TextComponentString(maxY + ""));
-//
-//                for (int i = 0; i < 15; i++) {
-//                    int y = maxY - i;
-//                    BlockPos newPos = new BlockPos(pos.getX(), y, pos.getZ());
-//                    if (world.getBlockState(newPos) != Blocks.AIR.getDefaultState()) {
-//                        world.setBlockState(newPos, Blocks.DIAMOND_BLOCK.getDefaultState());
-//                        player.sendMessage(new TextComponentString(newPos.toString()));
-//                        break;
-//                    }
-//                }
-
-                Chunk chunk = world.getChunkFromBlockCoords(pos);
-                int max = world.getHeight(pos.getX(), pos.getZ());
-                player.sendMessage(new TextComponentString(max + ""));
+                if (!world.isRemote) {
+                    Data.RUBBER_SAPLING.generateTree(world, pos, Ref.RNG);
+                }
             }
         }
         return EnumActionResult.FAIL; //TODO FAIL?

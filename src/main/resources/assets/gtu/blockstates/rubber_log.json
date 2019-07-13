@@ -1,0 +1,33 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gtu:rubber_log"
+  },
+  "variants": {
+		"normal": [{}],
+		"inventory": [{}],
+		"axis": {
+			"x": {"x": 90, "y": 90},
+			"y": {},
+			"z": {"x": 90},
+			"none": {}
+		},
+		"resin_facing": {
+			"north": {"y": 0},
+			"south": {"y": 180},
+			"east": {"y": 90},
+			"west": {"y": 270}
+		},
+		"resin_state": {
+			"none": {
+				"textures": {"resin": "gtu:blocks/tree/rubber_log"}
+			},
+			"empty": {
+				"textures": {"resin": "gtu:blocks/tree/rubber_log_empty"}
+			},
+			"filled": {
+				"textures": {"resin": "gtu:blocks/tree/rubber_log_filled"}
+			}
+		}
+  }
+}

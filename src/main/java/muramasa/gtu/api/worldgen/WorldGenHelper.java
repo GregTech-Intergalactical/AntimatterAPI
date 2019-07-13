@@ -24,6 +24,9 @@ public class WorldGenHelper {
     public static Object2ObjectOpenHashMap<IBlockState, IBlockState> ORE_MAP = new Object2ObjectOpenHashMap<>();
     public static Object2ObjectOpenHashMap<IBlockState, IBlockState> ROCK_MAP = new Object2ObjectOpenHashMap<>();
     public static ObjectOpenHashSet<IBlockState> STONE_SET = new ObjectOpenHashSet<>();
+    public static ObjectOpenHashSet<IBlockState> TREE_SET = new ObjectOpenHashSet<>();
+    public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
+
     public static IBlockState ORE_DEFAULT, ROCK_DEFAULT;
 
     public static Predicate<IBlockState> ORE_PREDICATE = state -> ORE_MAP.containsKey(state);
@@ -59,6 +62,10 @@ public class WorldGenHelper {
         STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE));
         STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE));
         STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE));
+
+        TREE_SET.add(Blocks.GRASS.getDefaultState());
+        TREE_BIOME_SET.add("Forest");
+        TREE_BIOME_SET.add("ForestHills");
     }
 
     public static void setState(World world, BlockPos pos, IBlockState state) {
@@ -110,5 +117,9 @@ public class WorldGenHelper {
             return true;
         }
         return false;
+    }
+
+    public static boolean canSetTree(World world, BlockPos pos) {
+        return TREE_BIOME_SET.contains(world.getBiome(pos).getBiomeName()) && TREE_SET.contains(world.getBlockState(pos));
     }
 }
