@@ -1,5 +1,6 @@
 package muramasa.gtu.api.recipe;
 
+import com.google.common.collect.Sets;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -7,6 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Recipe {
 
@@ -16,6 +18,7 @@ public class Recipe {
     private long power;
     private int[] chances;
     private boolean hidden;
+    private Set<RecipeTag> tags = Sets.newHashSet();
 
     public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
         this.itemsInput = stacksInput;
@@ -33,6 +36,10 @@ public class Recipe {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public void addTags(Set<RecipeTag> tags) {
+        this.tags = tags;
     }
 
     public boolean hasInputItems() {

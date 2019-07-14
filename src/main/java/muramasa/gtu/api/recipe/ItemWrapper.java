@@ -1,6 +1,5 @@
 package muramasa.gtu.api.recipe;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class ItemWrapper {
@@ -13,8 +12,9 @@ public class ItemWrapper {
         this.item = item;
         count = item.getCount() > 1;
         nbt = item.hasTagCompound();
-        hash = 31 * hash + Item.getIdFromItem(item.getItem());
+        hash = 31 * hash + item.getItem().getRegistryName().toString().hashCode();
         if (item.getItemDamage() > 0) hash = 31 * hash + item.getItemDamage(); //TODO 1.13+: Remove damage
+        if (nbt) hash = 31 * hash + item.getTagCompound().hashCode();
     }
 
     public ItemStack get() {

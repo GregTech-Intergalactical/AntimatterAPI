@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class RecipeMap<B extends RecipeBuilder> {
 
-    private HashMap<IRecipeObject, Recipe> LOOKUP;
+    private HashMap<RecipeInput, Recipe> LOOKUP;
     private String categoryId;
     private B builder;
 
@@ -45,12 +45,7 @@ public class RecipeMap<B extends RecipeBuilder> {
     }
 
     void add(Recipe recipe) {
-        IRecipeObject input = null;
-        if (recipe.hasInputItems() && !recipe.hasInputFluids()) {
-            input = new RecipeInputItem(recipe.getInputItems());
-        } else if (!recipe.hasInputItems() && recipe.hasInputFluids()) {
-            input = new RecipeInputFluid(recipe.getInputFluids());
-        }
+        RecipeInput input = new RecipeInput(recipe.getInputItems(), recipe.getInputFluids());
         if (LOOKUP.containsKey(input)) {
             Utils.printError("Duplicate recipe detected, skipping!: " + recipe);
             return;
@@ -58,16 +53,17 @@ public class RecipeMap<B extends RecipeBuilder> {
         LOOKUP.put(input, recipe);
     }
 
-    @Nullable
     //TODO take into account machine tier
+    //TODO merge item and fluid finding, should be easy
+    @Nullable
     public static Recipe findRecipeItem(RecipeMap map, long voltage, ItemStack[] items) {
         if (map == null || !Utils.areItemsValid(items)) return null;
-        return (Recipe) map.LOOKUP.get(new RecipeInputItem(items));
+        return (Recipe) map.LOOKUP.get(new RecipeInput(items, null));
     }
 
     @Nullable
     public static Recipe findRecipeFluid(RecipeMap map, long voltage, FluidStack[] fluids) {
         if (map == null || !Utils.areFluidsValid(fluids)) return null;
-        return (Recipe) map.LOOKUP.get(new RecipeInputFluid(fluids));
+        return (Recipe) map.LOOKUP.get(new RecipeInput(null, fluids));
     }
 }
