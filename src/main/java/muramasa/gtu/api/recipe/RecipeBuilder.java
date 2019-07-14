@@ -1,9 +1,12 @@
 package muramasa.gtu.api.recipe;
 
+import com.google.common.collect.Sets;
 import muramasa.gtu.Configs;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.Set;
 
 public class RecipeBuilder {
 
@@ -14,6 +17,7 @@ public class RecipeBuilder {
     private int duration, special;
     private long power;
     private boolean hidden;
+    private Set<RecipeTag> tags;
 
     public void add() {
         if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
@@ -58,6 +62,7 @@ public class RecipeBuilder {
         duration = special = 0;
         power = 0;
         hidden = false;
+        tags = Sets.newHashSet();
     }
 
     public void add(long duration, long power, long special) {
@@ -103,6 +108,11 @@ public class RecipeBuilder {
 
     public RecipeBuilder hide() {
         hidden = true;
+        return this;
+    }
+
+    public RecipeBuilder tags(RecipeTag... tags) {
+        this.tags = Sets.newHashSet(tags);
         return this;
     }
 
