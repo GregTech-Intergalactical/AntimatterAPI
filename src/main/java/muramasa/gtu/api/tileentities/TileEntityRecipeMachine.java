@@ -3,7 +3,6 @@ package muramasa.gtu.api.tileentities;
 import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
-import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.util.EnumFacing;
 
@@ -36,9 +35,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Recipe Methods **/
     public Recipe findRecipe() {
-        if (itemHandler != null) return RecipeMap.findRecipeItem(getType().getRecipeMap(), getMaxInputVoltage(), itemHandler.getInputs());
-        else if (fluidHandler != null) return RecipeMap.findRecipeFluid(getType().getRecipeMap(), getMaxInputVoltage(), fluidHandler.getInputs());
-        return null;
+        return getType().getRecipeMap().find(itemHandler, fluidHandler, getMaxInputVoltage());
     }
 
     public void checkRecipe() {

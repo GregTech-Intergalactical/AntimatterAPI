@@ -8,6 +8,7 @@ import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
@@ -132,7 +133,8 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
         } else {
             if (Data.DebugScanner.isEqual(stack)) {
                 if (!world.isRemote) {
-                    Data.RUBBER_SAPLING.generateTree(world, pos, Ref.RNG);
+                    //Data.RUBBER_SAPLING.generateTree(world, pos, Ref.RNG);
+                    RecipeMap.dumpHashCollisions();
                 }
             }
         }
