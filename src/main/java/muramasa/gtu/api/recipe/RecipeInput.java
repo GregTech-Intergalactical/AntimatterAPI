@@ -4,6 +4,9 @@ import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.Collections;
+import java.util.Set;
+
 //Reminder: A simplified version of a HashMap get
 //if (e.hash == hash && ((k = e.key) == key || key.equals(k))) return e.value;
 public class RecipeInput {
@@ -14,14 +17,14 @@ public class RecipeInput {
     private FluidWrapper[] fluids;
     private Int2IntArrayMap fluidMap = new Int2IntArrayMap();
 
-    private int computedHash;
+    private int hash;
 
-    public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
-        long tempHash = 1; //A long hash used to handle many inputs with nbt hashes
+    public RecipeInput(ItemStack[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
+        long tempHash = 1; //long hash used to handle many inputs with nbt hashes
         if (items != null && items.length > 0) {
             this.items = new ItemWrapper[items.length];
             for (int i = 0; i < items.length; i++) {
-                this.items[i] = new ItemWrapper(items[i]);
+                this.items[i] = new ItemWrapper(items[i], tags);
                 itemMap.put(this.items[i].getHash(), i);
                 tempHash += this.items[i].getHash();
             }
@@ -29,12 +32,16 @@ public class RecipeInput {
         if (fluids != null && fluids.length > 0) {
             this.fluids = new FluidWrapper[fluids.length];
             for (int i = 0; i < fluids.length; i++) {
-                this.fluids[i] = new FluidWrapper(fluids[i]);
+                this.fluids[i] = new FluidWrapper(fluids[i], tags);
                 fluidMap.put(this.fluids[i].getHash(), i);
                 tempHash += this.fluids[i].getHash();
             }
         }
-        computedHash = (int) (tempHash ^ (tempHash >>> 32)); //A int version of the hash for the actual comparision
+        hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
+    }
+
+    public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
+        this(items, fluids, Collections.emptySet());
     }
 
     @Override
@@ -56,6 +63,6 @@ public class RecipeInput {
 
     @Override
     public int hashCode() {
-        return computedHash;
+        return hash;
     }
 }

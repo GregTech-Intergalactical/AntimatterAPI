@@ -57,7 +57,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
             Utils.printError("Duplicate recipe detected, skipping!: " + recipe);
             return;
         }
-        LOOKUP.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids()), recipe);
+        LOOKUP.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags()), recipe);
     }
 
     @Nullable

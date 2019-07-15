@@ -2,19 +2,28 @@ package muramasa.gtu.api.recipe;
 
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ItemWrapper {
 
     private ItemStack item;
     private boolean count, nbt;
-    private int hash = 1;
+    private int hash;
 
-    public ItemWrapper(ItemStack item) {
+    public ItemWrapper(ItemStack item, Set<RecipeTag> tags) {
         this.item = item;
         count = item.getCount() > 1;
-        nbt = item.hasTagCompound();
-        hash = 31 * hash + item.getItem().getRegistryName().toString().hashCode();
-        if (item.getItemDamage() > 0) hash = 31 * hash + item.getItemDamage(); //TODO 1.13+: Remove damage
-        if (nbt) hash = 31 * hash + item.getTagCompound().hashCode();
+        nbt = item.hasTagCompound() && !tags.contains(RecipeTag.IGNORE_NBT);
+        long tempHash = 1; //long hash used to handle many inputs with nbt hashes
+        tempHash = 31 * tempHash + item.getItem().getRegistryName().toString().hashCode();
+        if (item.getItemDamage() > 0) tempHash = 31 * tempHash + item.getItemDamage(); //TODO 1.13+: Remove damage
+        if (nbt) tempHash = 31 * tempHash + item.getTagCompound().hashCode();
+        hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
+    }
+
+    public ItemWrapper(ItemStack item) {
+        this(item, Collections.emptySet());
     }
 
     public ItemStack get() {
