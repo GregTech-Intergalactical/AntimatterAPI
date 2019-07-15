@@ -126,6 +126,10 @@ public class Recipe {
         return hidden;
     }
 
+    public Set<RecipeTag> getTags() {
+        return tags;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

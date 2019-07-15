@@ -6,6 +6,7 @@ import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class RecipeBuilder {
@@ -17,7 +18,7 @@ public class RecipeBuilder {
     private int duration, special;
     private long power;
     private boolean hidden;
-    private Set<RecipeTag> tags;
+    private Set<RecipeTag> tags = new HashSet<>();
 
     public void add() {
         if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
@@ -54,6 +55,7 @@ public class RecipeBuilder {
         );
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
+        recipe.addTags(new HashSet<>(tags));
         recipeMap.add(recipe);
 
         itemsInput = itemsOutput = null;
@@ -62,7 +64,7 @@ public class RecipeBuilder {
         duration = special = 0;
         power = 0;
         hidden = false;
-        tags = Sets.newHashSet();
+        tags.clear();
     }
 
     public void add(long duration, long power, long special) {

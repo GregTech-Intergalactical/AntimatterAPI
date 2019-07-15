@@ -1,7 +1,6 @@
 package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.IMaterialTag;
 import muramasa.gtu.api.materials.Material;
@@ -10,15 +9,15 @@ import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 
 import static muramasa.gtu.api.data.RecipeMaps.*;
-import static muramasa.gtu.api.materials.MaterialType.*;
 import static muramasa.gtu.api.materials.MaterialTag.*;
+import static muramasa.gtu.api.materials.MaterialType.*;
+import static muramasa.gtu.api.recipe.RecipeTag.IGNORE_NBT;
 import static muramasa.gtu.common.Data.*;
 
 //TODO EXCLUDED FROM COMPILE
@@ -221,7 +220,7 @@ public class MaterialRecipeLoader {
                 int eu = m.getBlastTemp() >= 2800 ? 64 : 16;
                 ItemStack smeltIntoPlate = m.getSmeltInto().getPlate(1);
                 EXTRUDING.RB().ii(ingot, ShapePlate.get(0)).io(smeltIntoPlate).add(mass, 8 * eu);
-                ALLOY_SMELTING.RB().ii(Utils.ca(2, ingot), MoldPlate.get(0)).io(smeltIntoPlate).add(mass * 2, 2 * eu);
+                ALLOY_SMELTING.RB().ii(Utils.ca(2, ingot), MoldPlate.get(0)).io(smeltIntoPlate).tags(IGNORE_NBT).add(mass * 2, 2 * eu);
                 //TODO WUT?
 //              if (Prefix.block.isIgnored(m) && m != Materials.GraniteRed && m != Materials.GraniteBlack && m != Materials.Glass && m != Materials.Obsidian && m != Materials.Glowstone && m != Materials.Paper) {
 //              GT_ModHandler.addCompressorRecipe(aDustStack, aPlateStack);
