@@ -1,4 +1,4 @@
-package muramasa.gtu.integration.ubc;
+package muramasa.gtu.integration;
 
 import exterminatorjeff.undergroundbiomes.api.API;
 import exterminatorjeff.undergroundbiomes.api.enums.IgneousVariant;

@@ -1,4 +1,4 @@
-package muramasa.gtu.integration.ic2classic;
+package muramasa.gtu.integration;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
