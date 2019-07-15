@@ -1,4 +1,4 @@
-package muramasa.gtu.integration.gc;
+package muramasa.gtu.integration;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
