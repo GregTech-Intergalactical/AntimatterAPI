@@ -30,7 +30,7 @@ public class GregTechJEIPlugin implements IModPlugin {
     private static HashMap<String, Tuple<RecipeMap, GuiData>> REGISTRY = new HashMap<>();
 
     public static void registerCategory(RecipeMap map, GuiData gui) {
-        REGISTRY.put(map.getCategoryId(), new Tuple<>(map, gui));
+        REGISTRY.put(map.getId(), new Tuple<>(map, gui));
     }
 
     @Nullable
@@ -51,9 +51,9 @@ public class GregTechJEIPlugin implements IModPlugin {
         Set<String> registeredMachineCats = new HashSet<>();
 
         for (Machine type : MachineFlag.RECIPE.getTypes()) {
-            if (registeredMachineCats.contains(type.getRecipeMap().getCategoryId())) continue;
+            if (registeredMachineCats.contains(type.getRecipeMap().getId())) continue;
             if (type.hasFlag(BASIC)) {
-                if (REGISTRY.containsKey(type.getRecipeMap().getCategoryId())) continue;
+                if (REGISTRY.containsKey(type.getRecipeMap().getId())) continue;
                 registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.LV)));
             } else if (type.hasFlag(MULTI)) {
                 if (type.getGui().hasSlots()) {
@@ -62,25 +62,25 @@ public class GregTechJEIPlugin implements IModPlugin {
                     registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Guis.MULTI_DISPLAY));
                 }
             }
-            registeredMachineCats.add(type.getRecipeMap().getCategoryId());
+            registeredMachineCats.add(type.getRecipeMap().getId());
         }
         REGISTRY.forEach((k, v) -> {
-            if (!registeredMachineCats.contains(v.getFirst().getCategoryId())) registry.addRecipeCategories(new RecipeMapCategory(v.getFirst(), v.getSecond()));
+            if (!registeredMachineCats.contains(v.getFirst().getId())) registry.addRecipeCategories(new RecipeMapCategory(v.getFirst(), v.getSecond()));
         });
     }
 
     @Override
     public void register(IModRegistry registry) {
         for (Machine type : MachineFlag.RECIPE.getTypes()) {
-            registry.addRecipes(type.getRecipeMap().getRecipes(true), type.getRecipeMap().getCategoryId());
-            registry.handleRecipes(Recipe.class, RecipeWrapper::new, type.getRecipeMap().getCategoryId());
+            registry.addRecipes(type.getRecipeMap().getRecipes(true), type.getRecipeMap().getId());
+            registry.handleRecipes(Recipe.class, RecipeWrapper::new, type.getRecipeMap().getId());
             for (Tier tier : type.getTiers()) {
-                registry.addRecipeCatalyst(new MachineStack(type, tier).asItemStack(), type.getRecipeMap().getCategoryId());
+                registry.addRecipeCatalyst(new MachineStack(type, tier).asItemStack(), type.getRecipeMap().getId());
             }
         }
         for (Tuple<RecipeMap, GuiData> pair : REGISTRY.values()) {
-            registry.addRecipes(pair.getFirst().getRecipes(true), pair.getFirst().getCategoryId());
-            registry.handleRecipes(Recipe.class, RecipeWrapper::new, pair.getFirst().getCategoryId());
+            registry.addRecipes(pair.getFirst().getRecipes(true), pair.getFirst().getId());
+            registry.handleRecipes(Recipe.class, RecipeWrapper::new, pair.getFirst().getId());
         }
     }
 
@@ -89,7 +89,7 @@ public class GregTechJEIPlugin implements IModPlugin {
             List<String> list = new LinkedList<>();
             for (int i = 0; i < types.length; i++) {
                 if (!types[i].hasFlag(RECIPE)) continue;
-                list.add(types[i].getRecipeMap().getCategoryId());
+                list.add(types[i].getRecipeMap().getId());
             }
             runtime.getRecipesGui().showCategories(list);
         }

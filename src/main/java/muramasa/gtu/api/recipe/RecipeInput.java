@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+//Reminder: A simplified version of a HashMap get
+//if (e.hash == hash && ((k = e.key) == key || key.equals(k))) return e.value;
 public class RecipeInput {
 
     private ItemWrapper[] items;
@@ -12,10 +14,10 @@ public class RecipeInput {
     private FluidWrapper[] fluids;
     private Int2IntArrayMap fluidMap = new Int2IntArrayMap();
 
-    private long tempHash = 1; //A long hash used to handle many inputs with nbt hashes
-    private int computedHash; //A int version of the hash for the actual comparision
+    private int computedHash;
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
+        long tempHash = 1; //A long hash used to handle many inputs with nbt hashes
         if (items != null && items.length > 0) {
             this.items = new ItemWrapper[items.length];
             for (int i = 0; i < items.length; i++) {
@@ -32,7 +34,7 @@ public class RecipeInput {
                 tempHash += this.fluids[i].getHash();
             }
         }
-        computedHash = (int) (tempHash ^ (tempHash >>> 32));
+        computedHash = (int) (tempHash ^ (tempHash >>> 32)); //A int version of the hash for the actual comparision
     }
 
     @Override
@@ -41,16 +43,12 @@ public class RecipeInput {
         RecipeInput other = (RecipeInput) obj;
         if (items != null) {
             for (int i = 0; i < items.length; i++) {
-                int recipeCount = other.items[other.itemMap.get(items[i].getHash())].getCount();
-                int invCount = items[i].getCount();
-                if (invCount < recipeCount) return false;
+                if (!other.items[other.itemMap.get(items[i].getHash())].equals(items[i])) return false;
             }
         }
         if (fluids != null) {
             for (int i = 0; i < fluids.length; i++) {
-                int recipeCount = other.fluids[other.fluidMap.get(fluids[i].getHash())].getCount();
-                int invCount = fluids[i].getCount();
-                if (invCount < recipeCount) return false;
+                if (!other.fluids[other.fluidMap.get(fluids[i].getHash())].equals(fluids[i])) return false;
             }
         }
         return true;

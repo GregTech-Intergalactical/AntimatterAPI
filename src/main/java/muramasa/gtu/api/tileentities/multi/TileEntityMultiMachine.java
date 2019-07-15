@@ -9,7 +9,6 @@ import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
-import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.structure.Structure;
@@ -113,9 +112,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public Recipe findRecipe() {
-        if (hasFlag(MachineFlag.ITEM)) return RecipeMap.findRecipeItem(getType().getRecipeMap(), getMaxInputVoltage(), getStoredItems());
-        else if (hasFlag(MachineFlag.FLUID)) return RecipeMap.findRecipeFluid(getType().getRecipeMap(), getMaxInputVoltage(), getStoredFluids());
-        return null;
+        return getType().getRecipeMap().find(getStoredItems(), getStoredFluids(), getMaxInputVoltage());
     }
 
     @Override
@@ -161,6 +158,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     /** Returns list of items across all input hatches. Merges equal filters empty **/
     public ItemStack[] getStoredItems() {
+        if (!hasFlag(MachineFlag.ITEM)) return new ItemStack[0];
         ArrayList<ItemStack> all = new ArrayList<>();
         MachineItemHandler itemHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
@@ -174,6 +172,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     /** Returns list of fluids across all input hatches. Merges equal filters empty **/
     public FluidStack[] getStoredFluids() {
+        if (!hasFlag(MachineFlag.FLUID)) return new FluidStack[0];
         ArrayList<FluidStack> all = new ArrayList<>();
         MachineFluidHandler fluidHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
