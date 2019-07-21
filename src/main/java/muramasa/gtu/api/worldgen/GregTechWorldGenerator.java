@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.internal.LinkedTreeMap;
 import exterminatorjeff.undergroundbiomes.api.event.UBForceReProcessEvent;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
@@ -42,9 +42,9 @@ public class GregTechWorldGenerator implements IWorldGenerator {
     private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
     private static ImmutableMap<String, Class<?>> TYPE = ImmutableMap.of("vein", WorldGenOreVein.class, "small", WorldGenOreSmall.class, "stone", WorldGenStone.class);
 
-    private static Int2ObjectArrayMap<List<WorldGenOreVein>> LAYER = new Int2ObjectArrayMap<>();
-    private static Int2ObjectArrayMap<List<WorldGenOreSmall>> SMALL = new Int2ObjectArrayMap<>();
-    private static Int2ObjectArrayMap<List<WorldGenStone>> STONE = new Int2ObjectArrayMap<>();
+    private static Int2ObjectOpenHashMap<List<WorldGenOreVein>> LAYER = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectOpenHashMap<List<WorldGenOreSmall>> SMALL = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectOpenHashMap<List<WorldGenStone>> STONE = new Int2ObjectOpenHashMap<>();
 
     static {
         //veins, singles, stones

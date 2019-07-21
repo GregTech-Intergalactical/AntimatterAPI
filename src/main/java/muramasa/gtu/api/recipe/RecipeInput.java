@@ -1,6 +1,6 @@
 package muramasa.gtu.api.recipe;
 
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -12,10 +12,10 @@ import java.util.Set;
 public class RecipeInput {
 
     private ItemWrapper[] items;
-    private Int2IntArrayMap itemMap = new Int2IntArrayMap();
+    private Int2IntOpenHashMap itemMap = new Int2IntOpenHashMap();
 
     private FluidWrapper[] fluids;
-    private Int2IntArrayMap fluidMap = new Int2IntArrayMap();
+    private Int2IntOpenHashMap fluidMap = new Int2IntOpenHashMap();
 
     private int hash;
 

@@ -2,7 +2,7 @@ package muramasa.gtu.api.worldgen;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
@@ -28,7 +28,7 @@ public class WorldGenOreVein extends WorldGenBase {
 
     public static int TOTAL_WEIGHT;
 
-    public static Long2ObjectArrayMap<WorldGenOreVein> VALID_VEINS = new Long2ObjectArrayMap<>();
+    public static Long2ObjectOpenHashMap<WorldGenOreVein> VALID_VEINS = new Long2ObjectOpenHashMap<>();
 
     private Material[] materials;
     @Expose private String primary, secondary, between, sporadic;

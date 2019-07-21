@@ -1,6 +1,6 @@
 package muramasa.gtu.api.machines.types;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.data.Machines;
@@ -43,7 +43,7 @@ public class Machine implements IGregTechObject {
     protected GuiData guiData;
 
     /** Multi Members **/
-    protected Int2ObjectArrayMap<Structure> structures;
+    protected Int2ObjectOpenHashMap<Structure> structures;
 
     //TODO get valid covers
 
@@ -142,7 +142,7 @@ public class Machine implements IGregTechObject {
     }
 
     public void setStructure(Tier tier, Structure structure) {
-        if (structures == null) structures = new Int2ObjectArrayMap<>();
+        if (structures == null) structures = new Int2ObjectOpenHashMap<>();
         structures.put(tier.getInternalId(), structure);
     }
 
