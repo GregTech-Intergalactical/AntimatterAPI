@@ -36,12 +36,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StandardItem extends Item implements IGregTechObject, IModelOverride {
 
     protected String id, tooltip = "";
     protected boolean enabled = true;
+    protected Set<ItemTag> tags = new HashSet<>();
 
     public StandardItem(String id) {
         this.id = id;
@@ -54,6 +58,11 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
     public StandardItem(String id, String tooltip) {
         this(id);
         this.tooltip = tooltip;
+    }
+
+    public StandardItem tags(ItemTag... tags) {
+        this.tags.addAll(Arrays.asList(tags));
+        return this;
     }
 
     @Override
