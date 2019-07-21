@@ -1,6 +1,6 @@
 package muramasa.gtu.client.render.bakedmodels;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.TextureData;
@@ -28,7 +28,7 @@ public class BakedPipe implements IBakedModel {
     protected static ItemOverrideList OVERRIDE;
     protected static TextureAtlasSprite PARTICLE;
 
-    public static Int2ObjectArrayMap<List<BakedQuad>> CACHE = new Int2ObjectArrayMap<>();
+    public static Int2ObjectOpenHashMap<List<BakedQuad>> CACHE = new Int2ObjectOpenHashMap<>();
     public static int[][] CONFIG = new int[64][];
     public static IBakedModel[][] BAKED;
 
