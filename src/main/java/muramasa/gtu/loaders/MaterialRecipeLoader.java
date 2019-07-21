@@ -480,9 +480,17 @@ public class MaterialRecipeLoader {
             if (m.hasByProducts()) {
                 ArrayList<Material> byProducts = m.getByProducts();
                 int byProductsCount = byProducts.size();
+
+                ArrayList<ItemStack> ores = new ArrayList<>();
+                if (m.has(ORE)) ores.add(ore);
+                if (m.has(ROCK)) ores.add(m.getRock(1));
+                if (m.has(CRUSHED)) ores.add(crushed);
+                if (m.has(CRUSHED_PURIFIED)) ores.add(m.getCrushedPurified(1));
+                if (m.has(CRUSHED_CENTRIFUGED)) ores.add(m.getCrushedCentrifuged(1));
+
                 ArrayList<ItemStack> dusts = new ArrayList<>(byProductsCount);
                 byProducts.forEach(p -> dusts.add(p.getDust(1)));
-                ORE_BY_PRODUCTS.RB().ii(ore).io(dusts.toArray(new ItemStack[byProductsCount])).add();
+                ORE_BYPRODUCTS.RB().ii(ores.toArray(new ItemStack[0])).io(dusts.toArray(new ItemStack[byProductsCount])).add();
             }
             boolean needsBF = m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace();
             int multiplier = /*aIsRich ? 2 : */1; //TODO implement in some way, but for now support is coded in

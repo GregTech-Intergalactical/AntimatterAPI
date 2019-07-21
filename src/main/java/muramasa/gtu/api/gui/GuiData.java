@@ -18,16 +18,16 @@ public class GuiData {
 
     private static final String ANY = "any";
 
-    private String id;
-    private Object instance = GregTech.INSTANCE;
-    private int guiId = 0;
-    private boolean enablePlayerSlots = true;
+    protected String id;
+    protected Object instance = GregTech.INSTANCE;
+    protected int guiId = 0;
+    protected boolean enablePlayerSlots = true;
 
-    private int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
-    private BarDir dir = BarDir.LEFT;
+    protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
+    protected BarDir dir = BarDir.LEFT;
 
-    private LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
-    private TObjectIntHashMap<SlotType> COUNT_LOOKUP = new TObjectIntHashMap<>();
+    protected LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
+    protected TObjectIntHashMap<SlotType> COUNT_LOOKUP = new TObjectIntHashMap<>();
 
     public GuiData(String id) {
         this.id = id;

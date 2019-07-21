@@ -1,6 +1,9 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.machines.Tier;
+import net.minecraft.util.ResourceLocation;
 
 import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.api.gui.SlotType.*;
@@ -11,6 +14,13 @@ public class Guis {
     public static GuiData MULTI_DISPLAY = new GuiData("multi_display").add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 143, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34).add(FL_IN, 17, 63).add(FL_IN, 35, 63).add(FL_IN, 53, 63).add(FL_OUT, 107, 63).add(FL_OUT, 125, 63).add(FL_OUT, 143, 63);
     public static GuiData MULTI_DISPLAY_COMPACT = new GuiData("multi_display").add(MULTI_DISPLAY).setPadding(0, 0, 0, 0);
     public static GuiData BASIC_TANK = new GuiData("basic_tank").add(IT_IN, 8, 17).add(IT_OUT, 8, 53).add(FL_IN, 106, 43);
+
+    public static GuiData ORE_BYPRODUCTS = new GuiData("ore_byproducts"){
+        @Override
+        public ResourceLocation getTexture(Tier tier) {
+            return new ResourceLocation(Ref.MODID, "textures/gui/" + id + ".png");
+        }
+    }.setPadding(0, 0, 0, 0).add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 142, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34);
 
     public static void init() {
 
