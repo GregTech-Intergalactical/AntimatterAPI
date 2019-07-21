@@ -73,7 +73,7 @@ public final class GregTechAPI {
         register(TileEntityMaterial.class);
         register(TileEntityRock.class);
 
-        registerJEICategory(RecipeMaps.ORE_BY_PRODUCTS, Guis.MULTI_DISPLAY_COMPACT);
+        registerJEICategory(RecipeMaps.ORE_BYPRODUCTS, Guis.ORE_BYPRODUCTS);
 //        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
         registerJEICategory(RecipeMaps.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
         registerJEICategory(RecipeMaps.GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
