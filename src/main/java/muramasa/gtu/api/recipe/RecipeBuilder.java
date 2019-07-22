@@ -57,14 +57,6 @@ public class RecipeBuilder {
         recipe.setHidden(hidden);
         recipe.addTags(new HashSet<>(tags));
         recipeMap.add(recipe);
-
-        itemsInput = itemsOutput = null;
-        fluidsInput = fluidsOutput = null;
-        chances = null;
-        duration = special = 0;
-        power = 0;
-        hidden = false;
-        tags.clear();
     }
 
     public void add(long duration, long power, long special) {
@@ -116,6 +108,16 @@ public class RecipeBuilder {
     public RecipeBuilder tags(RecipeTag... tags) {
         this.tags = Sets.newHashSet(tags);
         return this;
+    }
+
+    public void clear() {
+        itemsInput = itemsOutput = null;
+        fluidsInput = fluidsOutput = null;
+        chances = null;
+        duration = special = 0;
+        power = 0;
+        hidden = false;
+        tags.clear();
     }
 
     public RecipeMap getMap() {

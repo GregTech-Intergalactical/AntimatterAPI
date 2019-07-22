@@ -112,7 +112,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public Recipe findRecipe() {
-        return getType().getRecipeMap().find(getStoredItems(), getStoredFluids(), getMaxInputVoltage());
+        return getType().getRecipeMap().find(getStoredItems(), getStoredFluids());
     }
 
     @Override

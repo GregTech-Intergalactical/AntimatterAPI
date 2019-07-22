@@ -35,7 +35,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Recipe Methods **/
     public Recipe findRecipe() {
-        return getType().getRecipeMap().find(itemHandler, fluidHandler, getMaxInputVoltage());
+        return getType().getRecipeMap().find(itemHandler, fluidHandler);
     }
 
     public void checkRecipe() {
@@ -43,6 +43,9 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
             System.out.println("check recipe");
             if (!hadFirstTick()) return; //TODO fixme
             if ((activeRecipe = findRecipe()) != null) {
+                if (activeRecipe.getPower() > getMaxInputVoltage()) {
+                    //TODO machine tier cannot process recipe
+                }
                 curProgress = 0;
                 maxProgress = activeRecipe.getDuration();
                 setMachineState(ACTIVE);

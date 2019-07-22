@@ -4,12 +4,11 @@ import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.util.Utils;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
-//TODO support fluids?
 public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
     @Override
-    public Recipe findRecipe() {
-        return getType().getRecipeMap().find(itemHandler, null, getMaxInputVoltage());
+    public Recipe findRecipe() { //TODO support fluids?
+        return getType().getRecipeMap().find(itemHandler, null);
     }
 
     @Override

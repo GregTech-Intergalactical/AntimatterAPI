@@ -15,6 +15,6 @@ public class RecipeInputFlat extends RecipeInput {
     public boolean equals(Object obj) {
         if (!(obj instanceof RecipeInput)) return false;
         RecipeInput other = (RecipeInput) obj;
-        return hashCode() == other.hashCode();
+        return hash == other.hash;
     }
 }

@@ -1,13 +1,18 @@
 package muramasa.gtu.loaders;
 
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 
 import static muramasa.gtu.api.data.Materials.*;
 import static muramasa.gtu.api.data.RecipeMaps.*;
+import static muramasa.gtu.api.materials.MaterialTag.NOBBF;
+import static muramasa.gtu.api.materials.MaterialTag.NOSMELT;
+import static muramasa.gtu.api.materials.MaterialType.INGOT;
 
 public class MachineRecipeLoader {
 
@@ -18,21 +23,23 @@ public class MachineRecipeLoader {
         //TODO: Glass processing recipes here
         LATHING.RB().ii(Glass.getPlate(1)).io(Glass.getLens(1), Glass.getDustSmall(1)).add(20, 12);
 
-        OreDictionary.getOres("logWood").forEach(i -> COKING.RB().ii(Utils.ca(2, i), Coal.getDust(1)).io(Charcoal.getGem(1)).fo(Creosote.getLiquid(250)).add(3600)); //Coal?
+        OreDictionary.getOres("logWood").forEach(i -> COKING.RB().ii(Utils.ca(2, i)).io(Charcoal.getGem(1)).fo(Creosote.getLiquid(250)).add(3600)); //Coal?
         COKING.RB().ii(Coal.getGem(1)).io(CoalCoke.getGem(1)).fo(Creosote.getLiquid(500)).add(3600);
         COKING.RB().ii(Lignite.getGem(1)).io(LigniteCoke.getGem(1)).fo(Creosote.getLiquid(750)).add(3600);
 
         //Add Basic blasting for mixed metals
-//        GenerationFlag.DUST.getMats().forEach(m -> {
-//            if (m.getDirectSmeltInto() != m && !m.has(NOSMELT) && !(m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace()) && !m.has(NOBBF)) {
-//                if (m.getDirectSmeltInto().has(INGOT)) { //TODO INGOT check was added to avoid DOES NOT GENERATE: P(INGOT) M(mercury)
-//                    RecipeAdder.addBasicBlast(new ItemStack[]{m.getDust(2)}, new ItemStack[]{m.getDirectSmeltInto().getIngot(MaterialRecipeLoader.aMixedOreYieldCount)}, 2, 2400);
-//                }
-//            }
-//        });
+        MaterialType.DUST.getMats().forEach(m -> {
+            if (m.getDirectSmeltInto() != m && !m.has(NOSMELT) && !(m.needsBlastFurnace() || m.getDirectSmeltInto().needsBlastFurnace()) && !m.has(NOBBF)) {
+                if (m.getDirectSmeltInto().has(INGOT)) { //TODO INGOT check was added to avoid DOES NOT GENERATE: P(INGOT) M(mercury)
+                    BASIC_BLASTING.RB().add(new ItemStack[]{m.getDust(2)}, new ItemStack[]{m.getDirectSmeltInto().getIngot(MaterialRecipeLoader.mixedOreYield)}, 2, 2400);
+                }
+            }
+        });
 
         /** Temp Testing Recipes **/ //TODO remove
         COMBUSTION_FUELS.RB().fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(1, 0, 1024);
+        COMBUSTION_FUELS.RB().fi(Titanium.getLiquid(1999)).fo(CarbonDioxide.getGas(2000)).add(1, 0, 1024);
+        COMBUSTION_FUELS.RB().fi(Osmium.getLiquid(2001)).fo(CarbonDioxide.getGas(3000)).add(1, 0, 1024);
 
         //How the hell does empty stacks even get into smeltingList?!
         FurnaceRecipes.instance().getSmeltingList().entrySet().stream().filter((set) -> !set.getKey().isEmpty()).forEach((set) -> SMELTING.RB().ii(set.getKey()).io(set.getValue()).add(140, 2));
