@@ -56,7 +56,17 @@ public class RenderHelper {
         TextureAtlasSprite fluidStillSprite = getStillFluidSprite(mc, fluid);
         int fluidColor = fluid.getColor(stack);
 
+        //Draw the fluid texture
         drawTiledSprite(mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
+
+        //Render the amount String
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, 200);
+        if (stack.amount >= 2000) {
+            String amount = stack.amount / 1000 + "";
+            mc.fontRenderer.drawStringWithShadow(amount, posX + (16 - mc.fontRenderer.getStringWidth(amount) + 1), posY + 9, 0xFFFFFF);
+        }
+        GlStateManager.popMatrix();
     }
 
     public static void drawTiledSprite(Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
