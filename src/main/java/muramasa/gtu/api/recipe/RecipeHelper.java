@@ -13,7 +13,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,21 +132,12 @@ public class RecipeHelper {
     }
 
     public static String[] getOres(ItemStack stack) {
+        if (stack.isEmpty()) return new String[0];
         int[] ids = OreDictionary.getOreIDs(stack);
+        if (ids.length == 0) return new String[0];
         String[] names = new String[ids.length];
         for (int i = 0; i < ids.length; i++) {
             names[i] = OreDictionary.getOreName(ids[i]);
-        }
-        return names;
-    }
-
-    public static ArrayList<String> getOreNames(ItemStack stack) {
-        ArrayList<String> names = new ArrayList<>();
-        if (stack.isEmpty()) return names;
-        int[] ids = OreDictionary.getOreIDs(stack);
-        if (ArrayUtils.isEmpty(ids)) return names;
-        for (int id : ids) {
-            names.add(OreDictionary.getOreName(id));
         }
         return names;
     }
