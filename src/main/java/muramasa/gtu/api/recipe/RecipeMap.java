@@ -9,7 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
@@ -22,7 +24,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
         this.id = "gt.recipe_map." + categoryId;
         this.builder = builder;
         this.builder.setMap(this);
-        LOOKUP = new LinkedHashMap<>();
+        LOOKUP = new HashMap<>();
         GregTechAPI.register(RecipeMap.class, this);
     }
 
@@ -40,6 +42,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
     }
 
     public B RB() {
+        builder.clear();
         return builder;
     }
 
@@ -61,13 +64,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
     }
 
     @Nullable
-    public Recipe find(@Nullable MachineItemHandler itemHandler, @Nullable MachineFluidHandler fluidHandler, long voltage) {
-        return find(itemHandler != null ? itemHandler.getInputs() : null, fluidHandler != null ? fluidHandler.getInputs() : null, voltage);
+    public Recipe find(@Nullable MachineItemHandler itemHandler, @Nullable MachineFluidHandler fluidHandler) {
+        return find(itemHandler != null ? itemHandler.getInputs() : null, fluidHandler != null ? fluidHandler.getInputs() : null);
     }
 
     //TODO take into account machine tier
     @Nullable
-    public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids, long voltage) {
+    public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
         if ((items != null && !Utils.areItemsValid(items)) || (fluids != null && !Utils.areFluidsValid(fluids))) return null;
         return LOOKUP.get(new RecipeInput(items, fluids));
     }

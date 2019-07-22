@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class ItemWrapper {
 
-    private ItemStack item;
+    public ItemStack item;
     private boolean count, nbt;
     private int hash;
 
@@ -24,18 +24,6 @@ public class ItemWrapper {
 
     public ItemWrapper(ItemStack item) {
         this(item, Collections.emptySet());
-    }
-
-    public ItemStack get() {
-        return item.copy();
-    }
-
-    public int getCount() {
-        return item.getCount();
-    }
-
-    public int getHash() {
-        return hash;
     }
 
     @Override

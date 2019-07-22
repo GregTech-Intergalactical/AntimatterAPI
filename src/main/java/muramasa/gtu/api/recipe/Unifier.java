@@ -1,10 +1,12 @@
 package muramasa.gtu.api.recipe;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.items.MaterialItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashSet;
@@ -13,6 +15,8 @@ import java.util.Set;
 public class Unifier {
 
     private static Set<ItemWrapper> UNIFICATION_BLACKLIST = new HashSet<>();
+
+    private static Object2ObjectOpenHashMap<Fluid, Fluid> FLUID_DICT = new Object2ObjectOpenHashMap<>();
 
     static {
         if (Configs.RECIPE.MOD_PRIORITY.length == 0 || Configs.RECIPE.MOD_PRIORITY[0].equals(Ref.MODID)) {
@@ -35,5 +39,10 @@ public class Unifier {
             }
         }
         return stack;
+    }
+
+    public static Fluid get(Fluid fluid) {
+        Fluid replacement = FLUID_DICT.get(fluid);
+        return replacement != null ? replacement : fluid;
     }
 }

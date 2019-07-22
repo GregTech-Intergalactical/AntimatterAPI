@@ -11,13 +11,13 @@ import java.util.Set;
 //if (e.hash == hash && ((k = e.key) == key || key.equals(k))) return e.value;
 public class RecipeInput {
 
-    private ItemWrapper[] items;
-    private Int2IntOpenHashMap itemMap = new Int2IntOpenHashMap();
+    protected ItemWrapper[] items;
+    protected Int2IntOpenHashMap itemMap = new Int2IntOpenHashMap();
 
-    private FluidWrapper[] fluids;
-    private Int2IntOpenHashMap fluidMap = new Int2IntOpenHashMap();
+    protected FluidWrapper[] fluids;
+    protected Int2IntOpenHashMap fluidMap = new Int2IntOpenHashMap();
 
-    private int hash;
+    protected int hash;
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
@@ -25,16 +25,16 @@ public class RecipeInput {
             this.items = new ItemWrapper[items.length];
             for (int i = 0; i < items.length; i++) {
                 this.items[i] = new ItemWrapper(items[i], tags);
-                itemMap.put(this.items[i].getHash(), i);
-                tempHash += this.items[i].getHash();
+                itemMap.put(this.items[i].hashCode(), i);
+                tempHash += this.items[i].hashCode();
             }
         }
         if (fluids != null && fluids.length > 0) {
             this.fluids = new FluidWrapper[fluids.length];
             for (int i = 0; i < fluids.length; i++) {
                 this.fluids[i] = new FluidWrapper(fluids[i], tags);
-                fluidMap.put(this.fluids[i].getHash(), i);
-                tempHash += this.fluids[i].getHash();
+                fluidMap.put(this.fluids[i].hashCode(), i);
+                tempHash += this.fluids[i].hashCode();
             }
         }
         hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
@@ -50,12 +50,12 @@ public class RecipeInput {
         RecipeInput other = (RecipeInput) obj;
         if (items != null) {
             for (int i = 0; i < items.length; i++) {
-                if (!other.items[other.itemMap.get(items[i].getHash())].equals(items[i])) return false;
+                if (!other.items[other.itemMap.get(items[i].hashCode())].equals(items[i])) return false;
             }
         }
         if (fluids != null) {
             for (int i = 0; i < fluids.length; i++) {
-                if (!other.fluids[other.fluidMap.get(fluids[i].getHash())].equals(fluids[i])) return false;
+                if (!other.fluids[other.fluidMap.get(fluids[i].hashCode())].equals(fluids[i])) return false;
             }
         }
         return true;

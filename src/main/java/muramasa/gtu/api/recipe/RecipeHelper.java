@@ -60,7 +60,7 @@ public class RecipeHelper {
     }
 
     /**
-     * @see RecipeHelper#addShaped(path, result, data) for char references
+     * @see RecipeHelper#addShaped(String, ItemStack, Object...) for char references
      */
     public static void addShapeless(String path, ItemStack result, Object... data) {
         if (result != null && !Utils.areItemsValid(result)) {
@@ -130,6 +130,15 @@ public class RecipeHelper {
                 iterator.remove();
             }
         }
+    }
+
+    public static String[] getOres(ItemStack stack) {
+        int[] ids = OreDictionary.getOreIDs(stack);
+        String[] names = new String[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            names[i] = OreDictionary.getOreName(ids[i]);
+        }
+        return names;
     }
 
     public static ArrayList<String> getOreNames(ItemStack stack) {

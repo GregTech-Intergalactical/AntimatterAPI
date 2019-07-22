@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class FluidWrapper {
 
-    private FluidStack fluid;
+    public FluidStack fluid;
     private boolean count, nbt;
     private int hash;
 
@@ -16,7 +16,7 @@ public class FluidWrapper {
         count = fluid.amount > 1;
         nbt = fluid.tag != null && !tags.contains(RecipeTag.IGNORE_NBT);
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
-        tempHash = 31 * tempHash + fluid.getFluid().hashCode();
+        tempHash = 31 * tempHash + fluid.getFluid().hashCode(); //TODO validate? potentially not persistent on relaunches?
         if (nbt) tempHash = 31 * tempHash + fluid.tag.hashCode();
         hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
     }
@@ -25,26 +25,11 @@ public class FluidWrapper {
         this(fluid, Collections.emptySet());
     }
 
-    public FluidStack get() {
-        return fluid.copy();
-    }
-
-    public int getCount() {
-        return fluid.amount;
-    }
-
-    public int getHash() {
-        return hash;
-    }
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FluidWrapper)) return false;
         FluidWrapper other = (FluidWrapper) obj;
-        if ((count && other.fluid.amount < fluid.amount) &&
-            (nbt && !FluidStack.areFluidStackTagsEqual(fluid, other.fluid))) {
-            return false;
-        }
-        return true;
+        return (!count || other.fluid.amount >= fluid.amount) || (!nbt || FluidStack.areFluidStackTagsEqual(fluid, other.fluid));
     }
 
     @Override
