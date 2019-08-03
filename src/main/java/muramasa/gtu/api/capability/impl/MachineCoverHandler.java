@@ -18,6 +18,10 @@ public class MachineCoverHandler extends CoverHandler {
         };
     }
 
+    public EnumFacing getOutputFacing() {
+        return Utils.rotateFacing(EnumFacing.VALUES[outputSide], getTileFacing());
+    }
+
     public boolean setOutputFacing(EnumFacing side) {
         if (set(side, GregTechAPI.CoverOutput)) {
             covers[outputSide] = GregTechAPI.CoverNone;

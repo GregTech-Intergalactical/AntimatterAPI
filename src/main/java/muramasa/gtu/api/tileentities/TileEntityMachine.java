@@ -58,6 +58,11 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
     }
 
+    @Override
+    public void onServerUpdate() {
+        if (coverHandler != null) coverHandler.update();
+    }
+
     /** Events **/
     public void onContentsChanged(ContentEvent type, int slot) {
         //NOOP
@@ -90,6 +95,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     public EnumFacing getFacing() {
         return facing != null ? facing : EnumFacing.NORTH;
+    }
+
+    public EnumFacing getOutputFacing() {
+        return coverHandler.getOutputFacing();
     }
 
     public MachineState getMachineState() {
@@ -255,7 +264,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         if (getType().hasFlag(COVERABLE)) {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (int i = 0; i < 6; i++) {
-                builder.append(coverHandler.get(EnumFacing.VALUES[i]).getName()).append(" ");
+                builder.append(coverHandler.get(EnumFacing.VALUES[i]).getId()).append(" ");
             }
             info.add(builder.toString());
         }

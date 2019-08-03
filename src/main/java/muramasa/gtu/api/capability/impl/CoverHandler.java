@@ -27,14 +27,14 @@ public class CoverHandler implements ICoverHandler {
         this.tile = tile;
         //TODO fix valid covers
         validCovers = new ArrayList<>();
-        validCovers.add(GregTechAPI.CoverNone.getName());
+        validCovers.add(GregTechAPI.CoverNone.getId());
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
-            validCovers.add(cover.getName());
+            validCovers.add(cover.getId());
         }
     }
 
     @Override
-    public void tick() {
+    public void update() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
             covers[i].onUpdate(getTile());
@@ -80,7 +80,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean isValid(EnumFacing side, Cover cover) {
-        return validCovers.contains(cover.getName());
+        return validCovers.contains(cover.getId());
     }
 
     @Override

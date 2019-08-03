@@ -207,7 +207,7 @@ public final class GregTechAPI {
      */
     public static void registerCover(Cover cover) {
         cover.onRegister();
-        COVER_REGISTRY.put(cover.getName(), cover);
+        COVER_REGISTRY.put(cover.getId(), cover);
     }
 
     public static Cover getCover(String name) {
@@ -233,7 +233,7 @@ public final class GregTechAPI {
         if (coverHandler == null) return false;
         Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
         if (cover == null) return false;
-        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack), getCover(cover.getName()).getInternalId()))) {
+        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack), getCover(cover.getId()).getInternalId()))) {
             stack.shrink(1);
             return true;
         }

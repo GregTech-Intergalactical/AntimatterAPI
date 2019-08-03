@@ -13,7 +13,7 @@ public class CoverPump extends Cover {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "pump";
     }
 

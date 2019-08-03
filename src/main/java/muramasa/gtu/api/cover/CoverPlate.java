@@ -26,7 +26,7 @@ public class CoverPlate extends CoverMaterial {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "plate";
     }
 

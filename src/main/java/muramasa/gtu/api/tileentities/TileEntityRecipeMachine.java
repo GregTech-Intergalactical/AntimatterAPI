@@ -20,8 +20,8 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     @Override
     public void onServerUpdate() {
+        super.onServerUpdate();
         if (getMachineState() == ACTIVE) tickMachineLoop();
-        if (coverHandler != null) coverHandler.tick();
     }
 
     public void tickMachineLoop() {

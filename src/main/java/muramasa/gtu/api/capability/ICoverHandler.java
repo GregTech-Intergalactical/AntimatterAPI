@@ -9,7 +9,7 @@ import net.minecraft.util.EnumHand;
 
 public interface ICoverHandler {
 
-    void tick();
+    void update();
 
     boolean set(EnumFacing side, Cover cover);
 

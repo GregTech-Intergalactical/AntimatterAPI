@@ -22,7 +22,7 @@ public abstract class Cover {
     private int internalId;
 
     //TODO rename to getId();
-    public abstract String getName();
+    public abstract String getId();
 
     public int getInternalId() {
         return internalId;
@@ -59,21 +59,21 @@ public abstract class Cover {
     }
 
     public boolean isEqual(Cover cover) {
-        return getName().equals(cover.getName());
+        return getId().equals(cover.getId());
     }
 
     public boolean isEmpty() {
-        return getName().equals(GregTechAPI.CoverNone.getName());
+        return getId().equals(GregTechAPI.CoverNone.getId());
     }
 
     public Texture[] getTextures() {
         return new Texture[] {
-            new Texture("blocks/machine/cover/" + getName())
+            new Texture("blocks/machine/cover/" + getId())
         };
     }
 
     public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine/cover/" + getName());
+        return new ModelResourceLocation(Ref.MODID + ":machine/cover/" + getId());
     }
 
     public static ModelResourceLocation getBasicModel() {

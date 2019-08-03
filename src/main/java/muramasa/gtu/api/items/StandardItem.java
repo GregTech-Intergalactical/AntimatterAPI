@@ -127,7 +127,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                         tile.markDirty();
                     }*/ else {
                         for (Cover c : GregTechAPI.getRegisteredCovers()) {
-                            System.out.println(c.getName() + " - " + c.getInternalId());
+                            System.out.println(c.getId() + " - " + c.getInternalId());
                         }
                     }
                 } else if (tile instanceof TileEntityPipe) {
