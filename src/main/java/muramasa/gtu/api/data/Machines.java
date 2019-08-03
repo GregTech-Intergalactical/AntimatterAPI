@@ -58,9 +58,9 @@ public class Machines {
     public static BasicMachine ARC_FURNACE = new BasicMachine("arc_furnace", ARC_SMELTING, ITEM, FLUID);
     public static BasicMachine PLASMA_ARC_FURNACE = new BasicMachine("plasma_arc_furnace", PLASMA_ARC_SMELTING, ITEM, FLUID);
 
-    public static BasicMachine COAL_BOILER = new BasicMachine("coal_boiler", BRONZE, STEEL, ITEM, FLUID);
-    public static BasicMachine LAVA_BOILER = new BasicMachine("lava_boiler", STEEL, ITEM, FLUID); //TODO
-    public static BasicMachine SOLAR_BOILER = new BasicMachine("solar_boiler", BRONZE, ITEM, FLUID); //TODO
+    public static BasicMachine COAL_BOILER = new BasicMachine("coal_boiler", SMALL_BOILERS, BRONZE, STEEL, ITEM, FLUID);
+    public static BasicMachine LAVA_BOILER = new BasicMachine("lava_boiler", SMALL_BOILERS, STEEL, ITEM, FLUID); //TODO
+    public static BasicMachine SOLAR_BOILER = new BasicMachine("solar_boiler", SMALL_BOILERS, BRONZE, ITEM, FLUID); //TODO
     public static BasicMachine STEAM_FURNACE = new BasicMachine("steam_furnace", BRONZE, STEEL, ITEM, FLUID);
     public static BasicMachine STEAM_PULVERIZER = new BasicMachine("steam_pulverizer", BRONZE, STEEL, ITEM, FLUID);
     public static BasicMachine STEAM_EXTRACTOR = new BasicMachine("steam_extractor", BRONZE, STEEL, ITEM, FLUID);

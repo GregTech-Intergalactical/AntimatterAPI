@@ -5,8 +5,7 @@ import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.ICoverHandler;
-import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.cover.impl.*;
+import muramasa.gtu.api.cover.*;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.RecipeMaps;
 import muramasa.gtu.api.gui.GuiData;
@@ -196,11 +195,11 @@ public final class GregTechAPI {
     private final static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
 
     /** IMPORTANT: These should only be used to compare instances. **/
-    public final static Cover CoverNone = new CoverNone();
-    public final static Cover CoverPlate = new CoverPlate();
-    public final static Cover CoverItem = new CoverItem(Tier.LV);
-    public final static Cover CoverFluid = new CoverFluid(Tier.LV);
-    public final static Cover CoverEnergy = new CoverEnergy(Tier.LV);
+    public static final Cover CoverNone = new CoverNone();
+    public static final Cover CoverPlate = new CoverPlate();
+    public static final Cover CoverOutput = new CoverOutput();
+    public static final Cover CoverConveyor = new CoverConveyor(Tier.LV);
+    public static final Cover CoverPump = new CoverPump(Tier.LV);
 
     /**
      * Registers a cover behaviour. This must be done during preInit.

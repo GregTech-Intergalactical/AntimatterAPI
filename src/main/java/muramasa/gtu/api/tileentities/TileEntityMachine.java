@@ -1,7 +1,6 @@
 package muramasa.gtu.api.tileentities;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.*;
@@ -109,6 +108,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         return 0;
     }
 
+    //TODO convert getFooHandlers to Optionals
     @Nullable
     public MachineItemHandler getItemHandler() {
         return itemHandler;
@@ -172,15 +172,19 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
+        //TODO if a side has a cover, disallow energy/items/fluid etc?
         if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (coverHandler == null) return false;
-            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
+            //return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
+            return true;
         } else if (getType().hasFlag(FLUID) && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (fluidHandler == null || (fluidHandler.getInputWrapper() == null && fluidHandler.getOutputWrapper() == null)) return false;
-            return side == null || (coverHandler != null && coverHandler.hasCover(side, GregTechAPI.CoverFluid));
+            //return side == null || (coverHandler != null && coverHandler.hasCover(side, GregTechAPI.CoverFluid));
+            return true;
         } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
             if (coverHandler == null) return false;
-            return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
+            //return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
+            return true;
         } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
             if (coverHandler == null) return false;
             return side == null || !coverHandler.get(side).isEmpty();
@@ -247,6 +251,13 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         if (slots.length() > 0) info.add("Slots:" + slots);
         if (getType().hasFlag(ENERGY)) {
             info.add("Energy: " + energyHandler.getEnergyStored() + " / " + energyHandler.getMaxEnergyStored());
+        }
+        if (getType().hasFlag(COVERABLE)) {
+            StringBuilder builder = new StringBuilder("Covers: ");
+            for (int i = 0; i < 6; i++) {
+                builder.append(coverHandler.get(EnumFacing.VALUES[i]).getName()).append(" ");
+            }
+            info.add(builder.toString());
         }
         return info;
     }

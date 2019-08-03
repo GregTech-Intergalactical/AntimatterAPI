@@ -1,21 +1,20 @@
-package muramasa.gtu.api.cover.impl;
+package muramasa.gtu.api.cover;
 
-import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.common.Data;
 import net.minecraft.item.ItemStack;
 
-public class CoverFluid extends Cover {
+public class CoverPump extends Cover {
 
     protected Tier tier;
 
-    public CoverFluid(Tier tier) {
+    public CoverPump(Tier tier) {
         this.tier = tier;
     }
 
     @Override
     public String getName() {
-        return "fluid";
+        return "pump";
     }
 
     @Override

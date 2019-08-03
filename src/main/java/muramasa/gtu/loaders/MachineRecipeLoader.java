@@ -36,6 +36,12 @@ public class MachineRecipeLoader {
             }
         });
 
+        SMALL_BOILERS.RB().ii(Coal.getGem(1)).io(DarkAsh.getDustTiny(1)).fo(Steam.getGas(150)).chances(33).add(10);
+        SMALL_BOILERS.RB().ii(Charcoal.getGem(1)).io(DarkAsh.getDustTiny(1)).fo(Steam.getGas(150)).chances(33).add(10);
+        SMALL_BOILERS.RB().ii(Lignite.getGem(1)).io(DarkAsh.getDustTiny(1)).fo(Steam.getGas(150)).chances(15).add(10);
+        SMALL_BOILERS.RB().ii(CoalCoke.getGem(1)).io(DarkAsh.getDustTiny(1)).fo(Steam.getGas(150)).chances(50).add(10);
+        SMALL_BOILERS.RB().ii(LigniteCoke.getGem(1)).io(DarkAsh.getDustTiny(1)).fo(Steam.getGas(150)).chances(40).add(10);
+
         /** Temp Testing Recipes **/ //TODO remove
         COMBUSTION_FUELS.RB().fi(Diesel.getLiquid(1)).fo(CarbonDioxide.getGas(1)).add(1, 0, 1024);
         COMBUSTION_FUELS.RB().fi(Titanium.getLiquid(1999)).fo(CarbonDioxide.getGas(2000)).add(1, 0, 1024);

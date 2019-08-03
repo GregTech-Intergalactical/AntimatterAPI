@@ -1,6 +1,5 @@
-package muramasa.gtu.api.cover.impl;
+package muramasa.gtu.api.cover;
 
-import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 

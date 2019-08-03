@@ -1,7 +1,6 @@
-package muramasa.gtu.api.cover.impl;
+package muramasa.gtu.api.cover;
 
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
