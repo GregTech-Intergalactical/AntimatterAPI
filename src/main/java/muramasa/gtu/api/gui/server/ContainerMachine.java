@@ -10,14 +10,17 @@ import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.network.GregTechNetwork;
 import net.minecraft.inventory.IInventory;
 
+import javax.annotation.Nullable;
+
 public class ContainerMachine extends ContainerBase {
 
     protected TileEntityMachine tile;
     private int lastState = -1;
 
-    public ContainerMachine(TileEntityMachine tile, IInventory playerInv) {
-        super(tile.getType().getGui().enablePlayerSlots() ? playerInv : null);
+    public ContainerMachine(TileEntityMachine tile, @Nullable IInventory playerInv) {
+        super(tile.getType().getGui().getSlots(tile.getTier()).size(), playerInv);
         addSlots(tile);
+        if (tile.getType().getGui().enablePlayerSlots()) addPlayerInventorySlots();
         this.tile = tile;
     }
 
