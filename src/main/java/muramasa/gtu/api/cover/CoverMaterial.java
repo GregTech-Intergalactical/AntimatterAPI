@@ -1,4 +1,4 @@
-package muramasa.gtu.api.cover.impl;
+package muramasa.gtu.api.cover;
 
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;

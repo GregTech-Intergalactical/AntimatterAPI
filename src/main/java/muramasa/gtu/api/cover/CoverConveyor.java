@@ -1,21 +1,20 @@
-package muramasa.gtu.api.cover.impl;
+package muramasa.gtu.api.cover;
 
-import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.common.Data;
 import net.minecraft.item.ItemStack;
 
-public class CoverItem extends Cover {
+public class CoverConveyor extends Cover {
 
     protected Tier tier;
 
-    public CoverItem(Tier tier) {
+    public CoverConveyor(Tier tier) {
         this.tier = tier;
     }
 
     @Override
     public String getName() {
-        return "item";
+        return "conveyor";
     }
 
     @Override

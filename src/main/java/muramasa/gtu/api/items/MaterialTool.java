@@ -120,6 +120,7 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
             }
         }
 
+        //TODO does this clash with BlockMachine.onBlockActivated?
         TileEntity tile = Utils.getTile(world, pos);
         if (tile == null) return EnumActionResult.PASS;
         EnumActionResult result = EnumActionResult.PASS;

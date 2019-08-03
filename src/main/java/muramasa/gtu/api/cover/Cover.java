@@ -21,6 +21,7 @@ public abstract class Cover {
 
     private int internalId;
 
+    //TODO rename to getId();
     public abstract String getName();
 
     public int getInternalId() {

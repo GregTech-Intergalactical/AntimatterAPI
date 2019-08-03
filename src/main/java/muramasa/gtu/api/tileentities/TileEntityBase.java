@@ -63,6 +63,7 @@ public class TileEntityBase extends TileEntity {
         Utils.markTileForRenderUpdate(this);
     }
 
+    //TODO pass constant StringBuilder
     public List<String> getInfo() {
         return new ArrayList<>();
     }

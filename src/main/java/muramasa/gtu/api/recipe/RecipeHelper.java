@@ -116,8 +116,7 @@ public class RecipeHelper {
     public static void addSmelting(ItemStack input, ItemStack output) {
         addSmelting(input, output, 1.0f);
     }
-
-
+    
     public static void removeSmelting(ItemStack output) {
         ItemStack recipeResult;
         Map<ItemStack,ItemStack> recipes = FurnaceRecipes.instance().getSmeltingList();

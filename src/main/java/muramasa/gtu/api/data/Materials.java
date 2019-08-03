@@ -127,6 +127,7 @@ public class Materials {
     /** Fluids **/
     public static Material Lava = new Material("lava", 0xff4000, NONE).asFluid();
     public static Material Water = new Material("water", 0x0000ff, NONE).asFluid().add(Hydrogen, 2, Oxygen, 1);
+    public static Material Steam = new Material("steam", 0xa0a0a0, NONE).asGas();
     public static Material UUAmplifier = new Material("uu_amplifier", 0x600080, NONE).asFluid();
     public static Material UUMatter = new Material("uu_matter", 0x8000c4, NONE).asFluid();
     public static Material Antimatter = new Material("anti_matter", 0x8000c4, NONE).asFluid();

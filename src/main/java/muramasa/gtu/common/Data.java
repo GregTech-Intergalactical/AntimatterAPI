@@ -28,9 +28,6 @@ public class Data {
 
     public static StandardItem DebugScanner = new StandardItem("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
     public static StandardItem StickyResin = new StandardItem("sticky_resin");
-    public static StandardItem ItemPort = new StandardItem("item_port", "Can be placed on machines as a cover");
-    public static StandardItem FluidPort = new StandardItem("fluid_port", "Can be placed on machines as a cover");
-    public static StandardItem EnergyPort = new StandardItem("energy_port", "Can be placed on machines as a cover");
     public static StandardItem ComputerMonitor = new StandardItem("computer_monitor", "Can be placed on machines as a cover");
 
     public static ItemFluidCell CellTin = new ItemFluidCell(Materials.Tin, 1000);
