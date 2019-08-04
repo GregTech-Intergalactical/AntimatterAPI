@@ -3,7 +3,7 @@ package muramasa.gtu.integration.top;
 import mcjty.theoneprobe.api.*;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.IEnergyStorage;
+import muramasa.gtu.api.capability.IEnergyHandler;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.state.IBlockState;
@@ -38,12 +38,12 @@ public class EnergyStorageInfoProvider implements IProbeInfoProvider {
 				}
 			}
 			if (tile.hasCapability(GTCapabilities.ENERGY, null)) {
-				IEnergyStorage energyStorage = tile.getCapability(GTCapabilities.ENERGY, null);
+				IEnergyHandler energyStorage = tile.getCapability(GTCapabilities.ENERGY, null);
 				if (energyStorage == null) return;
 				IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
 				horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.energy_stored*} " + " ");
-				horizontalPane.progress(energyStorage.getEnergyStored(), energyStorage.getMaxEnergyStored(), probeInfo.defaultProgressStyle()
-					.suffix("/" + energyStorage.getMaxEnergyStored() + " EU")
+				horizontalPane.progress(energyStorage.getPower(), energyStorage.getCapacity(), probeInfo.defaultProgressStyle()
+					.suffix("/" + energyStorage.getCapacity() + " EU")
 					.borderColor(0x00000000)
 					.backgroundColor(0x00000000)
 					.filledColor(0xFFFFE000)
