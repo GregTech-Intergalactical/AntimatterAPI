@@ -1,6 +1,7 @@
 package muramasa.gtu.api.capability;
 
 import muramasa.gtu.api.cover.Cover;
+import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +17,8 @@ public interface ICoverHandler {
     Cover get(EnumFacing side);
 
     boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type);
+
+    void onMachineEvent(MachineEvent event);
 
     Cover[] getAll();
 

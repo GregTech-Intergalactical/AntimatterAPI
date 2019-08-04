@@ -2,8 +2,10 @@ package muramasa.gtu.api.cover;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.texture.Texture;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +53,10 @@ public abstract class Cover {
     }
 
     public void onUpdate(TileEntity tile) {
+        //NOOP
+    }
+
+    public void onMachineEvent(TileEntityMachine tile, MachineEvent event) {
         //NOOP
     }
 
