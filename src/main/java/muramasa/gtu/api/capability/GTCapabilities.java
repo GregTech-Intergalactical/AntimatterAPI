@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 
 public class GTCapabilities {
 
-    @CapabilityInject(IEnergyStorage.class)
-    public static Capability<IEnergyStorage> ENERGY;
+    @CapabilityInject(IEnergyHandler.class)
+    public static Capability<IEnergyHandler> ENERGY;
 
     @CapabilityInject(IConfigHandler.class)
     public static Capability<IConfigHandler> CONFIGURABLE;
@@ -29,14 +29,14 @@ public class GTCapabilities {
 
     public static void register() {
 
-        CapabilityManager.INSTANCE.register(IEnergyStorage.class, new Capability.IStorage<IEnergyStorage>() {
+        CapabilityManager.INSTANCE.register(IEnergyHandler.class, new Capability.IStorage<IEnergyHandler>() {
             @Override
-            public NBTBase writeNBT(Capability<IEnergyStorage> capability, IEnergyStorage instance, EnumFacing side) {
-                return new NBTTagLong(instance.getEnergyStored());
+            public NBTBase writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, EnumFacing side) {
+                return new NBTTagLong(instance.getPower());
             }
 
             @Override
-            public void readNBT(Capability<IEnergyStorage> capability, IEnergyStorage instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, EnumFacing side, NBTBase nbt) {
                 if (!(instance instanceof MachineEnergyHandler)) {
                     throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
                 }

@@ -18,6 +18,7 @@ import muramasa.gtu.api.texture.TextureData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -194,6 +195,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
             if (coverHandler == null) return false;
             //return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
             return true;
+        } else if (getType().hasFlag(ENERGY) && capability == CapabilityEnergy.ENERGY) {
+            if (coverHandler == null) return false;
+
+            return true;
         } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
             if (coverHandler == null) return false;
             return side == null || !coverHandler.get(side).isEmpty();
@@ -212,6 +217,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper() != null ? fluidHandler.getInputWrapper() : fluidHandler.getOutputWrapper());
         } else if (capability == GTCapabilities.ENERGY) {
             return GTCapabilities.ENERGY.cast(energyHandler);
+        } else if (capability == CapabilityEnergy.ENERGY) {
+            return CapabilityEnergy.ENERGY.cast(energyHandler);
         } else if (capability == GTCapabilities.COVERABLE) {
             return GTCapabilities.COVERABLE.cast(coverHandler);
         } else if (capability == GTCapabilities.CONFIGURABLE) {
