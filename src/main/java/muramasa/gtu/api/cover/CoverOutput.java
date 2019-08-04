@@ -2,10 +2,12 @@ package muramasa.gtu.api.cover;
 
 import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 public class CoverOutput extends Cover {
 
@@ -25,7 +27,10 @@ public class CoverOutput extends Cover {
                 IItemHandler adjInventory = adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputFacing.getOpposite());
                 for (int i = 0; i < adjInventory.getSlots(); i++) {
                     if (i >= machineInventory.getSlots()) break;
-                    adjInventory.insertItem(i, machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), false), false);
+                    ItemStack toInsert = machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), true);
+                    if (ItemHandlerHelper.insertItem(adjInventory, toInsert, true).isEmpty()) {
+                        ItemHandlerHelper.insertItem(adjInventory, machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), false), false);
+                    }
                 }
             }
         }

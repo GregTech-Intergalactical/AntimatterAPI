@@ -19,7 +19,7 @@ public class MachineCoverHandler extends CoverHandler {
     }
 
     public EnumFacing getOutputFacing() {
-        return Utils.rotateFacing(EnumFacing.VALUES[outputSide], getTileFacing());
+        return Utils.rotateFacingAlt(EnumFacing.VALUES[outputSide], getTileFacing());
     }
 
     public boolean setOutputFacing(EnumFacing side) {

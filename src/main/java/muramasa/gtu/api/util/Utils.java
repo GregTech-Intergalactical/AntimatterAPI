@@ -265,6 +265,33 @@ public class Utils {
         tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
     }
 
+    //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
+    //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
+    public static EnumFacing rotateFacingAlt(EnumFacing toRotate, EnumFacing rotateBy) {
+        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return toRotate;
+        /** S-W-N-E **/
+        if (rotateBy.getHorizontalIndex() < EnumFacing.NORTH.getHorizontalIndex()) {
+            //Rotate CCW
+            int dif = rotateBy.getHorizontalIndex() - EnumFacing.NORTH.getHorizontalIndex();
+//            System.out.println("Difccw: " + dif);
+            for (int i = 0; i < Math.abs(dif); i++) {
+                toRotate = toRotate.rotateYCCW();
+            }
+        } else {
+            //Rotate CW
+            int dif = EnumFacing.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
+//            System.out.println("Difcw: " + dif);
+            for (int i = 0; i < Math.abs(dif); i++) {
+                toRotate = toRotate.rotateY();
+            }
+        }
+//        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
+        //return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? toRotate.getOpposite() : toRotate;
+        return toRotate;
+    }
+
+    //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
+    //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
     public static EnumFacing rotateFacing(EnumFacing toRotate, EnumFacing rotateBy) {
         if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return toRotate;
         /** S-W-N-E **/
