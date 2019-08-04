@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 
 public class MachineCoverHandler extends CoverHandler {
 
-    private int outputSide = 3;
+    protected int outputSide = 3;
 
     public MachineCoverHandler(TileEntityMachine tile) {
         //TODO add valid covers to Machine class

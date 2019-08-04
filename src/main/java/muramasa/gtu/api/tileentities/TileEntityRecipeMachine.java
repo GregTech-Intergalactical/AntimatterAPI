@@ -1,6 +1,7 @@
 package muramasa.gtu.api.tileentities;
 
 import muramasa.gtu.api.machines.ContentEvent;
+import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.util.Utils;
@@ -87,6 +88,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
     public void addOutputs() {
         if (itemHandler != null) itemHandler.addOutputs(activeRecipe.getOutputItems());
         if (fluidHandler != null) fluidHandler.addOutputs(activeRecipe.getOutputFluids());
+        if (coverHandler != null) coverHandler.onMachineEvent(MachineEvent.ITEM_OUTPUT);
     }
 
     public boolean canRecipeContinue() {

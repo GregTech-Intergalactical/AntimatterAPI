@@ -3,6 +3,8 @@ package muramasa.gtu.api.capability.impl;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
+import muramasa.gtu.api.machines.MachineEvent;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
@@ -61,6 +63,14 @@ public class CoverHandler implements ICoverHandler {
                 GregTechAPI.removeCover(player, this, side);
                 return true;
             default: return false;
+        }
+    }
+
+    @Override
+    public void onMachineEvent(MachineEvent event) {
+        for (int i = 0; i < covers.length; i++) {
+            if (covers[i].isEmpty()) continue;
+            covers[i].onMachineEvent((TileEntityMachine) getTile(), event);
         }
     }
 
