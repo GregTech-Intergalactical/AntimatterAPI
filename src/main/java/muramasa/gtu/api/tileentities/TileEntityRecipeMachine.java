@@ -36,7 +36,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Recipe Methods **/
     public Recipe findRecipe() {
-        return getType().getRecipeMap().find(itemHandler, fluidHandler);
+        return getType().getRecipeMap().find(itemHandler.orElse(null), fluidHandler.orElse(null));
     }
 
     public void checkRecipe() {
@@ -73,36 +73,38 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
     }
 
     public void consumeInputs() {
-        if (itemHandler != null) itemHandler.consumeInputs(activeRecipe.getInputItems());
-        if (fluidHandler != null) fluidHandler.consumeInputs(activeRecipe.getInputFluids());
+        itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputItems()));
+        fluidHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputFluids()));
     }
 
     public boolean canOutput() {
-        if ((itemHandler != null && !itemHandler.canOutputsFit(activeRecipe.getOutputItems())) ||
-            (fluidHandler != null && !fluidHandler.canOutputsFit(activeRecipe.getOutputFluids()))) {
+        if ((itemHandler.isPresent() && !itemHandler.get().canOutputsFit(activeRecipe.getOutputItems())) ||
+            (fluidHandler.isPresent() && !fluidHandler.get().canOutputsFit(activeRecipe.getOutputFluids()))) {
             return false;
         }
         return true;
     }
 
     public void addOutputs() {
-        if (itemHandler != null) itemHandler.addOutputs(activeRecipe.getOutputItems());
-        if (fluidHandler != null) fluidHandler.addOutputs(activeRecipe.getOutputFluids());
-        if (coverHandler != null) coverHandler.onMachineEvent(MachineEvent.ITEM_OUTPUT);
+        itemHandler.ifPresent(h -> h.addOutputs(activeRecipe.getOutputItems()));
+        fluidHandler.ifPresent(h -> h.addOutputs(activeRecipe.getOutputFluids()));
+        onMachineEvent(MachineEvent.ITEM_OUTPUT);
     }
 
     public boolean canRecipeContinue() {
-        if ((itemHandler != null && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.getInputs())) ||
-            (fluidHandler != null && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), fluidHandler.getInputs()))) {
+        if ((itemHandler.isPresent() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.get().getInputs())) ||
+            (fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), fluidHandler.get().getInputs()))) {
             return false;
         }
         return true;
     }
 
     public boolean consumeResourceForRecipe() {
-        if (energyHandler.extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
-            energyHandler.extract(activeRecipe.getPower(), false);
-            return true;
+        if (energyHandler.isPresent()) {
+            if (energyHandler.get().extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
+                energyHandler.get().extract(activeRecipe.getPower(), false);
+                return true;
+            }
         }
         return false;
     }

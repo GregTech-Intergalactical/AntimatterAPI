@@ -2,7 +2,9 @@ package muramasa.gtu.api.structure;
 
 import muramasa.gtu.api.capability.IComponentHandler;
 
+import java.util.Optional;
+
 public interface IComponent {
 
-    IComponentHandler getComponentHandler();
+    Optional<? extends IComponentHandler> getComponentHandler();
 }

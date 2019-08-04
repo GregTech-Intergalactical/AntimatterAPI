@@ -1,13 +1,12 @@
 package muramasa.gtu.api.gui.server;
 
-import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.gui.SlotData;
 import muramasa.gtu.api.gui.slot.SlotInput;
 import muramasa.gtu.api.gui.slot.SlotOutput;
 import muramasa.gtu.api.machines.MachineState;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.network.GregTechNetwork;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.inventory.IInventory;
 
 import javax.annotation.Nullable;
@@ -32,11 +31,13 @@ public class ContainerMachine extends ContainerBase {
             listeners.forEach(l -> l.sendWindowProperty(this, GuiEvent.MACHINE_STATE.ordinal(), curState));
             lastState = curState;
         }
-        if (tile.getFluidHandler() != null && ((tile.getFluidHandler().getInputWrapper() != null && tile.getFluidHandler().getInputWrapper().dirty) || (tile.getFluidHandler().getOutputWrapper() != null && tile.getFluidHandler().getOutputWrapper().dirty))) {
-            if (tile.getFluidHandler().getInputWrapper() != null) tile.getFluidHandler().getInputWrapper().dirty = false;
-            if (tile.getFluidHandler().getOutputWrapper() != null) tile.getFluidHandler().getOutputWrapper().dirty = false;
-            GregTechNetwork.syncMachineTanks(tile);
-        }
+        tile.fluidHandler.ifPresent(h -> {
+            if ((h.getInputWrapper() != null && h.getInputWrapper().dirty) || (h.getOutputWrapper() != null && h.getOutputWrapper().dirty)) {
+                if (h.getInputWrapper() != null) h.getInputWrapper().dirty = false;
+                if (h.getOutputWrapper() != null) h.getOutputWrapper().dirty = false;
+                GregTechNetwork.syncMachineTanks(tile);
+            }
+        });
     }
 
     @Override
@@ -48,25 +49,24 @@ public class ContainerMachine extends ContainerBase {
     }
 
     protected void addSlots(TileEntityMachine tile) {
-        MachineItemHandler itemHandler = tile.getItemHandler();
-        if (itemHandler == null) return;
-
-        int inputIndex = 0, outputIndex = 0, cellIndex = 0;
-        for (SlotData slot : tile.getType().getGui().getSlots(tile.getTier())) {
-            switch (slot.type) {
-                case IT_IN:
-                    addSlotToContainer(new SlotInput(itemHandler.getInputHandler(), inputIndex++, slot.x, slot.y));
-                    break;
-                case IT_OUT:
-                    addSlotToContainer(new SlotOutput(itemHandler.getOutputHandler(), outputIndex++, slot.x, slot.y));
-                    break;
-                case CELL_IN:
-                    addSlotToContainer(new SlotInput(itemHandler.getCellHandler(), cellIndex++, slot.x, slot.y));
-                    break;
-                case CELL_OUT:
-                    addSlotToContainer(new SlotOutput(itemHandler.getCellHandler(), cellIndex++, slot.x, slot.y));
-                    break;
+        tile.itemHandler.ifPresent(h -> {
+            int inputIndex = 0, outputIndex = 0, cellIndex = 0;
+            for (SlotData slot : tile.getType().getGui().getSlots(tile.getTier())) {
+                switch (slot.type) {
+                    case IT_IN:
+                        addSlotToContainer(new SlotInput(h.getInputHandler(), inputIndex++, slot.x, slot.y));
+                        break;
+                    case IT_OUT:
+                        addSlotToContainer(new SlotOutput(h.getOutputHandler(), outputIndex++, slot.x, slot.y));
+                        break;
+                    case CELL_IN:
+                        addSlotToContainer(new SlotInput(h.getCellHandler(), cellIndex++, slot.x, slot.y));
+                        break;
+                    case CELL_OUT:
+                        addSlotToContainer(new SlotOutput(h.getCellHandler(), cellIndex++, slot.x, slot.y));
+                        break;
+                }
             }
-        }
+        });
     }
 }

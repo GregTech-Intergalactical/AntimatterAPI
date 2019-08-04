@@ -21,7 +21,11 @@ public class MachineConfigHandler implements IConfigHandler {
         switch (type) {
             case WRENCH:
             case WRENCH_P:
-                return player.isSneaking() ? getTile().setFacing(side) : getTile().getCoverHandler().setOutputFacing(side);
+                if (player.isSneaking()) {
+                    return getTile().setFacing(side);
+                } else {
+                    if (getTile().coverHandler.isPresent()) return getTile().coverHandler.get().setOutputFacing(side);
+                }
             case HAMMER:
 //                getTile().toggleDisabled();
 //                player.sendMessage(new TextComponentString("Machine was " + (getTile().getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));

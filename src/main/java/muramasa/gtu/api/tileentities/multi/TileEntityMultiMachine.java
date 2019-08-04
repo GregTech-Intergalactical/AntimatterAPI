@@ -32,15 +32,15 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected ControllerComponentHandler componentHandler;
+    protected Optional<ControllerComponentHandler> componentHandler = Optional.empty();
 
     protected Optional<StructureResult> result = Optional.empty();
 
     @Override
     public void onLoad() {
         super.onLoad();
-        componentHandler = new ControllerComponentHandler(getType(), this);
-        configHandler = new ControllerConfigHandler(this);
+        componentHandler = Optional.of(new ControllerComponentHandler(getType(), this));
+        configHandler = Optional.of(new ControllerConfigHandler(this));
     }
 
     public boolean checkStructure() {
@@ -160,11 +160,8 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public ItemStack[] getStoredItems() {
         if (!hasFlag(MachineFlag.ITEM)) return new ItemStack[0];
         ArrayList<ItemStack> all = new ArrayList<>();
-        MachineItemHandler itemHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            Utils.mergeItems(all, itemHandler.getInputList());
+            hatch.getItemHandler().ifPresent(h -> Utils.mergeItems(all, h.getInputList()));
         }
         System.out.println(all.toString());
         return all.toArray(new ItemStack[0]);
@@ -174,11 +171,8 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public FluidStack[] getStoredFluids() {
         if (!hasFlag(MachineFlag.FLUID)) return new FluidStack[0];
         ArrayList<FluidStack> all = new ArrayList<>();
-        MachineFluidHandler fluidHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
-            fluidHandler = hatch.getFluidHandler();
-            if (fluidHandler == null) continue;
-            Utils.mergeFluids(all, fluidHandler.getInputList());
+            hatch.getFluidHandler().ifPresent(h -> Utils.mergeFluids(all, h.getInputList()));
         }
         System.out.println(all.toString());
         return all.toArray(new FluidStack[0]);
@@ -187,11 +181,8 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Returns the total energy stored across all energy hatches **/
     public long getStoredEnergy() {
         long total = 0;
-        MachineEnergyHandler energyHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ENERGY)) {
-            energyHandler = hatch.getEnergyHandler();
-            if (energyHandler == null) continue;
-            total += energyHandler.getEnergyStored();
+            if (hatch.getEnergyHandler().isPresent()) total += hatch.getEnergyHandler().get().getEnergyStored();
         }
         return total;
     }
@@ -199,12 +190,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Consumes inputs from all input hatches. Assumes Utils.doItemsMatchAndSizeValid has been used **/
     public void consumeItems(ItemStack[] items) {
         if (items == null) return;
-        MachineItemHandler itemHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            items = itemHandler.consumeAndReturnInputs(items.clone());
-            if (items.length == 0) break;
+            if (hatch.getItemHandler().isPresent()) {
+                items = hatch.getItemHandler().get().consumeAndReturnInputs(items.clone());
+                if (items.length == 0) break;
+            }
         }
         if (items.length > 0) System.out.println("DID NOT CONSUME ALL: " + items.toString());
     }
@@ -212,12 +202,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
     public void consumeFluids(FluidStack[] fluids) {
         if (fluids == null) return;
-        MachineFluidHandler fluidHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
-            fluidHandler = hatch.getFluidHandler();
-            if (fluidHandler == null) continue;
-            fluids = fluidHandler.consumeAndReturnInputs(fluids);
-            if (fluids.length == 0) break;
+            if (hatch.getFluidHandler().isPresent()) {
+                fluids = hatch.getFluidHandler().get().consumeAndReturnInputs(fluids);
+                if (fluids.length == 0) break;
+            }
         }
         if (fluids.length > 0) System.out.println("DID NOT CONSUME ALL: " + fluids.toString());
     }
@@ -225,24 +214,22 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Consumes energy from all energy hatches. Assumes enough energy is present in hatches **/
     public void consumeEnergy(long energy) {
         if (energy <= 0) return;
-        MachineEnergyHandler energyHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ENERGY)) {
-            energyHandler = hatch.getEnergyHandler();
-            if (energyHandler == null) return;
-            energy -= energyHandler.extract(energy, false);
-            if (energy == 0) break;
+            if (hatch.getEnergyHandler().isPresent()) {
+                energy -= hatch.getEnergyHandler().get().extract(energy, false);
+                if (energy == 0) break;
+            }
         }
     }
 
     /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
-        MachineItemHandler itemHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            items = itemHandler.exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
-            if (items.length == 0) break;
+            if (hatch.getItemHandler().isPresent()) {
+                items = hatch.getItemHandler().get().exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
+                if (items.length == 0) break;
+            }
         }
         if (items.length > 0) System.out.println("HATCH OVERFLOW: " + items.toString());
     }
@@ -250,12 +237,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Export fluids to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputFluids(FluidStack[] fluids) {
         if (fluids == null) return;
-        MachineFluidHandler fluidHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
-            fluidHandler = hatch.getFluidHandler();
-            if (fluidHandler == null) continue;
-            fluids = fluidHandler.exportAndReturnOutputs(fluids.clone());
-            if (fluids.length == 0) break;
+            if (hatch.getFluidHandler().isPresent()) {
+                fluids = hatch.getFluidHandler().get().exportAndReturnOutputs(fluids.clone());
+                if (fluids.length == 0) break;
+            }
         }
         if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + fluids.toString());
     }
@@ -264,11 +250,10 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public boolean canItemsFit(ItemStack[] items) {
         if (items == null) return true;
         int matchCount = 0;
-        MachineItemHandler itemHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
-            itemHandler = hatch.getItemHandler();
-            if (itemHandler == null) continue;
-            matchCount += itemHandler.getSpaceForOutputs(items);
+            if (hatch.getItemHandler().isPresent()) {
+                matchCount += hatch.getItemHandler().get().getSpaceForOutputs(items);
+            }
         }
         return matchCount >= items.length;
     }
@@ -277,11 +262,10 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public boolean canFluidsFit(FluidStack[] fluids) {
         if (fluids == null) return true;
         int matchCount = 0;
-        MachineFluidHandler fluidHandler;
         for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
-            fluidHandler = hatch.getFluidHandler();
-            if (fluidHandler == null) continue;
-            matchCount += fluidHandler.getSpaceForOutputs(fluids);
+            if (hatch.getFluidHandler().isPresent()) {
+                matchCount += hatch.getFluidHandler().get().getSpaceForOutputs(fluids);
+            }
         }
         return matchCount >= fluids.length;
     }
@@ -289,11 +273,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     @Override
     public long getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents(Machines.HATCH_ENERGY);
-        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().getMaxInsert() : Ref.V[0];
+        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getMaxInsert() : Ref.V[0] : Ref.V[0];
     }
 
     @Override
-    public ControllerComponentHandler getComponentHandler() {
+    public Optional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 
@@ -310,6 +294,6 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        return capability == GTCapabilities.COMPONENT ? GTCapabilities.COMPONENT.cast(componentHandler) : super.getCapability(capability, side);
+        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
     }
 }

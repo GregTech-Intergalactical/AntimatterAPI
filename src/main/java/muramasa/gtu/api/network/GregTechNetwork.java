@@ -25,8 +25,10 @@ public class GregTechNetwork {
     }
 
     public static void syncMachineTanks(TileEntityMachine tile) {
-        if (tile == null || tile.getFluidHandler() == null) return;
-        NETWORK.sendToAllTracking(new FluidStackMessage(tile.getFluidHandler().getInputsRaw(), tile.getFluidHandler().getOutputsRaw()), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 1));
+        if (tile == null) return;
+        tile.fluidHandler.ifPresent(h -> {
+            NETWORK.sendToAllTracking(new FluidStackMessage(h.getInputsRaw(), h.getOutputsRaw()), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 1));
+        });
     }
 
     public static void sendGuiEvent(GuiEvent event, TileEntityMachine tile) {

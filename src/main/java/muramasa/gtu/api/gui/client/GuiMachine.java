@@ -1,6 +1,5 @@
 package muramasa.gtu.api.gui.client;
 
-import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.gui.SlotData;
 import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.gui.server.ContainerMachine;
@@ -35,30 +34,30 @@ public class GuiMachine extends GuiBase {
     }
 
     public void drawContainedFluids(int mouseX, int mouseY) {
-        MachineFluidHandler fluidHandler = tile.getFluidHandler();
-        if (fluidHandler == null) return;
-        FluidStack[] fluids;
-        List<SlotData> slots;
+        tile.fluidHandler.ifPresent(h -> {
+            FluidStack[] fluids;
+            List<SlotData> slots;
 
-        //TODO this should use getInputsRaw to preserve ordering
-        fluids = fluidHandler.getInputs();
-        slots = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier());
-        if (fluids != null) {
-            for (int i = 0; i < fluids.length; i++) {
-                if (i >= slots.size()) continue;
-                RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
-                drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
+            //TODO this should use getInputsRaw to preserve ordering
+            fluids = h.getInputs();
+            slots = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier());
+            if (fluids != null) {
+                for (int i = 0; i < fluids.length; i++) {
+                    if (i >= slots.size()) continue;
+                    RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
+                    drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
+                }
             }
-        }
-        fluids = fluidHandler.getOutputs();
-        slots = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier());
-        if (fluids != null) {
-            for (int i = 0; i < fluids.length; i++) {
-                if (i >= slots.size()) continue;
-                RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
-                drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
+            fluids = h.getOutputs();
+            slots = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier());
+            if (fluids != null) {
+                for (int i = 0; i < fluids.length; i++) {
+                    if (i >= slots.size()) continue;
+                    RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
+                    drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
+                }
             }
-        }
+        });
     }
 
     @Override

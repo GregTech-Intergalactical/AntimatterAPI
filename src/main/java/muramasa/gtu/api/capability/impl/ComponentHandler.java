@@ -9,7 +9,7 @@ import muramasa.gtu.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class ComponentHandler implements IComponentHandler {
 
@@ -31,22 +31,19 @@ public class ComponentHandler implements IComponentHandler {
         return componentTile;
     }
 
-    @Nullable
     @Override
-    public MachineItemHandler getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getItemHandler() : null;
+    public Optional<MachineItemHandler> getItemHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : Optional.empty();
     }
 
-    @Nullable
     @Override
-    public MachineFluidHandler getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getFluidHandler() : null;
+    public Optional<MachineFluidHandler> getFluidHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : Optional.empty();
     }
 
-    @Nullable
     @Override
-    public MachineEnergyHandler getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).getEnergyHandler() : null;
+    public Optional<MachineEnergyHandler> getEnergyHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : Optional.empty();
     }
 
     @Override
@@ -64,9 +61,8 @@ public class ComponentHandler implements IComponentHandler {
         return StructureCache.has(getTile().getWorld(), getTile().getPos());
     }
 
-    @Nullable
     @Override
-    public TileEntityMultiMachine getFirstController() {
+    public Optional<TileEntityMultiMachine> getFirstController() {
 //        int size = controllers.size();
 //        TileEntity tile;
 //        for (int i = 0; i < size; i++) {
@@ -78,8 +74,8 @@ public class ComponentHandler implements IComponentHandler {
         BlockPos controllerPos = StructureCache.get(getTile().getWorld(), getTile().getPos());
         if (controllerPos != null) {
             TileEntity tile = Utils.getTile(getTile().getWorld(), getTile().getPos());
-            if (tile instanceof TileEntityMultiMachine) return (TileEntityMultiMachine) tile;
+            if (tile instanceof TileEntityMultiMachine) return Optional.of((TileEntityMultiMachine) tile);
         }
-        return null;
+        return Optional.empty();
     }
 }

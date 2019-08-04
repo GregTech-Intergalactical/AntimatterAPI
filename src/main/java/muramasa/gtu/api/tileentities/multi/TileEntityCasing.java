@@ -4,9 +4,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
-import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.capability.impl.ComponentHandler;
-import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.texture.IBakedTile;
@@ -18,18 +16,19 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class TileEntityCasing extends TileEntityBase implements IComponent, IBakedTile {
 
     private BlockCasing type;
 
-    protected IComponentHandler componentHandler = new ComponentHandler("null", this) {
+    protected Optional<IComponentHandler> componentHandler = Optional.of(new ComponentHandler("null", this) {
         @Override
         public String getId() {
             return getType().getId();
         }
-    };
-    protected ICoverHandler coverHandler = new CoverHandler(this);
+    });
+    //protected ICoverHandler coverHandler = new CoverHandler(this);
     protected int textureOverride = -1;
 
     public BlockCasing getType() {
@@ -37,7 +36,7 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     }
 
     @Override
-    public IComponentHandler getComponentHandler() {
+    public Optional<IComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 
@@ -64,8 +63,8 @@ public class TileEntityCasing extends TileEntityBase implements IComponent, IBak
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        if (capability == GTCapabilities.COMPONENT) return GTCapabilities.COMPONENT.cast(componentHandler);
-        else if (capability == GTCapabilities.COVERABLE) return GTCapabilities.COVERABLE.cast(coverHandler);
+        if (capability == GTCapabilities.COMPONENT && componentHandler.isPresent()) return GTCapabilities.COMPONENT.cast(componentHandler.get());
+        //else if (capability == GTCapabilities.COVERABLE) return GTCapabilities.COVERABLE.cast(coverHandler);
         return super.getCapability(capability, side);
     }
 

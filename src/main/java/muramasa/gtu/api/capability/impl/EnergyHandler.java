@@ -12,7 +12,6 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
         this.capacity = capacity;
         this.maxInsert = maxInsert;
         this.maxExtract = maxExtract;
-        this.energy = this.capacity; //TODO temp for testing, REMOVE IN FUTURE
     }
 
     /** GTI IEnergyHandler Implementations **/

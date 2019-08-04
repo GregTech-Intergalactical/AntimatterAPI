@@ -3,7 +3,6 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
@@ -115,10 +114,10 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                         }
                         ((TileEntityMultiMachine) tile).checkRecipe();
                     } else if (tile instanceof TileEntityHatch) {
-                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
-                        if (handler != null) {
-                            System.out.println(handler.toString());
-                        }
+//                        MachineFluidHandler handler = ((TileEntityHatch) tile).getFluidHandler();
+//                        if (handler != null) {
+//                            System.out.println(handler.toString());
+//                        }
                     } /*else if (tile instanceof TileEntityItemFluidMachine) {
                         MachineFluidHandler fluidHandler = ((TileEntityItemFluidMachine) tile).getFluidHandler();
                         for (FluidStack fluid : fluidHandler.getInputs()) {

@@ -94,35 +94,36 @@ public class FluidStackMessage implements IMessage {
             TileEntity tile = Utils.getTile(Minecraft.getMinecraft().world, pos);
             if (tile instanceof TileEntityMachine) {
                 TileEntityMachine machine = (TileEntityMachine) tile;
-                if (machine.getFluidHandler() == null) return null;
-                if (message.inputIds != null) {
-                    FluidStack[] inputs = new FluidStack[message.inputIds.length];
-                    Fluid currentFluid;
-                    for (int i = 0; i < inputs.length; i++) {
-                        if (message.inputIds[i] >= 0) {
-                            currentFluid = Utils.getFluidById(message.inputIds[i]);
-                            if (currentFluid == null) continue;
-                            inputs[i] = new FluidStack(currentFluid, message.inputAmounts[i]);
-                        } else {
-                            inputs[i] = null;
+                machine.fluidHandler.ifPresent(h -> {
+                    if (message.inputIds != null) {
+                        FluidStack[] inputs = new FluidStack[message.inputIds.length];
+                        Fluid currentFluid;
+                        for (int i = 0; i < inputs.length; i++) {
+                            if (message.inputIds[i] >= 0) {
+                                currentFluid = Utils.getFluidById(message.inputIds[i]);
+                                if (currentFluid == null) continue;
+                                inputs[i] = new FluidStack(currentFluid, message.inputAmounts[i]);
+                            } else {
+                                inputs[i] = null;
+                            }
                         }
+                        h.setInputs(inputs);
                     }
-                    machine.getFluidHandler().setInputs(inputs);
-                }
-                if (message.outputIds != null) {
-                    FluidStack[] outputs = new FluidStack[message.outputIds.length];
-                    Fluid currentFluid;
-                    for (int i = 0; i < outputs.length; i++) {
-                        if (message.outputIds[i] >= 0) {
-                            currentFluid = Utils.getFluidById(message.outputIds[i]);
-                            if (currentFluid == null) continue;
-                            outputs[i] = new FluidStack(currentFluid, message.outputAmounts[i]);
-                        } else {
-                            outputs[i] = null;
+                    if (message.outputIds != null) {
+                        FluidStack[] outputs = new FluidStack[message.outputIds.length];
+                        Fluid currentFluid;
+                        for (int i = 0; i < outputs.length; i++) {
+                            if (message.outputIds[i] >= 0) {
+                                currentFluid = Utils.getFluidById(message.outputIds[i]);
+                                if (currentFluid == null) continue;
+                                outputs[i] = new FluidStack(currentFluid, message.outputAmounts[i]);
+                            } else {
+                                outputs[i] = null;
+                            }
                         }
+                        h.setOutputs(outputs);
                     }
-                    machine.getFluidHandler().setOutputs(outputs);
-                }
+                });
             }
             return null;
         }

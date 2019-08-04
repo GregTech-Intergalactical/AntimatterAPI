@@ -1,8 +1,6 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.capability.IConfigHandler;
-import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineStack;
@@ -41,7 +39,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static muramasa.gtu.api.machines.MachineFlag.*;
+import static muramasa.gtu.api.machines.MachineFlag.BASIC;
+import static muramasa.gtu.api.machines.MachineFlag.GUI;
 import static muramasa.gtu.api.properties.GTProperties.*;
 
 public class BlockMachine extends Block implements IItemBlock, IModelOverride, IColorHandler {
@@ -75,14 +74,12 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            int x = machine.getTypeId();
             exState = exState
                 .withProperty(TYPE, machine.getTypeId())
                 .withProperty(FACING, machine.getFacing().getIndex())
                 .withProperty(TEXTURE, machine.getTextureData());
-            if (getType().hasFlag(COVERABLE)) {
-                if (machine.getCoverHandler() == null) return exState;
-                exState = exState.withProperty(COVER, machine.getCoverHandler().getAll());
+            if (machine.coverHandler.isPresent()) {
+                exState = exState.withProperty(COVER, machine.coverHandler.get().getAll());
             }
         }
         return exState;
@@ -129,17 +126,11 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
             EnumFacing targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
-            if (machine.getType().hasFlag(COVERABLE)) {
-                ICoverHandler coverHandler = machine.getCoverHandler();
-                if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
-            }
-            if (machine.getType().hasFlag(CONFIGURABLE)) {
-                IConfigHandler configHandler = machine.getConfigHandler();
-                if (configHandler != null && configHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
-            }
+            if (machine.coverHandler.isPresent() && machine.coverHandler.get().onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+            if (machine.configHandler.isPresent() && machine.configHandler.get().onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
             if (machine.getType().hasFlag(GUI)) {
                 //TODO if cover returns false, open normal gui if present
-                if (machine.getType().hasFlag(COVERABLE) && !machine.getCoverHandler().get(targetSide).isEmpty()) return false;
+                if (machine.coverHandler.isPresent() && machine.coverHandler.get().get(targetSide).isEmpty()) return false;
                 GuiData gui = machine.getType().getGui();
                 player.openGui(gui.getInstance(), gui.getGuiId(), world, pos.getX(), pos.getY(), pos.getZ());
                 return true;
@@ -212,10 +203,10 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            if (machine.getItemHandler() != null) {
-                machine.getItemHandler().getInputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
-                machine.getItemHandler().getOutputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
-            }
+            machine.itemHandler.ifPresent(h -> {
+                h.getInputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
+                h.getOutputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
+            });
         }
     }
 
