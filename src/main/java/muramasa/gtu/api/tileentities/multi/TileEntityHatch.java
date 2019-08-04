@@ -2,13 +2,12 @@ package muramasa.gtu.api.tileentities.multi;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.capability.impl.HatchComponentHandler;
 import muramasa.gtu.api.capability.impl.MachineFluidHandler;
 import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,44 +15,44 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 import static muramasa.gtu.api.machines.MachineFlag.FLUID;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    protected HatchComponentHandler componentHandler;
+    protected Optional<HatchComponentHandler> componentHandler = Optional.empty();
     protected int textureOverride = -1;
 
     @Override
     public void onLoad() {
         super.onLoad();
-        if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, 8000 * getTierId(), fluidData);
-        componentHandler = new HatchComponentHandler(this);
+        componentHandler = Optional.of(new HatchComponentHandler(this));
+        if (getType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000 * getTierId(), fluidData));
     }
 
     @Override
-    public ComponentHandler getComponentHandler() {
+    public Optional<HatchComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 
     @Override
     public void onContentsChanged(ContentEvent type, int slot) {
-        if (componentHandler == null) return;
-        TileEntityMultiMachine controller = componentHandler.getFirstController();
-        if (controller == null) return;
-        switch (type) {
-            case ITEM_INPUT:
-                controller.onContentsChanged(type, slot);
-                break;
-            case ITEM_OUTPUT:
-                controller.onContentsChanged(type, slot);
-            case ITEM_CELL:
-                //TODO handle cells
-                break;
-            case FLUID_INPUT:
-                //TODO
-                break;
-        }
+        componentHandler.ifPresent(h -> h.getFirstController().ifPresent(controller -> {
+            switch (type) {
+                case ITEM_INPUT:
+                    controller.onContentsChanged(type, slot);
+                    break;
+                case ITEM_OUTPUT:
+                    controller.onContentsChanged(type, slot);
+                case ITEM_CELL:
+                    //TODO handle cells
+                    break;
+                case FLUID_INPUT:
+                    //TODO
+                    break;
+            }
+        }));
     }
 
     @Override
@@ -76,7 +75,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        return capability == GTCapabilities.COMPONENT ? GTCapabilities.COMPONENT.cast(componentHandler) : super.getCapability(capability, side);
+        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
     }
 
     @Override

@@ -6,7 +6,7 @@ import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public interface IComponentHandler {
 
@@ -14,14 +14,11 @@ public interface IComponentHandler {
 
     TileEntity getTile();
 
-    @Nullable
-    MachineItemHandler getItemHandler();
+    Optional<MachineItemHandler> getItemHandler();
 
-    @Nullable
-    MachineFluidHandler getFluidHandler();
+    Optional<MachineFluidHandler> getFluidHandler();
 
-    @Nullable
-    MachineEnergyHandler getEnergyHandler();
+    Optional<MachineEnergyHandler> getEnergyHandler();
 
     void onStructureFormed(TileEntityMultiMachine tile);
 
@@ -29,6 +26,5 @@ public interface IComponentHandler {
 
     boolean hasLinkedController();
 
-    @Nullable
-    TileEntityMultiMachine getFirstController();
+    Optional<TileEntityMultiMachine> getFirstController();
 }

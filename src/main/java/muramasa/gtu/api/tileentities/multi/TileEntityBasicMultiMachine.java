@@ -8,27 +8,27 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
     @Override
     public Recipe findRecipe() { //TODO support fluids?
-        return getType().getRecipeMap().find(itemHandler, null);
+        return getType().getRecipeMap().find(itemHandler.get(), null);
     }
 
     @Override
     public void consumeInputs() {
-        itemHandler.consumeInputs(activeRecipe.getInputItems());
+        itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputItems()));
     }
 
     @Override
     public boolean canOutput() {
-        return itemHandler.canOutputsFit(activeRecipe.getOutputItems());
+        return itemHandler.isPresent() && itemHandler.get().canOutputsFit(activeRecipe.getOutputItems());
     }
 
     @Override
     public void addOutputs() {
-        itemHandler.addOutputs(activeRecipe.getOutputItems());
+        itemHandler.ifPresent(h -> h.addOutputs(activeRecipe.getOutputItems()));
     }
 
     @Override
     public boolean canRecipeContinue() {
-        return Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.getInputs());
+        return itemHandler.isPresent() && Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.get().getInputs());
     }
 
     @Override

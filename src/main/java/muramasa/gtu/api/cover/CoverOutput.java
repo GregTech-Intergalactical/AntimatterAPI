@@ -23,15 +23,17 @@ public class CoverOutput extends Cover {
             TileEntity adjTile = tile.getWorld().getTileEntity(tile.getPos().offset(outputFacing));
             if (adjTile == null) return;
             if (adjTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputFacing.getOpposite())) {
-                IItemHandler machineInventory = tile.getItemHandler().getOutputHandler();
-                IItemHandler adjInventory = adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputFacing.getOpposite());
-                for (int i = 0; i < adjInventory.getSlots(); i++) {
-                    if (i >= machineInventory.getSlots()) break;
-                    ItemStack toInsert = machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), true);
-                    if (ItemHandlerHelper.insertItem(adjInventory, toInsert, true).isEmpty()) {
-                        ItemHandlerHelper.insertItem(adjInventory, machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), false), false);
+                tile.itemHandler.ifPresent(h -> {
+                    IItemHandler machineInventory = h.getOutputHandler();
+                    IItemHandler adjInventory = adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputFacing.getOpposite());
+                    for (int i = 0; i < adjInventory.getSlots(); i++) {
+                        if (i >= machineInventory.getSlots()) break;
+                        ItemStack toInsert = machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), true);
+                        if (ItemHandlerHelper.insertItem(adjInventory, toInsert, true).isEmpty()) {
+                            ItemHandlerHelper.insertItem(adjInventory, machineInventory.extractItem(i, machineInventory.getStackInSlot(i).getCount(), false), false);
+                        }
                     }
-                }
+                });
             }
         }
     }

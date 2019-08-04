@@ -7,10 +7,7 @@ import muramasa.gtu.api.capability.impl.*;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.gui.SlotType;
-import muramasa.gtu.api.machines.ContentEvent;
-import muramasa.gtu.api.machines.MachineFlag;
-import muramasa.gtu.api.machines.MachineState;
-import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.machines.*;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.IBakedTile;
@@ -24,6 +21,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 
@@ -33,11 +31,11 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     protected NBTTagCompound itemData, fluidData;
 
     /** Capabilities **/
-    protected MachineItemHandler itemHandler;
-    protected MachineFluidHandler fluidHandler;
-    protected MachineEnergyHandler energyHandler;
-    protected MachineCoverHandler coverHandler;
-    protected MachineConfigHandler configHandler;
+    public Optional<MachineItemHandler> itemHandler = Optional.empty();
+    public Optional<MachineFluidHandler> fluidHandler = Optional.empty();
+    public Optional<MachineEnergyHandler> energyHandler = Optional.empty();
+    public Optional<MachineCoverHandler> coverHandler = Optional.empty();
+    public Optional<MachineConfigHandler> configHandler = Optional.empty();
 
     /** Machine Data **/
     private Machine type;
@@ -52,16 +50,16 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public void onLoad() {
         type = ((BlockMachine) getBlockType()).getType();
-        if (getType().hasFlag(ITEM)) itemHandler = new MachineItemHandler(this, itemData);
-        if (getType().hasFlag(FLUID)) fluidHandler = new MachineFluidHandler(this, fluidData);
-        if (getType().hasFlag(ENERGY)) energyHandler = new MachineEnergyHandler(this);
-        if (getType().hasFlag(COVERABLE)) coverHandler = new MachineCoverHandler(this);
-        if (getType().hasFlag(CONFIGURABLE)) configHandler = new MachineConfigHandler(this);
+        if (getType().hasFlag(ITEM)) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
+        if (getType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+        if (getType().hasFlag(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (getType().hasFlag(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
+        if (getType().hasFlag(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
     }
 
     @Override
     public void onServerUpdate() {
-        if (coverHandler != null) coverHandler.update();
+        coverHandler.ifPresent(CoverHandler::update);
     }
 
     /** Events **/
@@ -71,6 +69,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     public void onGuiEvent(GuiEvent event) {
         //NOOP
+    }
+
+    public void onMachineEvent(MachineEvent event) {
+        coverHandler.ifPresent(h -> h.onMachineEvent(event));
     }
 
     /** Getters **/
@@ -99,7 +101,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     }
 
     public EnumFacing getOutputFacing() {
-        return coverHandler.getOutputFacing();
+        return coverHandler.isPresent() ? coverHandler.get().getOutputFacing() : getFacing().getOpposite();
     }
 
     public MachineState getMachineState() {
@@ -118,34 +120,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         return 0;
     }
 
-    //TODO convert getFooHandlers to Optionals
-    @Nullable
-    public MachineItemHandler getItemHandler() {
-        return itemHandler;
-    }
-
-    @Nullable
-    public MachineFluidHandler getFluidHandler() {
-        return fluidHandler;
-    }
-
-    @Nullable
-    public MachineEnergyHandler getEnergyHandler() {
-        return energyHandler;
-    }
-
-    @Nullable
-    public MachineCoverHandler getCoverHandler() {
-        return coverHandler;
-    }
-
-    @Nullable
-    public MachineConfigHandler getConfigHandler() {
-        return configHandler;
-    }
-
     public long getMaxInputVoltage() {
-        return energyHandler != null ? energyHandler.getMaxInsert() : 0;
+        return energyHandler.map(EnergyHandler::getMaxInsert).orElse(0L);
     }
 
     /** Setters **/
@@ -183,25 +159,14 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
         //TODO if a side has a cover, disallow energy/items/fluid etc?
-        if (getType().hasFlag(ITEM) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (coverHandler == null) return false;
-            //return side == null || coverHandler.hasCover(side, GregTechAPI.CoverItem);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
             return true;
-        } else if (getType().hasFlag(FLUID) && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            if (fluidHandler == null || (fluidHandler.getInputWrapper() == null && fluidHandler.getOutputWrapper() == null)) return false;
-            //return side == null || (coverHandler != null && coverHandler.hasCover(side, GregTechAPI.CoverFluid));
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) {
             return true;
-        } else if (getType().hasFlag(ENERGY) && capability == GTCapabilities.ENERGY) {
-            if (coverHandler == null) return false;
-            //return side == null || coverHandler.hasCover(side, GregTechAPI.CoverEnergy);
+        } else if ((capability == GTCapabilities.ENERGY || capability == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) {
             return true;
-        } else if (getType().hasFlag(ENERGY) && capability == CapabilityEnergy.ENERGY) {
-            if (coverHandler == null) return false;
-
-            return true;
-        } else if (getType().hasFlag(COVERABLE) && capability == GTCapabilities.COVERABLE) {
-            if (coverHandler == null) return false;
-            return side == null || !coverHandler.get(side).isEmpty();
+        } else if (capability == GTCapabilities.COVERABLE && coverHandler.isPresent()) {
+            return side == null || !coverHandler.get().get(side).isEmpty();
         } else if (getType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
             return true;
         }
@@ -211,18 +176,18 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.getInputHandler());
-        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.getInputWrapper() != null ? fluidHandler.getInputWrapper() : fluidHandler.getOutputWrapper());
-        } else if (capability == GTCapabilities.ENERGY) {
-            return GTCapabilities.ENERGY.cast(energyHandler);
-        } else if (capability == CapabilityEnergy.ENERGY) {
-            return CapabilityEnergy.ENERGY.cast(energyHandler);
-        } else if (capability == GTCapabilities.COVERABLE) {
-            return GTCapabilities.COVERABLE.cast(coverHandler);
-        } else if (capability == GTCapabilities.CONFIGURABLE) {
-            return GTCapabilities.CONFIGURABLE.cast(configHandler);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.get().getInputHandler());
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.get().getInputWrapper() != null ? fluidHandler.get().getInputWrapper() : fluidHandler.get().getOutputWrapper());
+        } else if (capability == GTCapabilities.ENERGY && energyHandler.isPresent()) {
+            return GTCapabilities.ENERGY.cast(energyHandler.get());
+        } else if (capability == CapabilityEnergy.ENERGY && energyHandler.isPresent()) {
+            return CapabilityEnergy.ENERGY.cast(energyHandler.get());
+        } else if (capability == GTCapabilities.COVERABLE && coverHandler.isPresent()) {
+            return GTCapabilities.COVERABLE.cast(coverHandler.get());
+        } else if (capability == GTCapabilities.CONFIGURABLE && configHandler.isPresent()) {
+            return GTCapabilities.CONFIGURABLE.cast(configHandler.get());
         }
         return super.getCapability(capability, side);
     }
@@ -241,8 +206,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
         super.writeToNBT(tag); //TODO get tile data tag
         tag.setInteger(Ref.KEY_MACHINE_TILE_FACING, getFacing().getIndex());
         if (machineState != null) tag.setInteger(Ref.KEY_MACHINE_TILE_STATE, machineState.ordinal());
-        if (itemHandler != null) tag.setTag(Ref.KEY_MACHINE_TILE_ITEMS, itemHandler.serialize());
-        if (fluidHandler != null) tag.setTag(Ref.KEY_MACHINE_TILE_FLUIDS, fluidHandler.serialize());
+        itemHandler.ifPresent(h -> tag.setTag(Ref.KEY_MACHINE_TILE_ITEMS, h.serialize()));
+        fluidHandler.ifPresent(h -> tag.setTag(Ref.KEY_MACHINE_TILE_FLUIDS, h.serialize()));
         return tag;
     }
 
@@ -265,16 +230,14 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
             if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }
         if (slots.length() > 0) info.add("Slots:" + slots);
-        if (getType().hasFlag(ENERGY)) {
-            info.add("Energy: " + energyHandler.getEnergyStored() + " / " + energyHandler.getMaxEnergyStored());
-        }
-        if (getType().hasFlag(COVERABLE)) {
+        energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergyStored() + " / " + h.getMaxEnergyStored()));
+        coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (int i = 0; i < 6; i++) {
-                builder.append(coverHandler.get(EnumFacing.VALUES[i]).getId()).append(" ");
+                builder.append(h.get(EnumFacing.VALUES[i]).getId()).append(" ");
             }
             info.add(builder.toString());
-        }
+        });
         return info;
     }
 }
