@@ -22,6 +22,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -210,6 +212,16 @@ public class Utils {
         return matchCount >= a.length;
     }
 
+    public static void transferItems(IItemHandler from, IItemHandler to) {
+        for (int i = 0; i < to.getSlots(); i++) {
+            if (i >= from.getSlots()) break;
+            ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
+            if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
+                ItemHandlerHelper.insertItem(to, from.extractItem(i, from.getStackInSlot(i).getCount(), false), false);
+            }
+        }
+    }
+
     @Nullable
     public static Fluid getFluidById(int id) {
         for (Map.Entry<Fluid, Integer> entry : FluidRegistry.getRegisteredFluidIDs().entrySet()) {
@@ -268,50 +280,52 @@ public class Utils {
     //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
     //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
     public static EnumFacing rotateFacingAlt(EnumFacing toRotate, EnumFacing rotateBy) {
-        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return toRotate;
+        EnumFacing result = toRotate;
+        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return result;
         /** S-W-N-E **/
         if (rotateBy.getHorizontalIndex() < EnumFacing.NORTH.getHorizontalIndex()) {
             //Rotate CCW
             int dif = rotateBy.getHorizontalIndex() - EnumFacing.NORTH.getHorizontalIndex();
 //            System.out.println("Difccw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
-                toRotate = toRotate.rotateYCCW();
+                result = result.rotateYCCW();
             }
         } else {
             //Rotate CW
             int dif = EnumFacing.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
 //            System.out.println("Difcw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
-                toRotate = toRotate.rotateY();
+                result = result.rotateY();
             }
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
         //return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? toRotate.getOpposite() : toRotate;
-        return toRotate;
+        return result;
     }
 
     //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
     //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
     public static EnumFacing rotateFacing(EnumFacing toRotate, EnumFacing rotateBy) {
-        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return toRotate;
+        EnumFacing result = toRotate;
+        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return result;
         /** S-W-N-E **/
         if (rotateBy.getHorizontalIndex() < EnumFacing.NORTH.getHorizontalIndex()) {
             //Rotate CCW
             int dif = rotateBy.getHorizontalIndex() - EnumFacing.NORTH.getHorizontalIndex();
 //            System.out.println("Difccw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
-                toRotate = toRotate.rotateYCCW();
+                result = result.rotateYCCW();
             }
         } else {
             //Rotate CW
             int dif = EnumFacing.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
 //            System.out.println("Difcw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
-                toRotate = toRotate.rotateY();
+                result = result.rotateY();
             }
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? toRotate.getOpposite() : toRotate;
+        return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? result.getOpposite() : result;
     }
 
     public static String trans(String unlocalized) {

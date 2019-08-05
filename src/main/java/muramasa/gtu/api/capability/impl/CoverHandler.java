@@ -39,29 +39,27 @@ public class CoverHandler implements ICoverHandler {
     public void update() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onUpdate(getTile());
+            covers[i].onUpdate(getTile(), Utils.rotateFacingAlt(EnumFacing.VALUES[i], getTileFacing()));
         }
     }
 
     @Override
     public boolean set(EnumFacing side, Cover cover) {
         side = Utils.rotateFacing(side, getTileFacing());
-        if (!isValid(side, cover) || covers[side.getIndex()] == cover) return false;
+        if (!isValid(side, covers[side.getIndex()], cover)) return false;
         covers[side.getIndex()] = cover;
         SoundType.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
         Utils.markTileForRenderUpdate(getTile());
         return true;
     }
 
-    @Override
+    @Override /** Fires ones per hand **/
     public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
         Cover cover = get(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
         switch (type) {
-            case CROWBAR:
-                GregTechAPI.removeCover(player, this, side);
-                return true;
+            case CROWBAR: return GregTechAPI.removeCover(player, this, side);
             default: return false;
         }
     }
@@ -89,8 +87,8 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean isValid(EnumFacing side, Cover cover) {
-        return validCovers.contains(cover.getId());
+    public boolean isValid(EnumFacing side, Cover existing, Cover replacement) {
+        return (existing.isEmpty() || replacement.isEqual(GregTechAPI.CoverNone)) && validCovers.contains(replacement.getId());
     }
 
     @Override
