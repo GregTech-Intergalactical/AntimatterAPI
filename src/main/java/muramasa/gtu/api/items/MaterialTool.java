@@ -6,12 +6,9 @@ import com.google.common.collect.Multimap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.IConfigHandler;
-import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
@@ -33,7 +30,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -120,31 +116,35 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
             }
         }
 
-        //TODO does this clash with BlockMachine.onBlockActivated?
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile == null) return EnumActionResult.PASS;
-        EnumActionResult result = EnumActionResult.PASS;
-        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
-            EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
-            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
-            if (configHandler != null) {
-                if (type != null && configHandler.onInteract(player, hand, targetSide, type)) {
-                    damage(stack, type.getDamageCrafting(), player, true);
-                    result = EnumActionResult.SUCCESS;
-                }
-            }
-        }
-        if (tile.hasCapability(GTCapabilities.COVERABLE, facing)) {
-            EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
-            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
-            if (coverHandler != null) {
-                if (type != null && coverHandler.onInteract(player, hand, targetSide, type)) {
-                    damage(stack, type.getDamageCrafting(), player, true);
-                    result = EnumActionResult.SUCCESS;
-                }
-            }
-        }
-        return result;
+        //TODO functionality moved to BlockMachine.onBlockActivated
+        //TODO determine if other mods need smart interaction on
+        //TODO blocks that *don't* extend BlockMachine
+//        TileEntity tile = Utils.getTile(world, pos);
+//        if (tile == null) return EnumActionResult.PASS;
+//        EnumActionResult result = EnumActionResult.PASS;
+//        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
+//            EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
+//            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
+//            if (configHandler != null) {
+//                if (type != null && configHandler.onInteract(player, hand, targetSide, type)) {
+//                    damage(stack, type.getDamageCrafting(), player, true);
+//                    result = EnumActionResult.SUCCESS;
+//                }
+//            }
+//        }
+//        if (tile.hasCapability(GTCapabilities.COVERABLE, facing)) {
+//            EnumFacing targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
+//            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
+//            if (coverHandler != null) {
+//                if (type != null && coverHandler.onInteract(player, hand, targetSide, type)) {
+//                    damage(stack, type.getDamageCrafting(), player, true);
+//                    result = EnumActionResult.SUCCESS;
+//                }
+//            }
+//        }
+//        return result;
+
+        return EnumActionResult.PASS;
     }
 
     @Override

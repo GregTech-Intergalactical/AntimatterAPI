@@ -102,9 +102,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
         ItemStack stack = player.getHeldItem(hand);
         TileEntity tile = Utils.getTile(world, pos);
         if (tile != null) {
-            if (GregTechAPI.placeCover(tile, stack, side, hitX, hitY, hitZ)) {
-                return EnumActionResult.SUCCESS;
-            } else if (Data.DebugScanner.isEqual(stack)) {
+            if (Data.DebugScanner.isEqual(stack)) {
                 if (tile instanceof TileEntityMachine) {
                     if (tile instanceof TileEntityMultiMachine) {
                         if (!world.isRemote) {

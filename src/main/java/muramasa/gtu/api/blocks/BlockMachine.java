@@ -1,6 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineStack;
@@ -126,11 +127,13 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
             EnumFacing targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
+            if (GregTechAPI.placeCover(machine, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
             if (machine.coverHandler.isPresent() && machine.coverHandler.get().onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
             if (machine.configHandler.isPresent() && machine.configHandler.get().onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+
+            //TODO machine gui member -> Optional<GuiData>?
+            //TODO possibly drop flags for optionals?
             if (machine.getType().hasFlag(GUI)) {
-                //TODO if cover returns false, open normal gui if present
-                if (machine.coverHandler.isPresent() && machine.coverHandler.get().get(targetSide).isEmpty()) return false;
                 GuiData gui = machine.getType().getGui();
                 player.openGui(gui.getInstance(), gui.getGuiId(), world, pos.getX(), pos.getY(), pos.getZ());
                 return true;

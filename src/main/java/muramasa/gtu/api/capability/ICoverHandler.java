@@ -24,7 +24,7 @@ public interface ICoverHandler {
 
     boolean hasCover(EnumFacing side, Cover cover);
 
-    boolean isValid(EnumFacing side, Cover cover);
+    boolean isValid(EnumFacing side, Cover existing, Cover replacement);
 
     EnumFacing getTileFacing();
 

@@ -177,7 +177,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler.get().getInputHandler());
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(side == EnumFacing.UP ? itemHandler.get().getInputHandler() : itemHandler.get().getOutputHandler());
         } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.get().getInputWrapper() != null ? fluidHandler.get().getInputWrapper() : fluidHandler.get().getOutputWrapper());
         } else if (capability == GTCapabilities.ENERGY && energyHandler.isPresent()) {

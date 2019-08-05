@@ -52,7 +52,11 @@ public abstract class Cover {
         return true;
     }
 
-    public void onUpdate(TileEntity tile) {
+    /**
+     * @param tile containing the cover
+     * @param side global side of the cover
+     */
+    public void onUpdate(TileEntity tile, EnumFacing side) {
         //NOOP
     }
 

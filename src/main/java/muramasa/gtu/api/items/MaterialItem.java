@@ -18,7 +18,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -87,10 +86,6 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile != null) {
-            return GregTechAPI.placeCover(tile, stack, side, hitX, hitY, hitZ) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
-        }
         if (type == MaterialType.DUST_IMPURE && world.getBlockState(pos).getBlock() instanceof BlockCauldron) {
             int level = world.getBlockState(pos).getValue(BlockCauldron.LEVEL);
             if (level > 0) {
