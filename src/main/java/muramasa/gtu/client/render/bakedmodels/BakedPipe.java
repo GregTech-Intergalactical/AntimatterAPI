@@ -1,7 +1,9 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Textures;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
@@ -131,6 +133,7 @@ public class BakedPipe implements IBakedModel {
         int size = state.getValue(GTProperties.PIPE_SIZE);
         int connections = exState.getValue(GTProperties.PIPE_CONNECTIONS);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
+        Cover[] covers = exState.getValue(GTProperties.COVER);
 
         //List<BakedQuad> quads = CACHE.get((size * 100) + connections);
         List<BakedQuad> quads = null;
@@ -141,9 +144,21 @@ public class BakedPipe implements IBakedModel {
             if (config.length > 1) quads = ModelUtils.trans(quads, 1, config);
             ModelUtils.tex(quads, 0, 1, data.getBase()[0]);
             ModelUtils.tex(quads, 2, data.getOverlay()[size]);
+
+            if (covers != null) {
+                for (int s = 0; s < 6; s++) {
+                    if (!covers[s].isEmpty()) {
+                        quads.addAll(ModelUtils.tex(covers[s].onRender(this, getCovers(covers[s], s, state), s), 3, Tier.LV.getBaseTexture()));
+                    }
+                }
+            }
         }
         //CACHE.put((size * 100) + connections, quads);
         return quads;
+    }
+
+    public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
+        return ModelUtils.trans(BakedMachine.COVERS.get(cover.getId()).getQuads(state, null, -1), s);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package muramasa.gtu.client.render.models;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
@@ -70,11 +71,11 @@ public class ModelMachine implements IModel {
             );
         }
 
-        BakedMachine.COVERS = new IBakedModel[Cover.getLastInternalId()];
+        BakedMachine.COVERS = new Object2ObjectOpenHashMap<>();
         for (Cover cover : GregTechAPI.getRegisteredCovers()) {
             if (cover.isEmpty()) continue;
             ModelResourceLocation loc = Configs.MISC.BASIC_MACHINE_MODELS ? Cover.getBasicModel() : cover.getModel();
-            BakedMachine.COVERS[cover.getInternalId()] = ModelUtils.tex(ModelUtils.load(loc), "base", cover.getTextures()[0]).bake(state, format, getter);
+            BakedMachine.COVERS.put(cover.getId(), ModelUtils.tex(ModelUtils.load(loc), "base", cover.getTextures()[0]).bake(state, format, getter));
         }
 
         return Configs.MISC.BASIC_MACHINE_MODELS ? new BakedMachineBasic() : new BakedMachine();

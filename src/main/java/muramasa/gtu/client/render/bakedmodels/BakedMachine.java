@@ -1,5 +1,6 @@
 package muramasa.gtu.client.render.bakedmodels;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
@@ -22,7 +23,8 @@ public class BakedMachine extends BakedBase {
 
     public static IBakedModel BASE;
     public static IBakedModel[][] OVERLAYS;
-    public static IBakedModel[] OVERLAY_EMPTY, COVERS;
+    public static IBakedModel[] OVERLAY_EMPTY;
+    public static Object2ObjectOpenHashMap<String, IBakedModel> COVERS;
     public static ItemOverrideMachine itemOverride = new ItemOverrideMachine();
 
     @Override
@@ -37,7 +39,7 @@ public class BakedMachine extends BakedBase {
         if (covers != null) {
             for (int s = 0; s < 6; s++) {
                 if (!covers[s].isEmpty()) {
-                    quads.addAll(covers[s].onRender(getCovers(covers[s], s, state), s));
+                    quads.addAll(covers[s].onRender(this, getCovers(covers[s], s, state), s));
                 } else {
                     quads.addAll(getOverlays(type, s, data.getOverlay(), state));
                 }
@@ -48,7 +50,8 @@ public class BakedMachine extends BakedBase {
             }
         }
 
-        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 0);
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 0); //Machine Base
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 3); //Cover Base
 //        texOverlays(quads, data.getOverlayMode(), data.getOverlay());
         quads = ModelUtils.trans(quads, facing);
 
@@ -60,7 +63,8 @@ public class BakedMachine extends BakedBase {
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
-        return ModelUtils.trans(COVERS[cover.getInternalId()].getQuads(state, null, -1), s);
+        IBakedModel baked = COVERS.get(cover.getId());
+        return ModelUtils.trans(baked.getQuads(state, null, -1), s);
     }
 
     @Override

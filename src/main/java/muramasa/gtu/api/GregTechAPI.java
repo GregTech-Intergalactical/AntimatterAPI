@@ -233,7 +233,7 @@ public final class GregTechAPI {
         if (coverHandler == null) return false;
         Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
         if (cover == null) return false;
-        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack), getCover(cover.getId()).getInternalId()))) {
+        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack)))) {
             stack.shrink(1);
             return true;
         }

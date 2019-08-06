@@ -297,6 +297,7 @@ public class ModelUtils {
         return quads;
     }
 
+    //TODO convert layer onto an Enum
     public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, Texture texture) {
         return tex(quads, layer, texture.getSprite());
     }
@@ -323,9 +324,10 @@ public class ModelUtils {
         return quads;
     }
 
-    public static List<BakedQuad> tint(List<BakedQuad> quads, int rgb) {
+    public static List<BakedQuad> tint(List<BakedQuad> quads, int layer, int rgb) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
+            if (quads.get(i).getTintIndex() != layer) continue;
             quads.set(i, new BakedQuadTinted(quads.get(i), rgb));
         }
         return quads;

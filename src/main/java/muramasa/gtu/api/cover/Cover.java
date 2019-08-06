@@ -7,6 +7,7 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,27 +20,17 @@ import java.util.List;
 
 public abstract class Cover {
 
-    private static int lastInternalId = 0;
-
-    private int internalId;
-
-    //TODO rename to getId();
     public abstract String getId();
 
-    public int getInternalId() {
-        return internalId;
-    }
-
     public final void onRegister() {
-        internalId = lastInternalId++;
+        //NOOP
     }
 
     public ItemStack getDroppedStack() {
         return ItemStack.EMPTY;
     }
 
-    public final Cover onNewInstance(ItemStack stack, int newId) {
-        internalId = newId;
+    public final Cover onNewInstance(ItemStack stack) {
         return onPlace(stack);
     }
 
@@ -64,7 +55,7 @@ public abstract class Cover {
         //NOOP
     }
 
-    public List<BakedQuad> onRender(List<BakedQuad> quads, int side) {
+    public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {
         return quads;
     }
 
@@ -88,9 +79,5 @@ public abstract class Cover {
 
     public static ModelResourceLocation getBasicModel() {
         return new ModelResourceLocation(Ref.MODID + ":machine/cover/basic");
-    }
-
-    public static int getLastInternalId() {
-        return lastInternalId;
     }
 }
