@@ -1,6 +1,7 @@
 package muramasa.gtu.api.tileentities.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.capability.impl.PipeConfigHandler;
@@ -8,7 +9,6 @@ import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.tileentities.TileEntityTickable;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,20 +16,25 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class TileEntityPipe extends TileEntityTickable {
 
+    /** Pipe Data **/
     protected BlockPipe type;
     protected PipeSize size;
-    protected CoverHandler coverHandler;
-    protected PipeConfigHandler configHandler;
+
+    /** Capabilities **/
+    public Optional<CoverHandler> coverHandler = Optional.empty();
+    public Optional<PipeConfigHandler> configHandler = Optional.empty();
 
     protected byte connections, disabledConnections;
 
     //TODO needed in load?
     @Override
     public void onLoad() {
-        configHandler = new PipeConfigHandler(this);
+        coverHandler = Optional.of(new CoverHandler(this));
+        configHandler = Optional.of(new PipeConfigHandler(this));
     }
 
     @Override
@@ -93,17 +98,21 @@ public abstract class TileEntityPipe extends TileEntityTickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
-        if (capability == GTCapabilities.COVERABLE || capability == GTCapabilities.CONFIGURABLE) return true;
+        if (capability == GTCapabilities.COVERABLE && coverHandler.isPresent()) {
+            return true;
+        } else if (capability == GTCapabilities.CONFIGURABLE && configHandler.isPresent()) {
+            return true;
+        }
         return super.hasCapability(capability, side);
     }
 
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        if (capability == GTCapabilities.COVERABLE) {
-            return GTCapabilities.COVERABLE.cast(coverHandler);
-        } else if (capability == GTCapabilities.CONFIGURABLE) {
-            return GTCapabilities.CONFIGURABLE.cast(configHandler);
+        if (capability == GTCapabilities.COVERABLE && coverHandler.isPresent()) {
+            return GTCapabilities.COVERABLE.cast(coverHandler.get());
+        } else if (capability == GTCapabilities.CONFIGURABLE && configHandler.isPresent()) {
+            return GTCapabilities.CONFIGURABLE.cast(configHandler.get());
         }
         return super.getCapability(capability, side);
     }

@@ -3,7 +3,6 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.materials.MaterialType;
@@ -122,11 +121,7 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                             System.out.println(fluid.getLocalizedName() + " - " + fluid.amount);
                         }
                         tile.markDirty();
-                    }*/ else {
-                        for (Cover c : GregTechAPI.getRegisteredCovers()) {
-                            System.out.println(c.getId() + " - " + c.getInternalId());
-                        }
-                    }
+                    }*/
                 } else if (tile instanceof TileEntityPipe) {
                     player.sendMessage(new TextComponentString("C: " + ((TileEntityPipe) tile).getConnections() + (((TileEntityPipe) tile).getConnections() > 63 ? " (Culled)" : " (Non Culled)")));
                 } else if (tile instanceof TileEntityMaterial) {

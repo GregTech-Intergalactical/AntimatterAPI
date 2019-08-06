@@ -3,10 +3,14 @@ package muramasa.gtu.api.blocks.pipe;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.api.capability.IIntractable;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
-import muramasa.gtu.api.registration.*;
+import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
@@ -37,7 +41,7 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler, IIntractable {
 
     protected String id;
     protected Material material;
@@ -75,7 +79,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE).build();
+        return new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build();
     }
 
     @Override
@@ -86,6 +90,9 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
             TileEntityPipe pipe = (TileEntityPipe) tile;
             exState = exState.withProperty(PIPE_CONNECTIONS, pipe.getConnections());
             exState = exState.withProperty(TEXTURE, getDefaultData());
+            if (pipe.coverHandler.isPresent()) {
+                exState = exState.withProperty(COVER, pipe.coverHandler.get().getAll());
+            }
         }
         return exState;
     }
@@ -112,7 +119,8 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
 //                default: return new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(0.0625f * size.ordinal());
 //            }
 
-            return size != null ? size.getAABB() : PipeSize.TINY.getAABB();
+            //TODO temp disable
+            //return size != null ? size.getAABB() : PipeSize.TINY.getAABB();
         }
         return FULL_BLOCK_AABB;
     }
@@ -133,8 +141,9 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        return false;
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntity tile = Utils.getTile(world, pos);
+        return tile != null && onInteract(tile, player, hand, side, hitX, hitY, hitZ);
     }
 
     @Override
