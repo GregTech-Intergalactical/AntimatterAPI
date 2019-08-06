@@ -39,18 +39,26 @@ public class CoverHandler implements ICoverHandler {
     public void update() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onUpdate(getTile(), Utils.rotateFacingAlt(EnumFacing.VALUES[i], getTileFacing()));
+            covers[i].onUpdate(getTile(), EnumFacing.VALUES[i]);
         }
     }
 
     @Override
     public boolean set(EnumFacing side, Cover cover) {
-        side = Utils.rotateFacing(side, getTileFacing());
         if (!isValid(side, covers[side.getIndex()], cover)) return false;
         covers[side.getIndex()] = cover;
         SoundType.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
         Utils.markTileForRenderUpdate(getTile());
         return true;
+    }
+
+    @Override
+    public Cover get(EnumFacing side) {
+        return covers[side.getIndex()];
+    }
+
+    public Cover[] getAll() {
+        return covers;
     }
 
     @Override /** Fires ones per hand **/
@@ -70,15 +78,6 @@ public class CoverHandler implements ICoverHandler {
             if (covers[i].isEmpty()) continue;
             covers[i].onMachineEvent((TileEntityMachine) getTile(), event);
         }
-    }
-
-    @Override
-    public Cover get(EnumFacing side) {
-        return covers[Utils.rotateFacing(side, getTileFacing()).getIndex()];
-    }
-
-    public Cover[] getAll() {
-        return covers;
     }
 
     @Override

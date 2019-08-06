@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 
-public class MachineCoverHandler extends CoverHandler {
+public class MachineCoverHandler extends RotatableCoverHandler {
 
     protected int outputSide = 3;
 
