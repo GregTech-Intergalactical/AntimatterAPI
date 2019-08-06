@@ -12,7 +12,7 @@ public interface IIntractable {
 
     default boolean onInteract(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         EnumFacing targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
-        if (GregTechAPI.placeCover(tile, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
+        if (GregTechAPI.placeCover(tile, player, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
         if (tile.hasCapability(GTCapabilities.COVERABLE, targetSide)) {
             ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
             if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;

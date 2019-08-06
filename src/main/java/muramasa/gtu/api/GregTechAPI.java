@@ -227,14 +227,14 @@ public final class GregTechAPI {
     }
 
     /** Attempts to place a cover on a tile at a given side **/
-    public static boolean placeCover(TileEntity tile, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public static boolean placeCover(TileEntity tile, EntityPlayer player, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (stack.isEmpty()) return false;
         ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
         if (coverHandler == null) return false;
         Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
         if (cover == null) return false;
         if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack)))) {
-            stack.shrink(1);
+            if (!player.isCreative()) stack.shrink(1);
             return true;
         }
         return false;
@@ -244,7 +244,7 @@ public final class GregTechAPI {
     public static boolean removeCover(EntityPlayer player, ICoverHandler coverHandler, EnumFacing side) {
         ItemStack toDrop = coverHandler.get(side).getDroppedStack();
         if (coverHandler.set(side, CoverNone)) {
-            player.dropItem(toDrop, false);
+            if (!player.isCreative()) player.dropItem(toDrop, false);
             return true;
         }
         return false;
