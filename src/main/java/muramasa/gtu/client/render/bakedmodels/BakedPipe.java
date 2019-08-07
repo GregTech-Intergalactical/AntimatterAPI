@@ -27,12 +27,13 @@ import static net.minecraft.util.EnumFacing.*;
 
 public class BakedPipe implements IBakedModel {
 
-    protected static ItemOverrideList OVERRIDE;
-    protected static TextureAtlasSprite PARTICLE;
+    protected static ItemOverrideList OVERRIDE = new ItemOverridePipe();
+    protected static TextureAtlasSprite PARTICLE = Textures.PIPE.getSprite();
 
     public static Int2ObjectOpenHashMap<List<BakedQuad>> CACHE = new Int2ObjectOpenHashMap<>();
     public static int[][] CONFIG = new int[64][];
     public static IBakedModel[][] BAKED;
+    public static IBakedModel[] PIPE_EXTRA;
 
     static {
         //Default Shape (0 Connections)
@@ -120,13 +121,6 @@ public class BakedPipe implements IBakedModel {
         CONFIG[63] = new int[]{9};
     }
 
-    public BakedPipe(IBakedModel[][] baked) {
-        BAKED = baked;
-        PARTICLE = Textures.PIPE.getSprite();
-        OVERRIDE = new ItemOverridePipe();
-    }
-
-
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
@@ -148,7 +142,8 @@ public class BakedPipe implements IBakedModel {
             if (covers != null) {
                 for (int s = 0; s < 6; s++) {
                     if (!covers[s].isEmpty()) {
-                        quads.addAll(ModelUtils.tex(covers[s].onRender(this, getCovers(covers[s], s, state), s), 3, Tier.LV.getBaseTexture()));
+                        //TODO get Tier from cover instance when all covers have a tier member
+                        quads.addAll(covers[s].onRender(this, ModelUtils.tex(getCovers(covers[s], s, state), 3, Tier.LV.getBaseTexture()), s));
                     }
                 }
             }
@@ -158,7 +153,9 @@ public class BakedPipe implements IBakedModel {
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
-        return ModelUtils.trans(BakedMachine.COVERS.get(cover.getId()).getQuads(state, null, -1), s);
+        List<BakedQuad> quads = ModelUtils.trans(BakedMachine.COVERS.get(cover.getId()).getQuads(state, null, -1), s);
+        quads.addAll(PIPE_EXTRA[s].getQuads(state, null, -1));
+        return quads;
     }
 
     @Override

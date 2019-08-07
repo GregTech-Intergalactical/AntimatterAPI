@@ -63,8 +63,7 @@ public class BakedMachine extends BakedBase {
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
-        IBakedModel baked = COVERS.get(cover.getId());
-        return ModelUtils.trans(baked.getQuads(state, null, -1), s);
+        return ModelUtils.trans(COVERS.get(cover.getId()).getQuads(state, null, -1), s);
     }
 
     @Override

@@ -16,7 +16,7 @@ public abstract class CoverMaterial extends CoverTintable {
 
     @Override
     public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {
-        return ModelUtils.tex(super.onRender(baked, quads, side), TINTED_COVER_LAYER, getMaterial().getSet().getTextures(getType())[0]);
+        return ModelUtils.tex(super.onRender(baked, quads, side), 3, getMaterial().getSet().getTextures(getType())[0]);
     }
 
     @Override
