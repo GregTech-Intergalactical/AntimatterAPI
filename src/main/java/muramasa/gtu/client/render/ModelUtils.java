@@ -325,10 +325,11 @@ public class ModelUtils {
     }
 
     public static List<BakedQuad> tint(List<BakedQuad> quads, int layer, int rgb) {
+        List<BakedQuad> tintedQuads = new LinkedList<>();
         int size = quads.size();
         for (int i = 0; i < size; i++) {
             if (quads.get(i).getTintIndex() != layer) continue;
-            quads.set(i, new BakedQuadTinted(quads.get(i), rgb));
+            tintedQuads.add(new BakedQuadTinted(quads.get(i), rgb));
         }
         return quads;
     }

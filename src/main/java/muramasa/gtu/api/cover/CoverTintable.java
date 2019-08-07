@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class CoverTintable extends Cover {
 
-    public static final int TINTED_COVER_LAYER = 5; //TODO move to Enum
+    public static final int TINTED_COVER_LAYER = 3; //TODO move to Enum
 
     public abstract int getRGB();
 

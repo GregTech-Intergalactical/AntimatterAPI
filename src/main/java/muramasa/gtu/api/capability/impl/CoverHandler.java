@@ -47,6 +47,7 @@ public class CoverHandler implements ICoverHandler {
     public boolean set(EnumFacing side, Cover cover) {
         if (!isValid(side, covers[side.getIndex()], cover)) return false;
         covers[side.getIndex()] = cover;
+        //TODO add cover.onPlace and cover.onRemove to customize sounds
         SoundType.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
         Utils.markTileForRenderUpdate(getTile());
         return true;

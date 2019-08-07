@@ -10,6 +10,7 @@ import net.minecraft.util.EnumHand;
 
 public interface IIntractable {
 
+    //TODO actually, this can probably go in GregTechAPI
     default boolean onInteract(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         EnumFacing targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
         if (GregTechAPI.placeCover(tile, player, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
