@@ -5,6 +5,7 @@ import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.QuadLayer;
 import muramasa.gtu.client.render.overrides.ItemOverrideMachine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -50,8 +51,8 @@ public class BakedMachine extends BakedBase {
             }
         }
 
-        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 0); //Machine Base
-        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 3); //Cover Base
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), QuadLayer.BASE); //Machine Base
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), QuadLayer.COVER_BASE); //Cover Base
 //        texOverlays(quads, data.getOverlayMode(), data.getOverlay());
         quads = ModelUtils.trans(quads, facing);
 
@@ -59,7 +60,7 @@ public class BakedMachine extends BakedBase {
     }
 
     public List<BakedQuad> getOverlays(int t, int s, Texture[] data, IBlockState state) {
-        return OVERLAYS[t][s] != null ? ModelUtils.tex(OVERLAYS[t][s].getQuads(state, null, -1), 1, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, -1);
+        return OVERLAYS[t][s] != null ? ModelUtils.tex(OVERLAYS[t][s].getQuads(state, null, -1), QuadLayer.OVERLAY, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, -1);
     }
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {

@@ -1,6 +1,7 @@
 package muramasa.gtu.api.texture;
 
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 
@@ -40,8 +41,8 @@ public class TextureData {
     }
 
     public List<BakedQuad> apply(List<BakedQuad> quads) {
-        if (base != null) ModelUtils.tex(quads, baseMode, base, 0);
-        if (overlay != null) ModelUtils.tex(quads, overlayMode, overlay, 1);
+        if (base != null) ModelUtils.tex(quads, baseMode, base, QuadLayer.BASE);
+        if (overlay != null) ModelUtils.tex(quads, overlayMode, overlay, QuadLayer.OVERLAY);
         return quads;
     }
 
