@@ -241,7 +241,7 @@ public class ModelUtils {
     }
 
 
-    public static List<BakedQuad> tex(List<BakedQuad> quads, TextureMode mode, Texture[] textures, int layer) {
+    public static List<BakedQuad> tex(List<BakedQuad> quads, TextureMode mode, Texture[] textures, QuadLayer layer) {
 //        for (int i = 0; i < textures.length; i++) {
 //            if (textures[i] == null) continue;
 //            switch (mode) {
@@ -298,37 +298,37 @@ public class ModelUtils {
     }
 
     //TODO convert layer onto an Enum
-    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, Texture texture) {
+    public static List<BakedQuad> tex(List<BakedQuad> quads, QuadLayer layer, Texture texture) {
         return tex(quads, layer, texture.getSprite());
     }
 
-    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer1, int layer2, Texture texture) {
+    public static List<BakedQuad> tex(List<BakedQuad> quads, QuadLayer layer1, QuadLayer layer2, Texture texture) {
         return tex(quads, layer1, layer2, texture.getSprite());
     }
 
-    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, TextureAtlasSprite sprite) {
+    public static List<BakedQuad> tex(List<BakedQuad> quads, QuadLayer layer, TextureAtlasSprite sprite) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
-            if (quads.get(i).getTintIndex() != layer) continue;
+            if (quads.get(i).getTintIndex() != layer.getIndex()) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
     }
 
-    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer1, int layer2, TextureAtlasSprite sprite) {
+    public static List<BakedQuad> tex(List<BakedQuad> quads, QuadLayer layer1, QuadLayer layer2, TextureAtlasSprite sprite) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
-            if (!(quads.get(i).getTintIndex() == layer1 || quads.get(i).getTintIndex() == layer2)) continue;
+            if (!(quads.get(i).getTintIndex() == layer1.getIndex() || quads.get(i).getTintIndex() == layer2.getIndex())) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
     }
 
-    public static List<BakedQuad> tint(List<BakedQuad> quads, int layer, int rgb) {
+    public static List<BakedQuad> tint(List<BakedQuad> quads, QuadLayer layer, int rgb) {
         List<BakedQuad> tintedQuads = new LinkedList<>();
         int size = quads.size();
         for (int i = 0; i < size; i++) {
-            if (quads.get(i).getTintIndex() != layer) continue;
+            if (quads.get(i).getTintIndex() != layer.getIndex()) continue;
             tintedQuads.add(new BakedQuadTinted(quads.get(i), rgb));
         }
         return quads;
@@ -348,11 +348,11 @@ public class ModelUtils {
         return quadsTemp;
     }
 
-    public static List<BakedQuad> remove(List<BakedQuad> quads, int layer) {
+    public static List<BakedQuad> remove(List<BakedQuad> quads, QuadLayer layer) {
         List<BakedQuad> quadsTemp = new LinkedList<>();
         int size = quads.size();
         for (int i = 0; i < size; i++) {
-            if (quads.get(i).getTintIndex() != layer) quadsTemp.add(quads.get(i));
+            if (quads.get(i).getTintIndex() != layer.getIndex()) quadsTemp.add(quads.get(i));
         }
         return quadsTemp;
     }

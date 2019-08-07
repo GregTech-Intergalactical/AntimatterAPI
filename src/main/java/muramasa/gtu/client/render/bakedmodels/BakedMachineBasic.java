@@ -3,6 +3,7 @@ package muramasa.gtu.client.render.bakedmodels;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -23,7 +24,7 @@ public class BakedMachineBasic extends BakedMachine {
         TextureData data = exState.getValue(GTProperties.TEXTURE);
 
         List<BakedQuad> quads = new LinkedList<>(BASE.getQuads(state, side, rand));
-        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), 0);
+        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), QuadLayer.BASE);
 
 //        Cover[] covers;
 //        List<BakedQuad> coverQuads = null;

@@ -3,6 +3,7 @@ package muramasa.gtu.api.cover;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 
@@ -16,7 +17,7 @@ public abstract class CoverMaterial extends CoverTintable {
 
     @Override
     public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {
-        return ModelUtils.tex(super.onRender(baked, quads, side), 3, getMaterial().getSet().getTextures(getType())[0]);
+        return ModelUtils.tex(super.onRender(baked, quads, side), QuadLayer.COVER_BASE, getMaterial().getSet().getTextures(getType())[0]);
     }
 
     @Override

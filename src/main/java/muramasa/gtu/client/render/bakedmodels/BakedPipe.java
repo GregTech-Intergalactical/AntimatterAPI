@@ -7,6 +7,7 @@ import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.QuadLayer;
 import muramasa.gtu.client.render.overrides.ItemOverridePipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -134,16 +135,16 @@ public class BakedPipe implements IBakedModel {
         if (quads == null) {
             int[] config = connections > 63 ? CONFIG[connections - 64] : CONFIG[connections];
             quads = new ArrayList<>(BAKED[size][config[0]].getQuads(state, side, rand));
-            if (connections > 63) quads = ModelUtils.remove(quads, 1);
+            if (connections > 63) quads = ModelUtils.remove(quads, QuadLayer.OVERLAY);
             if (config.length > 1) quads = ModelUtils.trans(quads, 1, config);
-            ModelUtils.tex(quads, 0, 1, data.getBase()[0]);
-            ModelUtils.tex(quads, 2, data.getOverlay()[size]);
+            ModelUtils.tex(quads, QuadLayer.BASE, QuadLayer.OVERLAY, data.getBase()[0]);
+            ModelUtils.tex(quads, QuadLayer.EXTRA, data.getOverlay()[size]);
 
             if (covers != null) {
                 for (int s = 0; s < 6; s++) {
                     if (!covers[s].isEmpty()) {
                         //TODO get Tier from cover instance when all covers have a tier member
-                        quads.addAll(covers[s].onRender(this, ModelUtils.tex(getCovers(covers[s], s, state), 3, Tier.LV.getBaseTexture()), s));
+                        quads.addAll(covers[s].onRender(this, ModelUtils.tex(getCovers(covers[s], s, state), QuadLayer.COVER_BASE, Tier.LV.getBaseTexture()), s));
                     }
                 }
             }
