@@ -1,7 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.capability.IIntractable;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.MachineStack;
@@ -43,7 +43,7 @@ import static muramasa.gtu.api.machines.MachineFlag.BASIC;
 import static muramasa.gtu.api.machines.MachineFlag.GUI;
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public class BlockMachine extends Block implements IItemBlock, IModelOverride, IColorHandler, IIntractable {
+public class BlockMachine extends Block implements IItemBlock, IModelOverride, IColorHandler {
 
     private Machine type;
 
@@ -123,7 +123,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile != null && onInteract(tile, player, hand, side, hitX, hitY, hitZ)) return true;
+        if (tile != null && GregTechAPI.interact(tile, player, hand, side, hitX, hitY, hitZ)) return true;
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
             //TODO machine gui member -> Optional<GuiData>?

@@ -3,7 +3,6 @@ package muramasa.gtu.api.blocks.pipe;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
-import muramasa.gtu.api.capability.IIntractable;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.pipe.PipeStack;
@@ -41,7 +40,7 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler, IIntractable {
+public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     protected String id;
     protected Material material;
@@ -143,7 +142,7 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = Utils.getTile(world, pos);
-        return tile != null && onInteract(tile, player, hand, side, hitX, hitY, hitZ);
+        return tile != null && GregTechAPI.interact(tile, player, hand, side, hitX, hitY, hitZ);
     }
 
     @Override
