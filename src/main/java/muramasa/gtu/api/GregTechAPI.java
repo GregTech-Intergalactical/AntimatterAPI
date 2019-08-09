@@ -4,6 +4,7 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.capability.GTCapabilities;
+import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.*;
 import muramasa.gtu.api.data.Guis;
@@ -25,6 +26,7 @@ import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
+import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.integration.jei.GregTechJEIPlugin;
 import muramasa.gtu.loaders.InternalRegistrar;
@@ -34,6 +36,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -224,6 +227,21 @@ public final class GregTechAPI {
 
     public static Collection<Cover> getRegisteredCovers() {
         return COVER_REGISTRY.values();
+    }
+
+    /** Attempts to do smart interaction with a compatible Tile/Block **/
+    public static boolean interact(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        EnumFacing targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
+        if (GregTechAPI.placeCover(tile, player, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
+        if (tile.hasCapability(GTCapabilities.COVERABLE, targetSide)) {
+            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
+            if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+        }
+        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, targetSide)) {
+            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
+            if (configHandler != null && configHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+        }
+        return false;
     }
 
     /** Attempts to place a cover on a tile at a given side **/
