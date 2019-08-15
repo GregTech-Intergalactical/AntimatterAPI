@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import com.google.common.base.CaseFormat;
 
-import it.unimi.dsi.fastutil.doubles.Double2IntRBTreeMap;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.MaterialTool;
