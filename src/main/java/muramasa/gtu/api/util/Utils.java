@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -26,6 +27,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
+
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -469,6 +472,19 @@ public class Utils {
 
             GregTech.PROXY.sendDiggingPacket(pos);
         }
+    }
+    
+    public static EnumDyeColor determineColour(int rgb) {
+        Color colour = new Color(rgb);
+        Map<Double, EnumDyeColor> distances = new HashMap<>();
+        for (EnumDyeColor dyeColour : EnumDyeColor.values()) {
+            Color enumColour = new Color(dyeColour.colorValue);
+            double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
+                + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
+                + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
+            distances.put(distance, dyeColour);
+        }
+        return distances.get(Collections.min(distances.keySet()));
     }
     
     //Subscript 0 doesn't get displayed properly for some reason

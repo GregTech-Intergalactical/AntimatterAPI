@@ -55,6 +55,7 @@ repositories {
 }
 
 processResources {
+	rename '(.+_at.cfg)', 'META-INF/$1'
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
@@ -71,6 +72,12 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+jar {
+	manifest {	
+	    attributes 'FMLAT': 'gtu_at.cfg'
+	}
 }
 
 task deobfJar(type: Jar) {

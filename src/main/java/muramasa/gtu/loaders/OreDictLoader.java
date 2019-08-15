@@ -1,9 +1,17 @@
 package muramasa.gtu.loaders;
 
+import java.awt.Color;
+
+import com.google.common.base.CaseFormat;
+
+import it.unimi.dsi.fastutil.doubles.Double2IntRBTreeMap;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.MaterialTool;
+import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.util.Utils;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class OreDictLoader {
@@ -11,10 +19,12 @@ public class OreDictLoader {
     public static void init() {
         //Register materialItem entries (materialTypeMaterialName)
         GregTechAPI.all(MaterialItem.class).forEach(i -> {
-            OreDictionary.registerOre(i.getType().oreName(i.getMaterial()), i);
-            /*if (i.getType() == MaterialType.ROD) {
-                OreDictionary.registerOre(i.getType().oreName(i.getMaterial()), i);
-            }*/
+            Material material = i.getMaterial();
+            OreDictionary.registerOre(i.getType().oreName(material), i);
+            if (i.getType() == MaterialType.LENS) { // Can apply to other MaterialItems too
+                EnumDyeColor colour = Utils.determineColour(material.getRGB());
+                OreDictionary.registerOre(i.getType().getId() + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, colour.getName()), i);
+            }
         });
 
         //Register craftingTool entries (craftingToolType)
