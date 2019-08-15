@@ -55,7 +55,7 @@ repositories {
 }
 
 processResources {
-	rename '(.+_at.cfg)', 'META-INF/$1'
+    rename '(.+_at.cfg)', 'META-INF/$1'
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
