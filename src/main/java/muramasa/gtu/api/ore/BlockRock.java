@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -24,6 +25,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -46,6 +49,9 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
     public BlockRock(StoneType stoneType) {
         super(net.minecraft.block.material.Material.ROCK);
         this.stoneType = stoneType;
+        setSoundType(stoneType.getSoundType());
+        setHardness(0.4f);
+        setResistance(0.2f);
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_BLOCKS);
@@ -104,13 +110,8 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
     }
 
     @Override
-    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
-        return 0.25f;
-    }
-
-    @Override
-    public int getHarvestLevel(IBlockState state) {
-        return 0;
+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
 
     @Override
@@ -168,6 +169,14 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
         super.harvestBlock(world, player, pos, state, tile, stack);
         world.setBlockToAir(pos);
     }
+    
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {       
+        if (GuiScreen.isShiftKeyDown()) return false; 
+        harvestBlock(world, player, pos, state, Utils.getTile(world, pos), player.getHeldItem(hand));
+        return removedByPlayer(state, world, pos, player, true);
+    }
+    
     /** TileEntity Drops End **/
 
     @Override

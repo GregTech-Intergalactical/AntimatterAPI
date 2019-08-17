@@ -18,8 +18,9 @@ public class BlockStone extends Block implements IGregTechObject, IModelOverride
     private StoneType type;
 
     public BlockStone(StoneType type) {
-        super(net.minecraft.block.material.Material.IRON);
+        super(net.minecraft.block.material.Material.ROCK);
         this.type = type;
+        setSoundType(type.getSoundType());
         setUnlocalizedName("stone_" + getId());
         setRegistryName("stone_" + getId());
         setCreativeTab(Ref.TAB_BLOCKS);
