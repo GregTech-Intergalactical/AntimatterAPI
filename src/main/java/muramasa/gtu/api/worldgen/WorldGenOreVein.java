@@ -114,6 +114,9 @@ public class WorldGenOreVein extends WorldGenBase {
     // will be less, and veins that are completely above the average height will be much less.
 
     public static void generate(World world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ, BlockPos.MutableBlockPos pos, IBlockState state) {
+        List<WorldGenOreVein> veins = GregTechWorldGenerator.getVeins(world.provider.getDimension());
+        if (veins == null || veins.size() == 0) return;
+
         // Explanation of oreveinseed implementation.
         // (long)this.world.getSeed()<<16)    Deep Dark does two oregen passes, one with getSeed set to +1 the original world seed.  This pushes that +1 off the low bits of oreSeedZ, so that the hashes are far apart for the two passes.
         // ((this.world.provider.getDimension() & 0xffL)<<56)    Puts the dimension in the top bits of the hash, to make sure to get unique hashes per dimension
@@ -126,7 +129,6 @@ public class WorldGenOreVein extends WorldGenBase {
 
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
-            List<WorldGenOreVein> veins = GregTechWorldGenerator.getVeins(world.provider.getDimension());
             int veinCount = veins.size();
             if (oreVeinPercentageRoll < Ref.ORE_VEIN_CHANCE && WorldGenOreVein.TOTAL_WEIGHT > 0 && veinCount > 0) {
                 int placementAttempts = 0;
