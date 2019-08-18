@@ -29,7 +29,12 @@ public class GregTechTweaker {
 
     @ZenMethod
     public static void addMaterialType(String id, boolean visible) {
-        new MaterialType(id, visible);
+        new MaterialType(id, visible, -1);
+    }
+
+    @ZenMethod
+    public static void addMaterialType(String id, boolean visible, int unitValue) {
+        new MaterialType(id, visible, unitValue);
     }
 
     @ZenMethod
