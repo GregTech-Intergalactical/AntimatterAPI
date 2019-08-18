@@ -23,15 +23,16 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
-
-import java.awt.Color;
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -478,7 +479,8 @@ public class Utils {
         Color colour = new Color(rgb);
         Map<Double, EnumDyeColor> distances = new HashMap<>();
         for (EnumDyeColor dyeColour : EnumDyeColor.values()) {
-            Color enumColour = new Color(dyeColour.colorValue);
+            int colorValue = ReflectionHelper.getPrivateValue(EnumDyeColor.class, dyeColour, "colorValue", "field_193351_w");
+            Color enumColour = new Color(colorValue);
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
                 + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
                 + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
