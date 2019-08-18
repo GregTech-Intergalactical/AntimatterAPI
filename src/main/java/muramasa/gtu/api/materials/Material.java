@@ -1,6 +1,7 @@
 package muramasa.gtu.api.materials;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.Materials;
@@ -23,8 +24,6 @@ import static muramasa.gtu.api.materials.MaterialTag.METAL;
 import static muramasa.gtu.api.materials.MaterialType.*;
 
 public class Material implements IGregTechObject {
-
-    public static final long M = 3628800;
 
     private int hash;
 
@@ -257,7 +256,7 @@ public class Material implements IGregTechObject {
     }
 
     public long getDensity() {
-        return M;
+        return Ref.M;
     }
 
     public long getProtons() {
@@ -268,7 +267,7 @@ public class Material implements IGregTechObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getProtons();
         }
-        return (getDensity() * rAmount) / (tAmount * M);
+        return (getDensity() * rAmount) / (tAmount * Ref.M);
     }
 
     public long getNeutrons() {
@@ -279,7 +278,7 @@ public class Material implements IGregTechObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getNeutrons();
         }
-        return (getDensity() * rAmount) / (tAmount * M);
+        return (getDensity() * rAmount) / (tAmount * Ref.M);
     }
 
     public long getMass() {
@@ -290,7 +289,7 @@ public class Material implements IGregTechObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getMass();
         }
-        return (getDensity() * rAmount) / (tAmount * M);
+        return (getDensity() * rAmount) / (tAmount * Ref.M);
     }
 
     /** Element Getters **/
