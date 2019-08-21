@@ -169,18 +169,19 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             }
 
             //Generate Stones and Small Ores
-            if (STONE.size() > 0) {
-                for (WorldGenStone stone : STONE.get(world.provider.getDimension())) {
+            List<WorldGenStone> stones = STONE.get(world.provider.getDimension());
+            if (stones != null && stones.size() > 0) {
+                for (WorldGenStone stone : stones) {
                     stone.generate(world, rand, chunkX * 16, chunkZ * 16, new BlockPos.MutableBlockPos(), null, generator, provider);
                 }
             }
-            if (SMALL.size() > 0) {
-                for (WorldGenOreSmall small : SMALL.get(world.provider.getDimension())) {
+
+            List<WorldGenOreSmall> smalls = SMALL.get(world.provider.getDimension());
+            if (smalls != null && smalls.size() > 0) {
+                for (WorldGenOreSmall small : smalls) {
                     small.generate(world, rand, chunkX * 16, chunkZ * 16, new BlockPos.MutableBlockPos(), null, generator, provider);
                 }
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
