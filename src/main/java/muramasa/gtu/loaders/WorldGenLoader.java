@@ -9,12 +9,16 @@ import static muramasa.gtu.api.ore.StoneType.*;
 
 public class WorldGenLoader {
 
-    public static WorldGenAsteroid ASTEROID_GEN = new WorldGenAsteroid();
-    public static WorldGenTree RUBBER_TREE_GEN = new WorldGenTree("rubber_tree", 5, 5, Data.RUBBER_SAPLING, OVERWORLD);
-
     public static void init() {
         //TODO probably increase max generation heights for most things
         //TODO add GC dims to all objects
+
+        new WorldGenRock("surface_rock", 4, OVERWORLD);
+
+        new WorldGenTree("rubber_tree", 5, 5, Data.RUBBER_SAPLING, OVERWORLD);
+
+        new WorldGenAsteroid("asteroids", END, ASTEROIDS);
+
         new WorldGenStone("granite_black_tiny", GRANITE_BLACK, 1, 75, 5, 0, 180, OVERWORLD);
         new WorldGenStone("granite_black_small", GRANITE_BLACK, 1, 100, 10, 0, 180, OVERWORLD);
         new WorldGenStone("granite_black_medium", GRANITE_BLACK, 1, 200, 10, 0, 120, OVERWORLD);

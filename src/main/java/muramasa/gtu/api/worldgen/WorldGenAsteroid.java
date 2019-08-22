@@ -33,8 +33,8 @@ public class WorldGenAsteroid extends WorldGenBase {
     private static IBlockState END_STONE_STATE = null;
     private static IBlockState GRANITE_RED_STATE = null;
 
-    public WorldGenAsteroid() {
-        super("asteroid");
+    public WorldGenAsteroid(String id, int... dimensions) {
+        super(id, dimensions);
     }
 
     @Override
