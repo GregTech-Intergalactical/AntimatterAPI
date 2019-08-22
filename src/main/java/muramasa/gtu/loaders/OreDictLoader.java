@@ -7,9 +7,11 @@ import com.google.common.base.CaseFormat;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.items.MaterialTool;
+import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.common.Data;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -28,5 +30,13 @@ public class OreDictLoader {
 
         //Register craftingTool entries (craftingToolType)
         GregTechAPI.all(MaterialTool.class).forEach(t -> OreDictionary.registerOre(t.getType().getOreDict(), t));
+    
+        //OreDictionary.registerOre("resinSticky", Data.StickyResin);
+        OreDictionary.registerOre("dropRubber", Data.StickyResin);
+        OreDictionary.registerOre("craftingSawDiamond", Data.DiamondSawBlade);
+        OreDictionary.registerOre("craftingGrinderDiamond", Data.DiamondGrindHead);
+        OreDictionary.registerOre("craftingGrinderTungsten", Data.TungstenGrindHead);
+        OreDictionary.registerOre("ingotAlloyIridium", Data.IridiumAlloyIngot);
+        OreDictionary.registerOre("plateReinforcedIridium", Data.IridiumReinforcedPlate);
     }
 }

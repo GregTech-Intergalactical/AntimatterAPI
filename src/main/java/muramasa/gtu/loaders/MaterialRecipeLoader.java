@@ -621,14 +621,34 @@ public class MaterialRecipeLoader {
 //            RecipeHelper.addBasicShapelessRecipe(INSTANCE.getToolWithStats(SOFTHAMMER, 1, m, Materials.Wood), m.getHeadHammer(1), Materials.Wood.getRod(1));
         }
 
-        for (Material m : TOOLS.getMats()) {
-            if (!m.has(INGOT)) continue; //TODO temp
-            ItemStack ingot = m.getIngot(1), plate = m.getPlate(1);
-            RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', ingot);
-            RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m, Materials.Wood), "II ", "IIS", "II ", 'I', ingot, 'S', "stickWood");
-            RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m, Materials.Wood), " P ", "fPh", " S ", 'P', plate, 'S', "stickWood");
-            RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m, Materials.Wood), "P", "P", "S", 'P', plate, 'S', "stickWood");
-            
+        TOOLS.getMats().forEach(m -> {
+            if (m.has(ROD)) {
+                RecipeHelper.addShaped("crowbar_" + m.getId(), ToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', m.getRod(1));
+            }
+            if (m.has(INGOT)) {
+                ItemStack main = m.getIngot(1), plate = m.getPlate(1);
+                RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m), " M ", "fPh", " S ", 'M', main, 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("pickaxe_" + m.getId(), ToolType.PICKAXE.get(m), "MPM", "fSh", " S ", 'P', plate, 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("shovel_" + m.getId(), ToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("axe_" + m.getId(), ToolType.AXE.get(m), "PMh", "PS ", "fS ", 'M', main, 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("hoe_" + m.getId(), ToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
+                RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
+                RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m), "P", "P", "S", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("saw_" + m.getId(), ToolType.SAW.get(m), "PPP", "fSS", "   ", 'P', plate, 'S', "stickWood");
+            }
+            else if (m.has(GEM)) {
+                ItemStack main = m.getGem(1);
+                RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m), " M ", "fMh", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("pickaxe_" + m.getId(), ToolType.PICKAXE.get(m), "MMM", "fSh", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("shovel_" + m.getId(), ToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("axe_" + m.getId(), ToolType.AXE.get(m), "MMh", "MS ", "fS ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("hoe_" + m.getId(), ToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
+                RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
+                RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m), "M", "M", "S", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("saw_" + m.getId(), ToolType.SAW.get(m), "MMM", "fSS", "   ", 'M', main, 'S', "stickWood");
+            }
             /*
             if (m.has(INGOT) && m.has(Plate) && !m.has(RUBBERTOOLS) && m == m.mMacerateInto) {
                 ItemStack aStainlessScrew = Materials.StainlessSteel.getScrew(1), aTitaniumScrew = Materials.Titanium.getScrew(1), aTungstensteelScrew = Materials.TungstenSteel.getScrew(1), aStainlessPlate = Materials.StainlessSteel.getPlate(1), aTitaniumPlate = Materials.Titanium.getPlate(1), aTungstensteelPlate = Materials.TungstenSteel.getPlate(1), aStainlessSmallGear = Materials.StainlessSteel.getGearS(1), aTitaniumSmallGear = Materials.Titanium.getGearS(1), aTungstensteelSmallGear = Materials.TungstenSteel.getGearS(1), aTitaniumSpring = Materials.Titanium.getSpring(1);
@@ -775,6 +795,6 @@ public class MaterialRecipeLoader {
                 GT_ModHandler.addShapedToolRecipe(m.getHeadShovel(1), "fG", 'G', aGem);
                 GT_ModHandler.addShapedToolRecipe(m.getHeadSword(1), " G", "fG", 'G', aGem);
             }*/
-        }
+        });
     }
 }

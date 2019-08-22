@@ -2,6 +2,7 @@ package muramasa.gtu.api.tools;
 
 import com.google.common.collect.Sets;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.util.SoundType;
@@ -154,7 +155,7 @@ public enum ToolType {
     }
 
     public ItemStack get(Material primary) {
-        return get(primary, primary.getHandleMaterial());
+        return get(primary, Materials.Wood);
     }
 
     public ItemStack get(Material primary, Material secondary) {

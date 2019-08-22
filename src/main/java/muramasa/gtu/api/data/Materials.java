@@ -399,7 +399,7 @@ public class Materials {
     public static Material Rubber = new Material("rubber", 0x000000, SHINY).asSolid(295, 0, PLATE, RING).addTools(1.5F, 32, 0).add(Carbon, 5, Hydrogen, 8);
     public static Material PolyphenyleneSulfide = new Material("polyphenyleneSulfide", 0xaa8800, DULL).asSolid(295, 0, PLATE, FOIL).addTools(3.0F, 32, 1).add(Carbon, 6, Hydrogen, 4, Sulfur, 1);
     public static Material Polystyrene = new Material("polystyrene", 0xbeb4aa, DULL).asSolid(295, 0).add(Carbon, 8, Hydrogen, 8);
-    public static Material StyreneButadieneRubber = new Material("styrene_butadiene_rubber", 0x211a18, SHINY).asSolid(295, 0).addTools(3.0F, 128, 1).add(Styrene, 1, Butadiene, 3);
+    public static Material StyreneButadieneRubber = new Material("styrene_butadiene_rubber", 0x211a18, SHINY).asSolid(295, 0, PLATE, RING).addTools(3.0F, 128, 1).add(Styrene, 1, Butadiene, 3);
     public static Material PolyvinylChloride = new Material("polyvinyl_chloride", 0xd7e6e6, NONE).asSolid(295, 0, PLATE, FOIL).addTools(3.0F, 32, 1).add(Carbon, 2, Hydrogen, 3, Chlorine, 1);
     public static Material GalliumArsenide = new Material("gallium_arsenide", 0xa0a0a0, DULL).asSolid(295, 1200).add(Arsenic, 1, Gallium, 1);
     public static Material EpoxidFiberReinforced = new Material("fiber_reinforced_epoxy_resin", 0xa07010, DULL).asSolid(400, 0).addTools(3.0F, 64, 1).add(Epoxid, 1);
