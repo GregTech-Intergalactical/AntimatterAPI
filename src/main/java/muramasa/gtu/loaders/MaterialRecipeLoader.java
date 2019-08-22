@@ -474,6 +474,20 @@ public class MaterialRecipeLoader {
                 HAMMERING.RB().ii(block).io(dust).add(minDuration * 9, 24);
             }
         });
+        
+        ROCK.getMats().forEach(m -> {
+            ItemStack rock = m.getRock(1);
+            if (m.has(DUST)) {
+                ItemStack dustTiny = m.getDustTiny(1);
+                RecipeHelper.addShapeless(m.getId() + "_rock_to_tiny_dust", dustTiny, rock, ToolType.MORTAR.getOreDict());
+                PULVERIZING.RB().ii(rock).io(dustTiny).add(80, 2);
+                HAMMERING.RB().ii(rock).io(dustTiny).add(20, 4);
+            }
+            if (m.has(NUGGET)) {
+                ItemStack nugget = m.getNugget(1);
+                RecipeHelper.addSmelting(rock, nugget, 1.0F);
+            }
+        });
 
         CRUSHED.getMats().forEach(m -> {
             ItemStack ore = m.getOre(1), crushed = m.getCrushed(1), dust = m.getDust(1), stoneDust = Materials.Stone.getDust(1);;
