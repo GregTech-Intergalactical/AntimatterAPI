@@ -184,7 +184,7 @@ public class Material implements IGregTechObject {
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
-        this.handleMaterial = this;
+        this.handleMaterial = Materials.Wood;
         this.toolEnchantment = ImmutableMap.of();
         return this;
     }
