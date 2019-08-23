@@ -660,6 +660,7 @@ public class Materials {
 
     //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
     public static void init() {
+        //TODO assign correct handle materials
 //                for (Material material : generated) {
 //            if (material == Blaze) {
 //                material.handleMaterial = "blaze";
