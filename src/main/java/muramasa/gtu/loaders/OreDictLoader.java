@@ -22,6 +22,9 @@ public class OreDictLoader {
         GregTechAPI.all(MaterialItem.class).forEach(i -> {
             Material material = i.getMaterial();
             OreDictionary.registerOre(i.getType().oreName(material), i);
+            if (i.getType() == MaterialType.ROD) {
+                OreDictionary.registerOre("stick" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, material.getId()), i);
+            }
             if (i.getType() == MaterialType.LENS) { // Can apply to other MaterialItems too
                 EnumDyeColor colour = Utils.determineColour(material.getRGB());
                 OreDictionary.registerOre(i.getType().getId() + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, colour.getName()), i);
