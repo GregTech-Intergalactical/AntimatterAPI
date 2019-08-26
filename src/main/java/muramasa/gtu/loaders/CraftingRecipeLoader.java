@@ -12,6 +12,13 @@ public class CraftingRecipeLoader {
 
     public static void init() {
         
+        //Machines
+        
+        ItemStack rockFlint = Materials.Flint.getRock(1);
+        RecipeHelper.addShapeless("rock_to_flint", new ItemStack(Items.FLINT), rockFlint, rockFlint, ToolType.MORTAR.getOreDict());
+        
+        RecipeHelper.addShaped("mortar_flint", ToolType.MORTAR.get(Materials.Flint), " F ", "SFS", "SSS", 'F', Items.FLINT, 'S', "stone");
+
         RecipeHelper.addShaped("hopper", new ItemStack(Blocks.HOPPER), "IxI", "ICI", " I ", 'I', Materials.Vibranium.getIngot(1), 'C', new ItemStack(Blocks.CHEST));
         RecipeHelper.addShapeless("scanner", Data.DebugScanner.get(1), Materials.Vibranium.getIngot(1), Materials.Iridium.getIngot(1));
         
@@ -30,7 +37,5 @@ public class CraftingRecipeLoader {
         
         RecipeHelper.addShaped("item_filter", Data.ItemFilter.asItemStack(), "XXX", "XYX", "XXX", 'X', Materials.Zinc.getFoil(1), 'Y', Materials.Iron.getPlate(1));
         RecipeHelper.addShapeless("magnetic_rod", Materials.IronMagnetic.getRod(1), Materials.Iron.getRod(1), Items.REDSTONE, Items.REDSTONE, Items.REDSTONE, Items.REDSTONE);
-    
-        RecipeHelper.addShaped("mortar_flint", ToolType.MORTAR.get(Materials.Flint), " F ", "SFS", "SSS", 'F', Items.FLINT, 'S', "stone");
     }
 }

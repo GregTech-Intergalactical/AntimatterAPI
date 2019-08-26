@@ -4,10 +4,12 @@ import com.google.common.collect.Lists;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.api.util.dummytypes.DummyRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class RecipeHelper {
 
@@ -68,6 +71,17 @@ public class RecipeHelper {
         }
         IRecipe recipe = new ShapelessOreRecipe(null, Unifier.get(result), parse(data, false)).setRegistryName(path);
         ForgeRegistries.RECIPES.register(recipe);
+    }
+    
+    public static void removeRecipeByName(String location) {
+        removeRecipeByName(new ResourceLocation(location));
+    }
+    
+    /**
+     * Providing removeRecipeByName only. As getting getRecipeOutput means looping through {@link ForgeRegistries#RECIPES} 
+     */
+    public static void removeRecipeByName(ResourceLocation location) {
+        ForgeRegistries.RECIPES.register(new DummyRecipe().setRegistryName(location));
     }
 
     public static Object[] parse(Object[] data, boolean shaped) {

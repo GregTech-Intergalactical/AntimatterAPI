@@ -18,7 +18,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     public static MaterialType DUST_TINY = new MaterialType("dust_tiny", false, Ref.M / 9);
     public static MaterialType DUST_IMPURE = new MaterialType("dust_impure", false, Ref.M);
     public static MaterialType DUST_PURE = new MaterialType("dust_pure", false, Ref.M);
-    public static MaterialType ROCK = new MaterialType("rock", false, -1);
+    public static MaterialType ROCK = new MaterialType("rock", false, Ref.M / 9);
     public static MaterialType CRUSHED = new MaterialType("crushed", false, Ref.M);
     public static MaterialType CRUSHED_CENTRIFUGED = new MaterialType("crushed_centrifuged", false, Ref.M);
     public static MaterialType CRUSHED_PURIFIED = new MaterialType("crushed_purified", false, Ref.M);

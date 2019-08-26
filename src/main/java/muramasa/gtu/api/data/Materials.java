@@ -277,7 +277,7 @@ public class Materials {
     public static Material YellowLimonite = new Material("yellow_limonite", 0xc8c800, METALLIC).asDust(ORE).add(Iron, 1, Hydrogen, 1, Oxygen, 2);
     //public static Material WoodSealed = new Material("sealed_wood", 0x502800, NONE).asDust().addTools(3.0F, 24, 0).add(Wood, 1); TODO: Perhaps with IE integration or when we have some utility stuff
     public static Material Blaze = new Material("blaze", 0xffc800, NONE).asDust().addTools(3.0F, 64, 1, of(Enchantments.FIRE_ASPECT, 3)).add(Sulfur, 1, DarkAsh, 1/*, Magic, 1*/);
-    public static Material Flint = new Material("flint", 0x002040, FLINT).asDust().addTools(2.0F, 48, 1, of(Enchantments.FIRE_ASPECT, 1)).add(SiliconDioxide, 1);
+    public static Material Flint = new Material("flint", 0x002040, FLINT).asDust(ROCK).addTools(2.0F, 48, 1, of(Enchantments.FIRE_ASPECT, 1)).add(SiliconDioxide, 1);
     public static Material Marble = new Material("marble", 0xc8c8c8, NONE).asDust().add(Magnesium, 1, Calcite, 7);
     public static Material PotassiumFeldspar = new Material("potassium_feldspar", 0x782828, FINE).asDust().add(Potassium, 1, Aluminium, 1, Silicon, 3, Oxygen, 8);
     public static Material Biotite = new Material("biotite", 0x141e14, METALLIC).asDust().add(Potassium, 1, Magnesium, 3, Aluminium, 3, Fluorine, 2, Silicon, 3, Oxygen, 10);

@@ -1,6 +1,8 @@
 package muramasa.gtu.common.events;
 
 import muramasa.gtu.Configs;
+import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.worldgen.WorldGenHelper;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.OreGenEvent;
@@ -25,5 +27,6 @@ public class OreGenHandler {
     @SubscribeEvent
     public static void onOreGenMineable(OreGenEvent.GenerateMinable e) {
         e.setResult(e.getGenerator() instanceof WorldGenMinable && PREVENTED_TYPES.contains(e.getType()) ? Event.Result.DENY : e.getResult());
+        if (e.getType() == GRAVEL) WorldGenHelper.setRock(e.getWorld(), e.getWorld().getTopSolidOrLiquidBlock(e.getPos()), Materials.Flint);
     }
 }
