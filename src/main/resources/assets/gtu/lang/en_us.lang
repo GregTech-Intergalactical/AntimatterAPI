@@ -72,6 +72,8 @@ pipe.normal.name=Normal
 pipe.large.name=Large
 pipe.huge.name=Huge
 
+material.NULL.name=
+
 material.aluminium.name=Aluminium
 material.titanium.name=Titanium
 material.beryllium.name=Beryllium
