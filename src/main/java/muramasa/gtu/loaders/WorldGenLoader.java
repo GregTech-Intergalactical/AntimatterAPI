@@ -13,7 +13,7 @@ public class WorldGenLoader {
         //TODO probably increase max generation heights for most things
         //TODO add GC dims to all objects
 
-        new WorldGenRock("surface_rock", 4, OVERWORLD);
+        new WorldGenRock("surface_rock", 1, OVERWORLD);
 
         new WorldGenTree("rubber_tree", 5, 5, Data.RUBBER_SAPLING, OVERWORLD);
 

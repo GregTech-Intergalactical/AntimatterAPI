@@ -13,6 +13,7 @@ import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
@@ -139,6 +140,15 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         return null;
     }
+    
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+        if (fromPos.up().equals(pos)) {
+            if (world.getBlockState(fromPos).getBlockFaceShape(world, fromPos, EnumFacing.UP) != BlockFaceShape.SOLID) {
+                world.destroyBlock(pos, true);
+            }
+        }
+    }
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
@@ -153,8 +163,11 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMaterial) {
             TileEntityMaterial ore = (TileEntityMaterial) tile;
-            if (ore.getMaterial() != Materials.NULL) drops.add(ore.getMaterial().getRock(1));
-            else drops.add(new ItemStack(Items.FLINT));
+            if (ore.getMaterial() == Materials.NULL) {
+                int chance = Ref.RNG.nextInt(4);
+                drops.add(Materials.Stone.getDustTiny(chance == 0 ? 1 : chance));
+            }
+            else drops.add(ore.getMaterial().getRock(1));
         }
     }
 
@@ -174,7 +187,7 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {       
         if (GuiScreen.isShiftKeyDown()) return false; 
         harvestBlock(world, player, pos, state, Utils.getTile(world, pos), player.getHeldItem(hand));
-        return removedByPlayer(state, world, pos, player, true);
+        return super.removedByPlayer(state, world, pos, player, true);
     }
     
     /** TileEntity Drops End **/

@@ -101,7 +101,7 @@ public class WorldGenHelper {
             IBlockState toSet = ORE_MAP.get(world.getBlockState(pos));
             if (toSet == null) toSet = ORE_DEFAULT;
             setOreState(world, pos, toSet, material, type);
-            if (type == OreType.NORMAL && Ref.RNG.nextInt(256) == 0) setRock(world, pos, material);
+            if (type == OreType.NORMAL && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
             return true;
         }
         return false;
