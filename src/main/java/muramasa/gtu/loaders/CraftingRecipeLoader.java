@@ -5,6 +5,7 @@ import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.common.Data;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class CraftingRecipeLoader {
@@ -23,8 +24,13 @@ public class CraftingRecipeLoader {
         RecipeHelper.addShapeless("styrene_butadiene_rubber_ring", Materials.StyreneButadieneRubber.getRing(1), ToolType.KNIFE.getOreDict(), Materials.StyreneButadieneRubber.getPlate(1));
 
         RecipeHelper.addShaped("rubber_torch", new ItemStack(Blocks.TORCH, 4), " R ", " S ", "   ", 'R', "dropRubber", 'S', "stickWood");
-        RecipeHelper.addShaped("sulfur_torch", new ItemStack(Blocks.TORCH, 6), " R ", " S ", "   ", 'R', Materials.Sulfur.getDust(1), 'S', "stickWood");
+        //RecipeHelper.addShaped("sulfur_torch", new ItemStack(Blocks.TORCH, 6), " R ", " S ", "   ", 'R', Materials.Sulfur.getDust(1), 'S', "stickWood");
     
         RecipeHelper.addShapeless("resin_sticky_piston", new ItemStack(Blocks.STICKY_PISTON), "dropRubber", Blocks.PISTON);
+        
+        RecipeHelper.addShaped("item_filter", Data.ItemFilter.asItemStack(), "XXX", "XYX", "XXX", 'X', Materials.Zinc.getFoil(1), 'Y', Materials.Iron.getPlate(1));
+        RecipeHelper.addShapeless("magnetic_rod", Materials.IronMagnetic.getRod(1), Materials.Iron.getRod(1), Items.REDSTONE, Items.REDSTONE, Items.REDSTONE, Items.REDSTONE);
+    
+        RecipeHelper.addShaped("mortar_flint", ToolType.MORTAR.get(Materials.Flint), " F ", "SFS", "SSS", 'F', Items.FLINT, 'S', "stone");
     }
 }

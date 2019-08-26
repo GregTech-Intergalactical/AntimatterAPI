@@ -9,6 +9,7 @@ import muramasa.gtu.api.recipe.RecipeHelper;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -622,8 +623,14 @@ public class MaterialRecipeLoader {
         }
 
         TOOLS.getMats().forEach(m -> {
+            //TODO: Scoop done in the Forestry Registrar
             if (m.has(ROD)) {
-                RecipeHelper.addShaped("crowbar_" + m.getId(), ToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', m.getRod(1));
+                ItemStack rod = m.getRod(1);
+                RecipeHelper.addShaped("crowbar_" + m.getId(), ToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', rod);
+                RecipeHelper.addShaped("screwdriver_" + m.getId(), ToolType.SCREWDRIVER.get(m), " fR", " Rh", "S  ", 'R', rod, 'S', "stickWood");
+                if (m.has(SCREW)) {
+                    RecipeHelper.addShaped("wire_cutter_" + m.getId(), ToolType.WIRE_CUTTER.get(m), "PfP", "hPd", "RSR", 'P', m.getPlate(1), 'R', rod, 'S', m.getScrew(1));
+                }
             }
             if (m.has(INGOT)) {
                 ItemStack main = m.getIngot(1), plate = m.getPlate(1);
@@ -636,6 +643,10 @@ public class MaterialRecipeLoader {
                 RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
                 RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m), "P", "P", "S", 'P', plate, 'S', "stickWood");
                 RecipeHelper.addShaped("saw_" + m.getId(), ToolType.SAW.get(m), "PPP", "fSS", "   ", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("knife_" + m.getId(), ToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', plate, 'S', "stickWood");
+                if (!m.has(NOSMASH)) {
+                    RecipeHelper.addShaped("mortar_" + m.getId(), ToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
+                }
             }
             else if (m.has(GEM)) {
                 ItemStack main = m.getGem(1);
@@ -648,6 +659,10 @@ public class MaterialRecipeLoader {
                 RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
                 RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m), "M", "M", "S", 'M', main, 'S', "stickWood");
                 RecipeHelper.addShaped("saw_" + m.getId(), ToolType.SAW.get(m), "MMM", "fSS", "   ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("knife_" + m.getId(), ToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', main, 'S', "stickWood");
+                if (!m.has(NOSMASH)) {
+                    RecipeHelper.addShaped("mortar_" + m.getId(), ToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
+                }
             }
             /*
             if (m.has(INGOT) && m.has(Plate) && !m.has(RUBBERTOOLS) && m == m.mMacerateInto) {

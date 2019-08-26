@@ -420,11 +420,14 @@ public class Materials {
             GregTechAPI.addReplacement(GEM, Emerald, new ItemStack(Items.EMERALD));
             GregTechAPI.addReplacement(GEM, Diamond, new ItemStack(Items.DIAMOND));
             GregTechAPI.addReplacement(DUST, Redstone, new ItemStack(Items.REDSTONE));
+            GregTechAPI.addReplacement(DUST, Glowstone, new ItemStack(Items.GLOWSTONE_DUST));
             GregTechAPI.addReplacement(BLOCK, Coal, new ItemStack(Blocks.COAL_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Iron, new ItemStack(Blocks.IRON_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Gold, new ItemStack(Blocks.GOLD_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Emerald, new ItemStack(Blocks.EMERALD_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Diamond, new ItemStack(Blocks.DIAMOND_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Redstone, new ItemStack(Blocks.REDSTONE_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Glowstone, new ItemStack(Blocks.GLOWSTONE));
             GregTechAPI.addReplacement(ROD, Wood, new ItemStack(Items.STICK));
         }
         ELECSEPI.add(Bastnasite/*, Monazite*/);
