@@ -3,6 +3,7 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.materials.MaterialType;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StandardItem extends Item implements IGregTechObject, IModelOverride {
 
@@ -92,7 +94,9 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             tooltip.add("Machines: " + Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size());
             tooltip.add("Ores: " + MaterialType.ORE.getMats().size());
             tooltip.add("Ores Small: " + MaterialType.ORE_SMALL.getMats().size());
-            tooltip.add("Storage: " + MaterialType.BLOCK.getMats().size());
+            GregTechAPI.all(BlockStorage.class);
+            tooltip.add("Block: " + MaterialType.BLOCK.getMats().size() + " - (" + GregTechAPI.all(BlockStorage.class).stream().map(b -> b.getType() == MaterialType.BLOCK).collect(Collectors.toList()).size() + ")");
+            tooltip.add("Frame: " + MaterialType.FRAME.getMats().size()+ " - (" + GregTechAPI.all(BlockStorage.class).stream().map(b -> b.getType() == MaterialType.FRAME).collect(Collectors.toList()).size() + ")");
         }
     }
 

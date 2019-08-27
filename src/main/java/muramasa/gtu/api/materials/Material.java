@@ -601,7 +601,12 @@ public class Material implements IGregTechObject {
 
     public ItemStack getBlock(int amount) {
         if (!has(BLOCK)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + BLOCK.getId() + ") M(" + id + ")");
-        return new ItemStack(GregTechAPI.get(BlockStorage.class, id), amount);
+        return BlockStorage.get(this, MaterialType.BLOCK, amount);
+    }
+
+    public ItemStack getFrame(int amount) {
+        if (!has(FRAME)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + FRAME.getId() + ") M(" + id + ")");
+        return BlockStorage.get(this, MaterialType.FRAME, amount);
     }
 
     public FluidStack getLiquid(int amount) {

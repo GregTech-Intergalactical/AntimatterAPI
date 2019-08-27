@@ -519,7 +519,6 @@ public class Utils {
         return original;
     }
 
-
     public static boolean isModLoaded(String modid) {
         if (MOD_LOADED_CACHE.containsKey(modid)) {
             return MOD_LOADED_CACHE.get(modid);
