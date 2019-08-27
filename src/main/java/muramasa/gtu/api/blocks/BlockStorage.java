@@ -3,6 +3,7 @@ package muramasa.gtu.api.blocks;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
@@ -54,12 +55,13 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         for (int i = 0; i < materials.length; i++) {
             INDEX_LOOKUP.put(materials[i].getHash(), new Tuple<>(index, i));
         }
-        STORAGE_MATERIAL = PropertyInteger.create("storage_material", 0, materials.length - 1);
+        STORAGE_MATERIAL = PropertyInteger.create("storage_material", 0, Math.max(materials.length - 1, 1));
 
         //Hack to dynamically create a BlockState with a correctly sized material property based on the passed materials array
         BlockStateContainer blockStateContainer = createBlockState();
         ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
         setDefaultState(blockStateContainer.getBaseState());
+
         setResistance(8.0f);
         setUnlocalizedName(getId());
         setRegistryName(getId());
@@ -78,6 +80,10 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     public Material[] getMaterials() {
         return materials;
+    }
+
+    public PropertyInteger getMaterialProp() {
+        return STORAGE_MATERIAL;
     }
 
     @Override
@@ -104,13 +110,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         return new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL));
     }
-    
-    /** Frame Placing Stuffs - Start **/
-    private boolean isFrame(Block block) {
-        return block instanceof BlockStorage && ((BlockStorage) block).type == MaterialType.FRAME;
-    }
-    /** Frame Placing Stuffs - End **/
-    
+
     /** Ladder Stuffs - Start **/
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
@@ -182,7 +182,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
-        return type == MaterialType.FRAME ? true : false;
+        return type == MaterialType.FRAME;
     }
 
     @Override
@@ -216,6 +216,15 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         for (int i = 0; i < materials.length; i++) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(Ref.MODID + ":" + getId(), "storage_material=" + i));
         }
+    }
+
+    private static boolean isFrame(Block block) {
+        return block instanceof BlockStorage && ((BlockStorage) block).type == MaterialType.FRAME;
+    }
+
+    public static Material getMaterialFromState(IBlockState state) {
+        if (!(state.getBlock() instanceof BlockStorage)) return Materials.NULL;
+        return ((BlockStorage) state.getBlock()).getMaterials()[state.getValue(((BlockStorage) state.getBlock()).getMaterialProp())];
     }
 
     public static ItemStack get(Material material, MaterialType type, int count) {
