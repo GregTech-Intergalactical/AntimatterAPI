@@ -25,7 +25,4 @@ public class GTProperties {
 
     /** Block Rock Properties **/
     public static final UnlistedInteger ROCK_MODEL = new UnlistedInteger();
-
-    /** Block Storage Properties **/
-    public static final PropertyInteger STORAGE_TYPE = PropertyInteger.create("storage_type", 0, 1);
 }

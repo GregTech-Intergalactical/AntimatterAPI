@@ -10,6 +10,7 @@ public class GTItemBlock extends ItemBlock {
     public GTItemBlock(Block block) {
         super(block);
         setRegistryName(block.getRegistryName());
+        setHasSubtypes(true);
     }
 
     @Override

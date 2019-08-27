@@ -1,5 +1,6 @@
 package muramasa.gtu.api.blocks;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
@@ -9,71 +10,104 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.properties.GTProperties.STORAGE_TYPE;
-
 public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
-    private Material material;
+    private static Int2ObjectOpenHashMap<Tuple<Integer, Integer>> INDEX_LOOKUP = new Int2ObjectOpenHashMap<>();
 
-    public BlockStorage(Material material) {
+    private int index;
+    private MaterialType type;
+    private Material[] materials;
+    private PropertyInteger STORAGE_MATERIAL;
+
+    public BlockStorage(int index, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
-        this.material = material;
-        setUnlocalizedName("storage_" + getId());
-        setRegistryName("storage_" + getId());
+        this.index = index;
+        this.type = type;
+        this.materials = materials;
+        for (int i = 0; i < materials.length; i++) {
+            INDEX_LOOKUP.put(materials[i].getHash(), new Tuple<>(index, i));
+        }
+        STORAGE_MATERIAL = PropertyInteger.create("storage_material", 0, materials.length - 1);
+
+        //Hack to dynamically create a BlockState with a correctly sized material property based on the passed materials array
+        BlockStateContainer blockStateContainer = createBlockState();
+        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
+        setDefaultState(blockStateContainer.getBaseState());
+
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
         setCreativeTab(Ref.TAB_BLOCKS);
-        setDefaultState(getDefaultState().withProperty(STORAGE_TYPE, 0));
         GregTechAPI.register(BlockStorage.class, this);
     }
 
     @Override
     public String getId() {
-        return material.getId();
+        return "storage_" + type.getId() + "_" + index;
     }
 
-    public Material getMaterial() {
-        return material;
+    public MaterialType getType() {
+        return type;
+    }
+
+    public Material[] getMaterials() {
+        return materials;
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(STORAGE_TYPE).build();
-    }
-
-    @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        return getDefaultState().withProperty(STORAGE_TYPE, Ref.RNG.nextInt(2));
+        return STORAGE_MATERIAL != null ? new BlockStateContainer.Builder(this).add(STORAGE_MATERIAL).build() : new BlockStateContainer(this);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(STORAGE_TYPE);
+        return state.getValue(STORAGE_MATERIAL);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(STORAGE_TYPE, meta);
+        return getDefaultState().withProperty(STORAGE_MATERIAL, meta);
     }
 
-    public IBlockState get(MaterialType type) {
-        return getDefaultState().withProperty(STORAGE_TYPE, type == MaterialType.BLOCK ? 0 : 1);
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return getDefaultState().withProperty(STORAGE_MATERIAL, placer.getHeldItem(hand).getMetadata());
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL));
+    }
+
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        for (int i = 0; i < materials.length; i++) {
+            items.add(new ItemStack(this, 1, i));
+        }
+    }
+
+    public IBlockState get(int i) {
+        return getDefaultState().withProperty(STORAGE_MATERIAL, i);
     }
 
     //TODO
@@ -90,38 +124,45 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public String getDisplayName(ItemStack stack) {
-        return MaterialType.BLOCK.getDisplayName(material);
+        return type.getDisplayName(materials[Math.min(stack.getMetadata(), materials.length - 1)]);
     }
 
     @Override
     public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
-        return state.getValue(STORAGE_TYPE) == 1;
+        return false; //TODO?
     }
 
     @Override
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
+        return type == MaterialType.BLOCK ? BlockRenderLayer.SOLID : BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
-        return false;
+        return type == MaterialType.BLOCK;
     }
 
     @Override
-    public int getBlockColor(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int i) {
-        return i == 0 ? getMaterial().getRGB() : -1;
+    public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        return i == 0 ? materials[state.getValue(STORAGE_MATERIAL)].getRGB() : -1;
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? ((BlockStorage) block).getMaterial().getRGB() : -1;
+        return i == 0 ? materials[stack.getMetadata()].getRGB() : -1;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":storage_" + getId(), "storage_type=0"));
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, new ModelResourceLocation(Ref.MODID + ":storage_" + getId(), "storage_type=1"));
+        for (int i = 0; i < materials.length; i++) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(Ref.MODID + ":" + getId(), "storage_material=" + i));
+        }
+    }
+
+    public static ItemStack get(Material material, MaterialType type, int count) {
+        Block block = GregTechAPI.get(BlockStorage.class, "storage_" + type.getId() + "_" + INDEX_LOOKUP.get(material.getHash()).getFirst());
+        if (block == null) return ItemStack.EMPTY;
+        return new ItemStack(block, count, INDEX_LOOKUP.get(material.getHash()).getSecond());
     }
 }

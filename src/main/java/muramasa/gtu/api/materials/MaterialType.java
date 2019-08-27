@@ -7,7 +7,7 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class MaterialType implements IMaterialTag, IGregTechObject {
@@ -56,7 +56,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     private String id, namePre, namePost;
     private int unitValue;
     private boolean doesGenerate, visible, hasLocName;
-    private Set<Material> materials = new HashSet<>();
+    private Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
 
     public MaterialType(String id, boolean visible, int unitValue) {
         this.id = id;

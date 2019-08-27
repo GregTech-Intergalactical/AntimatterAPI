@@ -171,13 +171,14 @@ public class ClientProxy implements IProxy {
             baked = TYPE_SET_MAP.get(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId()));
             e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId(), "inventory"), baked);
         }
+
+        //Inject models for blocks and frames
         for (BlockStorage b : GregTechAPI.all(BlockStorage.class)) {
-            ModelResourceLocation block = new ModelResourceLocation(Ref.MODID + ":storage_" + b.getMaterial().getId(), "storage_type=0");
-            ModelResourceLocation frame = new ModelResourceLocation(Ref.MODID + ":storage_" + b.getMaterial().getId(), "storage_type=1");
-            baked = TYPE_SET_MAP.get(MaterialType.BLOCK.getId() + "_" + b.getMaterial().getSet().getId());
-            e.getModelRegistry().putObject(block, baked);
-            baked = TYPE_SET_MAP.get(MaterialType.FRAME.getId() + "_" + b.getMaterial().getSet().getId());
-            e.getModelRegistry().putObject(frame, baked);
+            for (int i = 0; i < b.getMaterials().length; i++) {
+                ModelResourceLocation block = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), "storage_material=" + i);
+                baked = TYPE_SET_MAP.get(b.getType().getId() + "_" + b.getMaterials()[i].getSet().getId());
+                e.getModelRegistry().putObject(block, baked);
+            }
         }
     }
 }
