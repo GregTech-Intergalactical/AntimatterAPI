@@ -10,17 +10,21 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -34,6 +38,8 @@ import javax.annotation.Nullable;
 public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     private static Int2ObjectOpenHashMap<Tuple<Integer, Integer>> INDEX_LOOKUP = new Int2ObjectOpenHashMap<>();
+
+    private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
     private int index;
     private MaterialType type;
@@ -54,7 +60,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         BlockStateContainer blockStateContainer = createBlockState();
         ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
         setDefaultState(blockStateContainer.getBaseState());
-
+        setResistance(8.0f);
         setUnlocalizedName(getId());
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_BLOCKS);
@@ -98,6 +104,53 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         return new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL));
     }
+    
+    /** Frame Placing Stuffs - Start **/
+    private boolean isFrame(Block block) {
+        return block instanceof BlockStorage && ((BlockStorage) block).type == MaterialType.FRAME;
+    }
+    /** Frame Placing Stuffs - End **/
+    
+    /** Ladder Stuffs - Start **/
+    @Override
+    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        if (!(entityIn instanceof EntityLivingBase)) return;
+        if (type == MaterialType.BLOCK) return;
+        EntityLivingBase entity = (EntityLivingBase) entityIn;
+        entity.motionX = MathHelper.clamp(entity.motionX, -0.15, 0.15);
+        entity.motionZ = MathHelper.clamp(entity.motionZ, -0.15, 0.15);
+        entity.fallDistance = 0.0F;
+        if (entity.isSneaking() && entity instanceof EntityPlayer) {
+            if (entity.isInWater()) {
+                entity.motionY = 0.02D;
+            } else {
+                entity.motionY = 0.08D;
+            }
+        } else if (entity.collidedHorizontally) {
+            entity.motionY = 0.2D;
+        } else {
+            entity.motionY = Math.max(entity.motionY, -0.07D);
+        }
+    }
+    
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+        if (type == MaterialType.FRAME) return FRAME_COLLISION;
+        else return super.getCollisionBoundingBox(state, world, pos);
+    }
+    /** Ladder Stuffs - End **/
+    
+    @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state) {
+        if (type == MaterialType.FRAME) return EnumPushReaction.DESTROY;
+        else return EnumPushReaction.NORMAL;
+    }
+    
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        drops.clear();
+        drops.add(new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(STORAGE_MATERIAL)));
+    }
 
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
@@ -129,7 +182,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
-        return false; //TODO?
+        return type == MaterialType.FRAME ? true : false;
     }
 
     @Override
@@ -139,6 +192,11 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
+        return type == MaterialType.BLOCK;
+    }
+
+    @Override
+    public boolean isFullBlock(IBlockState state) {
         return type == MaterialType.BLOCK;
     }
 
