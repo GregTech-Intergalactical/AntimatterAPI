@@ -53,6 +53,7 @@ public class GregTechWorldGenerator implements IWorldGenerator {
     }
 
     public static void register(WorldGenBase worldGen) {
+        //TODO use a prefix to determine type and allow filtering world gen objects
         if (worldGen instanceof WorldGenOreVein) REGISTRY.get("vein").put(worldGen.getId(), worldGen);
         else if (worldGen instanceof WorldGenOreSmall) REGISTRY.get("small").put(worldGen.getId(), worldGen);
         else if (worldGen instanceof WorldGenStone) REGISTRY.get("stone").put(worldGen.getId(), worldGen);
@@ -117,9 +118,11 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             }));
             REGISTRY.get("small").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
                 SMALL.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
+                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
             }));
             REGISTRY.get("stone").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
                 STONE.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
+                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
             }));
             REGISTRY.get("base").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
                 BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
