@@ -6,7 +6,6 @@ import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
@@ -49,10 +48,5 @@ public class BakedMachineBasic extends BakedMachine {
 //        if (coverQuads != null) quads.addAll(coverQuads);
 
         return quads;
-    }
-
-    @Override
-    public ItemOverrideList getOverrides() {
-        return itemOverride;
     }
 }
