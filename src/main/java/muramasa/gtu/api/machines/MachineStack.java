@@ -1,11 +1,8 @@
 package muramasa.gtu.api.machines;
 
-import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.machines.types.Machine;
-import muramasa.gtu.Ref;
-import net.minecraft.item.Item;
+import muramasa.gtu.api.registration.IGregTechObject;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class MachineStack implements IGregTechObject {
 
@@ -32,9 +29,6 @@ public class MachineStack implements IGregTechObject {
 
     @Override
     public ItemStack asItemStack() {
-        ItemStack stack = new ItemStack(type.getBlock());
-        stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound().setString(Ref.KEY_MACHINE_STACK_TIER, tier.getId());
-        return stack;
+        return new ItemStack(type.getBlock(), 1, tier.getInternalId());
     }
 }

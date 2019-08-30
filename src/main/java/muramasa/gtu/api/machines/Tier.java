@@ -1,17 +1,18 @@
 package muramasa.gtu.api.machines;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
 import net.minecraft.util.text.TextFormatting;
 
-import java.util.ArrayList;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 
 public class Tier implements IGregTechObject {
 
-    private static HashMap<String, Tier> tierLookup = new HashMap<>();
-    private static ArrayList<Tier> tierLookupArray = new ArrayList<>();
+    private static HashMap<String, Tier> TIER_NAME_LOOKUP = new HashMap<>();
+    private static Int2ObjectOpenHashMap<Tier> TIER_ID_LOOKUP = new Int2ObjectOpenHashMap<>();
 
     private static int lastInternalId = 0;
 
@@ -44,11 +45,11 @@ public class Tier implements IGregTechObject {
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture("blocks/machine/base/" + id);
-        if (tierLookup.size() >= 16) { //TODO 1.13: remove this limit
+        if (TIER_NAME_LOOKUP.size() >= 16) { //TODO 1.13: remove this limit
             throw new IllegalStateException("Cannot have more than 16 Machine Tiers");
         }
-        tierLookup.put(id, this);
-        tierLookupArray.add(internalId, this);
+        TIER_NAME_LOOKUP.put(id, this);
+        TIER_ID_LOOKUP.put(internalId, this);
     }
 
     public int getInternalId() {
@@ -73,7 +74,7 @@ public class Tier implements IGregTechObject {
     }
 
     public static int getCount() {
-        return tierLookup.size();
+        return TIER_NAME_LOOKUP.size();
     }
 
     public static Tier[] getSteam() {
@@ -88,12 +89,14 @@ public class Tier implements IGregTechObject {
         return new Tier[]{ULV, LV, MV, HV, EV, IV, LUV, ZPM, UV, MAX};
     }
 
+    @Nullable
     public static Tier get(String name) {
-        return tierLookup.get(name);
+        return TIER_NAME_LOOKUP.get(name);
     }
 
+    @Nullable
     public static Tier get(int id) {
-        return tierLookupArray.get(id);
+        return TIER_ID_LOOKUP.get(id);
     }
 
     public static Tier[] getBasic() {
@@ -105,7 +108,7 @@ public class Tier implements IGregTechObject {
     }
 
     public static Collection<Tier> getAll() {
-        return tierLookup.values();
+        return TIER_NAME_LOOKUP.values();
     }
 
     public static Texture[] getTextures(Tier... tiers) {
@@ -117,6 +120,6 @@ public class Tier implements IGregTechObject {
     }
 
     public static Texture[] getAllTextures() {
-        return getTextures(tierLookup.values().toArray(new Tier[0]));
+        return getTextures(TIER_NAME_LOOKUP.values().toArray(new Tier[0]));
     }
 }

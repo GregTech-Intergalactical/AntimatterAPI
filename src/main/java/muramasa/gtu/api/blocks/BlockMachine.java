@@ -100,7 +100,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
         Machine type = getType();
         if (type == Machines.INVALID) return;
         for (Tier tier : type.getTiers()) {
-            items.add(Machines.get(type, tier).asItemStack());
+            items.add(new MachineStack(type, tier).asItemStack());
         }
     }
 
@@ -139,22 +139,16 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        ItemStack stack = placer.getHeldItem(hand);
-        if (!stack.isEmpty() && stack.hasTagCompound()) {
-            int tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER)).getInternalId();
-            return getDefaultState().withProperty(TIER, tier);
-        }
-        return getDefaultState();
+        if (Tier.get(placer.getHeldItem(hand).getMetadata()) == null) return getDefaultState();
+        return getDefaultState().withProperty(TIER, placer.getHeldItem(hand).getMetadata());
     }
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.hasTagCompound()) {
-            TileEntity tile = Utils.getTile(world, pos);
-            if (tile instanceof TileEntityMachine) {
-                EnumFacing facing = EnumFacing.getFacingFromVector((float)placer.getLookVec().x, (float)placer.getLookVec().y, (float)placer.getLookVec().z).getOpposite();
-                ((TileEntityMachine) tile).setFacing(facing);
-            }
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMachine) {
+            EnumFacing facing = EnumFacing.getFacingFromVector((float)placer.getLookVec().x, (float)placer.getLookVec().y, (float)placer.getLookVec().z).getOpposite();
+            ((TileEntityMachine) tile).setFacing(facing);
         }
     }
 
@@ -178,9 +172,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityMachine) {
-            drops.add(new MachineStack(((TileEntityMachine) tile).getType(), ((TileEntityMachine) tile).getTier()).asItemStack());
-        }
+        if (tile instanceof TileEntityMachine) drops.add(new MachineStack(((TileEntityMachine) tile).getType(), ((TileEntityMachine) tile).getTier()).asItemStack());
     }
 
     @Override
@@ -215,22 +207,20 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
 
     @Override
     public String getDisplayName(ItemStack stack) {
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
-            Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-            return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".name");
-        }
-        return getUnlocalizedName();
+        Tier tier = Tier.get(stack.getMetadata());
+        if (tier == null) return getUnlocalizedName();
+        return tier.getRarityColor() + Utils.trans("machine." + getType().getId() + "." + tier.getId() + ".name");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_MACHINE_STACK_TIER)) {
-            if (getType().hasFlag(BASIC)) {
-                Tier tier = Tier.get(stack.getTagCompound().getString(Ref.KEY_MACHINE_STACK_TIER));
-                tooltip.add("Voltage IN: " + TextFormatting.GREEN + tier.getVoltage() + " (" + tier.getId().toUpperCase() + ")");
-                tooltip.add("Capacity: " + TextFormatting.BLUE + (tier.getVoltage() * 64));
-            }
+        //TODO localize
+        if (getType().hasFlag(BASIC)) {
+            Tier tier = Tier.get(stack.getMetadata());
+            if (tier == null) return;
+            tooltip.add("Voltage IN: " + TextFormatting.GREEN + tier.getVoltage() + " (" + tier.getId().toUpperCase() + ")");
+            tooltip.add("Capacity: " + TextFormatting.BLUE + (tier.getVoltage() * 64));
         }
     }
 
@@ -243,7 +233,10 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_machine", "inventory"));
+        for (Tier tier : getType().getTiers()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), tier.getInternalId(), new ModelResourceLocation(Ref.MODID + ":" + getType().getId(), "tier=" + tier.getId()));
+        }
+        //Redirect block model to custom baked model handling
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine")));
     }
 }

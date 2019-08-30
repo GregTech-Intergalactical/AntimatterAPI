@@ -9,6 +9,8 @@ import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
 import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.items.MaterialItem;
+import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.ore.StoneType;
@@ -22,6 +24,7 @@ import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
+import muramasa.gtu.client.render.bakedmodels.BakedMachine;
 import muramasa.gtu.client.render.bakedmodels.BakedPipe;
 import muramasa.gtu.client.render.bakedmodels.BakedTextureDataItem;
 import muramasa.gtu.client.render.models.*;
@@ -188,7 +191,16 @@ public class ClientProxy implements IProxy {
             }
         }
 
+        //Inject models for machines
+        for (Machine machine : GregTechAPI.all(Machine.class)) {
+            for (Tier tier : machine.getTiers()) {
+                ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + machine.getId(), "tier=" + tier.getId());
+                e.getModelRegistry().putObject(loc, BakedMachine.ITEMS.get(machine.getId() + "_" + tier.getId()));
+            }
+        }
+
         //Inject models for pipes and cables
+        //TODO keep copy of PipeModels and remove BakedTextureDataItem
         for (BlockFluidPipe p : GregTechAPI.all(BlockFluidPipe.class)) {
             for (int i = 0; i < p.getSizes().length; i++) {
                 ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName());
@@ -204,13 +216,6 @@ public class ClientProxy implements IProxy {
 
                 pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=true");
                 e.getModelRegistry().putObject(pipe, baked);
-//                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=false");
-//                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay()[p.getSizes()[i].ordinal()]));
-//                e.getModelRegistry().putObject(pipe, baked);
-//
-//                pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=true");
-//                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay()[p.getSizes()[i].ordinal()]));
-//                e.getModelRegistry().putObject(pipe, baked);
             }
         }
         for (BlockCable p : GregTechAPI.all(BlockCable.class)) {

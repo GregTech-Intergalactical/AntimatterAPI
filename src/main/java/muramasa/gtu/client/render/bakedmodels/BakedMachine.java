@@ -6,11 +6,9 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
-import muramasa.gtu.client.render.overrides.ItemOverrideMachine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
@@ -25,8 +23,8 @@ public class BakedMachine extends BakedBase {
     public static IBakedModel BASE;
     public static IBakedModel[][] OVERLAYS;
     public static IBakedModel[] OVERLAY_EMPTY;
+    public static Object2ObjectOpenHashMap<String, IBakedModel> ITEMS;
     public static Object2ObjectOpenHashMap<String, IBakedModel> COVERS;
-    public static ItemOverrideMachine itemOverride = new ItemOverrideMachine();
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
@@ -65,10 +63,5 @@ public class BakedMachine extends BakedBase {
 
     public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
         return ModelUtils.trans(COVERS.get(cover.getId()).getQuads(state, null, -1), s);
-    }
-
-    @Override
-    public ItemOverrideList getOverrides() {
-        return itemOverride;
     }
 }

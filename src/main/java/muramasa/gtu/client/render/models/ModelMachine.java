@@ -14,7 +14,6 @@ import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedBase;
 import muramasa.gtu.client.render.bakedmodels.BakedMachine;
 import muramasa.gtu.client.render.bakedmodels.BakedMachineBasic;
-import muramasa.gtu.client.render.bakedmodels.BakedMachineItem;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -64,11 +63,13 @@ public class ModelMachine implements IModel {
             }
         }
 
-        BakedMachineItem.OVERLAYS = new IBakedModel[Machine.getLastInternalId()];
+        BakedMachine.ITEMS = new Object2ObjectOpenHashMap<>();
         for (Machine type : machines) {
-            BakedMachineItem.OVERLAYS[type.getInternalId()] = new BakedBase(
-                ModelUtils.tex(BASE, new String[] {"1", "2", "3", "4", "5", "6"}, type.getOverlayTextures(MachineState.ACTIVE)).bake(state, format, getter)
-            );
+            for (Tier tier : type.getTiers()) {
+                IModel model = ModelUtils.tex(BASE, "0", type.getBaseTexture(tier));
+                model = ModelUtils.tex(model, new String[] {"1", "2", "3", "4", "5", "6"}, type.getOverlayTextures(MachineState.ACTIVE));
+                BakedMachine.ITEMS.put(type.getId() + "_" + tier.getId(), new BakedBase(model.bake(state, format, getter)));
+            }
         }
 
         BakedMachine.COVERS = new Object2ObjectOpenHashMap<>();
