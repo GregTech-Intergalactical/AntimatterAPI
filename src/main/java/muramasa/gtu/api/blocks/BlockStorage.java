@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
@@ -11,8 +12,10 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -20,11 +23,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -40,14 +45,13 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     private static Int2ObjectOpenHashMap<Tuple<Integer, Integer>> INDEX_LOOKUP = new Int2ObjectOpenHashMap<>();
 
-    private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
+    private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
     private int index;
     private MaterialType type;
     private Material[] materials;
     private PropertyInteger STORAGE_MATERIAL;
-
-    //TODO make sure this is save persistent if materials have the BLOCK type added or removed
+    
     public BlockStorage(int index, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
         this.index = index;
@@ -63,6 +67,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
         setDefaultState(blockStateContainer.getBaseState());
 
+        setSoundType(type == MaterialType.FRAME ? SoundType.LADDER : SoundType.METAL);
         setResistance(8.0f);
         setUnlocalizedName(getId());
         setRegistryName(getId());
@@ -111,10 +116,44 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         return new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL));
     }
+    
+    /** Frame Placing Stuffs - Start **/
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (facing == EnumFacing.UP) return false;
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.isEmpty()) return false;
+        Item item = stack.getItem();
+        if (!(item instanceof GTItemBlock)) return false;
+        GTItemBlock itemBlock = ((GTItemBlock) item);
+        if (isFrame(itemBlock.getBlock())) {
+            BlockPos playerPos = player.getPosition();
+            if (playerPos.equals(pos)) return false;
+            MutableBlockPos mutablePos = new MutableBlockPos(pos);
+            for (int i = pos.getY(); i < 256; i++) {
+                mutablePos.move(EnumFacing.UP);
+                if (playerPos.equals(mutablePos) || player.isOnLadder()) return false;
+                else if (world.mayPlace(this, mutablePos, false, EnumFacing.DOWN, player) && canPlaceBlockAt(world, mutablePos)) {
+                    //TODO: Fix setBlockState
+                    //world.setBlockState(mutablePos, getDefaultState().withProperty(STORAGE_MATERIAL, stack.getMetadata()));
+                    SoundType soundType = getSoundType();
+                    world.playSound(player, mutablePos, soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
+                    return true;
+                }
+                else continue;
+            }
+        }
+        return false;
+    }
+    
+    private static boolean isFrame(Block block) {
+        return block instanceof BlockStorage && ((BlockStorage) block).type == MaterialType.FRAME;
+    }
+    /** Frame Placing Stuffs - End **/
 
     /** Ladder Stuffs - Start **/
     @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entityIn) {
         if (!(entityIn instanceof EntityLivingBase)) return;
         if (type == MaterialType.BLOCK) return;
         EntityLivingBase entity = (EntityLivingBase) entityIn;
@@ -122,16 +161,10 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         entity.motionZ = MathHelper.clamp(entity.motionZ, -0.15, 0.15);
         entity.fallDistance = 0.0F;
         if (entity.isSneaking() && entity instanceof EntityPlayer) {
-            if (entity.isInWater()) {
-                entity.motionY = 0.02D;
-            } else {
-                entity.motionY = 0.08D;
-            }
-        } else if (entity.collidedHorizontally) {
-            entity.motionY = 0.2D;
-        } else {
-            entity.motionY = Math.max(entity.motionY, -0.07D);
-        }
+            if (entity.isInWater()) entity.motionY = 0.02D;
+            else entity.motionY = 0.08D;
+        } else if (entity.collidedHorizontally)entity.motionY = 0.22D + (double)(getMaterialFromState(state).getToolSpeed() / 75);
+        else entity.motionY = Math.max(entity.motionY, -0.2D);
     }
     
     @Override
@@ -142,15 +175,9 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     /** Ladder Stuffs - End **/
     
     @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state) {
-        if (type == MaterialType.FRAME) return EnumPushReaction.DESTROY;
-        else return EnumPushReaction.NORMAL;
-    }
-    
-    @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         drops.clear();
-        drops.add(new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(STORAGE_MATERIAL)));
+        drops.add(new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL)));
     }
 
     @Override
@@ -187,6 +214,11 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     }
 
     @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state) {
+        return type == MaterialType.FRAME ? EnumPushReaction.DESTROY : EnumPushReaction.NORMAL;
+    }
+
+    @Override
     public BlockRenderLayer getBlockLayer() {
         return type == MaterialType.BLOCK ? BlockRenderLayer.SOLID : BlockRenderLayer.CUTOUT_MIPPED;
     }
@@ -217,10 +249,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         for (int i = 0; i < materials.length; i++) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(Ref.MODID + ":" + getId(), "storage_material=" + i));
         }
-    }
-
-    private static boolean isFrame(Block block) {
-        return block instanceof BlockStorage && ((BlockStorage) block).type == MaterialType.FRAME;
     }
 
     public static Material getMaterialFromState(IBlockState state) {

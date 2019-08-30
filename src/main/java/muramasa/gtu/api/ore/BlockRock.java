@@ -3,6 +3,8 @@ package muramasa.gtu.api.ore;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
+import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
@@ -32,6 +34,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -148,6 +151,18 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
                 world.destroyBlock(pos, true);
             }
         }
+    }
+    
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityMaterial) {
+            TileEntityMaterial ore = (TileEntityMaterial) tile;
+            Material material = ore.getMaterial();
+            if (material == Materials.NULL) return Materials.Stone.getDustTiny(1);
+            else return material.getRock(1);
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
