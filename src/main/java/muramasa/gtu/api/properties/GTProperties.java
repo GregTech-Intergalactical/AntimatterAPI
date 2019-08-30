@@ -2,7 +2,7 @@ package muramasa.gtu.api.properties;
 
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.ore.OreType;
-import muramasa.gtu.api.pipe.PipeSize;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 
@@ -16,7 +16,8 @@ public class GTProperties {
     public static final UnlistedCovers COVER = new UnlistedCovers();
 
     /** Block Pipe Properties **/
-    public static final PropertyInteger PIPE_SIZE = PropertyInteger.create("size", 0, PipeSize.VALUES.length);
+    public static PropertyBool PIPE_INSULATED = PropertyBool.create("insulated");
+    public static PropertyBool PIPE_RESTRICTIVE = PropertyBool.create("restrictive");
     public static final UnlistedByte PIPE_CONNECTIONS = new UnlistedByte();
 
     /** Block Ore Properties **/

@@ -1,42 +1,58 @@
 package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.pipe.ItemPipeStack;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
-import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.client.render.StateMapperRedirect;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-//TODO 1.13+: Flatten and avoid CableStacks
-public class BlockItemPipe extends BlockPipe<BlockItemPipe> {
+import static muramasa.gtu.api.properties.GTProperties.*;
+
+public class BlockItemPipe extends BlockPipe {
 
     protected int[] slots, steps;
 
-    public BlockItemPipe(Material material, int baseSlots) {
-        super("item_pipe", material, Textures.PIPE_DATA[0]);
+    public BlockItemPipe(Material material, int baseSlots, PipeSize... sizes) {
+        super("item_pipe", material, Textures.PIPE_DATA[0], sizes.length > 0 ? sizes : new PipeSize[]{PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE});
         slots = new int[] {
             baseSlots, baseSlots, baseSlots, baseSlots, baseSlots * 2, baseSlots * 4
         };
         steps = new int[] {
             32768 / baseSlots, 32768 / baseSlots, 32768 / baseSlots, 32768 / baseSlots, 16384 / baseSlots, 8192 / baseSlots
         };
-        setSizes(PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
+
+        //Hack to dynamically create a BlockState with a with RESTRICTIVE property added
+        BlockStateContainer blockStateContainer = createBlockState();
+        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
+        setDefaultState(blockStateContainer.getBaseState());
+
+        GregTechAPI.register(BlockItemPipe.class, this);
     }
 
     public int getSlotCount(PipeSize size) {
@@ -48,12 +64,37 @@ public class BlockItemPipe extends BlockPipe<BlockItemPipe> {
     }
 
     @Override
+    protected BlockStateContainer createBlockState() {
+        return PIPE_SIZE != null ? new BlockStateContainer.Builder(this).add(PIPE_SIZE, PIPE_RESTRICTIVE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build() : new BlockStateContainer(this);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        boolean res = meta > 7;
+        int size = res ? meta - 8 : meta;
+        return getDefaultState().withProperty(PIPE_SIZE, PipeSize.VALUES[size]).withProperty(PIPE_RESTRICTIVE, res);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        int meta = state.getValue(PIPE_SIZE).ordinal();
+        return state.getValue(PIPE_RESTRICTIVE) ? meta + 8 : meta;
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        int stackMeta = placer.getHeldItem(hand).getMetadata();
+        int size = stackMeta > 7 ? stackMeta - 8 : stackMeta;
+        return getDefaultState().withProperty(PIPE_SIZE, PipeSize.VALUES[size]).withProperty(PIPE_RESTRICTIVE, stackMeta > 7);
+    }
+
+    @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (PipeSize size : getSizes()) {
-            items.add(new ItemPipeStack(this, size, false).asItemStack());
+        for (int i = 0; i < sizes.length; i++) {
+            items.add(new ItemStack(this, 1, sizes[i].ordinal()));
         }
-        for (PipeSize size : getSizes()) {
-            items.add(new ItemPipeStack(this, size, true).asItemStack());
+        for (int i = 0; i < sizes.length; i++) {
+            items.add(new ItemStack(this, 1, sizes[i].ordinal() + 8));
         }
     }
 
@@ -64,34 +105,29 @@ public class BlockItemPipe extends BlockPipe<BlockItemPipe> {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (stack.hasTagCompound()) {
-            TileEntity tile = Utils.getTile(world, pos);
-            if (tile instanceof TileEntityItemPipe) {
-                boolean restrictive = stack.getTagCompound().getBoolean(Ref.KEY_ITEM_PIPE_STACK_RESTRICTIVE);
-                ((TileEntityItemPipe) tile).init(restrictive);
-            }
-        }
-    }
-
-    @Override
     public String getDisplayName(ItemStack stack) {
-        if (stack.hasTagCompound()) {
-            PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-            boolean restrictive = stack.getTagCompound().getBoolean(Ref.KEY_ITEM_PIPE_STACK_RESTRICTIVE);
-            String name = (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + (restrictive ? "Restrictive " : "") + material.getDisplayName() + " Item Pipe";
-            return name;
-        }
-        return stack.getUnlocalizedName();
+        boolean res = stack.getMetadata() > 7;
+        PipeSize size = PipeSize.VALUES[res ? stack.getMetadata() - 8 : stack.getMetadata()];
+        return (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + (res ? "Restrictive " : "") + material.getDisplayName() + " Item Pipe";
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        if (stack.hasTagCompound()) {
-            PipeSize size = PipeSize.VALUES[stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE)];
-            tooltip.add("Item Capacity: " + TextFormatting.BLUE + getSlotCount(size) + " Stacks/s");
-            tooltip.add("Routing Value: " + TextFormatting.YELLOW + getStepSize(size, stack.getTagCompound().getBoolean(Ref.KEY_ITEM_PIPE_STACK_RESTRICTIVE)));
+        boolean res = stack.getMetadata() > 7;
+        PipeSize size = PipeSize.VALUES[res ? stack.getMetadata() - 8 : stack.getMetadata()];
+        tooltip.add("Item Capacity: " + TextFormatting.BLUE + getSlotCount(size) + " Stacks/s");
+        tooltip.add("Routing Value: " + TextFormatting.YELLOW + getStepSize(size, res));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelRegistration() {
+        for (int i = 0; i < sizes.length; i++) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), sizes[i].ordinal(), new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + sizes[i].getName() + ",restrictive=false"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), sizes[i].ordinal() + 8, new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + sizes[i].getName() + ",restrictive=true"));
         }
+        //Redirect block model to custom baked model handling
+        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
     }
 }

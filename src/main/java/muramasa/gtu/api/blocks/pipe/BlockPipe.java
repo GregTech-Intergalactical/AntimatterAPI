@@ -5,7 +5,6 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
-import muramasa.gtu.api.pipe.PipeStack;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
@@ -15,9 +14,11 @@ import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -25,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -33,6 +35,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,27 +43,35 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+public abstract class BlockPipe extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
-    protected String id;
+    protected String type, id;
     protected Material material;
     protected PipeSize[] sizes;
+    protected PropertyEnum<PipeSize> PIPE_SIZE;
 
-    public BlockPipe(String type, Material material, TextureData data) {
+    public BlockPipe(String type, Material material, TextureData data, PipeSize... sizes) {
         super(data);
+        this.type = type;
         this.id = material.getId();
         this.material = material;
-        sizes = PipeSize.VALUES;
-        setUnlocalizedName(type.concat("_").concat(getId()));
-        setRegistryName(type.concat("_").concat(getId()));
+        this.sizes = sizes.length > 0 ? sizes : PipeSize.VALUES;
+        PIPE_SIZE = PropertyEnum.create("size", PipeSize.class, this.sizes);
+
+        //Hack to dynamically create a BlockState with a correctly sized size property based on the passed sizes array
+        BlockStateContainer blockStateContainer = createBlockState();
+        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
+        setDefaultState(blockStateContainer.getBaseState());
+
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
         setCreativeTab(Ref.TAB_MACHINES);
-        setDefaultState(getDefaultState().withProperty(PIPE_SIZE, 0));
-        GregTechAPI.register(this);
+        GregTechAPI.register(BlockPipe.class, this);
     }
 
     @Override
     public String getId() {
-        return id;
+        return type + "_" + id;
     }
 
     public int getRGB() {
@@ -71,14 +82,13 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
         return sizes;
     }
 
-    public T setSizes(PipeSize... sizes) {
-        this.sizes = sizes;
-        return (T)this;
+    public PropertyEnum<PipeSize> getSizeProp() {
+        return PIPE_SIZE;
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build();
+        return PIPE_SIZE != null ? new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build() : new BlockStateContainer(this);
     }
 
     @Override
@@ -98,12 +108,19 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(PIPE_SIZE, meta);
+        return getDefaultState().withProperty(PIPE_SIZE, PipeSize.VALUES[meta]);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(PIPE_SIZE);
+        return state.getValue(PIPE_SIZE).ordinal();
+    }
+
+    @Override
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+        for (int i = 0; i < sizes.length; i++) {
+            items.add(new ItemStack(this, 1, sizes[i].ordinal()));
+        }
     }
 
     @Override
@@ -147,21 +164,14 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-        ItemStack stack = placer.getHeldItem(hand);
-        if (!stack.isEmpty() && stack.hasTagCompound()) {
-            return getDefaultState().withProperty(PIPE_SIZE, stack.getTagCompound().getInteger(Ref.KEY_PIPE_STACK_SIZE));
-        }
-        return getDefaultState();
+        int stackMeta = placer.getHeldItem(hand).getMetadata();
+        int size = stackMeta > 7 ? stackMeta - 8 : stackMeta;
+        return getDefaultState().withProperty(PIPE_SIZE, PipeSize.VALUES[size]);
     }
 
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityPipe) {
-            TileEntityPipe pipe = (TileEntityPipe) tile;
-            return new PipeStack(pipe.getType(), pipe.getSize()).asItemStack();
-        }
-        return ItemStack.EMPTY;
+        return new ItemStack(this, 1, state.getValue(PIPE_SIZE).ordinal());
     }
 
     @Override
@@ -203,7 +213,10 @@ public abstract class BlockPipe<T> extends BlockBaked implements IGregTechObject
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_pipe", "inventory"));
+        for (int i = 0; i < sizes.length; i++) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), sizes[i].ordinal(), new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + sizes[i].getName()));
+        }
+        //Redirect block model to custom baked model handling
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
     }
 }

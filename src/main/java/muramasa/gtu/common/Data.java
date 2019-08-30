@@ -322,7 +322,7 @@ public class Data {
     public static BlockCable CABLE_DURANIUM = new BlockCable(Materials.Duranium, HC ? 8 : 64, HC ? 16 : 128, 1, Tier.ZPM);
     public static BlockCable CABLE_SUPERCONDUCTOR = new BlockCable(Materials.Superconductor, 1, 1, 4, Tier.MAX); //MAX
 
-    public static BlockFluidPipe FLUID_PIPE_WOOD = new BlockFluidPipe(Materials.Wood, 30, 350, false).setSizes(PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(10, 10, 30, 60, 60, 60);
+    public static BlockFluidPipe FLUID_PIPE_WOOD = new BlockFluidPipe(Materials.Wood, 30, 350, false, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(10, 10, 30, 60, 60, 60);
     public static BlockFluidPipe FLUID_PIPE_COPPER = new BlockFluidPipe(Materials.Copper, 10, 1000, true);
     public static BlockFluidPipe FLUID_PIPE_BRONZE = new BlockFluidPipe(Materials.Bronze, 20, 2000, true);
     public static BlockFluidPipe FLUID_PIPE_STEEL = new BlockFluidPipe(Materials.Steel, 40, 2500, true);
@@ -331,8 +331,8 @@ public class Data {
     public static BlockFluidPipe FLUID_PIPE_TUNGSTENSTEEL = new BlockFluidPipe(Materials.TungstenSteel, 100, 7500, true);
     public static BlockFluidPipe FLUID_PIPE_PLASTIC = new BlockFluidPipe(Materials.Plastic, 60, 250, true);
     public static BlockFluidPipe FLUID_PIPE_POLYTETRAFLUOROETHYLENE = new BlockFluidPipe(Materials.Polytetrafluoroethylene, 480, 600, true);
-    public static BlockFluidPipe FLUID_PIPE_HIGH_PRESSURE = new BlockFluidPipe(Materials.HighPressure, 7200, 1500, true).setSizes(PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(4800, 4800, 4800, 7200, 9600, 9600);
-    public static BlockFluidPipe FLUID_PIPE_PLASMA = new BlockFluidPipe(Materials.PlasmaContainment, 240, 100000, true).setSizes(PipeSize.NORMAL).setCapacities(240, 240, 240, 240, 240, 240);
+    public static BlockFluidPipe FLUID_PIPE_HIGH_PRESSURE = new BlockFluidPipe(Materials.HighPressure, 7200, 1500, true, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE).setCapacities(4800, 4800, 4800, 7200, 9600, 9600);
+    public static BlockFluidPipe FLUID_PIPE_PLASMA = new BlockFluidPipe(Materials.PlasmaContainment, 240, 100000, true, PipeSize.NORMAL).setCapacities(240, 240, 240, 240, 240, 240);
 
     public static BlockItemPipe ITEM_PIPE_CUPRONICKEL = new BlockItemPipe(Materials.Cupronickel, 1);
     public static BlockItemPipe ITEM_PIPE_COBALT_BRASS = new BlockItemPipe(Materials.CobaltBrass, 1);

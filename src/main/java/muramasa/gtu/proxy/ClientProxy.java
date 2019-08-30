@@ -4,12 +4,17 @@ import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStorage;
-import muramasa.gtu.api.ore.StoneType;
+import muramasa.gtu.api.blocks.pipe.BlockCable;
+import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
+import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.events.BlockHighlightHandler;
 import muramasa.gtu.client.events.RenderGameOverlayHandler;
@@ -17,6 +22,8 @@ import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
+import muramasa.gtu.client.render.bakedmodels.BakedPipe;
+import muramasa.gtu.client.render.bakedmodels.BakedTextureDataItem;
 import muramasa.gtu.client.render.models.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -178,6 +185,43 @@ public class ClientProxy implements IProxy {
                 ModelResourceLocation block = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), "storage_material=" + i);
                 baked = TYPE_SET_MAP.get(b.getType().getId() + "_" + b.getMaterials()[i].getSet().getId());
                 e.getModelRegistry().putObject(block, baked);
+            }
+        }
+
+        //Inject models for pipes and cables
+        for (BlockFluidPipe p : GregTechAPI.all(BlockFluidPipe.class)) {
+            for (int i = 0; i < p.getSizes().length; i++) {
+                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName());
+                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[p.getSizes()[i].ordinal()]));
+                e.getModelRegistry().putObject(pipe, baked);
+            }
+        }
+        for (BlockItemPipe p : GregTechAPI.all(BlockItemPipe.class)) {
+            for (int i = 0; i < p.getSizes().length; i++) {
+                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=false");
+                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[p.getSizes()[i].ordinal()]));
+                e.getModelRegistry().putObject(pipe, baked);
+
+                pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=true");
+                e.getModelRegistry().putObject(pipe, baked);
+//                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=false");
+//                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay()[p.getSizes()[i].ordinal()]));
+//                e.getModelRegistry().putObject(pipe, baked);
+//
+//                pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=true");
+//                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay()[p.getSizes()[i].ordinal()]));
+//                e.getModelRegistry().putObject(pipe, baked);
+            }
+        }
+        for (BlockCable p : GregTechAPI.all(BlockCable.class)) {
+            for (int i = 0; i < p.getSizes().length; i++) {
+                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",insulated=false");
+                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay()[p.getSizes()[i].ordinal()]));
+                e.getModelRegistry().putObject(pipe, baked);
+
+                pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",insulated=true");
+                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay()[p.getSizes()[i].ordinal()]));
+                e.getModelRegistry().putObject(pipe, baked);
             }
         }
     }
