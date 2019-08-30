@@ -47,6 +47,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     private Material[] materials;
     private PropertyInteger STORAGE_MATERIAL;
 
+    //TODO make sure this is save persistent if materials have the BLOCK type added or removed
     public BlockStorage(int index, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
         this.index = index;

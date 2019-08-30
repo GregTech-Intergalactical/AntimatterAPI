@@ -1,6 +1,7 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.machines.Tier;
@@ -8,7 +9,6 @@ import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
-import muramasa.gtu.client.render.overrides.ItemOverridePipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -28,7 +28,6 @@ import static net.minecraft.util.EnumFacing.*;
 
 public class BakedPipe implements IBakedModel {
 
-    protected static ItemOverrideList OVERRIDE = new ItemOverridePipe();
     protected static TextureAtlasSprite PARTICLE = Textures.PIPE.getSprite();
 
     public static Int2ObjectOpenHashMap<List<BakedQuad>> CACHE = new Int2ObjectOpenHashMap<>();
@@ -125,7 +124,7 @@ public class BakedPipe implements IBakedModel {
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IExtendedBlockState exState = (IExtendedBlockState) state;
-        int size = state.getValue(GTProperties.PIPE_SIZE);
+        int size = state.getValue(((BlockPipe) state.getBlock()).getSizeProp()).ordinal();
         int connections = exState.getValue(GTProperties.PIPE_CONNECTIONS);
         TextureData data = exState.getValue(GTProperties.TEXTURE);
         Cover[] covers = exState.getValue(GTProperties.COVER);
@@ -186,6 +185,6 @@ public class BakedPipe implements IBakedModel {
 
     @Override
     public ItemOverrideList getOverrides() {
-        return OVERRIDE;
+        return ItemOverrideList.NONE;
     }
 }

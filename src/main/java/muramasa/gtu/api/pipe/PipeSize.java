@@ -1,11 +1,13 @@
 package muramasa.gtu.api.pipe;
 
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.Locale;
 
-public enum PipeSize {
+//TODO 1.14+ remove the limit of 8 pipe sizes, as Item/Cable need an extra boolean property
+public enum PipeSize implements IStringSerializable {
 
     VTINY(1),
     TINY(2),
@@ -14,7 +16,7 @@ public enum PipeSize {
     LARGE(12),
     HUGE(16);
 
-    public static PipeSize[] VALUES;
+    public static final PipeSize[] VALUES;
 
     static {
         VALUES = values();
@@ -29,6 +31,7 @@ public enum PipeSize {
         AABB = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
     }
 
+    @Override
     public String getName() {
         return name().toLowerCase(Locale.ENGLISH);
     }

@@ -6,7 +6,6 @@ import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.capability.impl.PipeConfigHandler;
 import muramasa.gtu.api.pipe.PipeSize;
-import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.tileentities.TileEntityTickable;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,7 +46,7 @@ public abstract class TileEntityPipe extends TileEntityTickable {
     }
 
     public PipeSize getSize() {
-        return size != null ? size : (size = PipeSize.VALUES[getState().getValue(GTProperties.PIPE_SIZE)]);
+        return size != null ? size : (size = getState().getValue(getType().getSizeProp()));
     }
 
     public byte getConnections() {
