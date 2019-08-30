@@ -477,6 +477,7 @@ public class MaterialRecipeLoader {
         });
         
         ROCK.getMats().forEach(m -> {
+            if (m == Materials.Flint) return;
             ItemStack rock = m.getRock(1);
             if (m.has(DUST)) {
                 ItemStack dustTiny = m.getDustTiny(1);
