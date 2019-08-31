@@ -83,7 +83,7 @@ public class WorldGenLoader {
         new WorldGenOreSmall("bismuth", 80, 120, 8, Bismuth, OVERWORLD, NETHER, MOON, MARS);
         new WorldGenOreSmall("coal", 60, 100, 24, Coal, OVERWORLD);
 
-        //TODO replace
+        //TODO replace and also swap ORE_SMALL tags in Materials
         //new WorldGenOreSmall("hematite", 40, 80, 24, Hematite, OVERWORLD, NETHER, END, MOON, MARS);
         new WorldGenOreSmall("iron", 40, 80, 16, Iron, OVERWORLD, NETHER, END, MOON, MARS);
 
@@ -92,7 +92,7 @@ public class WorldGenLoader {
         new WorldGenOreSmall("sphalerite", 30, 60, 12, Sphalerite, OVERWORLD, NETHER, END, MARS);
         new WorldGenOreSmall("zinc", 40, 70, 4, Zinc, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
 
-        //TODO replace
+        //TODO replace and also swap ORE_SMALL tags in Materials
         //new WorldGenOreSmall("smithsonite", 30, 60, 2, Smithsonite, OVERWORLD, NETHER, END, MARS);
         new WorldGenOreSmall("nickel", 20, 40, 8, Nickel, OVERWORLD, NETHER, END, MOON, MARS, ASTEROIDS);
 

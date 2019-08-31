@@ -203,7 +203,6 @@ public class Material implements IGregTechObject {
 
     public void add(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (t == ORE) add(ORE_SMALL);
             if (t == ORE || t == ORE_SMALL) add(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
