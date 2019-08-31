@@ -1,5 +1,6 @@
 package muramasa.gtu.api.worldgen;
 
+import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStone;
@@ -53,7 +54,7 @@ public class WorldGenAsteroid extends WorldGenBase {
             if (WorldGenOreVein.TOTAL_WEIGHT > 0 && layerCount > 0) {
                 int randomWeight;
                 WorldGenOreVein layer;
-                for (int i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS; i++) {
+                for (int i = 0; i < Configs.WORLD.ORE_VEIN_FIND_ATTEMPTS; i++) {
                     randomWeight = rand.nextInt(WorldGenOreVein.TOTAL_WEIGHT);
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);

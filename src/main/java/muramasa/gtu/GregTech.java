@@ -114,13 +114,13 @@ public class GregTech {
         GregTechAPI.onRegistration(RegistrationEvent.DATA);
         GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
         GregTechWorldGenerator.init();
-        if (!Ref.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
+        if (!Configs.WORLD.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
         GregTechAPI.onRegistration(RegistrationEvent.RECIPE);
     }
 
     @Mod.EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent e) {
-        if (Ref.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
+        if (Configs.WORLD.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
     }
 
     @SubscribeEvent

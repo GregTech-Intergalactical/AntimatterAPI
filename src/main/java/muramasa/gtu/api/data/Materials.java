@@ -683,6 +683,9 @@ public class Materials {
         PLASMA.getMats().forEach(m -> m.setPlasma(new GTFluid(m, PLASMA)));
         
         GregTechAPI.all(Material.class).forEach(Material::setChemicalFormula);
+
+        //If using small ore markers, every normal ore needs a small version. This greatly increases block usage
+        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.getMats().forEach(m -> m.add(ORE_SMALL));
     }
 
     public static Material get(String name) {

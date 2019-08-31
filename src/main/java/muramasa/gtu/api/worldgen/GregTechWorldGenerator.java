@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.gtu.Configs;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.util.XSTR;
@@ -158,10 +159,10 @@ public class GregTechWorldGenerator implements IWorldGenerator {
 
             if (LAYER.size() > 0) {
                 // Determine bounding box on how far out to check for ore veins affecting this chunk
-                int westX = chunkX - (Ref.ORE_VEIN_MAX_SIZE / 16);
-                int eastX = chunkX + (Ref.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
-                int northZ = chunkZ - (Ref.ORE_VEIN_MAX_SIZE / 16);
-                int southZ = chunkZ + (Ref.ORE_VEIN_MAX_SIZE / 16 + 1);
+                int westX = chunkX - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
+                int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
+                int northZ = chunkZ - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
+                int southZ = chunkZ + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
 
                 // Search for oreVein seeds and add to the list;
                 for (int x = westX; x < eastX; x++) {
