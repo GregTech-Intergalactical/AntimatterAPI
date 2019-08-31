@@ -10,6 +10,7 @@ import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -101,6 +102,9 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             tooltip.add("Storage: " + GregTechAPI.all(BlockStorage.class).size());
             tooltip.add("Ores: " + GregTechAPI.all(BlockOre.class).size());
             tooltip.add("Stones: " + GregTechAPI.all(BlockStone.class).size());
+            tooltip.add("Data:");
+            tooltip.add("Ore Materials: " + MaterialType.ORE.getMats().size());
+            tooltip.add("Small Ore Materials: " + MaterialType.ORE_SMALL.getMats().size());
         }
     }
 
