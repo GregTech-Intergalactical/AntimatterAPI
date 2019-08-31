@@ -3,10 +3,14 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockCasing;
+import muramasa.gtu.api.blocks.BlockCoil;
+import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.blocks.BlockStorage;
+import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
-import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
@@ -39,7 +43,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class StandardItem extends Item implements IGregTechObject, IModelOverride {
 
@@ -92,11 +95,12 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
         if (Data.DebugScanner.equals(this)) {
             tooltip.add("Blocks: " + GregTechAPI.BLOCKS.size());
             tooltip.add("Machines: " + Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size());
-            tooltip.add("Ores: " + MaterialType.ORE.getMats().size());
-            tooltip.add("Ores Small: " + MaterialType.ORE_SMALL.getMats().size());
-            GregTechAPI.all(BlockStorage.class);
-            tooltip.add("Block: " + MaterialType.BLOCK.getMats().size() + " - (" + GregTechAPI.all(BlockStorage.class).stream().map(b -> b.getType() == MaterialType.BLOCK).collect(Collectors.toList()).size() + ")");
-            tooltip.add("Frame: " + MaterialType.FRAME.getMats().size()+ " - (" + GregTechAPI.all(BlockStorage.class).stream().map(b -> b.getType() == MaterialType.FRAME).collect(Collectors.toList()).size() + ")");
+            tooltip.add("Pipes: " + GregTechAPI.all(BlockPipe.class).size());
+            tooltip.add("Casings: " + GregTechAPI.all(BlockCasing.class).size());
+            tooltip.add("Coils: " + GregTechAPI.all(BlockCoil.class).size());
+            tooltip.add("Storage: " + GregTechAPI.all(BlockStorage.class).size());
+            tooltip.add("Ores: " + GregTechAPI.all(BlockOre.class).size());
+            tooltip.add("Stones: " + GregTechAPI.all(BlockStone.class).size());
         }
     }
 

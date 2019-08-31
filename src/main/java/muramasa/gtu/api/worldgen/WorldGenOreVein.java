@@ -3,7 +3,7 @@ package muramasa.gtu.api.worldgen;
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import muramasa.gtu.Ref;
+import muramasa.gtu.Configs;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
@@ -129,12 +129,12 @@ public class WorldGenOreVein extends WorldGenBase {
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
             int veinCount = veins.size();
-            if (oreVeinPercentageRoll < Ref.ORE_VEIN_CHANCE && WorldGenOreVein.TOTAL_WEIGHT > 0 && veinCount > 0) {
+            if (oreVeinPercentageRoll < Configs.WORLD.ORE_VEIN_CHANCE && WorldGenOreVein.TOTAL_WEIGHT > 0 && veinCount > 0) {
                 int placementAttempts = 0;
                 boolean oreVeinFound = false;
                 int i;
 
-                for (i = 0; i < Ref.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < Ref.ORE_VEIN_PLACE_ATTEMPTS; i++) {
+                for (i = 0; i < Configs.WORLD.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < Configs.WORLD.ORE_VEIN_PLACE_ATTEMPTS; i++) {
                     int tRandomWeight = oreVeinRNG.nextInt(WorldGenOreVein.TOTAL_WEIGHT);
                     WorldGenOreVein vein;
                     for (int j = 0; j < veinCount; j++) {
@@ -172,7 +172,7 @@ public class WorldGenOreVein extends WorldGenBase {
                     //if (Ref.debugOreVein) GregTech.LOGGER.info("Empty oreVeinSeed="+ oreVeinSeed + " chunkX="+ this.chunkX + " chunkZ="+ this.chunkZ + " oreSeedX="+ oreSeedX + " oreSeedZ="+ oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.provider.getDimension());
                     //VALID_VEINS.put(oreVeinSeed, WorldGenLoader.noOresInVein);
                 }
-            } else if (oreVeinPercentageRoll >= Ref.ORE_VEIN_CHANCE) {
+            } else if (oreVeinPercentageRoll >= Configs.WORLD.ORE_VEIN_CHANCE) {
                 //if (Ref.debugOreVein) GregTech.LOGGER.info("Skipped oreVeinSeed="+ oreVeinSeed + " chunkX="+ this.chunkX + " chunkZ="+ this.chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + Ref.ORE_VEIN_CHANCE+ " dimension=" + world.provider.getDimension());
                 //VALID_VEINS.put(oreVeinSeed, WorldGenLoader.noOresInVein);
             }
@@ -390,8 +390,8 @@ public class WorldGenOreVein extends WorldGenBase {
             }
         }
         //Place small ores for the vein
-        if (/*Ref.ORE_VEIN_SMALL_ORE_MARKERS*/ false) {
-            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Ref.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
+            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
             //Small ores are placed in the whole chunk in which the vein appears.
             for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
                 int tX = rand.nextInt(16) + chunkX + 2;

@@ -68,6 +68,35 @@ public class Configs {
 		@RequiresWorldRestart
 		@Comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
 		public boolean DISABLE_VANILLA_STONE_GEN = false;
+
+		@RequiresWorldRestart
+		public int ORE_VEIN_MAX_SIZE = 32;
+
+		@RequiresWorldRestart
+		@Comment("Control percentage of filled 3x3 chunks. Lower number means less oreveins spawn")
+		public int ORE_VEIN_CHANCE = 100;
+
+		@RequiresWorldRestart
+		@Comment("Control number of attempts to find a valid orevein. Generally this maximum limit isn't hit, selecting a vein is cheap")
+		public int ORE_VEIN_FIND_ATTEMPTS = 64;
+
+		@RequiresWorldRestart
+		@Comment("Control number of attempts to place a valid orevein.  If a vein wasn't placed due to height restrictions, completely in the water, etc, another attempt is tried")
+		public int ORE_VEIN_PLACE_ATTEMPTS = 8;
+
+		@RequiresWorldRestart
+		@Comment("Whether or not to place small ores as placer ores for an orevein")
+		public boolean ORE_VEIN_SMALL_ORE_MARKERS = false;
+
+		@RequiresWorldRestart
+		@Comment("//Multiplier to control how many placer ores get generated")
+		public int ORE_VEIN_SMALL_ORE_MARKERS_MULTI = 2;
+
+		@RequiresWorldRestart
+		public boolean ORE_VEIN_SPECTATOR_DEBUG = true;
+
+		@RequiresWorldRestart
+		public boolean ORE_JSON_RELOADING = true;
 	}
 
 	public static class Misc {

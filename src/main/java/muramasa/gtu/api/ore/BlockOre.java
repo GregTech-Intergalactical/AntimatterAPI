@@ -1,5 +1,6 @@
 package muramasa.gtu.api.ore;
 
+import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
@@ -125,12 +126,12 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return Ref.ORE_VEIN_SPECTATOR_DEBUG || super.shouldSideBeRendered(state, world, pos, side);
+        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG || super.shouldSideBeRendered(state, world, pos, side);
     }
 
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return Ref.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
+        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
     }
 
     @Override
