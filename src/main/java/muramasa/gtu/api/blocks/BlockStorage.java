@@ -134,7 +134,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
                 else if (world.mayPlace(this, mutablePos, false, EnumFacing.DOWN, player) && canPlaceBlockAt(world, mutablePos)) {
                     //TODO: Fix setBlockState
                     //world.setBlockState(mutablePos, getDefaultState().withProperty(STORAGE_MATERIAL, stack.getMetadata()));
-                    if (!player.isCreative()) stack.setCount(stack.getCount() - 1);
+                    if (!player.isCreative()) stack.shrink(1);
                     SoundType soundType = getSoundType();
                     world.playSound(player, mutablePos, soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
                     return true;
