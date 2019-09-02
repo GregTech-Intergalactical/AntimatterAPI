@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.texture.Texture;
+import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.texture.TextureMode;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.bakedmodels.BakedBase;
@@ -118,6 +119,11 @@ public class ModelUtils {
             faceQuads.put(s, Lists.newArrayList());
         }
         return new BakedBase(new SimpleBakedModel(quads, faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides()));
+    }
+
+    //TODO expand to support dynamic baking of TextureData objects and its modes
+    public static IBakedModel getBakedTextureData(TextureData data) {
+        return ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", data.getBase()[0]).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
     }
 
     /** Model Helpers **/
