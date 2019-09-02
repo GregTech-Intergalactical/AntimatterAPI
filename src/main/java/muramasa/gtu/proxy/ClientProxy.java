@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
-import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
@@ -18,7 +17,6 @@ import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.events.BlockHighlightHandler;
@@ -26,10 +24,10 @@ import muramasa.gtu.client.events.RenderGameOverlayHandler;
 import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
 import muramasa.gtu.client.render.bakedmodels.BakedMachine;
 import muramasa.gtu.client.render.bakedmodels.BakedPipe;
-import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
 import muramasa.gtu.client.render.models.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -123,7 +121,13 @@ public class ClientProxy implements IProxy {
         });
 
         GregTechAPI.BLOCKS.forEach(b -> {
-            if (b instanceof BlockBaked) ((BlockBaked) b).getTextures().forEach(t -> e.getMap().registerSprite(t));
+            if (b instanceof BlockBaked) {
+                e.getMap().registerSprite(((BlockBaked) b).getData().getBase()[0]);
+                if (((BlockBaked) b).getData().getOverlay() != null)
+                for (int i = 0; i < ((BlockBaked) b).getData().getOverlay().length; i++) {
+                    e.getMap().registerSprite(((BlockBaked) b).getData().getOverlay()[i]);
+                }
+            }
         });
     }
 
@@ -190,10 +194,9 @@ public class ClientProxy implements IProxy {
         }
 
         //Inject models for casings
-        for (BlockCasing b : GregTechAPI.all(BlockCasing.class)) {
-            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), "normal");
-            baked = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", new Texture("blocks/casing/" + b.getType())).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
-            e.getModelRegistry().putObject(loc, baked);
+        for (BlockBaked b : GregTechAPI.all(BlockBaked.class)) {
+            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), b.getVariant());
+            e.getModelRegistry().putObject(loc, ModelUtils.getBakedTextureData(b.getData()));
         }
 
         //Inject models for blocks and frames
