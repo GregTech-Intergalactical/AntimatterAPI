@@ -10,7 +10,6 @@ import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.ore.BlockRock;
 import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
-import muramasa.gtu.api.properties.GTProperties;
 import muramasa.gtu.api.tileentities.TileEntityMaterial;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.state.IBlockState;
@@ -21,35 +20,34 @@ import net.minecraft.world.World;
 
 public class WorldGenHelper {
 
-    public static Object2ObjectOpenHashMap<IBlockState, IBlockState> ORE_MAP = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<IBlockState, StoneType> STONE_MAP = new Object2ObjectOpenHashMap<>();
     public static Object2ObjectOpenHashMap<IBlockState, IBlockState> ROCK_MAP = new Object2ObjectOpenHashMap<>();
     public static ObjectOpenHashSet<IBlockState> STONE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<IBlockState> TREE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
 
-    public static IBlockState ORE_DEFAULT, ROCK_DEFAULT;
+    public static IBlockState ROCK_DEFAULT;
 
-    public static Predicate<IBlockState> ORE_PREDICATE = state -> ORE_MAP.containsKey(state);
+    public static Predicate<IBlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
     public static Predicate<IBlockState> ROCK_PREDICATE = state -> ROCK_MAP.containsKey(state);
     public static Predicate<IBlockState> STONE_PREDICATE = state -> STONE_SET.contains(state);
 
     public static void init() {
-        ORE_DEFAULT = BlockOre.get(StoneType.STONE, OreType.NORMAL);
         ROCK_DEFAULT = BlockRock.get(StoneType.STONE);
 
-        ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), BlockOre.get(StoneType.STONE, OreType.NORMAL));
-        ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), BlockOre.get(StoneType.GRANITE, OreType.NORMAL));
-        ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), BlockOre.get(StoneType.DIORITE, OreType.NORMAL));
-        ORE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), BlockOre.get(StoneType.ANDESITE, OreType.NORMAL));
-        ORE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), BlockOre.get(StoneType.SAND, OreType.NORMAL));
-        ORE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), BlockOre.get(StoneType.SAND_RED, OreType.NORMAL));
-        ORE_MAP.put(Blocks.SANDSTONE.getDefaultState(), BlockOre.get(StoneType.SANDSTONE, OreType.NORMAL));
-        ORE_MAP.put(Blocks.NETHERRACK.getDefaultState(), BlockOre.get(StoneType.NETHERRACK, OreType.NORMAL));
-        ORE_MAP.put(Blocks.END_STONE.getDefaultState(), BlockOre.get(StoneType.ENDSTONE, OreType.NORMAL));
-        ORE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), BlockOre.get(StoneType.GRANITE_RED, OreType.NORMAL));
-        ORE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), BlockOre.get(StoneType.GRANITE_RED, OreType.NORMAL));
-        ORE_MAP.put(BlockStone.get(StoneType.MARBLE).getDefaultState(), BlockOre.get(StoneType.MARBLE, OreType.NORMAL));
-        ORE_MAP.put(BlockStone.get(StoneType.BASALT).getDefaultState(), BlockOre.get(StoneType.BASALT, OreType.NORMAL));
+        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), StoneType.STONE);
+        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), StoneType.GRANITE);
+        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), StoneType.DIORITE);
+        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), StoneType.ANDESITE);
+        STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), StoneType.SAND);
+        STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), StoneType.SAND_RED);
+        STONE_MAP.put(Blocks.SANDSTONE.getDefaultState(), StoneType.SANDSTONE);
+        STONE_MAP.put(Blocks.NETHERRACK.getDefaultState(), StoneType.NETHERRACK);
+        STONE_MAP.put(Blocks.END_STONE.getDefaultState(), StoneType.ENDSTONE);
+        STONE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), StoneType.GRANITE_RED);
+        STONE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), StoneType.GRANITE_RED);
+        STONE_MAP.put(BlockStone.get(StoneType.MARBLE).getDefaultState(), StoneType.MARBLE);
+        STONE_MAP.put(BlockStone.get(StoneType.BASALT).getDefaultState(), StoneType.BASALT);
 
         ROCK_MAP.put(Blocks.GRASS.getDefaultState(), BlockRock.get(StoneType.STONE));
         ROCK_MAP.put(Blocks.DIRT.getDefaultState(), BlockRock.get(StoneType.STONE));
@@ -84,10 +82,8 @@ public class WorldGenHelper {
 //        }
 //    }
 
-    private static void setOreState(World world, BlockPos pos, IBlockState state, Material material, OreType type) {
-        world.setBlockState(pos, state.withProperty(GTProperties.ORE_TYPE, type), 2 | 16);
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
+    private static void setOreState(World world, BlockPos pos, StoneType stone, Material material, OreType type) {
+        world.setBlockState(pos, BlockOre.get(type, material, stone), 2 | 16);
     }
 
     private static void setRockState(World world, BlockPos pos, IBlockState state, Material material) {
@@ -98,9 +94,9 @@ public class WorldGenHelper {
 
     public static boolean setOre(World world, BlockPos pos, IBlockState existing, Material material, OreType type) {
         if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
-            IBlockState toSet = ORE_MAP.get(world.getBlockState(pos));
-            if (toSet == null) toSet = ORE_DEFAULT;
-            setOreState(world, pos, toSet, material, type);
+            StoneType stone = STONE_MAP.get(world.getBlockState(pos));
+            if (stone == null) stone = StoneType.STONE;
+            setOreState(world, pos, stone, material, type);
             if (type == OreType.NORMAL && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
             return true;
         }

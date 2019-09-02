@@ -1,9 +1,7 @@
 package muramasa.gtu.api.properties;
 
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.ore.OreType;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 
 public class GTProperties {
@@ -21,8 +19,8 @@ public class GTProperties {
     public static final UnlistedByte PIPE_CONNECTIONS = new UnlistedByte();
 
     /** Block Ore Properties **/
-    public static final UnlistedInteger ORE_SET = new UnlistedInteger();
-    public static final PropertyEnum<OreType> ORE_TYPE = PropertyEnum.create("ore_type", OreType.class);
+    //public static final UnlistedInteger ORE_SET = new UnlistedInteger();
+    //public static final PropertyEnum<OreType> ORE_TYPE = PropertyEnum.create("ore_type", OreType.class);
 
     /** Block Rock Properties **/
     public static final UnlistedInteger ROCK_MODEL = new UnlistedInteger();

@@ -595,7 +595,7 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return Utils.ca(amount, BlockOre.get(this, StoneType.STONE, OreType.NORMAL));
+        return BlockOre.get(OreType.NORMAL, this, StoneType.STONE, amount);
     }
 
     public ItemStack getBlock(int amount) {

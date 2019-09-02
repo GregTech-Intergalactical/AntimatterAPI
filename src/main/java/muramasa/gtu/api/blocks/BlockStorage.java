@@ -61,6 +61,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         }
         STORAGE_MATERIAL = PropertyInteger.create("storage_material", 0, Math.max(materials.length - 1, 1));
 
+        //TODO possibly move this to base class?
         //Hack to dynamically create a BlockState with a correctly sized material property based on the passed materials array
         BlockStateContainer blockStateContainer = createBlockState();
         ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
