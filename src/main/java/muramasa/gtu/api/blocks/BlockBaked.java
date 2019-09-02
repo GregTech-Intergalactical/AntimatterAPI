@@ -16,6 +16,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+//TODO support blockstate baking?
 public abstract class BlockBaked extends Block implements IGregTechObject, IModelOverride {
 
     protected TextureData data;

@@ -1,17 +1,11 @@
 package muramasa.gtu.integration;
 
-import exterminatorjeff.undergroundbiomes.api.API;
-import exterminatorjeff.undergroundbiomes.api.enums.IgneousVariant;
-import exterminatorjeff.undergroundbiomes.api.enums.MetamorphicVariant;
-import exterminatorjeff.undergroundbiomes.api.enums.SedimentaryVariant;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.data.Materials;
-import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.texture.Texture;
-import muramasa.gtu.api.worldgen.WorldGenHelper;
 import net.minecraft.block.SoundType;
 
 public class UndergroundBiomesRegistrar implements IGregTechRegistrar {
@@ -59,32 +53,32 @@ public class UndergroundBiomesRegistrar implements IGregTechRegistrar {
 
                 break;
             case WORLDGEN:
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.RED_GRANITE), BlockOre.get(UB_RED_GRANIITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.BLACK_GRANITE), BlockOre.get(UB_BLACK_GRANIITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.RHYOLITE), BlockOre.get(UB_RHYOLITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.ANDESITE), BlockOre.get(UB_ANDESITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.GABBRO), BlockOre.get(UB_GABBRO).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.BASALT), BlockOre.get(UB_BASALT).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.KOMATIITE), BlockOre.get(UB_KOMATIITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.DACITE), BlockOre.get(UB_DACITE).getDefaultState());
-
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.GNEISS), BlockOre.get(UB_GNEISS).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.ECLOGITE), BlockOre.get(UB_ECLOGITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.MARBLE), BlockOre.get(UB_MARBLE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.QUARTZITE), BlockOre.get(UB_QUARTZITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.BLUESCHIST), BlockOre.get(UB_BLUE_SCHIST).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.GREENSCHIST), BlockOre.get(UB_GREEN_SCHIST).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.SOAPSTONE), BlockOre.get(UB_SOAPSTONE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.MIGMATITE), BlockOre.get(UB_MIGMATITE).getDefaultState());
-
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.LIMESTONE), BlockOre.get(UB_LIMESTONE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.CHALK), BlockOre.get(UB_CHALK).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.SHALE), BlockOre.get(UB_SHALE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.SILTSTONE), BlockOre.get(UB_SILTSTONE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.LIGNITE), BlockOre.get(UB_LIGNITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.DOLOMITE), BlockOre.get(UB_DOLOMITE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.GREYWACKE), BlockOre.get(UB_GREYWACKE).getDefaultState());
-                WorldGenHelper.ORE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.CHERT), BlockOre.get(UB_CHERT).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.RED_GRANITE), BlockOre.get(UB_RED_GRANIITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.BLACK_GRANITE), BlockOre.get(UB_BLACK_GRANIITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.RHYOLITE), BlockOre.get(UB_RHYOLITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.ANDESITE), BlockOre.get(UB_ANDESITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.GABBRO), BlockOre.get(UB_GABBRO).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.BASALT), BlockOre.get(UB_BASALT).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.KOMATIITE), BlockOre.get(UB_KOMATIITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.IGNEOUS_STONE.getBlock().getDefaultState().withProperty(IgneousVariant.IGNEOUS_VARIANT_PROPERTY, IgneousVariant.DACITE), BlockOre.get(UB_DACITE).getDefaultState());
+//
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.GNEISS), BlockOre.get(UB_GNEISS).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.ECLOGITE), BlockOre.get(UB_ECLOGITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.MARBLE), BlockOre.get(UB_MARBLE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.QUARTZITE), BlockOre.get(UB_QUARTZITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.BLUESCHIST), BlockOre.get(UB_BLUE_SCHIST).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.GREENSCHIST), BlockOre.get(UB_GREEN_SCHIST).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.SOAPSTONE), BlockOre.get(UB_SOAPSTONE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.METAMORPHIC_STONE.getBlock().getDefaultState().withProperty(MetamorphicVariant.METAMORPHIC_VARIANT_PROPERTY, MetamorphicVariant.MIGMATITE), BlockOre.get(UB_MIGMATITE).getDefaultState());
+//
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.LIMESTONE), BlockOre.get(UB_LIMESTONE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.CHALK), BlockOre.get(UB_CHALK).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.SHALE), BlockOre.get(UB_SHALE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.SILTSTONE), BlockOre.get(UB_SILTSTONE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.LIGNITE), BlockOre.get(UB_LIGNITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.DOLOMITE), BlockOre.get(UB_DOLOMITE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.GREYWACKE), BlockOre.get(UB_GREYWACKE).getDefaultState());
+//                WorldGenHelper.STONE_MAP.put(API.SEDIMENTARY_STONE.getBlock().getDefaultState().withProperty(SedimentaryVariant.SEDIMENTARY_VARIANT_PROPERTY, SedimentaryVariant.CHERT), BlockOre.get(UB_CHERT).getDefaultState());
                 break;
         }
     }

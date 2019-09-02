@@ -139,9 +139,6 @@ public class ClientProxy implements IProxy {
         ModelRock modelRock = new ModelRock();
         GTModelLoader.register("block_rock", modelRock);
 
-        ModelOre modelOre = new ModelOre();
-        GTModelLoader.register("block_ore", modelOre);
-
         ModelMachine modelMachine = new ModelMachine();
         GTModelLoader.register("block_machine", modelMachine);
 

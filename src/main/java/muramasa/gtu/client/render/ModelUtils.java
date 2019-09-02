@@ -123,6 +123,9 @@ public class ModelUtils {
 
     //TODO expand to support dynamic baking of TextureData objects and its modes
     public static IBakedModel getBakedTextureData(TextureData data) {
+        if (data.getOverlay() != null) {
+            return ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{data.getBase()[0], data.getOverlay()[0]}).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+        }
         return ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", data.getBase()[0]).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
     }
 

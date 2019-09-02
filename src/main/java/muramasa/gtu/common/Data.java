@@ -11,6 +11,8 @@ import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.ore.BlockOre;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.tree.BlockLeavesBase;
 import muramasa.gtu.api.tree.BlockRubberLog;
@@ -26,7 +28,9 @@ public class Data {
     private static boolean HC = Configs.GAMEPLAY.HARDCORE_CABLES;
 
     public static void init() {
-
+        BlockOre.addStoneSet("default", new StoneType[] {
+            StoneType.STONE, StoneType.GRANITE, StoneType.DIORITE, StoneType.ANDESITE, StoneType.SAND, StoneType.SAND_RED, StoneType.SANDSTONE, StoneType.NETHERRACK, StoneType.ENDSTONE, StoneType.GRANITE_RED, StoneType.GRANITE_BLACK, StoneType.MARBLE, StoneType.BASALT
+        });
     }
 
     public static StandardItem DebugScanner = new StandardItem("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
