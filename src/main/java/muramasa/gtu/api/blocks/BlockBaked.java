@@ -5,9 +5,12 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
+import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,5 +46,12 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), getVariant()));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
+        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), getVariant());
+        registry.putObject(loc, ModelUtils.getBakedTextureData(getData()));
     }
 }
