@@ -58,6 +58,8 @@ public final class GregTechAPI {
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
     private static final LinkedHashMap<String, ItemStack> REPLACEMENTS = new LinkedHashMap<>();
 
+    private static RegistrationEvent LAST_EVENT = null;
+
     static {
         register(TileEntityMachine.class);
         register(TileEntityRecipeMachine.class);
@@ -112,6 +114,7 @@ public final class GregTechAPI {
 
     /** Registrar Section **/
     public static void onRegistration(RegistrationEvent event) {
+        LAST_EVENT = event;
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);

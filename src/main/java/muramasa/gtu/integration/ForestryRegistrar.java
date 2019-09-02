@@ -1,7 +1,9 @@
 package muramasa.gtu.integration;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
@@ -27,6 +29,8 @@ public class ForestryRegistrar implements IGregTechRegistrar {
 
     public static Material Apatite;
 
+    public static BlockStorage FR_BLOCK_1;
+
     @Override
     public String getId() {
         return Ref.MOD_FR;
@@ -49,6 +53,9 @@ public class ForestryRegistrar implements IGregTechRegistrar {
                 Uranium235.add(ORE);
                 Plutonium.add(ORE);
                 Naquadria.add(ORE);
+                break;
+            case DATA:
+                FR_BLOCK_1 = new BlockStorage("fr_0", MaterialType.BLOCK, Apatite);
                 break;
             case RECIPE:
                 CombLoader.init();

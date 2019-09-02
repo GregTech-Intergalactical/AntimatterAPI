@@ -71,6 +71,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
         this.doesGenerate = generatesItems;
     }
 
+    @Override
     public String getId() {
         return id;
     }

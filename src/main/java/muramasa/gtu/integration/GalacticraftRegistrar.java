@@ -1,9 +1,11 @@
 package muramasa.gtu.integration;
 
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialTag;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.util.Utils;
@@ -14,6 +16,7 @@ import static muramasa.gtu.api.materials.TextureSet.METALLIC;
 public class GalacticraftRegistrar implements IGregTechRegistrar {
 
     public static Material MeteoricIron, MeteoricSteel;
+    public static BlockStorage GC_BLOCK_1;
 
     @Override
     public String getId() {
@@ -34,6 +37,9 @@ public class GalacticraftRegistrar implements IGregTechRegistrar {
                 MeteoricSteel = new Material("meteoric_steel", 0x321928, METALLIC).asMetal(1811, 1000).addTools(6.0f, 768, 2);
                 MaterialTag.CALCITE3X.add(MeteoricIron);
                 MeteoricIron.addByProduct(Materials.Iron);
+                break;
+            case DATA:
+                GC_BLOCK_1 = new BlockStorage("gc_0", MaterialType.BLOCK, MeteoricIron, MeteoricSteel);
                 break;
             case RECIPE:
                 init();

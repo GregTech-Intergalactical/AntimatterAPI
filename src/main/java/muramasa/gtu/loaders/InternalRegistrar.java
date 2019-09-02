@@ -44,7 +44,7 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCoverStack(Data.PumpIV.get(1), new CoverPump(Tier.IV));
                 MaterialType.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverStack(m.getPlate(1), GregTechAPI.CoverPlate));
                 break;
-            case MATERIAL_INIT:
+            case DATA_BUILT:
                 Materials.init();
                 break;
             case WORLDGEN:
