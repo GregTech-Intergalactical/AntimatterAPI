@@ -46,9 +46,10 @@ public class GregTechTweaker implements IGregTechRegistrar {
 
     @ZenMethod
     public static void addStorage(String id, String type, String... ids) {
+        if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("a storage block with the id " + id + " already exists");
         Material[] materials = Arrays.stream(ids).filter(s -> Materials.get(s) != null).map(Materials::get).toArray(Material[]::new);
-        if (materials.length == 0) throw new IllegalStateException("could not find any valid materials for passed names");
-        if (materials.length > 16) throw new IllegalStateException("materials for " + id + "cannot be more than 16");
+        if (materials.length == 0) throw new IllegalArgumentException("could not find any valid materials for passed names");
+        if (materials.length > 16) throw new IllegalArgumentException("materials for " + id + "cannot be more than 16");
         MaterialType materialType = GregTechAPI.get(MaterialType.class, type);
         if (materialType == null) throw new IllegalArgumentException("materialType for id " + type + " does not exist");
         new BlockStorage(id, GregTechAPI.get(MaterialType.class, type), materials);
@@ -101,7 +102,7 @@ public class GregTechTweaker implements IGregTechRegistrar {
 
     @Override
     public void onRegistrationEvent(RegistrationEvent event) {
-        if (event == RegistrationEvent.MATERIAL) {
+        if (event == RegistrationEvent.DATA) {
             CraftTweakerAPI.tweaker.loadScript(false, Ref.MODID + "_data");
         }
     }
