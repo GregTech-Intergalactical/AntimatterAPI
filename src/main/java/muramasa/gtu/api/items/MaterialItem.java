@@ -10,9 +10,12 @@ import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
+import muramasa.gtu.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +26,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -30,6 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 public class MaterialItem extends Item implements IGregTechObject, IModelOverride, IColorHandler {
@@ -140,7 +145,20 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
 
     @Override
     @SideOnly(Side.CLIENT)
+    public void onTextureStitch(TextureMap map) {
+        Arrays.stream(getMaterial().getSet().getTextures(getType())).forEach(map::registerSprite);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + type.getId() + "_" + material.getId(), "inventory"));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
+        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory");
+        registry.putObject(loc, ClientProxy.TYPE_SET_MAP.get(getType().getId() + "_" + getMaterial().getSet().getId()));
     }
 }

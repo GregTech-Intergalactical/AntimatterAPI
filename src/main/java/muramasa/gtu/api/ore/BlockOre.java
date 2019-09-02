@@ -5,6 +5,7 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.properties.GTPropertyInteger;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
@@ -14,7 +15,6 @@ import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -49,7 +49,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     private OreType type;
     private String setId;
     private StoneType[] stoneSet;
-    private PropertyInteger STONE_TYPE;
+    private GTPropertyInteger STONE_TYPE;
 
     public BlockOre(OreType type, Material material, String setId) {
         super(net.minecraft.block.material.Material.ROCK);
@@ -61,7 +61,9 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
             ID_LOOKUP.put(type.getType().getId() + "_" + material.getId() + "_" + stoneSet[i].getId(), new Tuple<>(this, i));
         }
 
-        STONE_TYPE = PropertyInteger.create("stone_type", 0, Math.max(stoneSet.length - 1, 1));
+        if (stoneSet.length == 1) STONE_TYPE = new GTPropertyInteger("stone_type", 0);
+        else STONE_TYPE = new GTPropertyInteger("stone_type", 0, Math.max(stoneSet.length - 1, 1));
+
         BlockStateContainer blockStateContainer = createBlockState();
         ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
         setDefaultState(blockStateContainer.getBaseState());
@@ -85,7 +87,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         return type;
     }
 
-    public PropertyInteger getStoneTypeProp() {
+    public GTPropertyInteger getStoneTypeProp() {
         return STONE_TYPE;
     }
 
@@ -183,6 +185,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void onTextureStitch(TextureMap map) {
         for (int i = 0; i < stoneSet.length; i++) {
             map.registerSprite(stoneSet[i].getTexture());
@@ -199,6 +202,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
         for (int i = 0; i < stoneSet.length; i++) {
             ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "stone_type=" + i);

@@ -1,36 +1,25 @@
 package muramasa.gtu.proxy;
 
 import com.google.common.collect.ImmutableList;
-import muramasa.gtu.Ref;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockStorage;
-import muramasa.gtu.api.blocks.pipe.BlockCable;
-import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
-import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
-import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
-import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.events.BlockHighlightHandler;
 import muramasa.gtu.client.events.RenderGameOverlayHandler;
 import muramasa.gtu.client.events.TooltipHandler;
 import muramasa.gtu.client.render.GTModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
-import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
-import muramasa.gtu.client.render.bakedmodels.BakedMachine;
-import muramasa.gtu.client.render.bakedmodels.BakedPipe;
-import muramasa.gtu.client.render.models.*;
+import muramasa.gtu.client.render.models.ModelFluidCell;
+import muramasa.gtu.client.render.models.ModelMachine;
+import muramasa.gtu.client.render.models.ModelPipe;
+import muramasa.gtu.client.render.models.ModelRock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
@@ -51,13 +40,12 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy implements IProxy {
 
     private static Minecraft MC = Minecraft.getMinecraft();
+
+    public static Object2ObjectOpenHashMap<String, IBakedModel> TYPE_SET_MAP = new Object2ObjectOpenHashMap<>();
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
@@ -110,15 +98,6 @@ public class ClientProxy implements IProxy {
             e.getMap().registerSprite(s.getTexture(MaterialType.PLASMA, 0));
         });
 
-        //Register Material Item textures
-        GregTechAPI.all(MaterialItem.class).forEach(i -> Arrays.stream(i.getMaterial().getSet().getTextures(i.getType())).forEach(r -> e.getMap().registerSprite(r)));
-
-        StoneType.getAllActive().forEach(s -> e.getMap().registerSprite(s.getTexture()));
-        GregTechAPI.all(TextureSet.class).forEach(s -> {
-            e.getMap().registerSprite(s.getTexture(MaterialType.BLOCK, 0));
-            e.getMap().registerSprite(s.getTexture(MaterialType.FRAME, 0));
-        });
-
         GregTechAPI.ITEMS.forEach(i -> {
             if (i instanceof IModelOverride) ((IModelOverride) i).onTextureStitch(e.getMap());
         });
@@ -152,17 +131,9 @@ public class ClientProxy implements IProxy {
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
         ModelUtils.onModelBake(e);
-        GregTechAPI.ITEMS.forEach(i -> {
-            if (i instanceof IModelOverride) ((IModelOverride) i).onModelBake(e.getModelRegistry());
-        });
-        GregTechAPI.BLOCKS.forEach(b -> {
-            if (b instanceof IModelOverride) ((IModelOverride) b).onModelBake(e.getModelRegistry());
-        });
 
-        //Generate Material Item TextureSet models
         IModel model;
         IBakedModel baked;
-        HashMap<String, IBakedModel> TYPE_SET_MAP = new HashMap<>();
         for (MaterialType t : GregTechAPI.all(MaterialType.class)) {
             for (TextureSet s : GregTechAPI.all(TextureSet.class)) {
                 if (t == MaterialType.BLOCK) {
@@ -186,58 +157,11 @@ public class ClientProxy implements IProxy {
             }
         }
 
-        //Inject models for Material Items
-        for (MaterialItem i : GregTechAPI.all(MaterialItem.class)) {
-            baked = TYPE_SET_MAP.get(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId()));
-            e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId(), "inventory"), baked);
-        }
-
-        //Inject models for blocks and frames
-        for (BlockStorage b : GregTechAPI.all(BlockStorage.class)) {
-            for (int i = 0; i < b.getMaterials().length; i++) {
-                ModelResourceLocation block = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), "storage_material=" + i);
-                baked = TYPE_SET_MAP.get(b.getType().getId() + "_" + b.getMaterials()[i].getSet().getId());
-                e.getModelRegistry().putObject(block, baked);
-            }
-        }
-
-        //Inject models for machines
-        for (Machine machine : GregTechAPI.all(Machine.class)) {
-            for (Tier tier : machine.getTiers()) {
-                ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + machine.getId(), "tier=" + tier.getId());
-                e.getModelRegistry().putObject(loc, BakedMachine.ITEMS.get(machine.getId() + "_" + tier.getId()));
-            }
-        }
-
-        //Inject models for pipes and cables
-        //TODO keep copy of PipeModels and remove BakedTextureDataItem
-        for (BlockFluidPipe p : GregTechAPI.all(BlockFluidPipe.class)) {
-            for (int i = 0; i < p.getSizes().length; i++) {
-                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName());
-                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[p.getSizes()[i].ordinal()]));
-                e.getModelRegistry().putObject(pipe, baked);
-            }
-        }
-        for (BlockItemPipe p : GregTechAPI.all(BlockItemPipe.class)) {
-            for (int i = 0; i < p.getSizes().length; i++) {
-                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=false");
-                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[p.getSizes()[i].ordinal()]));
-                e.getModelRegistry().putObject(pipe, baked);
-
-                pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",restrictive=true");
-                e.getModelRegistry().putObject(pipe, baked);
-            }
-        }
-        for (BlockCable p : GregTechAPI.all(BlockCable.class)) {
-            for (int i = 0; i < p.getSizes().length; i++) {
-                ModelResourceLocation pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",insulated=false");
-                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay()[p.getSizes()[i].ordinal()]));
-                e.getModelRegistry().putObject(pipe, baked);
-
-                pipe = new ModelResourceLocation(Ref.MODID + ":" + p.getId(), "size=" + p.getSizes()[i].getName() + ",insulated=true");
-                baked = new BakedTextureDataItem(BakedPipe.BAKED[p.getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay()[p.getSizes()[i].ordinal()]));
-                e.getModelRegistry().putObject(pipe, baked);
-            }
-        }
+        GregTechAPI.ITEMS.forEach(i -> {
+            if (i instanceof IModelOverride) ((IModelOverride) i).onModelBake(e.getModelRegistry());
+        });
+        GregTechAPI.BLOCKS.forEach(b -> {
+            if (b instanceof IModelOverride) ((IModelOverride) b).onModelBake(e.getModelRegistry());
+        });
     }
 }

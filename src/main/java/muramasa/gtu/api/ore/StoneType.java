@@ -1,5 +1,6 @@
 package muramasa.gtu.api.ore;
 
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -50,6 +51,7 @@ public class StoneType implements IGregTechObject {
             generating.add(this);
         }
         all.add(this);
+        GregTechAPI.register(StoneType.class, this);
     }
 
     public StoneType(String id, String mod, Material material, boolean generate, Texture texture, SoundType soundType) {

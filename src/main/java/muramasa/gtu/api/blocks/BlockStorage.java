@@ -6,18 +6,21 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
+import muramasa.gtu.api.properties.GTPropertyInteger;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +33,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -48,7 +52,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     private String id;
     private MaterialType type;
     private Material[] materials;
-    private PropertyInteger STORAGE_MATERIAL;
+    private GTPropertyInteger STORAGE_MATERIAL;
     
     public BlockStorage(String id, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
@@ -59,7 +63,10 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         for (int i = 0; i < materials.length; i++) {
             ID_LOOKUP.put(type.getId() + "_" + materials[i].getId(), new Tuple<>(this, i));
         }
-        STORAGE_MATERIAL = PropertyInteger.create("storage_material", 0, Math.max(materials.length - 1, 1));
+
+        //TODO see if this is needed...
+        if (materials.length == 1) STORAGE_MATERIAL = new GTPropertyInteger("storage_material", 0);
+        else STORAGE_MATERIAL = new GTPropertyInteger("storage_material", 0, Math.max(materials.length - 1, 1));
 
         //TODO possibly move this to base class?
         //Hack to dynamically create a BlockState with a correctly sized material property based on the passed materials array
@@ -88,7 +95,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         return materials;
     }
 
-    public PropertyInteger getMaterialProp() {
+    public GTPropertyInteger getMaterialProp() {
         return STORAGE_MATERIAL;
     }
 
@@ -242,9 +249,26 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     @SideOnly(Side.CLIENT)
+    public void onTextureStitch(TextureMap map) {
+        for (int i = 0; i < materials.length; i++) {
+            map.registerSprite(materials[i].getSet().getTexture(type, 0));
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
         for (int i = 0; i < materials.length; i++) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(Ref.MODID + ":" + getId(), "storage_material=" + i));
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
+        for (int i = 0; i < materials.length; i++) {
+            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "storage_material=" + i);
+            registry.putObject(loc, ClientProxy.TYPE_SET_MAP.get(getType().getId() + "_" + getMaterials()[i].getSet().getId()));
         }
     }
 

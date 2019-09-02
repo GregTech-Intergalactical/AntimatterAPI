@@ -8,12 +8,16 @@ import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
+import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
+import muramasa.gtu.client.render.bakedmodels.BakedPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,6 +30,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -76,7 +81,7 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
         if (tile instanceof TileEntityCable) {
             TileEntityCable cable = (TileEntityCable) tile;
             exState = exState.withProperty(PIPE_CONNECTIONS, cable.getConnections());
-            exState = exState.withProperty(TEXTURE, state.getValue(PIPE_INSULATED) ? Textures.PIPE_DATA[2] : getDefaultData());
+            exState = exState.withProperty(TEXTURE, state.getValue(PIPE_INSULATED) ? Textures.PIPE_DATA[2] : getData());
         }
         return exState;
     }
@@ -177,5 +182,19 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
         }
         //Redirect block model to custom baked model handling
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
+        for (int i = 0; i < getSizes().length; i++) {
+            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + getSizes()[i].getName() + ",insulated=false");
+            IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay()[getSizes()[i].ordinal()]));
+            registry.putObject(loc, baked);
+
+            loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + getSizes()[i].getName() + ",insulated=true");
+            baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay()[getSizes()[i].ordinal()]));
+            registry.putObject(loc, baked);
+        }
     }
 }

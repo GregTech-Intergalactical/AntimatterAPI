@@ -52,7 +52,7 @@ public class WorldGenStone extends WorldGenBase {
     public WorldGenBase build() {
         super.build();
         this.block = GregTechAPI.get(BlockStone.class, type);
-        if (block == null) throw new IllegalArgumentException("WorldGenOreLayer - " + getId() + ": was given a invalid stone type");
+        if (block == null) throw new IllegalArgumentException("WorldGenStone - " + getId() + ": was given a invalid stone type");
         this.stone = block.getDefaultState();
         this.CHECKED_SEEDS = new LongOpenHashSet();
         return this;

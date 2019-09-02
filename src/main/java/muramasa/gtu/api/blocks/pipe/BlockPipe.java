@@ -2,7 +2,8 @@ package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.client.render.bakedblockold.BlockBakedOld;
+import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.registration.IColorHandler;
@@ -13,10 +14,13 @@ import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.StateMapperRedirect;
+import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
+import muramasa.gtu.client.render.bakedmodels.BakedPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,6 +35,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -43,8 +48,7 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-//TODO does this need BlockBaked?
-public abstract class BlockPipe extends BlockBakedOld implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+public abstract class BlockPipe extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     protected String type, id;
     protected Material material;
@@ -52,7 +56,7 @@ public abstract class BlockPipe extends BlockBakedOld implements IGregTechObject
     protected PropertyEnum<PipeSize> PIPE_SIZE;
 
     public BlockPipe(String type, Material material, TextureData data, PipeSize... sizes) {
-        super(data);
+        super(net.minecraft.block.material.Material.IRON, data);
         this.type = type;
         this.id = material.getId();
         this.material = material;
@@ -99,7 +103,7 @@ public abstract class BlockPipe extends BlockBakedOld implements IGregTechObject
         if (tile instanceof TileEntityPipe) {
             TileEntityPipe pipe = (TileEntityPipe) tile;
             exState = exState.withProperty(PIPE_CONNECTIONS, pipe.getConnections());
-            exState = exState.withProperty(TEXTURE, getDefaultData());
+            exState = exState.withProperty(TEXTURE, getData());
             if (pipe.coverHandler.isPresent()) {
                 exState = exState.withProperty(COVER, pipe.coverHandler.get().getAll());
             }
@@ -219,5 +223,16 @@ public abstract class BlockPipe extends BlockBakedOld implements IGregTechObject
         }
         //Redirect block model to custom baked model handling
         ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
+        //TODO keep copy of PipeModels and remove BakedTextureDataItem
+        for (int i = 0; i < getSizes().length; i++) {
+            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + getSizes()[i].getName());
+            IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[getSizes()[i].ordinal()]));
+            registry.putObject(loc, baked);
+        }
     }
 }

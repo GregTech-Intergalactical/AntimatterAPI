@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+@Deprecated
 public class ItemOverrideTextureData extends ItemOverrideList {
 
     protected IBakedModel baked;

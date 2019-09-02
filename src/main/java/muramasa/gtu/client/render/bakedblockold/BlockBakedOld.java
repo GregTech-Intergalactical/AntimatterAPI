@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public abstract class BlockBakedOld extends Block {
 
     protected static ModelResourceLocation BASIC = new ModelResourceLocation(Ref.MODID + ":basic");

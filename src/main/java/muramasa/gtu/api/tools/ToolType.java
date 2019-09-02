@@ -4,12 +4,15 @@ import com.google.common.collect.Sets;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.items.MaterialTool;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.SoundType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -159,6 +162,19 @@ public enum ToolType {
 
     public ItemStack get(Material primary, Material secondary) {
         return GregTechAPI.get(MaterialTool.class, getName()).get(primary, secondary);
+    }
+
+    public Texture[] getTextures() {
+        List<Texture> textures = new ArrayList<>();
+        textures.add(new Texture("items/tool/" + getName()));
+        //TODO better solution for this
+        if (this == SCREWDRIVER_P || this == BUZZSAW) {
+            textures.add(new Texture("items/tool/overlay/" + getName() + "_1"));
+            textures.add(new Texture("items/tool/overlay/" + getName() + "_2"));
+        } else {
+            textures.add(new Texture("items/tool/overlay/" + getName()));
+        }
+        return textures.toArray(new Texture[0]);
     }
 
     @Nullable
