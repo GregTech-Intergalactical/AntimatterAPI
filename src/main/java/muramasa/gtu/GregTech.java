@@ -2,7 +2,6 @@ package muramasa.gtu;
 
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.GTItemBlock;
 import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.data.Guis;
@@ -66,7 +65,7 @@ public class GregTech {
         GregTechAPI.addRegistrar(new ForestryRegistrar());
         GregTechAPI.addRegistrar(new GalacticraftRegistrar());
         if (Utils.isModLoaded(Ref.MOD_UB)) GregTechAPI.addRegistrar(new UndergroundBiomesRegistrar());
-        if (Utils.isModLoaded(Ref.MOD_CT)) GregTechTweaker.init();
+        if (Utils.isModLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
     }
 
     @Mod.EventHandler
@@ -92,13 +91,14 @@ public class GregTech {
         Structures.init();
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
+        GregTechAPI.onRegistration(RegistrationEvent.DATA);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         PROXY.init(e);
 
-        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL_INIT);
+        GregTechAPI.onRegistration(RegistrationEvent.DATA_BUILT);
 
         if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
 
@@ -111,7 +111,6 @@ public class GregTech {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         PROXY.postInit(e);
-        GregTechAPI.onRegistration(RegistrationEvent.DATA);
         GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
         GregTechWorldGenerator.init();
         if (!Configs.WORLD.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
@@ -141,27 +140,27 @@ public class GregTech {
         StoneType.getAllActive().forEach(BlockOre::new);
         new BlockRock(StoneType.STONE);
 
-        int chunk = 16; // chunk size to divide
-
-        Material[] blocks = MaterialType.BLOCK.getMats().toArray(new Material[0]);
-        Material[][] blockChunks = new Material[blocks.length / chunk + (blocks.length % chunk > 0 ? 1 : 0)][];
-        for (int i = 0; i < blocks.length; i += chunk) {
-            blockChunks[i / chunk] = Arrays.copyOfRange(blocks, i, Math.min(blocks.length, i + chunk));
-        }
-
-        Material[] frames = MaterialType.FRAME.getMats().toArray(new Material[0]);
-        Material[][] frameChunks = new Material[frames.length / chunk + (frames.length % chunk > 0 ? 1 : 0)][];
-        for (int i = 0; i < frames.length; i += chunk) {
-            frameChunks[i / chunk] = Arrays.copyOfRange(frames, i, Math.min(frames.length, i + chunk));
-        }
-
-        for (int i = 0; i < blockChunks.length; i++) {
-            new BlockStorage(i, MaterialType.BLOCK, blockChunks[i]);
-        }
-
-        for (int i = 0; i < frameChunks.length; i++) {
-            new BlockStorage(i, MaterialType.FRAME, frameChunks[i]);
-        }
+//        int chunk = 16; // chunk size to divide
+//
+//        Material[] blocks = MaterialType.BLOCK.getMats().toArray(new Material[0]);
+//        Material[][] blockChunks = new Material[blocks.length / chunk + (blocks.length % chunk > 0 ? 1 : 0)][];
+//        for (int i = 0; i < blocks.length; i += chunk) {
+//            blockChunks[i / chunk] = Arrays.copyOfRange(blocks, i, Math.min(blocks.length, i + chunk));
+//        }
+//
+//        Material[] frames = MaterialType.FRAME.getMats().toArray(new Material[0]);
+//        Material[][] frameChunks = new Material[frames.length / chunk + (frames.length % chunk > 0 ? 1 : 0)][];
+//        for (int i = 0; i < frames.length; i += chunk) {
+//            frameChunks[i / chunk] = Arrays.copyOfRange(frames, i, Math.min(frames.length, i + chunk));
+//        }
+//
+//        for (int i = 0; i < blockChunks.length; i++) {
+//            new BlockStorage(i, MaterialType.BLOCK, blockChunks[i]);
+//        }
+//
+//        for (int i = 0; i < frameChunks.length; i++) {
+//            new BlockStorage(i, MaterialType.FRAME, frameChunks[i]);
+//        }
 
         GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
         StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));

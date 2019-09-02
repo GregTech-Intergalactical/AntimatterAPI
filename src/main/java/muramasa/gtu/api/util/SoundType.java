@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 
 import java.util.HashMap;
 
+//TODO rename this class to avoid naming clash with mc class
 public class SoundType {
 
     //TODO get GT sound category

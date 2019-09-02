@@ -1,6 +1,6 @@
 package muramasa.gtu.api.blocks;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
@@ -10,6 +10,7 @@ import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -21,7 +22,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -41,22 +41,22 @@ import javax.annotation.Nullable;
 
 public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
-    private static Int2ObjectOpenHashMap<Tuple<Integer, Integer>> INDEX_LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static Object2ObjectOpenHashMap<String, Tuple<BlockStorage, Integer>> ID_LOOKUP = new Object2ObjectOpenHashMap<>();
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
-    private int index;
+    private String id;
     private MaterialType type;
     private Material[] materials;
     private PropertyInteger STORAGE_MATERIAL;
     
-    public BlockStorage(int index, MaterialType type, Material... materials) {
+    public BlockStorage(String id, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
-        this.index = index;
+        this.id = id;
         this.type = type;
         this.materials = materials;
         for (int i = 0; i < materials.length; i++) {
-            INDEX_LOOKUP.put(materials[i].getHash(), new Tuple<>(index, i));
+            ID_LOOKUP.put(type.getId() + "_" + materials[i].getId(), new Tuple<>(this, i));
         }
         STORAGE_MATERIAL = PropertyInteger.create("storage_material", 0, Math.max(materials.length - 1, 1));
 
@@ -75,7 +75,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public String getId() {
-        return "storage_" + type.getId() + "_" + index;
+        return "storage_" + type.getId() + "_" + id;
     }
 
     public MaterialType getType() {
@@ -256,8 +256,11 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     }
 
     public static ItemStack get(Material material, MaterialType type, int count) {
-        Block block = GregTechAPI.get(BlockStorage.class, "storage_" + type.getId() + "_" + INDEX_LOOKUP.get(material.getHash()).getFirst());
-        if (block == null) return ItemStack.EMPTY;
-        return new ItemStack(block, count, INDEX_LOOKUP.get(material.getHash()).getSecond());
+        Tuple<BlockStorage, Integer> tuple = ID_LOOKUP.get(type.getId() + "_" + material.getId());
+        if (tuple == null) {
+            Utils.onInvalidData("BlockStorage.get() returned null");
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(tuple.getFirst(), count, tuple.getSecond());
     }
 }
