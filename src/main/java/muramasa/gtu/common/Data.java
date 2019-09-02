@@ -352,16 +352,16 @@ public class Data {
     public static BlockItemPipe ITEM_PIPE_POLYVINYL_CHLORIDE = new BlockItemPipe(PolyvinylChloride, 4);
     public static BlockItemPipe ITEM_PIPE_OSMIUM = new BlockItemPipe(Osmium, 8);
 
-    public static BlockStorage BLOCK_1 = new BlockStorage("_0", MaterialType.BLOCK, Aluminium, Beryllium, Bismuth, Carbon, Chrome, Cobalt, Gold, Iridium, Iron, Lanthanum, Lead, Manganese, Molybdenum, Neodymium, Neutronium, Nickel);
-    public static BlockStorage BLOCK_2 = new BlockStorage("_1", MaterialType.BLOCK, Osmium, Palladium, Platinum, Plutonium, Plutonium241, Silver, Thorium, Titanium, Tungsten, Uranium, Uranium235, Americium, Antimony, Arsenic, Caesium, Cerium);
-    public static BlockStorage BLOCK_3 = new BlockStorage("_2", MaterialType.BLOCK, Copper, Dysprosium, Europium, Gallium, Indium, Lithium, Lutetium, Magnesium, Niobium, Potassium, Silicon, Tantalum, Tin, Vanadium, Yttrium, Zinc);
-    public static BlockStorage BLOCK_4 = new BlockStorage("_3", MaterialType.BLOCK, Dilithium, NetherQuartz, NetherStar, Quartzite, BlueTopaz, Charcoal, Coal, Lignite, CoalCoke, LigniteCoke, Diamond, Emerald, GreenSapphire, Ruby, BlueSapphire, Tanzanite);
-    public static BlockStorage BLOCK_5 = new BlockStorage("_4", MaterialType.BLOCK, Topaz, Olivine, Opal, Amethyst, Lapis, EnderPearl, EnderEye, Phosphorus, GarnetRed, GarnetYellow, AnnealedCopper, BatteryAlloy, Brass, Bronze, Cupronickel, Electrum);
-    public static BlockStorage BLOCK_6 = new BlockStorage("_5", MaterialType.BLOCK, Invar, Kanthal, Magnalium, Nichrome, NiobiumTitanium, SolderingAlloy, StainlessSteel, Steel, Ultimet, VanadiumGallium, WroughtIron, YttriumBariumCuprate, SterlingSilver, RoseGold, BlackBronze, BismuthBronze);
-    public static BlockStorage BLOCK_7 = new BlockStorage("_6", MaterialType.BLOCK, BlackSteel, RedSteel, BlueSteel, TungstenSteel, RedAlloy, CobaltBrass, IronMagnetic, SteelMagnetic, NeodymiumMagnetic, NickelZincFerrite, TungstenCarbide, VanadiumSteel, HSSG, HSSE, HSSS, Osmiridium);
-    public static BlockStorage BLOCK_8 = new BlockStorage("_7", MaterialType.BLOCK, Duranium, Naquadah, NaquadahAlloy, NaquadahEnriched, Naquadria, Tritanium, Vibranium, Plastic, Epoxid, Silicone, Polycaprolactam, Polytetrafluoroethylene, Rubber, PolyphenyleneSulfide, Polystyrene, StyreneButadieneRubber);
-    public static BlockStorage BLOCK_9 = new BlockStorage("_8", MaterialType.BLOCK, PolyvinylChloride, GalliumArsenide, EpoxidFiberReinforced);
+    public static BlockStorage BLOCK_0 = new BlockStorage("0", MaterialType.BLOCK, Aluminium, Beryllium, Bismuth, Carbon, Chrome, Cobalt, Gold, Iridium, Iron, Lanthanum, Lead, Manganese, Molybdenum, Neodymium, Neutronium, Nickel);
+    public static BlockStorage BLOCK_1 = new BlockStorage("1", MaterialType.BLOCK, Osmium, Palladium, Platinum, Plutonium, Plutonium241, Silver, Thorium, Titanium, Tungsten, Uranium, Uranium235, Americium, Antimony, Arsenic, Caesium, Cerium);
+    public static BlockStorage BLOCK_2 = new BlockStorage("2", MaterialType.BLOCK, Copper, Dysprosium, Europium, Gallium, Indium, Lithium, Lutetium, Magnesium, Niobium, Potassium, Silicon, Tantalum, Tin, Vanadium, Yttrium, Zinc);
+    public static BlockStorage BLOCK_3 = new BlockStorage("3", MaterialType.BLOCK, Dilithium, NetherQuartz, NetherStar, Quartzite, BlueTopaz, Charcoal, Coal, Lignite, CoalCoke, LigniteCoke, Diamond, Emerald, GreenSapphire, Ruby, BlueSapphire, Tanzanite);
+    public static BlockStorage BLOCK_4 = new BlockStorage("4", MaterialType.BLOCK, Topaz, Olivine, Opal, Amethyst, Lapis, EnderPearl, EnderEye, Phosphorus, GarnetRed, GarnetYellow, AnnealedCopper, BatteryAlloy, Brass, Bronze, Cupronickel, Electrum);
+    public static BlockStorage BLOCK_5 = new BlockStorage("5", MaterialType.BLOCK, Invar, Kanthal, Magnalium, Nichrome, NiobiumTitanium, SolderingAlloy, StainlessSteel, Steel, Ultimet, VanadiumGallium, WroughtIron, YttriumBariumCuprate, SterlingSilver, RoseGold, BlackBronze, BismuthBronze);
+    public static BlockStorage BLOCK_6 = new BlockStorage("6", MaterialType.BLOCK, BlackSteel, RedSteel, BlueSteel, TungstenSteel, RedAlloy, CobaltBrass, IronMagnetic, SteelMagnetic, NeodymiumMagnetic, NickelZincFerrite, TungstenCarbide, VanadiumSteel, HSSG, HSSE, HSSS, Osmiridium);
+    public static BlockStorage BLOCK_7 = new BlockStorage("7", MaterialType.BLOCK, Duranium, Naquadah, NaquadahAlloy, NaquadahEnriched, Naquadria, Tritanium, Vibranium, Plastic, Epoxid, Silicone, Polycaprolactam, Polytetrafluoroethylene, Rubber, PolyphenyleneSulfide, Polystyrene, StyreneButadieneRubber);
+    public static BlockStorage BLOCK_8 = new BlockStorage("8", MaterialType.BLOCK, PolyvinylChloride, GalliumArsenide, EpoxidFiberReinforced);
     
-    public static BlockStorage FRAME_1 = new BlockStorage("0", MaterialType.FRAME, Aluminium, Iridium, Iron, Neutronium, Tin, Brass, Bronze, Invar, StainlessSteel, Steel, WroughtIron, BlackSteel, BlueSteel, TungstenSteel, HSSG, HSSE);
-    public static BlockStorage FRAME_2 = new BlockStorage("1", MaterialType.FRAME, Osmiridium, Tritanium, Vibranium, Polytetrafluoroethylene);
+    public static BlockStorage FRAME_0 = new BlockStorage("0", MaterialType.FRAME, Aluminium, Iridium, Iron, Neutronium, Tin, Brass, Bronze, Invar, StainlessSteel, Steel, WroughtIron, BlackSteel, BlueSteel, TungstenSteel, HSSG, HSSE);
+    public static BlockStorage FRAME_1 = new BlockStorage("1", MaterialType.FRAME, Osmiridium, Tritanium, Vibranium, Polytetrafluoroethylene);
 }

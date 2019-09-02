@@ -28,6 +28,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
+
+import com.google.common.base.CaseFormat;
+
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -489,8 +492,17 @@ public class Utils {
         return distances.get(Collections.min(distances.keySet()));
     }
     
+    public static String underscoreToLowerCamel(String string) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, string);
+    }
+    
+    public static String underscoreToUpperCamel(String string) {
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string);
+    }
+    
     //Subscript 0 doesn't get displayed properly for some reason
     public static String digitsToSubscript(String string) {
+        if (string.length() == 0) return "";
         char[] chars = string.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             int index = chars[i] - '0';
