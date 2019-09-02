@@ -1,8 +1,6 @@
-package muramasa.gtu.client.render.overrides;
+package muramasa.gtu.client.render.bakedblockold;
 
 import com.google.common.collect.ImmutableList;
-import muramasa.gtu.client.render.bakedmodels.BakedTextureDataItem;
-import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -23,6 +21,6 @@ public class ItemOverrideTextureData extends ItemOverrideList {
 
     @Override
     public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
-        return new BakedTextureDataItem(baked, ((BlockBaked) Block.getBlockFromItem(stack.getItem())).getDefaultData());
+        return new BakedTextureDataItem(baked, ((BlockBakedOld) Block.getBlockFromItem(stack.getItem())).getDefaultData());
     }
 }

@@ -2,7 +2,7 @@ package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.client.render.bakedblockold.BlockBakedOld;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.registration.IColorHandler;
@@ -43,7 +43,8 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+//TODO does this need BlockBaked?
+public abstract class BlockPipe extends BlockBakedOld implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
     protected String type, id;
     protected Material material;

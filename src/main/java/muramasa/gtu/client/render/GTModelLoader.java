@@ -1,8 +1,8 @@
 package muramasa.gtu.client.render;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.client.render.models.ModelTextureData;
-import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.client.render.bakedblockold.ModelTextureData;
+import muramasa.gtu.client.render.bakedblockold.BlockBakedOld;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
@@ -21,7 +21,7 @@ public class GTModelLoader implements ICustomModelLoader {
         if (!modelLookup.containsKey(registryPath)) modelLookup.put(registryPath, model);
     }
 
-    public static void register(String registryPath, BlockBaked block) {
+    public static void register(String registryPath, BlockBakedOld block) {
         if (!modelLookup.containsKey(registryPath)) modelLookup.put(registryPath, new ModelTextureData(block));
     }
 

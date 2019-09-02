@@ -1,8 +1,6 @@
-package muramasa.gtu.client.render.models;
+package muramasa.gtu.client.render.bakedblockold;
 
 import muramasa.gtu.client.render.ModelUtils;
-import muramasa.gtu.client.render.bakedmodels.BakedTextureData;
-import muramasa.gtu.api.blocks.BlockBaked;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -17,10 +15,10 @@ import java.util.function.Function;
 
 public class ModelTextureData implements IModel {
 
-    protected BlockBaked block;
+    protected BlockBakedOld block;
     protected ItemOverrideList item;
 
-    public ModelTextureData(BlockBaked block) {
+    public ModelTextureData(BlockBakedOld block) {
         this.block = block;
     }
 
