@@ -159,6 +159,12 @@ public class ClientProxy implements IProxy {
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
         ModelUtils.onModelBake(e);
+        GregTechAPI.ITEMS.forEach(i -> {
+            if (i instanceof IModelOverride) ((IModelOverride) i).onModelBake(e.getModelRegistry());
+        });
+        GregTechAPI.BLOCKS.forEach(b -> {
+            if (b instanceof IModelOverride) ((IModelOverride) b).onModelBake(e.getModelRegistry());
+        });
 
         //Generate Material Item TextureSet models
         IModel model;
@@ -191,12 +197,6 @@ public class ClientProxy implements IProxy {
         for (MaterialItem i : GregTechAPI.all(MaterialItem.class)) {
             baked = TYPE_SET_MAP.get(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId()));
             e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId(), "inventory"), baked);
-        }
-
-        //Inject models for casings
-        for (BlockBaked b : GregTechAPI.all(BlockBaked.class)) {
-            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), b.getVariant());
-            e.getModelRegistry().putObject(loc, ModelUtils.getBakedTextureData(b.getData()));
         }
 
         //Inject models for blocks and frames
