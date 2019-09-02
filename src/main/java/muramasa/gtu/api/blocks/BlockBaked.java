@@ -9,17 +9,13 @@ import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-//TODO probably very future, but add system to build dynamic baked models from
-//TODO a TextureData object.
-//TODO Maybe some base class could have a overridable String getVariant method
-//TODO for automatic basic model injection
-//TODO allow to specify textures by passing TextureData
 public abstract class BlockBaked extends Block implements IGregTechObject, IModelOverride {
 
     protected TextureData data;
@@ -38,20 +34,26 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
         return data;
     }
 
-    public String getVariant() {
-        return "normal";
+    @Override
+    public void onTextureStitch(TextureMap map) {
+        map.registerSprite(data.getBase()[0]);
+        if (data.getOverlay() != null) {
+            for (int i = 0; i < data.getOverlay().length; i++) {
+                map.registerSprite(data.getOverlay()[i]);
+            }
+        }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), getVariant()));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), "normal"));
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), getVariant());
+        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "normal");
         registry.putObject(loc, ModelUtils.getBakedTextureData(getData()));
     }
 }

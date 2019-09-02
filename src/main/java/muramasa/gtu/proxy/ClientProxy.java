@@ -3,7 +3,6 @@ package muramasa.gtu.proxy;
 import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
@@ -120,14 +119,11 @@ public class ClientProxy implements IProxy {
             e.getMap().registerSprite(s.getTexture(MaterialType.FRAME, 0));
         });
 
+        GregTechAPI.ITEMS.forEach(i -> {
+            if (i instanceof IModelOverride) ((IModelOverride) i).onTextureStitch(e.getMap());
+        });
         GregTechAPI.BLOCKS.forEach(b -> {
-            if (b instanceof BlockBaked) {
-                e.getMap().registerSprite(((BlockBaked) b).getData().getBase()[0]);
-                if (((BlockBaked) b).getData().getOverlay() != null)
-                for (int i = 0; i < ((BlockBaked) b).getData().getOverlay().length; i++) {
-                    e.getMap().registerSprite(((BlockBaked) b).getData().getOverlay()[i]);
-                }
-            }
+            if (b instanceof IModelOverride) ((IModelOverride) b).onTextureStitch(e.getMap());
         });
     }
 
