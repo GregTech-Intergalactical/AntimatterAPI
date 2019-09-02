@@ -15,7 +15,7 @@ public class RecipeBuilders {
         public static ItemStack[] FUELS;
 
         static {
-            GregTechAPI.onEvent(RegistrationEvent.DATA_BUILT, () -> FUELS = new ItemStack[] {
+            GregTechAPI.onEvent(RegistrationEvent.DATA_FINAL, () -> FUELS = new ItemStack[] {
                 Materials.Coal.getGem(1),
                 Materials.Coal.getDust(1),
                 Materials.Charcoal.getGem(1),

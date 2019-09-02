@@ -98,7 +98,7 @@ public class GregTech {
     public void init(FMLInitializationEvent e) {
         PROXY.init(e);
 
-        GregTechAPI.onRegistration(RegistrationEvent.DATA_BUILT);
+        GregTechAPI.onRegistration(RegistrationEvent.DATA_FINAL);
 
         if (Utils.isModLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
 
