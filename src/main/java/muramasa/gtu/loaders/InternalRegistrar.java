@@ -44,11 +44,11 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCoverStack(Data.PumpIV.get(1), new CoverPump(Tier.IV));
                 MaterialType.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverStack(m.getPlate(1), GregTechAPI.CoverPlate));
                 break;
-            case DATA_BUILT:
-                Materials.init();
-                break;
             case WORLDGEN:
                 WorldGenLoader.init();
+                break;
+            case DATA_FINAL:
+                Materials.init();
                 break;
             case RECIPE:
                 OreDictLoader.init();
