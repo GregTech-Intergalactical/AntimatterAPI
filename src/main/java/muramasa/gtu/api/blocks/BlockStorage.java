@@ -76,7 +76,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
         setUnlocalizedName(getId());
         setRegistryName(getId());
-        setSoundType(type == MaterialType.FRAME ? SoundType.LADDER : SoundType.METAL);
+        setSoundType(SoundType.METAL);
         setResistance(8.0f);
         setCreativeTab(Ref.TAB_BLOCKS);
         GregTechAPI.register(BlockStorage.class, this);
@@ -133,22 +133,25 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         Item item = stack.getItem();
         if (!(item instanceof GTItemBlock)) return false;
         GTItemBlock itemBlock = ((GTItemBlock) item);
-        if (isFrame(itemBlock.getBlock())) {
+        Block block = itemBlock.getBlock();
+        if (isFrame(block)) {
+            BlockStorage frame = ((BlockStorage) block);
             BlockPos playerPos = player.getPosition();
             if (playerPos.equals(pos)) return false;
             MutableBlockPos mutablePos = new MutableBlockPos(pos);
             for (int i = pos.getY(); i < 256; i++) {
                 mutablePos.move(EnumFacing.UP);
                 if (playerPos.equals(mutablePos) || player.isOnLadder()) return false;
-                else if (world.mayPlace(this, mutablePos, false, EnumFacing.DOWN, player) && canPlaceBlockAt(world, mutablePos)) {
-                    //TODO: Fix setBlockState
-                    //world.setBlockState(mutablePos, getDefaultState().withProperty(STORAGE_MATERIAL, stack.getMetadata()));
+                else if (world.mayPlace(frame, mutablePos, false, EnumFacing.DOWN, player) && frame.canPlaceBlockAt(world, mutablePos)) {
+                    world.setBlockState(mutablePos, frame.getDefaultState().withProperty(frame.getMaterialProp(), stack.getMetadata()));
                     if (!player.isCreative()) stack.shrink(1);
                     SoundType soundType = getSoundType();
                     world.playSound(player, mutablePos, soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
                     return true;
                 }
-                else continue;
+                else if (isFrame(world.getBlockState(mutablePos).getBlock())) continue;
+                //else continue; //Uncomment this if we want frames to be place-able even if there are obstacles in the y-axis
+                else break;
             }
         }
         return false;
@@ -177,8 +180,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (type == MaterialType.FRAME) return FRAME_COLLISION;
-        else return super.getCollisionBoundingBox(state, world, pos);
+        return type == MaterialType.FRAME ? FRAME_COLLISION : super.getCollisionBoundingBox(state, world, pos);
     }
     /** Ladder Stuffs - End **/
     
