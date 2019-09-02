@@ -139,6 +139,7 @@ public class GregTech {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> e) {
+        //TODO, possibly loop over stone sets?
         MaterialType.ORE.getMats().forEach(m -> new BlockOre(OreType.NORMAL, m, "default"));
         MaterialType.ORE_SMALL.getMats().forEach(m -> new BlockOre(OreType.SMALL, m, "default"));
         new BlockRock(StoneType.STONE);

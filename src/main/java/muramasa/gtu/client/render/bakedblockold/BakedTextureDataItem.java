@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@Deprecated
 public class BakedTextureDataItem extends BakedBase {
 
     protected IBakedModel baked;

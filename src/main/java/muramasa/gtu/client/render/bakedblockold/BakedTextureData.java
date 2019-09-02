@@ -13,6 +13,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@Deprecated
 public class BakedTextureData extends BakedBase {
 
     protected IBakedModel baked;

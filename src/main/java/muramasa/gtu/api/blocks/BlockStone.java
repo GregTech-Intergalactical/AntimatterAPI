@@ -3,26 +3,18 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.ore.StoneType;
-import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.client.render.StateMapperRedirect;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import muramasa.gtu.api.texture.TextureData;
 
-public class BlockStone extends Block implements IGregTechObject, IModelOverride {
+public class BlockStone extends BlockBaked {
 
     private StoneType type;
 
     public BlockStone(StoneType type) {
-        super(net.minecraft.block.material.Material.ROCK);
+        super(net.minecraft.block.material.Material.ROCK, new TextureData().base(type.getTexture()));
         this.type = type;
         setSoundType(type.getSoundType());
-        setUnlocalizedName("stone_" + getId());
-        setRegistryName("stone_" + getId());
+        setUnlocalizedName(getId());
+        setRegistryName(getId());
         setCreativeTab(Ref.TAB_BLOCKS);
         GregTechAPI.register(BlockStone.class, this);
     }
@@ -34,13 +26,6 @@ public class BlockStone extends Block implements IGregTechObject, IModelOverride
     @Override
     public String getId() {
         return type.getId();
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":block_stone", "id=" + getId()));
-        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ModelResourceLocation(Ref.MODID + ":block_stone", "id=" + getId())));
     }
 
     public static BlockStone get(StoneType stoneType) {

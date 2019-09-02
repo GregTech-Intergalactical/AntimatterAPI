@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
 
+@Deprecated
 public class ModelTextureData implements IModel {
 
     protected BlockBakedOld block;
