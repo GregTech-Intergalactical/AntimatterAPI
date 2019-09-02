@@ -3,6 +3,8 @@ package muramasa.gtu.proxy;
 import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.api.blocks.BlockCasing;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
@@ -16,6 +18,7 @@ import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.events.BlockHighlightHandler;
@@ -118,6 +121,10 @@ public class ClientProxy implements IProxy {
             e.getMap().registerSprite(s.getTexture(MaterialType.BLOCK, 0));
             e.getMap().registerSprite(s.getTexture(MaterialType.FRAME, 0));
         });
+
+        GregTechAPI.BLOCKS.forEach(b -> {
+            if (b instanceof BlockBaked) ((BlockBaked) b).getTextures().forEach(t -> e.getMap().registerSprite(t));
+        });
     }
 
     @SubscribeEvent
@@ -180,6 +187,13 @@ public class ClientProxy implements IProxy {
         for (MaterialItem i : GregTechAPI.all(MaterialItem.class)) {
             baked = TYPE_SET_MAP.get(i.getType().getId().concat("_").concat(i.getMaterial().getSet().getId()));
             e.getModelRegistry().putObject(new ModelResourceLocation(Ref.MODID + ":" + i.getType().getId() + "_" + i.getMaterial().getId(), "inventory"), baked);
+        }
+
+        //Inject models for casings
+        for (BlockCasing b : GregTechAPI.all(BlockCasing.class)) {
+            ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + b.getId(), "normal");
+            baked = ModelUtils.tex(ModelUtils.MODEL_BASIC, "0", new Texture("blocks/casing/" + b.getType())).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
+            e.getModelRegistry().putObject(loc, baked);
         }
 
         //Inject models for blocks and frames

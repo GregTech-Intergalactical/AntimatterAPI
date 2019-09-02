@@ -66,10 +66,10 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
         setDefaultState(blockStateContainer.getBaseState());
 
-        setSoundType(type == MaterialType.FRAME ? SoundType.LADDER : SoundType.METAL);
-        setResistance(8.0f);
         setUnlocalizedName(getId());
         setRegistryName(getId());
+        setSoundType(type == MaterialType.FRAME ? SoundType.LADDER : SoundType.METAL);
+        setResistance(8.0f);
         setCreativeTab(Ref.TAB_BLOCKS);
         GregTechAPI.register(BlockStorage.class, this);
     }
@@ -187,10 +187,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         }
     }
 
-    public IBlockState get(int i) {
-        return getDefaultState().withProperty(STORAGE_MATERIAL, i);
-    }
-
     //TODO
     @Override
     public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
@@ -263,5 +259,11 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
             return ItemStack.EMPTY;
         }
         return new ItemStack(tuple.getFirst(), count, tuple.getSecond());
+    }
+
+    public static boolean equals(Material material, MaterialType type, IBlockState state) {
+        Tuple<BlockStorage, Integer> tuple = ID_LOOKUP.get(type.getId() + "_" + material.getId());
+        if (tuple == null) return false;
+        return tuple.getFirst() == state.getBlock() && tuple.getSecond().equals(state.getValue(tuple.getFirst().getMaterialProp()));
     }
 }

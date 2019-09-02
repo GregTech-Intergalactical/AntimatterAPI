@@ -19,7 +19,6 @@ import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import muramasa.gtu.api.tileentities.*;
 import muramasa.gtu.api.tileentities.multi.TileEntityBasicMultiMachine;
-import muramasa.gtu.api.tileentities.multi.TileEntityCasing;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
@@ -73,7 +72,7 @@ public final class GregTechAPI {
         register(TileEntityItemPipe.class);
         register(TileEntityFluidPipe.class);
         register(TileEntityCable.class);
-        register(TileEntityCasing.class);
+        //register(TileEntityCasing.class);
         register(TileEntityMaterial.class);
         register(TileEntityRock.class);
 
