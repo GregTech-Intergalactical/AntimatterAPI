@@ -106,6 +106,11 @@ public final class GregTechAPI {
         return map != null ? c.cast(map.get(id)) : null;
     }
 
+    public static <T> boolean has(Class<T> c, String id) {
+        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
+        return map != null && map.containsKey(id);
+    }
+
     public static <T> List<T> all(Class<T> c) {
         LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
         if (map == null) return Collections.emptyList();

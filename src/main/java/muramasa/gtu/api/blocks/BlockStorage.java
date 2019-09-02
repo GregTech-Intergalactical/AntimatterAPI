@@ -52,6 +52,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     
     public BlockStorage(String id, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
+        if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("a storage block with the id " + id + " already exists");
         this.id = id;
         this.type = type;
         this.materials = materials;
