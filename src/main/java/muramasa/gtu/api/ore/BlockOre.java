@@ -86,7 +86,15 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public OreType getType() {
         return type;
     }
+    
+    public String getSetId() {
+        return setId;
+    }
 
+    public StoneType[] getStoneTypesFromSet(String setId) {
+        return STONE_SET_MAP.get(setId);
+    }
+    
     public GTPropertyInteger getStoneTypeProp() {
         return STONE_TYPE;
     }
