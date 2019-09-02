@@ -1,7 +1,8 @@
-package muramasa.gtu.client.render.bakedmodels;
+package muramasa.gtu.client.render.bakedblockold;
 
 import com.google.common.collect.Lists;
 import muramasa.gtu.api.properties.GTProperties;
+import muramasa.gtu.client.render.bakedmodels.BakedBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;

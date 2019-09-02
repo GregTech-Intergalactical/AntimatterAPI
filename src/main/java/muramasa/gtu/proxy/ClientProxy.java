@@ -26,7 +26,7 @@ import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
 import muramasa.gtu.client.render.bakedmodels.BakedMachine;
 import muramasa.gtu.client.render.bakedmodels.BakedPipe;
-import muramasa.gtu.client.render.bakedmodels.BakedTextureDataItem;
+import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
 import muramasa.gtu.client.render.models.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;

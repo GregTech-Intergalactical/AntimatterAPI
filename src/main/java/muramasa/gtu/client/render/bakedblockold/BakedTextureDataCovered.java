@@ -1,4 +1,4 @@
-package muramasa.gtu.client.render.bakedmodels;
+package muramasa.gtu.client.render.bakedblockold;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
