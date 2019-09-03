@@ -70,7 +70,7 @@ public abstract class TileEntityPipe extends TileEntityTickable {
             sideMask = 1 << s;
             if ((disabledConnections & sideMask) == 0) { //Connection side has not been disabled
                 if (canConnect(adjTile)) {
-                    connections |=  sideMask;
+                    connections |= sideMask;
                     //TODO check isFullCube to allow more culled connections?
                     if (((TileEntityPipe) adjTile).getSize().ordinal() < getSize().ordinal()) smallerPipes++;
                 } else if (adjTile.hasCapability(GTCapabilities.ENERGY, EnumFacing.VALUES[s].getOpposite())) {

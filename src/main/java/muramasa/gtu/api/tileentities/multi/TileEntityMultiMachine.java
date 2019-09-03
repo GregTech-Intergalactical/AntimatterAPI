@@ -41,6 +41,11 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         super.onLoad();
         componentHandler = Optional.of(new ControllerComponentHandler(getType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
+
+        //TODO fix this oversight
+        itemHandler = Optional.empty();
+        fluidHandler = Optional.empty();
+        energyHandler = Optional.empty();
     }
 
     public boolean checkStructure() {

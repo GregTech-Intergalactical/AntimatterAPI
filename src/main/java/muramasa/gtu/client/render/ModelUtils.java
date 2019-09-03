@@ -42,8 +42,8 @@ public class ModelUtils {
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
-    public static IModel MODEL_BASIC, MODEL_LAYERED;
-    public static IBakedModel BAKED_MISSING, BAKED_BASIC, BAKED_LAYERED;
+    public static IModel MODEL_BASIC, MODEL_LAYERED, MODEL_COMPLEX;
+    public static IBakedModel BAKED_MISSING, BAKED_BASIC, BAKED_LAYERED, BAKED_COMPLEX;
 
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -73,8 +73,10 @@ public class ModelUtils {
     public static void onModelBake(ModelBakeEvent e) {
         MODEL_BASIC = load("basic");
         MODEL_LAYERED = load("layered");
+        MODEL_COMPLEX = load("complex");
         BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        BAKED_COMPLEX = MODEL_COMPLEX.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
@@ -308,6 +310,10 @@ public class ModelUtils {
 
     //TODO convert layer onto an Enum
     public static List<BakedQuad> tex(List<BakedQuad> quads, QuadLayer layer, Texture texture) {
+        return tex(quads, layer.getIndex(), texture.getSprite());
+    }
+
+    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, Texture texture) {
         return tex(quads, layer, texture.getSprite());
     }
 
@@ -315,10 +321,10 @@ public class ModelUtils {
         return tex(quads, layer1, layer2, texture.getSprite());
     }
 
-    public static List<BakedQuad> tex(List<BakedQuad> quads, QuadLayer layer, TextureAtlasSprite sprite) {
+    public static List<BakedQuad> tex(List<BakedQuad> quads, int layer, TextureAtlasSprite sprite) {
         int size = quads.size();
         for (int i = 0; i < size; i++) {
-            if (quads.get(i).getTintIndex() != layer.getIndex()) continue;
+            if (quads.get(i).getTintIndex() != layer) continue;
             quads.set(i, new BakedQuadRetextured(quads.get(i), sprite));
         }
         return quads;
