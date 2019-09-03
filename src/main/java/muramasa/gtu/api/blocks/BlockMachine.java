@@ -229,6 +229,7 @@ public class BlockMachine extends Block implements IItemBlock, IModelOverride, I
 
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockMachine) && world == null || pos == null) return -1;
         TileEntity tile = Utils.getTile(world, pos);
         return tile instanceof TileEntityMachine && i == 0 ? ((TileEntityMachine) tile).getTextureData().getTint() : -1;
     }

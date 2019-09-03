@@ -4,7 +4,6 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
@@ -23,15 +22,10 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -44,7 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static muramasa.gtu.api.properties.GTProperties.*;
+import static muramasa.gtu.api.properties.GTProperties.ROCK_MODEL;
 
 public class BlockRock extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
@@ -209,6 +203,7 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
 
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockRock) && world == null || pos == null) return -1;
         TileEntity tile = Utils.getTile(world, pos);
         return tile instanceof TileEntityMaterial && i == 1 ? ((TileEntityMaterial) tile).getMaterial().getRGB() : -1;
     }

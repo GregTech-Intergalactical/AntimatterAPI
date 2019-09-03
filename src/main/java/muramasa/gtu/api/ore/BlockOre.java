@@ -183,13 +183,14 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
-        if (world == null || pos == null || i != 1) return -1;
+        if (!(state.getBlock() instanceof BlockOre) && world == null || pos == null || i != 1) return -1;
         return ((BlockOre) world.getBlockState(pos).getBlock()).getMaterial().getRGB();
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 1 && block != null ? ((BlockOre) block).getMaterial().getRGB() : -1;
+        if (!(block instanceof BlockOre)) return -1;
+        return i == 1 ? ((BlockOre) block).getMaterial().getRGB() : -1;
     }
 
     @Override

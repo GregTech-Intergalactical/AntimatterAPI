@@ -5,6 +5,7 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -207,11 +208,13 @@ public abstract class BlockPipe extends BlockBaked implements IGregTechObject, I
 
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockPipe) && world == null || pos == null) return -1;
         return i == 0 || i == 1 || i == 2 ? getRGB() : -1;
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        if (!(block instanceof BlockPipe)) return -1;
         return i == 0 || i == 1 || i == 2 ? ((BlockPipe) block).getRGB() : -1;
     }
 
