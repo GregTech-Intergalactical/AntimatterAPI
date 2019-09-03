@@ -4,16 +4,12 @@ import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockCasing;
-import muramasa.gtu.api.blocks.BlockCoil;
-import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.blocks.BlockStorage;
+import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.BlockOre;
-import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.Texture;
@@ -26,6 +22,7 @@ import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedItem;
 import muramasa.gtu.common.Data;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -47,6 +44,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -156,10 +154,30 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
             }
         } else {
             if (Data.DebugScanner.isEqual(stack)) {
-                if (!world.isRemote) {
-                    //Data.RUBBER_SAPLING.generateTree(world, pos, Ref.RNG);
-                    RecipeMap.dumpHashCollisions();
+                IBlockState state = world.getBlockState(pos);
+                if (state.getBlock() instanceof BlockCasingTurbine) {
+                    IBlockState casingState = state.getBlock().getExtendedState(state, world, pos);
+                    if (casingState instanceof IExtendedBlockState) {
+                        IExtendedBlockState exState = (IExtendedBlockState) casingState;
+                        try {
+                            int ctm = exState.getValue(BlockCasingTurbine.CTM);
+                            player.sendMessage(new TextComponentString("ctm: " + ctm));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+//                    for (int x = -1; x < 2; x++) {
+//                        for (int y = -1; y < 2; y++) {
+//                            for (int z = -1; z < 2; z++) {
+//                                world.setBlockState(pos.add(x, y, z), Blocks.DIAMOND_BLOCK.getDefaultState());
+//                            }
+//                        }
+//                    }
                 }
+                //if (!world.isRemote) {
+                    //Data.RUBBER_SAPLING.generateTree(world, pos, Ref.RNG);
+                    //RecipeMap.dumpHashCollisions();
+                //}
             }
         }
         return EnumActionResult.FAIL; //TODO FAIL?

@@ -36,6 +36,8 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    //TODO this should probably just be a Texture collection
     public void onTextureStitch(TextureMap map) {
         map.registerSprite(data.getBase()[0]);
         if (data.getOverlay() != null) {

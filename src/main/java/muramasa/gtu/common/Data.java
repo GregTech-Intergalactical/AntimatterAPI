@@ -2,6 +2,7 @@ package muramasa.gtu.common;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.api.blocks.BlockCasing;
+import muramasa.gtu.api.blocks.BlockCasingTurbine;
 import muramasa.gtu.api.blocks.BlockCoil;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
@@ -288,10 +289,10 @@ public class Data {
     public static BlockCasing CASING_PIPE_TITANIUM = new BlockCasing("pipe_titanium");
     public static BlockCasing CASING_PIPE_TUNGSTENSTEEL = new BlockCasing("pipe_tungstensteel");
     public static BlockCasing CASING_ENGINE_INTAKE = new BlockCasing("engine_intake");
-    public static BlockCasing CASING_TURBINE_1 = new BlockCasing("turbine_1");
-    public static BlockCasing CASING_TURBINE_2 = new BlockCasing("turbine_2");
-    public static BlockCasing CASING_TURBINE_3 = new BlockCasing("turbine_3");
-    public static BlockCasing CASING_TURBINE_4 = new BlockCasing("turbine_4");
+    public static BlockCasing CASING_TURBINE_1 = new BlockCasingTurbine("turbine_1");
+    public static BlockCasing CASING_TURBINE_2 = new BlockCasingTurbine("turbine_2");
+    public static BlockCasing CASING_TURBINE_3 = new BlockCasingTurbine("turbine_3");
+    public static BlockCasing CASING_TURBINE_4 = new BlockCasingTurbine("turbine_4");
     public static BlockCasing CASING_FUSION_1 = new BlockCasing("fusion_1");
     public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2");
     public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3");
