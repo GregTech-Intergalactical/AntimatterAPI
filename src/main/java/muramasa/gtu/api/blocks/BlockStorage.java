@@ -241,6 +241,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockStorage) && world == null || pos == null) return -1;
         return i == 0 ? materials[state.getValue(STORAGE_MATERIAL)].getRGB() : -1;
     }
 

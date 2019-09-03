@@ -163,6 +163,7 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
 
     @Override
     public int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockCable) && world == null || pos == null) return -1;
         TileEntity tile = Utils.getTile(world, pos);
         if (!(tile instanceof TileEntityCable)) return -1;
         return state.getValue(PIPE_INSULATED) ? i == 2 ? getRGB() : -1 : i == 0 || i == 2 ? getRGB() : -1;
