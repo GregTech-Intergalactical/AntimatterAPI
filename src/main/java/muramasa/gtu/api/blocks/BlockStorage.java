@@ -20,7 +20,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,6 +41,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Set;
 
 public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
@@ -252,10 +253,8 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureMap map) {
-        for (int i = 0; i < materials.length; i++) {
-            map.registerSprite(materials[i].getSet().getTexture(type, 0));
-        }
+    public void getTextures(Set<ResourceLocation> textures) {
+        Arrays.stream(materials).forEach(m -> textures.add(m.getSet().getTexture(type, 0)));
     }
 
     @Override

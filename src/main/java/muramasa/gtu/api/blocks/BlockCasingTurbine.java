@@ -10,16 +10,19 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Arrays;
+import java.util.Set;
 
 public class BlockCasingTurbine extends BlockCasing {
 
@@ -58,14 +61,10 @@ public class BlockCasingTurbine extends BlockCasing {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureMap map) {
-        for (int i = 0; i < Textures.LARGE_TURBINE.length; i++) {
-            map.registerSprite(Textures.LARGE_TURBINE[i]);
-        }
-        for (int i = 0; i < Textures.LARGE_TURBINE_ACTIVE.length; i++) {
-            map.registerSprite(Textures.LARGE_TURBINE_ACTIVE[i]);
-        }
-        map.registerSprite(data.getBase()[0]);
+    public void getTextures(Set<ResourceLocation> textures) {
+        textures.addAll(Arrays.asList(Textures.LARGE_TURBINE));
+        textures.addAll(Arrays.asList(Textures.LARGE_TURBINE_ACTIVE));
+        textures.add(getData().getBase(0));
     }
 
     @Override

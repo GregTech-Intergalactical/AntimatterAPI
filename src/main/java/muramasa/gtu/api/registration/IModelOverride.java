@@ -2,15 +2,17 @@ package muramasa.gtu.api.registration;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Set;
+
 public interface IModelOverride {
 
     @SideOnly(Side.CLIENT)
-    default void onTextureStitch(TextureMap map) {
+    default void getTextures(Set<ResourceLocation> textures) {
         //NOOP
     }
 

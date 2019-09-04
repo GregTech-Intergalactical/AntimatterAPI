@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -39,6 +40,9 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy implements IProxy {
@@ -98,12 +102,14 @@ public class ClientProxy implements IProxy {
             e.getMap().registerSprite(s.getTexture(MaterialType.PLASMA, 0));
         });
 
+        Set<ResourceLocation> textures = new HashSet<>();
         GregTechAPI.ITEMS.forEach(i -> {
-            if (i instanceof IModelOverride) ((IModelOverride) i).onTextureStitch(e.getMap());
+            if (i instanceof IModelOverride) ((IModelOverride) i).getTextures(textures);
         });
         GregTechAPI.BLOCKS.forEach(b -> {
-            if (b instanceof IModelOverride) ((IModelOverride) b).onTextureStitch(e.getMap());
+            if (b instanceof IModelOverride) ((IModelOverride) b).getTextures(textures);
         });
+        textures.forEach(t -> e.getMap().registerSprite(t));
     }
 
     @SubscribeEvent

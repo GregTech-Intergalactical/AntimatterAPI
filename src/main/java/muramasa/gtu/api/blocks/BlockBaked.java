@@ -9,12 +9,15 @@ import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Arrays;
+import java.util.Set;
 
 //TODO support blockstate baking?
 public abstract class BlockBaked extends Block implements IGregTechObject, IModelOverride {
@@ -37,14 +40,9 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
 
     @Override
     @SideOnly(Side.CLIENT)
-    //TODO this should probably just be a Texture collection
-    public void onTextureStitch(TextureMap map) {
-        map.registerSprite(data.getBase()[0]);
-        if (data.getOverlay() != null) {
-            for (int i = 0; i < data.getOverlay().length; i++) {
-                map.registerSprite(data.getOverlay()[i]);
-            }
-        }
+    public void getTextures(Set<ResourceLocation> textures) {
+        textures.add(data.getBase(0));
+        if (data.hasOverlay()) textures.addAll(Arrays.asList(data.getOverlay()));
     }
 
     @Override

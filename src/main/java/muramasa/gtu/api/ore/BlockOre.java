@@ -19,7 +19,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -39,6 +38,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Set;
 
 public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
@@ -195,11 +196,9 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureMap map) {
-        for (int i = 0; i < stoneSet.length; i++) {
-            map.registerSprite(stoneSet[i].getTexture());
-        }
-        map.registerSprite(material.getSet().getTexture(type.getType(), 0));
+    public void getTextures(Set<ResourceLocation> textures) {
+        Arrays.stream(stoneSet).forEach(s -> textures.add(s.getTexture()));
+        textures.add(material.getSet().getTexture(type.getType(), 0));
     }
 
     @Override

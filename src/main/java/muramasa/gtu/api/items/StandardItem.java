@@ -25,7 +25,6 @@ import muramasa.gtu.common.Data;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextComponentString;
@@ -223,10 +223,14 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
         return get(1);
     }
 
+    public Texture[] getTextures() {
+        return new Texture[]{new Texture("items/standard/" + id)};
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureMap map) {
-        map.registerSprite(new Texture("items/standard/" + id));
+    public void getTextures(Set<ResourceLocation> textures) {
+        textures.addAll(Arrays.asList(getTextures()));
     }
 
     @Override

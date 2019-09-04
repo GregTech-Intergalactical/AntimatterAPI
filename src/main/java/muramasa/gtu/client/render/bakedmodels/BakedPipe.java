@@ -136,8 +136,8 @@ public class BakedPipe implements IBakedModel {
             quads = new ArrayList<>(BAKED[size][config[0]].getQuads(state, side, rand));
             if (connections > 63) quads = ModelUtils.remove(quads, QuadLayer.OVERLAY);
             if (config.length > 1) quads = ModelUtils.trans(quads, 1, config);
-            ModelUtils.tex(quads, QuadLayer.BASE, QuadLayer.OVERLAY, data.getBase()[0]);
-            ModelUtils.tex(quads, QuadLayer.EXTRA, data.getOverlay()[size]);
+            ModelUtils.tex(quads, QuadLayer.BASE, QuadLayer.OVERLAY, data.getBase(0));
+            ModelUtils.tex(quads, QuadLayer.EXTRA, data.getOverlay(size));
 
             if (covers != null) {
                 for (int s = 0; s < 6; s++) {
