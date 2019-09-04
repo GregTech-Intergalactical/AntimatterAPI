@@ -136,7 +136,7 @@ public class ClientProxy implements IProxy {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
-        ModelUtils.onModelBake(e);
+        ModelUtils.buildDefaultModels();
 
         IModel model;
         IBakedModel baked;

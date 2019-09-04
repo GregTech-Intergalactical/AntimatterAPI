@@ -214,7 +214,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
         for (int i = 0; i < stoneSet.length; i++) {
             ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "stone_type=" + i);
-            registry.putObject(loc, ModelUtils.getBakedTextureData(new TextureData().base(stoneSet[i].getTexture()).overlay(material.getSet().getTexture(type.getType(), 0))));
+            registry.putObject(loc, ModelUtils.bakeTextureData(new TextureData().base(stoneSet[i].getTexture()).overlay(material.getSet().getTexture(type.getType(), 0))));
         }
     }
 

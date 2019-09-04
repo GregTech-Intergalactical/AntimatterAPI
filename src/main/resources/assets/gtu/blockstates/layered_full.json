@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gtu:layered_full"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}
