@@ -71,7 +71,7 @@ public class BakedTurbineCasing extends BakedBase {
             int tileFacing = exState.getValue(BlockCasingTurbine.TILE_FACING);
             Texture[] set = ctm < 1000 ? Textures.LARGE_TURBINE_ACTIVE : Textures.LARGE_TURBINE_ACTIVE;
 
-            Texture base = ((BlockCasingTurbine) state.getBlock()).getData().getBase()[0];
+            Texture base = ((BlockCasingTurbine) state.getBlock()).getData().getBase(0);
             List<BakedQuad> baseQuads = ModelUtils.tex(ModelUtils.MODEL_COMPLEX, new String[]{"0", "6", "7", "8", "9", "10", "11"}, new Texture[]{base, base, base, base, base, base, base}).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter()).getQuads(state, side, rand);
             return ModelUtils.tex(baseQuads, tileFacing + 6, set[LOOKUP.get(ctm)]);
         }

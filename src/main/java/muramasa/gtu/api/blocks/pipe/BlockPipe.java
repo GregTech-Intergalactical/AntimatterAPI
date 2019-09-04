@@ -5,7 +5,6 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
@@ -234,7 +233,7 @@ public abstract class BlockPipe extends BlockBaked implements IGregTechObject, I
         //TODO keep copy of PipeModels and remove BakedTextureDataItem
         for (int i = 0; i < getSizes().length; i++) {
             ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + getSizes()[i].getName());
-            IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay()[getSizes()[i].ordinal()]));
+            IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay(getSizes()[i].ordinal())));
             registry.putObject(loc, baked);
         }
     }

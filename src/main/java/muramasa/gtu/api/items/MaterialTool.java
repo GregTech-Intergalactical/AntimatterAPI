@@ -13,7 +13,6 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.creativetab.GregTechTab;
@@ -24,7 +23,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -37,10 +35,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.IRegistry;
@@ -56,6 +51,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -441,10 +437,8 @@ public class MaterialTool extends ItemSword implements IGregTechObject, IModelOv
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureMap map) {
-        for (Texture texture : type.getTextures()) {
-            map.registerSprite(texture);
-        }
+    public void getTextures(Set<ResourceLocation> textures) {
+        textures.addAll(Arrays.asList(type.getTextures()));
     }
 
     @Override

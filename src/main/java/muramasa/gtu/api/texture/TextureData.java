@@ -54,12 +54,24 @@ public class TextureData {
         return overlayMode;
     }
 
+    public Texture getBase(int layer) {
+        return base[layer];
+    }
+
+    public Texture getOverlay(int layer) {
+        return overlay[layer];
+    }
+
     public Texture[] getBase() {
         return base;
     }
 
     public Texture[] getOverlay() {
         return overlay;
+    }
+
+    public boolean hasOverlay() {
+        return overlay != null && overlay.length > 0;
     }
 
     public int getTint() {

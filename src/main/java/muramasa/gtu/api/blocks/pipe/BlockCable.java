@@ -190,11 +190,11 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
     public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
         for (int i = 0; i < getSizes().length; i++) {
             ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + getSizes()[i].getName() + ",insulated=false");
-            IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay()[getSizes()[i].ordinal()]));
+            IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[1].getBase()).overlay(Textures.PIPE_DATA[1].getOverlay(getSizes()[i].ordinal())));
             registry.putObject(loc, baked);
 
             loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + getSizes()[i].getName() + ",insulated=true");
-            baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay()[getSizes()[i].ordinal()]));
+            baked = new BakedTextureDataItem(BakedPipe.BAKED[getSizes()[i].ordinal()][2], new TextureData().base(Textures.PIPE_DATA[2].getBase()).overlay(Textures.PIPE_DATA[2].getOverlay(getSizes()[i].ordinal())));
             registry.putObject(loc, baked);
         }
     }
