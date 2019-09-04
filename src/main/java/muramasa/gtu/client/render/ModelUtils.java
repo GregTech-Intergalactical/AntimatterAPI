@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
@@ -42,8 +41,8 @@ public class ModelUtils {
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
-    public static IModel MODEL_BASIC, MODEL_LAYERED, MODEL_COMPLEX;
-    public static IBakedModel BAKED_MISSING, BAKED_BASIC, BAKED_LAYERED, BAKED_COMPLEX;
+    public static IModel MODEL_BASIC, MODEL_LAYERED, MODEL_BASIC_FULL, MODEL_LAYERED_FULL, MODEL_COMPLEX;
+    public static IBakedModel BAKED_MISSING, BAKED_BASIC, BAKED_LAYERED, BAKED_BASIC_FULL, BAKED_LAYERED_FULL, BAKED_COMPLEX;
 
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -70,12 +69,17 @@ public class ModelUtils {
         TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
     }
 
-    public static void onModelBake(ModelBakeEvent e) {
+    public static void buildDefaultModels() {
+        if (MODEL_BASIC != null) return;
         MODEL_BASIC = load("basic");
         MODEL_LAYERED = load("layered");
+        MODEL_BASIC_FULL = load("basic_full");
+        MODEL_LAYERED_FULL = load("layered_full");
         MODEL_COMPLEX = load("complex");
         BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        BAKED_BASIC_FULL = MODEL_BASIC_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        BAKED_LAYERED_FULL = MODEL_LAYERED_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_COMPLEX = MODEL_COMPLEX.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
@@ -124,7 +128,7 @@ public class ModelUtils {
     }
 
     //TODO expand to support dynamic baking of TextureData objects and its modes
-    public static IBakedModel getBakedTextureData(TextureData data) {
+    public static IBakedModel bakeTextureData(TextureData data) {
         if (data.hasOverlay()) {
             return ModelUtils.tex(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{data.getBase(0), data.getOverlay(0)}).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, ModelUtils.getTextureGetter());
         }
@@ -150,9 +154,9 @@ public class ModelUtils {
         }
     }
 
-    public static IModel tex(IModel model, String[] elements, Texture[] textures) {
+    public static IModel tex(IModel model, String[] elements, ResourceLocation[] locs) {
         for (int i = 0; i < elements.length; i++) {
-            model = tex(model, elements[i], textures[i]);
+            model = tex(model, elements[i], locs[i]);
         }
         return model;
     }
@@ -165,6 +169,14 @@ public class ModelUtils {
             e.printStackTrace();
             return model;
         }
+    }
+
+    public static IBakedModel texBake(IModel model, String[] elements, ResourceLocation[] locs) {
+        return tex(model, elements, locs).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+    }
+
+    public static IBakedModel texBake(IModel model, String element, ResourceLocation loc) {
+        return tex(model, element, loc).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
     /** Baked Model Helpers **/
