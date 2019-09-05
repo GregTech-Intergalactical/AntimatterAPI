@@ -6,10 +6,7 @@ import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.*;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
 import muramasa.gtu.api.util.Utils;
@@ -40,7 +37,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,7 +44,7 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+public abstract class BlockPipe extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IStateOverride, IColorHandler {
 
     protected String type, id;
     protected Material material;
@@ -61,12 +57,9 @@ public abstract class BlockPipe extends BlockBaked implements IGregTechObject, I
         this.id = material.getId();
         this.material = material;
         this.sizes = sizes.length > 0 ? sizes : PipeSize.VALUES;
-        PIPE_SIZE = PropertyEnum.create("size", PipeSize.class, this.sizes);
 
-        //Hack to dynamically create a BlockState with a correctly sized size property based on the passed sizes array
-        BlockStateContainer blockStateContainer = createBlockState();
-        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
-        setDefaultState(blockStateContainer.getBaseState());
+        PIPE_SIZE = PropertyEnum.create("size", PipeSize.class, this.sizes);
+        overrideState(this, new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build());
 
         setUnlocalizedName(getId());
         setRegistryName(getId());
@@ -89,11 +82,6 @@ public abstract class BlockPipe extends BlockBaked implements IGregTechObject, I
 
     public PropertyEnum<PipeSize> getSizeProp() {
         return PIPE_SIZE;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return PIPE_SIZE != null ? new BlockStateContainer.Builder(this).add(PIPE_SIZE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build() : new BlockStateContainer(this);
     }
 
     @Override

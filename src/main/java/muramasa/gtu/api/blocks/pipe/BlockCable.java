@@ -36,7 +36,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -61,17 +60,9 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
             baseAmps, baseAmps * 2, baseAmps * 4, baseAmps * 8, baseAmps * 12, baseAmps * 16
         };
 
-        //Hack to dynamically create a BlockState with a with INSULATED property added
-        BlockStateContainer blockStateContainer = createBlockState();
-        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
-        setDefaultState(blockStateContainer.getBaseState());
+        overrideState(this, new BlockStateContainer.Builder(this).add(PIPE_SIZE, PIPE_INSULATED).add(PIPE_CONNECTIONS, TEXTURE, COVER).build());
 
         GregTechAPI.register(BlockCable.class, this);
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return PIPE_SIZE != null ? new BlockStateContainer.Builder(this).add(PIPE_SIZE, PIPE_INSULATED).add(PIPE_CONNECTIONS, TEXTURE, COVER).build() : new BlockStateContainer(this);
     }
 
     @Override
