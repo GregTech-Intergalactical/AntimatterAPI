@@ -10,7 +10,6 @@ import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
 import muramasa.gtu.client.render.StateMapperRedirect;
 import muramasa.gtu.client.render.bakedblockold.BakedTextureDataItem;
 import muramasa.gtu.client.render.bakedmodels.BakedPipe;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -30,7 +29,6 @@ import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,10 +50,7 @@ public class BlockItemPipe extends BlockPipe {
             32768 / baseSlots, 32768 / baseSlots, 32768 / baseSlots, 32768 / baseSlots, 16384 / baseSlots, 8192 / baseSlots
         };
 
-        //Hack to dynamically create a BlockState with a with RESTRICTIVE property added
-        BlockStateContainer blockStateContainer = createBlockState();
-        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
-        setDefaultState(blockStateContainer.getBaseState());
+        overrideState(this, new BlockStateContainer.Builder(this).add(PIPE_SIZE, PIPE_RESTRICTIVE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build());
 
         GregTechAPI.register(BlockItemPipe.class, this);
     }
@@ -66,11 +61,6 @@ public class BlockItemPipe extends BlockPipe {
 
     public int getStepSize(PipeSize size, boolean restrictive) {
         return restrictive ? steps[size.ordinal()] * 1000 : steps[size.ordinal()];
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return PIPE_SIZE != null ? new BlockStateContainer.Builder(this).add(PIPE_SIZE, PIPE_RESTRICTIVE).add(PIPE_CONNECTIONS, TEXTURE, COVER).build() : new BlockStateContainer(this);
     }
 
     @Override

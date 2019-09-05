@@ -7,10 +7,7 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.properties.GTPropertyInteger;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.*;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.proxy.ClientProxy;
 import net.minecraft.block.Block;
@@ -36,7 +33,6 @@ import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -44,7 +40,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
 
-public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IStateOverride, IColorHandler {
 
     private static Object2ObjectOpenHashMap<String, Tuple<BlockStorage, Integer>> ID_LOOKUP = new Object2ObjectOpenHashMap<>();
 
@@ -68,12 +64,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         //TODO see if this is needed...
         if (materials.length == 1) STORAGE_MATERIAL = new GTPropertyInteger("storage_material", 0);
         else STORAGE_MATERIAL = new GTPropertyInteger("storage_material", 0, Math.max(materials.length - 1, 1));
-
-        //TODO possibly move this to base class?
-        //Hack to dynamically create a BlockState with a correctly sized material property based on the passed materials array
-        BlockStateContainer blockStateContainer = createBlockState();
-        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, blockStateContainer, 21);
-        setDefaultState(blockStateContainer.getBaseState());
+        overrideState(this, new BlockStateContainer.Builder(this).add(STORAGE_MATERIAL).build());
 
         setUnlocalizedName(getId());
         setRegistryName(getId());
@@ -98,11 +89,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     public GTPropertyInteger getMaterialProp() {
         return STORAGE_MATERIAL;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return STORAGE_MATERIAL != null ? new BlockStateContainer.Builder(this).add(STORAGE_MATERIAL).build() : new BlockStateContainer(this);
     }
 
     @Override
