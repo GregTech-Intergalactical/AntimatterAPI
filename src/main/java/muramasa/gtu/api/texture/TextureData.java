@@ -21,13 +21,16 @@ public class TextureData {
 
     public TextureData base(Texture... base) {
         this.base = base;
-//        if (base.length == 6) overlayMode = TextureMode.FULL;
+        if (base.length == 6) {
+            baseMode = TextureMode.FULL;
+        }
         return this;
     }
 
     public TextureData overlay(Texture... overlay) {
         this.overlay = overlay;
-//        if (overlay.length == 6) baseMode = TextureMode.FULL;
+        //TODO this breaks machine quad retex
+        //if (overlay.length == 6) baseMode = TextureMode.FULL;
         return this;
     }
 
@@ -44,6 +47,21 @@ public class TextureData {
         if (base != null) ModelUtils.tex(quads, baseMode, base, QuadLayer.BASE);
         if (overlay != null) ModelUtils.tex(quads, overlayMode, overlay, QuadLayer.OVERLAY);
         return quads;
+    }
+
+    public IBakedModel bake() {
+        if (hasOverlay()) {
+            return ModelUtils.texBake(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{getBase(0), getOverlay(0)});
+        } else {
+            switch (getBaseMode()) {
+                case SINGLE:
+                    return ModelUtils.texBake(ModelUtils.MODEL_BASIC, "0", base[0]);
+                case FULL:
+                    return ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, new String[]{"0", "1", "2", "3", "4", "5"}, new Texture[]{base[0], base[1], base[2], base[3], base[4], base[5]});
+                default:
+                    return ModelUtils.BAKED_MISSING;
+            }
+        }
     }
 
     public TextureMode getBaseMode() {

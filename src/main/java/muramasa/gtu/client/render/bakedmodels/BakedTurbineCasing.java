@@ -1,7 +1,7 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.api.blocks.BlockCasingTurbine;
+import muramasa.gtu.api.blocks.BlockTurbineCasing;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -28,7 +28,7 @@ public class BakedTurbineCasing extends BakedBase {
         List<BakedQuad> quads = new ArrayList<>(baked.getQuads(state, side, rand));
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState exState = (IExtendedBlockState) state;
-            int[] ct = exState.getValue(BlockCasingTurbine.CT);
+            int[] ct = exState.getValue(BlockTurbineCasing.CT);
             List<BakedQuad> overlays;
             for (int i = 0; i < ct.length; i++) {
                 if (ct[i] > 0) {

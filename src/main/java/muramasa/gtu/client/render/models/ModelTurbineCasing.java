@@ -1,6 +1,6 @@
 package muramasa.gtu.client.render.models;
 
-import muramasa.gtu.api.blocks.BlockCasingTurbine;
+import muramasa.gtu.api.blocks.BlockTurbineCasing;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedTurbineCasing;
@@ -15,9 +15,9 @@ import java.util.function.Function;
 
 public class ModelTurbineCasing extends ModelBase {
 
-    private BlockCasingTurbine block;
+    private BlockTurbineCasing block;
 
-    public ModelTurbineCasing(BlockCasingTurbine block) {
+    public ModelTurbineCasing(BlockTurbineCasing block) {
         this.block = block;
     }
 
@@ -104,6 +104,6 @@ public class ModelTurbineCasing extends ModelBase {
             BakedTurbineCasing.LOOKUP.put(1506, ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, "5", Textures.LARGE_TURBINE_ACTIVE[6]).getQuads(null, EnumFacing.EAST, -1));
             BakedTurbineCasing.LOOKUP.put(1510, ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, "5", Textures.LARGE_TURBINE_ACTIVE[8]).getQuads(null, EnumFacing.EAST, -1));
         }
-        return new BakedTurbineCasing(ModelUtils.bakeTextureData(block.getData()));
+        return new BakedTurbineCasing(block.getData().bake());
     }
 }

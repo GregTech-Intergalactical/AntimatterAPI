@@ -155,24 +155,28 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
         } else {
             if (Data.DebugScanner.isEqual(stack)) {
                 IBlockState state = world.getBlockState(pos);
-                if (state.getBlock() instanceof BlockCasingTurbine) {
+                if (state.getBlock() instanceof BlockTurbineCasing) {
                     IBlockState casingState = state.getBlock().getExtendedState(state, world, pos);
                     if (casingState instanceof IExtendedBlockState) {
                         IExtendedBlockState exState = (IExtendedBlockState) casingState;
                         try {
-                            int[] ctm = exState.getValue(BlockCasingTurbine.CT);
-                            player.sendMessage(new TextComponentString("ctm: " + Arrays.toString(ctm)));
+                            int[] ct = exState.getValue(BlockTurbineCasing.CT);
+                            player.sendMessage(new TextComponentString("ct: " + Arrays.toString(ct)));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-//                    for (int x = -1; x < 2; x++) {
-//                        for (int y = -1; y < 2; y++) {
-//                            for (int z = -1; z < 2; z++) {
-//                                world.setBlockState(pos.add(x, y, z), Blocks.DIAMOND_BLOCK.getDefaultState());
-//                            }
-//                        }
-//                    }
+                } else if (state.getBlock() instanceof BlockCT) {
+                    IBlockState ctState = state.getBlock().getExtendedState(state, world, pos);
+                    if (ctState instanceof IExtendedBlockState) {
+                        IExtendedBlockState exState = (IExtendedBlockState) ctState;
+                        try {
+                            int ct = exState.getValue(BlockCT.CT);
+                            player.sendMessage(new TextComponentString("ct: " + ct));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 //if (!world.isRemote) {
                     //Data.RUBBER_SAPLING.generateTree(world, pos, Ref.RNG);
