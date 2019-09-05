@@ -4,17 +4,18 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 
 import javax.annotation.Nullable;
 
-public class BlockCasing extends BlockBaked {
+public class BlockCasing extends BlockCT {
 
     private String type;
     protected String harvestTool = "wrench";
 
     public BlockCasing(String type) {
-        super(net.minecraft.block.material.Material.IRON, new TextureData().base(new Texture("blocks/casing/" + type)));
+        super(Material.IRON, new TextureData().base(new Texture("blocks/casing/" + type)));
         this.type = type;
         setUnlocalizedName(getId());
         setRegistryName(getId());

@@ -1,13 +1,11 @@
 package muramasa.gtu.common;
 
 import muramasa.gtu.Configs;
-import muramasa.gtu.api.blocks.BlockCasing;
-import muramasa.gtu.api.blocks.BlockCasingTurbine;
-import muramasa.gtu.api.blocks.BlockCoil;
-import muramasa.gtu.api.blocks.BlockStorage;
+import muramasa.gtu.api.blocks.*;
 import muramasa.gtu.api.blocks.pipe.BlockCable;
 import muramasa.gtu.api.blocks.pipe.BlockFluidPipe;
 import muramasa.gtu.api.blocks.pipe.BlockItemPipe;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.items.ItemFluidCell;
 import muramasa.gtu.api.items.StandardItem;
 import muramasa.gtu.api.machines.Tier;
@@ -289,13 +287,13 @@ public class Data {
     public static BlockCasing CASING_PIPE_TITANIUM = new BlockCasing("pipe_titanium");
     public static BlockCasing CASING_PIPE_TUNGSTENSTEEL = new BlockCasing("pipe_tungstensteel");
     public static BlockCasing CASING_ENGINE_INTAKE = new BlockCasing("engine_intake");
-    public static BlockCasing CASING_TURBINE_1 = new BlockCasingTurbine("turbine_1");
-    public static BlockCasing CASING_TURBINE_2 = new BlockCasingTurbine("turbine_2");
-    public static BlockCasing CASING_TURBINE_3 = new BlockCasingTurbine("turbine_3");
-    public static BlockCasing CASING_TURBINE_4 = new BlockCasingTurbine("turbine_4");
-    public static BlockCasing CASING_FUSION_1 = new BlockCasing("fusion_1");
-    public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2");
-    public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3");
+    public static BlockCasing CASING_TURBINE_1 = new BlockTurbineCasing("turbine_1");
+    public static BlockCasing CASING_TURBINE_2 = new BlockTurbineCasing("turbine_2");
+    public static BlockCasing CASING_TURBINE_3 = new BlockTurbineCasing("turbine_3");
+    public static BlockCasing CASING_TURBINE_4 = new BlockTurbineCasing("turbine_4");
+    public static BlockCasing CASING_FUSION_1 = new BlockFusionCasing("fusion_1", Textures.FUSION_1_CT);
+    public static BlockCasing CASING_FUSION_2 = new BlockFusionCasing("fusion_2", Textures.FUSION_2_CT);
+    public static BlockCasing CASING_FUSION_3 = new BlockFusionCasing("fusion_3", Textures.FUSION_3_CT);
 
     public static BlockCable CABLE_RED_ALLOY = new BlockCable(RedAlloy, 0, 1, 1, Tier.ULV); //ULV
     public static BlockCable CABLE_COBALT = new BlockCable(Cobalt, 2, 4, 2, Tier.LV); //LV

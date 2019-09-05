@@ -20,11 +20,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import java.util.Set;
 
-public class BlockCasingTurbine extends BlockCasing {
+public class BlockTurbineCasing extends BlockCasing {
 
     public static UnlistedIntArray CT = new UnlistedIntArray();
 
-    public BlockCasingTurbine(String id) {
+    public BlockTurbineCasing(String id) {
         super(id);
         registerCustomModel(getId(), new ModelTurbineCasing(this), false);
     }

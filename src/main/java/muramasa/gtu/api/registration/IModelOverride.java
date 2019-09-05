@@ -12,12 +12,12 @@ import java.util.Set;
 public interface IModelOverride {
 
     @SideOnly(Side.CLIENT)
-    default void getTextures(Set<ResourceLocation> textures) {
+    default void onModelRegistration() {
         //NOOP
     }
 
     @SideOnly(Side.CLIENT)
-    default void onModelRegistration() {
+    default void getTextures(Set<ResourceLocation> textures) {
         //NOOP
     }
 

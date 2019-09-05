@@ -6,7 +6,6 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.GTModelLoader;
-import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -69,7 +68,7 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
-        baked = ModelUtils.bakeTextureData(data);
+        baked = data.bake();
         if (bakeItem) registry.putObject(new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"), baked);
         if (bakeBlock) registry.putObject(new ModelResourceLocation(Ref.MODID + ":" + getId(), "normal"), baked);
     }
