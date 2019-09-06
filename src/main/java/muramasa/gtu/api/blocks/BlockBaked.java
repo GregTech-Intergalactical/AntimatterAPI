@@ -7,6 +7,7 @@ import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.GTModelLoader;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -27,8 +28,9 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     protected IBakedModel baked;
 
     private boolean bakeItem = true, bakeBlock = true;
+    protected boolean customModel;
 
-    public BlockBaked(net.minecraft.block.material.Material material, TextureData data) {
+    public BlockBaked(Material material, TextureData data) {
         super(material);
         this.data = data;
     }
@@ -50,6 +52,7 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
         GTModelLoader.register(id, model);
         bakeItem = !hasItemOverride;
         bakeBlock = false;
+        customModel = true;
     }
 
     @Override

@@ -1,11 +1,9 @@
 package muramasa.gtu.api.blocks;
 
 import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.properties.UnlistedIntArray;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.client.render.models.ModelTurbineCasing;
 import muramasa.gtu.common.tileentities.multi.TileEntityLargeTurbine;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -22,16 +20,9 @@ import java.util.Set;
 
 public class BlockTurbineCasing extends BlockCasing {
 
-    public static UnlistedIntArray CT = new UnlistedIntArray();
-
     public BlockTurbineCasing(String id) {
         super(id);
         registerCustomModel(getId(), new ModelTurbineCasing(this), false);
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CT).build();
     }
 
     @Override

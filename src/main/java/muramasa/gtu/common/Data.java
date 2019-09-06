@@ -241,30 +241,22 @@ public class Data {
     public static BlockRubberLog RUBBER_LOG = new BlockRubberLog();
     public static BlockLeavesBase RUBBER_LEAVES = new BlockLeavesBase("rubber_leaves", RUBBER_SAPLING);
 
-    public static BlockCoil COIL_CUPRONICKEL = new BlockCoil("cupronickel", 113); //1808
-    public static BlockCoil COIL_KANTHAL = new BlockCoil("kanthal", 169); //2704
-    public static BlockCoil COIL_NICHROME = new BlockCoil("nichrome", 225); //3600
-    public static BlockCoil COIL_TUNGSTENSTEEL = new BlockCoil("tungstensteel", 282); //4512
-    public static BlockCoil COIL_HSSG = new BlockCoil("hssg", 338); //5408
-    public static BlockCoil COIL_NAQUADAH = new BlockCoil("naquadah", 450); //7200
-    public static BlockCoil COIL_NAQUADAH_ALLOY = new BlockCoil("naquadah_alloy", 563); //9008
-    public static BlockCoil COIL_FUSION = new BlockCoil("fusion", 563); //9008
-    public static BlockCoil COIL_SUPERCONDUCTOR = new BlockCoil("superconductor", 563); //9008
+    public static BlockBasic CASING_FIRE_BRICK = new BlockBasic("fire_brick");
 
-    public static BlockCasing CASING_ULV = new BlockCasing("ulv");
-    public static BlockCasing CASING_LV = new BlockCasing("lv");
-    public static BlockCasing CASING_MV = new BlockCasing("mv");
-    public static BlockCasing CASING_HV = new BlockCasing("hv");
-    public static BlockCasing CASING_EV = new BlockCasing("ev");
-    public static BlockCasing CASING_IV = new BlockCasing("iv");
-    public static BlockCasing CASING_LUV = new BlockCasing("luv");
-    public static BlockCasing CASING_ZPM = new BlockCasing("zpm");
-    public static BlockCasing CASING_UV = new BlockCasing("uv");
-    public static BlockCasing CASING_MAX = new BlockCasing("max");
+    public static BlockCasingMachine CASING_ULV = new BlockCasingMachine("ulv");
+    public static BlockCasingMachine CASING_LV = new BlockCasingMachine("lv");
+    public static BlockCasingMachine CASING_MV = new BlockCasingMachine("mv");
+    public static BlockCasingMachine CASING_HV = new BlockCasingMachine("hv");
+    public static BlockCasingMachine CASING_EV = new BlockCasingMachine("ev");
+    public static BlockCasingMachine CASING_IV = new BlockCasingMachine("iv");
+    public static BlockCasingMachine CASING_LUV = new BlockCasingMachine("luv");
+    public static BlockCasingMachine CASING_ZPM = new BlockCasingMachine("zpm");
+    public static BlockCasingMachine CASING_UV = new BlockCasingMachine("uv");
+    public static BlockCasingMachine CASING_MAX = new BlockCasingMachine("max");
+
     public static BlockCasing CASING_BRONZE = new BlockCasing("bronze");
     public static BlockCasing CASING_BRICKED_BRONZE = new BlockCasing("bricked_bronze");
     public static BlockCasing CASING_BRONZE_PLATED_BRICK = new BlockCasing("bronze_plated_brick");
-    public static BlockCasing CASING_FIRE_BRICK = new BlockCasing("fire_brick");
     public static BlockCasing CASING_STEEL = new BlockCasing("steel");
     public static BlockCasing CASING_BRICKED_STEEL = new BlockCasing("bricked_steel");
     public static BlockCasing CASING_SOLID_STEEL = new BlockCasing("solid_steel");
@@ -287,13 +279,24 @@ public class Data {
     public static BlockCasing CASING_PIPE_TITANIUM = new BlockCasing("pipe_titanium");
     public static BlockCasing CASING_PIPE_TUNGSTENSTEEL = new BlockCasing("pipe_tungstensteel");
     public static BlockCasing CASING_ENGINE_INTAKE = new BlockCasing("engine_intake");
+    public static BlockCasing CASING_FUSION_1 = new BlockCasing("fusion_1", Textures.FUSION_1_CT);
+    public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2", Textures.FUSION_2_CT);
+    public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3", Textures.FUSION_3_CT);
+
     public static BlockCasing CASING_TURBINE_1 = new BlockTurbineCasing("turbine_1");
     public static BlockCasing CASING_TURBINE_2 = new BlockTurbineCasing("turbine_2");
     public static BlockCasing CASING_TURBINE_3 = new BlockTurbineCasing("turbine_3");
     public static BlockCasing CASING_TURBINE_4 = new BlockTurbineCasing("turbine_4");
-    public static BlockCasing CASING_FUSION_1 = new BlockFusionCasing("fusion_1", Textures.FUSION_1_CT);
-    public static BlockCasing CASING_FUSION_2 = new BlockFusionCasing("fusion_2", Textures.FUSION_2_CT);
-    public static BlockCasing CASING_FUSION_3 = new BlockFusionCasing("fusion_3", Textures.FUSION_3_CT);
+
+    public static BlockCoil COIL_CUPRONICKEL = new BlockCoil("cupronickel", 113); //1808
+    public static BlockCoil COIL_KANTHAL = new BlockCoil("kanthal", 169); //2704
+    public static BlockCoil COIL_NICHROME = new BlockCoil("nichrome", 225); //3600
+    public static BlockCoil COIL_TUNGSTENSTEEL = new BlockCoil("tungstensteel", 282); //4512
+    public static BlockCoil COIL_HSSG = new BlockCoil("hssg", 338); //5408
+    public static BlockCoil COIL_NAQUADAH = new BlockCoil("naquadah", 450); //7200
+    public static BlockCoil COIL_NAQUADAH_ALLOY = new BlockCoil("naquadah_alloy", 563); //9008
+    public static BlockCoil COIL_FUSION = new BlockCoil("fusion", 563); //9008
+    public static BlockCoil COIL_SUPERCONDUCTOR = new BlockCoil("superconductor", 563); //9008
 
     public static BlockCable CABLE_RED_ALLOY = new BlockCable(RedAlloy, 0, 1, 1, Tier.ULV); //ULV
     public static BlockCable CABLE_COBALT = new BlockCable(Cobalt, 2, 4, 2, Tier.LV); //LV

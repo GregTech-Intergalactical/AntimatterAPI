@@ -1,7 +1,7 @@
 package muramasa.gtu.api.blocks;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.api.properties.UnlistedInteger;
+import muramasa.gtu.api.properties.UnlistedIntArray;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.models.ModelCT;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 public abstract class BlockCT extends BlockBaked {
 
-    public static UnlistedInteger CT = new UnlistedInteger();
+    public static UnlistedIntArray CT = new UnlistedIntArray();
     private Int2ObjectOpenHashMap<IBakedModel> LOOKUP = new Int2ObjectOpenHashMap<>();
     private Int2ObjectOpenHashMap<TextureData> TEXTURES = new Int2ObjectOpenHashMap<>();
 
@@ -37,16 +37,17 @@ public abstract class BlockCT extends BlockBaked {
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (LOOKUP.size() == 0) return ((IExtendedBlockState) state).withProperty(CT, 0);
-        int ct = 0;
+        int[] ct = new int[6];
+        if (LOOKUP.size() == 0) return ((IExtendedBlockState) state).withProperty(CT, ct);
+        BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos();
         for (int s = 0; s < 6; s++) {
-            if (canConnect(world.getBlockState(pos.offset(EnumFacing.VALUES[s])))) ct += 1 << s;
+            if (canConnect(world, mut.setPos(pos.offset(EnumFacing.VALUES[s])))) ct[0] += 1 << s;
         }
         return ((IExtendedBlockState) state).withProperty(CT, ct);
     }
 
-    public boolean canConnect(IBlockState state) {
-        return state.getBlock() == this;
+    public boolean canConnect(IBlockAccess world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock() == this;
     }
 
     public void onConfig() {
@@ -61,6 +62,10 @@ public abstract class BlockCT extends BlockBaked {
         TEXTURES.put(config, new TextureData().base(textures));
     }
 
+    public void addConfig(int config, IBakedModel baked) {
+        LOOKUP.put(config, baked);
+    }
+
     public Int2ObjectOpenHashMap<IBakedModel> getLookup() {
         return LOOKUP;
     }
@@ -69,7 +74,9 @@ public abstract class BlockCT extends BlockBaked {
     public void onModelRegistration() {
         super.onModelRegistration();
         onConfig();
-        if (TEXTURES.size() > 0) registerCustomModel(getId(), new ModelCT(this), false);
+        if (!customModel && TEXTURES.size() > 0) {
+            registerCustomModel(getId(), new ModelCT(this), false);
+        }
     }
 
     @Override

@@ -29,6 +29,10 @@ public class BakedBase implements IBakedModel {
         this.bakedModel = bakedModel;
     }
 
+    public BakedBase(Texture texture) {
+        this.particle = texture.getSprite();
+    }
+
     public BakedBase(IBakedModel bakedModel, Texture texture) {
         this(bakedModel);
         particle = texture.getSprite();

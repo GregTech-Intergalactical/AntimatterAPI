@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 public class BlockCasing extends BlockCT {
 
     private String type;
-    protected String harvestTool = "wrench";
+    private Texture[] textures;
 
     public BlockCasing(String type) {
         super(Material.IRON, new TextureData().base(new Texture("blocks/casing/" + type)));
@@ -26,9 +26,9 @@ public class BlockCasing extends BlockCT {
         register(BlockCasing.class, this);
     }
 
-    public BlockCasing(String type, String harvestTool) {
+    public BlockCasing(String type, Texture[] textures) {
         this(type);
-        this.harvestTool = harvestTool;
+        this.textures = textures;
     }
 
     @Override
@@ -43,6 +43,11 @@ public class BlockCasing extends BlockCT {
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
-        return harvestTool;
+        return "wrench";
+    }
+
+    @Override
+    public void onConfig() {
+        if (textures != null) buildBasicConfig(textures);
     }
 }
