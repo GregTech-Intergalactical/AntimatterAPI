@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureMode;
 import muramasa.gtu.api.util.Utils;
@@ -166,12 +167,16 @@ public class ModelUtils {
         return model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
-    public static IBakedModel texBake(IModel model, String[] elements, ResourceLocation[] locs) {
-        return tex(model, elements, locs).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+    public static IBakedModel bake(IModel model, Texture particle) {
+        return new BakedBase(bake(model), particle);
     }
 
-    public static IBakedModel texBake(IModel model, String element, ResourceLocation loc) {
-        return tex(model, element, loc).bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs) {
+        return bake(tex(model, elements, locs), locs.length >= 1 ? locs[0] : Textures.ERROR);
+    }
+
+    public static IBakedModel texBake(IModel model, String element, Texture loc) {
+        return bake(tex(model, element, loc), loc);
     }
 
     /** Baked Model Helpers **/

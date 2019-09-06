@@ -104,6 +104,6 @@ public class ModelTurbineCasing extends ModelBase {
             BakedTurbineCasing.LOOKUP.put(1506, ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, "5", Textures.LARGE_TURBINE_ACTIVE[6]).getQuads(null, EnumFacing.EAST, -1));
             BakedTurbineCasing.LOOKUP.put(1510, ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, "5", Textures.LARGE_TURBINE_ACTIVE[8]).getQuads(null, EnumFacing.EAST, -1));
         }
-        return new BakedTurbineCasing(block.getData().bake());
+        return new BakedTurbineCasing(block, block.getData().bake());
     }
 }

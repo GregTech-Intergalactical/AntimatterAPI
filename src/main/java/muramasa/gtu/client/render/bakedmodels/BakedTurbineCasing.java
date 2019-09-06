@@ -1,6 +1,7 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.gtu.api.blocks.BlockBaked;
 import muramasa.gtu.api.blocks.BlockTurbineCasing;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -18,7 +19,8 @@ public class BakedTurbineCasing extends BakedBase {
     public static Int2ObjectOpenHashMap<List<BakedQuad>> LOOKUP = new Int2ObjectOpenHashMap<>();
     private IBakedModel baked;
 
-    public BakedTurbineCasing(IBakedModel baked) {
+    public BakedTurbineCasing(BlockBaked block, IBakedModel baked) {
+        super(block.getData().getBase(0));
         this.baked = baked;
     }
 
