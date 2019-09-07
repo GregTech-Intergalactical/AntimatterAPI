@@ -88,6 +88,10 @@ public class TextureData {
         return overlay;
     }
 
+    public boolean hasBase() {
+        return base != null && base.length > 0;
+    }
+
     public boolean hasOverlay() {
         return overlay != null && overlay.length > 0;
     }
