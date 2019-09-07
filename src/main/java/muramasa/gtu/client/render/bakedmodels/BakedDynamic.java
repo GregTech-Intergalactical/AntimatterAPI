@@ -1,6 +1,6 @@
 package muramasa.gtu.client.render.bakedmodels;
 
-import muramasa.gtu.api.blocks.BlockCT;
+import muramasa.gtu.api.blocks.BlockDynamic;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -12,11 +12,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BakedCT extends BakedBase {
+public class BakedDynamic extends BakedBase {
 
-    private BlockCT block;
+    private BlockDynamic block;
 
-    public BakedCT(BlockCT block) {
+    public BakedDynamic(BlockDynamic block) {
         super(block.getData().getBase(0));
         this.block = block;
     }
@@ -27,7 +27,7 @@ public class BakedCT extends BakedBase {
         List<BakedQuad> quads = block.addDefaultModel() ? new LinkedList<>(block.getBaked().getQuads(state, side, rand)) : new LinkedList<>();
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState exState = (IExtendedBlockState) state;
-            int[] ct = exState.getValue(BlockCT.CT);
+            int[] ct = exState.getValue(BlockDynamic.CONFIG);
             IBakedModel baked;
             for (int i = 0; i < ct.length; i++) {
                 if (ct[i] > 0) {

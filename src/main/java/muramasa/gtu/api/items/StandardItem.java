@@ -160,18 +160,18 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
                     if (casingState instanceof IExtendedBlockState) {
                         IExtendedBlockState exState = (IExtendedBlockState) casingState;
                         try {
-                            int[] ct = exState.getValue(BlockTurbineCasing.CT);
+                            int[] ct = exState.getValue(BlockTurbineCasing.CONFIG);
                             player.sendMessage(new TextComponentString("ct: " + Arrays.toString(ct)));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                } else if (state.getBlock() instanceof BlockCT) {
+                } else if (state.getBlock() instanceof BlockDynamic) {
                     IBlockState ctState = state.getBlock().getExtendedState(state, world, pos);
                     if (ctState instanceof IExtendedBlockState) {
                         IExtendedBlockState exState = (IExtendedBlockState) ctState;
                         try {
-                            int[] ct = exState.getValue(BlockCT.CT);
+                            int[] ct = exState.getValue(BlockDynamic.CONFIG);
                             player.sendMessage(new TextComponentString("ct: " + Arrays.toString(ct)));
                         } catch (Exception e) {
                             e.printStackTrace();

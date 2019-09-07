@@ -9,7 +9,7 @@ import net.minecraft.block.state.IBlockState;
 
 import javax.annotation.Nullable;
 
-public class BlockCasing extends BlockCT {
+public class BlockCasing extends BlockDynamic {
 
     private String type;
     private Texture[] textures;
