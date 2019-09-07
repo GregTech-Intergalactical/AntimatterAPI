@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.api.properties.UnlistedIntArray;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.client.render.models.ModelCT;
+import muramasa.gtu.client.render.models.ModelDynamic;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -20,34 +20,34 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import java.util.*;
 import java.util.function.Supplier;
 
-public abstract class BlockCT extends BlockBaked {
+public abstract class BlockDynamic extends BlockBaked {
 
-    public static UnlistedIntArray CT = new UnlistedIntArray();
+    public static UnlistedIntArray CONFIG = new UnlistedIntArray();
 
     private Int2ObjectOpenHashMap<Supplier<IBakedModel>> LOOKUP = new Int2ObjectOpenHashMap<>();
     private Int2ObjectOpenHashMap<IBakedModel> BAKED_LOOKUP = new Int2ObjectOpenHashMap<>();
     private Set<Texture> TEXTURES = new HashSet<>();
 
-    private boolean addDefaultModel;
+    private boolean defaultModel;
 
-    public BlockCT(Material material, TextureData data) {
+    public BlockDynamic(Material material, TextureData data) {
         super(material, data);
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CT).build();
+        return new BlockStateContainer.Builder(this).add(CONFIG).build();
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         int[] ct = new int[1];
-        if (BAKED_LOOKUP.size() == 0) return ((IExtendedBlockState) state).withProperty(CT, ct);
+        if (BAKED_LOOKUP.size() == 0) return ((IExtendedBlockState) state).withProperty(CONFIG, ct);
         BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos();
         for (int s = 0; s < 6; s++) {
             if (canConnect(world, mut.setPos(pos.offset(EnumFacing.VALUES[s])))) ct[0] += 1 << s;
         }
-        return ((IExtendedBlockState) state).withProperty(CT, ct);
+        return ((IExtendedBlockState) state).withProperty(CONFIG, ct);
     }
 
     public boolean canConnect(IBlockAccess world, BlockPos pos) {
@@ -55,11 +55,11 @@ public abstract class BlockCT extends BlockBaked {
     }
 
     public void setDefaultModel(boolean value) {
-        addDefaultModel = value;
+        defaultModel = value;
     }
 
     public boolean addDefaultModel() {
-        return addDefaultModel;
+        return defaultModel;
     }
 
     public void onConfig() {
@@ -88,7 +88,7 @@ public abstract class BlockCT extends BlockBaked {
     public void onModelRegistration() {
         super.onModelRegistration();
         onConfig();
-        if (!customModel && LOOKUP.size() > 0) registerCustomModel(getId(), new ModelCT(this), false);
+        if (!customModel && LOOKUP.size() > 0) registerCustomModel(getId(), new ModelDynamic(this), false);
     }
 
     @Override

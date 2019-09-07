@@ -41,7 +41,7 @@ public class BlockTurbineCasing extends BlockCasing {
                 ct[s] = (1 << s) + (1 << EnumFacing.UP.getIndex()) + (((TileEntityLargeTurbine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
             }
         }
-        return exState.withProperty(CT, ct);
+        return exState.withProperty(CONFIG, ct);
     }
 
     @Override
