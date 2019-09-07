@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "gtu:basic_full"
+    "model": "gtu:templates/basic"
   },
   "variants": {
     "normal": [{}],

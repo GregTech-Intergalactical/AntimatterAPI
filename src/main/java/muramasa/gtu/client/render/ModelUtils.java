@@ -41,8 +41,9 @@ public class ModelUtils {
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
-    public static IModel MODEL_BASIC, MODEL_LAYERED, MODEL_BASIC_FULL, MODEL_LAYERED_FULL, MODEL_COMPLEX;
-    public static IBakedModel BAKED_MISSING, BAKED_BASIC, BAKED_LAYERED, BAKED_BASIC_FULL, BAKED_LAYERED_FULL, BAKED_COMPLEX;
+    //TODO convert from IModel to ModelWrapper for calling tex, bake etc
+    public static IModel MODEL_QUAD, MODEL_QUAD_L, MODEL_BASIC, MODEL_LAYERED, MODEL_BASIC_FULL, MODEL_LAYERED_FULL, MODEL_COMPLEX;
+    public static IBakedModel BAKED_MISSING, BAKED_QUAD, BAKED_BASIC, BAKED_LAYERED, BAKED_BASIC_FULL, BAKED_LAYERED_FULL, BAKED_COMPLEX;
 
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -71,11 +72,14 @@ public class ModelUtils {
 
     public static void buildDefaultModels() {
         if (MODEL_BASIC != null) return;
-        MODEL_BASIC = load("basic");
-        MODEL_LAYERED = load("layered");
-        MODEL_BASIC_FULL = load("basic_full");
-        MODEL_LAYERED_FULL = load("layered_full");
-        MODEL_COMPLEX = load("complex");
+        MODEL_QUAD = load("templates/quad");
+        MODEL_QUAD_L = load("templates/quad_layered");
+        MODEL_BASIC = load("templates/basic");
+        MODEL_LAYERED = load("templates/layered");
+        MODEL_BASIC_FULL = load("templates/basic_full");
+        MODEL_LAYERED_FULL = load("templates/layered_full");
+        MODEL_COMPLEX = load("templates/complex");
+        BAKED_QUAD = MODEL_QUAD.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         BAKED_BASIC_FULL = MODEL_BASIC_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
@@ -146,6 +150,17 @@ public class ModelUtils {
         }
     }
 
+    public static IModel tex(IModel model, ResourceLocation loc) {
+        return tex(model, "0", loc);
+    }
+
+    public static IModel tex(IModel model, ResourceLocation loc, String... elements) {
+        for (int i = 0; i < elements.length; i++) {
+            model = tex(model, elements[i], loc);
+        }
+        return model;
+    }
+
     public static IModel tex(IModel model, String[] elements, ResourceLocation[] locs) {
         for (int i = 0; i < elements.length; i++) {
             model = tex(model, elements[i], locs[i]);
@@ -163,20 +178,44 @@ public class ModelUtils {
         }
     }
 
-    public static IBakedModel bake(IModel model) {
-        return model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+    public static IBakedModel bake(IModel model, EnumFacing... rotations) {
+        TRSRTransformation transformation = TRSRTransformation.identity();
+        for (int i = 0; i < rotations.length; i++) {
+            transformation = transformation.compose(TRSRTransformation.from(rotations[i]));
+        }
+        return model.bake(transformation, DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
-    public static IBakedModel bake(IModel model, Texture particle) {
-        return new BakedBase(bake(model), particle);
+    public static IBakedModel bake(IModel model, Texture particle, EnumFacing... rotations) {
+        return new BakedBase(bake(model, rotations), particle);
     }
 
-    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs) {
-        return bake(tex(model, elements, locs), locs.length >= 1 ? locs[0] : Textures.ERROR);
+    public static IBakedModel texBake(IModel model, Texture loc, EnumFacing... rotations) {
+        return texBake(model, "0", loc, rotations);
     }
 
-    public static IBakedModel texBake(IModel model, String element, Texture loc) {
-        return bake(tex(model, element, loc), loc);
+    public static IBakedModel texBake(IModel model, String element, Texture loc, EnumFacing... rotations) {
+        return texBake(model, new String[]{element}, new Texture[]{loc}, rotations);
+    }
+
+    public static IBakedModel texBake(IModel model, Texture[] locs, EnumFacing... rotations) {
+        String[] elements = new String[locs.length];
+        for (int i = 0; i < locs.length; i++) {
+            elements[i] = "" + i;
+        }
+        return texBake(model, elements, locs, rotations);
+    }
+
+    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs, EnumFacing... rotations) {
+        return bake(tex(model, elements, locs), locs.length >= 1 ? locs[0] : Textures.ERROR, rotations);
+    }
+    
+    public static IBakedModel bakeQuad(Texture texture, EnumFacing... rotations) {
+        return bake(tex(MODEL_QUAD, texture), rotations);
+    }
+
+    public static IBakedModel bakeQuad(Texture texture, int... rotations) {
+        return bake(tex(MODEL_QUAD, texture), Arrays.stream(rotations).mapToObj(i -> EnumFacing.VALUES[i]).toArray(EnumFacing[]::new));
     }
 
     /** Baked Model Helpers **/

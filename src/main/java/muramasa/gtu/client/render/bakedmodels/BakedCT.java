@@ -24,7 +24,7 @@ public class BakedCT extends BakedBase {
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         if (state == null) return Collections.emptyList();
-        List<BakedQuad> quads = new LinkedList<>();
+        List<BakedQuad> quads = block.addDefaultModel() ? new LinkedList<>(block.getBaked().getQuads(state, side, rand)) : new LinkedList<>();
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState exState = (IExtendedBlockState) state;
             int[] ct = exState.getValue(BlockCT.CT);
