@@ -1,11 +1,21 @@
 package muramasa.gtu.api.data;
 
+import muramasa.gtu.api.texture.ITextureHandler;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 
 public class Textures {
 
     public static final Texture ERROR = new Texture("blocks/machine/overlay/invalid/front");
+
+    public static final ITextureHandler BOILER_HANDLER = (m, t) -> new Texture[] {
+        new Texture("blocks/machine/base/" + t.getId()),
+        new Texture("blocks/machine/base/" + t.getId()),
+        new Texture("blocks/machine/base/bricked_" + t.getId()),
+        new Texture("blocks/machine/base/bricked_" + t.getId()),
+        new Texture("blocks/machine/base/bricked_" + t.getId()),
+        new Texture("blocks/machine/base/bricked_" + t.getId()),
+    };
 
     public static final Texture PIPE = new Texture("blocks/pipe/pipe_side");
     public static final Texture WIRE = new Texture("blocks/pipe/wire_side");

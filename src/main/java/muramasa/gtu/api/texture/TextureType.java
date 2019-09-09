@@ -6,7 +6,6 @@ import java.util.Locale;
 
 public enum TextureType implements IGregTechObject {
 
-    BASE,
     TOP,
     BOTTOM,
     FRONT,

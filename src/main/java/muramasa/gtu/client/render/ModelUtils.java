@@ -327,9 +327,9 @@ public class ModelUtils {
                 tex(quads, layer, textures[0]);
                 break;
             case FULL:
-//                for (int i = 0; i < 6; i++) {
-//                    tex(quads, layer, textures[i]);
-//                }
+                for (int i = 0; i < 6; i++) {
+                    tex(quads, 0, textures[i]);
+                }
                 //TODO
                 break;
             case COPIED_SIDES:

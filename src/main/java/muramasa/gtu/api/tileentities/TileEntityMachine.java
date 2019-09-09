@@ -148,7 +148,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
 
     @Override
     public TextureData getTextureData() {
-        return TextureData.get().base(getType().getBaseTexture(getTier())).overlay(getType().getOverlayTextures(getMachineState()));
+        return getType().getTextureData(getTier(), getMachineState());
     }
 
     @Override

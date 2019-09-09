@@ -12,7 +12,9 @@ import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
+import muramasa.gtu.api.texture.ITextureHandler;
 import muramasa.gtu.api.texture.Texture;
+import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
@@ -23,6 +25,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static muramasa.gtu.api.machines.MachineFlag.RECIPE;
+
 public class Machine implements IGregTechObject {
 
     /** Global Members **/
@@ -31,7 +35,7 @@ public class Machine implements IGregTechObject {
     /** Basic Members **/
     protected int internalId;
     protected BlockMachine block;
-    protected Class tileClass;
+    protected Class<? extends TileEntityMachine> tileClass;
     protected String id;
     protected ArrayList<Tier> tiers;
     protected int machineMask;
@@ -42,22 +46,44 @@ public class Machine implements IGregTechObject {
     /** GUI Members **/
     protected GuiData guiData;
 
+    /** Texture Members **/
+    protected ITextureHandler baseHandler = (m, t) -> new Texture[] {m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t)};
+    protected Texture baseTexture;
+
     /** Multi Members **/
     protected Int2ObjectOpenHashMap<Structure> structures;
 
     //TODO get valid covers
 
-    public Machine(String id) {
-        this(id, TileEntityMachine.class);
+    public Machine(String id, Object... data) {
+        this(id, TileEntityMachine.class, data);
     }
 
-    public Machine(String id, Class tileClass) {
+    public Machine(String id, Class<? extends TileEntityMachine> tileClass, Object... data) {
         internalId = lastInternalId++;
         this.id = id;
         this.block = new BlockMachine(this);
         this.tileClass = tileClass;
         setTiers(Tier.LV);
+        initData(data);
         Machines.add(this);
+    }
+
+    protected void initData(Object... data) {
+        ArrayList<Tier> tiers = new ArrayList<>();
+        ArrayList<MachineFlag> flags = new ArrayList<>();
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] instanceof RecipeMap) {
+                recipeMap = (RecipeMap) data[i];
+                flags.add(RECIPE);
+            }
+            if (data[i] instanceof Tier) tiers.add((Tier) data[i]);
+            if (data[i] instanceof MachineFlag) flags.add((MachineFlag) data[i]);
+            if (data[i] instanceof Texture) baseTexture = (Texture) data[i];
+            if (data[i] instanceof ITextureHandler) baseHandler = (ITextureHandler) data[i];
+        }
+        setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
+        addFlags(flags.toArray(new MachineFlag[0]));
     }
 
     public int getInternalId() {
@@ -75,13 +101,20 @@ public class Machine implements IGregTechObject {
 
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
+        for (Tier tier : getTiers()) {
+            textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
+        }
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE)));
         return textures;
     }
 
+    public TextureData getTextureData(Tier tier, MachineState state) {
+        return new TextureData().base(baseHandler.getBase(this, tier)).overlay(getOverlayTextures(state));
+    }
+
     public Texture getBaseTexture(Tier tier) {
-        return tier.getBaseTexture();
+        return baseTexture != null ? baseTexture : tier.getBaseTexture();
     }
 
     public Texture[] getOverlayTextures(MachineState state) {
@@ -124,7 +157,7 @@ public class Machine implements IGregTechObject {
         this.block = block;
     }
 
-    public void setTileClass(Class tileClass) {
+    public void setTileClass(Class<? extends TileEntityMachine> tileClass) {
         this.tileClass = tileClass;
     }
 
@@ -155,7 +188,7 @@ public class Machine implements IGregTechObject {
         return block;
     }
 
-    public Class getTileClass() {
+    public Class<? extends TileEntityMachine> getTileClass() {
         return tileClass;
     }
 
