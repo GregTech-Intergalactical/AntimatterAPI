@@ -27,7 +27,7 @@ public class BlockTurbineCasing extends BlockCasing {
     }
 
     @Override
-    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos pos) {
+    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int[] ct = new int[6];
         TileEntity tile;
         for (int s = 0; s < 6; s++) {

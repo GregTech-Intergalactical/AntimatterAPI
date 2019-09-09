@@ -42,13 +42,13 @@ public abstract class BlockDynamic extends BlockBaked {
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         if (BAKED_LOOKUP.size() == 0) return ((IExtendedBlockState) state).withProperty(CONFIG, new int[1]);
-        return ((IExtendedBlockState) state).withProperty(CONFIG, getConfig(state, world, new BlockPos.MutableBlockPos(pos)));
+        return ((IExtendedBlockState) state).withProperty(CONFIG, getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos));
     }
 
-    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos pos) {
+    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int[] ct = new int[1];
         for (int s = 0; s < 6; s++) {
-            if (canConnect(world, pos.setPos(pos.offset(EnumFacing.VALUES[s])))) ct[0] += 1 << s;
+            if (canConnect(world, mut.setPos(pos.offset(EnumFacing.VALUES[s])))) ct[0] += 1 << s;
         }
         return ct;
     }
