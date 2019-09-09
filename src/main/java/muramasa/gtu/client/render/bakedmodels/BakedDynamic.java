@@ -30,10 +30,9 @@ public class BakedDynamic extends BakedBase {
             int[] ct = exState.getValue(BlockDynamic.CONFIG);
             IBakedModel baked;
             for (int i = 0; i < ct.length; i++) {
-                if (ct[i] > 0) {
-                    baked = block.getLookup().get(ct[i]);
-                    if (baked != null) quads.addAll(baked.getQuads(state, side, rand));
-                }
+                if (ct[i] == 0) continue;
+                baked = block.getLookup().get(ct[i]);
+                if (baked != null) quads.addAll(baked.getQuads(state, side, rand));
             }
             if (quads.size() > 0) return quads;
         }

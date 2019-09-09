@@ -10,7 +10,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,10 +27,9 @@ public class BlockTurbineCasing extends BlockCasing {
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IExtendedBlockState exState = (IExtendedBlockState) state;
-        TileEntity tile;
+    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos pos) {
         int[] ct = new int[6];
+        TileEntity tile;
         for (int s = 0; s < 6; s++) {
             if ((tile = world.getTileEntity(pos.offset(EnumFacing.VALUES[s]))) instanceof TileEntityLargeTurbine) {
                 ct[s] = (1 << s) + (((TileEntityMachine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
@@ -41,7 +39,7 @@ public class BlockTurbineCasing extends BlockCasing {
                 ct[s] = (1 << s) + (1 << EnumFacing.UP.getIndex()) + (((TileEntityLargeTurbine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
             }
         }
-        return exState.withProperty(CONFIG, ct);
+        return ct;
     }
 
     @Override
