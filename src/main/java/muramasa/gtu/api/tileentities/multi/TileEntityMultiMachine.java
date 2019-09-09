@@ -112,7 +112,10 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public void onGuiEvent(GuiEvent event) {
-        if (event == GuiEvent.MULTI_ACTIVATE) checkStructure();
+        if (event == GuiEvent.MULTI_ACTIVATE) {
+            checkStructure();
+            checkRecipe();
+        }
     }
 
     @Override

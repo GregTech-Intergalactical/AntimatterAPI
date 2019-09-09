@@ -71,7 +71,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
     //TODO take into account machine tier
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
-        if ((items != null && !Utils.areItemsValid(items)) || (fluids != null && !Utils.areFluidsValid(fluids))) return null;
+        if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
         return LOOKUP.get(new RecipeInput(items, fluids));
     }
 
