@@ -2,13 +2,11 @@ package muramasa.gtu.api.machines.types;
 
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.texture.Texture;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,23 +14,10 @@ import static muramasa.gtu.api.machines.MachineFlag.*;
 
 public class MultiMachine extends Machine {
 
-    public MultiMachine(String name, Class tileClass, Object... data) {
-        super(name, tileClass);
+    public MultiMachine(String name, Class<? extends TileEntityMachine> tileClass, Object... data) {
+        super(name, tileClass, data);
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
         setGUI(GregTech.INSTANCE, Ref.GUI_ID_MULTI_MACHINE);
-
-        ArrayList<Tier> tiers = new ArrayList<>();
-        ArrayList<MachineFlag> flags = new ArrayList<>();
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] instanceof RecipeMap) {
-                recipeMap = (RecipeMap) data[i];
-                flags.add(RECIPE);
-            }
-            if (data[i] instanceof Tier) tiers.add((Tier) data[i]);
-            if (data[i] instanceof MachineFlag) flags.add((MachineFlag) data[i]);
-        }
-        setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
-        addFlags(flags.toArray(new MachineFlag[0]));
     }
 
     @Override

@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
+import muramasa.gtu.api.texture.TextureMode;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.block.state.IBlockState;
@@ -49,9 +50,9 @@ public class BakedMachine extends BakedBase {
             }
         }
 
-        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), QuadLayer.BASE); //Machine Base
-        ModelUtils.tex(quads, data.getBaseMode(), data.getBase(), QuadLayer.COVER_BASE); //Cover Base
-//        texOverlays(quads, data.getOverlayMode(), data.getOverlay());
+        ModelUtils.tex(quads, TextureMode.SINGLE, data.getBase(), QuadLayer.BASE); //Machine Base
+        ModelUtils.tex(quads, TextureMode.SINGLE, data.getBase(), QuadLayer.COVER_BASE); //Cover Base
+//        texOverlays(quads, data.getOverlayMode(), data.getOverlay());`
         quads = ModelUtils.trans(quads, facing);
 
         return quads;

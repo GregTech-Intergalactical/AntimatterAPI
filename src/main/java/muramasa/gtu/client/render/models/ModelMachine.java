@@ -9,6 +9,7 @@ import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
+import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.bakedmodels.BakedBase;
@@ -66,8 +67,9 @@ public class ModelMachine implements IModel {
         BakedMachine.ITEMS = new Object2ObjectOpenHashMap<>();
         for (Machine type : machines) {
             for (Tier tier : type.getTiers()) {
-                IModel model = ModelUtils.tex(BASE, "0", type.getBaseTexture(tier));
-                model = ModelUtils.tex(model, new String[] {"1", "2", "3", "4", "5", "6"}, type.getOverlayTextures(MachineState.ACTIVE));
+                TextureData data = type.getTextureData(tier, MachineState.ACTIVE);
+                IModel model = ModelUtils.tex(BASE, new String[]{"0", "1", "2", "3", "4", "5"}, data.getBase());
+                model = ModelUtils.tex(model, new String[] {"6", "7", "8", "9", "10", "11"}, data.getOverlay());
                 BakedMachine.ITEMS.put(type.getId() + "_" + tier.getId(), new BakedBase(model.bake(state, format, getter)));
             }
         }
