@@ -2,7 +2,7 @@ package muramasa.gtu.api.blocks.pipe;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.blocks.BlockBaked;
+import muramasa.gtu.api.blocks.BlockDynamic;
 import muramasa.gtu.api.data.Textures;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.pipe.PipeSize;
@@ -44,13 +44,14 @@ import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.properties.GTProperties.*;
 
-public abstract class BlockPipe extends BlockBaked implements IGregTechObject, IItemBlock, IModelOverride, IStateOverride, IColorHandler {
+public abstract class BlockPipe extends BlockDynamic implements IGregTechObject, IItemBlock, IModelOverride, IStateOverride, IColorHandler {
 
     protected String type, id;
     protected Material material;
     protected PipeSize[] sizes;
     protected PropertyEnum<PipeSize> PIPE_SIZE;
 
+    //TODO merge functionality with BlockDynamic
     public BlockPipe(String type, Material material, TextureData data, PipeSize... sizes) {
         super(net.minecraft.block.material.Material.IRON, data);
         this.type = type;
