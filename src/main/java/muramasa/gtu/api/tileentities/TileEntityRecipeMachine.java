@@ -78,10 +78,8 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
     }
 
     public boolean canOutput() {
-        if ((itemHandler.isPresent() && !itemHandler.get().canOutputsFit(activeRecipe.getOutputItems())) ||
-            (fluidHandler.isPresent() && !fluidHandler.get().canOutputsFit(activeRecipe.getOutputFluids()))) {
-            return false;
-        }
+        if (itemHandler.isPresent() && activeRecipe.hasOutputItems() && !itemHandler.get().canOutputsFit(activeRecipe.getOutputItems())) return false;
+        if (fluidHandler.isPresent() && activeRecipe.hasOutputFluids() && !fluidHandler.get().canOutputsFit(activeRecipe.getOutputFluids())) return false;
         return true;
     }
 
@@ -92,10 +90,8 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
     }
 
     public boolean canRecipeContinue() {
-        if ((itemHandler.isPresent() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.get().getInputs())) ||
-            (fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), fluidHandler.get().getInputs()))) {
-            return false;
-        }
+        if (itemHandler.isPresent() && activeRecipe.hasInputItems() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), itemHandler.get().getInputs())) return false;
+        if (fluidHandler.isPresent() && activeRecipe.hasInputFluids() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), fluidHandler.get().getInputs())) return false;
         return true;
     }
 

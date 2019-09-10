@@ -24,9 +24,11 @@ public class MachineFluidHandler {
         this.tile = tile;
         int inputCount = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier()).size();
         int outputCount = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size();
+        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
+        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
         //TODO validate removing this check doesn't break anything else
-        /*if (inputCount > 0) */inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
-        /*if (outputCount > 0) */outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
+//        inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
+//        outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -133,7 +135,7 @@ public class MachineFluidHandler {
     }
 
     public void addOutputs(FluidStack... outputs) {
-        if (outputWrapper == null) return;
+        if (outputWrapper == null || outputs == null || outputs.length == 0) return;
         for (int i = 0; i < outputs.length; i++) {
             outputWrapper.fill(outputs[i], true);
         }
