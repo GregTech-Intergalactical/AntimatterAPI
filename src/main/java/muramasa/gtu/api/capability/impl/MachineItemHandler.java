@@ -119,6 +119,7 @@ public class MachineItemHandler {
     }
 
     public void addOutputs(ItemStack... outputs) {
+        if (outputHandler == null || outputs == null || outputs.length == 0) return;
         for (int i = 0; i < outputs.length; i++) {
             for (int j = 0; j < outputHandler.getSlots(); j++) {
                 ItemStack result = outputHandler.insertItem(j, outputs[i].copy(), false);
