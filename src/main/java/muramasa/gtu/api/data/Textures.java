@@ -17,6 +17,8 @@ public class Textures {
         new Texture("blocks/machine/base/bricked_" + t.getId()),
     };
 
+    public static final ITextureHandler MULTI_HANDLER = (m, t) -> m.getTiers().size() > 1 ? new Texture[]{new Texture("blocks/machine/base/" + m.getId() + "_" + t.getId())} : new Texture[]{new Texture("blocks/machine/base/" + m.getId())};
+
     public static final Texture PIPE = new Texture("blocks/pipe/pipe_side");
     public static final Texture WIRE = new Texture("blocks/pipe/wire_side");
     public static final Texture CABLE = new Texture("blocks/pipe/cable_side");

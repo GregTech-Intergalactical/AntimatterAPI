@@ -24,8 +24,8 @@ public class BakedMachine extends BakedBase {
     public static IBakedModel BASE;
     public static IBakedModel[][] OVERLAYS;
     public static IBakedModel[] OVERLAY_EMPTY;
-    public static Object2ObjectOpenHashMap<String, IBakedModel> ITEMS;
-    public static Object2ObjectOpenHashMap<String, IBakedModel> COVERS;
+    public static Object2ObjectOpenHashMap<String, IBakedModel> ITEMS = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<String, IBakedModel> COVERS = new Object2ObjectOpenHashMap<>();
 
     @Override
     public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {

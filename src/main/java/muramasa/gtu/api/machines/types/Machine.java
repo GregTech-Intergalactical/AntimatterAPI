@@ -12,7 +12,6 @@ import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.structure.Structure;
-import muramasa.gtu.api.texture.ITextureHandler;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.texture.TextureType;
@@ -37,8 +36,7 @@ public class Machine implements IGregTechObject {
     protected BlockMachine block;
     protected Class<? extends TileEntityMachine> tileClass;
     protected String id;
-    protected ArrayList<Tier> tiers;
-    protected int machineMask;
+    protected ArrayList<Tier> tiers = new ArrayList<>();
 
     /** Recipe Members **/
     protected RecipeMap recipeMap;
@@ -47,11 +45,11 @@ public class Machine implements IGregTechObject {
     protected GuiData guiData;
 
     /** Texture Members **/
-    protected ITextureHandler baseHandler = (m, t) -> new Texture[] {m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t), m.getBaseTexture(t)};
+    protected TextureData baseData;
     protected Texture baseTexture;
 
     /** Multi Members **/
-    protected Int2ObjectOpenHashMap<Structure> structures;
+    protected Int2ObjectOpenHashMap<Structure> structures = new Int2ObjectOpenHashMap<>();
 
     //TODO get valid covers
 
@@ -64,12 +62,11 @@ public class Machine implements IGregTechObject {
         this.id = id;
         this.block = new BlockMachine(this);
         this.tileClass = tileClass;
-        setTiers(Tier.LV);
-        initData(data);
+        addData(data);
         Machines.add(this);
     }
 
-    protected void initData(Object... data) {
+    protected void addData(Object... data) {
         ArrayList<Tier> tiers = new ArrayList<>();
         ArrayList<MachineFlag> flags = new ArrayList<>();
         for (int i = 0; i < data.length; i++) {
@@ -80,7 +77,7 @@ public class Machine implements IGregTechObject {
             if (data[i] instanceof Tier) tiers.add((Tier) data[i]);
             if (data[i] instanceof MachineFlag) flags.add((MachineFlag) data[i]);
             if (data[i] instanceof Texture) baseTexture = (Texture) data[i];
-            if (data[i] instanceof ITextureHandler) baseHandler = (ITextureHandler) data[i];
+            //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
         addFlags(flags.toArray(new MachineFlag[0]));
@@ -102,7 +99,8 @@ public class Machine implements IGregTechObject {
     public List<Texture> getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
         for (Tier tier : getTiers()) {
-            textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
+            //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
+            textures.add(getBaseTexture(tier));
         }
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE)));
@@ -110,7 +108,11 @@ public class Machine implements IGregTechObject {
     }
 
     public TextureData getTextureData(Tier tier, MachineState state) {
-        return new TextureData().base(baseHandler.getBase(this, tier)).overlay(getOverlayTextures(state));
+        //if (baseHandler != null) {
+            //return new TextureData().base(baseHandler.getBase(this, tier)).overlay(getOverlayTextures(state));
+        //} else {
+            return new TextureData().base(getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier)).overlay(getOverlayTextures(state));
+        //}
     }
 
     public Texture getBaseTexture(Tier tier) {
@@ -142,14 +144,11 @@ public class Machine implements IGregTechObject {
     }
 
     public void addFlags(MachineFlag... flags) {
-        for (MachineFlag flag : flags) {
-            machineMask |= flag.getBit();
-            flag.add(this);
-        }
+        Arrays.stream(flags).forEach(f -> f.add(this));
     }
 
     public void setFlags(MachineFlag... flags) {
-        machineMask = 0;
+        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.getTypes().remove(this));
         addFlags(flags);
     }
 
@@ -171,16 +170,15 @@ public class Machine implements IGregTechObject {
     }
 
     public void setStructure(Structure structure) {
-        setStructure(getFirstTier(), structure);
+        getTiers().forEach(t -> setStructure(t, structure));
     }
 
     public void setStructure(Tier tier, Structure structure) {
-        if (structures == null) structures = new Int2ObjectOpenHashMap<>();
         structures.put(tier.getInternalId(), structure);
     }
 
     public boolean hasFlag(MachineFlag flag) {
-        return (machineMask & flag.getBit()) != 0;
+        return flag.getTypes().contains(this);
     }
 
     /** Getters **/
@@ -190,10 +188,6 @@ public class Machine implements IGregTechObject {
 
     public Class<? extends TileEntityMachine> getTileClass() {
         return tileClass;
-    }
-
-    public int getMask() {
-        return machineMask;
     }
 
     public Collection<Tier> getTiers() {
