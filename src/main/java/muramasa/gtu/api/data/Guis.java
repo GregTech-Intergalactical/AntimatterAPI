@@ -46,7 +46,7 @@ public class Guis {
         CENTRIFUGE.getGui().add(IT_IN, 35, 25).add(IT_IN, 53, 25).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 142, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34);
         ELECTROLYZER.getGui().add(CENTRIFUGE);
         THERMAL_CENTRIFUGE.getGui().add(IT_IN, 53, 25).add(IT_OUT, 107, 25).add(IT_OUT, 125, 25).add(IT_OUT, 143, 25);
-        ORE_WASHER.getGui().add(THERMAL_CENTRIFUGE);
+        ORE_WASHER.getGui().add(THERMAL_CENTRIFUGE).add(FL_IN, 53, 63).add(FL_OUT, 107, 63);
         CHEMICAL_REACTOR.getGui().add(CANNER);
         FLUID_CANNER.getGui().add(COMPRESSOR);
         DISASSEMBLER.getGui().add(ALLOY_SMELTER); //TODO
