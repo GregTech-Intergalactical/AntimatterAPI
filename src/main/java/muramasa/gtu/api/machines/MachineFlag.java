@@ -3,9 +3,7 @@ package muramasa.gtu.api.machines;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.types.Machine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 public enum MachineFlag {
 
@@ -21,29 +19,25 @@ public enum MachineFlag {
     COVERABLE(),
     CONFIGURABLE();
 
-    private int bit;
-    private ArrayList<Machine> typeList;
+    public static MachineFlag[] VALUES;
 
-    MachineFlag() {
-        bit = 1 << ordinal();
-        typeList = new ArrayList<>();
+    static {
+        VALUES = values();
     }
+
+    private Set<Machine> types = new HashSet<>();
 
     public void add(Machine... machines) {
-        typeList.addAll(Arrays.asList(machines));
+        types.addAll(Arrays.asList(machines));
     }
 
-    public int getBit() {
-        return bit;
-    }
-
-    public Collection<Machine> getTypes() {
-        return typeList;
+    public Set<Machine> getTypes() {
+        return types;
     }
 
     public Collection<MachineStack> getStacks() {
         ArrayList<MachineStack> stacks = new ArrayList<>();
-        for (Machine machine : typeList) {
+        for (Machine machine : types) {
             for (Tier tier : machine.getTiers()) {
                 stacks.add(Machines.get(machine, tier));
             }

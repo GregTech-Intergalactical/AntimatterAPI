@@ -11,7 +11,7 @@ public class BasicMachine extends Machine {
 
     public BasicMachine(String name, Class<? extends TileEntityMachine> tileClass, Object... data) {
         super(name, tileClass, data);
-        setFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
+        addFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
         setGUI(GregTech.INSTANCE, Ref.GUI_ID_MACHINE);
     }
 
