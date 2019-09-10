@@ -130,7 +130,7 @@ public final class GregTechAPI {
     }
 
     public static void addRegistrar(IGregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Configs.MISC.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
+        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
     }
 
     @Nullable

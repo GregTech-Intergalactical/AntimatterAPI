@@ -94,6 +94,7 @@ public class GregTech {
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
         GregTechAPI.onRegistration(RegistrationEvent.DATA);
+        
     }
 
     @Mod.EventHandler
@@ -139,14 +140,21 @@ public class GregTech {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> e) {
-        //TODO, possibly loop over stone sets?
-        MaterialType.ORE.getMats().forEach(m -> new BlockOre(OreType.NORMAL, m, "default"));
-        MaterialType.ORE_SMALL.getMats().forEach(m -> new BlockOre(OreType.SMALL, m, "default"));
+        MaterialType.ORE.getMats().forEach(m -> {
+            for (String setId : BlockOre.getAvailableSets()) {
+                new BlockOre(OreType.NORMAL, m, setId);
+            }
+        });
+        MaterialType.ORE_SMALL.getMats().forEach(m -> {
+            for (String setId : BlockOre.getAvailableSets()) {
+                new BlockOre(OreType.SMALL, m, setId);
+            }
+        });
         new BlockRock(StoneType.STONE);
-
         GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
-        StoneType.getGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
+        StoneType.getStoneGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
         GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(b));
         GregTechAPI.TILES.forEach(c -> GameRegistry.registerTileEntity(c, new ResourceLocation(Ref.MODID, c.getName())));
+        GregTechAPI.onRegistration(RegistrationEvent.BLOCK);
     }
 }

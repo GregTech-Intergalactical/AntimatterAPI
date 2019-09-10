@@ -35,31 +35,41 @@ public class WorldGenHelper {
     public static void init() {
         ROCK_DEFAULT = BlockRock.get(StoneType.STONE);
 
-        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), StoneType.STONE);
-        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), StoneType.GRANITE);
-        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), StoneType.DIORITE);
-        STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), StoneType.ANDESITE);
-        STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), StoneType.SAND);
-        STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), StoneType.SAND_RED);
-        STONE_MAP.put(Blocks.SANDSTONE.getDefaultState(), StoneType.SANDSTONE);
-        STONE_MAP.put(Blocks.NETHERRACK.getDefaultState(), StoneType.NETHERRACK);
-        STONE_MAP.put(Blocks.END_STONE.getDefaultState(), StoneType.ENDSTONE);
-        STONE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), StoneType.GRANITE_RED);
-        STONE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), StoneType.GRANITE_RED);
-        STONE_MAP.put(BlockStone.get(StoneType.MARBLE).getDefaultState(), StoneType.MARBLE);
-        STONE_MAP.put(BlockStone.get(StoneType.BASALT).getDefaultState(), StoneType.BASALT);
+        for (StoneType stoneType : StoneType.getAllActive()) {
+            IBlockState state = stoneType.getBaseState();
+            if (state == StoneType.AIR) continue;
+            STONE_MAP.put(state, stoneType);
+            if (state.getBlock() == Blocks.STONE) {
+                ROCK_MAP.put(state, ROCK_DEFAULT);
+                STONE_SET.add(state);
+            }
+        }
+        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), StoneType.STONE);
+        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), StoneType.GRANITE);
+        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), StoneType.DIORITE);
+        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), StoneType.ANDESITE);
+        //STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), StoneType.SAND);
+        //STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), StoneType.SAND_RED);
+        //STONE_MAP.put(Blocks.SANDSTONE.getDefaultState(), StoneType.SANDSTONE);
+        //STONE_MAP.put(Blocks.NETHERRACK.getDefaultState(), StoneType.NETHERRACK);
+        //STONE_MAP.put(Blocks.END_STONE.getDefaultState(), StoneType.ENDSTONE);
 
-        ROCK_MAP.put(Blocks.GRASS.getDefaultState(), BlockRock.get(StoneType.STONE));
-        ROCK_MAP.put(Blocks.DIRT.getDefaultState(), BlockRock.get(StoneType.STONE));
-        ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), BlockRock.get(StoneType.STONE));
-        ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), BlockRock.get(StoneType.STONE));
-        ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), BlockRock.get(StoneType.STONE));
-        ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), BlockRock.get(StoneType.STONE));
+        //STONE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), StoneType.GRANITE_RED);
+        //STONE_MAP.put(BlockStone.get(StoneType.GRANITE_BLACK).getDefaultState(), StoneType.GRANITE_BLACK);
+        //STONE_MAP.put(BlockStone.get(StoneType.MARBLE).getDefaultState(), StoneType.MARBLE);
+        //STONE_MAP.put(BlockStone.get(StoneType.BASALT).getDefaultState(), StoneType.BASALT);
 
-        STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE));
-        STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE));
-        STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE));
-        STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE));
+        ROCK_MAP.put(Blocks.GRASS.getDefaultState(), ROCK_DEFAULT);
+        ROCK_MAP.put(Blocks.DIRT.getDefaultState(), ROCK_DEFAULT);
+        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), BlockRock.get(StoneType.STONE));
+        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), BlockRock.get(StoneType.STONE));
+        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), BlockRock.get(StoneType.STONE));
+        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), BlockRock.get(StoneType.STONE));
+
+        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE));
+        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE));
+        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE));
+        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE));
 
         TREE_SET.add(Blocks.GRASS.getDefaultState());
         TREE_BIOME_SET.add("Forest");

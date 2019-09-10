@@ -13,6 +13,7 @@ public class Configs {
 	public static Data DATA = new Data();
 	public static Recipe RECIPE = new Recipe();
 	public static World WORLD = new World();
+	public static ModCompatibility MODCOMPAT = new ModCompatibility();
 	public static Misc MISC = new Misc();
 
 	public static class Jei {
@@ -67,7 +68,7 @@ public class Configs {
 
 		@RequiresWorldRestart
 		@Comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
-		public boolean DISABLE_VANILLA_STONE_GEN = false;
+		public boolean DISABLE_VANILLA_STONE_GEN = true;
 
 		@RequiresWorldRestart
 		public int ORE_VEIN_MAX_SIZE = 32;
@@ -98,12 +99,17 @@ public class Configs {
 		@RequiresWorldRestart
 		public boolean ORE_JSON_RELOADING = true;
 	}
-
-	public static class Misc {
+	
+	public static class ModCompatibility {
 		@RequiresMcRestart
 		@Comment("Enable all mod support registrars - Default: true")
 		public boolean ENABLE_ALL_REGISTRARS = true;
+	    
+		@Comment("Have Underground Biomes Stones interchangeable with GregTech native ones (Such as marble, red granite etc), this may break balance - Default: false")
+		public boolean ENABLE_UB_CROSS_OREDICT = false;
+	}
 
+	public static class Misc {
 		@RequiresMcRestart
 		@Comment("Enable flat machine related models (5U Style) - Default: false")
 		public boolean BASIC_MACHINE_MODELS = false;
