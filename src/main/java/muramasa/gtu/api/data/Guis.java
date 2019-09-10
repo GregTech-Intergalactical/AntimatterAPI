@@ -62,7 +62,7 @@ public class Guis {
         MIXER.getGui().add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 25);
         LASER_ENGRAVER.getGui().add(ALLOY_SMELTER);
         FORMING_PRESS.getGui().add(ALLOY_SMELTER);
-        FORGE_HAMMER.getGui().add(ALLOY_SMELTER); //TODO
+        FORGE_HAMMER.getGui().add(IT_IN, 53, 25).add(IT_OUT, 107, 25);
         SIFTER.getGui().add(DISASSEMBLER);
         ARC_FURNACE.getGui().add(ALLOY_SMELTER); //TODO
         PLASMA_ARC_FURNACE.getGui().add(ARC_FURNACE);
