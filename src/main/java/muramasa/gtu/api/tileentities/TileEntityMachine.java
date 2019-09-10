@@ -50,8 +50,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile 
     @Override
     public void onLoad() {
         type = ((BlockMachine) getBlockType()).getType();
-        if (getType().hasFlag(ITEM)) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
-        if (getType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+        if (getType().hasFlag(ITEM) && getType().getGui().hasAnyItem(getTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
+        if (getType().hasFlag(FLUID) && getType().getGui().hasAnyFluid(getTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
         if (getType().hasFlag(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
         if (getType().hasFlag(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
         if (getType().hasFlag(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));

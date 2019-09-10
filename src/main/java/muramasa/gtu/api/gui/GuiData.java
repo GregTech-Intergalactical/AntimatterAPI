@@ -187,6 +187,14 @@ public class GuiData {
         return getCount(type) > 0;
     }
 
+    public boolean hasAnyItem(Tier tier) {
+        return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0;
+    }
+
+    public boolean hasAnyFluid(Tier tier) {
+        return getSlots(SlotType.FL_IN, tier).size() > 0 || getSlots(SlotType.FL_OUT, tier).size() > 0;
+    }
+
     //TODO broken
     public int getCount(SlotType type) {
         return COUNT_LOOKUP.get(type);

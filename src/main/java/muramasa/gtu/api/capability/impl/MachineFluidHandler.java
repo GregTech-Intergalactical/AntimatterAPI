@@ -26,9 +26,6 @@ public class MachineFluidHandler {
         int outputCount = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
-        //TODO validate removing this check doesn't break anything else
-//        inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
-//        outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
