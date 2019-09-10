@@ -317,7 +317,7 @@ public class Materials {
     public static Material LigniteCoke = new Material("lignite_coke", 0x8c6464, LIGNITE).asGemBasic(false);
 
     public static Material Diamond = new Material("diamond", 0xc8ffff, DIAMOND).asGem(true, ORE, ORE_SMALL).addTools(8.0F, 1280, 3).add(Carbon, 1);
-    public static Material Emerald = new Material("emerald", 0x50ff50, NONE).asGem(true, ORE, ORE_SMALL).addTools(9.0F, 590, 3).add(Silver, 1, Gold, 1); //Made Emerald better
+    public static Material Emerald = new Material("emerald", 0x50ff50, GEM_V).asGem(true, ORE, ORE_SMALL).addTools(9.0F, 590, 3).add(Silver, 1, Gold, 1); //Made Emerald better
     public static Material GreenSapphire = new Material("green_sapphire", 0x64c882, GEM_H).asGem(true, ORE, ORE_SMALL).addTools(7.0F, 256, 2).add(Aluminium, 2, Oxygen, 3);
     //public static Material Lazurite = new Material("lazurite", 0x6478ff, LAPIS).asGemBasic(false, ORE).add(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8); //TODO I think this is needed?
     public static Material Ruby = new Material("ruby", 0xff6464, RUBY).asGem(true, ORE, ORE_SMALL).addTools(7.0F, 256, 2).add(Chrome, 1, Aluminium, 2, Oxygen, 3);
@@ -419,11 +419,13 @@ public class Materials {
             GregTechAPI.addReplacement(GEM, Charcoal, new ItemStack(Items.COAL, 1, 1));
             GregTechAPI.addReplacement(GEM, Emerald, new ItemStack(Items.EMERALD));
             GregTechAPI.addReplacement(GEM, Diamond, new ItemStack(Items.DIAMOND));
+            GregTechAPI.addReplacement(GEM, Lapis, new ItemStack(Items.DYE, 1, 4));
             GregTechAPI.addReplacement(DUST, Redstone, new ItemStack(Items.REDSTONE));
             GregTechAPI.addReplacement(DUST, Glowstone, new ItemStack(Items.GLOWSTONE_DUST));
             GregTechAPI.addReplacement(BLOCK, Coal, new ItemStack(Blocks.COAL_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Iron, new ItemStack(Blocks.IRON_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Gold, new ItemStack(Blocks.GOLD_BLOCK));
+            GregTechAPI.addReplacement(BLOCK, Lapis, new ItemStack(Blocks.LAPIS_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Emerald, new ItemStack(Blocks.EMERALD_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Diamond, new ItemStack(Blocks.DIAMOND_BLOCK));
             GregTechAPI.addReplacement(BLOCK, Redstone, new ItemStack(Blocks.REDSTONE_BLOCK));

@@ -3,6 +3,7 @@ package muramasa.gtu.api.registration;
 public enum RegistrationEvent {
 
     INIT,
+    BLOCK,
     ITEM,
     MATERIAL,
     DATA,

@@ -4,6 +4,7 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
+import crafttweaker.runtime.ScriptLoader;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStorage;
@@ -13,6 +14,7 @@ import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
+import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
 import net.minecraft.item.ItemStack;
@@ -46,13 +48,31 @@ public class GregTechTweaker implements IGregTechRegistrar {
 
     @ZenMethod
     public static void addStorage(String id, String type, String... ids) {
-        if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("a storage block with the id " + id + " already exists");
-        Material[] materials = Arrays.stream(ids).filter(s -> Materials.get(s) != null).map(Materials::get).toArray(Material[]::new);
-        if (materials.length == 0) throw new IllegalArgumentException("could not find any valid materials for passed names");
-        if (materials.length > 16) throw new IllegalArgumentException("materials for " + id + "cannot be more than 16");
+        if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("A storage block with the id " + id + " already exists");
+        Material[] materials = Arrays.stream(ids).filter(s -> Materials.get(s) != null).toArray(Material[]::new);
+        int length = materials.length;
         MaterialType materialType = GregTechAPI.get(MaterialType.class, type);
-        if (materialType == null) throw new IllegalArgumentException("materialType for id " + type + " does not exist");
-        new BlockStorage(id, GregTechAPI.get(MaterialType.class, type), materials);
+        if (length == 0) throw new IllegalArgumentException("Could not find any valid materials for passed names");
+        else if (materialType == null) throw new IllegalArgumentException("MaterialType for id " + type + " does not exist");
+        else if (length <= 16) new BlockStorage(id, GregTechAPI.get(MaterialType.class, type), materials);
+        else if (length % 16 == 0) {
+            int sets = length / 16;
+            CraftTweakerAPI.logWarning("You have loaded a list of materials that have more than 16 materials, and is a multiple of 16, we have automatically split them into " + Integer.toString(sets) + " sets of blocks.");
+            for (int i = 0; i <= sets; i++) {
+                new BlockStorage(id + "_" + Integer.toString(i), GregTechAPI.get(MaterialType.class, type), Arrays.copyOfRange(materials, i * sets, (i + 1) * sets));
+            }
+        }
+        //Everything here *should* be more than 16 but can't be divided by 16
+        else {
+            int sets = length / 16;
+            int remainder = length % 16;
+            CraftTweakerAPI.logWarning("You have loaded a list of materials that have more than 16 materials, we have automatically split them into " + Integer.toString(sets) + " sets of blocks. With the last set of blocks having " + Integer.toString(remainder) + " metas.");
+            for (int i = 0; i <= sets; i++) {
+                if (i == sets) new BlockStorage(id, GregTechAPI.get(MaterialType.class, type), Arrays.copyOfRange(materials, i * 16, (i * 16) + remainder));
+                else new BlockStorage(id, GregTechAPI.get(MaterialType.class, type), Arrays.copyOfRange(materials, i * 16, (i + 1) * 16));
+            }
+        }
+        //new BlockStorage(id, GregTechAPI.get(MaterialType.class, type), materials);
     }
 
     @ZenMethod
@@ -103,7 +123,8 @@ public class GregTechTweaker implements IGregTechRegistrar {
     @Override
     public void onRegistrationEvent(RegistrationEvent event) {
         if (event == RegistrationEvent.DATA) {
-            CraftTweakerAPI.tweaker.loadScript(false, Ref.MODID + "_data");
+            ScriptLoader loader = CraftTweakerAPI.tweaker.getOrCreateLoader(Ref.MODID + "_data");
+            CraftTweakerAPI.tweaker.loadScript(false, loader);
         }
     }
 }

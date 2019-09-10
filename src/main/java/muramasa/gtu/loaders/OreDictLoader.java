@@ -36,8 +36,7 @@ public class OreDictLoader {
         });
 
         GregTechAPI.all(BlockOre.class).forEach(o -> {
-            if (o.getSetId() != "default") return;
-            StoneType[] stoneTypes = o.getStoneTypesFromSet("default");
+            StoneType[] stoneTypes = o.getStoneTypesFromSet(o.getSetId());
             for (int i = 0; i < stoneTypes.length; i++) {
                 StoneType currentType = stoneTypes[i];
                 String oreName = o.getType().getType().getId() + "_" + currentType.getOreId() + "_" + o.getMaterial().getId();

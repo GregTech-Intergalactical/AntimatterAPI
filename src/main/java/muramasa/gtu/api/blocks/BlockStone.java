@@ -17,6 +17,7 @@ public class BlockStone extends BlockBaked {
         setRegistryName(getId());
         setCreativeTab(Ref.TAB_BLOCKS);
         GregTechAPI.register(BlockStone.class, this);
+        type.setBaseState(this.getDefaultState());
     }
 
     public StoneType getType() {
