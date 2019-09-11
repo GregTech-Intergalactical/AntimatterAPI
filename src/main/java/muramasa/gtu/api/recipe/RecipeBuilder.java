@@ -20,22 +20,22 @@ public class RecipeBuilder {
     private boolean hidden;
     private Set<RecipeTag> tags = new HashSet<>();
 
-    public void add() {
+    public Recipe add() {
         if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT ITEMS INVALID!");
-            return;
+            return null;
         }
         if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
-            return;
+            return null;
         }
         if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
-            return;
+            return null;
         }
         if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
-            return;
+            return null;
         }
 
         if (Configs.RECIPE.ENABLE_RECIPE_UNIFICATION && itemsOutput != null) {
@@ -57,21 +57,23 @@ public class RecipeBuilder {
         recipe.setHidden(hidden);
         recipe.addTags(new HashSet<>(tags));
         recipeMap.add(recipe);
+
+        return recipe;
     }
 
-    public void add(long duration, long power, long special) {
+    public Recipe add(long duration, long power, long special) {
         this.duration = (int)duration;
         this.power = power;
         this.special = (int)special;
-        add();
+        return add();
     }
 
-    public void add(long duration, long power) {
-        add(duration, power, 0);
+    public Recipe add(long duration, long power) {
+        return add(duration, power, 0);
     }
 
-    public void add(int duration) {
-        add(duration, 0, 0);
+    public Recipe add(int duration) {
+        return add(duration, 0, 0);
     }
 
     public RecipeBuilder ii(ItemStack... stacks) {
