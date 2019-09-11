@@ -27,9 +27,7 @@ public class Data {
     private static boolean HC = Configs.GAMEPLAY.HARDCORE_CABLES;
 
     public static void init() {
-        BlockOre.addStoneSet("default", new StoneType[] {
-            StoneType.STONE, StoneType.GRANITE, StoneType.DIORITE, StoneType.ANDESITE, StoneType.SAND, StoneType.SAND_RED, StoneType.SANDSTONE, StoneType.NETHERRACK, StoneType.ENDSTONE, StoneType.GRANITE_RED, StoneType.GRANITE_BLACK, StoneType.MARBLE, StoneType.BASALT
-        });
+        BlockOre.addStoneSet("", StoneType.getVanillaTypes());
     }
 
     public static StandardItem DebugScanner = new StandardItem("debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");

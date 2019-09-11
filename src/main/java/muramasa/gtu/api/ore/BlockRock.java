@@ -48,7 +48,7 @@ public class BlockRock extends Block implements IGregTechObject, IItemBlock, IMo
         super(net.minecraft.block.material.Material.ROCK);
         this.stoneType = stoneType;
         setSoundType(stoneType.getSoundType());
-        setHardness(0.4f);
+        setHardness(0.2f);
         setResistance(0.2f);
         setUnlocalizedName(getId());
         setRegistryName(getId());
