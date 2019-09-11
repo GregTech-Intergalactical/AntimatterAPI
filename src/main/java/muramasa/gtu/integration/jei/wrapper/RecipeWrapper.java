@@ -7,6 +7,7 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int4;
+import muramasa.gtu.integration.jei.renderer.IInfoRenderer;
 import net.minecraft.client.Minecraft;
 
 import java.util.Arrays;
@@ -15,6 +16,7 @@ public class RecipeWrapper implements IRecipeWrapper {
 
     public Recipe recipe;
     private int4 padding;
+    private IInfoRenderer infoRenderer;
 
     public RecipeWrapper(Recipe recipe) {
         this.recipe = recipe;
@@ -22,6 +24,10 @@ public class RecipeWrapper implements IRecipeWrapper {
 
     public void setPadding(int4 padding) {
         this.padding = padding;
+    }
+
+    public void setInfoRenderer(IInfoRenderer infoRenderer) {
+        this.infoRenderer = infoRenderer;
     }
 
     @Override
@@ -43,20 +49,25 @@ public class RecipeWrapper implements IRecipeWrapper {
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         if (padding == null) return;
-        int lineCount = 0, startY = (recipeHeight - padding.y) + 5;
-        if (recipe.getTotalPower() > 0) {
-            minecraft.fontRenderer.drawString("Total: " + recipe.getTotalPower() + " EU", 10, startY + (lineCount++ * 10), 0x000000);
-        }
-        if (recipe.getPower() > 0) {
-            minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, startY + (lineCount++ * 10), 0x000000);
-            minecraft.fontRenderer.drawString("Voltage: " + Ref.VN[Utils.getVoltageTier(recipe.getPower())], 10, startY + (lineCount++ * 10), 0x000000);
-            minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, startY + (lineCount++ * 10), 0x000000);
-        }
-        if (recipe.getDuration() > 0) {
-            minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s (" + recipe.getDuration() + " ticks)", 10, startY + (lineCount++ * 10), 0x000000);
-        }
-        if (recipe.getSpecialValue() > 0) {
-            minecraft.fontRenderer.drawString("Special: " + recipe.getSpecialValue(), 10, startY + (lineCount++ * 10), 0x000000);
+        int startY = (recipeHeight - padding.y) + 5;
+        if (infoRenderer != null) {
+            infoRenderer.drawInfo(recipe, minecraft, startY, recipeWidth, recipeHeight, mouseX, mouseY);
+        } else {
+            int lineCount = 0;
+            if (recipe.getTotalPower() > 0) {
+                minecraft.fontRenderer.drawString("Total: " + recipe.getTotalPower() + " EU", 10, startY + (lineCount++ * 10), 0x000000);
+            }
+            if (recipe.getPower() > 0) {
+                minecraft.fontRenderer.drawString("Usage: " + recipe.getPower() + " EU/t", 10, startY + (lineCount++ * 10), 0x000000);
+                minecraft.fontRenderer.drawString("Voltage: " + Ref.VN[Utils.getVoltageTier(recipe.getPower())], 10, startY + (lineCount++ * 10), 0x000000);
+                minecraft.fontRenderer.drawString("Amperage: " + "1" + "", 10, startY + (lineCount++ * 10), 0x000000);
+            }
+            if (recipe.getDuration() > 0) {
+                minecraft.fontRenderer.drawString("Time: " + (recipe.getDuration() / (float)20) + "s (" + recipe.getDuration() + " ticks)", 10, startY + (lineCount++ * 10), 0x000000);
+            }
+            if (recipe.getSpecialValue() > 0) {
+                minecraft.fontRenderer.drawString("Special: " + recipe.getSpecialValue(), 10, startY + (lineCount++ * 10), 0x000000);
+            }
         }
     }
 }

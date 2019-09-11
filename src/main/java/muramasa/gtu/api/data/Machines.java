@@ -58,15 +58,15 @@ public class Machines {
     public static BasicMachine ARC_FURNACE = new BasicMachine("arc_furnace", ARC_SMELTING, ITEM, FLUID);
     public static BasicMachine PLASMA_ARC_FURNACE = new BasicMachine("plasma_arc_furnace", PLASMA_ARC_SMELTING, ITEM, FLUID);
 
-    public static BasicMachine COAL_BOILER = new BasicMachine("coal_boiler", SMALL_BOILERS, BRONZE, STEEL, ITEM, FLUID, Textures.BOILER_HANDLER);
-    public static BasicMachine LAVA_BOILER = new BasicMachine("lava_boiler", SMALL_BOILERS, STEEL, ITEM, FLUID); //TODO
-    public static BasicMachine SOLAR_BOILER = new BasicMachine("solar_boiler", SMALL_BOILERS, BRONZE, ITEM, FLUID); //TODO
-    public static BasicMachine STEAM_FURNACE = new BasicMachine("steam_furnace", BRONZE, STEEL, ITEM, FLUID, STEAM_SMELTING);
-    public static BasicMachine STEAM_PULVERIZER = new BasicMachine("steam_pulverizer", BRONZE, STEEL, ITEM, FLUID, STEAM_PULVERIZING);
-    public static BasicMachine STEAM_EXTRACTOR = new BasicMachine("steam_extractor", BRONZE, STEEL, ITEM, FLUID, STEAM_EXTRACTING);
-    public static BasicMachine STEAM_FORGE_HAMMER = new BasicMachine("steam_forge_hammer", BRONZE, STEEL, ITEM, FLUID, STEAM_HAMMERING);
-    public static BasicMachine STEAM_COMPRESSOR = new BasicMachine("steam_compressor", BRONZE, STEEL, ITEM, FLUID, STEAM_COMPRESSING);
-    public static BasicMachine STEAM_ALLOY_SMELTER = new BasicMachine("steam_alloy_smelter", BRONZE, STEEL, ITEM, FLUID, STEAM_ALLOY_SMELTING);
+    public static BasicMachine COAL_BOILER = new BasicMachine("coal_boiler", SMALL_BOILERS, BRONZE, STEEL, STEAM, ITEM, FLUID, Textures.BOILER_HANDLER);
+    public static BasicMachine LAVA_BOILER = new BasicMachine("lava_boiler", SMALL_BOILERS, STEEL, STEAM, ITEM, FLUID); //TODO
+    public static BasicMachine SOLAR_BOILER = new BasicMachine("solar_boiler", SMALL_BOILERS, BRONZE, STEAM, ITEM, FLUID); //TODO
+    public static BasicMachine STEAM_FURNACE = new BasicMachine("steam_furnace", BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_SMELTING);
+    public static BasicMachine STEAM_PULVERIZER = new BasicMachine("steam_pulverizer", BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_PULVERIZING);
+    public static BasicMachine STEAM_EXTRACTOR = new BasicMachine("steam_extractor", BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_EXTRACTING);
+    public static BasicMachine STEAM_FORGE_HAMMER = new BasicMachine("steam_forge_hammer", BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_HAMMERING);
+    public static BasicMachine STEAM_COMPRESSOR = new BasicMachine("steam_compressor", BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_COMPRESSING);
+    public static BasicMachine STEAM_ALLOY_SMELTER = new BasicMachine("steam_alloy_smelter", BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_ALLOY_SMELTING);
 
     public static MultiMachine COKE_OVEN = new MultiMachine("coke_oven", TileEntityCokeOven.class, COKING, LV, ITEM);
     public static MultiMachine PRIMITIVE_BLAST_FURNACE = new MultiMachine("primitive_blast_furnace", TileEntityPrimitiveBlastFurnace.class, BASIC_BLASTING, LV, ITEM);

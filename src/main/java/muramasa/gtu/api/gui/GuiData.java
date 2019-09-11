@@ -6,6 +6,7 @@ import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.int4;
 import muramasa.gtu.Ref;
+import muramasa.gtu.integration.jei.renderer.IInfoRenderer;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -21,10 +22,12 @@ public class GuiData {
     protected String id;
     protected Object instance = GregTech.INSTANCE;
     protected int guiId = 0;
+    protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
 
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     protected BarDir dir = BarDir.LEFT;
+    protected IInfoRenderer infoRenderer;
 
     protected LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     protected TObjectIntHashMap<SlotType> COUNT_LOOKUP = new TObjectIntHashMap<>();
@@ -90,6 +93,15 @@ public class GuiData {
         return this;
     }
 
+    public IInfoRenderer getInfoRenderer() {
+        return infoRenderer;
+    }
+
+    public GuiData setInfoRenderer(IInfoRenderer infoRenderer) {
+        this.infoRenderer = infoRenderer;
+        return this;
+    }
+
     /** Adds a slot for ANY **/
     public GuiData add(SlotType type, int x, int y) {
         return add(ANY, new SlotData(type, x, y));
@@ -133,6 +145,10 @@ public class GuiData {
     }
 
     public GuiData add(String key, SlotData slot) {
+        //TODO figure out better way to do this
+        Tier tier = Tier.get(key);
+        if (tier != null && tier.getInternalId() > highestTier.getInternalId()) highestTier = tier;
+
         COUNT_LOOKUP.adjustOrPutValue(slot.type, 1, 1);
         if (SLOT_LOOKUP.containsKey(key)) {
             SLOT_LOOKUP.get(key).add(slot);
@@ -159,11 +175,7 @@ public class GuiData {
     }
 
     public Tier getHighestTier() {
-        Tier[] tiers = Tier.getAllElectric();
-        for (int i = tiers.length - 1; i >= 0; i--) {
-            if (hasSlots(tiers[i])) return tiers[i];
-        }
-        return Tier.LV;
+        return highestTier;
     }
 
     public List<SlotData> getSlots(Tier tier) {
