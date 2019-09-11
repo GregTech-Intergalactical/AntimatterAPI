@@ -53,7 +53,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     
     public BlockStorage(String id, MaterialType type, Material... materials) {
         super(net.minecraft.block.material.Material.IRON);
-        if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("a storage block with the id " + id + " already exists");
+        if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("A storage block with the id " + id + " already exists");
         this.id = id;
         this.type = type;
         this.materials = materials;
@@ -190,10 +190,14 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         return 1.0f + (getHarvestLevel(blockState) * 1.0f);
     }
 
-    //TODO
     @Override
     public int getHarvestLevel(IBlockState state) {
-        return 1;
+        return materials[state.getValue(STORAGE_MATERIAL)].getToolQuality();
+    }
+    
+    @Override
+    public String getHarvestTool(IBlockState state) {
+        return "pickaxe";
     }
 
     @Override

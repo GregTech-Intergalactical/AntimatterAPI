@@ -49,7 +49,7 @@ public class GregTechTweaker implements IGregTechRegistrar {
     @ZenMethod
     public static void addStorage(String id, String type, String... ids) {
         if (GregTechAPI.has(BlockStorage.class, id)) throw new IllegalArgumentException("A storage block with the id " + id + " already exists");
-        Material[] materials = Arrays.stream(ids).filter(s -> Materials.get(s) != null).toArray(Material[]::new);
+        Material[] materials = Arrays.stream(ids).filter(s -> Materials.get(s) != null).map(Materials::get).toArray(Material[]::new);
         int length = materials.length;
         MaterialType materialType = GregTechAPI.get(MaterialType.class, type);
         if (length == 0) throw new IllegalArgumentException("Could not find any valid materials for passed names");
