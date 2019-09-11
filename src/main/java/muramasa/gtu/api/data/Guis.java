@@ -37,8 +37,8 @@ public class Guis {
         EXTRUDER.getGui().add(ALLOY_SMELTER);
         LATHE.getGui().add(CUTTER);
         PULVERIZER.getGui().add(COMPRESSOR);
-        PULVERIZER.getGui().add(HV, COMPRESSOR).add(HV, IT_OUT, 125, 25);
-        PULVERIZER.getGui().add(EV, COMPRESSOR).add(EV, IT_OUT, 125, 25).add(EV, IT_OUT, 143, 25);
+        PULVERIZER.getGui().add(HV, PULVERIZER).add(HV, IT_OUT, 125, 25);
+        PULVERIZER.getGui().add(EV, PULVERIZER).add(EV, IT_OUT, 125, 25).add(EV, IT_OUT, 143, 25);
         PULVERIZER.getGui().add(IV, IT_IN, 53, 25).add(IV, IT_OUT, 107, 16).add(IV, IT_OUT, 125, 16).add(IV, IT_OUT, 107, 34).add(IV, IT_OUT, 125, 34);
         RECYCLER.getGui().add(COMPRESSOR);
         SCANNER.getGui().add(COMPRESSOR);
@@ -70,12 +70,19 @@ public class Guis {
         COAL_BOILER.getGui().add(ALLOY_SMELTER); //TODO
         LAVA_BOILER.getGui().add(ALLOY_SMELTER);
         SOLAR_BOILER.getGui().add(ALLOY_SMELTER);
-        STEAM_FURNACE.getGui().add(FURNACE);
-        STEAM_PULVERIZER.getGui().add(PULVERIZER);
-        STEAM_EXTRACTOR.getGui().add(EXTRACTOR);
-        STEAM_FORGE_HAMMER.getGui().add(FORGE_HAMMER);
-        STEAM_COMPRESSOR.getGui().add(COMPRESSOR);
-        STEAM_ALLOY_SMELTER.getGui().add(ALLOY_SMELTER);
+
+        STEAM_ALLOY_SMELTER.getGui().add(BRONZE, ALLOY_SMELTER);
+        STEAM_ALLOY_SMELTER.getGui().add(STEEL, ALLOY_SMELTER);
+        STEAM_COMPRESSOR.getGui().add(BRONZE, COMPRESSOR);
+        STEAM_COMPRESSOR.getGui().add(STEEL, COMPRESSOR);
+        STEAM_FURNACE.getGui().add(BRONZE, FURNACE);
+        STEAM_FURNACE.getGui().add(STEEL, FURNACE);
+        STEAM_EXTRACTOR.getGui().add(BRONZE, EXTRACTOR);
+        STEAM_EXTRACTOR.getGui().add(STEEL, EXTRACTOR);
+        STEAM_PULVERIZER.getGui().add(BRONZE, PULVERIZER);
+        STEAM_PULVERIZER.getGui().add(STEEL, PULVERIZER);
+        STEAM_FORGE_HAMMER.getGui().add(BRONZE, FORGE_HAMMER);
+        STEAM_FORGE_HAMMER.getGui().add(STEEL, FORGE_HAMMER);
 
         STEAM_GENERATOR.getGui().add(BASIC_TANK);
         GAS_GENERATOR.getGui().add(BASIC_TANK);
