@@ -54,18 +54,22 @@ public class GregTechJEIPlugin implements IModPlugin {
             if (registeredMachineCats.contains(type.getRecipeMap().getId())) continue;
             if (type.hasFlag(BASIC)) {
                 if (REGISTRY.containsKey(type.getRecipeMap().getId())) continue;
-                registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, Tier.LV)));
+                if (type.hasFlag(STEAM)) {
+                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Tier.BRONZE));
+                } else {
+                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), type.getGui().getHighestTier()));
+                }
             } else if (type.hasFlag(MULTI)) {
                 if (type.getGui().hasSlots()) {
-                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier())));
+                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), type.getGui().getHighestTier()));
                 } else {
-                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Guis.MULTI_DISPLAY));
+                    registry.addRecipeCategories(new RecipeMapCategory(Machines.get(type, type.getFirstTier()), Guis.MULTI_DISPLAY, type.getGui().getHighestTier()));
                 }
             }
             registeredMachineCats.add(type.getRecipeMap().getId());
         }
-        REGISTRY.forEach((k, v) -> {
-            if (!registeredMachineCats.contains(v.getFirst().getId())) registry.addRecipeCategories(new RecipeMapCategory(v.getFirst(), v.getSecond()));
+        REGISTRY.forEach((id, tuple) -> {
+            if (!registeredMachineCats.contains(tuple.getFirst().getId())) registry.addRecipeCategories(new RecipeMapCategory(tuple.getFirst(), tuple.getSecond(), Tier.LV));
         });
     }
 
