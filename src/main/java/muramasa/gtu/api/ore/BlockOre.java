@@ -3,7 +3,6 @@ package muramasa.gtu.api.ore;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.Configs;
-import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
@@ -16,7 +15,6 @@ import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
-import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
@@ -24,7 +22,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -43,15 +40,9 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Random;
-
 import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class BlockOre extends BlockFalling implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
 
@@ -274,12 +265,11 @@ public class BlockOre extends BlockFalling implements IGregTechObject, IItemBloc
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureMap map) {
+    public void getTextures(Set<ResourceLocation> textures) {
         for (int i = 0; i < stoneSet.length; i++) {
-            map.registerSprite(stoneSet[i].getTexture());
+            textures.add(stoneSet[i].getTexture());
         }
-        map.registerSprite(material.getSet().getTexture(type.getType(), 0));
+        textures.add(material.getSet().getTexture(type.getType(), 0));
     }
 
     @Override
@@ -295,7 +285,7 @@ public class BlockOre extends BlockFalling implements IGregTechObject, IItemBloc
     public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
         for (int i = 0; i < stoneSet.length; i++) {
             ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "stone_type=" + i);
-            registry.putObject(loc, ModelUtils.getBakedTextureData(new TextureData().base(stoneSet[i].getTexture()).overlay(material.getSet().getTexture(type.getType(), 0))));
+            registry.putObject(loc, new TextureData().base(stoneSet[i].getTexture()).overlay(material.getSet().getTexture(type.getType(), 0)).bake());
         }
     }
 
