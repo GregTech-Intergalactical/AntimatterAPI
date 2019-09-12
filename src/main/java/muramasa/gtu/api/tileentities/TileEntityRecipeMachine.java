@@ -3,7 +3,6 @@ package muramasa.gtu.api.tileentities;
 import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.machines.MachineState;
-import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.util.EnumFacing;
@@ -27,10 +26,21 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
     }
 
     public void tickMachineLoop() {
+//        if (getMachineState() == ACTIVE || getMachineState() == OUTPUT_FULL) {
+//            setMachineState(tickRecipe());
+//        } else if (getMachineState() == NO_POWER) {
+//            setMachineState(IDLE);
+//            checkRecipe();
+//        }
         switch (getMachineState()) {
             case ACTIVE:
+                setMachineState(tickRecipe());
+                break;
             case OUTPUT_FULL:
                 setMachineState(tickRecipe());
+                break;
+            case NO_POWER:
+                checkRecipe();
                 break;
         }
     }
@@ -103,8 +113,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
                 return true;
             }
         }
-        //TODO maybe eventually override this with a Steam specific machine tile?
-        return getTier() == Tier.BRONZE || getTier() == Tier.STEEL;
+        return false;
     }
 
     /** Helpers **/

@@ -24,7 +24,7 @@ public class Guis {
     }.setPadding(0, 0, 0, 0).add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 142, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34);
 
     public static IInfoRenderer STEAM_INFO_RENDERER = (r, m, startY, width, height, mouseX, mouseY) -> {
-        if (r.hasInputFluids()) m.fontRenderer.drawString("Steam L/t: " + r.getInputFluids()[0].amount, 10, startY, 0x000000);
+        if (r.hasInputFluids()) m.fontRenderer.drawString("Steam: " + r.getPower() + "L/t (" + r.getSpecialValue() + " total)", 10, startY, 0x000000);
         if (r.getDuration() > 0) m.fontRenderer.drawString("Time: " + (r.getDuration() / (float)20) + "s (" + r.getDuration() + " ticks)", 10, startY + 10, 0x000000);
     };
 
