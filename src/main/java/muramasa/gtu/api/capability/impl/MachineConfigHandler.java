@@ -1,8 +1,8 @@
 package muramasa.gtu.api.capability.impl;
 
 import muramasa.gtu.api.capability.IConfigHandler;
-import muramasa.gtu.api.tools.ToolType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tools.ToolType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -27,6 +27,10 @@ public class MachineConfigHandler implements IConfigHandler {
                     if (getTile().coverHandler.isPresent()) return getTile().coverHandler.get().setOutputFacing(side);
                 }
             case HAMMER:
+//                getTile().setMachineState(MachineState.IDLE);
+//                if (getTile() instanceof TileEntityRecipeMachine) {
+//                    ((TileEntityRecipeMachine) getTile()).checkRecipe();
+//                }
 //                getTile().toggleDisabled();
 //                player.sendMessage(new TextComponentString("Machine was " + (getTile().getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
                 return true;

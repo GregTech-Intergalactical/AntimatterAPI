@@ -1,6 +1,7 @@
 package muramasa.gtu.api.data;
 
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.recipe.RecipeBuilder;
 import muramasa.gtu.api.recipe.RecipeMap;
@@ -55,8 +56,8 @@ public class RecipeBuilders {
     }
 
     public static Recipe addRecipeToSteamMap(RecipeMap map, Recipe recipe) {
-        if (recipe.getOutputItems() != null && recipe.getOutputItems().length == 1) {
-            map.RB().ii(recipe.getInputItems()).fi(Materials.Steam.getGas(1)).io(recipe.getOutputItems()).add(recipe.getDuration(), recipe.getPower(), recipe.getSpecialValue());
+        if (recipe.getPower() <= Tier.LV.getVoltage()) {
+            map.RB().ii(recipe.getInputItems()).fi(Materials.Steam.getGas((int)(recipe.getPower() * 2))).io(recipe.getOutputItems()).add(recipe.getDuration(), recipe.getPower() * 2, recipe.getTotalPower() * 2);
         }
         return recipe;
     }

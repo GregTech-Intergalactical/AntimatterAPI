@@ -17,7 +17,7 @@ public enum MachineState implements IGregTechObject {
 //    INVALID_RECIPE(2, "Recipe Invalid", true, false), //no recipe for input
     INVALID_TIER(2, "Recipe Tier Invalid", true, false, false), //recipe tier requirement not met
     OUTPUT_FULL(2, "Output Full", false, true, false), //output full can not continue
-    NO_POWER(2, "No Power", false, false, false), //no power
+    NO_POWER(2, "No Power", true, false, false), //no power
     POWER_LOSS(2, "Power Loss", false, false, false); //power loss while operating
 
     public static MachineState[] VALUES;
