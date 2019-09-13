@@ -135,21 +135,42 @@ public class Utils {
     public static boolean hasChanceTag(ItemStack stack) {
         return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_CHANCE);
     }
+    
+    public static boolean hasChanceTag(FluidStack stack) {
+        return stack.tag != null && stack.tag.hasKey(Ref.KEY_STACK_CHANCE);
+    }
 
     public static boolean hasNoConsumeTag(ItemStack stack) {
         return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_NO_CONSUME);
+    }
+    
+    public static boolean hasNoConsumeTag(FluidStack stack) {
+        return stack.tag != null && stack.tag.hasKey(Ref.KEY_STACK_NO_CONSUME);
     }
 
     public static int getChanceTag(ItemStack stack) {
         return stack.getTagCompound().getInteger(Ref.KEY_STACK_CHANCE);
     }
+    
+    public static int getChanceTag(FluidStack stack) {
+        return stack.tag.getInteger(Ref.KEY_STACK_CHANCE);
+    }
 
     public static boolean getNoConsumeTag(ItemStack stack) {
         return stack.getTagCompound().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
+    
+    public static boolean getNoConsumeTag(FluidStack stack) {
+        return stack.tag.getBoolean(Ref.KEY_STACK_NO_CONSUME);
+    }
 
     public static ItemStack addChanceTag(ItemStack stack, int chance) {
         validateNBT(stack).getTagCompound().setInteger(Ref.KEY_STACK_CHANCE, chance);
+         return stack;
+    }
+    
+    public static FluidStack addChanceTag(FluidStack stack, int chance) {
+        validateNBT(stack).tag.setInteger(Ref.KEY_STACK_CHANCE, chance);
          return stack;
     }
 
@@ -157,9 +178,20 @@ public class Utils {
         validateNBT(stack).getTagCompound().setBoolean(Ref.KEY_STACK_NO_CONSUME, true);
         return stack;
     }
+    
+    public static FluidStack addNoConsumeTag(FluidStack stack) {
+        validateNBT(stack).tag.setBoolean(Ref.KEY_STACK_NO_CONSUME, true);
+        return stack;
+    }
 
     public static ItemStack validateNBT(ItemStack stack) {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        return stack;
+    }
+    
+    public static FluidStack validateNBT(FluidStack stack) {
+        NBTTagCompound tag = stack.tag;
+        if (tag == null) tag = new NBTTagCompound();
         return stack;
     }
 

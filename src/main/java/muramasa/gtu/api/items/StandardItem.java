@@ -99,9 +99,6 @@ public class StandardItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         tooltip.add(this.tooltip);
-        if (Utils.hasNoConsumeTag(stack)) {
-            tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
-        }
         if (Data.DebugScanner.equals(this)) {
             tooltip.add("Blocks: " + GregTechAPI.BLOCKS.size());
             tooltip.add("Machines: " + Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size());
