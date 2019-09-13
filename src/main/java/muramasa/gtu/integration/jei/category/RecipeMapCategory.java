@@ -11,12 +11,14 @@ import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.MachineStack;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.recipe.RecipeMap;
+import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.int4;
 import muramasa.gtu.common.Data;
 import muramasa.gtu.integration.jei.renderer.FluidStackRenderer;
 import muramasa.gtu.integration.jei.wrapper.RecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -146,7 +148,15 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
                     fluidGroup.set(groupIndex++, fluids[s]);
                 }
             }
-        }
+        }    
+        itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
+            if (Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+            else if (Utils.hasChanceTag(stack)) tooltip.add(TextFormatting.WHITE + "Chance: " + Utils.getChanceTag(stack) + "%");
+        });
+        fluidGroup.addTooltipCallback((index, input, stack, tooltip) -> {
+            if (Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+            else if (Utils.hasChanceTag(stack)) tooltip.add(TextFormatting.WHITE + "Chance: " + Utils.getChanceTag(stack) + "%");
+        });
     }
 
     public static void setGuiHelper(IGuiHelper helper) {
