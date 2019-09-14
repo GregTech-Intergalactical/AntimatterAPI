@@ -11,6 +11,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.IModel;
@@ -53,6 +54,11 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
         bakeItem = !hasItemOverride;
         bakeBlock = false;
         customModel = true;
+    }
+    
+    @Override
+    public ItemStack asItemStack() {
+        return new ItemStack(this);
     }
 
     @Override
