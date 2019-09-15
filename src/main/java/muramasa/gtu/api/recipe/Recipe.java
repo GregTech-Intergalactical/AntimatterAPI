@@ -2,7 +2,6 @@ package muramasa.gtu.api.recipe;
 
 import com.google.common.collect.Sets;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -58,6 +57,11 @@ public class Recipe {
         return fluidsOutput != null && fluidsOutput.length > 0;
     }
 
+    public boolean hasChances() {
+        //TODO change this if we add input chances?
+        return chances != null && chances.length == itemsOutput.length;
+    }
+
     @Nullable
     public ItemStack[] getInputItems() {
         return hasInputItems() ? itemsInput.clone() : null;
@@ -82,21 +86,6 @@ public class Recipe {
     }
 
     @Nullable
-    public ItemStack[] getOutputItemsJEI() {
-        if (hasOutputItems()) {
-            ItemStack[] outputs = itemsOutput.clone();
-            if (chances != null) {
-                for (int i = 0; i < outputs.length; i++) {
-                    if (chances[i] >= 100) continue;
-                    Utils.addChanceTag(outputs[i], chances[i]);
-                }
-            }
-            return outputs;
-        }
-        return null;
-    }
-
-    @Nullable
     public FluidStack[] getInputFluids() {
         return hasInputFluids() ? fluidsInput.clone() : null;
     }
@@ -112,6 +101,11 @@ public class Recipe {
 
     public long getPower() {
         return power;
+    }
+
+    @Nullable
+    public int[] getChances() {
+        return chances;
     }
 
     public long getTotalPower() {
@@ -162,6 +156,14 @@ public class Recipe {
             for (int i = 0; i < fluidsOutput.length; i++) {
                 builder.append(fluidsOutput[i].getFluid().getName() + " x" + fluidsOutput[i].amount);
                 if (i != fluidsOutput.length - 1) builder.append(", ");
+            }
+            builder.append("}\n");
+        }
+        if (chances != null) {
+            builder.append("Chances: {");
+            for (int i = 0; i < chances.length; i++) {
+                builder.append(chances[i] + "%");
+                if (i != chances.length - 1) builder.append(", ");
             }
             builder.append("}\n");
         }

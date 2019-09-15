@@ -36,7 +36,7 @@ public class RecipeWrapper implements IRecipeWrapper {
             ingredients.setInputs(VanillaTypes.ITEM, Arrays.asList(recipe.getInputItems()));
         }
         if (recipe.hasOutputItems()) {
-            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputItemsJEI()));
+            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputItems()));
         }
         if (recipe.hasInputFluids()) {
             ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(recipe.getInputFluids()));

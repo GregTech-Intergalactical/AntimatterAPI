@@ -99,6 +99,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
         int groupIndex = 0, slotCount;
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
 
+        int inputItems = 0, inputFluids = 0;
         if (wrapper.recipe.hasInputItems()) {
             slots = gui.getSlots(SlotType.IT_IN, guiTier);
             slotCount = slots.size();
@@ -108,6 +109,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
                 for (int s = 0; s < slotCount; s++) {
                     itemGroup.init(groupIndex, true, slots.get(s).x - offsetX, slots.get(s).y - offsetY);
                     itemGroup.set(groupIndex++, stacks[s]);
+                    inputItems++;
                 }
             }
         }
@@ -115,7 +117,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
             slots = gui.getSlots(SlotType.IT_OUT, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
-                ItemStack[] stacks = wrapper.recipe.getOutputItemsJEI();
+                ItemStack[] stacks = wrapper.recipe.getOutputItems();
                 slotCount = Math.min(slotCount, stacks.length);
                 for (int s = 0; s < slotCount; s++) {
                     itemGroup.init(groupIndex, false, slots.get(s).x - offsetX, slots.get(s).y - offsetY);
@@ -134,6 +136,7 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
                 for (int s = 0; s < slotCount; s++) {
                     fluidGroup.init(groupIndex, true, fluidRenderer, slots.get(s).x - (offsetX - 1), slots.get(s).y - (offsetY - 1), 16, 16, 0, 0);
                     fluidGroup.set(groupIndex++, fluids[s]);
+                    inputFluids++;
                 }
             }
         }
@@ -148,14 +151,28 @@ public class RecipeMapCategory implements IRecipeCategory<RecipeWrapper> {
                     fluidGroup.set(groupIndex++, fluids[s]);
                 }
             }
-        }    
+        }
+
+        final int finalInputItems = inputItems;
+        final int finalInputFluids = inputFluids;
         itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
-            if (Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
-            else if (Utils.hasChanceTag(stack)) tooltip.add(TextFormatting.WHITE + "Chance: " + Utils.getChanceTag(stack) + "%");
+            if (input && Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+            if (wrapper.recipe.hasChances() && !input) {
+                int chanceIndex = index - finalInputItems;
+                if (wrapper.recipe.getChances()[chanceIndex] < 100) {
+                    tooltip.add(TextFormatting.WHITE + "Chance: " + wrapper.recipe.getChances()[chanceIndex] + "%");
+                }
+            }
         });
         fluidGroup.addTooltipCallback((index, input, stack, tooltip) -> {
-            if (Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
-            else if (Utils.hasChanceTag(stack)) tooltip.add(TextFormatting.WHITE + "Chance: " + Utils.getChanceTag(stack) + "%");
+            if (input && Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+            //TODO add fluid chances to recipe
+//            if (wrapper.recipe.hasChances() && !input) {
+//                int chanceIndex = index - finalInputFluids;
+//                if (wrapper.recipe.getChances()[chanceIndex] < 100) {
+//                    tooltip.add(TextFormatting.WHITE + "Chance: " + wrapper.recipe.getChances()[chanceIndex] + "%");
+//                }
+//            }
         });
     }
 
