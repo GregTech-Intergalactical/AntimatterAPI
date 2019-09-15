@@ -53,7 +53,6 @@ public class Ref {
     public static boolean debugStones = true;
 
     /** NBT Tags & Keys **/
-    public static final String KEY_STACK_CHANCE = "chance";
     public static final String KEY_STACK_NO_CONSUME = "noconsume";
 
     public static final String KEY_MACHINE_STACK_TIER = "st2";

@@ -1,5 +1,6 @@
 package muramasa.gtu.api.util;
 
+import com.google.common.base.CaseFormat;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
@@ -28,9 +29,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
-
-import com.google.common.base.CaseFormat;
-
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -132,14 +130,6 @@ public class Utils {
         return ca(stack.amount * amount, stack);
     }
 
-    public static boolean hasChanceTag(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_CHANCE);
-    }
-    
-    public static boolean hasChanceTag(FluidStack stack) {
-        return stack.tag != null && stack.tag.hasKey(Ref.KEY_STACK_CHANCE);
-    }
-
     public static boolean hasNoConsumeTag(ItemStack stack) {
         return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_NO_CONSUME);
     }
@@ -148,30 +138,12 @@ public class Utils {
         return stack.tag != null && stack.tag.hasKey(Ref.KEY_STACK_NO_CONSUME);
     }
 
-    public static int getChanceTag(ItemStack stack) {
-        return stack.getTagCompound().getInteger(Ref.KEY_STACK_CHANCE);
-    }
-    
-    public static int getChanceTag(FluidStack stack) {
-        return stack.tag.getInteger(Ref.KEY_STACK_CHANCE);
-    }
-
     public static boolean getNoConsumeTag(ItemStack stack) {
         return stack.getTagCompound().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
     
     public static boolean getNoConsumeTag(FluidStack stack) {
         return stack.tag.getBoolean(Ref.KEY_STACK_NO_CONSUME);
-    }
-
-    public static ItemStack addChanceTag(ItemStack stack, int chance) {
-        validateNBT(stack).getTagCompound().setInteger(Ref.KEY_STACK_CHANCE, chance);
-         return stack;
-    }
-    
-    public static FluidStack addChanceTag(FluidStack stack, int chance) {
-        validateNBT(stack).tag.setInteger(Ref.KEY_STACK_CHANCE, chance);
-         return stack;
     }
 
     public static ItemStack addNoConsumeTag(ItemStack stack) {
