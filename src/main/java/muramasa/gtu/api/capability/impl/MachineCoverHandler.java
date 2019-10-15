@@ -1,13 +1,14 @@
 package muramasa.gtu.api.capability.impl;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.tools.GregTechToolType;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 
 public class MachineCoverHandler extends RotatableCoverHandler {
 
@@ -21,11 +22,11 @@ public class MachineCoverHandler extends RotatableCoverHandler {
         };
     }
 
-    public EnumFacing getOutputFacing() {
-        return Utils.rotateFacingAlt(EnumFacing.VALUES[outputSide], getTileFacing());
+    public Direction getOutputFacing() {
+        return Utils.rotateFacingAlt(Ref.DIRECTIONS[outputSide], getTileFacing());
     }
 
-    public boolean setOutputFacing(EnumFacing side) {
+    public boolean setOutputFacing(Direction side) {
         if (set(side, GregTechAPI.CoverOutput)) {
             if (covers[outputSide].isEqual(GregTechAPI.CoverOutput)) covers[outputSide] = GregTechAPI.CoverNone;
             outputSide = Utils.rotateFacing(side, getTileFacing()).getIndex();
@@ -35,7 +36,7 @@ public class MachineCoverHandler extends RotatableCoverHandler {
     }
 
     @Override
-    public boolean set(EnumFacing side, Cover cover) {
+    public boolean set(Direction side, Cover cover) {
         if (cover.isEqual(GregTechAPI.CoverNone) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
             super.set(side, GregTechAPI.CoverNone);
             return super.set(side, GregTechAPI.CoverOutput);
@@ -44,19 +45,19 @@ public class MachineCoverHandler extends RotatableCoverHandler {
     }
 
     @Override
-    public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
-        if (type == ToolType.CROWBAR && get(side).isEqual(GregTechAPI.CoverOutput)) return false;
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
+        if (type == GregTechToolType.CROWBAR && get(side).isEqual(GregTechAPI.CoverOutput)) return false;
         return super.onInteract(player, hand, side, type);
     }
 
     @Override
-    public boolean isValid(EnumFacing side, Cover existing, Cover replacement) {
+    public boolean isValid(Direction side, Cover existing, Cover replacement) {
         if (!validCovers.contains(replacement.getId())) return false;
         return (existing.isEqual(GregTechAPI.CoverOutput) && !replacement.isEqual(GregTechAPI.CoverNone)) || super.isValid(side, existing, replacement);
     }
 
     @Override
-    public EnumFacing getTileFacing() {
+    public Direction getTileFacing() {
         return ((TileEntityMachine) getTile()).getFacing();
     }
 }

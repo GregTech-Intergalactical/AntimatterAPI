@@ -1,23 +1,21 @@
 package muramasa.gtu.api.blocks;
 
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.texture.TextureData;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 
 public class BlockStone extends BlockBaked {
 
     private StoneType type;
 
     public BlockStone(StoneType type) {
-        super(net.minecraft.block.material.Material.ROCK, new TextureData().base(type.getTexture()));
+        super(Block.Properties.create(Material.ROCK).sound(type.getSoundType()), new TextureData().base(type.getTexture()));
         this.type = type;
-        setSoundType(type.getSoundType());
-        setUnlocalizedName(getId());
         setRegistryName(getId());
-        setCreativeTab(Ref.TAB_BLOCKS);
-        GregTechAPI.register(BlockStone.class, this);
         type.setBaseState(this.getDefaultState());
+        GregTechAPI.register(BlockStone.class, this);
     }
 
     public StoneType getType() {

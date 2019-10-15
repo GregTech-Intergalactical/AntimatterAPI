@@ -3,13 +3,11 @@ package muramasa.gtu.api;
 import muramasa.gtu.Configs;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.*;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.RecipeMaps;
-import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.guiold.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
@@ -17,30 +15,25 @@ import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
-import muramasa.gtu.api.tileentities.*;
+import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
+import muramasa.gtu.api.tileentities.TileEntitySteamMachine;
+import muramasa.gtu.api.tileentities.TileEntityTank;
 import muramasa.gtu.api.tileentities.multi.TileEntityBasicMultiMachine;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
-import muramasa.gtu.api.tileentities.pipe.TileEntityCable;
-import muramasa.gtu.api.tileentities.pipe.TileEntityFluidPipe;
-import muramasa.gtu.api.tileentities.pipe.TileEntityItemPipe;
-import muramasa.gtu.api.tileentities.pipe.TileEntityPipe;
-import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.integration.jei.GregTechJEIPlugin;
 import muramasa.gtu.loaders.InternalRegistrar;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -50,7 +43,7 @@ public final class GregTechAPI {
 
     public static final Set<Item> ITEMS = new LinkedHashSet<>();
     public static final Set<Block> BLOCKS = new LinkedHashSet<>();
-    public static final Set<Class> TILES = new HashSet<>();
+    public static final Set<TileEntityType> TILES = new HashSet<>();
     private static final HashMap<Class<?>, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
     private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
     private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
@@ -58,6 +51,8 @@ public final class GregTechAPI {
     private static final LinkedHashMap<String, ItemStack> REPLACEMENTS = new LinkedHashMap<>();
 
     private static RegistrationEvent LAST_EVENT = null;
+
+    private static ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
 
     static {
         register(TileEntityMachine.class);
@@ -68,13 +63,13 @@ public final class GregTechAPI {
         register(TileEntityTank.class);
         register(TileEntityHatch.class);
 
-        register(TileEntityPipe.class);
-        register(TileEntityItemPipe.class);
-        register(TileEntityFluidPipe.class);
-        register(TileEntityCable.class);
+        //register(TileEntityPipe.class);
+        //register(TileEntityItemPipe.class);
+        //register(TileEntityFluidPipe.class);
+        //register(TileEntityCable.class);
         //register(TileEntityCasing.class);
-        register(TileEntityMaterial.class);
-        register(TileEntityRock.class);
+        //register(TileEntityMaterial.class);
+        //register(TileEntityRock.class);
 
         registerJEICategory(RecipeMaps.ORE_BYPRODUCTS, Guis.ORE_BYPRODUCTS);
 //        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
@@ -88,14 +83,17 @@ public final class GregTechAPI {
     public static void register(Object o) {
         if (o instanceof Item) ITEMS.add((Item) o);
         else if (o instanceof Block) BLOCKS.add((Block) o);
-        else if (o instanceof Class) TILES.add((Class) o);
+        else if (o instanceof TileEntityType) TILES.add((TileEntityType) o);
     }
 
     public static void register(Class c, IGregTechObject o) {
         if (!OBJECTS.containsKey(c)) OBJECTS.put(c, new LinkedHashMap<>());
         if (!OBJECTS.get(c).containsKey(o.getId()))  {
             OBJECTS.get(c).put(o.getId(), o);
-        } else GregTech.LOGGER.error("Object: " + o.getId() + " has already been registered! This is a error!");
+        } else {
+            //TODO throw error
+            GregTech.LOGGER.error("Object: " + o.getId() + " has already been registered! This is a error!");
+        }
         register(o);
     }
 
@@ -143,15 +141,15 @@ public final class GregTechAPI {
         return registrar != null && registrar.isEnabled();
     }
 
-    @Nullable
-    public static Item getItem(String domain, String path) {
-        return Item.getByNameOrId(new ResourceLocation(domain, path).toString());
-    }
-
-    @Nullable
-    public static Block getBlock(String domain, String path) {
-        return Block.getBlockFromName(new ResourceLocation(domain, path).toString());
-    }
+//    @Nullable
+//    public static Item getItem(String domain, String path) {
+//        return Item.getByNameOrId(new ResourceLocation(domain, path).toString());
+//    }
+//
+//    @Nullable
+//    public static Block getBlock(String domain, String path) {
+//        return Block.getBlockFromName(new ResourceLocation(domain, path).toString());
+//    }
 
     /** Item Registry Section **/
     public static void addReplacement(MaterialType type, Material material, ItemStack stack) {
@@ -166,8 +164,8 @@ public final class GregTechAPI {
 
     /** JEI Registry Section **/
     public static void registerJEICategory(RecipeMap map, GuiData gui) {
-        if (Utils.isModLoaded(Ref.MOD_JEI)) {
-            GregTechJEIPlugin.registerCategory(map, gui);
+        if (ModList.get().isLoaded(Ref.MOD_JEI)) {
+            //GregTechJEIPlugin.registerCategory(map, gui);
         }
     }
 
@@ -175,8 +173,8 @@ public final class GregTechAPI {
     private final static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
 
     public static void registerFluidCell(ItemStack stack) {
-        if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
-        FLUID_CELL_REGISTRY.add(stack);
+        //if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
+        //FLUID_CELL_REGISTRY.add(stack);
     }
 
     public static List<ItemStack> getFluidCells() {
@@ -191,13 +189,17 @@ public final class GregTechAPI {
 
     public static Collection<ItemStack> getFluidCells(Fluid fluid, int amount) {
         Collection<ItemStack> cells = getFluidCells();
-        for (ItemStack stack : cells) {
-            IFluidHandlerItem fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandler == null) continue;
-            amount = amount != -1 ? amount : Integer.MAX_VALUE;
-            fluidHandler.fill(new FluidStack(fluid, amount), true);
-        }
+//        for (ItemStack stack : cells) {
+//            IFluidHandlerItem fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+//            if (fluidHandler == null) continue;
+//            amount = amount != -1 ? amount : Integer.MAX_VALUE;
+//            fluidHandler.fill(new FluidStack(fluid, amount), true);
+//        }
         return cells;
+    }
+
+    public static ToolType getWrenchToolType() {
+        return WRENCH_TOOL_TYPE;
     }
 
     /** Cover Registry Section **/
@@ -237,36 +239,36 @@ public final class GregTechAPI {
     }
 
     /** Attempts to do smart interaction with a compatible Tile/Block **/
-    public static boolean interact(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        EnumFacing targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
-        if (GregTechAPI.placeCover(tile, player, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
-        if (tile.hasCapability(GTCapabilities.COVERABLE, targetSide)) {
-            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
-            if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
-        }
-        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, targetSide)) {
-            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
-            if (configHandler != null && configHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
-        }
+    public static boolean interact(TileEntity tile, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
+//        Direction targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
+//        if (GregTechAPI.placeCover(tile, player, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
+//        if (tile.hasCapability(GTCapabilities.COVERABLE, targetSide)) {
+//            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
+//            if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+//        }
+//        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, targetSide)) {
+//            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
+//            if (configHandler != null && configHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+//        }
         return false;
     }
 
     /** Attempts to place a cover on a tile at a given side **/
-    public static boolean placeCover(TileEntity tile, EntityPlayer player, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (stack.isEmpty()) return false;
-        ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
-        if (coverHandler == null) return false;
-        Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
-        if (cover == null) return false;
-        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack)))) {
-            if (!player.isCreative()) stack.shrink(1);
-            return true;
-        }
+    public static boolean placeCover(TileEntity tile, PlayerEntity player, ItemStack stack, Direction side, float hitX, float hitY, float hitZ) {
+//        if (stack.isEmpty()) return false;
+//        ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
+//        if (coverHandler == null) return false;
+//        Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
+//        if (cover == null) return false;
+//        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack)))) {
+//            if (!player.isCreative()) stack.shrink(1);
+//            return true;
+//        }
         return false;
     }
 
     /** Attempts to remove a cover at a given side **/
-    public static boolean removeCover(EntityPlayer player, ICoverHandler coverHandler, EnumFacing side) {
+    public static boolean removeCover(PlayerEntity player, ICoverHandler coverHandler, Direction side) {
         ItemStack toDrop = coverHandler.get(side).getDroppedStack();
         if (coverHandler.set(side, CoverNone)) {
             if (!player.isCreative()) player.dropItem(toDrop, false);

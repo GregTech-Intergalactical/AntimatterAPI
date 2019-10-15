@@ -5,17 +5,18 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.Texture;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static muramasa.gtu.api.machines.MachineFlag.*;
 
 public class MultiMachine extends Machine {
 
-    public MultiMachine(String name, Class<? extends TileEntityMachine> tileClass, Object... data) {
-        super(name, tileClass, data);
+    public MultiMachine(String name, Supplier<? extends TileEntityMultiMachine> tile, Object... data) {
+        super(name, tile, data);
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
         setGUI(GregTech.INSTANCE, Ref.GUI_ID_MULTI_MACHINE);
     }

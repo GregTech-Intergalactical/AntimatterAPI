@@ -1,10 +1,10 @@
 package muramasa.gtu.api.structure;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 
 public interface IBlockStatePredicate {
 
-    boolean evaluate(World world, BlockPos pos, IBlockState state);
+    boolean evaluate(IWorldReader reader, BlockPos pos, BlockState state);
 }

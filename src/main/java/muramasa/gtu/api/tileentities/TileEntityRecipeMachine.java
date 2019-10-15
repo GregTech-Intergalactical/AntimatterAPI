@@ -5,7 +5,7 @@ import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Recipe Methods **/
     public Recipe findRecipe() {
-        return getType().getRecipeMap().find(itemHandler.orElse(null), fluidHandler.orElse(null));
+        return getMachineType().getRecipeMap().find(itemHandler.orElse(null), fluidHandler.orElse(null));
     }
 
     public void checkRecipe() {
@@ -137,7 +137,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
         switch (type) {
             case ITEM_INPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
-                if (getType().hasFlag(RECIPE)) checkRecipe();
+                if (getMachineType().hasFlag(RECIPE)) checkRecipe();
                 break;
             case ITEM_OUTPUT:
                 if (getMachineState().allowLoopTick() || getMachineState() == NO_POWER) tickMachineLoop();
@@ -163,8 +163,8 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
 
     /** Setters **/
     @Override
-    public boolean setFacing(EnumFacing side) {
-        return super.setFacing(side.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : side);
+    public boolean setFacing(Direction side) {
+        return super.setFacing(side.getAxis() == Direction.Axis.Y ? Direction.NORTH : side);
     }
 
     public void setClientProgress(float progress) {

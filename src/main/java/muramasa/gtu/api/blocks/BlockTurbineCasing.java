@@ -1,17 +1,18 @@
 package muramasa.gtu.api.blocks;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.common.tileentities.multi.TileEntityLargeTurbine;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.IBlockReader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -27,16 +28,16 @@ public class BlockTurbineCasing extends BlockCasing {
     }
 
     @Override
-    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int[] ct = new int[6];
         TileEntity tile;
         for (int s = 0; s < 6; s++) {
-            if ((tile = world.getTileEntity(pos.offset(EnumFacing.VALUES[s]))) instanceof TileEntityLargeTurbine) {
+            if ((tile = world.getTileEntity(pos.offset(Ref.DIRECTIONS[s]))) instanceof TileEntityLargeTurbine) {
                 ct[s] = (1 << s) + (((TileEntityMachine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
-            } else if ((tile = world.getTileEntity(pos.offset(EnumFacing.VALUES[s]).down())) instanceof TileEntityLargeTurbine) {
-                ct[s] = (1 << s) + (1 << EnumFacing.DOWN.getIndex()) + (((TileEntityLargeTurbine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
-            } else if ((tile = world.getTileEntity(pos.offset(EnumFacing.VALUES[s]).up())) instanceof TileEntityLargeTurbine) {
-                ct[s] = (1 << s) + (1 << EnumFacing.UP.getIndex()) + (((TileEntityLargeTurbine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
+            } else if ((tile = world.getTileEntity(pos.offset(Ref.DIRECTIONS[s]).down())) instanceof TileEntityLargeTurbine) {
+                ct[s] = (1 << s) + (1 << Direction.DOWN.getIndex()) + (((TileEntityLargeTurbine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
+            } else if ((tile = world.getTileEntity(pos.offset(Ref.DIRECTIONS[s]).up())) instanceof TileEntityLargeTurbine) {
+                ct[s] = (1 << s) + (1 << Direction.UP.getIndex()) + (((TileEntityLargeTurbine) tile).getFacing().getIndex() * 100) /*+ ((TileEntityLargeTurbine) tile).getClientProgress() > 0 ? 1000 : 0*/;
             }
         }
         return ct;
@@ -126,16 +127,15 @@ public class BlockTurbineCasing extends BlockCasing {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void getTextures(Set<ResourceLocation> textures) {
         super.getTextures(textures);
         textures.addAll(Arrays.asList(LARGE_TURBINE));
         textures.addAll(Arrays.asList(LARGE_TURBINE_ACTIVE));
-
     }
 
     @Override
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 }

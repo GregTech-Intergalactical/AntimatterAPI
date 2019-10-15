@@ -3,7 +3,10 @@ package muramasa.gtu;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import muramasa.gtu.api.util.XSTR;
-import muramasa.gtu.client.creativetab.GregTechTab;
+import muramasa.gtu.client.itemgroup.GregTechItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Direction;
 
 import java.io.File;
 
@@ -23,10 +26,10 @@ public class Ref {
     public static final String SERVER = "muramasa.gtu.proxy.ServerProxy";
 
     /** Creative Tabs **/
-    public static GregTechTab TAB_ITEMS = new GregTechTab("items");
-    public static GregTechTab TAB_BLOCKS = new GregTechTab("blocks");
-    public static GregTechTab TAB_MATERIALS = new GregTechTab("materials");
-    public static GregTechTab TAB_MACHINES = new GregTechTab("machines");
+    public static GregTechItemGroup TAB_ITEMS = new GregTechItemGroup("items", new ItemStack(Items.NETHER_BRICK));
+    public static GregTechItemGroup TAB_BLOCKS = new GregTechItemGroup("blocks", new ItemStack(Items.NETHER_BRICK));
+    public static GregTechItemGroup TAB_MATERIALS = new GregTechItemGroup("materials", new ItemStack(Items.NETHER_BRICK));
+    public static GregTechItemGroup TAB_MACHINES = new GregTechItemGroup("machines", new ItemStack(Items.NETHER_BRICK));
 
     /** GUI IDs **/
     public static final int GUI_ID_MACHINE = 0;
@@ -37,6 +40,7 @@ public class Ref {
     public static final int M = 3628800;
     public static final int[] V = new int[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX", "", "", "", "", "", ""}; //TODO: Schedule to change? ZPM rename? Tier decisions?
+    public static final Direction[] DIRECTIONS = Direction.values();
 
     /** Debug Options **/
     public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;

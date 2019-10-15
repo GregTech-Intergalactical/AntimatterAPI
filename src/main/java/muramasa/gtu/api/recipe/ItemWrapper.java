@@ -14,11 +14,10 @@ public class ItemWrapper {
     public ItemWrapper(ItemStack item, Set<RecipeTag> tags) {
         this.item = item;
         count = item.getCount() > 1;
-        nbt = item.hasTagCompound() && !tags.contains(RecipeTag.IGNORE_NBT);
+        nbt = item.hasTag() && !tags.contains(RecipeTag.IGNORE_NBT);
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
         tempHash = 31 * tempHash + item.getItem().getRegistryName().toString().hashCode();
-        if (item.getItemDamage() > 0) tempHash = 31 * tempHash + item.getItemDamage(); //TODO 1.13+: Remove damage
-        if (nbt) tempHash = 31 * tempHash + item.getTagCompound().hashCode();
+        if (nbt) tempHash = 31 * tempHash + item.getTag().hashCode();
         hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
     }
 

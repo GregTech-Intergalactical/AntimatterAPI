@@ -1,28 +1,27 @@
 package muramasa.gtu.client.render.bakedmodels;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.util.Direction;
+import net.minecraftforge.client.model.data.IModelData;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
-import static muramasa.gtu.api.properties.GTProperties.ROCK_MODEL;
+import static muramasa.gtu.api.GregTechProperties.ROCK_MODEL;
 
 public class BakedRock extends BakedBase {
 
     public static IBakedModel[] BAKED;
 
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public List<BakedQuad> getBakedQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         List<BakedQuad> quads = new LinkedList<>();
-        if (state == null) return quads;
-
-        int model = ((IExtendedBlockState) state).getValue(ROCK_MODEL);
-
-        return BAKED[model].getQuads(state, side, rand);
+        if (state == null || !data.hasProperty(ROCK_MODEL)) return quads;
+        return BAKED[data.getData(ROCK_MODEL)].getQuads(state, side, rand, data);
     }
 }

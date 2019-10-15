@@ -1,11 +1,11 @@
 package muramasa.gtu.api.tileentities.multi;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.capability.GTCapabilities;
 import muramasa.gtu.api.capability.IComponentHandler;
-import muramasa.gtu.api.capability.impl.*;
+import muramasa.gtu.api.capability.impl.ControllerComponentHandler;
+import muramasa.gtu.api.capability.impl.ControllerConfigHandler;
 import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.gui.GuiEvent;
+import muramasa.gtu.api.guiold.GuiEvent;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
@@ -16,13 +16,10 @@ import muramasa.gtu.api.structure.StructureCache;
 import muramasa.gtu.api.structure.StructureResult;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +36,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     @Override
     public void onLoad() {
         super.onLoad();
-        componentHandler = Optional.of(new ControllerComponentHandler(getType(), this));
+        componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
 
         //TODO fix this oversight
@@ -50,7 +47,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     public boolean checkStructure() {
         if (!isServerSide()) return false;
-        Structure structure = getType().getStructure(getTier());
+        Structure structure = getMachineType().getStructure(getTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
@@ -89,9 +86,9 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         return Collections.emptyList();
     }
 
-    public List<IBlockState> getStates(String id) {
+    public List<BlockState> getStates(String id) {
         if (result.isPresent()) {
-            ArrayList<IBlockState> list = result.get().states.get(id);
+            ArrayList<BlockState> list = result.get().states.get(id);
             return list != null ? list : Collections.emptyList();
         }
         return Collections.emptyList();
@@ -120,7 +117,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public Recipe findRecipe() {
-        return getType().getRecipeMap().find(getStoredItems(), getStoredFluids());
+        return getMachineType().getRecipeMap().find(getStoredItems(), getStoredFluids());
     }
 
     @Override
@@ -294,14 +291,15 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         return MachineState.INVALID_STRUCTURE;
     }
 
-    @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
-        return capability == GTCapabilities.COMPONENT || super.hasCapability(capability, side);
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
-    }
+    //TODO
+//    @Override
+//    public boolean hasCapability(Capability<?> capability, @Nullable Direction side) {
+//        return capability == GTCapabilities.COMPONENT || super.hasCapability(capability, side);
+//    }
+//
+//    @Nullable
+//    @Override
+//    public <T> T getCapability(Capability<T> capability, @Nullable Direction side) {
+//        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
+//    }
 }

@@ -1,6 +1,6 @@
 package muramasa.gtu.client.render;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.model.BakedQuad;
 
 //Credit: http://www.minecraftforge.net/forum/topic/66893-112-is-there-a-way-to-color-bakedquads/?do=findComment&comment=321762
 public class BakedQuadTinted extends BakedQuad {

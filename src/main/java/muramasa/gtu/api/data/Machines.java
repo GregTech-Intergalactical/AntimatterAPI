@@ -2,8 +2,6 @@ package muramasa.gtu.api.data;
 
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.machines.MachineFlag;
-import muramasa.gtu.api.machines.MachineStack;
-import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.*;
 import muramasa.gtu.api.tileentities.TileEntitySteamMachine;
 import muramasa.gtu.common.tileentities.multi.*;
@@ -69,23 +67,23 @@ public class Machines {
     public static BasicMachine STEAM_COMPRESSOR = new BasicMachine("steam_compressor", TileEntitySteamMachine.class, BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_COMPRESSING);
     public static BasicMachine STEAM_ALLOY_SMELTER = new BasicMachine("steam_alloy_smelter", TileEntitySteamMachine.class, BRONZE, STEEL, STEAM, ITEM, FLUID, STEAM_ALLOY_SMELTING);
 
-    public static MultiMachine COKE_OVEN = new MultiMachine("coke_oven", TileEntityCokeOven.class, COKING, LV, ITEM);
-    public static MultiMachine PRIMITIVE_BLAST_FURNACE = new MultiMachine("primitive_blast_furnace", TileEntityPrimitiveBlastFurnace.class, BASIC_BLASTING, LV, ITEM);
-    public static MultiMachine BRONZE_BLAST_FURNACE = new MultiMachine("bronze_blast_furnace", TileEntityBronzeBlastFurnace.class, BASIC_BLASTING, LV, ITEM);
-    public static MultiMachine CHARCOAL_PIT = new MultiMachine("charcoal_pit", TileEntityCharcoalPit.class, LV);
-    public static MultiMachine BLAST_FURNACE = new MultiMachine("electric_blast_furnace", TileEntityElectricBlastFurnace.class, BLASTING, LV, ITEM, FLUID);
-    public static MultiMachine IMPLOSION_COMPRESSOR = new MultiMachine("implosion_compressor", TileEntityImplosionCompressor.class, IMPLOSION_COMPRESSING, HV, ITEM);
-    public static MultiMachine VACUUM_FREEZER = new MultiMachine("vacuum_freezer", TileEntityVacuumFreezer.class, VACUUM_FREEZING, HV, ITEM, FLUID);
-    public static MultiMachine MULTI_SMELTER = new MultiMachine("multi_smelter", TileEntityMultiSmelter.class, HV, ITEM);
-    public static MultiMachine LARGE_BOILER = new MultiMachine("large_boiler", TileEntityLargeBoiler.class, LV, MV, HV, EV, ITEM, FLUID);
-    public static MultiMachine LARGE_TURBINE = new MultiMachine("large_turbine", TileEntityLargeTurbine.class, HV, EV, IV, UV, FLUID);
-    public static MultiMachine HEAT_EXCHANGER = new MultiMachine("heat_exchanger", TileEntityHeatExchanger.class, EV, FLUID);
-    public static MultiMachine OIL_DRILLING_RIG = new MultiMachine("oil_drilling_rig", TileEntityOilDrillingRig.class, EV, IV, LUV, ZPM, FLUID);
-    public static MultiMachine OIL_CRACKING_UNIT = new MultiMachine("oil_cracking_unit", TileEntityOilCrackingUnit.class, HV, FLUID);
-    public static MultiMachine ADVANCED_MINER = new MultiMachine("advanced_miner", TileEntityAdvancedMiner.class, LV, ITEM);
-    public static MultiMachine PYROLYSIS_OVEN = new MultiMachine("pyrolysis_oven", TileEntityPyrolysisOven.class, MV, ITEM, FLUID);
-    public static MultiMachine COMBUSTION_ENGINE = new MultiMachine("combustion_engine", TileEntityCombustionEngine.class, COMBUSTION_FUELS, EV, FLUID);
-    public static MultiMachine FUSION_REACTOR = new MultiMachine("fusion_reactor", TileEntityFusionReactor.class, FUSION, LUV, ZPM, UV, FLUID);
+    public static MultiMachine COKE_OVEN = new MultiMachine("coke_oven", TileEntityCokeOven::new, COKING, LV, ITEM);
+    public static MultiMachine PRIMITIVE_BLAST_FURNACE = new MultiMachine("primitive_blast_furnace", TileEntityPrimitiveBlastFurnace::new, BASIC_BLASTING, LV, ITEM);
+    public static MultiMachine BRONZE_BLAST_FURNACE = new MultiMachine("bronze_blast_furnace", TileEntityBronzeBlastFurnace::new, BASIC_BLASTING, LV, ITEM);
+    public static MultiMachine CHARCOAL_PIT = new MultiMachine("charcoal_pit", TileEntityCharcoalPit::new, LV);
+    public static MultiMachine BLAST_FURNACE = new MultiMachine("electric_blast_furnace", TileEntityElectricBlastFurnace::new, BLASTING, LV, ITEM, FLUID);
+    public static MultiMachine IMPLOSION_COMPRESSOR = new MultiMachine("implosion_compressor", TileEntityImplosionCompressor::new, IMPLOSION_COMPRESSING, HV, ITEM);
+    public static MultiMachine VACUUM_FREEZER = new MultiMachine("vacuum_freezer", TileEntityVacuumFreezer::new, VACUUM_FREEZING, HV, ITEM, FLUID);
+    public static MultiMachine MULTI_SMELTER = new MultiMachine("multi_smelter", TileEntityMultiSmelter::new, HV, ITEM);
+    public static MultiMachine LARGE_BOILER = new MultiMachine("large_boiler", TileEntityLargeBoiler::new, LV, MV, HV, EV, ITEM, FLUID);
+    public static MultiMachine LARGE_TURBINE = new MultiMachine("large_turbine", TileEntityLargeTurbine::new, HV, EV, IV, UV, FLUID);
+    public static MultiMachine HEAT_EXCHANGER = new MultiMachine("heat_exchanger", TileEntityHeatExchanger::new, EV, FLUID);
+    public static MultiMachine OIL_DRILLING_RIG = new MultiMachine("oil_drilling_rig", TileEntityOilDrillingRig::new, EV, IV, LUV, ZPM, FLUID);
+    public static MultiMachine OIL_CRACKING_UNIT = new MultiMachine("oil_cracking_unit", TileEntityOilCrackingUnit::new, HV, FLUID);
+    public static MultiMachine ADVANCED_MINER = new MultiMachine("advanced_miner", TileEntityAdvancedMiner::new, LV, ITEM);
+    public static MultiMachine PYROLYSIS_OVEN = new MultiMachine("pyrolysis_oven", TileEntityPyrolysisOven::new, MV, ITEM, FLUID);
+    public static MultiMachine COMBUSTION_ENGINE = new MultiMachine("combustion_engine", TileEntityCombustionEngine::new, COMBUSTION_FUELS, EV, FLUID);
+    public static MultiMachine FUSION_REACTOR = new MultiMachine("fusion_reactor", TileEntityFusionReactor::new, FUSION, LUV, ZPM, UV, FLUID);
 
     public static HatchMachine HATCH_ITEM_I = new HatchMachine("hatch_item_input", GUI, ITEM);
     public static HatchMachine HATCH_ITEM_O = new HatchMachine("hatch_item_output", GUI, ITEM);
@@ -109,7 +107,7 @@ public class Machines {
 
     public static void add(Machine machine) {
         GregTechAPI.register(Machine.class, machine);
-        GregTechAPI.register(machine.getBlock());
+        machine.getBlocks().forEach(GregTechAPI::register);
         ID_LOOKUP.add(machine.getInternalId(), machine);
     }
 
@@ -123,9 +121,9 @@ public class Machines {
         return machine != null ? machine : INVALID;
     }
 
-    public static MachineStack get(Machine type, Tier tier) {
-        return new MachineStack(type, tier);
-    }
+//    public static MachineStack get(Machine type, Tier tier) {
+//        return new MachineStack(type, tier);
+//    }
 
     public static Collection<Machine> getTypes(MachineFlag... flags) {
         ArrayList<Machine> types = new ArrayList<>();
@@ -135,11 +133,11 @@ public class Machines {
         return types;
     }
 
-    public static Collection<MachineStack> getStacks(MachineFlag... flags) {
-        ArrayList<MachineStack> stacks = new ArrayList<>();
-        for (MachineFlag flag : flags) {
-            stacks.addAll(flag.getStacks());
-        }
-        return stacks;
-    }
+//    public static Collection<MachineStack> getStacks(MachineFlag... flags) {
+//        ArrayList<MachineStack> stacks = new ArrayList<>();
+//        for (MachineFlag flag : flags) {
+//            stacks.addAll(flag.getStacks());
+//        }
+//        return stacks;
+//    }
 }

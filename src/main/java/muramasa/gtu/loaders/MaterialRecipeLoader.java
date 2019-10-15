@@ -6,10 +6,9 @@ import muramasa.gtu.api.materials.IMaterialTag;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialStack;
 import muramasa.gtu.api.recipe.RecipeHelper;
-import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.tools.GregTechToolType;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -33,7 +32,7 @@ public class MaterialRecipeLoader {
     //TODO: Plasma Arc/Normal Arc smelting will be handled differently, when we have said amount system.    
     
     public static void init() {       
-        //ELEMENTAL.getMats().forEach();
+        //ELEMENTAL.all().forEach();
 //            ItemStack aDataOrb = ItemType.Tool_DataO.RB(1);
 //            Behaviour_DataOrb.setDataTitle(aDataOrb, "Elemental-Scan");
 //            Behaviour_DataOrb.setDataName(aDataOrb, m.mElement.id());
@@ -43,21 +42,21 @@ public class MaterialRecipeLoader {
 //            GT_Recipe.GT_Recipe_Map.sScannerFakeRecipes.addFakeRecipe(false, new ItemStack[]{aRepOutput}, new ItemStack[]{aDataOrb}, ItemType.Tool_DataO.RB(1), null, null, aMass * 8192, 32, 0);
 //            GT_Recipe.GT_Recipe_Map.sReplicatorFakeRecipes.addFakeRecipe(false, null, aFluid == null ? new ItemStack[]{aRepOutput} : null, new ItemStack[]{aDataOrb}, new FluidStack[]{Materials.UUMatter.getFluid(aMass)}, aFluid == null ? null : new FluidStack[]{new FluidStack(aFluid, 144)}, aMass * 512, 32, 0);
 
-        //LIQUID.getMats().forEach();
+        //LIQUID.all().forEach();
 
-        //GAS.getMats().forEach();
+        //GAS.all().forEach();
 
-        PLASMA.getMats().forEach(m -> {
+        PLASMA.all().forEach(m -> {
             ItemStack cell = m.has(LIQUID) ? m.getCell(1) : m.getCellGas(1);
             VACUUM_FREEZING.RB().ii(m.getCellPlasma(1)).io(cell).add(Math.max(m.getMass() * 2, 1), 120);
             PLASMA_FUELS.RB().fi(m.getPlasma(1296)).add(0, 0, Math.max(1024, 1024 * m.getMass()) * 1000); //TODO: 1296 or 1000? To per cell amount or to '9' units?
         });
         
-        INGOT_HOT.getMats().forEach(m -> VACUUM_FREEZING.RB().ii(m.getIngotHot(1)).io(m.getIngot(1)).add(Math.max(m.getMass() * 3, 1), 120)); //TODO: Coolant idea?
+        INGOT_HOT.all().forEach(m -> VACUUM_FREEZING.RB().ii(m.getIngotHot(1)).io(m.getIngot(1)).add(Math.max(m.getMass() * 3, 1), 120)); //TODO: Coolant idea?
 
-        SPRING.getMats().forEach(m -> BENDING.RB().ii(m.getRod(1)).io(m.getSpring(1)).add(200, 16));
+        SPRING.all().forEach(m -> BENDING.RB().ii(m.getRod(1)).io(m.getSpring(1)).add(200, 16));
 
-        PLATE_DENSE.getMats().forEach(m -> {
+        PLATE_DENSE.all().forEach(m -> {
             ItemStack plateDense = m.getPlateDense(1);
             long mass = Math.max(m.getMass() * 9, 1);
             BENDING.RB().ii(m.getPlate(9)).io(plateDense).add(mass, 96);  
@@ -65,7 +64,7 @@ public class MaterialRecipeLoader {
             //GregTech_API.registerCover(aDenseStack, new GT_RenderedTexture(merial.mIconSet.mTextures[76], merial.mRGBa, false), null);
         });
    
-        ROTOR.getMats().forEach(m -> {
+        ROTOR.all().forEach(m -> {
             ItemStack plate = m.getPlate(1), ring = m.getRing(1), rotor = m.getRotor(1);
             RecipeHelper.addShaped("rotor_" + m.getId(), rotor, "PhP", "SRf", "PdP", 'P', plate, 'R', ring, 'S', m.getScrew(1));
             //ItemStack plates = plate.copy();
@@ -75,7 +74,7 @@ public class MaterialRecipeLoader {
             ASSEMBLING.RB().ii(plate, ring).fi(Materials.SolderingAlloy.getLiquid(16)).io(rotor).add(240, 24);          
         });
         
-        /*WIRE_FINE.getMats().forEach(m -> {
+        /*WIRE_FINE.all().forEach(m -> {
             if (!m.has(NOSMASH)) {
                 //RecipeAdder.addWiremillRecipe(m.getIngot(1), Utils.copy(m.getWire01(2), aWireF), 100, 4);
                 //RecipeAdder.addWiremillRecipe(m.getRod(1), Utils.copy(m.getWire01(1), aWireF), 50, 4);
@@ -85,13 +84,13 @@ public class MaterialRecipeLoader {
             }
         });*/
 
-        GEAR_SMALL.getMats().stream().filter(m -> m != Materials.Wood).forEach(m -> {
+        GEAR_SMALL.all().stream().filter(m -> m != Materials.Wood).forEach(m -> {
             ItemStack gearSmall = m.getGearSmall(1);
             RecipeHelper.addShapeless("plate_to_small_gear_", gearSmall, "h", m.getPlate(1));
             FLUID_SOLIDIFYING.RB().ii(MoldGearSmall.get(0)).fi(m.getLiquid(144)).io(gearSmall).add(16, 8);        
         });
         
-        GEAR.getMats().forEach(m -> {
+        GEAR.all().forEach(m -> {
             ItemStack gear = m.getGear(1);
             if (m.has(PLATE)) RecipeHelper.addShaped("gear_" + m.getId(), gear, "SPS", "PwP", "SPS", 'P', m.getPlate(1), 'S', m.getRod(1));
             if (m.has(GEM) && m.has(ROD)) RecipeHelper.addShaped("gear_" + m.getId(), gear, "SPS", "PwP", "SPS", 'P', m.getGemBrittle(1), 'S', m.getRod(1));
@@ -109,21 +108,21 @@ public class MaterialRecipeLoader {
             }
         });
         
-        FOIL.getMats().forEach(m -> {
+        FOIL.all().forEach(m -> {
             ItemStack plate = m.getPlate(1), foil = m.getFoil(2);
             RecipeHelper.addShapeless("plate_to_foil_" + m.getId(), foil, "h", plate);
             BENDING.RB().ii(plate).io(Utils.ca(4, foil)).add(Math.max(m.getMass(), 1), 24);
             //GregTech_API.registerCover(aFoilStack, new GT_RenderedTexture(merial.mIconSet.mTextures[70], merial.mRGBa, false), null);
         });
         
-        SCREW.getMats().forEach(m -> {
+        SCREW.all().forEach(m -> {
             if (!m.has(ROD)) return;
             ItemStack screw = m.getScrew(1), rod = m.getRod(1);
             RecipeHelper.addShaped("rod_to_screw_" + m.getId(), screw, "sRf", "   ", "   ", 'R', rod);
             LATHING.RB().ii(rod).io(screw).add(Math.max(m.getMass(), 1), 4);
         });
         
-        RING.getMats().forEach(m -> {
+        RING.all().forEach(m -> {
             ItemStack ring = m.getRing(1);
             Material smeltInto = m.getSmeltInto();
             ItemStack ringQuadruple = smeltInto != m ? smeltInto.getRing(4) : Utils.ca(4, ring);
@@ -142,7 +141,7 @@ public class MaterialRecipeLoader {
             }
         });
 
-        ROD.getMats().forEach(m -> {  
+        ROD.all().forEach(m -> {
             ItemStack ingotOrGem = m.has(GEM) ? m.getGem(1) : m.getIngot(1), rod = m.getRod(1);
             long mass = m.getMass();
             LATHING.RB().ii(ingotOrGem).io(rod, m.getMacerateInto().getDustSmall(2)).add(Math.max(mass * 5, 1), 16);
@@ -156,7 +155,7 @@ public class MaterialRecipeLoader {
             }
         });
 
-        ROD_LONG.getMats().forEach(m -> {
+        ROD_LONG.all().forEach(m -> {
             if (!m.has(ROD)) return;
             ItemStack rod = m.getRod(2), rodLong = m.getRodLong(1);
             long mass = m.getMass();
@@ -169,7 +168,7 @@ public class MaterialRecipeLoader {
             HAMMERING.RB().ii(rod).io(rodLong).add(duration, 16);
         });
 
-        BLOCK.getMats().forEach(m -> { 
+        BLOCK.all().forEach(m -> {
             ItemStack block = m.getBlock(1), ingotOrGem = m.has(GEM) ? m.getGem(1) : m.getIngot(1);
             //TODO: Leave in compressor? Hardcore mode?
             RecipeHelper.addShapeless("block_compress_" + m.getId(), block, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem, ingotOrGem);
@@ -198,7 +197,7 @@ public class MaterialRecipeLoader {
             }
         });
         
-        PLATE.getMats().forEach(m -> {
+        PLATE.all().forEach(m -> {
             ItemStack plate = m.getPlate(1), dust = m.getDust(1);
             if (m.has(CRYSTALLIZE)) {
                 COMPRESSING.RB().ii(dust).io(plate).add(300, 2); 
@@ -231,7 +230,7 @@ public class MaterialRecipeLoader {
         });
 
         //Handle tiny, small, normal variants of dusts here! NOT IMPURE/PURE!
-        DUST.getMats().forEach(m -> {
+        DUST.all().forEach(m -> {
             ItemStack dust = m.getDust(1), dustSmall = m.getDustSmall(1), dustTiny = m.getDustTiny(1); //The Big Three          
             RecipeHelper.addShapeless("dust_tiny_to_dust_" + m.getId(), dust, dustTiny, dustTiny, dustTiny, dustTiny, dustTiny, dustTiny, dustTiny, dustTiny, dustTiny);
             RecipeHelper.addShapeless("dust_small_to_dust_" + m.getId(), dust, dustSmall, dustSmall, dustSmall, dustSmall);
@@ -300,7 +299,7 @@ public class MaterialRecipeLoader {
         });
 
         //I removed checks for stack count, if it does happen, I'll write a catch for it
-        IMaterialTag.getMats(ELEC, CENT).forEach(m -> {
+        IMaterialTag.all(ELEC, CENT).forEach(m -> {
             int inputCount = 0, inputCellCount = 0;
             ArrayList<ItemStack> outputs = new ArrayList<>();
             ArrayList<FluidStack> fluidOutputs = new ArrayList<>();
@@ -388,7 +387,7 @@ public class MaterialRecipeLoader {
             }
         });
 
-        NUGGET.getMats().forEach(m -> {
+        NUGGET.all().forEach(m -> {
             ItemStack nugget = m.getNugget(1);
             if (m.has(LIQUID)) FLUID_SOLIDIFYING.RB().ii(MoldNugget.get(0)).fi(m.getLiquid(16)).io(nugget).add(16, 4);
             nugget = Utils.ca(9, nugget);
@@ -396,7 +395,7 @@ public class MaterialRecipeLoader {
             if (!m.has(NOSMELT)) ALLOY_SMELTING.RB().ii(m.getIngot(1), MoldNugget.get(0)).io(nugget).add(100, 1);
         });
 
-        INGOT.getMats().forEach(m -> {
+        INGOT.all().forEach(m -> {
             ItemStack ingot = m.getIngot(1), dust = m.getDust(1);
             if (!m.needsBlastFurnace()) RecipeHelper.addShapeless("nugget_to_ingot_" + m.getId(), ingot, dust, dust, dust, dust, dust, dust, dust, dust, dust);
             if (m.has(GRINDABLE)) {
@@ -421,7 +420,7 @@ public class MaterialRecipeLoader {
             }
         });
         
-        GEM.getMats().forEach(m -> {
+        GEM.all().forEach(m -> {
             ItemStack gem = m.getGem(1), dust = m.getDust(1);
             if (m.has(CRYSTALLIZE)) {
                 AUTOCLAVING.RB().ii(dust).fi(Materials.Water.getLiquid(200)).io(gem).chances(70).add(2000, 24);
@@ -454,7 +453,7 @@ public class MaterialRecipeLoader {
            if (m.has(ROD_LONG)) LATHING.RB().ii(gem).io(m.getRodLong(1)).add(Math.max(mass, 1) / 3, 8);
         });
 
-        GEM_BRITTLE.getMats().forEach(m -> {
+        GEM_BRITTLE.all().forEach(m -> {
             ItemStack gem = m.getGem(1), gemBrittle = m.getGemBrittle(1), gemPolished = m.getGemPolished(1), block = m.getBlock(1), dust = m.getDust(1);  
             ItemStack doubleBrittle = Utils.ca(2, gemBrittle);
             long mass = m.getMass();
@@ -476,13 +475,13 @@ public class MaterialRecipeLoader {
             }
         });
         
-        ROCK.getMats().forEach(m -> {
+        ROCK.all().forEach(m -> {
             if (m == Materials.Flint) return;
             ItemStack rock = m.getRock(1);
             if (m.has(DUST)) {
                 ItemStack dustTiny = m.getDustTiny(1);
                 //RecipeHelper.addShapeless(m.getId() + "_rock_to_dust", dust, rock, rock, rock, rock, rock, rock, rock, rock, ToolType.MORTAR.getOreDict());
-                RecipeHelper.addShapeless(m.getId() + "_rock_to_tiny_dust", dustTiny, rock, ToolType.MORTAR.getOreDict());
+                RecipeHelper.addShapeless(m.getId() + "_rock_to_tiny_dust", dustTiny, rock, GregTechToolType.MORTAR.getOreDict());
                 PULVERIZING.RB().ii(rock).io(dustTiny).add(80, 2);
                 HAMMERING.RB().ii(rock).io(dustTiny).add(20, 4);
             }
@@ -492,7 +491,7 @@ public class MaterialRecipeLoader {
             }
         });
 
-        CRUSHED.getMats().forEach(m -> {
+        CRUSHED.all().forEach(m -> {
             ItemStack ore = m.getOre(1), crushed = m.getCrushed(1), dust = m.getDust(1), stoneDust = Materials.Stone.getDust(1);;
             if (m.hasByProducts()) {
                 ArrayList<Material> byProducts = m.getByProducts();
@@ -578,7 +577,7 @@ public class MaterialRecipeLoader {
             }
         });
 
-        for (Material m : CRUSHED_CENTRIFUGED.getMats()) {
+        for (Material m : CRUSHED_CENTRIFUGED.all()) {
             ItemStack aCrushedC = m.getCrushedCentrifuged(1);
             //RecipeHelper.addShapedToolRecipe(m.getDust(1), "h  ", "X  ", "   ", 'X', aCrushedC);
             HAMMERING.RB().ii(aCrushedC).io(m.getMacerateInto().getDust(1)).add(10, 16);
@@ -604,7 +603,7 @@ public class MaterialRecipeLoader {
             }
         }
 
-        for (Material m : CRUSHED_PURIFIED.getMats()) {
+        for (Material m : CRUSHED_PURIFIED.all()) {
             ItemStack crushed = m.getCrushedPurified(1), dust = m.getDust(1);
             //RecipeHelper.addShapedToolRecipe(m.getDustPure(1), "h  ", "X  ", "   ", 'X', crushed); //TODO BROKEN?
             Material aOreByProduct1 = m.getByProducts().size() >= 1 ? m.getByProducts().get(0) : m.getMacerateInto(); //TODO simplify?
@@ -619,51 +618,51 @@ public class MaterialRecipeLoader {
             }
         }
 
-        for (Material m : RUBBERTOOLS.getMats()) {
+        for (Material m : RUBBERTOOLS.all()) {
 //            RecipeHelper.addBasicShapedRecipe(INSTANCE.getToolWithStats(SOFTHAMMER, 1, m, Materials.Wood), "XX ", "XXS", "XX ", 'X', m.getIngot(1), 'S', Materials.Wood.getRod(1));
 //            RecipeHelper.addBasicShapelessRecipe(INSTANCE.getToolWithStats(SOFTHAMMER, 1, m, Materials.Wood), m.getHeadHammer(1), Materials.Wood.getRod(1));
         }
 
-        TOOLS.getMats().forEach(m -> {
+        TOOLS.all().forEach(m -> {
             //TODO: Scoop done in the Forestry Registrar
             if (m.has(ROD)) {
                 ItemStack rod = m.getRod(1);
-                RecipeHelper.addShaped("crowbar_" + m.getId(), ToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', rod);
-                RecipeHelper.addShaped("screwdriver_" + m.getId(), ToolType.SCREWDRIVER.get(m), " fR", " Rh", "S  ", 'R', rod, 'S', "stickWood");
+                RecipeHelper.addShaped("crowbar_" + m.getId(), GregTechToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', rod);
+                RecipeHelper.addShaped("screwdriver_" + m.getId(), GregTechToolType.SCREWDRIVER.get(m), " fR", " Rh", "S  ", 'R', rod, 'S', "stickWood");
                 if (m.has(SCREW)) {
-                    RecipeHelper.addShaped("wire_cutter_" + m.getId(), ToolType.WIRE_CUTTER.get(m), "PfP", "hPd", "RSR", 'P', m.getPlate(1), 'R', rod, 'S', m.getScrew(1));
+                    RecipeHelper.addShaped("wire_cutter_" + m.getId(), GregTechToolType.WIRE_CUTTER.get(m), "PfP", "hPd", "RSR", 'P', m.getPlate(1), 'R', rod, 'S', m.getScrew(1));
                 }
             }
             if (m.has(INGOT)) {
                 ItemStack main = m.getIngot(1), plate = m.getPlate(1);
-                RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m), " M ", "fPh", " S ", 'M', main, 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("pickaxe_" + m.getId(), ToolType.PICKAXE.get(m), "MPM", "fSh", " S ", 'P', plate, 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("shovel_" + m.getId(), ToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("axe_" + m.getId(), ToolType.AXE.get(m), "PMh", "PS ", "fS ", 'M', main, 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("hoe_" + m.getId(), ToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
-                RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
-                RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m), "P", "P", "S", 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("saw_" + m.getId(), ToolType.SAW.get(m), "PPP", "fSS", "   ", 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("knife_" + m.getId(), ToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("sword_" + m.getId(), GregTechToolType.SWORD.get(m), " M ", "fPh", " S ", 'M', main, 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("pickaxe_" + m.getId(), GregTechToolType.PICKAXE.get(m), "MPM", "fSh", " S ", 'P', plate, 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("shovel_" + m.getId(), GregTechToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("axe_" + m.getId(), GregTechToolType.AXE.get(m), "PMh", "PS ", "fS ", 'M', main, 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("hoe_" + m.getId(), GregTechToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("wrench_" + m.getId(), GregTechToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
+                RecipeHelper.addShaped("hammer_" + m.getId(), GregTechToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
+                RecipeHelper.addShaped("file_" + m.getId(), GregTechToolType.FILE.get(m), "P", "P", "S", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("saw_" + m.getId(), GregTechToolType.SAW.get(m), "PPP", "fSS", "   ", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("knife_" + m.getId(), GregTechToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', plate, 'S', "stickWood");
                 if (!m.has(NOSMASH)) {
-                    RecipeHelper.addShaped("mortar_" + m.getId(), ToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
+                    RecipeHelper.addShaped("mortar_" + m.getId(), GregTechToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
                 }
             }
             else if (m.has(GEM)) {
                 ItemStack main = m.getGem(1);
-                RecipeHelper.addShaped("sword_" + m.getId(), ToolType.SWORD.get(m), " M ", "fMh", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("pickaxe_" + m.getId(), ToolType.PICKAXE.get(m), "MMM", "fSh", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("shovel_" + m.getId(), ToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("axe_" + m.getId(), ToolType.AXE.get(m), "MMh", "MS ", "fS ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("hoe_" + m.getId(), ToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("wrench_" + m.getId(), ToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
-                RecipeHelper.addShaped("hammer_" + m.getId(), ToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
-                RecipeHelper.addShaped("file_" + m.getId(), ToolType.FILE.get(m), "M", "M", "S", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("saw_" + m.getId(), ToolType.SAW.get(m), "MMM", "fSS", "   ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("knife_" + m.getId(), ToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', main, 'S', "stickWood");
+                RecipeHelper.addShaped("sword_" + m.getId(), GregTechToolType.SWORD.get(m), " M ", "fMh", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("pickaxe_" + m.getId(), GregTechToolType.PICKAXE.get(m), "MMM", "fSh", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("shovel_" + m.getId(), GregTechToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("axe_" + m.getId(), GregTechToolType.AXE.get(m), "MMh", "MS ", "fS ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("hoe_" + m.getId(), GregTechToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("wrench_" + m.getId(), GregTechToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
+                RecipeHelper.addShaped("hammer_" + m.getId(), GregTechToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
+                RecipeHelper.addShaped("file_" + m.getId(), GregTechToolType.FILE.get(m), "M", "M", "S", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("saw_" + m.getId(), GregTechToolType.SAW.get(m), "MMM", "fSS", "   ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("knife_" + m.getId(), GregTechToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', main, 'S', "stickWood");
                 if (!m.has(NOSMASH)) {
-                    RecipeHelper.addShaped("mortar_" + m.getId(), ToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
+                    RecipeHelper.addShaped("mortar_" + m.getId(), GregTechToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
                 }
             }
             /*

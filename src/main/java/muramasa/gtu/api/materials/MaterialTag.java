@@ -47,7 +47,7 @@ public class MaterialTag implements IGregTechObject, IMaterialTag {
     }
 
     @Override
-    public Set<Material> getMats() {
+    public Set<Material> all() {
         return materials;
     }
 }

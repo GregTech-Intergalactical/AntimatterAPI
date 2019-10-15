@@ -1,16 +1,21 @@
 package muramasa.gtu.client.render.bakedmodels;
 
+import muramasa.gtu.api.GregTechProperties;
 import muramasa.gtu.api.blocks.BlockDynamic;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraftforge.client.model.data.IModelData;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class BakedDynamic extends BakedBase {
 
@@ -21,13 +26,23 @@ public class BakedDynamic extends BakedBase {
         this.block = block;
     }
 
+    @Nonnull
     @Override
-    public List<BakedQuad> getBakedQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+        if (((BlockDynamic) state.getBlock()).getLookup().size() == 0) {
+            data.setData(GregTechProperties.DYNAMIC_CONFIG, new int[1]);
+        } else {
+            data.setData(GregTechProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos));
+        }
+        return data;
+    }
+
+    @Override
+    public List<BakedQuad> getBakedQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         if (state == null) return Collections.emptyList();
         List<BakedQuad> quads = block.addDefaultModel() ? new LinkedList<>(block.getBaked().getQuads(state, side, rand)) : new LinkedList<>();
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState exState = (IExtendedBlockState) state;
-            int[] ct = exState.getValue(BlockDynamic.CONFIG);
+        if (data.hasProperty(GregTechProperties.DYNAMIC_CONFIG)) {
+            int[] ct = data.getData(GregTechProperties.DYNAMIC_CONFIG);
             IBakedModel baked;
             for (int i = 0; i < ct.length; i++) {
                 if (ct[i] == 0) continue;

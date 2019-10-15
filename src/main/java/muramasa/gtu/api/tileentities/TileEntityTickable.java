@@ -1,13 +1,18 @@
 package muramasa.gtu.api.tileentities;
 
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 
-public class TileEntityTickable extends TileEntityBase implements ITickable {
+public class TileEntityTickable extends TileEntityBase implements ITickableTileEntity {
 
     private boolean hadFirstTick;
 
+    public TileEntityTickable(TileEntityType type) {
+        super(type);
+    }
+
     @Override
-    public void update() {
+    public void tick() {
         if (!hadFirstTick) {
             onFirstTick();
             hadFirstTick = true;

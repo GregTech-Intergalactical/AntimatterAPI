@@ -1,7 +1,6 @@
 package muramasa.gtu.loaders;
 
 import muramasa.gtu.api.worldgen.*;
-import muramasa.gtu.common.Data;
 
 import static muramasa.gtu.Ref.*;
 import static muramasa.gtu.api.data.Materials.*;
@@ -15,7 +14,7 @@ public class WorldGenLoader {
 
         new WorldGenRock("surface_rock", 1, OVERWORLD);
 
-        new WorldGenTree("rubber_tree", 5, 5, Data.RUBBER_SAPLING, OVERWORLD);
+        //new WorldGenTree("rubber_tree", 5, 5, Data.RUBBER_SAPLING, OVERWORLD);
 
         new WorldGenAsteroid("asteroids", END, ASTEROIDS);
 

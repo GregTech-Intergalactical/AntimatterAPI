@@ -22,9 +22,9 @@ public class InternalRegistrar implements IGregTechRegistrar {
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
             case ITEM:
-                GregTechAPI.registerFluidCell(Data.CellTin.get(1));
-                GregTechAPI.registerFluidCell(Data.CellSteel.get(1));
-                GregTechAPI.registerFluidCell(Data.CellTungstensteel.get(1));
+                //GregTechAPI.registerFluidCell(Data.CellTin.get(1));
+                //GregTechAPI.registerFluidCell(Data.CellSteel.get(1));
+                //GregTechAPI.registerFluidCell(Data.CellTungstensteel.get(1));
 
                 GregTechAPI.registerCover(GregTechAPI.CoverNone);
                 GregTechAPI.registerCover(GregTechAPI.CoverPlate);
@@ -42,17 +42,17 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 GregTechAPI.registerCoverStack(Data.PumpHV.get(1), new CoverPump(Tier.HV));
                 GregTechAPI.registerCoverStack(Data.PumpEV.get(1), new CoverPump(Tier.EV));
                 GregTechAPI.registerCoverStack(Data.PumpIV.get(1), new CoverPump(Tier.IV));
-                MaterialType.PLATE.getMats().forEach(m -> GregTechAPI.registerCoverStack(m.getPlate(1), GregTechAPI.CoverPlate));
+                MaterialType.PLATE.all().forEach(m -> GregTechAPI.registerCoverStack(m.getPlate(1), GregTechAPI.CoverPlate));
                 break;
             case WORLDGEN:
                 WorldGenLoader.init();
                 break;
-            case DATA_FINAL:
+            case DATA_READY:
                 Materials.init();
                 break;
             case RECIPE:
-                OreDictLoader.init();
-                CraftingRecipeLoader.init();
+                //OreDictLoader.init();
+                //CraftingRecipeLoader.init();
                 MaterialRecipeLoader.init();
                 MachineRecipeLoader.init();
                 break;

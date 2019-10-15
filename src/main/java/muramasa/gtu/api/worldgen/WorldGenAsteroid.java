@@ -7,13 +7,13 @@ import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.util.XSTR;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 
 import java.util.List;
 
@@ -31,8 +31,8 @@ public class WorldGenAsteroid extends WorldGenBase {
     private static int gcMaxSize = 400;
     private static int mGCAsteroidProbability = 50;
 
-    private static IBlockState END_STONE_STATE = null;
-    private static IBlockState GRANITE_RED_STATE = null;
+    private static BlockState END_STONE_STATE = null;
+    private static BlockState GRANITE_RED_STATE = null;
 
     public WorldGenAsteroid(String id, int... dimensions) {
         super(id, dimensions);
@@ -46,9 +46,9 @@ public class WorldGenAsteroid extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, IBlockState state, IChunkGenerator generator, IChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
-            List<WorldGenOreVein> layers = GregTechWorldGenerator.getVeins(world.provider.getDimension());
+            List<WorldGenOreVein> layers = GregTechWorldGenerator.getVeins(world.getDimension().getType().getId());
             int layerCount = layers.size();
             WorldGenOreVein layerToGen = null;
             if (WorldGenOreVein.TOTAL_WEIGHT > 0 && layerCount > 0) {
@@ -110,7 +110,7 @@ public class WorldGenAsteroid extends WorldGenBase {
                                     for (int eZ = tMinZ; eZ <= tMaxZ; eZ++) {
                                         double var45 = (eZ + 0.5D - var24) / (var28 / 2.0D);
                                         pos.setPos(tX, tY, tZ);
-                                        IBlockState airState = world.getBlockState(pos);
+                                        BlockState airState = world.getBlockState(pos);
                                         if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && airState.getBlock().isAir(airState, world, pos)) {
                                             pos.setPos(eX, eY, eZ);
                                             state = world.getBlockState(pos);
@@ -124,7 +124,7 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             } else if (ranOre < 10) {
                                                 WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(3), OreType.NORMAL);
                                             } else {
-                                                if (world.provider.getDimension() == Ref.ASTEROIDS) {
+                                                if (world.getDimension().getType().getId() == Ref.ASTEROIDS) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);
                                                 } else {
                                                     WorldGenHelper.setState(world, pos, END_STONE_STATE);

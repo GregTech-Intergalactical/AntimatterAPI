@@ -3,8 +3,8 @@ package muramasa.gtu.api.tools;
 import muramasa.gtu.Configs;
 import muramasa.gtu.api.items.MaterialTool;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -15,19 +15,19 @@ import java.util.Set;
 public class ToolAxe extends MaterialTool {
 
     public ToolAxe() {
-        super(ToolType.AXE);
+        super(GregTechToolType.AXE);
     }
 
-    public ToolAxe(ToolType type) {
+    public ToolAxe(GregTechToolType type) {
         super(type);
     }
 
     @Override
-    public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, EntityPlayer player, BlockPos origin) {
+    public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, PlayerEntity player, BlockPos origin) {
         if (Configs.GAMEPLAY.AXE_TIMBER && player.isSneaking()) {
             Set<BlockPos> set = new HashSet<>();
             BlockPos tempPos;
-            IBlockState state;
+            BlockState state;
             for (int y = origin.getY() + 1; y < origin.getY() + Configs.GAMEPLAY.AXE_TIMBER_MAX; y++) {
                 tempPos = new BlockPos(origin.getX(), y, origin.getZ());
                 state = world.getBlockState(tempPos);

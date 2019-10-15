@@ -10,7 +10,7 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -119,8 +119,8 @@ public class WorldGenOreVein extends WorldGenBase {
     // Actual spawn rates will vary based upon the average height of the stone layers
     // in the dimension. For example veins that range above and below the average height
     // will be less, and veins that are completely above the average height will be much less.
-    public static void generate(World world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ, BlockPos.MutableBlockPos pos, IBlockState state) {
-        List<WorldGenOreVein> veins = GregTechWorldGenerator.getVeins(world.provider.getDimension());
+    public static void generate(World world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ, BlockPos.MutableBlockPos pos, BlockState state) {
+        List<WorldGenOreVein> veins = GregTechWorldGenerator.getVeins(world.getDimension().getType().getId());
         if (veins == null || veins.size() == 0) return;
 
         // Explanation of oreveinseed implementation.
@@ -128,7 +128,7 @@ public class WorldGenOreVein extends WorldGenBase {
         // ((this.world.provider.getDimension() & 0xffL)<<56)    Puts the dimension in the top bits of the hash, to make sure to get unique hashes per dimension
         // ((long)oreSeedX & 0x000000000fffffffL) << 28)    Puts the chunk X in the bits 29-55. Cuts off the top few bits of the chunk so we have bits for dimension.
         // ((long)oreSeedZ & 0x000000000fffffffL))    Puts the chunk Z in the bits 0-27. Cuts off the top few bits of the chunk so we have bits for dimension.
-        long oreVeinSeed = world.getSeed() << 16 ^ ((world.provider.getDimension() & 0xffL) << 56 | ((long) oreSeedX & 0x000000000fffffffL) << 28 | (long) oreSeedZ & 0x000000000fffffffL); // Use an RNG that is identical every time it is called for this oreseed.
+        long oreVeinSeed = world.getSeed() << 16 ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | ((long) oreSeedX & 0x000000000fffffffL) << 28 | (long) oreSeedZ & 0x000000000fffffffL); // Use an RNG that is identical every time it is called for this oreseed.
         XSTR oreVeinRNG = new XSTR(oreVeinSeed);
         int oreVeinPercentageRoll = oreVeinRNG.nextInt(100); // Roll the dice, see if we get an orevein here at all
         //if (Ref.debugOreVein) GregTech.LOGGER.info("Finding oreveins for oreVeinSeed="+ oreVeinSeed + " chunkX="+ this.chunkX + " chunkZ="+ this.chunkZ + " oreSeedX="+ oreSeedX + " oreSeedZ="+ oreSeedZ + " worldSeed="+this.world.getSeed());
@@ -200,7 +200,7 @@ public class WorldGenOreVein extends WorldGenBase {
         }
     }
 
-    public int generateChunkified(World world, XSTR rand, int chunkX, int chunkZ, int seedX, int seedZ, BlockPos.MutableBlockPos pos, IBlockState state) {
+    public int generateChunkified(World world, XSTR rand, int chunkX, int chunkZ, int seedX, int seedZ, BlockPos.MutableBlockPos pos, BlockState state) {
         int[] placeCount = new int[4];
 
         int tMinY = minY + rand.nextInt(maxY - minY - 5);
@@ -214,7 +214,7 @@ public class WorldGenOreVein extends WorldGenBase {
         // Get a block at the center of the chunk and the bottom of the orevein.
 
         BlockPos centerPos = new BlockPos(chunkX + 7, tMinY, chunkZ + 9);
-        IBlockState centerState = world.getBlockState(centerPos);
+        BlockState centerState = world.getBlockState(centerPos);
         //Block tBlock = world.getBlock(chunkX + 7, tMinY, chunkZ + 9);
 
         if (wX >= eX) {  //No overlap between orevein and this chunk exists in X

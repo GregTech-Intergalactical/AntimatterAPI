@@ -2,10 +2,10 @@ package muramasa.gtu.api.capability.impl;
 
 import muramasa.gtu.api.capability.IConfigHandler;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tools.ToolType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import muramasa.gtu.api.tools.GregTechToolType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 
 public class MachineConfigHandler implements IConfigHandler {
 
@@ -16,7 +16,7 @@ public class MachineConfigHandler implements IConfigHandler {
     }
 
     @Override
-    public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
         if (type == null) return false;
         switch (type) {
             case WRENCH:

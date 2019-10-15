@@ -3,7 +3,7 @@ package muramasa.gtu.common.tileentities.multi;
 import muramasa.gtu.api.blocks.BlockCoil;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class TileEntityMultiSmelter extends TileEntityMultiMachine {
 
     @Override
     public boolean onStructureFormed() {
-        List<IBlockState> coils = getStates("coil");
+        List<BlockState> coils = getStates("coil");
         BlockCoil firstType = ((BlockCoil) coils.get(0).getBlock());
         if (coils.stream().allMatch(s -> s.getBlock() == firstType)) {
             setCoilValues(firstType);

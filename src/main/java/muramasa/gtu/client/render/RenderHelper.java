@@ -1,16 +1,16 @@
 package muramasa.gtu.client.render;
 
-import muramasa.gtu.api.data.Textures;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
@@ -20,6 +20,8 @@ import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 
 public class RenderHelper {
+
+    public static final TextureAtlasSprite MISSING_SPRITE = MissingTextureSprite.func_217790_a();
 
     private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(128).order(ByteOrder.nativeOrder()).asDoubleBuffer();
 
@@ -32,20 +34,19 @@ public class RenderHelper {
         new Matrix4f(0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f),
     };
 
-    public static void applyGLRotationForSide(EnumFacing side) {
+    public static void applyGLRotationForSide(Direction side) {
         Matrix4f mat = sideToMatrixRotation[side.getOpposite().getIndex()];
         glBuf.put(mat.m00).put(mat.m01).put(mat.m02).put(mat.m03).put(mat.m10).put(mat.m11).put(mat.m12).put(mat.m13).put(mat.m20).put(mat.m21).put(mat.m22).put(mat.m23).put(mat.m30).put(mat.m31).put(mat.m32).put(mat.m33);
         glBuf.flip();
-        GL11.glMultMatrix(glBuf);
+        GL11.glMultMatrixd(glBuf);
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
-        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(loc.toString());
-        return sprite != null ? sprite : Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(Textures.ERROR.toString());
+        return Minecraft.getInstance().getTextureMap().getSprite(loc);
     }
 
     public static TextureAtlasSprite getSprite(Fluid fluid) {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+        return Minecraft.getInstance().getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
     }
 
     public static void drawFluid(Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
@@ -54,23 +55,23 @@ public class RenderHelper {
         if (fluid == null) return;
 
         TextureAtlasSprite fluidStillSprite = getStillFluidSprite(mc, fluid);
-        int fluidColor = fluid.getColor(stack);
+        int fluidColor = fluid.getAttributes().getColor();
 
         //Draw the fluid texture
         drawTiledSprite(mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
 
         //Render the amount String
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0, 200);
-        if (stack.amount >= 2000) {
-            String amount = stack.amount / 1000 + "";
+        GlStateManager.translatef(0, 0, 200);
+        if (stack.getAmount() >= 2000) {
+            String amount = stack.getAmount() / 1000 + "";
             mc.fontRenderer.drawStringWithShadow(amount, posX + (16 - mc.fontRenderer.getStringWidth(amount) + 1), posY + 9, 0xFFFFFF);
         }
         GlStateManager.popMatrix();
     }
 
     public static void drawTiledSprite(Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        mc.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         setGLColorFromInt(color);
 
         int xTileCount = tiledWidth / texWidth;
@@ -96,13 +97,8 @@ public class RenderHelper {
         }
     }
 
-    public static TextureAtlasSprite getStillFluidSprite(Minecraft minecraft, Fluid fluid) {
-        TextureMap textureMapBlocks = minecraft.getTextureMapBlocks();
-        ResourceLocation fluidStill = fluid.getStill();
-        TextureAtlasSprite fluidStillSprite = null;
-        if (fluidStill != null) fluidStillSprite = textureMapBlocks.getTextureExtry(fluidStill.toString());
-        if (fluidStillSprite == null) fluidStillSprite = textureMapBlocks.getMissingSprite();
-        return fluidStillSprite;
+    public static TextureAtlasSprite getStillFluidSprite(Minecraft mc, Fluid fluid) {
+        return mc.getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
     }
 
     public static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
@@ -127,7 +123,7 @@ public class RenderHelper {
         float red = (color >> 16 & 0xFF) / 255.0F;
         float green = (color >> 8 & 0xFF) / 255.0F;
         float blue = (color & 0xFF) / 255.0F;
-        GlStateManager.color(red, green, blue, 1.0F);
+        GlStateManager.color4f(red, green, blue, 1.0F);
     }
 
     public static int rgbToABGR(int rgb) {

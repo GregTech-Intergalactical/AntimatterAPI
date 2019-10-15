@@ -1,22 +1,22 @@
 package muramasa.gtu.client.render.models;
 
-import muramasa.gtu.client.render.ModelUtils;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.common.model.IModelState;
-
-import java.util.function.Function;
 
 public abstract class ModelBase implements IModel {
 
-    public abstract IBakedModel bakeModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter);
+//    public abstract IBakedModel bakeModel(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format);
+//
+//    @Nullable
+//    @Override
+//    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format) {
+//        ModelUtils.buildDefaultModels();
+//        return bakeModel(bakery, spriteGetter, sprite, format);
+//    }
 
-    @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        ModelUtils.buildDefaultModels();
-        return bakeModel(state, format, bakedTextureGetter);
-    }
+    //    @Nullable
+//    @Override
+//    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format) {
+//        ModelUtils.buildDefaultModels();
+//        return bakeModel(bakery, spriteGetter, sprite, format);
+//    }
 }

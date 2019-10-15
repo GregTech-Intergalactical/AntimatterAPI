@@ -146,7 +146,7 @@ public class Recipe {
         if (fluidsInput != null) {
             builder.append("Input Fluids: {");
             for (int i = 0; i < fluidsInput.length; i++) {
-                builder.append(fluidsInput[i].getFluid().getName() + " x" + fluidsInput[i].amount);
+                builder.append(fluidsInput[i].getFluid().getRegistryName() + " x" + fluidsInput[i].getAmount());
                 if (i != fluidsInput.length - 1) builder.append(", ");
             }
             builder.append("}\n");
@@ -154,7 +154,7 @@ public class Recipe {
         if (fluidsOutput != null) {
             builder.append("Output Fluids: {");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(fluidsOutput[i].getFluid().getName() + " x" + fluidsOutput[i].amount);
+                builder.append(fluidsOutput[i].getFluid().getRegistryName() + " x" + fluidsOutput[i].getAmount());
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
             builder.append("}\n");

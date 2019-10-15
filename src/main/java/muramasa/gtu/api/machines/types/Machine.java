@@ -1,10 +1,11 @@
 package muramasa.gtu.api.machines.types;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.guiold.GuiData;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
@@ -16,13 +17,16 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.util.Utils;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static muramasa.gtu.api.machines.MachineFlag.RECIPE;
 
@@ -33,8 +37,8 @@ public class Machine implements IGregTechObject {
 
     /** Basic Members **/
     protected int internalId;
-    protected BlockMachine block;
-    protected Class<? extends TileEntityMachine> tileClass;
+    protected Object2ObjectOpenHashMap<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
+    protected TileEntityType tileType;
     protected String id;
     protected ArrayList<Tier> tiers = new ArrayList<>();
 
@@ -54,15 +58,15 @@ public class Machine implements IGregTechObject {
     //TODO get valid covers
 
     public Machine(String id, Object... data) {
-        this(id, TileEntityMachine.class, data);
+        this(id, TileEntityMachine::new, data);
     }
 
-    public Machine(String id, Class<? extends TileEntityMachine> tileClass, Object... data) {
+    public Machine(String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
         internalId = lastInternalId++;
-        this.id = id;
-        this.block = new BlockMachine(this);
-        this.tileClass = tileClass;
         addData(data);
+        this.id = id;
+        tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
+        this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(Ref.MODID, id);
         Machines.add(this);
     }
 
@@ -92,8 +96,8 @@ public class Machine implements IGregTechObject {
         return id;
     }
 
-    public String getDisplayName(Tier tier) {
-        return Utils.trans("machine." + id + "." + tier.getId() + ".name");
+    public TranslationTextComponent getDisplayName(Tier tier) {
+        return new TranslationTextComponent("machine." + id + "." + tier.getId());
     }
 
     public List<Texture> getTextures() {
@@ -152,20 +156,12 @@ public class Machine implements IGregTechObject {
         addFlags(flags);
     }
 
-    public void setBlock(BlockMachine block) {
-        this.block = block;
-    }
-
-    public void setTileClass(Class<? extends TileEntityMachine> tileClass) {
-        this.tileClass = tileClass;
-    }
-
     public void setTiers(Tier... tiers) {
         this.tiers = new ArrayList<>(Arrays.asList(tiers));
     }
 
     public void setGUI(Object instance, int id) {
-        guiData = new GuiData(this, instance, id);
+        guiData = new GuiData(this);
         addFlags(MachineFlag.GUI);
     }
 
@@ -182,12 +178,17 @@ public class Machine implements IGregTechObject {
     }
 
     /** Getters **/
-    public BlockMachine getBlock() {
-        return block;
+    public Collection<BlockMachine> getBlocks() {
+        return blocks.values();
     }
 
-    public Class<? extends TileEntityMachine> getTileClass() {
-        return tileClass;
+    @Nullable
+    public BlockMachine getBlock(Tier tier) {
+        return blocks.get(tier);
+    }
+
+    public TileEntityType getTileType() {
+        return tileType;
     }
 
     public Collection<Tier> getTiers() {

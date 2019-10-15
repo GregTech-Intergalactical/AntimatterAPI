@@ -6,6 +6,8 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -80,8 +82,13 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
         return unitValue;
     }
 
+    //TODO
+    public ItemStack get(Material material, int count) {
+        return ItemStack.EMPTY;
+    }
+
     @Override
-    public Set<Material> getMats() {
+    public Set<Material> all() {
         return materials;
     }
 
@@ -89,7 +96,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
         return visible || Configs.JEI.SHOW_ALL_MATERIAL_ITEMS;
     }
 
-    public String getDisplayName(Material material) { //TODO cache
+    public TranslationTextComponent getDisplayName(Material material) { //TODO cache
         if (!hasLocName) {
             namePre = Utils.trans("material_type.pre." + getId() + ".name");
             namePre = namePre.equals("") ? "" : namePre + " ";
@@ -97,7 +104,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
             namePost = namePost.equals("") ? "" : " " + namePost;
             hasLocName = true;
         }
-        return namePre + material.getDisplayName() + namePost;
+        return new TranslationTextComponent(namePre + material.getDisplayName() + namePost);
     }
 
     public String oreName(Material material) {

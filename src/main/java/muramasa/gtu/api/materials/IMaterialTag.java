@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface IMaterialTag {
 
-    Set<Material> getMats();
+    Set<Material> all();
 
     default void register(Class c, IGregTechObject o) {
         GregTechAPI.register(c, o);
@@ -18,19 +18,19 @@ public interface IMaterialTag {
 
     default void add(Material... m) {
         for (int i = 0; i < m.length; i++) {
-            getMats().add(m[i]);
+            all().add(m[i]);
         }
     }
 
     default void remove(Material... m) {
         for (int i = 0; i < m.length; i++) {
-            getMats().remove(m[i]);
+            all().remove(m[i]);
         }
     }
 
-    static Set<Material> getMats(IMaterialTag... tags) {
+    static Set<Material> all(IMaterialTag... tags) {
         Set<Material> materials = new HashSet<>();
-        Arrays.stream(tags).forEach(t -> materials.addAll(t.getMats()));
+        Arrays.stream(tags).forEach(t -> materials.addAll(t.all()));
         return materials;
     }
 

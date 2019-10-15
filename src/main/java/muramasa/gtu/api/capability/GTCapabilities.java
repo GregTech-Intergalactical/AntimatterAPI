@@ -4,9 +4,9 @@ import muramasa.gtu.api.capability.impl.ComponentHandler;
 import muramasa.gtu.api.capability.impl.CoverHandler;
 import muramasa.gtu.api.capability.impl.MachineConfigHandler;
 import muramasa.gtu.api.capability.impl.MachineEnergyHandler;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.LongNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -31,28 +31,28 @@ public class GTCapabilities {
 
         CapabilityManager.INSTANCE.register(IEnergyHandler.class, new Capability.IStorage<IEnergyHandler>() {
             @Override
-            public NBTBase writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, EnumFacing side) {
-                return new NBTTagLong(instance.getPower());
+            public INBT writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side) {
+                return new LongNBT(instance.getPower());
             }
 
             @Override
-            public void readNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side, INBT nbt) {
                 if (!(instance instanceof MachineEnergyHandler)) {
                     throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
                 }
-                instance.insert(((NBTTagLong)nbt).getLong(), false);
+                instance.insert(((LongNBT)nbt).getLong(), false);
             }
         }, () -> new MachineEnergyHandler(null));
 
         CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
             @Nullable
             @Override
-            public NBTBase writeNBT(Capability<IConfigHandler> capability, IConfigHandler instance, EnumFacing side) {
+            public INBT writeNBT(Capability<IConfigHandler> capability, IConfigHandler instance, Direction side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<IConfigHandler> capability, IConfigHandler instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IConfigHandler> capability, IConfigHandler instance, Direction side, INBT nbt) {
 
             }
         }, () -> new MachineConfigHandler(null));
@@ -60,12 +60,12 @@ public class GTCapabilities {
         CapabilityManager.INSTANCE.register(ICoverHandler.class, new Capability.IStorage<ICoverHandler>() {
             @Nullable
             @Override
-            public NBTBase writeNBT(Capability<ICoverHandler> capability, ICoverHandler instance, EnumFacing side) {
+            public INBT writeNBT(Capability<ICoverHandler> capability, ICoverHandler instance, Direction side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<ICoverHandler> capability, ICoverHandler instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<ICoverHandler> capability, ICoverHandler instance, Direction side, INBT nbt) {
 
             }
         }, () -> new CoverHandler(null));
@@ -73,12 +73,12 @@ public class GTCapabilities {
         CapabilityManager.INSTANCE.register(IComponentHandler.class, new Capability.IStorage<IComponentHandler>() {
             @Nullable
             @Override
-            public NBTBase writeNBT(Capability<IComponentHandler> capability, IComponentHandler instance, EnumFacing side) {
+            public INBT writeNBT(Capability<IComponentHandler> capability, IComponentHandler instance, Direction side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<IComponentHandler> capability, IComponentHandler instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IComponentHandler> capability, IComponentHandler instance, Direction side, INBT nbt) {
 
             }
         }, () -> new ComponentHandler("null", null));

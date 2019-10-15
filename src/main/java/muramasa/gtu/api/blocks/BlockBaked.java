@@ -5,21 +5,17 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.client.render.GTModelLoader;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 //TODO support blockstate baking?
@@ -31,8 +27,8 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     private boolean bakeItem = true, bakeBlock = true;
     protected boolean customModel;
 
-    public BlockBaked(Material material, TextureData data) {
-        super(material);
+    public BlockBaked(Block.Properties properties, TextureData data) {
+        super(properties);
         this.data = data;
     }
 
@@ -50,35 +46,30 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     }
 
     public void registerCustomModel(String id, IModel model, boolean hasItemOverride) {
-        GTModelLoader.register(id, model);
+        //TODO GTModelLoader.register(id, model);
         bakeItem = !hasItemOverride;
         bakeBlock = false;
         customModel = true;
     }
-    
-    @Override
-    public ItemStack asItemStack() {
-        return new ItemStack(this);
-    }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void getTextures(Set<ResourceLocation> textures) {
         textures.add(data.getBase(0));
         if (data.hasOverlay()) textures.addAll(Arrays.asList(data.getOverlay()));
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"));
+        //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"));
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
+    @OnlyIn(Dist.CLIENT)
+    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
         baked = data.bake();
-        if (bakeItem) registry.putObject(new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"), baked);
-        if (bakeBlock) registry.putObject(new ModelResourceLocation(Ref.MODID + ":" + getId(), "normal"), baked);
+        if (bakeItem) registry.put(new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"), baked);
+        if (bakeBlock) registry.put(new ModelResourceLocation(Ref.MODID + ":" + getId(), "normal"), baked);
     }
 }

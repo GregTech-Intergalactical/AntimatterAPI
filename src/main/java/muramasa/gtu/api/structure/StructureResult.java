@@ -3,10 +3,13 @@ package muramasa.gtu.api.structure;
 import com.google.common.collect.Lists;
 import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.data.Structures;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StructureResult {
 
@@ -17,7 +20,7 @@ public class StructureResult {
     //TODO compile list of positions
 
     public HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
-    public HashMap<String, ArrayList<IBlockState>> states = new HashMap<>();
+    public HashMap<String, ArrayList<BlockState>> states = new HashMap<>();
     public List<BlockPos> positions = new ArrayList<>();
 
     public StructureResult(Structure structure) {
@@ -46,9 +49,9 @@ public class StructureResult {
         positions.add(component.getTile().getPos());
     }
 
-    public void addState(String elementId, BlockPos pos, IBlockState state) {
+    public void addState(String elementId, BlockPos pos, BlockState state) {
         if (!elementId.equals(Structures.X.elementId)) {
-            ArrayList<IBlockState> existing = states.get(elementId);
+            ArrayList<BlockState> existing = states.get(elementId);
             if (existing == null) states.put(elementId, Lists.newArrayList(state));
             else existing.add(state);
             positions.add(pos);

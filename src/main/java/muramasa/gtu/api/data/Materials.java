@@ -3,13 +3,13 @@ package muramasa.gtu.api.data;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Configs;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.fluid.GTFluid;
+import muramasa.gtu.api.fluid.GregTechFluid;
 import muramasa.gtu.api.materials.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
+import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraft.item.Items;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.gtu.api.materials.Element.*;
@@ -416,10 +416,10 @@ public class Materials {
             GregTechAPI.addReplacement(NUGGET, Iron, new ItemStack(Items.IRON_NUGGET));
             GregTechAPI.addReplacement(NUGGET, Gold, new ItemStack(Items.GOLD_NUGGET));
             GregTechAPI.addReplacement(GEM, Coal, new ItemStack(Items.COAL));
-            GregTechAPI.addReplacement(GEM, Charcoal, new ItemStack(Items.COAL, 1, 1));
+            GregTechAPI.addReplacement(GEM, Charcoal, new ItemStack(Items.CHARCOAL));
             GregTechAPI.addReplacement(GEM, Emerald, new ItemStack(Items.EMERALD));
             GregTechAPI.addReplacement(GEM, Diamond, new ItemStack(Items.DIAMOND));
-            GregTechAPI.addReplacement(GEM, Lapis, new ItemStack(Items.DYE, 1, 4));
+            GregTechAPI.addReplacement(GEM, Lapis, new ItemStack(Items.LAPIS_LAZULI));
             GregTechAPI.addReplacement(DUST, Redstone, new ItemStack(Items.REDSTONE));
             GregTechAPI.addReplacement(DUST, Glowstone, new ItemStack(Items.GLOWSTONE_DUST));
             GregTechAPI.addReplacement(BLOCK, Coal, new ItemStack(Blocks.COAL_BLOCK));
@@ -659,8 +659,8 @@ public class Materials {
 //        Naquadah.mChemicalFormula = "Nq";
 //        Naquadria.mChemicalFormula = "NqX";
 
-        Materials.Water.setLiquid(FluidRegistry.WATER);
-        Materials.Lava.setLiquid(FluidRegistry.LAVA);
+        Materials.Water.setLiquid(Fluids.WATER);
+        Materials.Lava.setLiquid(Fluids.LAVA);
     }
 
     //TODO go through the GT_Loader_Item_Block_And_Fluid and make sure all explicitly added fluids have the LIQUID tag
@@ -680,14 +680,14 @@ public class Materials {
 //            }
 //        }
 
-        LIQUID.getMats().forEach(m -> m.setLiquid(new GTFluid(m, LIQUID)));
-        GAS.getMats().forEach(m -> m.setGas(new GTFluid(m, GAS)));
-        PLASMA.getMats().forEach(m -> m.setPlasma(new GTFluid(m, PLASMA)));
+        LIQUID.all().forEach(m -> m.setLiquid(new GregTechFluid(m, LIQUID)));
+        GAS.all().forEach(m -> m.setGas(new GregTechFluid(m, GAS)));
+        PLASMA.all().forEach(m -> m.setPlasma(new GregTechFluid(m, PLASMA)));
         
         GregTechAPI.all(Material.class).forEach(Material::setChemicalFormula);
 
         //If using small ore markers, every normal ore needs a small version. This greatly increases block usage
-        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.getMats().forEach(m -> m.add(ORE_SMALL));
+        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.all().forEach(m -> m.add(ORE_SMALL));
     }
 
     public static Material get(String name) {

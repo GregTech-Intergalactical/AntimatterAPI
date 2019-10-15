@@ -9,11 +9,11 @@ import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 
 public class WorldGenStone extends WorldGenBase {
 
@@ -23,7 +23,7 @@ public class WorldGenStone extends WorldGenBase {
     @Expose public int minY, maxY, amount, size, probability;
 
     public BlockStone block;
-    public IBlockState stone;
+    public BlockState stone;
     public LongOpenHashSet CHECKED_SEEDS;
 
     public WorldGenStone(String id, StoneType type, int amount, int size, int probability, int minY, int maxY, int... dimensions) {
@@ -59,7 +59,7 @@ public class WorldGenStone extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, IBlockState state, IChunkGenerator generator, IChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         // I think the real size of the balls is mSize/8, but the original code was difficult to understand.
         // Overall there will be less GT stones since they aren't spheres any more. /16 since this code uses it as a radius.
         int realSize = size / 16;
@@ -68,12 +68,12 @@ public class WorldGenStone extends WorldGenBase {
         for (int chunkX = passedX / 16 - windowWidth; chunkX < passedX / 16 + windowWidth + 1; chunkX++) {
             for (int chunkZ = passedZ / 16 - windowWidth; chunkZ < passedZ / 16 + windowWidth + 1; chunkZ++) {
                 //compute hash for dimension and position
-                long hash = (world.provider.getDimension() & 0xffL) << 56 | ((long) chunkX & 0x000000000fffffffL) << 28 | (long) chunkZ & 0x000000000fffffffL;
+                long hash = (world.getDimension().getType().getId() & 0xffL) << 56 | ((long) chunkX & 0x000000000fffffffL) << 28 | (long) chunkZ & 0x000000000fffffffL;
                 if (!CHECKED_SEEDS.contains(hash) && (probability <= 1 || rand.nextInt(probability) == 0)) CHECKED_SEEDS.add(hash);
                 if (CHECKED_SEEDS.contains(hash)) {
                     int x = chunkX * 16;
                     int z = chunkZ * 16;
-                    rand.setSeed(world.getSeed() ^ ((world.provider.getDimension() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL) + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + (block.getType() == StoneType.GRANITE_RED || block.getType() == StoneType.GRANITE_BLACK ? 32768 : 0));  //Don't judge me
+                    rand.setSeed(world.getSeed() ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL) + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + (block.getType() == StoneType.GRANITE_RED || block.getType() == StoneType.GRANITE_BLACK ? 32768 : 0));  //Don't judge me
                     for (int i = 0; i < amount; i++) { // Not sure why you would want more than one in a chunk! Left alone though.
                         // Locate the stoneseed XYZ. Original code would request an isAir at the seed location, causing a chunk generation request.
                         // To reduce potential worldgen cascade, we just always try to place a ball and use the check inside the for loop to prevent
@@ -146,7 +146,7 @@ public class WorldGenStone extends WorldGenBase {
                                         if (state.getBlock().isReplaceableOreGen(state, world, pos, WorldGenHelper.STONE_PREDICATE)) {
                                             world.setBlockState(pos, stone);
                                         } else if (state.getBlock() instanceof BlockOre) {
-                                            world.setBlockState(pos, BlockOre.get(((BlockOre) state.getBlock()).getType(), ((BlockOre) state.getBlock()).getMaterial(), block.getType()), 2 | 16);
+                                            world.setBlockState(pos, BlockOre.get(((BlockOre) state.getBlock()).getMaterial(), ((BlockOre) state.getBlock()).getType(), block.getType()), 2 | 16);
                                         }
                                     }
                                 }

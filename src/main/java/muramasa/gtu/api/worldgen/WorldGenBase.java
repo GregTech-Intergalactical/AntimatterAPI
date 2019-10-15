@@ -4,11 +4,11 @@ import com.google.common.collect.Sets;
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import muramasa.gtu.api.util.XSTR;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -62,7 +62,7 @@ public class WorldGenBase {
         return this;
     }
 
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, IBlockState state, IChunkGenerator generator, IChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         return true;
     }
 

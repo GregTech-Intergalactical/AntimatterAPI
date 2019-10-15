@@ -1,17 +1,18 @@
 package muramasa.gtu.api.capability.impl;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.tools.GregTechToolType;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 
 import java.util.ArrayList;
 
@@ -39,12 +40,12 @@ public class CoverHandler implements ICoverHandler {
     public void update() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onUpdate(getTile(), EnumFacing.VALUES[i]);
+            covers[i].onUpdate(getTile(), Ref.DIRECTIONS[i]);
         }
     }
 
     @Override
-    public boolean set(EnumFacing side, Cover cover) {
+    public boolean set(Direction side, Cover cover) {
         if (!isValid(side, covers[side.getIndex()], cover)) return false;
         covers[side.getIndex()] = cover;
         //TODO add cover.onPlace and cover.onRemove to customize sounds
@@ -54,7 +55,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public Cover get(EnumFacing side) {
+    public Cover get(Direction side) {
         return covers[side.getIndex()];
     }
 
@@ -63,7 +64,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override /** Fires ones per hand **/
-    public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
         Cover cover = get(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
@@ -82,18 +83,18 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean hasCover(EnumFacing side, Cover cover) {
+    public boolean hasCover(Direction side, Cover cover) {
         return get(side).isEqual(cover);
     }
 
     @Override
-    public boolean isValid(EnumFacing side, Cover existing, Cover replacement) {
+    public boolean isValid(Direction side, Cover existing, Cover replacement) {
         return (existing.isEmpty() || replacement.isEqual(GregTechAPI.CoverNone)) && validCovers.contains(replacement.getId());
     }
 
     @Override
-    public EnumFacing getTileFacing() {
-        return EnumFacing.NORTH;
+    public Direction getTileFacing() {
+        return Direction.NORTH;
     }
 
     @Override

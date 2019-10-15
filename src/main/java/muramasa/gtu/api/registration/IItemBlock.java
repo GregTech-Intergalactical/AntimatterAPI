@@ -1,8 +1,11 @@
 package muramasa.gtu.api.registration;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.GTItemBlock;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public interface IItemBlock {
 
@@ -10,7 +13,11 @@ public interface IItemBlock {
         return new GTItemBlock(block);
     }
 
-    default String getDisplayName(ItemStack stack) {
-        return stack.getUnlocalizedName();
+    default ItemGroup getItemGroup() {
+        return Ref.TAB_BLOCKS;
+    }
+
+    default TranslationTextComponent getDisplayName(ItemStack stack) {
+        return new TranslationTextComponent(stack.getTranslationKey());
     }
 }

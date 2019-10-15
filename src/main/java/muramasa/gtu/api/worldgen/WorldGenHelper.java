@@ -4,43 +4,39 @@ import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.ore.BlockOre;
-import muramasa.gtu.api.ore.BlockRock;
 import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
-import muramasa.gtu.api.tileentities.TileEntityMaterial;
-import net.minecraft.block.BlockSand;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 
 public class WorldGenHelper {
 
-    public static Object2ObjectOpenHashMap<IBlockState, StoneType> STONE_MAP = new Object2ObjectOpenHashMap<>();
-    public static Object2ObjectOpenHashMap<IBlockState, IBlockState> ROCK_MAP = new Object2ObjectOpenHashMap<>();
-    public static ObjectOpenHashSet<IBlockState> STONE_SET = new ObjectOpenHashSet<>();
-    public static ObjectOpenHashSet<IBlockState> TREE_SET = new ObjectOpenHashSet<>();
+    public static Object2ObjectOpenHashMap<BlockState, StoneType> STONE_MAP = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<BlockState, BlockState> ROCK_MAP = new Object2ObjectOpenHashMap<>();
+    public static ObjectOpenHashSet<BlockState> STONE_SET = new ObjectOpenHashSet<>();
+    public static ObjectOpenHashSet<BlockState> TREE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
 
-    public static IBlockState ROCK_DEFAULT;
+    //public static BlockState ROCK_DEFAULT;
 
-    public static Predicate<IBlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
-    public static Predicate<IBlockState> ROCK_PREDICATE = state -> ROCK_MAP.containsKey(state);
-    public static Predicate<IBlockState> STONE_PREDICATE = state -> STONE_SET.contains(state);
+    public static Predicate<BlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
+    public static Predicate<BlockState> ROCK_PREDICATE = state -> ROCK_MAP.containsKey(state);
+    public static Predicate<BlockState> STONE_PREDICATE = state -> STONE_SET.contains(state);
 
     public static void init() {
-        ROCK_DEFAULT = BlockRock.get(StoneType.STONE);
+        //ROCK_DEFAULT = BlockRock.get(StoneType.STONE);
 
         for (StoneType stoneType : StoneType.getAllActive()) {
-            IBlockState state = stoneType.getBaseState();
+            BlockState state = stoneType.getBaseState();
             if (state == StoneType.AIR) continue;
             STONE_MAP.put(state, stoneType);
             if (state.getBlock() == Blocks.STONE) {
-                ROCK_MAP.put(state, ROCK_DEFAULT);
+                //ROCK_MAP.put(state, ROCK_DEFAULT);
                 STONE_SET.add(state);
             }
         }
@@ -59,8 +55,8 @@ public class WorldGenHelper {
         //STONE_MAP.put(BlockStone.get(StoneType.MARBLE).getDefaultState(), StoneType.MARBLE);
         //STONE_MAP.put(BlockStone.get(StoneType.BASALT).getDefaultState(), StoneType.BASALT);
 
-        ROCK_MAP.put(Blocks.GRASS.getDefaultState(), ROCK_DEFAULT);
-        ROCK_MAP.put(Blocks.DIRT.getDefaultState(), ROCK_DEFAULT);
+        //ROCK_MAP.put(Blocks.GRASS.getDefaultState(), ROCK_DEFAULT);
+        //ROCK_MAP.put(Blocks.DIRT.getDefaultState(), ROCK_DEFAULT);
         //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), BlockRock.get(StoneType.STONE));
         //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), BlockRock.get(StoneType.STONE));
         //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), BlockRock.get(StoneType.STONE));
@@ -76,7 +72,7 @@ public class WorldGenHelper {
         TREE_BIOME_SET.add("ForestHills");
     }
 
-    public static void setState(World world, BlockPos pos, IBlockState state) {
+    public static void setState(World world, BlockPos pos, BlockState state) {
         world.setBlockState(pos, state, 2 | 16);
     }
 
@@ -87,22 +83,22 @@ public class WorldGenHelper {
 //            world.setBlockState(pos, WorldGenHelper.ORE_STATE, 2 | 16);
 //            TileEntity tile = Utils.getTile(world, pos);
 //            if (tile instanceof TileEntityOre) {
-//                ((TileEntityOre) tile).init(((TileEntityOre) tile).getMaterial(), block.getType(), ((TileEntityOre) tile).getType());
+//                ((TileEntityOre) tile).init(((TileEntityOre) tile).getMaterial(), block.getMaterialType(), ((TileEntityOre) tile).getMaterialType());
 //            }
 //        }
 //    }
 
     private static void setOreState(World world, BlockPos pos, StoneType stone, Material material, OreType type) {
-        world.setBlockState(pos, BlockOre.get(type, material, stone), 2 | 16);
+        world.setBlockState(pos, BlockOre.get(material, type, stone), 2 | 16);
     }
 
-    private static void setRockState(World world, BlockPos pos, IBlockState state, Material material) {
-        world.setBlockState(pos, state, 2 | 16);
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
+    private static void setRockState(World world, BlockPos pos, BlockState state, Material material) {
+//        world.setBlockState(pos, state, 2 | 16);
+//        TileEntity tile = world.getTileEntity(pos);
+//        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
     }
 
-    public static boolean setOre(World world, BlockPos pos, IBlockState existing, Material material, OreType type) {
+    public static boolean setOre(World world, BlockPos pos, BlockState existing, Material material, OreType type) {
         if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
             StoneType stone = STONE_MAP.get(world.getBlockState(pos));
             if (stone == null) stone = StoneType.STONE;
@@ -114,18 +110,19 @@ public class WorldGenHelper {
     }
 
     public static boolean setRock(World world, BlockPos pos, Material material) {
-        pos = new BlockPos(pos.getX(), world.getHeight(pos.getX(), pos.getZ()) - 1, pos.getZ());
-        IBlockState existing = world.getBlockState(pos);
-        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ROCK_PREDICATE)) {
-            IBlockState toSet = ROCK_MAP.get(existing);
-            if (toSet == null) toSet = ROCK_DEFAULT;
-            setRockState(world, pos.up(), toSet, material);
-            return true;
-        }
+//        pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos).down();
+//        BlockState existing = world.getBlockState(pos);
+//        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ROCK_PREDICATE)) {
+//            BlockState toSet = ROCK_MAP.get(existing);
+//            if (toSet == null) toSet = ROCK_DEFAULT;
+//            setRockState(world, pos.up(), toSet, material);
+//            return true;
+//        }
         return false;
     }
 
     public static boolean canSetTree(World world, BlockPos pos) {
-        return TREE_BIOME_SET.contains(world.getBiome(pos).getBiomeName()) && TREE_SET.contains(world.getBlockState(pos));
+        Biome biome = world.getBiome(pos);
+        return biome.getRegistryName() != null && TREE_BIOME_SET.contains(biome.getRegistryName().toString()) && TREE_SET.contains(world.getBlockState(pos));
     }
 }

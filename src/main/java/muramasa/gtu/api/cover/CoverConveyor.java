@@ -1,12 +1,10 @@
 package muramasa.gtu.api.cover;
 
 import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraft.util.Direction;
 
 public class CoverConveyor extends Cover {
 
@@ -37,11 +35,11 @@ public class CoverConveyor extends Cover {
     }
 
     @Override
-    public void onUpdate(TileEntity tile, EnumFacing side) {
-        if (tile.getWorld().getTotalWorldTime() % 20 != 0) return;
-        TileEntity adjTile = tile.getWorld().getTileEntity(tile.getPos().offset(side));
-        if (adjTile == null) return;
-        if (!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) || !adjTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) return;
-        Utils.transferItems(tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()), adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()));
+    public void onUpdate(TileEntity tile, Direction side) {
+//        if (tile.getWorld() == null || tile.getWorld().getGameTime() % 20 != 0) return;
+//        TileEntity adjTile = tile.getWorld().getTileEntity(tile.getPos().offset(side));
+//        if (adjTile == null) return;
+//        if (!tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) || !adjTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) return;
+//        Utils.transferItems(tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()), adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()));
     }
 }

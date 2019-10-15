@@ -3,7 +3,7 @@ package muramasa.gtu.client.render;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 
 import javax.vecmath.Matrix4f;
@@ -27,9 +27,9 @@ public final class MatrixVertexTransformer extends QuadGatheringTransformer {
         for (int v = 0; v < 4; v++) {
             for (int e = 0; e < count; e++) {
                 VertexFormatElement element = format.getElement(e);
-                if (element.getUsage() == VertexFormatElement.EnumUsage.POSITION) {
+                if (element.getUsage() == VertexFormatElement.Usage.POSITION) {
                     this.parent.put(e, this.transform(this.quadData[e][v], element.getElementCount()));
-                } else if (element.getUsage() == VertexFormatElement.EnumUsage.NORMAL) {
+                } else if (element.getUsage() == VertexFormatElement.Usage.NORMAL) {
                     this.parent.put(e, this.transformNormal(this.quadData[e][v]));
                 } else {
                     this.parent.put(e, this.quadData[e][v]);
@@ -44,7 +44,7 @@ public final class MatrixVertexTransformer extends QuadGatheringTransformer {
     }
 
     @Override
-    public void setQuadOrientation(EnumFacing orientation) {
+    public void setQuadOrientation(Direction orientation) {
         this.parent.setQuadOrientation(orientation);
     }
 

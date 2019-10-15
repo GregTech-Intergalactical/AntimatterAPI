@@ -1,10 +1,10 @@
 package muramasa.gtu.api.registration;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
@@ -14,7 +14,7 @@ public interface IColorHandler {
         return -1;
     }
 
-    default int getBlockColor(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int i) {
+    default int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         return -1;
     }
 }

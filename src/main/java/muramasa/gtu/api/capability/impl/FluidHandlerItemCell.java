@@ -17,6 +17,6 @@ public class FluidHandlerItemCell extends FluidHandlerItemStackSimple {
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        return fluid.getFluid().getTemperature() <= maxTemp;
+        return fluid.getFluid().getAttributes().getTemperature() <= maxTemp;
     }
 }

@@ -1,12 +1,13 @@
 package muramasa.gtu.api.capability.impl;
 
-import muramasa.gtu.api.gui.SlotType;
+import muramasa.gtu.api.guiold.SlotType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -22,8 +23,8 @@ public class MachineFluidHandler {
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
-        int inputCount = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier()).size();
-        int outputCount = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size();
+        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getTier()).size();
+        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
     }
@@ -32,12 +33,12 @@ public class MachineFluidHandler {
         this(tile, DEFAULT_CAPACITY);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, NBTTagCompound fluidData) {
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, CompoundNBT fluidData) {
         this(tile, capacity);
         if (fluidData != null) deserialize(fluidData);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile, NBTTagCompound fluidData) {
+    public MachineFluidHandler(TileEntityMachine tile, CompoundNBT fluidData) {
         this(tile, DEFAULT_CAPACITY, fluidData);
     }
 
@@ -120,21 +121,21 @@ public class MachineFluidHandler {
     public void consumeInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
         for (int i = 0; i < inputs.length; i++) {
-            inputWrapper.drain(inputs[i], true);
+            inputWrapper.drain(inputs[i], IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
     public void addInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
         for (int i = 0; i < inputs.length; i++) {
-            inputWrapper.fill(inputs[i], true);
+            inputWrapper.fill(inputs[i], IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
     public void addOutputs(FluidStack... outputs) {
         if (outputWrapper == null || outputs == null || outputs.length == 0) return;
         for (int i = 0; i < outputs.length; i++) {
-            outputWrapper.fill(outputs[i], true);
+            outputWrapper.fill(outputs[i], IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
@@ -146,7 +147,7 @@ public class MachineFluidHandler {
         int matchCount = 0;
         if (outputWrapper == null) return matchCount;
         for (int i = 0; i < outputs.length; i++) {
-            if (outputWrapper.fill(outputs[i], false) == outputs[i].amount) matchCount++;
+            if (outputWrapper.fill(outputs[i], IFluidHandler.FluidAction.SIMULATE) == outputs[i].getAmount()) matchCount++;
         }
         return matchCount;
     }
@@ -156,10 +157,10 @@ public class MachineFluidHandler {
         ArrayList<FluidStack> notConsumed = new ArrayList<>();
         FluidStack result;
         for (int i = 0; i < inputs.length; i++) {
-            result = inputWrapper.drain(inputs[i], true);
+            result = inputWrapper.drain(inputs[i], IFluidHandler.FluidAction.EXECUTE);
             if (result != null) {
-                if (result.amount != inputs[i].amount) { //Fluid was partially consumed
-                    notConsumed.add(Utils.ca(inputs[i].amount - result.amount, inputs[i]));
+                if (result.getAmount() != inputs[i].getAmount()) { //Fluid was partially consumed
+                    notConsumed.add(Utils.ca(inputs[i].getAmount() - result.getAmount(), inputs[i]));
                 }
             } else {
                 notConsumed.add(inputs[i]); //Fluid not present in input tanks
@@ -174,7 +175,7 @@ public class MachineFluidHandler {
         ArrayList<FluidStack> notExported = new ArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
-            result = outputWrapper.fill(outputs[i], true);
+            result = outputWrapper.fill(outputs[i], IFluidHandler.FluidAction.EXECUTE);
             if (result == 0) notExported.add(outputs[i]); //Valid space was not found
             else outputs[i] = Utils.ca(result, outputs[i]); //Fluid was partially exported
         }
@@ -182,41 +183,41 @@ public class MachineFluidHandler {
     }
 
     /** NBT **/
-    public NBTTagCompound serialize() {
-        NBTTagCompound tag = new NBTTagCompound();
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
-            NBTTagList list = new NBTTagList();
+            ListNBT list = new ListNBT();
             for (int i = 0; i < inputWrapper.tanks.length; i++) {
                 if (inputWrapper.tanks[i].getFluid() == null) continue;
-                list.appendTag(inputWrapper.tanks[i].writeToNBT(new NBTTagCompound()));
+                list.add(inputWrapper.tanks[i].writeToNBT(new CompoundNBT()));
             }
-            tag.setTag("Input-Fluids", list);
+            tag.put("Input-Fluids", list);
         }
         if (outputWrapper != null) {
-            NBTTagList list = new NBTTagList();
+            ListNBT list = new ListNBT();
             for (int i = 0; i < outputWrapper.tanks.length; i++) {
                 if (outputWrapper.tanks[i].getFluid() == null) continue;
-                list.appendTag(outputWrapper.tanks[i].writeToNBT(new NBTTagCompound()));
+                list.add(outputWrapper.tanks[i].writeToNBT(new CompoundNBT()));
             }
-            tag.setTag("Output-Fluids", list);
+            tag.put("Output-Fluids", list);
         }
         return tag;
     }
 
-    public void deserialize(NBTTagCompound tag) {
+    public void deserialize(CompoundNBT tag) {
         if (inputWrapper != null) {
-            NBTTagList list = tag.getTagList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.tagCount(); i++) {
+            ListNBT list = tag.getList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
                 if (i < inputWrapper.tanks.length) {
-                    inputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+                    inputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
                 }
             }
         }
         if (outputWrapper != null) {
-            NBTTagList list = tag.getTagList("Output-Fluids", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.tagCount(); i++) {
+            ListNBT list = tag.getList("Output-Fluids", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
                 if (i < outputWrapper.tanks.length) {
-                    outputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
+                    outputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
                 }
             }
         }
@@ -229,7 +230,7 @@ public class MachineFluidHandler {
             builder.append("Inputs:\n");
             for (int i = 0; i < inputWrapper.tanks.length; i++) {
                 if (inputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(inputWrapper.tanks[i].getFluid().getLocalizedName()).append(" - ").append(inputWrapper.tanks[i].getFluid().amount);
+                    builder.append(inputWrapper.tanks[i].getFluid().getFluid().getRegistryName()).append(" - ").append(inputWrapper.tanks[i].getFluid().getAmount());
                     if (i != inputWrapper.tanks.length - 1) {
                         builder.append("\n");
                     }
@@ -240,7 +241,7 @@ public class MachineFluidHandler {
             builder.append("Outputs:\n");
             for (int i = 0; i < outputWrapper.tanks.length; i++) {
                 if (outputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(outputWrapper.tanks[i].getFluid().getLocalizedName()).append(" - ").append(outputWrapper.tanks[i].getFluid().amount);
+                    builder.append(outputWrapper.tanks[i].getFluid().getFluid().getRegistryName()).append(" - ").append(outputWrapper.tanks[i].getFluid().getAmount());
                     if (i != outputWrapper.tanks.length - 1) {
                         builder.append("\n");
                     }

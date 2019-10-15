@@ -10,11 +10,10 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -50,7 +49,8 @@ public class GregTechWorldGenerator implements IWorldGenerator {
     }
 
     public GregTechWorldGenerator() {
-        GameRegistry.registerWorldGenerator(this, Integer.MAX_VALUE);
+        //TODO
+        //GameRegistry.registerWorldGenerator(this, Integer.MAX_VALUE);
     }
 
     public static void register(WorldGenBase worldGen) {
@@ -148,11 +148,11 @@ public class GregTechWorldGenerator implements IWorldGenerator {
     }
 
     @Override
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator generator, IChunkProvider provider) {
+    public void generate(Random random, int chunkX, int chunkZ, World world, ChunkGenerator generator, AbstractChunkProvider provider) {
         try {
             XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
             BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-            List<WorldGenBase> worldGenObjects = BASE.get(world.provider.getDimension());
+            List<WorldGenBase> worldGenObjects = BASE.get(world.getDimension().getType().getId());
             if (worldGenObjects != null && worldGenObjects.size() > 0) {
                 worldGenObjects.forEach(o -> o.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider));
             }

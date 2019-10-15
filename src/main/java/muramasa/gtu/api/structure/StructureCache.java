@@ -4,16 +4,15 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.api.util.Utils;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,34 +23,34 @@ public class StructureCache {
     private static Int2ObjectOpenHashMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
 
     public static boolean has(World world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
+        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
         return entry != null && entry.get(pos) != null;
     }
 
     public static BlockPos get(World world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
+        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
         if (entry == null) return null;
         return entry.get(pos);
     }
 
     public static void add(World world, BlockPos pos, List<BlockPos> structure) {
-        DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
+        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
         if (entry == null) {
-            entry = new DimensionEntry(world.provider.getDimension());
-            LOOKUP.put(world.provider.getDimension(), entry);
+            entry = new DimensionEntry(world.getDimension().getType().getId());
+            LOOKUP.put(world.getDimension().getType().getId(), entry);
         }
         entry.add(pos, structure);
         GregTech.LOGGER.info("Added Structure to Store!");
     }
 
-    public static void remove(World world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.provider.getDimension());
+    public static void remove(IWorld world, BlockPos pos) {
+        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
         if (entry == null) return;
         entry.remove(pos);
         GregTech.LOGGER.info("Removed Structure to Store!");
     }
 
-    private static void invalidateController(World world, BlockPos pos) {
+    private static void invalidateController(IWorld world, BlockPos pos) {
         TileEntity tile = Utils.getTile(world, pos);
         if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
         remove(world, pos);
@@ -59,20 +58,20 @@ public class StructureCache {
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
-        LOOKUP.remove(e.getWorld().provider.getDimension());
+        LOOKUP.remove(e.getWorld().getDimension().getType().getId());
     }
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent e) {
-        DimensionEntry entry = LOOKUP.get(e.getWorld().provider.getDimension());
+        DimensionEntry entry = LOOKUP.get(e.getWorld().getDimension().getType().getId());
         if (entry == null) return;
         BlockPos controllerPos = entry.get(e.getPos());
         if (controllerPos != null) invalidateController(e.getWorld(), controllerPos);
     }
 
     @SubscribeEvent
-    public static void onBlockPlace(BlockEvent.PlaceEvent e) {
-        DimensionEntry entry = LOOKUP.get(e.getWorld().provider.getDimension());
+    public static void onBlockPlace(BlockEvent.EntityPlaceEvent e) {
+        DimensionEntry entry = LOOKUP.get(e.getWorld().getDimension().getType().getId());
         if (entry == null) return;
         BlockPos controllerPos = entry.get(e.getPos());
         if (controllerPos != null) invalidateController(e.getWorld(), controllerPos);
@@ -80,18 +79,18 @@ public class StructureCache {
 
     @SubscribeEvent
     public static void onBlockClickEvent(PlayerInteractEvent.RightClickBlock e) {
-        if (e.getEntityPlayer().isSneaking()) return;
-        DimensionEntry entry = LOOKUP.get(e.getWorld().provider.getDimension());
-        if (entry == null) return;
-        BlockPos controllerPos = entry.get(e.getPos());
-        if (controllerPos == null) return;
-        Vec3d hit = e.getHitVec();
-        IBlockState state = e.getWorld().getBlockState(e.getPos());
-        if (!state.getBlock().onBlockActivated(e.getWorld(), e.getPos(), state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z)) {
-            state = e.getWorld().getBlockState(controllerPos);
-            state.getBlock().onBlockActivated(e.getWorld(), controllerPos, state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z);
-        }
-        e.setCanceled(true);
+//        if (e.getEntityPlayer().isSneaking()) return;
+//        DimensionEntry entry = LOOKUP.get(e.getWorld().getDimension().getType().getId());
+//        if (entry == null) return;
+//        BlockPos controllerPos = entry.get(e.getPos());
+//        if (controllerPos == null) return;
+//        Vec3d hit = e.getHitVec();
+//        BlockState state = e.getWorld().getBlockState(e.getPos());
+//        if (!state.getBlock().onBlockActivated(e.getWorld(), e.getPos(), state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z)) {
+//            state = e.getWorld().getBlockState(controllerPos);
+//            state.getBlock().onBlockActivated(e.getWorld(), controllerPos, state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z);
+//        }
+//        e.setCanceled(true);
     }
 
     public static class DimensionEntry {
