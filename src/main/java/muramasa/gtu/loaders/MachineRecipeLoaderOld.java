@@ -22,7 +22,7 @@
 //    public static RecipeBuilder RB = new RecipeBuilder();
 //
 ////    public static void init() {
-////        for (Material m : GenerationFlag.ORE.getMats()) {
+////        for (Material m : GenerationFlag.ORE.all()) {
 ////            RecipeBuilder.get(PULVERIZER).ii(m.getChunk(1)).io(m.getCrushed(2)).build(40, 1);
 ////            RecipeBuilder.get(THERMAL_CENTRIFUGE).ii(m.getCrushed(1)).io(m.getCrushedC(1), m.getDust(1), m.getDustT(4)).build(40, 1);
 ////            RecipeBuilder.get(ORE_WASHER).ii(m.getCrushed(1)).fi(new FluidStack(FluidRegistry.WATER, 100)).io(m.getCrushedP(1), m.getDustT(1), Stone.getDust(1)).build(40, 1);

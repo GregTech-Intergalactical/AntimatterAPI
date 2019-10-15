@@ -45,9 +45,6 @@ public class Tier implements IGregTechObject {
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture("blocks/machine/base/" + id);
-        if (TIER_NAME_LOOKUP.size() >= 16) { //TODO 1.13: remove this limit
-            throw new IllegalStateException("Cannot have more than 16 Machine Tiers");
-        }
         TIER_NAME_LOOKUP.put(id, this);
         TIER_ID_LOOKUP.put(internalId, this);
     }

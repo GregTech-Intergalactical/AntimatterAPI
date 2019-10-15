@@ -5,15 +5,15 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tools.ToolType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.player.EntityPlayer;
+import muramasa.gtu.api.tools.GregTechToolType;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -39,7 +39,7 @@ public abstract class Cover {
     }
 
     /** Fires once per Side **/
-    public boolean onInteract(TileEntity tile, EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable ToolType type) {
+    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable GregTechToolType type) {
         return true;
     }
 
@@ -47,7 +47,7 @@ public abstract class Cover {
      * @param tile containing the cover
      * @param side global side of the cover
      */
-    public void onUpdate(TileEntity tile, EnumFacing side) {
+    public void onUpdate(TileEntity tile, Direction side) {
         //NOOP
     }
 

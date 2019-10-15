@@ -5,11 +5,12 @@ import com.google.gson.internal.LinkedTreeMap;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.api.util.XSTR;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.Heightmap;
 
 public class WorldGenRock extends WorldGenBase {
 
@@ -35,11 +36,11 @@ public class WorldGenRock extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, IBlockState state, IChunkGenerator generator, IChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         int j = Math.max(1, rockAmount + rand.nextInt(rockAmount));
         for (int i = 0; i < j; i++) {
             pos.setPos(passedX + 8 + rand.nextInt(16), 0, passedZ + 8 + rand.nextInt(16));
-            pos.setY(world.getHeight(pos.getX(), pos.getZ()) - 1);
+            pos.setY(world.getHeight(Heightmap.Type.WORLD_SURFACE, pos).getY());
             WorldGenHelper.setRock(world, pos, Materials.NULL);
         }
         return true;

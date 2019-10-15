@@ -60,8 +60,8 @@ public class Structure {
         int elementSize = elements.size();
         for (int i = 0; i < elementSize; i++) {
             element = elements.get(i);
-            working.set(corner).offset(element.getFirst(), RIGHT, UP, FORWARD);
-            if (!element.getSecond().evaluate(tile, working, result)) {
+            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
+            if (!element.getB().evaluate(tile, working, result)) {
                 return result;
             }
         }

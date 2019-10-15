@@ -4,7 +4,7 @@ import muramasa.gtu.api.machines.MachineEvent;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 public class CoverOutput extends Cover {
@@ -17,11 +17,12 @@ public class CoverOutput extends Cover {
     @Override
     public void onMachineEvent(TileEntityMachine tile, MachineEvent event) {
         if (event == MachineEvent.ITEM_OUTPUT) {
-            EnumFacing outputFacing = tile.getOutputFacing();
-            TileEntity adjTile = tile.getWorld().getTileEntity(tile.getPos().offset(outputFacing));
+            Direction outputDir = tile.getOutputFacing();
+            TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
             if (adjTile == null) return;
-            if (!adjTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputFacing.getOpposite())) return;
-            tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputFacing.getOpposite())));
+            adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
+                tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler));
+            });
         }
     }
 }

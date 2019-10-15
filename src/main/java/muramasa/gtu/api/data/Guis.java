@@ -1,16 +1,21 @@
 package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.container.ContainerMachine;
+import muramasa.gtu.api.guiold.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.integration.jei.renderer.IInfoRenderer;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 
 import static muramasa.gtu.api.data.Machines.*;
-import static muramasa.gtu.api.gui.SlotType.*;
+import static muramasa.gtu.api.guiold.SlotType.*;
 import static muramasa.gtu.api.machines.Tier.*;
 
 public class Guis {
+
+    public static ContainerType<ContainerMachine> CONTAINER_MACHINE = IForgeContainerType.create(ContainerMachine::fromNetwork);
 
     public static GuiData MULTI_DISPLAY = new GuiData("multi_display").add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 143, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34).add(FL_IN, 17, 63).add(FL_IN, 35, 63).add(FL_IN, 53, 63).add(FL_OUT, 107, 63).add(FL_OUT, 125, 63).add(FL_OUT, 143, 63);
     public static GuiData MULTI_DISPLAY_COMPACT = new GuiData("multi_display").add(MULTI_DISPLAY).setPadding(0, 0, 0, 0);

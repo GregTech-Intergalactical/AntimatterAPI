@@ -8,7 +8,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
     @Override
     public Recipe findRecipe() { //TODO support fluids?
-        return getType().getRecipeMap().find(itemHandler.get(), null);
+        return getMachineType().getRecipeMap().find(itemHandler.get(), null);
     }
 
     @Override

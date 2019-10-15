@@ -1,18 +1,18 @@
 package muramasa.gtu.api.util;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 /**
  * Created By Muramasa -  https://github.com/Muramasa-
- * Allows easily stepping in directions given a EnumFacing
+ * Allows easily stepping in directions given a Direction
  */
 public class int3 {
 
     //TODO change this class to wrap a MutableBlockPos
 
     public int x, y, z;
-    public EnumFacing facing = EnumFacing.NORTH; //Used for moving in a direction
+    public Direction side = Direction.NORTH; //Used for moving in a direction
 
     public int3() {
         this.x = 0;
@@ -32,11 +32,11 @@ public class int3 {
         this.z = pos.z;
     }
 
-    public int3(int3 pos, EnumFacing facing) {
+    public int3(int3 pos, Direction side) {
         this.x = pos.x;
         this.y = pos.y;
         this.z = pos.z;
-        this.facing = facing;
+        this.side = side;
     }
 
     public int3(BlockPos pos) {
@@ -45,11 +45,11 @@ public class int3 {
         this.z = pos.getZ();
     }
 
-    public int3(BlockPos pos, EnumFacing facing) {
+    public int3(BlockPos pos, Direction side) {
         this.x = pos.getX();
         this.y = pos.getY();
         this.z = pos.getZ();
-        this.facing = facing;
+        this.side = side;
     }
 
     public int3 set(int x, int y, int z) {
@@ -63,7 +63,7 @@ public class int3 {
         this.x = pos.x;
         this.y = pos.y;
         this.z = pos.z;
-        this.facing = pos.facing;
+        this.side = pos.side;
         return this;
     }
 
@@ -74,8 +74,8 @@ public class int3 {
         return this;
     }
 
-    public void set(EnumFacing facing) {
-        this.facing = facing;
+    public void set(Direction side) {
+        this.side = side;
     }
 
     public int3 add(int x, int y, int z) {
@@ -107,52 +107,52 @@ public class int3 {
     }
 
     public int3 right(int n) {
-        return offset(n, facing.rotateY());
+        return offset(n, side.rotateY());
     }
 
     public int3 left(int n) {
-        return offset(n, facing.rotateYCCW());
+        return offset(n, side.rotateYCCW());
     }
 
     public int3 forward(int n) {
-        return offset(n, facing);
+        return offset(n, side);
     }
 
     public int3 back(int n) {
-        return offset(n, facing.getOpposite());
+        return offset(n, side.getOpposite());
     }
 
     public int3 up(int n) {
-        return offset(n, EnumFacing.UP);
+        return offset(n, Direction.UP);
     }
 
     public int3 down(int n) {
-        return offset(n, EnumFacing.DOWN);
+        return offset(n, Direction.DOWN);
     }
 
-    public int3 offset(int n, EnumFacing facing) {
-        if (n == 0 || facing == null) return this;
-        return set(x + facing.getFrontOffsetX() * n, y + facing.getFrontOffsetY() * n, z + facing.getFrontOffsetZ() * n);
+    public int3 offset(int n, Direction side) {
+        if (n == 0 || side == null) return this;
+        return set(x + side.getXOffset() * n, y + side.getYOffset() * n, z + side.getZOffset() * n);
     }
 
     public int3 offset(int2 n, Dir... directions) {
-        if (facing != null && directions.length >= 2) {
-            offset(n.x, directions[0].getRotatedFacing(facing));
-            offset(n.y, directions[1].getRotatedFacing(facing));
+        if (side != null && directions.length >= 2) {
+            offset(n.x, directions[0].getRotatedFacing(side));
+            offset(n.y, directions[1].getRotatedFacing(side));
         }
         return this;
     }
 
     public int3 offset(int3 n, Dir... directions) {
-        if (facing != null && directions.length >= 3) {
-            offset(n.x, directions[0].getRotatedFacing(facing));
-            offset(n.y, directions[1].getRotatedFacing(facing));
-            offset(n.z, directions[2].getRotatedFacing(facing));
+        if (side != null && directions.length >= 3) {
+            offset(n.x, directions[0].getRotatedFacing(side));
+            offset(n.y, directions[1].getRotatedFacing(side));
+            offset(n.z, directions[2].getRotatedFacing(side));
         }
         return this;
     }
 
-    public int3 offset(int3 n, EnumFacing... facings) {
+    public int3 offset(int3 n, Direction... facings) {
         if (facings.length >= 3) {
             offset(n.x, facings[0]);
             offset(n.y, facings[1]);

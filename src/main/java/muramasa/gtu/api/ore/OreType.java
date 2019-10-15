@@ -9,6 +9,7 @@ import java.util.Locale;
 
 public enum OreType implements IStringSerializable {
 
+    //TODO expand ore types :)
     NORMAL(MaterialType.ORE),
     SMALL(MaterialType.ORE_SMALL);
 
@@ -24,7 +25,7 @@ public enum OreType implements IStringSerializable {
         VALUES = Lists.newArrayList(values());
     }
 
-    public MaterialType getType() {
+    public MaterialType getMaterialType() {
         return type;
     }
 

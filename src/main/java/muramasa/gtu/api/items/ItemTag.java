@@ -3,6 +3,7 @@ package muramasa.gtu.api.items;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 
+//TODO replace with vanilla tag system
 public class ItemTag implements IGregTechObject {
 
     public static ItemTag SHOW_EXTENDED_HIGHLIGHT = new ItemTag("show_extended_highlight");

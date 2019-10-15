@@ -1,10 +1,10 @@
 package muramasa.gtu.api.capability.impl;
 
-import muramasa.gtu.api.tools.ToolType;
+import muramasa.gtu.api.tools.GregTechToolType;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 
 public class ControllerConfigHandler extends MachineConfigHandler {
 
@@ -13,8 +13,8 @@ public class ControllerConfigHandler extends MachineConfigHandler {
     }
 
     @Override
-    public boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type) {
-        if (type == ToolType.HAMMER) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
+        if (type == GregTechToolType.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
             if (!machine.isStructureValid()) {
                 machine.checkStructure();

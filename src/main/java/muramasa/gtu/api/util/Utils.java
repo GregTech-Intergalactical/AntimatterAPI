@@ -3,28 +3,19 @@ package muramasa.gtu.api.util;
 import com.google.common.base.CaseFormat;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -105,7 +96,7 @@ public class Utils {
             if (b.get(i) == null) continue;
             position = contains(a, b.get(i));
             if (position == -1) a.add(b.get(i));
-            else a.get(position).amount += b.get(i).amount;
+            else a.get(position).grow(b.get(i).getAmount());
         }
         return a;
     }
@@ -118,7 +109,7 @@ public class Utils {
 
     public static FluidStack ca(int amount, FluidStack toCopy) {
         FluidStack stack = toCopy.copy();
-        stack.amount = amount;
+        stack.setAmount(amount);
         return stack;
     }
 
@@ -127,43 +118,42 @@ public class Utils {
     }
 
     public static FluidStack mul(int amount, FluidStack stack) {
-        return ca(stack.amount * amount, stack);
+        return ca(stack.getAmount() * amount, stack);
     }
 
     public static boolean hasNoConsumeTag(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().hasKey(Ref.KEY_STACK_NO_CONSUME);
+        return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
     
     public static boolean hasNoConsumeTag(FluidStack stack) {
-        return stack.tag != null && stack.tag.hasKey(Ref.KEY_STACK_NO_CONSUME);
+        return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
 
     public static boolean getNoConsumeTag(ItemStack stack) {
-        return stack.getTagCompound().getBoolean(Ref.KEY_STACK_NO_CONSUME);
+        return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
     
     public static boolean getNoConsumeTag(FluidStack stack) {
-        return stack.tag.getBoolean(Ref.KEY_STACK_NO_CONSUME);
+        return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
 
     public static ItemStack addNoConsumeTag(ItemStack stack) {
-        validateNBT(stack).getTagCompound().setBoolean(Ref.KEY_STACK_NO_CONSUME, true);
+        validateNBT(stack).getTag().putBoolean(Ref.KEY_STACK_NO_CONSUME, true);
         return stack;
     }
     
     public static FluidStack addNoConsumeTag(FluidStack stack) {
-        validateNBT(stack).tag.setBoolean(Ref.KEY_STACK_NO_CONSUME, true);
+        validateNBT(stack).getTag().putBoolean(Ref.KEY_STACK_NO_CONSUME, true);
         return stack;
     }
 
     public static ItemStack validateNBT(ItemStack stack) {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        if (!stack.hasTag()) stack.setTag(new CompoundNBT());
         return stack;
     }
     
     public static FluidStack validateNBT(FluidStack stack) {
-        NBTTagCompound tag = stack.tag;
-        if (tag == null) tag = new NBTTagCompound();
+        if (!stack.hasTag()) stack.setTag(new CompoundNBT());
         return stack;
     }
 
@@ -233,25 +223,21 @@ public class Utils {
         }
     }
 
-    @Nullable
-    public static Fluid getFluidById(int id) {
-        for (Map.Entry<Fluid, Integer> entry : FluidRegistry.getRegisteredFluidIDs().entrySet()) {
-            if (entry.getValue() == id) return entry.getKey();
-        }
-        return null;
-    }
-
-    public static int getIdByFluid(Fluid fluid) {
-        return FluidRegistry.getRegisteredFluidIDs().get(fluid);
-    }
+//    @Nullable
+//    public static Fluid getFluidById(int id) {
+//        for (Map.Entry<Fluid, Integer> entry : FluidRegistry.getRegisteredFluidIDs().entrySet()) {
+//            if (entry.getValue() == id) return entry.getKey();
+//        }
+//        return null;
+//    }
+//
+//    public static int getIdByFluid(Fluid fluid) {
+//
+//        return FluidRegistry.getRegisteredFluidIDs().get(fluid);
+//    }
 
     public static String formatNumber(long number) {
         return DECIMAL_FORMAT.format(number);
-    }
-
-    public static void spawnItems(World world, BlockPos pos, @Nullable EnumFacing side, ItemStack stack) {
-        if (side != null) pos.offset(side);
-        world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
     }
 
     public static int getVoltageTier(long voltage) {
@@ -267,76 +253,87 @@ public class Utils {
 
     /** Safe version of world.getTileEntity **/
     @Nullable
-    public static TileEntity getTile(IBlockAccess blockAccess, BlockPos pos) {
-        if (pos == null || blockAccess == null) return null;
-        if (blockAccess instanceof ChunkCache) {
-            return ((ChunkCache) blockAccess).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-        } else {
-            return blockAccess.getTileEntity(pos);
-        }
+    public static TileEntity getTile(@Nullable IBlockReader reader, BlockPos pos) {
+        if (reader == null) return null;
+        return reader.getTileEntity(pos);
+        //TODO validate and redo
+//        if (pos == null || blockAccess == null) return null;
+//        if (blockAccess instanceof ChunkRenderCache) {
+//            return ((ChunkRenderCache) blockAccess).getTileEntity(pos, Chunk.CreateEntityType.CHECK);
+//        } else {
+//            return blockAccess.getTileEntity(pos);
+//        }
+    }
+
+    public static TileEntity getTileFromBuf(PacketBuffer buf) {
+        return DistExecutor.runForDist(() -> () -> {
+            return GregTech.PROXY.getClientWorld().getTileEntity(buf.readBlockPos());
+        }, () -> () -> {
+            throw new RuntimeException("Shouldn't be called on server!");
+        });
     }
 
     /** Syncs NBT between Client & Server **/
     public static void markTileForNBTSync(TileEntity tile) {
-        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        BlockState state = tile.getWorld().getBlockState(tile.getPos());
         tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
     }
 
     /** Sends block update to clients **/
     public static void markTileForRenderUpdate(TileEntity tile) {
-        IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+        BlockState state = tile.getWorld().getBlockState(tile.getPos());
         tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
     }
 
     //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
     //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
-    public static EnumFacing rotateFacingAlt(EnumFacing toRotate, EnumFacing rotateBy) {
-        EnumFacing result = toRotate;
-        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return result;
+    public static Direction rotateFacingAlt(Direction toRotate, Direction rotateBy) {
+        Direction result = toRotate;
+        if (toRotate.getAxis() == Direction.Axis.Y || rotateBy.getAxis() == Direction.Axis.Y) return result;
         /** S-W-N-E **/
-        if (rotateBy.getHorizontalIndex() < EnumFacing.NORTH.getHorizontalIndex()) {
+        if (rotateBy.getHorizontalIndex() < Direction.NORTH.getHorizontalIndex()) {
             //Rotate CCW
-            int dif = rotateBy.getHorizontalIndex() - EnumFacing.NORTH.getHorizontalIndex();
+            int dif = rotateBy.getHorizontalIndex() - Direction.NORTH.getHorizontalIndex();
 //            System.out.println("Difccw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
                 result = result.rotateYCCW();
             }
         } else {
             //Rotate CW
-            int dif = EnumFacing.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
+            int dif = Direction.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
 //            System.out.println("Difcw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
                 result = result.rotateY();
             }
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        //return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? toRotate.getOpposite() : toRotate;
+        //return rotateBy == Direction.EAST || rotateBy == Direction.WEST ? toRotate.getOpposite() : toRotate;
         return result;
     }
 
     //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
     //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
-    public static EnumFacing rotateFacing(EnumFacing toRotate, EnumFacing rotateBy) {
-        EnumFacing result = toRotate;
-        if (toRotate.getAxis() == EnumFacing.Axis.Y || rotateBy.getAxis() == EnumFacing.Axis.Y) return result;
+    public static Direction rotateFacing(Direction toRotate, Direction rotateBy) {
+        Direction result = toRotate;
+        if (toRotate.getAxis() == Direction.Axis.Y || rotateBy.getAxis() == Direction.Axis.Y) return result;
         /** S-W-N-E **/
-        if (rotateBy.getHorizontalIndex() < EnumFacing.NORTH.getHorizontalIndex()) {
+        if (rotateBy.getHorizontalIndex() < Direction.NORTH.getHorizontalIndex()) {
             //Rotate CCW
-            int dif = rotateBy.getHorizontalIndex() - EnumFacing.NORTH.getHorizontalIndex();
+            int dif = rotateBy.getHorizontalIndex() - Direction.NORTH.getHorizontalIndex();
 //            System.out.println("Difccw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
                 result = result.rotateYCCW();
             }
         } else {
             //Rotate CW
-            int dif = EnumFacing.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
+            int dif = Direction.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
 //            System.out.println("Difcw: " + dif);
             for (int i = 0; i < Math.abs(dif); i++) {
                 result = result.rotateY();
             }
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        return rotateBy == EnumFacing.EAST || rotateBy == EnumFacing.WEST ? result.getOpposite() : result;
+        return rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() : result;
     }
 
     public static String trans(String unlocalized) {
@@ -345,59 +342,59 @@ public class Utils {
 
     //TODO replace with doRaytrace in block?
     //TODO optimize...
-    public static EnumFacing getInteractSide(EnumFacing side, float x, float y, float z) {
-        EnumFacing backSide = side.getOpposite();
+    public static Direction getInteractSide(Direction side, float x, float y, float z) {
+        Direction backSide = side.getOpposite();
         switch (side.getIndex()) {
             case 0:
             case 1:
                 if (x < 0.25) {
                     if (z < 0.25) return backSide;
                     if (z > 0.75) return backSide;
-                    return EnumFacing.WEST;
+                    return Direction.WEST;
                 }
                 if (x > 0.75) {
                     if (z < 0.25) return backSide;
                     if (z > 0.75) return backSide;
-                    return EnumFacing.EAST;
+                    return Direction.EAST;
                 }
-                if (z < 0.25) return EnumFacing.NORTH;
-                if (z > 0.75) return EnumFacing.SOUTH;
+                if (z < 0.25) return Direction.NORTH;
+                if (z > 0.75) return Direction.SOUTH;
                 return side;
             case 2:
             case 3:
                 if (x < 0.25) {
                     if (y < 0.25) return backSide;
                     if (y > 0.75) return backSide;
-                    return EnumFacing.WEST;
+                    return Direction.WEST;
                 }
                 if (x > 0.75) {
                     if (y < 0.25) return backSide;
                     if (y > 0.75) return backSide;
-                    return EnumFacing.EAST;
+                    return Direction.EAST;
                 }
-                if (y < 0.25) return EnumFacing.DOWN;
-                if (y > 0.75) return EnumFacing.UP;
+                if (y < 0.25) return Direction.DOWN;
+                if (y > 0.75) return Direction.UP;
                 return side;
             case 4:
             case 5:
                 if (z < 0.25) {
                     if (y < 0.25) return backSide;
                     if (y > 0.75) return backSide;
-                    return EnumFacing.NORTH;
+                    return Direction.NORTH;
                 }
                 if (z > 0.75) {
                     if (y < 0.25) return backSide;
                     if (y > 0.75) return backSide;
-                    return EnumFacing.SOUTH;
+                    return Direction.SOUTH;
                 }
-                if (y < 0.25) return EnumFacing.DOWN;
-                if (y > 0.75) return EnumFacing.UP;
+                if (y < 0.25) return Direction.DOWN;
+                if (y > 0.75) return Direction.UP;
                 return side;
         }
         return side;
     }
 
-    public static Set<BlockPos> getCubicPosArea(int3 area, EnumFacing side, BlockPos origin, EntityPlayer player, boolean excludeAir) {
+    public static Set<BlockPos> getCubicPosArea(int3 area, Direction side, BlockPos origin, PlayerEntity player, boolean excludeAir) {
         int xRadius, yRadius, zRadius;
         BlockPos center;
 
@@ -408,19 +405,19 @@ public class Utils {
             zRadius = area.z;
         } else {
             center = origin.offset(side.getOpposite(), area.z);
-            if (side.getAxis() == EnumFacing.Axis.Y) {
-                xRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.X ? area.y : area.x;
+            if (side.getAxis() == Direction.Axis.Y) {
+                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.y : area.x;
                 yRadius = area.z;
-                zRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.Z ? area.y : area.x;
+                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.y : area.x;
             } else {
-                xRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.X ? area.z : area.x;
+                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.z : area.x;
                 yRadius = area.y;
-                zRadius = player.getHorizontalFacing().getAxis() == EnumFacing.Axis.Z ? area.z : area.x;
+                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.z : area.x;
             }
         }
 
         Set<BlockPos> set = new HashSet<>();
-        IBlockState state;
+        BlockState state;
         for (int x = center.getX() - xRadius; x <= center.getX() + xRadius; x++) {
             for (int y = center.getY() - yRadius; y <= center.getY() + yRadius; y++) {
                 for (int z = center.getZ() - zRadius; z <= center.getZ() + zRadius; z++) {
@@ -438,55 +435,55 @@ public class Utils {
     }
 
     //Credit: from Tinkers' Construct
-    public static void breakBlock(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityPlayer player) {
-        Block block = state.getBlock();
-        if (player.capabilities.isCreativeMode) {
-            block.onBlockHarvested(world, pos, state, player);
-            if (block.removedByPlayer(state, world, pos, player, false)) {
-                block.onBlockDestroyedByPlayer(world, pos, state);
-            }
-            if (!world.isRemote) {
-                ((EntityPlayerMP)player).connection.sendPacket(new SPacketBlockChange(world, pos));
-            }
-            return;
-        }
-        stack.onBlockDestroyed(world, state, pos, player);
-
-        if (!world.isRemote) { // server sided handling
-            int xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) player).interactionManager.getGameType(), (EntityPlayerMP) player, pos);
-            if (xp == -1) return;//event cancelled
-
-
-            // serverside we reproduce ItemInWorldManager.tryHarvestBlock
-
-            // ItemInWorldManager.removeBlock
-            block.onBlockHarvested(world, pos, state, player);
-
-            if (block.removedByPlayer(state, world, pos, player, true)){
-                block.onBlockDestroyedByPlayer(world, pos, state);
-                block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
-                block.dropXpOnBlockBreak(world, pos, xp);
-            }
-
-            EntityPlayerMP mpPlayer = (EntityPlayerMP) player;
-            mpPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
-        } else { // client sided handling
-            // PlayerControllerMP.onPlayerDestroyBlock
-            world.playBroadcastSound(2001, pos, Block.getStateId(state));
-            if (block.removedByPlayer(state, world, pos, player, true)) {
-                block.onBlockDestroyedByPlayer(world, pos, state);
-            }
-            stack.onBlockDestroyed(world, state, pos, player);
-
-            GregTech.PROXY.sendDiggingPacket(pos);
-        }
-    }
+//    public static void breakBlock(ItemStack stack, World world, BlockState state, BlockPos pos, PlayerEntity player) {
+//        Block block = state.getBlock();
+//        if (player.abilities.isCreativeMode) {
+//            block.onBlockHarvested(world, pos, state, player);
+//            if (block.removedByPlayer(state, world, pos, player, false)) {
+//                block.onBlockDestroyedByPlayer(world, pos, state);
+//            }
+//            if (!world.isRemote) {
+//                ((EntityPlayerMP)player).connection.sendPacket(new SPacketBlockChange(world, pos));
+//            }
+//            return;
+//        }
+//        stack.onBlockDestroyed(world, state, pos, player);
+//
+//        if (!world.isRemote) { // server sided handling
+//            int xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) player).interactionManager.getGameType(), (EntityPlayerMP) player, pos);
+//            if (xp == -1) return;//event cancelled
+//
+//
+//            // serverside we reproduce ItemInWorldManager.tryHarvestBlock
+//
+//            // ItemInWorldManager.removeBlock
+//            block.onBlockHarvested(world, pos, state, player);
+//
+//            if (block.removedByPlayer(state, world, pos, player, true)){
+//                block.onBlockDestroyedByPlayer(world, pos, state);
+//                block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
+//                block.dropXpOnBlockBreak(world, pos, xp);
+//            }
+//
+//            EntityPlayerMP mpPlayer = (EntityPlayerMP) player;
+//            mpPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
+//        } else { // client sided handling
+//            // PlayerControllerMP.onPlayerDestroyBlock
+//            world.playBroadcastSound(2001, pos, Block.getStateId(state));
+//            if (block.removedByPlayer(state, world, pos, player, true)) {
+//                block.onBlockDestroyedByPlayer(world, pos, state);
+//            }
+//            stack.onBlockDestroyed(world, state, pos, player);
+//
+//            GregTech.PROXY.sendDiggingPacket(pos);
+//        }
+//    }
     
-    public static EnumDyeColor determineColour(int rgb) {
+    public static DyeColor determineColour(int rgb) {
         Color colour = new Color(rgb);
-        Map<Double, EnumDyeColor> distances = new HashMap<>();
-        for (EnumDyeColor dyeColour : EnumDyeColor.values()) {
-            int colorValue = ReflectionHelper.getPrivateValue(EnumDyeColor.class, dyeColour, "colorValue", "field_193351_w");
+        Map<Double, DyeColor> distances = new HashMap<>();
+        for (DyeColor dyeColour : DyeColor.values()) {
+            int colorValue = ObfuscationReflectionHelper.getPrivateValue(DyeColor.class, dyeColour, "colorValue");
             Color enumColour = new Color(colorValue);
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
                 + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
@@ -533,15 +530,6 @@ public class Utils {
             }
         }
         return original;
-    }
-
-    public static boolean isModLoaded(String modid) {
-        if (MOD_LOADED_CACHE.containsKey(modid)) {
-            return MOD_LOADED_CACHE.get(modid);
-        }
-        boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
-        MOD_LOADED_CACHE.put(modid, isLoaded);
-        return isLoaded;
     }
 
     public static void onInvalidData(String msg) {

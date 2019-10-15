@@ -2,7 +2,7 @@ package muramasa.gtu.api.structure;
 
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.int3;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 public class BlockStateElement extends StructureElement {
 
@@ -19,7 +19,7 @@ public class BlockStateElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
-        IBlockState state = machine.getWorld().getBlockState(pos.asBP());
+        BlockState state = machine.getWorld().getBlockState(pos.asBP());
         if (predicate.evaluate(machine.getWorld(), pos.asBP(), state)) {
             result.addState(elementId, pos.asBP(), state);
             return true;

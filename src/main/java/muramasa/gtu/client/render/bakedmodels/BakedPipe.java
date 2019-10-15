@@ -1,32 +1,35 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.api.blocks.pipe.BlockPipe;
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.machines.Tier;
-import muramasa.gtu.api.properties.GTProperties;
-import muramasa.gtu.api.texture.TextureData;
+import muramasa.gtu.api.GregTechProperties;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
-import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.util.Direction.*;
 
-public class BakedPipe implements IBakedModel {
+public class BakedPipe implements IDynamicBakedModel {
 
     protected static TextureAtlasSprite PARTICLE = Textures.PIPE.getSprite();
 
@@ -121,13 +124,24 @@ public class BakedPipe implements IBakedModel {
         CONFIG[63] = new int[]{9};
     }
 
+    @Nonnull
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        IExtendedBlockState exState = (IExtendedBlockState) state;
-        int size = state.getValue(((BlockPipe) state.getBlock()).getSizeProp()).ordinal();
-        int connections = exState.getValue(GTProperties.PIPE_CONNECTIONS);
-        TextureData data = exState.getValue(GTProperties.TEXTURE);
-        Cover[] covers = exState.getValue(GTProperties.COVER);
+    public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+//        TileEntity tile = Utils.getTile(world, pos);
+//        if (tile instanceof TileEntityPipe) {
+//            data.setData(GTProperties.PIPE_CONNECTIONS, );
+//        }
+        return data;
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+        if (!(data.hasProperty(GregTechProperties.PIPE_SIZE) || data.hasProperty(GregTechProperties.PIPE_CONNECTIONS))) return Collections.emptyList();
+
+        int size = data.getData(GregTechProperties.PIPE_SIZE).ordinal();
+        int connections = data.getData(GregTechProperties.PIPE_CONNECTIONS);
+        //TextureData data = exState.getValue(GTProperties.TEXTURE);
+        //Cover[] covers = exState.getValue(GTProperties.COVER);
 
         //List<BakedQuad> quads = CACHE.get((size * 100) + connections);
         List<BakedQuad> quads = null;
@@ -136,26 +150,27 @@ public class BakedPipe implements IBakedModel {
             quads = new ArrayList<>(BAKED[size][config[0]].getQuads(state, side, rand));
             if (connections > 63) quads = ModelUtils.remove(quads, QuadLayer.OVERLAY);
             if (config.length > 1) quads = ModelUtils.trans(quads, 1, config);
-            ModelUtils.tex(quads, QuadLayer.BASE, QuadLayer.OVERLAY, data.getBase(0));
-            ModelUtils.tex(quads, QuadLayer.EXTRA, data.getOverlay(size));
+            //ModelUtils.tex(quads, QuadLayer.BASE, QuadLayer.OVERLAY, data.getBase(0));
+            //ModelUtils.tex(quads, QuadLayer.EXTRA, data.getOverlay(size));
 
-            if (covers != null) {
-                for (int s = 0; s < 6; s++) {
-                    if (!covers[s].isEmpty()) {
-                        //TODO get Tier from cover instance when all covers have a tier member
-                        quads.addAll(covers[s].onRender(this, ModelUtils.tex(getCovers(covers[s], s, state), QuadLayer.COVER_BASE, Tier.LV.getBaseTexture()), s));
-                    }
-                }
-            }
+//            if (covers != null) {
+//                for (int s = 0; s < 6; s++) {
+//                    if (!covers[s].isEmpty()) {
+//                        //TODO get Tier from cover instance when all covers have a tier member
+//                        quads.addAll(covers[s].onRender(this, ModelUtils.tex(getCovers(covers[s], s, state), QuadLayer.COVER_BASE, Tier.LV.getBaseTexture()), s));
+//                    }
+//                }
+//            }
         }
         //CACHE.put((size * 100) + connections, quads);
         return quads;
     }
 
-    public List<BakedQuad> getCovers(Cover cover, int s, IBlockState state) {
-        List<BakedQuad> quads = ModelUtils.trans(BakedMachine.COVERS.get(cover.getId()).getQuads(state, null, -1), s);
-        quads.addAll(PIPE_EXTRA[s].getQuads(state, null, -1));
-        return quads;
+    public List<BakedQuad> getCovers(Cover cover, int s, BlockState state) {
+//        List<BakedQuad> quads = ModelUtils.trans(BakedMachine.COVERS.get(cover.getId()).getQuads(state, null, -1), s);
+//        quads.addAll(PIPE_EXTRA[s].getQuads(state, null, -1));
+//        return quads;
+        return Collections.emptyList();
     }
 
     @Override
@@ -185,6 +200,6 @@ public class BakedPipe implements IBakedModel {
 
     @Override
     public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
+        return ItemOverrideList.EMPTY;
     }
 }

@@ -6,13 +6,13 @@ import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 public class HatchComponentHandler extends ComponentHandler {
 
     public HatchComponentHandler(TileEntityHatch componentTile) {
-        super(componentTile.getType().getId(), componentTile);
+        super(componentTile.getMachineType().getId(), componentTile);
     }
 
     @Override
     public void onStructureFormed(TileEntityMultiMachine controllerTile) {
         super.onStructureFormed(controllerTile);
-        ((TileEntityHatch) getTile()).setTextureOverride((controllerTile.getTypeId() * 1000) + controllerTile.getTierId());
+        ((TileEntityHatch) getTile()).setTextureOverride((controllerTile.getMachineTypeId() * 1000) + controllerTile.getTierId());
         getTile().markForRenderUpdate();
     }
 

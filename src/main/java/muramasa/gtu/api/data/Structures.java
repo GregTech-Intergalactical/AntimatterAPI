@@ -6,7 +6,7 @@ import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.structure.BlockStateElement;
 import muramasa.gtu.api.structure.StructureBuilder;
 import muramasa.gtu.api.structure.StructureElement;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 
 import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.common.Data.*;
@@ -15,10 +15,10 @@ public class Structures {
 
     /** Global Elements **/
     public static StructureElement X = new StructureElement("x").exclude(); //Used to skip positions for non-cubic structures
-    public static BlockStateElement AIR = new BlockStateElement("air", (w, p, s) -> s.getBlock().isAir(s, w, p)); //Air check
+    public static BlockStateElement AIR = new BlockStateElement("air", (r, p, s) -> s.isAir(r, p)); //Air check
 
     /** Special Case Elements **/
-    public static BlockStateElement AIR_OR_LAVA = new BlockStateElement("air_or_lava", (w, p, s) -> s.getBlock().isAir(s, w, p) || s.getBlock() == Blocks.LAVA || s.getBlock() == Blocks.FLOWING_LAVA);
+    public static BlockStateElement AIR_OR_LAVA = new BlockStateElement("air_or_lava", (w, p, s) -> s.getBlock().isAir(s, w, p) || s.getBlock() == Blocks.LAVA/* || s.getBlock() == Blocks.FLOWING_LAVA*/);
 
     public static void init() {
         StructureBuilder.addGlobalElement("A", AIR);

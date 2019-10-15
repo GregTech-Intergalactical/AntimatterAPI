@@ -8,6 +8,6 @@ public enum RegistrationEvent {
     MATERIAL,
     DATA,
     WORLDGEN,
-    DATA_FINAL,
+    DATA_READY,
     RECIPE
 }

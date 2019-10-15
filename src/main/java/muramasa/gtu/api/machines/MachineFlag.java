@@ -1,6 +1,5 @@
 package muramasa.gtu.api.machines;
 
-import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.machines.types.Machine;
 
 import java.util.*;
@@ -39,7 +38,7 @@ public enum MachineFlag {
         ArrayList<MachineStack> stacks = new ArrayList<>();
         for (Machine machine : types) {
             for (Tier tier : machine.getTiers()) {
-                stacks.add(Machines.get(machine, tier));
+                stacks.add(new MachineStack(machine, tier));
             }
         }
         return stacks;

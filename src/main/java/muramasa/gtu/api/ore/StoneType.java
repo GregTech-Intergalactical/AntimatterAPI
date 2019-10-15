@@ -7,48 +7,40 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.texture.Texture;
-import muramasa.gtu.api.util.Utils;
-import net.minecraft.block.BlockSand;
-import net.minecraft.block.BlockStone;
-import net.minecraft.block.BlockStone.EnumType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.Tuple;
+import net.minecraftforge.fml.ModList;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import exterminatorjeff.undergroundbiomes.config.UBConfig;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 public class StoneType implements IGregTechObject {
 
     private static List<StoneType> stoneGenerating = new LinkedList<>();
     
-    public final static IBlockState AIR = Blocks.AIR.getDefaultState();
-    private static IBlockState STONE_STATE = Blocks.STONE.getDefaultState();
-    private static IBlockState SAND_STATE = Blocks.SAND.getDefaultState();
+    public final static BlockState AIR = Blocks.AIR.getDefaultState();
+    private static BlockState STONE_STATE = Blocks.STONE.getDefaultState();
+    private static BlockState SAND_STATE = Blocks.SAND.getDefaultState();
     
     private static SoundType STONE_SOUND = SoundType.STONE;
     private static SoundType SAND_SOUND = SoundType.SAND;
     
-    private static boolean IS_UB_LOADED = Utils.isModLoaded(Ref.MOD_UB);
+    private static boolean IS_UB_LOADED = ModList.get().isLoaded(Ref.MOD_UB);
 
     //STONE should be the only non-removable StoneType. It serves as the foundation. It is also used natively by BlockRock
     public static final StoneType STONE = new StoneType("stone", Materials.Stone, STONE_STATE, true, new Texture("minecraft", "blocks/stone"));
 
     //TODO evaluate if needed. These are considered "stone" and are replace by ores anyway.
     //TODO Might need Red Sandstone in here to stay in-line with red sand/sandstone
-    public static StoneType GRANITE = new StoneType("granite", Materials.Stone, STONE_STATE.withProperty(BlockStone.VARIANT, EnumType.GRANITE), Configs.WORLD.DISABLE_VANILLA_STONE_GEN ? Ref.debugStones : true, new Texture("minecraft", "blocks/stone_granite"));
-    public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, STONE_STATE.withProperty(BlockStone.VARIANT, EnumType.DIORITE), Configs.WORLD.DISABLE_VANILLA_STONE_GEN ? Ref.debugStones : true, new Texture("minecraft", "blocks/stone_diorite"));
-    public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, STONE_STATE.withProperty(BlockStone.VARIANT, EnumType.ANDESITE), Configs.WORLD.DISABLE_VANILLA_STONE_GEN ? Ref.debugStones : true, new Texture("minecraft", "blocks/stone_andesite"));
+    public static StoneType GRANITE = new StoneType("granite", Materials.Stone, Blocks.GRANITE.getDefaultState(), !Configs.WORLD.DISABLE_VANILLA_STONE_GEN || Ref.debugStones, new Texture("minecraft", "blocks/stone_granite"));
+    public static StoneType DIORITE = new StoneType("diorite", Materials.Stone, Blocks.DIORITE.getDefaultState(), !Configs.WORLD.DISABLE_VANILLA_STONE_GEN || Ref.debugStones, new Texture("minecraft", "blocks/stone_diorite"));
+    public static StoneType ANDESITE = new StoneType("andesite", Materials.Stone, Blocks.ANDESITE.getDefaultState(), !Configs.WORLD.DISABLE_VANILLA_STONE_GEN || Ref.debugStones, new Texture("minecraft", "blocks/stone_andesite"));
 
     public static StoneType SAND = new StoneType("sand", "sand", Materials.SiliconDioxide, SAND_STATE, new Texture("minecraft", "blocks/sand"), SAND_SOUND, true);
-    public static StoneType SAND_RED = new StoneType("sand_red", "sand", Materials.SiliconDioxide, SAND_STATE.withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), new Texture("minecraft", "blocks/red_sand"), SAND_SOUND, true);
+    public static StoneType SAND_RED = new StoneType("sand_red", "sand", Materials.SiliconDioxide, Blocks.RED_SAND.getDefaultState(), new Texture("minecraft", "blocks/red_sand"), SAND_SOUND, true);
     public static StoneType SANDSTONE = new StoneType("sandstone", "sandstone", Materials.SiliconDioxide, Blocks.SANDSTONE.getDefaultState(), new Texture("minecraft", "blocks/sandstone_normal"), STONE_SOUND, false);
     
     public static StoneType NETHERRACK = new StoneType("netherrack", "nether", Materials.Netherrack, Blocks.NETHERRACK.getDefaultState(), new Texture("minecraft", "blocks/netherrack"));
@@ -65,9 +57,9 @@ public class StoneType implements IGregTechObject {
     private Material material;
     private Texture texture;
     private SoundType soundType;
-    private IBlockState baseState;
+    private BlockState baseState;
     
-    public StoneType(String id, String oreId, Material material, IBlockState baseState, boolean generate, boolean generateStone, Texture texture, SoundType soundType, int harvestLevel, boolean gravity) {
+    public StoneType(String id, String oreId, Material material, BlockState baseState, boolean generate, boolean generateStone, Texture texture, SoundType soundType, int harvestLevel, boolean gravity) {
         this.id = id;
         this.oreId = oreId;
         this.material = material;
@@ -85,20 +77,20 @@ public class StoneType implements IGregTechObject {
         this(id, oreId, material, AIR, true, generateStone, texture, soundType, harvestLevel, false);
     }
     
-    public StoneType(String id, String oreId, Material material, IBlockState baseState, Texture texture, SoundType soundType, boolean gravity) {
+    public StoneType(String id, String oreId, Material material, BlockState baseState, Texture texture, SoundType soundType, boolean gravity) {
         this(id, oreId, material, baseState, true, false, texture, soundType, 0, gravity);
     } 
     
-    public StoneType(String id, Material material, IBlockState baseState, boolean generate, Texture texture) {
+    public StoneType(String id, Material material, BlockState baseState, boolean generate, Texture texture) {
         this(id, "", material, baseState, generate, false, texture, STONE_SOUND, 0, false);
     }
     
-    public StoneType(String id, String oreId, Material material, IBlockState baseState, Texture texture) {
+    public StoneType(String id, String oreId, Material material, BlockState baseState, Texture texture) {
         this(id, oreId, material, baseState, texture, STONE_SOUND, false);
     }
 
     //For registrar uses
-    public StoneType(String id, String oreId, String mod, Material material, IBlockState baseState, Texture texture, SoundType soundType, int harvestLevel, boolean gravity) {
+    public StoneType(String id, String oreId, String mod, Material material, BlockState baseState, Texture texture, SoundType soundType, int harvestLevel, boolean gravity) {
         this(id, oreId, material, baseState, true, false, texture, soundType, harvestLevel, gravity);
         this.mod = mod;
     }
@@ -124,7 +116,7 @@ public class StoneType implements IGregTechObject {
         return material;
     }
     
-    public IBlockState getBaseState() {
+    public BlockState getBaseState() {
         return baseState;
     }
     
@@ -148,7 +140,7 @@ public class StoneType implements IGregTechObject {
         return gravity;
     }
     
-    public void setBaseState(IBlockState baseState) {
+    public void setBaseState(BlockState baseState) {
         this.baseState = baseState;
     }
     

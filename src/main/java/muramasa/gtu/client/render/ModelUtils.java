@@ -9,28 +9,21 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureMode;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.client.render.bakedmodels.BakedBase;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.state.IProperty;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.client.model.pipeline.VertexTransformer;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 import java.util.*;
 import java.util.function.Function;
 
@@ -55,19 +48,19 @@ public class ModelUtils {
     };
 
     static {
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 0, 0, 0, 1f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.5f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 3, 1, 0, 0, 0, 0.55f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0f, 4.0f, 0.5f, 0, 90, -55, 0.85f).getMatrix());
-
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 30, 225, 0, 0.625f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.25f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 45, 0, 0.4f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 0, 0, 0.4f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
+//        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 0, 0, 0, 1f).getMatrix());
+//        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.5f).getMatrix());
+//        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f).getMatrix());
+//        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 3, 1, 0, 0, 0, 0.55f).getMatrix());
+//        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f).getMatrix());
+//        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0f, 4.0f, 0.5f, 0, 90, -55, 0.85f).getMatrix());
+//
+//        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 30, 225, 0, 0.625f).getMatrix());
+//        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.25f).getMatrix());
+//        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 45, 0, 0.4f).getMatrix());
+//        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 0, 0, 0.4f).getMatrix());
+//        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
+//        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
     }
 
     public static void buildDefaultModels() {
@@ -79,28 +72,30 @@ public class ModelUtils {
         MODEL_BASIC_FULL = load("templates/basic_full");
         MODEL_LAYERED_FULL = load("templates/layered_full");
         MODEL_COMPLEX = load("templates/complex");
-        BAKED_QUAD = MODEL_QUAD.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_BASIC_FULL = MODEL_BASIC_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_LAYERED_FULL = MODEL_LAYERED_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_COMPLEX = MODEL_COMPLEX.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
-        BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_QUAD = MODEL_QUAD.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_BASIC_FULL = MODEL_BASIC_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_LAYERED_FULL = MODEL_LAYERED_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_COMPLEX = MODEL_COMPLEX.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        //BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
     }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
-        if (TEXTURE_GETTER == null) TEXTURE_GETTER = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+        if (TEXTURE_GETTER == null) TEXTURE_GETTER = location -> Minecraft.getInstance().getTextureMap().getSprite(location);
         return TEXTURE_GETTER;
     }
 
     public static Matrix4f getItemTransform(ItemCameraTransforms.TransformType type) {
-        Matrix4f mat = TRANSFORM_MAP_ITEM.get(type);
-        return mat != null ? mat : TRSRTransformation.identity().getMatrix();
+//        Matrix4f mat = TRANSFORM_MAP_ITEM.get(type);
+//        return mat != null ? mat : TRSRTransformation.identity().getMatrix();
+        return null;
     }
 
     public static Matrix4f getBlockTransform(ItemCameraTransforms.TransformType type) {
-        Matrix4f mat = TRANSFORM_MAP_BLOCK.get(type);
-        return mat != null ? mat : TRSRTransformation.identity().getMatrix();
+//        Matrix4f mat = TRANSFORM_MAP_BLOCK.get(type);
+//        return mat != null ? mat : TRSRTransformation.identity().getMatrix();
+        return null;
     }
 
     public static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az, float s) {
@@ -114,18 +109,14 @@ public class ModelUtils {
         return mat;
     }
 
-    public static boolean hasProperty(IBlockState state, IProperty property) {
-        return state.getPropertyKeys().contains(property);
-    }
-
-    public static boolean hasUnlistedProperty(IExtendedBlockState exState, IUnlistedProperty property) {
-        return exState.getUnlistedNames().contains(property);
+    public static boolean hasProperty(BlockState state, IProperty property) {
+        return state.getProperties().contains(property);
     }
 
     //Broken
     public static IBakedModel getBaked(IBakedModel baked, List<BakedQuad> quads) {
-        Map faceQuads = Maps.newEnumMap(EnumFacing.class);
-        for (EnumFacing s : EnumFacing.values()) {
+        Map faceQuads = Maps.newEnumMap(Direction.class);
+        for (Direction s : Direction.values()) {
             faceQuads.put(s, Lists.newArrayList());
         }
         return new BakedBase(new SimpleBakedModel(quads, faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides()));
@@ -178,27 +169,28 @@ public class ModelUtils {
         }
     }
 
-    public static IBakedModel bake(IModel model, EnumFacing... rotations) {
-        TRSRTransformation transformation = TRSRTransformation.identity();
-        for (int i = 0; i < rotations.length; i++) {
-            transformation = transformation.compose(TRSRTransformation.from(rotations[i]));
-        }
-        return model.bake(transformation, DefaultVertexFormats.BLOCK, getTextureGetter());
+    public static IBakedModel bake(IModel model, Direction... rotations) {
+//        TRSRTransformation transformation = TRSRTransformation.identity();
+//        for (int i = 0; i < rotations.length; i++) {
+//            transformation = transformation.compose(TRSRTransformation.from(rotations[i]));
+//        }
+//        return model.bake(transformation, DefaultVertexFormats.BLOCK, getTextureGetter());
+        return null;
     }
 
-    public static IBakedModel bake(IModel model, Texture particle, EnumFacing... rotations) {
+    public static IBakedModel bake(IModel model, Texture particle, Direction... rotations) {
         return new BakedBase(bake(model, rotations), particle);
     }
 
-    public static IBakedModel texBake(IModel model, Texture loc, EnumFacing... rotations) {
+    public static IBakedModel texBake(IModel model, Texture loc, Direction... rotations) {
         return texBake(model, "0", loc, rotations);
     }
 
-    public static IBakedModel texBake(IModel model, String element, Texture loc, EnumFacing... rotations) {
+    public static IBakedModel texBake(IModel model, String element, Texture loc, Direction... rotations) {
         return texBake(model, new String[]{element}, new Texture[]{loc}, rotations);
     }
 
-    public static IBakedModel texBake(IModel model, Texture[] locs, EnumFacing... rotations) {
+    public static IBakedModel texBake(IModel model, Texture[] locs, Direction... rotations) {
         String[] elements = new String[locs.length];
         for (int i = 0; i < locs.length; i++) {
             elements[i] = "" + i;
@@ -206,21 +198,21 @@ public class ModelUtils {
         return texBake(model, elements, locs, rotations);
     }
 
-    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs, EnumFacing... rotations) {
+    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs, Direction... rotations) {
         return bake(tex(model, elements, locs), locs.length >= 1 ? locs[0] : Textures.ERROR, rotations);
     }
     
-    public static IBakedModel bakeQuad(Texture texture, EnumFacing... rotations) {
+    public static IBakedModel bakeQuad(Texture texture, Direction... rotations) {
         return bake(tex(MODEL_QUAD, texture), rotations);
     }
 
     public static IBakedModel bakeQuad(Texture texture, int... rotations) {
-        return bake(tex(MODEL_QUAD, texture), Arrays.stream(rotations).mapToObj(i -> EnumFacing.VALUES[i]).toArray(EnumFacing[]::new));
+        return bake(tex(MODEL_QUAD, texture), Arrays.stream(rotations).mapToObj(i -> Ref.DIRECTIONS[i]).toArray(Direction[]::new));
     }
 
     /** Baked Model Helpers **/
     public static List<BakedQuad> trans(List<BakedQuad> quads, int rotation) {
-        return trans(quads, FACING_TO_MATRIX[rotation], EnumFacing.VALUES[rotation]);
+        return trans(quads, FACING_TO_MATRIX[rotation], Ref.DIRECTIONS[rotation]);
     }
 
     public static List<BakedQuad> trans(List<BakedQuad> quads, int offset, int... rotations) {
@@ -228,11 +220,11 @@ public class ModelUtils {
         for (int i = offset + 1; i < rotations.length; i++) {
             mat.mul(new Matrix4f(FACING_TO_MATRIX[rotations[i]]));
         }
-        return trans(quads, mat, EnumFacing.VALUES[rotations[rotations.length - 1]]);
+        return trans(quads, mat, Ref.DIRECTIONS[rotations[rotations.length - 1]]);
     }
 
     //Credit: From AE2
-    public static List<BakedQuad> trans(List<BakedQuad> quads, Matrix4f matrix, EnumFacing facing) {
+    public static List<BakedQuad> trans(List<BakedQuad> quads, Matrix4f matrix, Direction side) {
         List<BakedQuad> transformedQuads = new LinkedList<>();
         MatrixVertexTransformer transformer = new MatrixVertexTransformer(matrix);
         UnpackedBakedQuad.Builder builder;
@@ -241,7 +233,7 @@ public class ModelUtils {
             transformer.setParent(builder);
             transformer.setVertexFormat(builder.getVertexFormat());
             bakedQuad.pipe(transformer);
-            builder.setQuadOrientation(Utils.rotateFacing(bakedQuad.getFace(), facing));
+            builder.setQuadOrientation(Utils.rotateFacing(bakedQuad.getFace(), side));
             builder.setTexture(bakedQuad.getSprite() != null ? bakedQuad.getSprite() : ModelUtils.BAKED_MISSING.getParticleTexture());
             BakedQuad q = builder.build();
             transformedQuads.add(q);
@@ -250,56 +242,57 @@ public class ModelUtils {
     }
 
 
-    public static List<BakedQuad> transform(List<BakedQuad> quads, final EnumFacing rotation) {
-        List<BakedQuad> result = new ArrayList<>();
-
-        for (BakedQuad quad : quads) {
-            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
-            final IVertexConsumer consumer = new VertexTransformer(builder) {
-                @Override
-                public void put(int element, float... data) {
-                    VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
-                    switch (formatElement.getUsage()) {
-                        case POSITION: {
-                            float[] newData = new float[4];
-                            Vector4f vec = new Vector4f(data);
-                            TRSRTransformation.from(rotation).getMatrix().transform(vec);
-                            switch (rotation) {
-                                case UP:
-                                    vec.add(new Vector4f(0, 1, 0, 0));
-                                    break;
-                                case DOWN:
-                                    vec.add(new Vector4f(0, 0, 1, 0));
-                                    break;
-                                case NORTH:
-                                    vec.add(new Vector4f(0, 0, 0, 0));
-                                    break;
-                                case EAST:
-                                    vec.add(new Vector4f(1, 0, 0, 0));
-                                    break;
-                                case SOUTH:
-                                    vec.add(new Vector4f(1, 0, 1, 0));
-                                    break;
-                                case WEST:
-                                    vec.add(new Vector4f(0, 0, 1, 0));
-                                    break;
-                            }
-                            vec.get(newData);
-                            parent.put(element, newData);
-                            break;
-                        }
-                        default: {
-                            parent.put(element, data);
-                            break;
-                        }
-                    }
-                }
-            };
-
-            quad.pipe(consumer);
-            result.add(builder.build());
-        }
-        return result;
+    public static List<BakedQuad> transform(List<BakedQuad> quads, final Direction rotation) {
+        return quads;
+//        List<BakedQuad> result = new ArrayList<>();
+//
+//        for (BakedQuad quad : quads) {
+//            UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(DefaultVertexFormats.ITEM);
+//            final IVertexConsumer consumer = new VertexTransformer(builder) {
+//                @Override
+//                public void put(int element, float... data) {
+//                    VertexFormatElement formatElement = DefaultVertexFormats.ITEM.getElement(element);
+//                    switch (formatElement.getUsage()) {
+//                        case POSITION: {
+//                            float[] newData = new float[4];
+//                            Vector4f vec = new Vector4f(data);
+//                            TRSRTransformation.from(rotation).getMatrix().transform(vec);
+//                            switch (rotation) {
+//                                case UP:
+//                                    vec.add(new Vector4f(0, 1, 0, 0));
+//                                    break;
+//                                case DOWN:
+//                                    vec.add(new Vector4f(0, 0, 1, 0));
+//                                    break;
+//                                case NORTH:
+//                                    vec.add(new Vector4f(0, 0, 0, 0));
+//                                    break;
+//                                case EAST:
+//                                    vec.add(new Vector4f(1, 0, 0, 0));
+//                                    break;
+//                                case SOUTH:
+//                                    vec.add(new Vector4f(1, 0, 1, 0));
+//                                    break;
+//                                case WEST:
+//                                    vec.add(new Vector4f(0, 0, 1, 0));
+//                                    break;
+//                            }
+//                            vec.get(newData);
+//                            parent.put(element, newData);
+//                            break;
+//                        }
+//                        default: {
+//                            parent.put(element, data);
+//                            break;
+//                        }
+//                    }
+//                }
+//            };
+//
+//            quad.pipe(consumer);
+//            result.add(builder.build());
+//        }
+//        return result;
     }
 
 

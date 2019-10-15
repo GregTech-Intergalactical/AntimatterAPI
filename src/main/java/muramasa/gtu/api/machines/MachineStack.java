@@ -29,6 +29,6 @@ public class MachineStack implements IGregTechObject {
 
     @Override
     public ItemStack asItemStack() {
-        return new ItemStack(type.getBlock(), 1, tier.getInternalId());
+        return new ItemStack(type.getBlock(tier), 1);
     }
 }

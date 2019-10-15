@@ -10,11 +10,12 @@ import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.structure.IComponent;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 import static muramasa.gtu.api.machines.MachineFlag.FLUID;
@@ -28,7 +29,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     public void onLoad() {
         super.onLoad();
         componentHandler = Optional.of(new HatchComponentHandler(this));
-        if (getType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000 * getTierId(), fluidData));
+        if (getMachineType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000 * getTierId(), fluidData));
     }
 
     @Override
@@ -67,28 +68,24 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
         this.textureOverride = textureOverride;
     }
 
+    @Nonnull
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing side) {
-        return capability == GTCapabilities.COMPONENT || super.hasCapability(capability, side);
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing side) {
-        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (cap == GTCapabilities.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
+        return super.getCapability(cap, side);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         //TODO should texture be saved? it should be re-overridden when re-linked to a controller?
-        super.readFromNBT(tag);
-        textureOverride = tag.hasKey(Ref.KEY_MACHINE_TILE_TEXTURE) ? tag.getInteger(Ref.KEY_MACHINE_TILE_TEXTURE) : -1;
+        super.read(tag);
+        textureOverride = tag.contains(Ref.KEY_MACHINE_TILE_TEXTURE) ? tag.getInt(Ref.KEY_MACHINE_TILE_TEXTURE) : -1;
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
-        if (textureOverride != -1) tag.setInteger(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
+        if (textureOverride != -1) tag.putInt(Ref.KEY_MACHINE_TILE_TEXTURE, textureOverride);
         return tag;
     }
 }

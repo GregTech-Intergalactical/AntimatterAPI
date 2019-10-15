@@ -1,28 +1,28 @@
 package muramasa.gtu.api.blocks;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.api.properties.UnlistedIntArray;
+import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechProperties;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.models.ModelDynamic;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.state.IProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.IRegistry;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.event.ModelBakeEvent;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public abstract class BlockDynamic extends BlockBaked {
-
-    public static UnlistedIntArray CONFIG = new UnlistedIntArray();
 
     private Int2ObjectOpenHashMap<Supplier<IBakedModel>> LOOKUP = new Int2ObjectOpenHashMap<>();
     private Int2ObjectOpenHashMap<IBakedModel> BAKED_LOOKUP = new Int2ObjectOpenHashMap<>();
@@ -30,30 +30,24 @@ public abstract class BlockDynamic extends BlockBaked {
 
     private boolean defaultModel;
 
-    public BlockDynamic(Material material, TextureData data) {
-        super(material, data);
+    public BlockDynamic(Block.Properties properties, TextureData data) {
+        super(properties, data);
     }
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer.Builder(this).add(CONFIG).build();
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add((IProperty<?>) GregTechProperties.DYNAMIC_CONFIG);
     }
 
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (BAKED_LOOKUP.size() == 0) return ((IExtendedBlockState) state).withProperty(CONFIG, new int[1]);
-        return ((IExtendedBlockState) state).withProperty(CONFIG, getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos));
-    }
-
-    public int[] getConfig(IBlockState state, IBlockAccess world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int[] ct = new int[1];
         for (int s = 0; s < 6; s++) {
-            if (canConnect(world, mut.setPos(pos.offset(EnumFacing.VALUES[s])))) ct[0] += 1 << s;
+            if (canConnect(world, mut.setPos(pos.offset(Ref.DIRECTIONS[s])))) ct[0] += 1 << s;
         }
         return ct;
     }
 
-    public boolean canConnect(IBlockAccess world, BlockPos pos) {
+    public boolean canConnect(IBlockReader world, BlockPos pos) {
         return world.getBlockState(pos).getBlock() == this;
     }
 
@@ -101,8 +95,8 @@ public abstract class BlockDynamic extends BlockBaked {
     }
 
     @Override
-    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
-        super.onModelBake(registry);
+    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
+        super.onModelBake(e, registry);
         LOOKUP.forEach((k, v) -> BAKED_LOOKUP.put((int) k, v.get()));
     }
 

@@ -1,5 +1,6 @@
 package muramasa.gtu.api.items;
 
+import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
@@ -9,29 +10,36 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.client.creativetab.GregTechTab;
-import muramasa.gtu.proxy.ClientProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCauldron;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.CauldronBlock;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.BasicState;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class MaterialItem extends Item implements IGregTechObject, IModelOverride, IColorHandler {
@@ -40,11 +48,10 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     private MaterialType type;
 
     public MaterialItem(MaterialType type, Material material) {
+        super(new Properties().group(Ref.TAB_MATERIALS));
         this.material = material;
         this.type = type;
-        setUnlocalizedName(getId());
         setRegistryName(getId());
-        setCreativeTab(Ref.TAB_MATERIALS);
         GregTechAPI.register(MaterialItem.class, this);
     }
 
@@ -62,42 +69,37 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab instanceof GregTechTab) {
-            if (((GregTechTab) tab).getName().equals("materials")) {
-                if (getType().isVisible()) {
-                    items.add(new ItemStack(this));
-                }
-            }
-        }
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        if (isInGroup(group) && getType().isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        MaterialItem item = (MaterialItem) stack.getItem();
-        return item.getType().getDisplayName(item.getMaterial());
+    public ITextComponent getDisplayName(ItemStack stack) {
+        return ((MaterialItem) stack.getItem()).getType().getDisplayName(((MaterialItem) stack.getItem()).getMaterial());
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        if (getMaterial().getChemicalFormula() != null) tooltip.add(TextFormatting.DARK_AQUA + getMaterial().getChemicalFormula());
-        if (type == MaterialType.ROCK) tooltip.add("Indicates occurrence of " + TextFormatting.YELLOW + material.getDisplayName());
+    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        if (getMaterial().getChemicalFormula() != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_AQUA + getMaterial().getChemicalFormula()));
+        if (type == MaterialType.ROCK) tooltip.add(new StringTextComponent("Indicates occurrence of " + TextFormatting.YELLOW + material.getDisplayName()));
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (type == MaterialType.DUST_IMPURE && world.getBlockState(pos).getBlock() instanceof BlockCauldron) {
-            int level = world.getBlockState(pos).getValue(BlockCauldron.LEVEL);
+    public ActionResultType onItemUse(ItemUseContext context) {
+        if (context.getPlayer() == null) return ActionResultType.PASS;
+        ItemStack stack = context.getPlayer().getHeldItem(context.getHand());
+        BlockState state = context.getWorld().getBlockState(context.getPos());
+        if (type == MaterialType.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
+            int level = state.get(CauldronBlock.LEVEL);
             if (level > 0) {
-                MaterialItem item = (MaterialItem) player.getHeldItem(hand).getItem();
-                player.setHeldItem(hand, get(MaterialType.DUST_IMPURE, item.getMaterial(), stack.getCount()));
-                world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockCauldron.LEVEL, --level));
-                SoundType.BUCKET_EMPTY.play(world, pos);
-                return EnumActionResult.SUCCESS;
+                MaterialItem item = (MaterialItem) stack.getItem();
+                context.getPlayer().setHeldItem(context.getHand(), get(MaterialType.DUST_IMPURE, item.getMaterial(), stack.getCount()));
+                context.getWorld().setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
+                SoundType.BUCKET_EMPTY.play(context.getWorld(), context.getPos());
+                return ActionResultType.SUCCESS;
             }
         }
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
     public static boolean hasType(ItemStack stack, MaterialType type) {
@@ -140,21 +142,16 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void getTextures(Set<ResourceLocation> textures) {
         textures.addAll(Arrays.asList(getMaterial().getSet().getTextures(getType())));
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onModelRegistration() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + type.getId() + "_" + material.getId(), "inventory"));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onModelBake(IRegistry<ModelResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory");
-        registry.putObject(loc, ClientProxy.TYPE_SET_MAP.get(getType().getId() + "_" + getMaterial().getSet().getId()));
+    @OnlyIn(Dist.CLIENT)
+    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
+        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "");
+        IModel model = new ItemLayerModel(ImmutableList.of(getMaterial().getSet().getTexture(getType(), 0), getMaterial().getSet().getTexture(getType(), 1)));
+        registry.put(loc, model.bake(e.getModelLoader(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM));
     }
 }

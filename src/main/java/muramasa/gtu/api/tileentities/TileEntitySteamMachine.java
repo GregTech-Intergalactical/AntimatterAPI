@@ -16,7 +16,7 @@ public class TileEntitySteamMachine extends TileEntityRecipeMachine {
 
     @Override
     public boolean consumeResourceForRecipe() {
-        STEAM[0].amount = (int) activeRecipe.getPower();
+        STEAM[0].setAmount((int) activeRecipe.getPower());
         if (Utils.doFluidsMatchAndSizeValid(STEAM, fluidHandler.get().getInputs())) {
             fluidHandler.get().consumeInputs(STEAM);
             return true;

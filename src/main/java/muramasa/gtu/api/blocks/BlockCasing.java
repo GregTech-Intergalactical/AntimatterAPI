@@ -1,11 +1,13 @@
 package muramasa.gtu.api.blocks;
 
-import muramasa.gtu.Ref;
+import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
@@ -14,16 +16,15 @@ public class BlockCasing extends BlockDynamic {
     private String type;
     private Texture[] textures;
 
-    public BlockCasing(String type) {
-        super(Material.IRON, new TextureData().base(new Texture("blocks/casing/" + type)));
+    public BlockCasing(String type, Block.Properties properties) {
+        super(properties, new TextureData().base(new Texture("blocks/casing/" + type)));
         this.type = type;
-        setUnlocalizedName(getId());
         setRegistryName(getId());
-        setHardness(1.0F);
-        setResistance(10.0F);
-        setCreativeTab(Ref.TAB_BLOCKS);
-        setSoundType(SoundType.METAL);
         register(BlockCasing.class, this);
+    }
+
+    public BlockCasing(String type) {
+        this(type, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
     }
 
     public BlockCasing(String type, Texture[] textures) {
@@ -42,8 +43,8 @@ public class BlockCasing extends BlockDynamic {
 
     @Nullable
     @Override
-    public String getHarvestTool(IBlockState state) {
-        return "wrench";
+    public ToolType getHarvestTool(BlockState state) {
+        return GregTechAPI.getWrenchToolType();
     }
 
     @Override

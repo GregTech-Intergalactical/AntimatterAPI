@@ -2,25 +2,13 @@ package muramasa.gtu.api.recipe;
 
 import com.google.common.collect.Lists;
 import muramasa.gtu.api.items.MaterialItem;
-import muramasa.gtu.api.tools.ToolType;
-import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.api.util.dummytypes.DummyRecipe;
+import muramasa.gtu.api.tools.GregTechToolType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class RecipeHelper {
 
@@ -29,14 +17,14 @@ public class RecipeHelper {
     public static boolean ALWAYS_USE_ORE_DICT = true;
 
     static {
-        REPLACEMENTS.put('d', ToolType.SCREWDRIVER.getOreDict());
-        REPLACEMENTS.put('f', ToolType.FILE.getOreDict());
-        REPLACEMENTS.put('h', ToolType.HAMMER.getOreDict());
-        REPLACEMENTS.put('k', ToolType.KNIFE.getOreDict());
-        REPLACEMENTS.put('m', ToolType.MORTAR.getOreDict());
-        REPLACEMENTS.put('s', ToolType.SAW.getOreDict());
-        REPLACEMENTS.put('w', ToolType.WRENCH.getOreDict());
-        REPLACEMENTS.put('x', ToolType.WIRE_CUTTER.getOreDict());
+        REPLACEMENTS.put('d', GregTechToolType.SCREWDRIVER.getOreDict());
+        REPLACEMENTS.put('f', GregTechToolType.FILE.getOreDict());
+        REPLACEMENTS.put('h', GregTechToolType.HAMMER.getOreDict());
+        REPLACEMENTS.put('k', GregTechToolType.KNIFE.getOreDict());
+        REPLACEMENTS.put('m', GregTechToolType.MORTAR.getOreDict());
+        REPLACEMENTS.put('s', GregTechToolType.SAW.getOreDict());
+        REPLACEMENTS.put('w', GregTechToolType.WRENCH.getOreDict());
+        REPLACEMENTS.put('x', GregTechToolType.WIRE_CUTTER.getOreDict());
     }
 
     /**
@@ -53,24 +41,26 @@ public class RecipeHelper {
      * </ul>
      */
     public static void addShaped(String path, ItemStack result, Object... data) {
-        if (result != null && !Utils.areItemsValid(result)) {
-            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
-            return;
-        }
-        IRecipe recipe = new ShapedOreRecipe(null, Unifier.get(result), parse(data, true)).setRegistryName(path);
-        ForgeRegistries.RECIPES.register(recipe);
+        //TODO
+//        if (result != null && !Utils.areItemsValid(result)) {
+//            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
+//            return;
+//        }
+//        IRecipe recipe = new ShapedOreRecipe(null, Unifier.get(result), parse(data, true)).setRegistryName(path);
+//        ForgeRegistries.RECIPES.register(recipe);
     }
 
     /**
      * @see RecipeHelper#addShaped(String, ItemStack, Object...) for char references
      */
     public static void addShapeless(String path, ItemStack result, Object... data) {
-        if (result != null && !Utils.areItemsValid(result)) {
-            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
-            return;
-        }
-        IRecipe recipe = new ShapelessOreRecipe(null, Unifier.get(result), parse(data, false)).setRegistryName(path);
-        ForgeRegistries.RECIPES.register(recipe);
+        //TODO
+//        if (result != null && !Utils.areItemsValid(result)) {
+//            Utils.onInvalidData("CRAFTING RECIPE ERROR: OUTPUT STACK INVALID!");
+//            return;
+//        }
+//        IRecipe recipe = new ShapelessOreRecipe(null, Unifier.get(result), parse(data, false)).setRegistryName(path);
+//        ForgeRegistries.RECIPES.register(recipe);
     }
     
     public static void removeRecipeByName(String location) {
@@ -78,10 +68,11 @@ public class RecipeHelper {
     }
     
     /**
-     * Providing removeRecipeByName only. As getting getRecipeOutput means looping through {@link ForgeRegistries#RECIPES} 
+     * Providing removeRecipeByName only. As getting getRecipeOutput means looping through
      */
     public static void removeRecipeByName(ResourceLocation location) {
-        ForgeRegistries.RECIPES.register(new DummyRecipe().setRegistryName(location));
+        //TODO
+//        ForgeRegistries.RECIPES.register(new DummyRecipe().setRegistryName(location));
     }
 
     public static Object[] parse(Object[] data, boolean shaped) {
@@ -103,8 +94,8 @@ public class RecipeHelper {
         //Format supported alternate entries into valid types
         int start = shaped ? 3 : 0;
         for (int i = start; i < dataList.size(); i++) {
-            if (dataList.get(i) instanceof ToolType) {
-                dataList.set(i, ((ToolType) dataList.get(i)).getOreDict());
+            if (dataList.get(i) instanceof GregTechToolType) {
+                dataList.set(i, ((GregTechToolType) dataList.get(i)).getOreDict());
             } else if (dataList.get(i) instanceof ItemStack) {
                 Item item = ((ItemStack) dataList.get(i)).getItem();
                 if (ALWAYS_USE_ORE_DICT && item instanceof MaterialItem) {
@@ -120,11 +111,12 @@ public class RecipeHelper {
     }
 
     public static void addSmelting(ItemStack input, ItemStack output, float xp) {
-        if (input != null && !Utils.areItemsValid(input)) {
-            Utils.onInvalidData("FURNACE RECIPE ERROR: INPUT STACK INVALID!");
-            return;
-        }
-        GameRegistry.addSmelting(input, Unifier.get(output), xp);
+        //TODO
+//        if (input != null && !Utils.areItemsValid(input)) {
+//            Utils.onInvalidData("FURNACE RECIPE ERROR: INPUT STACK INVALID!");
+//            return;
+//        }
+//        GameRegistry.addSmelting(input, Unifier.get(output), xp);
     }
 
     public static void addSmelting(ItemStack input, ItemStack output) {
@@ -132,26 +124,29 @@ public class RecipeHelper {
     }
     
     public static void removeSmelting(ItemStack output) {
-        ItemStack recipeResult;
-        Map<ItemStack,ItemStack> recipes = FurnaceRecipes.instance().getSmeltingList();
-        Iterator<ItemStack> iterator = recipes.keySet().iterator();
-        while(iterator.hasNext()) {
-            ItemStack tmpRecipe = iterator.next();
-            recipeResult = recipes.get(tmpRecipe);
-            if (ItemStack.areItemStacksEqual(output, recipeResult)) {
-                iterator.remove();
-            }
-        }
+        //TODO
+//        ItemStack recipeResult;
+//        Map<ItemStack,ItemStack> recipes = FurnaceRecipes.instance().getSmeltingList();
+//        Iterator<ItemStack> iterator = recipes.keySet().iterator();
+//        while(iterator.hasNext()) {
+//            ItemStack tmpRecipe = iterator.next();
+//            recipeResult = recipes.get(tmpRecipe);
+//            if (ItemStack.areItemStacksEqual(output, recipeResult)) {
+//                iterator.remove();
+//            }
+//        }
     }
 
     public static String[] getOres(ItemStack stack) {
-        if (stack.isEmpty()) return new String[0];
-        int[] ids = OreDictionary.getOreIDs(stack);
-        if (ids.length == 0) return new String[0];
-        String[] names = new String[ids.length];
-        for (int i = 0; i < ids.length; i++) {
-            names[i] = OreDictionary.getOreName(ids[i]);
-        }
-        return names;
+        //TODO
+//        if (stack.isEmpty()) return new String[0];
+//        int[] ids = OreDictionary.getOreIDs(stack);
+//        if (ids.length == 0) return new String[0];
+//        String[] names = new String[ids.length];
+//        for (int i = 0; i < ids.length; i++) {
+//            names[i] = OreDictionary.getOreName(ids[i]);
+//        }
+//        return names;
+        return new String[0];
     }
 }

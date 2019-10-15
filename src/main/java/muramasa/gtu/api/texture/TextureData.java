@@ -1,9 +1,10 @@
 package muramasa.gtu.api.texture;
 
+import muramasa.gtu.Ref;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class TextureData {
     }
 
     public List<BakedQuad> apply(IBakedModel bakedModel) {
-        return apply(bakedModel.getQuads(null, null, -1));
+        return apply(bakedModel.getQuads(null, null, Ref.RNG));
     }
 
     public List<BakedQuad> apply(List<BakedQuad> quads) {

@@ -1,6 +1,6 @@
 package muramasa.gtu.api.util;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 public enum Dir {
 
@@ -11,15 +11,15 @@ public enum Dir {
     FORWARD(),
     BACK();
 
-    public EnumFacing getRotatedFacing(EnumFacing facing) {
+    public Direction getRotatedFacing(Direction side) {
         switch (this) {
-            case UP: return EnumFacing.UP;
-            case DOWN: return EnumFacing.DOWN;
-            case LEFT: return facing.rotateYCCW();
-            case RIGHT: return facing.rotateY();
-            case FORWARD: return facing;
-            case BACK: return facing.getOpposite();
-            default: return facing;
+            case UP: return Direction.UP;
+            case DOWN: return Direction.DOWN;
+            case LEFT: return side.rotateYCCW();
+            case RIGHT: return side.rotateY();
+            case FORWARD: return side;
+            case BACK: return side.getOpposite();
+            default: return side;
         }
     }
 }

@@ -11,10 +11,9 @@ import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.common.Data;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -196,7 +195,7 @@ public class Material implements IGregTechObject {
 
     public boolean has(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (!t.getMats().contains(this)) return false;
+            if (!t.all().contains(this)) return false;
         }
         return true;
     }
@@ -465,6 +464,7 @@ public class Material implements IGregTechObject {
     }
 
     /** Helpful Stack Getters **/
+    //TODO replace with MaterialType instance method
     public ItemStack getCrushed(int amount) {
         return MaterialItem.get(CRUSHED, this, amount);
     }
@@ -578,15 +578,18 @@ public class Material implements IGregTechObject {
     }
 
     public ItemStack getCell(int amount) {
-    	return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
+    	//return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
+        return ItemStack.EMPTY;
     }
 
     public ItemStack getCellGas(int amount) {
-        return Utils.ca(amount, Data.CellTin.fill(getGas()));
+        //return Utils.ca(amount, Data.CellTin.fill(getGas()));
+        return ItemStack.EMPTY;
     }
 
     public ItemStack getCellPlasma(int amount) {
-        return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
+        //return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
+        return ItemStack.EMPTY;
     }
 
     public ItemStack getRock(int amount) {
@@ -595,7 +598,7 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return BlockOre.get(OreType.NORMAL, this, StoneType.STONE, amount);
+        return BlockOre.get(this, OreType.NORMAL, StoneType.STONE, amount);
     }
 
     public ItemStack getBlock(int amount) {

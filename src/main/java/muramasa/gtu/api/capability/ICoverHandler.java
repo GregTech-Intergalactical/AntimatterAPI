@@ -2,31 +2,31 @@ package muramasa.gtu.api.capability;
 
 import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.machines.MachineEvent;
-import muramasa.gtu.api.tools.ToolType;
-import net.minecraft.entity.player.EntityPlayer;
+import muramasa.gtu.api.tools.GregTechToolType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 
 public interface ICoverHandler {
 
     void update();
 
-    boolean set(EnumFacing side, Cover cover);
+    boolean set(Direction side, Cover cover);
 
-    Cover get(EnumFacing side);
+    Cover get(Direction side);
 
-    boolean onInteract(EntityPlayer player, EnumHand hand, EnumFacing side, ToolType type);
+    boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type);
 
     void onMachineEvent(MachineEvent event);
 
     Cover[] getAll();
 
-    boolean hasCover(EnumFacing side, Cover cover);
+    boolean hasCover(Direction side, Cover cover);
 
-    boolean isValid(EnumFacing side, Cover existing, Cover replacement);
+    boolean isValid(Direction side, Cover existing, Cover replacement);
 
-    EnumFacing getTileFacing();
+    Direction getTileFacing();
 
     TileEntity getTile();
 }
