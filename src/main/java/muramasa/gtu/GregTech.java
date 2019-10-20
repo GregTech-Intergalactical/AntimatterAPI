@@ -137,6 +137,6 @@ public class GregTech {
 //        GregTechAPI.all(Machine.class).forEach(m -> {
 //            if (m.hasFlag(MachineFlag.GUI)) e.getRegistry().register(m.getGui().buildContainerType());
 //        });
-        e.getRegistry().register(Guis.CONTAINER_MACHINE);
+        //e.getRegistry().register(Guis.CONTAINER_MACHINE); //TODO errors
     }
 }

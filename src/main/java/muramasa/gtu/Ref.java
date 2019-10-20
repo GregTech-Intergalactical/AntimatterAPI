@@ -45,7 +45,7 @@ public class Ref {
     /** Debug Options **/
     public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;
     public static boolean SHOW_STACK_ORE_DICT = true;
-    public static boolean DATA_EXCEPTIONS = true;
+    public static boolean DATA_EXCEPTIONS = false; //TODO re-enable
 
     /** Config Values **/
     public static boolean mixedOreYieldsTwoThirdsPureOre = false; //TODO 5U remnant, determine if needed

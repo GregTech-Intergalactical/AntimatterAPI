@@ -5,10 +5,13 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.texture.Texture;
+import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +32,7 @@ import java.util.Set;
 public class ClientHandler implements IProxyHandler {
 
     private static Minecraft MC = Minecraft.getInstance();
+    private static ModelBakery BAKERY;
 
 //    public static Object2ObjectOpenHashMap<String, IBakedModel> TYPE_SET_MAP = new Object2ObjectOpenHashMap<>();
 
@@ -102,6 +106,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
+        BAKERY = e.getModelLoader();
         ModelUtils.buildDefaultModels();
 //        IModel model;
 //        IBakedModel baked;
@@ -133,6 +138,10 @@ public class ClientHandler implements IProxyHandler {
         GregTechAPI.BLOCKS.forEach(b -> {
             if (b instanceof IModelOverride) ((IModelOverride) b).onModelBake(e, e.getModelRegistry());
         });
+
+        e.getModelRegistry().put(new ModelResourceLocation("gtu:basic_fire_brick"), new TextureData().base(new Texture("minecraft", "dirt")).bakeAsBlock());
+
+        System.out.println("bake done");
     }
 
     @Override
@@ -146,6 +155,11 @@ public class ClientHandler implements IProxyHandler {
     }
 
     @Override
+    public ModelBakery getModelBakery() {
+        return BAKERY;
+    }
+
+    @Override
     public void playSound(SoundType type) {
         MC.player.playSound(type.getEvent(), type.getVolume(), type.getPitch());
         //TODO GregTechNetwork.NETWORK.sendToAllAround(new SoundMessage(type.getInternalId()), new NetworkRegistry.TargetPoint(MC.world.provider.getDimension(), MC.player.posX, MC.player.posY, MC.player.posZ, Ref.TOOL_SOUND_RANGE));
@@ -154,10 +168,5 @@ public class ClientHandler implements IProxyHandler {
     @Override
     public void sendDiggingPacket(BlockPos pos) {
         //TODO MC.getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, pos, MC.objectMouseOver.sideHit));
-    }
-
-    @Override
-    public String trans(String unlocalized) {
-        return I18n.format(unlocalized);
     }
 }

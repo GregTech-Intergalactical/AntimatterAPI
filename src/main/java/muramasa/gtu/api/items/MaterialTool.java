@@ -28,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -74,7 +74,7 @@ public class MaterialTool extends SwordItem implements IGregTechObject, IModelOv
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         Material mat = getPrimary(stack);
-        return new StringTextComponent((mat != null ? "".concat(mat.getDisplayName()) : "") + type.getDisplayName());
+        return (mat != null ? new TranslationTextComponent("") : mat.getDisplayName()).appendText(" ").appendSibling(type.getDisplayName());
     }
 
     //TODO: Localization

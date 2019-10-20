@@ -14,6 +14,8 @@ import muramasa.gtu.api.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class Material implements IGregTechObject {
 
     /** Basic Members **/
     private String id;
+    private ITextComponent displayName;
     private int rgb;
     private TextureSet set;
 
@@ -241,8 +244,8 @@ public class Material implements IGregTechObject {
     }
 
     /** Basic Getters**/
-    public String getDisplayName() {
-        return Utils.trans("material." + getId() + ".name");
+    public ITextComponent getDisplayName() {
+        return displayName == null ? displayName = new TranslationTextComponent("material." + getId()) : displayName;
     }
 
     public int getRGB() {

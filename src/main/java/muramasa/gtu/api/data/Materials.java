@@ -397,7 +397,7 @@ public class Materials {
     public static Material Polycaprolactam = new Material("polycaprolactam", 0x323232, DULL).asSolid(500, 0).addTools(3.0F, 32, 1).add(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1);
     public static Material Polytetrafluoroethylene = new Material("polytetrafluoroethylene", 0x646464, DULL).asSolid(1400, 0, PLATE, FRAME).addTools(3.0F, 32, 1).add(Carbon, 2, Fluorine, 4);
     public static Material Rubber = new Material("rubber", 0x000000, SHINY).asSolid(295, 0, PLATE, RING).addTools(1.5F, 32, 0).add(Carbon, 5, Hydrogen, 8);
-    public static Material PolyphenyleneSulfide = new Material("polyphenyleneSulfide", 0xaa8800, DULL).asSolid(295, 0, PLATE, FOIL).addTools(3.0F, 32, 1).add(Carbon, 6, Hydrogen, 4, Sulfur, 1);
+    public static Material PolyphenyleneSulfide = new Material("polyphenylene_sulfide", 0xaa8800, DULL).asSolid(295, 0, PLATE, FOIL).addTools(3.0F, 32, 1).add(Carbon, 6, Hydrogen, 4, Sulfur, 1);
     public static Material Polystyrene = new Material("polystyrene", 0xbeb4aa, DULL).asSolid(295, 0).add(Carbon, 8, Hydrogen, 8);
     public static Material StyreneButadieneRubber = new Material("styrene_butadiene_rubber", 0x211a18, SHINY).asSolid(295, 0, PLATE, RING).addTools(3.0F, 128, 1).add(Styrene, 1, Butadiene, 3);
     public static Material PolyvinylChloride = new Material("polyvinyl_chloride", 0xd7e6e6, NONE).asSolid(295, 0, PLATE, FOIL).addTools(3.0F, 32, 1).add(Carbon, 2, Hydrogen, 3, Chlorine, 1);

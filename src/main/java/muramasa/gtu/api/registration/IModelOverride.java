@@ -21,6 +21,7 @@ public interface IModelOverride {
         //NOOP
     }
 
+    //TODO store the ModelBakery so the ModelBakeEvent does not need to be passed
     @OnlyIn(Dist.CLIENT)
     default void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
         //NOOP

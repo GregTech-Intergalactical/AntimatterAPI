@@ -23,19 +23,19 @@ public class RecipeBuilder {
     public Recipe add() {
         if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT ITEMS INVALID!");
-            return null;
+            return Utils.getEmptyRecipe();
         }
         if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
-            return null;
+            return Utils.getEmptyRecipe();
         }
         if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
-            return null;
+            return Utils.getEmptyRecipe();
         }
         if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
-            return null;
+            return Utils.getEmptyRecipe();
         }
 
         if (Configs.RECIPE.ENABLE_RECIPE_UNIFICATION && itemsOutput != null) {

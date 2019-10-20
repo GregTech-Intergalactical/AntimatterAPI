@@ -3,6 +3,7 @@ package muramasa.gtu.api.util;
 import com.google.common.base.CaseFormat;
 import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.recipe.Recipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
@@ -15,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -336,10 +336,6 @@ public class Utils {
         return rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() : result;
     }
 
-    public static String trans(String unlocalized) {
-        return GregTech.PROXY.trans(unlocalized);
-    }
-
     //TODO replace with doRaytrace in block?
     //TODO optimize...
     public static Direction getInteractSide(Direction side, float x, float y, float z) {
@@ -483,8 +479,7 @@ public class Utils {
         Color colour = new Color(rgb);
         Map<Double, DyeColor> distances = new HashMap<>();
         for (DyeColor dyeColour : DyeColor.values()) {
-            int colorValue = ObfuscationReflectionHelper.getPrivateValue(DyeColor.class, dyeColour, "colorValue");
-            Color enumColour = new Color(colorValue);
+            Color enumColour = new Color(dyeColour.getColorValue());
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
                 + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
                 + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
@@ -530,6 +525,10 @@ public class Utils {
             }
         }
         return original;
+    }
+
+    public static Recipe getEmptyRecipe() {
+        return new Recipe(new ItemStack[0], new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
     }
 
     public static void onInvalidData(String msg) {

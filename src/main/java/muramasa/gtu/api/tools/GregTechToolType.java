@@ -8,6 +8,8 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.SoundType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -20,32 +22,32 @@ import java.util.Set;
 //TODO maybe extend forge ToolType?
 public enum GregTechToolType {
 
-    SWORD("Sword", "", "craftingToolSword", null, Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
-    PICKAXE("Pickaxe" , "", "craftingToolPickaxe", null, Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),
-    SHOVEL("Shovel", "", "craftingToolShovel", null, Sets.newHashSet("shovel"), null, false, 0, 1.5f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
-    AXE("Axe", "", "craftingToolAxe", ToolAxe.class, Sets.newHashSet("axe"), null, false, 0, 3.0f, -3.0f, 2.0f, 1.0f, 50, 200, 100),
-    HOE("Hoe", "", "craftingToolHoe", null, Sets.newHashSet("hoe"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
-    SAW("Saw", "", "craftingToolSaw", null, Sets.newHashSet("saw"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 200),
-    HAMMER("Hammer", "", "craftingToolForgeHammer", null, Sets.newHashSet("hammer"), SoundType.HAMMER, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 200, 400),
-    WRENCH("Wrench", "", "craftingToolWrench", null, Sets.newHashSet("wrench"), SoundType.WRENCH, false, 0, 3.0f, -2.4f, 1.0f, 1.0f, 50, 200, 800),
-    FILE("File", "", "craftingToolFile", null, Sets.newHashSet("file"), null, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
-    SCREWDRIVER("Screwdriver", "Adjusts Covers and Machines", "craftingToolScrewdriver", null, Sets.newHashSet("screwdriver"), SoundType.WRENCH, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 200, 200, 400),
-    CROWBAR("Crowbar", "Removes Covers", "craftingToolCrowbar", null, Sets.newHashSet("crowbar"), SoundType.BREAK, false, 0, 2.0f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
-    MORTAR("Mortar", "Grinds Ingots into Dust", "craftingToolMortar", null, Sets.newHashSet("mortar"), null, false, 0, 2.0f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
-    WIRE_CUTTER("Wire Cutter", "", "craftingToolWireCutter", null, Sets.newHashSet("wire_cutter"), null, false, 0, 1.25f, -2.4f, 1.0f, 1.0f, 100, 200, 400),
-    SCOOP("Scoop", "Harvests Bees from Hives", "craftingToolScoop", null, Sets.newHashSet("scoop"), null, false, 0, 1.0f, -3.0f, 1.0f, 1.0f, 200, 200, 200), //TODO: Forestry
-    BRANCH_CUTTER("Branch Cutter", "", "craftingToolBranchCutter", null, Sets.newHashSet("branch_cutter"), null, false, 0, 2.5f, -3.0f, 0.25f, 0.25f, 100, 200, 800), //TODO: Merge functionality with axe?
-    UNIVERSAL_SPADE("Universal Spade", "", "craftingToolUniversalSpade", null, Sets.newHashSet("shovel"), null, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 100, 400), //TODO: Universal tool? Rename?
-    KNIFE("Knife", "", "craftingToolKnife", null, Sets.newHashSet("knife", "sword"), null, false, 0, 2.0f, -2.4f, 0.5f, 1.0f, 100, 200, 100),
-    SCYTHE("Scythe", "", "craftingToolScythe", null, Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800), //TODO: Sort of a dupe with BRANCH_CUTTER
-    PLUNGER("Plunger", "", "craftingToolPlunger", ToolPlunger.class, Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
-    DRILL("Electric Drill", "", "craftingToolDrill", null, Sets.newHashSet("drill", "pickaxe"), SoundType.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
-    CHAINSAW("Electric Chainsaw", "", "craftingToolChainsaw", ToolChainsaw.class, Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 6.0f, 4.0f, 800, 3200, 12800),
-    WRENCH_P("Electric Wrench", "", "craftingToolWrench", null, Sets.newHashSet("wrench"), SoundType.WRENCH, true, 1, 2.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
-    JACKHAMMER("Electric Jackhammer", "", "craftingToolJackhammer", ToolJackhammer.class, Sets.newHashSet("jackhammer", "pickaxe"), null, true, 1, 3.0f, -3.0f, 0.25f, 2.0f, 400, 800, 3200),
-    SCREWDRIVER_P("Electric Screwdriver", "", "craftingToolScrewdriver", null, Sets.newHashSet("screwdriver"), SoundType.WRENCH, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
-    BUZZSAW("Electric Buzzsaw", "", "craftingToolBuzzsaw", null, Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
-    TURBINE("Turbine Rotor", "", "craftingToolTurbine", null, Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
+    SWORD("", "craftingToolSword", null, Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
+    PICKAXE("", "craftingToolPickaxe", null, Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),
+    SHOVEL("", "craftingToolShovel", null, Sets.newHashSet("shovel"), null, false, 0, 1.5f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
+    AXE("", "craftingToolAxe", ToolAxe.class, Sets.newHashSet("axe"), null, false, 0, 3.0f, -3.0f, 2.0f, 1.0f, 50, 200, 100),
+    HOE("", "craftingToolHoe", null, Sets.newHashSet("hoe"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
+    SAW("", "craftingToolSaw", null, Sets.newHashSet("saw"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 200),
+    HAMMER("", "craftingToolForgeHammer", null, Sets.newHashSet("hammer"), SoundType.HAMMER, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 200, 400),
+    WRENCH("", "craftingToolWrench", null, Sets.newHashSet("wrench"), SoundType.WRENCH, false, 0, 3.0f, -2.4f, 1.0f, 1.0f, 50, 200, 800),
+    FILE("", "craftingToolFile", null, Sets.newHashSet("file"), null, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
+    SCREWDRIVER("Adjusts Covers and Machines", "craftingToolScrewdriver", null, Sets.newHashSet("screwdriver"), SoundType.WRENCH, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 200, 200, 400),
+    CROWBAR("Removes Covers", "craftingToolCrowbar", null, Sets.newHashSet("crowbar"), SoundType.BREAK, false, 0, 2.0f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
+    MORTAR("Grinds Ingots into Dust", "craftingToolMortar", null, Sets.newHashSet("mortar"), null, false, 0, 2.0f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
+    WIRE_CUTTER("", "craftingToolWireCutter", null, Sets.newHashSet("wire_cutter"), null, false, 0, 1.25f, -2.4f, 1.0f, 1.0f, 100, 200, 400),
+    SCOOP("Harvests Bees from Hives", "craftingToolScoop", null, Sets.newHashSet("scoop"), null, false, 0, 1.0f, -3.0f, 1.0f, 1.0f, 200, 200, 200), //TODO: Forestry
+    BRANCH_CUTTER("", "craftingToolBranchCutter", null, Sets.newHashSet("branch_cutter"), null, false, 0, 2.5f, -3.0f, 0.25f, 0.25f, 100, 200, 800), //TODO: Merge functionality with axe?
+    UNIVERSAL_SPADE("", "craftingToolUniversalSpade", null, Sets.newHashSet("shovel"), null, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 100, 400), //TODO: Universal tool? Rename?
+    KNIFE("", "craftingToolKnife", null, Sets.newHashSet("knife", "sword"), null, false, 0, 2.0f, -2.4f, 0.5f, 1.0f, 100, 200, 100),
+    SCYTHE("", "craftingToolScythe", null, Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800), //TODO: Sort of a dupe with BRANCH_CUTTER
+    PLUNGER("", "craftingToolPlunger", ToolPlunger.class, Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
+    DRILL("", "craftingToolDrill", null, Sets.newHashSet("drill", "pickaxe"), SoundType.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
+    CHAINSAW("", "craftingToolChainsaw", ToolChainsaw.class, Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 6.0f, 4.0f, 800, 3200, 12800),
+    WRENCH_P("", "craftingToolWrench", null, Sets.newHashSet("wrench"), SoundType.WRENCH, true, 1, 2.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
+    JACKHAMMER("", "craftingToolJackhammer", ToolJackhammer.class, Sets.newHashSet("jackhammer", "pickaxe"), null, true, 1, 3.0f, -3.0f, 0.25f, 2.0f, 400, 800, 3200),
+    SCREWDRIVER_P("", "craftingToolScrewdriver", null, Sets.newHashSet("screwdriver"), SoundType.WRENCH, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
+    BUZZSAW("", "craftingToolBuzzsaw", null, Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
+    TURBINE("", "craftingToolTurbine", null, Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
 
     public static GregTechToolType[] VALUES;
 
@@ -53,7 +55,7 @@ public enum GregTechToolType {
         VALUES = values();
     }
 
-    private String displayName, tooltip, oreDict;
+    private String tooltip, oreDict;
     private Class toolClass;
     private Set<String> toolClasses;
     private SoundType useSound;
@@ -61,8 +63,7 @@ public enum GregTechToolType {
     private int baseQuality, damageMining, damageEntity, damageCrafting;
     private float baseAttackDamage, baseAttackSpeed, miningSpeedMulti, duraMulti;
 
-    GregTechToolType(String displayName, String tooltip, String oreDict, Class toolClass, Set<String> toolClasses, SoundType useSound, boolean powered, int baseQuality, float baseAttackDamage, float baseAttackSpeed, float miningSpeedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
-        this.displayName = displayName;
+    GregTechToolType(String tooltip, String oreDict, Class toolClass, Set<String> toolClasses, SoundType useSound, boolean powered, int baseQuality, float baseAttackDamage, float baseAttackSpeed, float miningSpeedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
         this.tooltip = tooltip;
         this.oreDict = oreDict;
         this.toolClass = toolClass;
@@ -83,8 +84,8 @@ public enum GregTechToolType {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent(getName());
     }
 
     public String getTooltip() {

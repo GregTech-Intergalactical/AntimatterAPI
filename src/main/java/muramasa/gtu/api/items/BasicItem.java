@@ -40,33 +40,33 @@ import net.minecraftforge.client.model.ModelLoader;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class GregTechItem extends Item implements IGregTechObject, IModelOverride {
+public class BasicItem extends Item implements IGregTechObject, IModelOverride {
 
     protected String id, tooltip = "";
     protected boolean enabled = true;
     protected Set<ItemTag> tags = new HashSet<>();
 
-    public GregTechItem(String id, Item.Properties properties) {
+    public BasicItem(String id, Item.Properties properties) {
         super(properties);
         this.id = id;
         setRegistryName(getId());
         GregTechAPI.register(this);
     }
 
-    public GregTechItem(String id) {
+    public BasicItem(String id) {
         this(id, new Item.Properties().group(Ref.TAB_ITEMS));
     }
 
-    public GregTechItem(String id, String tooltip, Item.Properties properties) {
+    public BasicItem(String id, String tooltip, Item.Properties properties) {
         this(id, properties);
         this.tooltip = tooltip;
     }
 
-    public GregTechItem(String id, String tooltip) {
+    public BasicItem(String id, String tooltip) {
         this(id, tooltip, new Item.Properties());
     }
 
-    public GregTechItem tags(ItemTag... tags) {
+    public BasicItem tags(ItemTag... tags) {
         this.tags.addAll(Arrays.asList(tags));
         return this;
     }
