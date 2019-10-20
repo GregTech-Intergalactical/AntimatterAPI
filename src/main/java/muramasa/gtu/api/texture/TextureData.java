@@ -1,10 +1,18 @@
 package muramasa.gtu.api.texture;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import muramasa.gtu.GregTech;
 import muramasa.gtu.Ref;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.BasicState;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ItemLayerModel;
+import net.minecraftforge.client.model.ModelLoader;
 
 import java.util.List;
 
@@ -50,19 +58,30 @@ public class TextureData {
         return quads;
     }
 
-    public IBakedModel bake() {
-        if (hasOverlay()) {
-            return ModelUtils.texBake(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{getBase(0), getOverlay(0)});
-        } else {
-            switch (getBaseMode()) {
-                case SINGLE:
-                    return ModelUtils.texBake(ModelUtils.MODEL_BASIC, "0", base[0]);
-                case FULL:
-                    return ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, new String[]{"0", "1", "2", "3", "4", "5"}, new Texture[]{base[0], base[1], base[2], base[3], base[4], base[5]});
-                default:
-                    return ModelUtils.BAKED_MISSING;
-            }
+    public IBakedModel bakeAsItem() {
+        IModel model = new ItemLayerModel(ImmutableList.<ResourceLocation>builder().add(base).add(overlay).build());
+        return model.bake(GregTech.PROXY.getModelBakery(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM);
+    }
+
+    public IBakedModel bakeAsBlock() {
+        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
+        for (int i = 0; i < base.length; i++) {
+            builder.put("" + i, base[i].toString());
         }
+        IModel model = GregTech.PROXY.getModelBakery().getUnbakedModel(ModelUtils.MODEL_BASIC_LOC).retexture(builder.build());
+        return model.bake(GregTech.PROXY.getModelBakery(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.BLOCK);
+//        if (hasOverlay()) {
+//            return ModelUtils.texBake(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{getBase(0), getOverlay(0)});
+//        } else {
+//            switch (getBaseMode()) {
+//                case SINGLE:
+//                    return ModelUtils.texBake(ModelUtils.MODEL_BASIC, "0", base[0]);
+//                case FULL:
+//                    return ModelUtils.texBake(ModelUtils.MODEL_BASIC_FULL, new String[]{"0", "1", "2", "3", "4", "5"}, new Texture[]{base[0], base[1], base[2], base[3], base[4], base[5]});
+//                default:
+//                    return ModelUtils.BAKED_MISSING;
+//            }
+//        }
     }
 
     public TextureMode getBaseMode() {

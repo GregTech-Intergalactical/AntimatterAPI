@@ -1,8 +1,9 @@
 package muramasa.gtu.api.pipe;
 
-import muramasa.gtu.api.util.Utils;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Locale;
 
@@ -36,8 +37,8 @@ public enum PipeSize implements IStringSerializable {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
-    public String getDisplayName() {
-        return Utils.trans("pipe." + getName() + ".name");
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("pipe." + getName());
     }
 
     public int getCableThickness() {

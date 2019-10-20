@@ -150,8 +150,8 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
     @Override
     @OnlyIn(Dist.CLIENT)
     public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "");
-        IModel model = new ItemLayerModel(ImmutableList.of(getMaterial().getSet().getTexture(getType(), 0), getMaterial().getSet().getTexture(getType(), 1)));
+        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory");
+        IModel model = new ItemLayerModel(ImmutableList.copyOf(getMaterial().getSet().getTextures(getType())));
         registry.put(loc, model.bake(e.getModelLoader(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM));
     }
 }

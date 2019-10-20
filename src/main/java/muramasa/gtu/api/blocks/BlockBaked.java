@@ -68,8 +68,8 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     @Override
     @OnlyIn(Dist.CLIENT)
     public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        baked = data.bake();
+        baked = data.bakeAsBlock();
         if (bakeItem) registry.put(new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"), baked);
-        if (bakeBlock) registry.put(new ModelResourceLocation(Ref.MODID + ":" + getId(), "normal"), baked);
+        if (bakeBlock) registry.put(new ModelResourceLocation(Ref.MODID + ":" + getId(), ""), baked);
     }
 }

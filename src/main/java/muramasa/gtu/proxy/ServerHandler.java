@@ -1,9 +1,9 @@
 package muramasa.gtu.proxy;
 
 import muramasa.gtu.api.util.SoundType;
+import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 
@@ -21,6 +21,11 @@ public class ServerHandler implements IProxyHandler {
     }
 
     @Override
+    public ModelBakery getModelBakery() {
+        throw new IllegalStateException("cannot call on server!");
+    }
+
+    @Override
     public void playSound(SoundType type) {
         //NOOP
     }
@@ -28,10 +33,5 @@ public class ServerHandler implements IProxyHandler {
     @Override
     public void sendDiggingPacket(BlockPos pos) {
         //NOOP
-    }
-
-    @Override
-    public String trans(String unlocalized) { //TODO server side localization?
-        return new TranslationTextComponent(unlocalized).toString();
     }
 }

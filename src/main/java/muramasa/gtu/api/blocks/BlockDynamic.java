@@ -2,15 +2,12 @@ package muramasa.gtu.api.blocks;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.GregTechProperties;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.client.render.models.ModelDynamic;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.state.IProperty;
-import net.minecraft.state.StateContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -32,11 +29,6 @@ public abstract class BlockDynamic extends BlockBaked {
 
     public BlockDynamic(Block.Properties properties, TextureData data) {
         super(properties, data);
-    }
-
-    @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add((IProperty<?>) GregTechProperties.DYNAMIC_CONFIG);
     }
 
     public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
@@ -70,10 +62,10 @@ public abstract class BlockDynamic extends BlockBaked {
     public void add(int config, TextureData data) {
         if (data.hasBase()) TEXTURES.addAll(Arrays.asList(data.getBase()));
         if (data.hasOverlay()) TEXTURES.addAll(Arrays.asList(data.getOverlay()));
-        add(config, data::bake);
+        add(config, data::bakeAsBlock);
     }
 
-    public void add(int config, Supplier<IBakedModel> supplier) {
+    public void add(int config, Supplier supplier) {
         LOOKUP.put(config, supplier);
     }
 

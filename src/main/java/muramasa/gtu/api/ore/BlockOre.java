@@ -170,7 +170,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     @OnlyIn(Dist.CLIENT)
     public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
         ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-        registry.put(loc, new TextureData().base(stoneType.getTexture()).overlay(material.getSet().getTexture(oreType.getMaterialType(), 0)).bake());
+        registry.put(loc, new TextureData().base(stoneType.getTexture()).overlay(material.getSet().getTexture(oreType.getMaterialType(), 0)).bakeAsBlock());
     }
 
     public static ItemStack get(Material material, OreType oreType, StoneType stoneType, int count) {

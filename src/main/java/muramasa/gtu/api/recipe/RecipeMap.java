@@ -6,6 +6,8 @@ import muramasa.gtu.api.capability.impl.MachineItemHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -33,12 +35,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
         return id;
     }
 
-    public String getDisplayName() {
-        return Utils.trans("jei.category." + id + ".name");
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("jei.category." + id);
     }
 
-    public String getExtraString(String id) {
-        return Utils.trans("jei.category." + this.id + "." + id + ".name");
+    public ITextComponent getExtraString(String extraId) {
+        return new TranslationTextComponent("jei.category." + this.id + "." + extraId);
     }
 
     public B RB() {

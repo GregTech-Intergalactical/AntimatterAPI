@@ -38,6 +38,8 @@ public class ModelUtils {
     public static IModel MODEL_QUAD, MODEL_QUAD_L, MODEL_BASIC, MODEL_LAYERED, MODEL_BASIC_FULL, MODEL_LAYERED_FULL, MODEL_COMPLEX;
     public static IBakedModel BAKED_MISSING, BAKED_QUAD, BAKED_BASIC, BAKED_LAYERED, BAKED_BASIC_FULL, BAKED_LAYERED_FULL, BAKED_COMPLEX;
 
+    public static ResourceLocation MODEL_BASIC_LOC = new ResourceLocation(Ref.MODID, "block/templates/basic");
+
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 1.5708f)),

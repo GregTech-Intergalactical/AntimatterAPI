@@ -5,8 +5,9 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.util.Utils;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.LinkedHashSet;
@@ -55,7 +56,8 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     public static MaterialType GAS = new MaterialType("gas", true, -1, false);
     public static MaterialType PLASMA = new MaterialType("plasma", true, -1, false);
 
-    private String id, namePre, namePost;
+    private String id;
+    private ITextComponent namePre, namePost;
     private int unitValue;
     private boolean doesGenerate, visible, hasLocName;
     private Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
@@ -96,17 +98,19 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
         return visible || Configs.JEI.SHOW_ALL_MATERIAL_ITEMS;
     }
 
-    public TranslationTextComponent getDisplayName(Material material) { //TODO cache
-        if (!hasLocName) {
-            namePre = Utils.trans("material_type.pre." + getId() + ".name");
-            namePre = namePre.equals("") ? "" : namePre + " ";
-            namePost = Utils.trans("material_type.post." + getId() + ".name");
-            namePost = namePost.equals("") ? "" : " " + namePost;
-            hasLocName = true;
-        }
-        return new TranslationTextComponent(namePre + material.getDisplayName() + namePost);
+    public ITextComponent getDisplayName(Material material) {
+        //if (namePre == null) { //TODO cache
+            namePre = new TranslationTextComponent("material_type.pre." + getId());
+            //if (!namePre.getFormattedText().isEmpty()) namePre.appendText(" ");
+        //}
+        //if (namePost == null) {
+            namePost = new TranslationTextComponent("material_type.post." + getId());
+            if (!namePost.getFormattedText().isEmpty()) namePost = new StringTextComponent(" ").appendSibling(namePost);
+        //}
+        return new TranslationTextComponent("").appendSibling(namePre).appendSibling(material.getDisplayName()).appendSibling(namePost);
     }
 
+    @Deprecated //TODO remove
     public String oreName(Material material) {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, getId().concat("_").concat(material.getId()));
     }
