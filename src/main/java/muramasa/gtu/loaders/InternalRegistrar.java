@@ -2,8 +2,9 @@ package muramasa.gtu.loaders;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.cover.CoverPump;
 import muramasa.gtu.api.cover.CoverConveyor;
+import muramasa.gtu.api.cover.CoverPump;
+import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.MaterialType;
@@ -21,6 +22,8 @@ public class InternalRegistrar implements IGregTechRegistrar {
     @Override
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
+            case GUI:
+                Guis.init();
             case ITEM:
                 //GregTechAPI.registerFluidCell(Data.CellTin.get(1));
                 //GregTechAPI.registerFluidCell(Data.CellSteel.get(1));

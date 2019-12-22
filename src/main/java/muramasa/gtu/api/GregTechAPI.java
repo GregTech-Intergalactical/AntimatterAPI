@@ -43,7 +43,7 @@ public final class GregTechAPI {
 
     public static final Set<Item> ITEMS = new LinkedHashSet<>();
     public static final Set<Block> BLOCKS = new LinkedHashSet<>();
-    public static final Set<TileEntityType> TILES = new HashSet<>();
+    public static final Set<TileEntityType<?>> TILES = new HashSet<>();
     private static final HashMap<Class<?>, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
     private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
     private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();

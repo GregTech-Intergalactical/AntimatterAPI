@@ -1,13 +1,19 @@
 package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.container.ContainerMachine;
+import muramasa.gtu.api.container.*;
 import muramasa.gtu.api.guiold.GuiData;
 import muramasa.gtu.api.machines.Tier;
+import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.integration.jei.renderer.IInfoRenderer;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.data.Machines.*;
 import static muramasa.gtu.api.guiold.SlotType.*;
@@ -15,7 +21,33 @@ import static muramasa.gtu.api.machines.Tier.*;
 
 public class Guis {
 
-    public static ContainerType<ContainerMachine> CONTAINER_MACHINE = IForgeContainerType.create(ContainerMachine::fromNetwork);
+    public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler("container_basic_machine") {
+        @Nullable
+        @Override
+        public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
+            return tile instanceof TileEntityRecipeMachine ? new ContainerBasicMachine((TileEntityRecipeMachine) tile, playerInv, this, windowId) : null;
+        }
+
+        @Nullable
+        @Override
+        public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenBasicMachine(container, inv, name);
+        }
+    };
+
+    public static MenuHandler MULTI_MENU_HANDLER = new MenuHandler("container_multi_machine") {
+        @Nullable
+        @Override
+        public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
+            return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine) tile, playerInv, this, windowId) : null;
+        }
+
+        @Nullable
+        @Override
+        public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenMultiMachine(container, inv, name);
+        }
+    };
 
     public static GuiData MULTI_DISPLAY = new GuiData("multi_display").add(IT_IN, 17, 16).add(IT_IN, 35, 16).add(IT_IN, 53, 16).add(IT_IN, 17, 34).add(IT_IN, 35, 34).add(IT_IN, 53, 34).add(IT_OUT, 107, 16).add(IT_OUT, 125, 16).add(IT_OUT, 143, 16).add(IT_OUT, 107, 34).add(IT_OUT, 125, 34).add(IT_OUT, 143, 34).add(FL_IN, 17, 63).add(FL_IN, 35, 63).add(FL_IN, 53, 63).add(FL_OUT, 107, 63).add(FL_OUT, 125, 63).add(FL_OUT, 143, 63);
     public static GuiData MULTI_DISPLAY_COMPACT = new GuiData("multi_display").add(MULTI_DISPLAY).setPadding(0, 0, 0, 0);

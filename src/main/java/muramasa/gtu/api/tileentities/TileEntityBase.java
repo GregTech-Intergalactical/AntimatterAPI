@@ -10,6 +10,10 @@ import java.util.List;
 
 public abstract class TileEntityBase extends TileEntity {
 
+    public TileEntityBase() {
+        super(null);
+    }
+
     public TileEntityBase(TileEntityType<?> type) {
         super(type);
     }

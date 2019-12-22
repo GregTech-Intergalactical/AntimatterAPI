@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.blocks.BlockMachine;
+import muramasa.gtu.api.container.MenuHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.guiold.GuiData;
 import muramasa.gtu.api.machines.MachineFlag;
@@ -19,6 +20,7 @@ import muramasa.gtu.api.texture.TextureType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
@@ -36,7 +38,7 @@ public class Machine implements IGregTechObject {
     private static int lastInternalId;
 
     /** Basic Members **/
-    protected int internalId;
+    protected int internalId; //TODO needed?
     protected Object2ObjectOpenHashMap<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
     protected TileEntityType tileType;
     protected String id;
@@ -67,6 +69,9 @@ public class Machine implements IGregTechObject {
         this.id = id;
         tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
         this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(Ref.MODID, id);
+
+
+
         Machines.add(this);
     }
 
@@ -96,7 +101,7 @@ public class Machine implements IGregTechObject {
         return id;
     }
 
-    public TranslationTextComponent getDisplayName(Tier tier) {
+    public ITextComponent getDisplayName(Tier tier) {
         return new TranslationTextComponent("machine." + id + "." + tier.getId());
     }
 
@@ -160,8 +165,8 @@ public class Machine implements IGregTechObject {
         this.tiers = new ArrayList<>(Arrays.asList(tiers));
     }
 
-    public void setGUI(Object instance, int id) {
-        guiData = new GuiData(this);
+    public void setGUI(MenuHandler menuHandler) {
+        guiData = new GuiData(this, menuHandler);
         addFlags(MachineFlag.GUI);
     }
 

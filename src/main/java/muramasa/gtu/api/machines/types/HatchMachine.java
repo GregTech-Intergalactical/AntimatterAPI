@@ -1,7 +1,6 @@
 package muramasa.gtu.api.machines.types;
 
-import muramasa.gtu.GregTech;
-import muramasa.gtu.Ref;
+import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 
@@ -15,7 +14,7 @@ public class HatchMachine extends Machine {
         super(name, tile, data);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, CONFIGURABLE, COVERABLE);
-        if (hasFlag(GUI)) setGUI(GregTech.INSTANCE, Ref.GUI_ID_HATCH);
+        if (hasFlag(GUI)) setGUI(Guis.BASIC_MENU_HANDLER);
     }
 
     public HatchMachine(String name, Object... data) {

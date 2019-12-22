@@ -65,7 +65,7 @@ public abstract class BlockDynamic extends BlockBaked {
         add(config, data::bakeAsBlock);
     }
 
-    public void add(int config, Supplier supplier) {
+    public void add(int config, Supplier<IBakedModel> supplier) {
         LOOKUP.put(config, supplier);
     }
 

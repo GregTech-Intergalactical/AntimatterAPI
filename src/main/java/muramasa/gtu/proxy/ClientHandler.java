@@ -1,6 +1,7 @@
 package muramasa.gtu.proxy;
 
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.container.MenuHandler;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.registration.IColorHandler;
@@ -10,6 +11,7 @@ import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.render.ModelUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,6 +40,8 @@ public class ClientHandler implements IProxyHandler {
 
     public static void init() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
+
+        GregTechAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
     }
 
     public static void setup(FMLClientSetupEvent e) {
