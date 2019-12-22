@@ -1,6 +1,6 @@
 package muramasa.gtu.api.capability.impl;
 
-import muramasa.gtu.api.guiold.SlotType;
+import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.machines.ContentEvent;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.tileentities.TileEntityMachine;

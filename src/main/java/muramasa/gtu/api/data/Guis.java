@@ -1,8 +1,14 @@
 package muramasa.gtu.api.data;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.container.*;
-import muramasa.gtu.api.guiold.GuiData;
+import muramasa.gtu.api.gui.GuiData;
+import muramasa.gtu.api.gui.MenuHandler;
+import muramasa.gtu.api.gui.container.ContainerBasicMachine;
+import muramasa.gtu.api.gui.container.ContainerMachine;
+import muramasa.gtu.api.gui.container.ContainerMultiMachine;
+import muramasa.gtu.api.gui.screen.ScreenBasicMachine;
+import muramasa.gtu.api.gui.screen.ScreenMachine;
+import muramasa.gtu.api.gui.screen.ScreenMultiMachine;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
@@ -16,7 +22,7 @@ import net.minecraft.util.text.ITextComponent;
 import javax.annotation.Nullable;
 
 import static muramasa.gtu.api.data.Machines.*;
-import static muramasa.gtu.api.guiold.SlotType.*;
+import static muramasa.gtu.api.gui.SlotType.*;
 import static muramasa.gtu.api.machines.Tier.*;
 
 public class Guis {

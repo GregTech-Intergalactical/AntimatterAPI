@@ -5,7 +5,7 @@ import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.GTItemBlock;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.container.MenuHandler;
+import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.data.Structures;

@@ -1,7 +1,9 @@
-package muramasa.gtu.api.container;
+package muramasa.gtu.api.gui;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
+import muramasa.gtu.api.gui.container.ContainerMachine;
+import muramasa.gtu.api.gui.screen.ScreenMachine;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import org.lwjgl.system.NonnullDefault;
 
 import javax.annotation.Nullable;
 
@@ -36,7 +39,7 @@ public abstract class MenuHandler<T extends Container> implements IGregTechObjec
     @Nullable
     public abstract T getMenu(TileEntity tile, PlayerInventory playerInv, int windowId);
 
-    @Nullable
+    @NonnullDefault
     public abstract ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name);
 
     public ContainerType<T> getContainerType() {

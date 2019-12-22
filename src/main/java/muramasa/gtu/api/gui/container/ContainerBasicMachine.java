@@ -1,5 +1,6 @@
-package muramasa.gtu.api.container;
+package muramasa.gtu.api.gui.container;
 
+import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.entity.player.PlayerInventory;
 

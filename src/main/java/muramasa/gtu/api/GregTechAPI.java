@@ -7,7 +7,7 @@ import muramasa.gtu.api.capability.ICoverHandler;
 import muramasa.gtu.api.cover.*;
 import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.data.RecipeMaps;
-import muramasa.gtu.api.guiold.GuiData;
+import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;

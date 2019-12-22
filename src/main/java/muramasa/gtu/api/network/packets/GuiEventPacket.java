@@ -1,6 +1,6 @@
 package muramasa.gtu.api.network.packets;
 
-import muramasa.gtu.api.guiold.GuiEvent;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.network.PacketBuffer;

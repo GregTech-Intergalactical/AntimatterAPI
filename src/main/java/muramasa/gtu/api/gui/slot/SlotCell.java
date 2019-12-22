@@ -1,4 +1,4 @@
-package muramasa.gtu.api.guiold.slot;
+package muramasa.gtu.api.gui.slot;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;

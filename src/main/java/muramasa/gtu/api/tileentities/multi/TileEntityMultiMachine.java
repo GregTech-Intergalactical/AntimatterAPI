@@ -5,7 +5,7 @@ import muramasa.gtu.api.capability.IComponentHandler;
 import muramasa.gtu.api.capability.impl.ControllerComponentHandler;
 import muramasa.gtu.api.capability.impl.ControllerConfigHandler;
 import muramasa.gtu.api.data.Machines;
-import muramasa.gtu.api.guiold.GuiEvent;
+import muramasa.gtu.api.gui.GuiEvent;
 import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.recipe.Recipe;
