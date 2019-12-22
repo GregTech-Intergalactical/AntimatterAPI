@@ -1,9 +1,11 @@
 package muramasa.gtu.api.gui.screen;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.ArrayList;
@@ -20,6 +22,12 @@ public abstract class GTContainerScreen<T extends Container> extends ContainerSc
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    public void drawTexture(ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
+        GlStateManager.color4f(1, 1, 1, 1);
+        Minecraft.getInstance().textureManager.bindTexture(loc);
+        blit(left, top, x, y, sizeX, sizeY);
     }
 
     public int getCenteredStringX(String s) {
@@ -39,11 +47,38 @@ public abstract class GTContainerScreen<T extends Container> extends ContainerSc
     }
 
     // Returns true if the given x,y coordinates are within the given rectangle
-    public boolean isInRect(int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
+    public boolean isInRect(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
         return ((mouseX >= x && mouseX <= x+xSize) && (mouseY >= y && mouseY <= y+ySize));
     }
 
-    public boolean isInGui(int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
+    public boolean isInGui(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
         return isInRect(x, y, xSize, ySize, mouseX - guiLeft, mouseY - guiTop);
     }
+
+//    public void drawContainedFluids(int mouseX, int mouseY) {
+//        tile.fluidHandler.ifPresent(h -> {
+//            FluidStack[] fluids;
+//            List<SlotData> slots;
+//
+//            //TODO this should use getInputsRaw to preserve ordering
+//            fluids = h.getInputs();
+//            slots = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier());
+//            if (fluids != null) {
+//                for (int i = 0; i < fluids.length; i++) {
+//                    if (i >= slots.size()) continue;
+//                    RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
+//                    drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
+//                }
+//            }
+//            fluids = h.getOutputs();
+//            slots = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier());
+//            if (fluids != null) {
+//                for (int i = 0; i < fluids.length; i++) {
+//                    if (i >= slots.size()) continue;
+//                    RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
+//                    drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
+//                }
+//            }
+//        });
+//    }
 }

@@ -1,6 +1,8 @@
 package muramasa.gtu.api.gui.screen;
 
 import muramasa.gtu.api.gui.container.ContainerMachine;
+import muramasa.gtu.api.machines.MachineState;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
@@ -11,8 +13,21 @@ public class ScreenMultiMachine extends ScreenMachine {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        //Minecraft.getInstance().fontRenderer.drawString("This is a multi", getCenteredStringX("This is a multi"), 0, 0x404040);
+    protected void init() {
+        super.init();
+        addButton(new Button(guiLeft, guiTop, 16, 16, "X", b -> {
+            if (container.getTile().getMachineState() == MachineState.INVALID_STRUCTURE) {
+                //TODO
+                //GregTechNetwork.sendGuiEvent(GuiEvent.MULTI_ACTIVATE, tile);
+            }
+        }));
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        if (container.getTile().getMachineState().getOverlayId() == 2) {
+            drawTexture(gui, guiLeft + (xSize / 2) - 4, guiTop + 44, xSize, 54, 8, 9);
+        }
     }
 }

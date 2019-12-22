@@ -14,7 +14,7 @@ public class HatchMachine extends Machine {
         super(name, tile, data);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, CONFIGURABLE, COVERABLE);
-        if (hasFlag(GUI)) setGUI(Guis.BASIC_MENU_HANDLER);
+        if (hasFlag(GUI)) setGUI(Guis.HATCH_MENU_HANDLER);
     }
 
     public HatchMachine(String name, Object... data) {
