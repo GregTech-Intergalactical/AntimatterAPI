@@ -4,13 +4,16 @@ import muramasa.gtu.Ref;
 import muramasa.gtu.api.gui.GuiData;
 import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.gui.container.ContainerBasicMachine;
+import muramasa.gtu.api.gui.container.ContainerHatchMachine;
 import muramasa.gtu.api.gui.container.ContainerMachine;
 import muramasa.gtu.api.gui.container.ContainerMultiMachine;
 import muramasa.gtu.api.gui.screen.ScreenBasicMachine;
+import muramasa.gtu.api.gui.screen.ScreenHatchMachine;
 import muramasa.gtu.api.gui.screen.ScreenMachine;
 import muramasa.gtu.api.gui.screen.ScreenMultiMachine;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
+import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
 import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.integration.jei.renderer.IInfoRenderer;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,7 +30,7 @@ import static muramasa.gtu.api.machines.Tier.*;
 
 public class Guis {
 
-    public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler("container_basic_machine") {
+    public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler("container_basic") {
         @Nullable
         @Override
         public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
@@ -41,7 +44,7 @@ public class Guis {
         }
     };
 
-    public static MenuHandler MULTI_MENU_HANDLER = new MenuHandler("container_multi_machine") {
+    public static MenuHandler MULTI_MENU_HANDLER = new MenuHandler("container_multi") {
         @Nullable
         @Override
         public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
@@ -52,6 +55,19 @@ public class Guis {
         @Override
         public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
             return new ScreenMultiMachine(container, inv, name);
+        }
+    };
+
+    public static MenuHandler HATCH_MENU_HANDLER = new MenuHandler("container_hatch") {
+        @Nullable
+        @Override
+        public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
+            return tile instanceof TileEntityHatch ? new ContainerHatchMachine((TileEntityHatch) tile, playerInv, this, windowId) : null;
+        }
+
+        @Override
+        public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenHatchMachine(container, inv, name);
         }
     };
 
