@@ -107,6 +107,7 @@ public class Machines {
 
     public static void add(Machine machine) {
         GregTechAPI.register(Machine.class, machine);
+        GregTechAPI.TILES.add(machine.getTileType());
         machine.getBlocks().forEach(GregTechAPI::register);
         ID_LOOKUP.add(machine.getInternalId(), machine);
     }

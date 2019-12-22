@@ -5,6 +5,7 @@ import muramasa.gtu.api.blocks.GTItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public interface IItemBlock {
@@ -17,7 +18,7 @@ public interface IItemBlock {
         return Ref.TAB_BLOCKS;
     }
 
-    default TranslationTextComponent getDisplayName(ItemStack stack) {
+    default ITextComponent getDisplayName(ItemStack stack) {
         return new TranslationTextComponent(stack.getTranslationKey());
     }
 }

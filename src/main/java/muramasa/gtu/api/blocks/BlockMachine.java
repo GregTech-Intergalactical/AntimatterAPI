@@ -23,6 +23,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -57,9 +58,9 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
 
     public BlockMachine(Machine type, Tier tier) {
         super(Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
-        setRegistryName(type.getId());
         this.type = type;
         this.tier = tier;
+        setRegistryName(getId());
     }
 
     public Machine getType() {
@@ -141,6 +142,7 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         Direction dir = Direction.getFacingFromVector((float)placer.getLookVec().x, (float)placer.getLookVec().y, (float)placer.getLookVec().z).getOpposite();
+        if (dir.getAxis().isVertical()) dir = Direction.NORTH; //TODO fix
         world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
     }
 
@@ -189,8 +191,13 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
     }
 
     @Override
-    public TranslationTextComponent getDisplayName(ItemStack stack) {
+    public ITextComponent getDisplayName(ItemStack stack) {
         return type.getDisplayName(tier);
+    }
+
+    @Override
+    public ItemGroup getItemGroup() {
+        return Ref.TAB_MACHINES;
     }
 
     @Override

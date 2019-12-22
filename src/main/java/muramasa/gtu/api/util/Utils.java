@@ -265,6 +265,7 @@ public class Utils {
 //        }
     }
 
+    @Nullable
     public static TileEntity getTileFromBuf(PacketBuffer buf) {
         return DistExecutor.runForDist(() -> () -> {
             return GregTech.PROXY.getClientWorld().getTileEntity(buf.readBlockPos());

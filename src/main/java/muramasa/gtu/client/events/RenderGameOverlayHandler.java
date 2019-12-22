@@ -6,15 +6,11 @@
 //import muramasa.gtu.api.util.Utils;
 //import muramasa.gtu.common.Data;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.entity.EntityPlayerSP;
-//import net.minecraft.client.gui.Gui;
 //import net.minecraft.item.ItemStack;
 //import net.minecraft.tileentity.TileEntity;
 //import net.minecraft.util.ResourceLocation;
 //import net.minecraft.util.text.TextFormatting;
 //import net.minecraftforge.client.event.RenderGameOverlayEvent;
-//import net.minecraftforge.fml.common.FMLCommonHandler;
-//import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 //import org.lwjgl.opengl.GL11;
 //
 //public class RenderGameOverlayHandler extends Gui {

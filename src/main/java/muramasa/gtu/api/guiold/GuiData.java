@@ -2,6 +2,7 @@ package muramasa.gtu.api.guiold;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.gtu.Ref;
+import muramasa.gtu.api.container.MenuHandler;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.int4;
@@ -21,19 +22,14 @@ public class GuiData {
     private static final String ANY = "any";
 
     protected String id;
-//    protected ContainerType<?> containerType;
+    protected MenuHandler menuHandler;
+
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
 
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     protected BarDir side = BarDir.LEFT;
     protected IInfoRenderer infoRenderer;
-
-//    protected IContainerHandler containerHandler = (windowId, world, pos, player, inv, data) -> {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityMachine) return new ContainerMachine(windowId, (TileEntityMachine) tile, inv, player);
-//        return null;
-//    };
 
     protected LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
@@ -42,26 +38,23 @@ public class GuiData {
         this.id = id;
     }
 
+    public GuiData(String id, MenuHandler menuHandler) {
+        this(id);
+        this.menuHandler = menuHandler;
+    }
+
     public GuiData(Machine type) {
         this(type.getId());
     }
 
-//    public ContainerType buildContainerType() {
-//        return containerType = IForgeContainerType.create((windowId, inv, data) -> containerHandler.getContainer(windowId, GregTech.PROXY.getClientWorld(), data.readBlockPos(), GregTech.PROXY.getClientPlayer(), inv, data)).setRegistryName(type.getId());
-//    }
-//
-//    public IContainerHandler getContainerHandler() {
-//        return containerHandler;
-//    }
-//
-//    public GuiData setContainer(IContainerHandler containerHandler) {
-//        this.containerHandler = containerHandler;
-//        return this;
-//    }
-//
-//    public ContainerType getContainerType() {
-//        return containerType;
-//    }
+    public GuiData(Machine type, MenuHandler menuHandler) {
+        this(type);
+        this.menuHandler = menuHandler;
+    }
+
+    public MenuHandler getMenuHandler() {
+        return menuHandler;
+    }
 
     public ResourceLocation getTexture(Tier tier) {
         if (hasSlots(tier)) {

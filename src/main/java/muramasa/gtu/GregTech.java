@@ -5,7 +5,7 @@ import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.GTItemBlock;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.data.Guis;
+import muramasa.gtu.api.container.MenuHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.data.Structures;
@@ -61,6 +61,12 @@ public class GregTech {
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
     }
 
+    private static void buildData() {
+        Data.init();
+        Machines.init();
+        Structures.init();
+    }
+
     private void setup(final FMLCommonSetupEvent e) {
         GregTechAPI.onRegistration(RegistrationEvent.INIT);
 
@@ -72,10 +78,7 @@ public class GregTech {
 
         //new GregTechWorldGenerator();
 
-        Data.init();
-        Machines.init();
-        Guis.init();
-        Structures.init();
+
 
         GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
         GregTechAPI.onRegistration(RegistrationEvent.DATA);
@@ -116,6 +119,7 @@ public class GregTech {
 
     @SubscribeEvent
     public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
+        buildData();
         MaterialType.ORE.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, OreType.NORMAL, s)));
         MaterialType.ORE_SMALL.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, OreType.SMALL, s)));
         MaterialType.BLOCK.all().forEach(m -> new BlockStorage(m, MaterialType.BLOCK));
@@ -134,9 +138,7 @@ public class GregTech {
 
     @SubscribeEvent
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
-//        GregTechAPI.all(Machine.class).forEach(m -> {
-//            if (m.hasFlag(MachineFlag.GUI)) e.getRegistry().register(m.getGui().buildContainerType());
-//        });
-        //e.getRegistry().register(Guis.CONTAINER_MACHINE); //TODO errors
+        GregTechAPI.onRegistration(RegistrationEvent.GUI);
+        GregTechAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
     }
 }

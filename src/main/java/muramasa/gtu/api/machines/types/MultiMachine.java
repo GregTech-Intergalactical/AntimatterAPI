@@ -1,7 +1,6 @@
 package muramasa.gtu.api.machines.types;
 
-import muramasa.gtu.GregTech;
-import muramasa.gtu.Ref;
+import muramasa.gtu.api.data.Guis;
 import muramasa.gtu.api.machines.MachineState;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.texture.Texture;
@@ -18,7 +17,7 @@ public class MultiMachine extends Machine {
     public MultiMachine(String name, Supplier<? extends TileEntityMultiMachine> tile, Object... data) {
         super(name, tile, data);
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
-        setGUI(GregTech.INSTANCE, Ref.GUI_ID_MULTI_MACHINE);
+        setGUI(Guis.MULTI_MENU_HANDLER);
     }
 
     @Override

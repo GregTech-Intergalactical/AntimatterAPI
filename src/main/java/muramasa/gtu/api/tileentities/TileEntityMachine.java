@@ -2,9 +2,8 @@ package muramasa.gtu.api.tileentities;
 
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechProperties;
+import muramasa.gtu.api.blocks.BlockMachine;
 import muramasa.gtu.api.capability.impl.*;
-import muramasa.gtu.api.container.ContainerMachine;
-import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.guiold.GuiEvent;
 import muramasa.gtu.api.guiold.SlotType;
 import muramasa.gtu.api.machines.*;
@@ -16,6 +15,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.model.data.IModelData;
@@ -45,15 +45,20 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
     public Optional<MachineConfigHandler> configHandler = Optional.empty();
 
     /** Machine Data **/
-    private Machine type;
-    private Tier tier;
+    //private Machine type;
+    //private Tier tier;
     private MachineState machineState;
     private Direction facing;
 
     public TileEntityMachine() {
-        super(null);
-        //getType()
         machineState = getDefaultMachineState();
+    }
+
+    @Override
+    public TileEntityType<?> getType() {
+        //if (type == null) type = ((BlockMachine) getBlockState().getBlock()).getType();
+        //if (tier == null) tier = ((BlockMachine) getBlockState().getBlock()).getTier();
+        return ((BlockMachine) getBlockState().getBlock()).getType().getTileType();
     }
 
     @Override
@@ -86,11 +91,13 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
 
     /** Getters **/
     public Machine getMachineType() {
-        return type != null ? type : Machines.INVALID;
+        /*return type != null ? type : Machines.INVALID;*/
+        return ((BlockMachine) getBlockState().getBlock()).getType();
     }
 
+    //TODO getMachineTier
     public Tier getTier() {
-        return tier != null ? tier : Tier.LV;
+        return ((BlockMachine) getBlockState().getBlock()).getTier();
     }
 
     public int getMachineTypeId() {
@@ -177,21 +184,23 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
     @Nonnull
     @Override
     public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(GregTechProperties.MACHINE_TYPE, type).withInitial(GregTechProperties.MACHINE_FACING, facing).withInitial(GregTechProperties.MACHINE_TEXTURE, getTextureData());
+        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(GregTechProperties.MACHINE_TYPE, getMachineType()).withInitial(GregTechProperties.MACHINE_FACING, facing).withInitial(GregTechProperties.MACHINE_TEXTURE, getTextureData());
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(GregTechProperties.MACHINE_COVER, machineCoverHandler.getAll()));
         return builder.build();
     }
 
     @Override
     public ITextComponent getDisplayName() {
-        return type.getDisplayName(tier);
+        return getMachineType().getDisplayName(getTier());
     }
 
     @Nullable
     @Override
     public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
         //return type.hasFlag(GUI) ? type.getGui().getContainerHandler().getContainer(windowId, world, pos, player, playerInv) : null;
-        return type.hasFlag(GUI) ? new ContainerMachine(windowId, this, inv) : null;
+        //return getMachineType().hasFlag(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(windowId, inv, this) : null;
+        return getMachineType().hasFlag(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+        //return getMachineType().hasFlag(GUI) ? new ContainerMachine(windowId, this, inv) : null;
     }
 
     //    @Override
