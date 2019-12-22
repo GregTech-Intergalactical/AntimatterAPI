@@ -1,8 +1,7 @@
-package muramasa.gtu.api.guiold;
+package muramasa.gtu.api.gui;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.container.MenuHandler;
 import muramasa.gtu.api.machines.Tier;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.util.int4;

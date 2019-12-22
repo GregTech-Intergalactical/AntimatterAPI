@@ -1,4 +1,4 @@
-package muramasa.gtu.api.guiold;
+package muramasa.gtu.api.gui;
 
 public enum SlotType {
 

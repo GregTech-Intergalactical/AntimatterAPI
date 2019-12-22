@@ -1,4 +1,4 @@
-package muramasa.gtu.api.guiold;
+package muramasa.gtu.api.gui;
 
 import muramasa.gtu.api.util.int2;
 import muramasa.gtu.api.util.int4;

@@ -1,5 +1,6 @@
-package muramasa.gtu.api.container;
+package muramasa.gtu.api.gui.container;
 
+import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -19,6 +20,10 @@ public abstract class ContainerMachine extends Container {
         super(menuHandler.getContainerType(), windowId);
         this.tile = tile;
         this.playerInv = playerInv;
+    }
+
+    public TileEntityMachine getTile() {
+        return tile;
     }
 
     @Override

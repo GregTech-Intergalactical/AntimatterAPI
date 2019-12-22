@@ -1,4 +1,4 @@
-package muramasa.gtu.api.container;
+package muramasa.gtu.api.gui.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;

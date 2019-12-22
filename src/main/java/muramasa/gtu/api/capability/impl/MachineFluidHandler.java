@@ -1,6 +1,6 @@
 package muramasa.gtu.api.capability.impl;
 
-import muramasa.gtu.api.guiold.SlotType;
+import muramasa.gtu.api.gui.SlotType;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.nbt.CompoundNBT;

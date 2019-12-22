@@ -1,7 +1,7 @@
 package muramasa.gtu.proxy;
 
 import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.container.MenuHandler;
+import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.registration.IColorHandler;

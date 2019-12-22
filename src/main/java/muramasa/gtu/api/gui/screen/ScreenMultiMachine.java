@@ -1,5 +1,6 @@
-package muramasa.gtu.api.container;
+package muramasa.gtu.api.gui.screen;
 
+import muramasa.gtu.api.gui.container.ContainerMachine;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
