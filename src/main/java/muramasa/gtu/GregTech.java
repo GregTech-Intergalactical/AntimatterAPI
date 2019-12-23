@@ -112,8 +112,8 @@ public class GregTech {
             if (t.allowGeneration(m)) new MaterialItem(t, m);
         }));
         Arrays.stream(GregTechToolType.VALUES).forEach(GregTechToolType::instantiate);
-        GregTechAPI.ITEMS.forEach(i -> e.getRegistry().register(i));
-        GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(b instanceof IItemBlock ? ((IItemBlock) b).getItemBlock(b) : new GTItemBlock(b)));
+        GregTechAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
+        GregTechAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlock ? ((IItemBlock) b).getItemBlock(b) : new GTItemBlock(b)));
         GregTechAPI.onRegistration(RegistrationEvent.ITEM);
     }
 
@@ -126,14 +126,14 @@ public class GregTech {
         MaterialType.FRAME.all().forEach(m -> new BlockStorage(m, MaterialType.FRAME));
         //new BlockRock(StoneType.STONE);
         //GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
-        StoneType.getStoneGenerating().forEach(type -> GregTechAPI.register(new BlockStone(type)));
-        GregTechAPI.BLOCKS.forEach(b -> e.getRegistry().register(b));
+        StoneType.getStoneGenerating().forEach(BlockStone::new);
+        GregTechAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
         GregTechAPI.onRegistration(RegistrationEvent.BLOCK);
     }
 
     @SubscribeEvent
     public static void onTileRegistry(RegistryEvent.Register<TileEntityType<?>> e) {
-        GregTechAPI.TILES.forEach(t -> e.getRegistry().register(t));
+        GregTechAPI.all(TileEntityType.class).forEach(t -> e.getRegistry().register(t));
     }
 
     @SubscribeEvent

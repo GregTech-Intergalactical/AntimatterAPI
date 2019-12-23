@@ -61,6 +61,7 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
         this.type = type;
         this.tier = tier;
         setRegistryName(getId());
+        GregTechAPI.register(BlockMachine.class, this);
     }
 
     public Machine getType() {
@@ -149,7 +150,7 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return GregTechAPI.getWrenchToolType();
+        return GregTechAPI.WRENCH_TOOL_TYPE;
     }
 
     /** TileEntity Drops Start **/

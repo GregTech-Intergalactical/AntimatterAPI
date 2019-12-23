@@ -69,9 +69,6 @@ public class Machine implements IGregTechObject {
         this.id = id;
         tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
         this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(Ref.MODID, id);
-
-
-
         Machines.add(this);
     }
 

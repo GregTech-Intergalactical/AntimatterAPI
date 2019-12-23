@@ -15,13 +15,6 @@ import muramasa.gtu.api.recipe.RecipeMap;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IGregTechRegistrar;
 import muramasa.gtu.api.registration.RegistrationEvent;
-import muramasa.gtu.api.tileentities.TileEntityMachine;
-import muramasa.gtu.api.tileentities.TileEntityRecipeMachine;
-import muramasa.gtu.api.tileentities.TileEntitySteamMachine;
-import muramasa.gtu.api.tileentities.TileEntityTank;
-import muramasa.gtu.api.tileentities.multi.TileEntityBasicMultiMachine;
-import muramasa.gtu.api.tileentities.multi.TileEntityHatch;
-import muramasa.gtu.api.tileentities.multi.TileEntityMultiMachine;
 import muramasa.gtu.loaders.InternalRegistrar;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,7 +22,6 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraftforge.common.ToolType;
@@ -41,36 +33,15 @@ import java.util.stream.Collectors;
 
 public final class GregTechAPI {
 
-    public static final Set<Item> ITEMS = new LinkedHashSet<>();
-    public static final Set<Block> BLOCKS = new LinkedHashSet<>();
-    public static final Set<TileEntityType<?>> TILES = new HashSet<>();
-    private static final HashMap<Class<?>, LinkedHashMap<String, IGregTechObject>> OBJECTS = new HashMap<>();
+    private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
     private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
     private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
     private static final LinkedHashMap<String, ItemStack> REPLACEMENTS = new LinkedHashMap<>();
 
-    private static RegistrationEvent LAST_EVENT = null;
-
-    private static ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
+    public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
 
     static {
-        register(TileEntityMachine.class);
-        register(TileEntityRecipeMachine.class);
-        register(TileEntitySteamMachine.class);
-        register(TileEntityMultiMachine.class);
-        register(TileEntityBasicMultiMachine.class);
-        register(TileEntityTank.class);
-        register(TileEntityHatch.class);
-
-        //register(TileEntityPipe.class);
-        //register(TileEntityItemPipe.class);
-        //register(TileEntityFluidPipe.class);
-        //register(TileEntityCable.class);
-        //register(TileEntityCasing.class);
-        //register(TileEntityMaterial.class);
-        //register(TileEntityRock.class);
-
         registerJEICategory(RecipeMaps.ORE_BYPRODUCTS, Guis.ORE_BYPRODUCTS);
 //        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
         registerJEICategory(RecipeMaps.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
@@ -80,43 +51,41 @@ public final class GregTechAPI {
         registerJEICategory(RecipeMaps.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
     }
 
-    public static void register(Object o) {
-        if (o instanceof Item) ITEMS.add((Item) o);
-        else if (o instanceof Block) BLOCKS.add((Block) o);
-        else if (o instanceof TileEntityType) TILES.add((TileEntityType) o);
+    private static void registerInternal(Class c, String id, Object o) {
+        OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
+        if (OBJECTS.get(c).containsKey(id)) GregTech.LOGGER.error("Object: " + id + " has already been registered! This is a error!");
+        OBJECTS.get(c).put(id, o);
+    }
+
+    public static void register(Class c, String id, Object o) {
+        registerInternal(c, id, o);
+        if (o instanceof Item) registerInternal(Item.class, id, o);
+        if (o instanceof Block) registerInternal(Block.class, id, o);
     }
 
     public static void register(Class c, IGregTechObject o) {
-        if (!OBJECTS.containsKey(c)) OBJECTS.put(c, new LinkedHashMap<>());
-        if (!OBJECTS.get(c).containsKey(o.getId()))  {
-            OBJECTS.get(c).put(o.getId(), o);
-        } else {
-            //TODO throw error
-            GregTech.LOGGER.error("Object: " + o.getId() + " has already been registered! This is a error!");
-        }
-        register(o);
+        register(c, o.getId(), o);
     }
 
     @Nullable
     public static <T> T get(Class<T> c, String id) {
-        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
+        LinkedHashMap<String, Object> map = OBJECTS.get(c);
         return map != null ? c.cast(map.get(id)) : null;
     }
 
     public static <T> boolean has(Class<T> c, String id) {
-        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
+        LinkedHashMap<String, Object> map = OBJECTS.get(c);
         return map != null && map.containsKey(id);
     }
 
     public static <T> List<T> all(Class<T> c) {
-        LinkedHashMap<String, IGregTechObject> map = OBJECTS.get(c);
+        LinkedHashMap<String, Object> map = OBJECTS.get(c);
         if (map == null) return Collections.emptyList();
         return map.values().stream().map(c::cast).collect(Collectors.toList());
     }
 
     /** Registrar Section **/
     public static void onRegistration(RegistrationEvent event) {
-        LAST_EVENT = event;
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
@@ -196,10 +165,6 @@ public final class GregTechAPI {
 //            fluidHandler.fill(new FluidStack(fluid, amount), true);
 //        }
         return cells;
-    }
-
-    public static ToolType getWrenchToolType() {
-        return WRENCH_TOOL_TYPE;
     }
 
     /** Cover Registry Section **/
