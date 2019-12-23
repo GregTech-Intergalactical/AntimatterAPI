@@ -16,6 +16,7 @@ import muramasa.gtu.api.registration.IModelOverride;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -50,7 +51,7 @@ public class BasicItem extends Item implements IGregTechObject, IModelOverride {
         super(properties);
         this.id = id;
         setRegistryName(getId());
-        GregTechAPI.register(this);
+        GregTechAPI.register(Item.class, this);
     }
 
     public BasicItem(String id) {
@@ -93,7 +94,7 @@ public class BasicItem extends Item implements IGregTechObject, IModelOverride {
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(new StringTextComponent(this.tooltip));
         if (Data.DebugScanner.equals(this)) {
-            tooltip.add(new StringTextComponent("Blocks: " + GregTechAPI.BLOCKS.size()));
+            tooltip.add(new StringTextComponent("Blocks: " + GregTechAPI.all(Block.class).size()));
             tooltip.add(new StringTextComponent("Machines: " + Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(new StringTextComponent("Pipes: " + /*GregTechAPI.all(BlockPipe.class).size()*/ "TODO"));
             tooltip.add(new StringTextComponent("Casings: " + /*GregTechAPI.all(BlockCasing.class).size()*/ "TODO"));

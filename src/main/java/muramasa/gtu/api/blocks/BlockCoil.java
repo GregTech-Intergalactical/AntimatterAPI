@@ -40,6 +40,6 @@ public class BlockCoil extends BlockBaked {
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return GregTechAPI.getWrenchToolType();
+        return GregTechAPI.WRENCH_TOOL_TYPE;
     }
 }

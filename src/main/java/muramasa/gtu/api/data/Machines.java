@@ -5,6 +5,7 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.machines.types.*;
 import muramasa.gtu.api.tileentities.TileEntitySteamMachine;
 import muramasa.gtu.common.tileentities.multi.*;
+import net.minecraft.tileentity.TileEntityType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,8 +108,7 @@ public class Machines {
 
     public static void add(Machine machine) {
         GregTechAPI.register(Machine.class, machine);
-        GregTechAPI.TILES.add(machine.getTileType());
-        machine.getBlocks().forEach(GregTechAPI::register);
+        GregTechAPI.register(TileEntityType.class, machine.getId(), machine.getTileType());
         ID_LOOKUP.add(machine.getInternalId(), machine);
     }
 

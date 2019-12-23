@@ -10,11 +10,13 @@ import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.render.ModelUtils;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -53,16 +55,16 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
-        GregTechAPI.ITEMS.forEach(i -> {
+        GregTechAPI.all(Item.class).forEach(i -> {
             if (i instanceof IColorHandler) e.getItemColors().register((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
         });
-        GregTechAPI.BLOCKS.forEach(b -> {
+        GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IColorHandler) e.getItemColors().register((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), b.asItem());
         });
     }
 
     public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
-        GregTechAPI.BLOCKS.forEach(b -> {
+        GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) b)::getBlockColor, b);
         });
     }
@@ -77,10 +79,10 @@ public class ClientHandler implements IProxyHandler {
         });
 
         Set<ResourceLocation> textures = new HashSet<>();
-        GregTechAPI.ITEMS.forEach(i -> {
+        GregTechAPI.all(Item.class).forEach(i -> {
             if (i instanceof IModelOverride) ((IModelOverride) i).getTextures(textures);
         });
-        GregTechAPI.BLOCKS.forEach(b -> {
+        GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IModelOverride) ((IModelOverride) b).getTextures(textures);
         });
         textures.forEach(e::addSprite);
@@ -88,10 +90,10 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void onModelRegistration(ModelRegistryEvent e) {
-        GregTechAPI.ITEMS.forEach(i -> {
+        GregTechAPI.all(Item.class).forEach(i -> {
             if (i instanceof IModelOverride) ((IModelOverride) i).onModelRegistration();
         });
-        GregTechAPI.BLOCKS.forEach(b -> {
+        GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IModelOverride) ((IModelOverride) b).onModelRegistration();
         });
 
@@ -136,10 +138,10 @@ public class ClientHandler implements IProxyHandler {
 //                }
 //            }
 //        }
-        GregTechAPI.ITEMS.forEach(i -> {
+        GregTechAPI.all(Item.class).forEach(i -> {
             if (i instanceof IModelOverride) ((IModelOverride) i).onModelBake(e, e.getModelRegistry());
         });
-        GregTechAPI.BLOCKS.forEach(b -> {
+        GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IModelOverride) ((IModelOverride) b).onModelBake(e, e.getModelRegistry());
         });
 
