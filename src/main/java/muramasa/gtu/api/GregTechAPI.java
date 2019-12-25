@@ -49,20 +49,28 @@ public final class GregTechAPI {
         registerJEICategory(RecipeMaps.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
     }
 
-    private static void registerInternal(Class c, String id, Object o) {
+    private static void registerInternal(Class c, String id, Object o, boolean checkDuplicates) {
         OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
-        if (OBJECTS.get(c).containsKey(id)) GregTech.LOGGER.error("Object: " + id + " has already been registered! This is a error!");
+        if (checkDuplicates && OBJECTS.get(c).containsKey(id)) GregTech.LOGGER.error("Object: " + id + " has already been registered! This is a error!");
         OBJECTS.get(c).put(id, o);
     }
 
+    private static boolean hasBeenRegistered(Class c, String id) {
+        return OBJECTS.containsKey(c) && OBJECTS.get(c).containsKey(id);
+    }
+
     public static void register(Class c, String id, Object o) {
-        registerInternal(c, id, o);
-        if (o instanceof Item) registerInternal(Item.class, id, o);
-        if (o instanceof Block) registerInternal(Block.class, id, o);
+        registerInternal(c, id, o, true);
+        if (o instanceof Item && !hasBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
+        if (o instanceof Block && !hasBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
     }
 
     public static void register(Class c, IGregTechObject o) {
         register(c, o.getId(), o);
+    }
+
+    public static void overrideRegistryObject(Class c, String id, Object o) {
+        registerInternal(c, id, o, false);
     }
 
     @Nullable
@@ -94,7 +102,7 @@ public final class GregTechAPI {
     }
 
     public static void addRegistrar(IGregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IGregTechRegistrar.class, registrar.getId(), registrar);
+        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IGregTechRegistrar.class, registrar.getId(), registrar, true);
     }
 
     public static Optional<IGregTechRegistrar> getRegistrar(String id) {
@@ -118,7 +126,7 @@ public final class GregTechAPI {
 
     /** Item Registry Section **/
     public static void addReplacement(MaterialType type, Material material, ItemStack stack) {
-        registerInternal(ItemStack.class, type.getId() + material.getId(), stack);
+        registerInternal(ItemStack.class, type.getId() + material.getId(), stack, true);
     }
 
     public static ItemStack getReplacement(MaterialType type, Material material) {

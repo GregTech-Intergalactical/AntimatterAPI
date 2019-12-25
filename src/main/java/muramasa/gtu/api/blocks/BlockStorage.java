@@ -1,6 +1,5 @@
 package muramasa.gtu.api.blocks;
 
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
@@ -9,28 +8,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.PushReaction;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.storage.loot.LootContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelOverride, IStateOverride, IColorHandler {
+public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelProvider, IStateOverride, IColorHandler {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
@@ -184,24 +175,24 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         return i == 0 ? material.getRGB() : -1;
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void getTextures(Set<ResourceLocation> textures) {
-        textures.add(material.getSet().getTexture(type, 0));
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelRegistration() {
-
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-        //TODO registry.put(loc, ClientHandler.TYPE_SET_MAP.get(getType().getId() + "_" + material.getSet().getId()));
-    }
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void getTextures(Set<ResourceLocation> textures) {
+//        textures.add(material.getSet().getTexture(type, 0));
+//    }
+//
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void onModelRegistration() {
+//
+//    }
+//
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
+//        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
+//        //TODO registry.put(loc, ClientHandler.TYPE_SET_MAP.get(getType().getId() + "_" + material.getSet().getId()));
+//    }
 
     public static ItemStack get(Material material, MaterialType type, int count) {
         BlockStorage block = GregTechAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());

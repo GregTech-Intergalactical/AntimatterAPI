@@ -5,10 +5,10 @@ import muramasa.gtu.api.blocks.BlockStone;
 import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.blocks.GTItemBlock;
 import muramasa.gtu.api.capability.GTCapabilities;
-import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.data.Machines;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.data.Structures;
+import muramasa.gtu.api.gui.MenuHandler;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
@@ -23,7 +23,9 @@ import muramasa.gtu.common.Data;
 import muramasa.gtu.proxy.ClientHandler;
 import muramasa.gtu.proxy.IProxyHandler;
 import muramasa.gtu.proxy.ServerHandler;
+import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
@@ -33,6 +35,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -140,5 +143,16 @@ public class GregTech {
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
         GregTechAPI.onRegistration(RegistrationEvent.GUI);
         GregTechAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
+    }
+
+    @SubscribeEvent
+    public static void onDataGather(GatherDataEvent e) {
+        DataGenerator gen = e.getGenerator();
+        if (e.includeClient()) {
+            gen.addProvider(new GregTechItemModelProvider(gen, e.getExistingFileHelper()));
+        }
+        if (e.includeServer()) {
+
+        }
     }
 }

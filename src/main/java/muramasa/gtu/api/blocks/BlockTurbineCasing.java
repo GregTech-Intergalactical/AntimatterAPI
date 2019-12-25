@@ -8,14 +8,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.Arrays;
-import java.util.Set;
 
 import static muramasa.gtu.api.data.Textures.LARGE_TURBINE;
 import static muramasa.gtu.api.data.Textures.LARGE_TURBINE_ACTIVE;
@@ -126,13 +120,13 @@ public class BlockTurbineCasing extends BlockCasing {
         add(1510, () -> ModelUtils.bakeQuad(LARGE_TURBINE_ACTIVE[8], 5));
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void getTextures(Set<ResourceLocation> textures) {
-        super.getTextures(textures);
-        textures.addAll(Arrays.asList(LARGE_TURBINE));
-        textures.addAll(Arrays.asList(LARGE_TURBINE_ACTIVE));
-    }
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void getTextures(Set<ResourceLocation> textures) {
+//        super.getTextures(textures);
+//        textures.addAll(Arrays.asList(LARGE_TURBINE));
+//        textures.addAll(Arrays.asList(LARGE_TURBINE_ACTIVE));
+//    }
 
     @Override
     public BlockRenderLayer getRenderLayer() {

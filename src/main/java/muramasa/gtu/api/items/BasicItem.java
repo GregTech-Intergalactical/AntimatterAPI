@@ -1,6 +1,5 @@
 package muramasa.gtu.api.items;
 
-import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
@@ -12,36 +11,32 @@ import muramasa.gtu.api.machines.MachineFlag;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
+import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.BasicState;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class BasicItem extends Item implements IGregTechObject, IModelOverride {
+public class BasicItem extends Item implements IGregTechObject, IModelProvider {
 
     protected String id, tooltip = "";
     protected boolean enabled = true;
@@ -223,25 +218,9 @@ public class BasicItem extends Item implements IGregTechObject, IModelOverride {
         return get(1);
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void getTextures(Set<ResourceLocation> textures) {
-        textures.add(new Texture("items/standard/" + id));
-    }
-
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelRegistration() {
-//        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"));
-//    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        //TODO this should probably support multi overlays
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory");
-        IModel model = new ItemLayerModel(ImmutableList.of(new Texture("items/standard/" + id)));
-        //registry.put(loc, new BakedItem(model.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, ModelUtils.getTextureGetter())));
-        registry.put(loc, model.bake(e.getModelLoader(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM));
-    }
+@Override
+@OnlyIn(Dist.CLIENT)
+public void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
+    provider.single(builder, new Texture("item/standard/" + id));
+}
 }

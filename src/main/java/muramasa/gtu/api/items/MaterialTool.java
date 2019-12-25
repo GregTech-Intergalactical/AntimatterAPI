@@ -1,6 +1,5 @@
 package muramasa.gtu.api.items;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
@@ -8,15 +7,12 @@ import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.tools.GregTechToolType;
-import muramasa.gtu.client.render.bakedmodels.BakedItem;
+import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +20,6 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -32,19 +27,13 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.BasicState;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public class MaterialTool extends SwordItem implements IGregTechObject, IModelOverride, IColorHandler {
+public class MaterialTool extends SwordItem implements IGregTechObject, IModelProvider, IColorHandler {
 
     protected GregTechToolType type;
 
@@ -423,21 +412,7 @@ public class MaterialTool extends SwordItem implements IGregTechObject, IModelOv
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void getTextures(Set<ResourceLocation> textures) {
-        textures.addAll(Arrays.asList(type.getTextures()));
-    }
-
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelRegistration() {
-//        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory"));
-//    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory");
-        IModel model = new ItemLayerModel(ImmutableList.copyOf(type.getTextures()));
-        registry.put(loc, new BakedItem(model.bake(e.getModelLoader(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM)));
+    public void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
+        provider.layered(builder, type.getTextures());
     }
 }
