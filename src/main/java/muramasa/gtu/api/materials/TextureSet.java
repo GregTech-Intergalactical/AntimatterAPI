@@ -43,11 +43,16 @@ public class TextureSet implements IGregTechObject {
     }
 
     public Texture getTexture(MaterialType type, int layer) {
-        return new Texture("material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"));
+        //TODO return different numbered overlay based on current layer
+        return new Texture("material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/));
     }
 
     public Texture[] getTextures(MaterialType type) {
-        return new Texture[] {getTexture(type, 0), getTexture(type, 1)};
+        Texture[] textures = new Texture[type.getLayers()];
+        for (int i = 0; i < type.getLayers(); i++) {
+            textures[i] = getTexture(type, i);
+        }
+        return textures;
     }
 
     public static int getLastInternalId() {

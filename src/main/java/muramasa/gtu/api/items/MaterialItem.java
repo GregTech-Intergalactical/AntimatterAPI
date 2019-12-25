@@ -1,21 +1,18 @@
 package muramasa.gtu.api.items;
 
-import com.google.common.collect.ImmutableList;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IModelOverride;
+import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
+import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -23,26 +20,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.BasicState;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-public class MaterialItem extends Item implements IGregTechObject, IModelOverride, IColorHandler {
+public class MaterialItem extends Item implements IGregTechObject, IModelProvider, IColorHandler {
 
     private Material material;
     private MaterialType type;
@@ -143,15 +132,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void getTextures(Set<ResourceLocation> textures) {
-        textures.addAll(Arrays.asList(getMaterial().getSet().getTextures(getType())));
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId(), "inventory");
-        IModel model = new ItemLayerModel(ImmutableList.copyOf(getMaterial().getSet().getTextures(getType())));
-        registry.put(loc, model.bake(e.getModelLoader(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM));
+    public void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
+        provider.layered(builder, getMaterial().getSet().getTextures(getType()));
     }
 }

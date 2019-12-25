@@ -169,13 +169,13 @@ public enum GregTechToolType {
 
     public Texture[] getTextures() {
         List<Texture> textures = new ArrayList<>();
-        textures.add(new Texture("items/tool/" + getName()));
+        textures.add(new Texture("item/tool/" + getName()));
         //TODO better solution for this
         if (this == SCREWDRIVER_P || this == BUZZSAW) {
-            textures.add(new Texture("items/tool/overlay/" + getName() + "_1"));
-            textures.add(new Texture("items/tool/overlay/" + getName() + "_2"));
+            textures.add(new Texture("item/tool/overlay/" + getName() + "_1"));
+            textures.add(new Texture("item/tool/overlay/" + getName() + "_2"));
         } else {
-            textures.add(new Texture("items/tool/overlay/" + getName()));
+            textures.add(new Texture("item/tool/overlay/" + getName()));
         }
         return textures.toArray(new Texture[0]);
     }

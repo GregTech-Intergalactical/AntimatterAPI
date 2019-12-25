@@ -74,7 +74,8 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'gti', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'gtu', '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"',
+                    '--existing', '"' + sourceSets.main.resources.srcDirs[0] + '"'
 
             mods {
                 gtu {
@@ -124,7 +125,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "gti",
+            "Specification-Title": "gtu",
             "Specification-Vendor": "examplemodsareus",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,

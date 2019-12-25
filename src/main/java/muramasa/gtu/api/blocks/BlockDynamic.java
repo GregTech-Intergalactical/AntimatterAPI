@@ -4,18 +4,14 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.client.render.models.ModelDynamic;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.client.event.ModelBakeEvent;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -73,24 +69,24 @@ public abstract class BlockDynamic extends BlockBaked {
         return BAKED_LOOKUP;
     }
 
-    @Override
-    public void onModelRegistration() {
-        super.onModelRegistration();
-        onConfig();
-        if (!customModel && LOOKUP.size() > 0) registerCustomModel(getId(), new ModelDynamic(this), false);
-    }
-
-    @Override
-    public void getTextures(Set<ResourceLocation> textures) {
-        super.getTextures(textures);
-        textures.addAll(TEXTURES);
-    }
-
-    @Override
-    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        super.onModelBake(e, registry);
-        LOOKUP.forEach((k, v) -> BAKED_LOOKUP.put((int) k, v.get()));
-    }
+//    @Override
+//    public void onModelRegistration() {
+//        super.onModelRegistration();
+//        onConfig();
+//        if (!customModel && LOOKUP.size() > 0) registerCustomModel(getId(), new ModelDynamic(this), false);
+//    }
+//
+//    @Override
+//    public void getTextures(Set<ResourceLocation> textures) {
+//        super.getTextures(textures);
+//        textures.addAll(TEXTURES);
+//    }
+//
+//    @Override
+//    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
+//        super.onModelBuild(e, registry);
+//        LOOKUP.forEach((k, v) -> BAKED_LOOKUP.put((int) k, v.get()));
+//    }
 
     public void buildBasicConfig(Texture[] textures) {
         if (textures.length < 13) return;

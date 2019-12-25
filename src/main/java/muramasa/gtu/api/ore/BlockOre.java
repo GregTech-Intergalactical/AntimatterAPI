@@ -1,32 +1,22 @@
 package muramasa.gtu.api.ore;
 
-import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelOverride;
-import muramasa.gtu.api.texture.TextureData;
+import muramasa.gtu.api.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelBakeEvent;
 
 import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Set;
 
-public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelOverride, IColorHandler {
+public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelProvider, IColorHandler {
 
     private Material material;
     private OreType oreType;
@@ -153,25 +143,25 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         return i == 1 && block != null ? ((BlockOre) block).getMaterial().getRGB() : -1;
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void getTextures(Set<ResourceLocation> textures) {
-        textures.add(material.getSet().getTexture(oreType.getMaterialType(), 0));
-        textures.add(stoneType.getTexture());
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelRegistration() {
-
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onModelBake(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-        registry.put(loc, new TextureData().base(stoneType.getTexture()).overlay(material.getSet().getTexture(oreType.getMaterialType(), 0)).bakeAsBlock());
-    }
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void getTextures(Set<ResourceLocation> textures) {
+//        textures.add(material.getSet().getTexture(oreType.getMaterialType(), 0));
+//        textures.add(stoneType.getTexture());
+//    }
+//
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void onModelRegistration() {
+//
+//    }
+//
+//    @Override
+//    @OnlyIn(Dist.CLIENT)
+//    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
+//        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
+//        registry.put(loc, new TextureData().base(stoneType.getTexture()).overlay(material.getSet().getTexture(oreType.getMaterialType(), 0)).bakeAsBlock());
+//    }
 
     public static ItemStack get(Material material, OreType oreType, StoneType stoneType, int count) {
         BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId());

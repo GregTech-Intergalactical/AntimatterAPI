@@ -171,7 +171,7 @@
 //
 //    @Override
 //    @OnlyIn(Dist.CLIENT)
-//    public void onModelBake(Map<ResourceLocation, IBakedModel> registry) {
+//    public void onModelBuild(Map<ResourceLocation, IBakedModel> registry) {
 //        //TODO keep copy of PipeModels and remove BakedTextureDataItem
 //        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
 //        IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay(size.ordinal())));
