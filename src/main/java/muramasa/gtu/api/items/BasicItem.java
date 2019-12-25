@@ -51,7 +51,7 @@ public class BasicItem extends Item implements IGregTechObject, IModelOverride {
         super(properties);
         this.id = id;
         setRegistryName(getId());
-        GregTechAPI.register(Item.class, this);
+        GregTechAPI.register(BasicItem.class, this);
     }
 
     public BasicItem(String id) {

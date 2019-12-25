@@ -126,7 +126,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelOverrid
 
     public static ItemStack get(MaterialType type, Material material, int count) {
         ItemStack replacement = GregTechAPI.getReplacement(type, material);
-        if (replacement != null) return Utils.ca(count, replacement);
+        if (!replacement.isEmpty()) return Utils.ca(count, replacement);
         if (!type.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + type.getId() + ") M(" + material.getId() + ")");
         MaterialItem item = GregTechAPI.get(MaterialItem.class, type.getId() + "_" + material.getId());
         if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + type.getId() + ") M(" + material.getId() + ")");

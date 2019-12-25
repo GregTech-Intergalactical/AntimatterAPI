@@ -116,6 +116,6 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && material.has(this) && GregTechAPI.getReplacement(this, material) == null;
+        return doesGenerate && material.has(this) && GregTechAPI.getReplacement(this, material).isEmpty();
     }
 }
