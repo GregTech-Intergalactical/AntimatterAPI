@@ -35,9 +35,7 @@ public final class GregTechAPI {
 
     private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
     private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
-    private static final HashMap<String, IGregTechRegistrar> REGISTRARS = new HashMap<>();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
-    private static final LinkedHashMap<String, ItemStack> REPLACEMENTS = new LinkedHashMap<>();
 
     public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
 
@@ -80,14 +78,13 @@ public final class GregTechAPI {
 
     public static <T> List<T> all(Class<T> c) {
         LinkedHashMap<String, Object> map = OBJECTS.get(c);
-        if (map == null) return Collections.emptyList();
-        return map.values().stream().map(c::cast).collect(Collectors.toList());
+        return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     /** Registrar Section **/
     public static void onRegistration(RegistrationEvent event) {
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
-        REGISTRARS.values().forEach(r -> r.onRegistrationEvent(event));
+        all(IGregTechRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
     }
 
@@ -97,17 +94,16 @@ public final class GregTechAPI {
     }
 
     public static void addRegistrar(IGregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) REGISTRARS.put(registrar.getId(), registrar);
+        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IGregTechRegistrar.class, registrar.getId(), registrar);
     }
 
-    @Nullable
-    public static IGregTechRegistrar getRegistrar(String id) {
-        return REGISTRARS.get(id);
+    public static Optional<IGregTechRegistrar> getRegistrar(String id) {
+        IGregTechRegistrar registrar = get(IGregTechRegistrar.class, id);
+        return registrar != null ? Optional.of(registrar) : Optional.empty();
     }
 
     public static boolean isRegistrarEnabled(String id) {
-        IGregTechRegistrar registrar = getRegistrar(id);
-        return registrar != null && registrar.isEnabled();
+        return getRegistrar(id).map(IGregTechRegistrar::isEnabled).orElse(false);
     }
 
 //    @Nullable
@@ -122,18 +118,18 @@ public final class GregTechAPI {
 
     /** Item Registry Section **/
     public static void addReplacement(MaterialType type, Material material, ItemStack stack) {
-        REPLACEMENTS.put(type.getId() + material.getId(), stack);
+        registerInternal(ItemStack.class, type.getId() + material.getId(), stack);
     }
 
-    @Nullable
     public static ItemStack getReplacement(MaterialType type, Material material) {
-        ItemStack stack = REPLACEMENTS.get(type.getId() + material.getId());
-        return stack != null ? stack.copy() : null;
+        ItemStack stack = get(ItemStack.class, type.getId() + material.getId());
+        return stack != null ? stack.copy() : ItemStack.EMPTY;
     }
 
     /** JEI Registry Section **/
     public static void registerJEICategory(RecipeMap map, GuiData gui) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
+            //TODO
             //GregTechJEIPlugin.registerCategory(map, gui);
         }
     }
