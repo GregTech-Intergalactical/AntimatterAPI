@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "block/sandstone",
-    "overlay": "gtu:material/metallic/ore_small"
+    "overlay": "gtu:material/metallic/ore_small",
+    "particle": "block/sandstone"
   },
   "elements": [
     {

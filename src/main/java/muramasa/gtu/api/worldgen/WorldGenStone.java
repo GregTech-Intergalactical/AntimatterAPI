@@ -146,7 +146,7 @@ public class WorldGenStone extends WorldGenBase {
                                         if (state.getBlock().isReplaceableOreGen(state, world, pos, WorldGenHelper.STONE_PREDICATE)) {
                                             world.setBlockState(pos, stone);
                                         } else if (state.getBlock() instanceof BlockOre) {
-                                            world.setBlockState(pos, BlockOre.get(((BlockOre) state.getBlock()).getMaterial(), ((BlockOre) state.getBlock()).getType(), block.getType()), 2 | 16);
+                                            world.setBlockState(pos, BlockOre.get(((BlockOre) state.getBlock()).getMaterial(), ((BlockOre) state.getBlock()).getOreType(), block.getType()), 2 | 16);
                                         }
                                     }
                                 }

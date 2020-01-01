@@ -7,7 +7,6 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.data.providers.GregTechBlockStateProvider;
-import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -145,26 +144,6 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, ICol
         return i == 1 && block != null ? ((BlockOre) block).getMaterial().getRGB() : -1;
     }
 
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void getTextures(Set<ResourceLocation> textures) {
-//        textures.add(material.getSet().getTexture(oreType.getMaterialType(), 0));
-//        textures.add(stoneType.getTexture());
-//    }
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelRegistration() {
-//
-//    }
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-//        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-//        registry.put(loc, new TextureData().base(stoneType.getTexture()).overlay(material.getSet().getTexture(oreType.getMaterialType(), 0)).bakeAsBlock());
-//    }
-
     public static ItemStack get(Material material, OreType oreType, StoneType stoneType, int count) {
         BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
@@ -173,11 +152,6 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, ICol
     public static BlockState get(Material material, OreType oreType, StoneType stoneType) {
         BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId());
         return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
-    }
-
-    @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
-        provider.blockItem(this);
     }
 
     @Override

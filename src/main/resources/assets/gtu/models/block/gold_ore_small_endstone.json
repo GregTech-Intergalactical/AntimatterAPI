@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "block/end_stone",
-    "overlay": "gtu:material/shiny/ore_small"
+    "overlay": "gtu:material/shiny/ore_small",
+    "particle": "block/end_stone"
   },
   "elements": [
     {

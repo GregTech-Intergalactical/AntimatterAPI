@@ -5,7 +5,6 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.texture.TextureData;
 import muramasa.gtu.data.providers.GregTechBlockStateProvider;
-import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -42,11 +41,6 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
         bakeItem = !hasItemOverride;
         bakeBlock = false;
         customModel = true;
-    }
-
-    @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
-        provider.blockItem(this);
     }
 
     @Override

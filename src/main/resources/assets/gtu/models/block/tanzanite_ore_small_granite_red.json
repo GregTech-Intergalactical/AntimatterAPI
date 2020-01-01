@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "gtu:block/stone/granite_red",
-    "overlay": "gtu:material/gem_v/ore_small"
+    "overlay": "gtu:material/gem_v/ore_small",
+    "particle": "gtu:block/stone/granite_red"
   },
   "elements": [
     {
