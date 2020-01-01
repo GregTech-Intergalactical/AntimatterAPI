@@ -42,6 +42,10 @@ public class Ref {
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX", "", "", "", "", "", ""}; //TODO: Schedule to change? ZPM rename? Tier decisions?
     public static final Direction[] DIRECTIONS = Direction.values();
 
+    /** Internal Options **/
+    public static boolean INJECT_RESOURCES = true; //Attach and inject data with a custom resource pack
+    public static boolean GENERATE_RESOURCES = false; //Generate resources with providers
+
     /** Debug Options **/
     public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;
     public static boolean SHOW_STACK_ORE_DICT = true;

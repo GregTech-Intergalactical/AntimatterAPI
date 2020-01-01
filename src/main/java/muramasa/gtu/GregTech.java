@@ -23,7 +23,8 @@ import muramasa.gtu.common.Data;
 import muramasa.gtu.proxy.ClientHandler;
 import muramasa.gtu.proxy.IProxyHandler;
 import muramasa.gtu.proxy.ServerHandler;
-import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
+import muramasa.gtu.data.providers.GregTechBlockStateProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
@@ -65,6 +66,7 @@ public class GregTech {
     }
 
     private static void buildData() {
+        Materials.init();
         Data.init();
         Machines.init();
         Structures.init();
@@ -122,7 +124,7 @@ public class GregTech {
 
     @SubscribeEvent
     public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
-        buildData();
+        buildData(); //TODO this needs a better solution, registration event?
         MaterialType.ORE.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, OreType.NORMAL, s)));
         MaterialType.ORE_SMALL.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, OreType.SMALL, s)));
         MaterialType.BLOCK.all().forEach(m -> new BlockStorage(m, MaterialType.BLOCK));
@@ -149,6 +151,7 @@ public class GregTech {
     public static void onDataGather(GatherDataEvent e) {
         DataGenerator gen = e.getGenerator();
         if (e.includeClient()) {
+            gen.addProvider(new GregTechBlockStateProvider(gen, e.getExistingFileHelper()));
             gen.addProvider(new GregTechItemModelProvider(gen, e.getExistingFileHelper()));
         }
         if (e.includeServer()) {

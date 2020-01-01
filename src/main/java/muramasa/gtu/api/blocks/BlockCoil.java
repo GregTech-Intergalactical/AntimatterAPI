@@ -17,7 +17,7 @@ public class BlockCoil extends BlockBaked {
     private int heatCapacity;
 
     public BlockCoil(String id, int heatCapacity, Block.Properties properties) {
-        super(properties, new TextureData().base(new Texture("blocks/coil/" + id)));
+        super(properties, new TextureData().base(new Texture("block/coil/" + id)));
         this.id = id;
         this.heatCapacity = heatCapacity;
         setRegistryName(getId());

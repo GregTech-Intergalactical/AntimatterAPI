@@ -15,7 +15,7 @@ import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
-import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -26,9 +26,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -213,14 +210,17 @@ public class BasicItem extends Item implements IGregTechObject, IModelProvider {
         return new ItemStack(this, count);
     }
 
+    public Texture getTexture() {
+        return new Texture("item/standard/" + id);
+    }
+
     @Override
     public ItemStack asItemStack() {
         return get(1);
     }
 
-@Override
-@OnlyIn(Dist.CLIENT)
-public void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
-    provider.single(builder, new Texture("item/standard/" + id));
-}
+    @Override
+    public void onItemModelBuild(GregTechItemModelProvider provider) {
+        provider.single(this, getTexture());
+    }
 }

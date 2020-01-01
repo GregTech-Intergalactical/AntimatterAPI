@@ -7,6 +7,7 @@ import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.client.render.ModelUtils;
+import muramasa.gtu.data.resources.DynamicPackFinder;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -29,10 +30,37 @@ public class ClientHandler implements IProxyHandler {
     private static Minecraft MC = Minecraft.getInstance();
     private static ModelBakery BAKERY;
 
+    private static DynamicPackFinder GTI_RESOURCES = new DynamicPackFinder("gti_resources", true);
+
     public static void init() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
-
         GregTechAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+
+        //TODO crashes suring runData?
+        //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
+
+//        GregTechAPI.onEvent(RegistrationEvent.DATA_READY, () -> {
+//            GregTechAPI.all(MaterialItem.class).forEach(i -> {
+//                //"assets/gtu/models/item/" + i.getId() + ".json"
+//                GTI_RESOURCES.getPack().addModel(Ref.MODID, "item", i.getId(), GregTechItemModelProvider.layered(GTModelBuilder.getItemBuilder(), i.getMaterial().getSet().getTextures(i.getType())));
+//            });
+//
+//
+//            ItemModelBuilder itemBuilder = new ItemModelBuilder(new ResourceLocation("dummy"), GTModelBuilder.EXISTING_FILE_HELPER);
+//            BlockModelBuilder blockBuilder = new BlockModelBuilder(new ResourceLocation("dummy"), GTModelBuilder.EXISTING_FILE_HELPER);
+//            GregTechBlockStateProvider stateProvider = new GregTechBlockStateProvider(new DataGenerator(null, Collections.emptyList()), GTModelBuilder.EXISTING_FILE_HELPER);
+//            GregTechAPI.all(BlockStone.class).forEach(b -> {
+//                blockBuilder.parent(stateProvider.getExistingFile(stateProvider.mcLoc("block/cube_all"))).texture("all", b.getType().getTexture());
+//                GTI_RESOURCES.getPack().addModel(Ref.MODID, "block", b.getId(), blockBuilder);
+//
+//                VariantBlockStateBuilder stateBuilder = stateProvider.getVariantBuilder(b);
+//                stateBuilder.partialState().setModels(new ConfiguredModel(blockBuilder));
+//                GTI_RESOURCES.getPack().addState(Ref.MODID, b.getId(), stateBuilder);
+//
+//                itemBuilder.parent(stateProvider.getExistingFile(b.getRegistryName()));
+//                GTI_RESOURCES.getPack().addModel(Ref.MODID, "item", b.getId(), itemBuilder);
+//            });
+//        });
     }
 
     public static void setup(FMLClientSetupEvent e) {
@@ -52,6 +80,7 @@ public class ClientHandler implements IProxyHandler {
         });
     }
 
+    @SubscribeEvent
     public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
         GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) b)::getBlockColor, b);
