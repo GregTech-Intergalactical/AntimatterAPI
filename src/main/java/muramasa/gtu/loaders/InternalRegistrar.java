@@ -51,7 +51,7 @@ public class InternalRegistrar implements IGregTechRegistrar {
                 WorldGenLoader.init();
                 break;
             case DATA_READY:
-                Materials.init();
+
                 break;
             case RECIPE:
                 //OreDictLoader.init();

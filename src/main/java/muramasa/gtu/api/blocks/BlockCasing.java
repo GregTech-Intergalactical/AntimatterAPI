@@ -17,7 +17,7 @@ public class BlockCasing extends BlockDynamic {
     private Texture[] textures;
 
     public BlockCasing(String type, Block.Properties properties) {
-        super(properties, new TextureData().base(new Texture("blocks/casing/" + type)));
+        super(properties, new TextureData().base(new Texture("block/casing/" + type)));
         this.type = type;
         setRegistryName(getId());
         register(BlockCasing.class, this);

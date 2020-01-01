@@ -8,7 +8,6 @@ import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.tileentities.TileEntityMachine;
 import muramasa.gtu.api.util.Utils;
 import net.minecraft.block.Block;
@@ -43,7 +42,7 @@ import java.util.List;
 
 import static muramasa.gtu.api.machines.MachineFlag.BASIC;
 
-public class BlockMachine extends Block implements IGregTechObject, IItemBlock, IModelProvider, IColorHandler {
+public class BlockMachine extends Block implements IGregTechObject, IItemBlock, IColorHandler {
 
     protected Machine type;
     protected Tier tier;

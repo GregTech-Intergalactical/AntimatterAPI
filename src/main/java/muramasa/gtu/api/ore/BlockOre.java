@@ -6,6 +6,8 @@ import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.IModelProvider;
+import muramasa.gtu.data.providers.GregTechBlockStateProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,7 +18,7 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public class BlockOre extends Block implements IGregTechObject, IItemBlock, IModelProvider, IColorHandler {
+public class BlockOre extends Block implements IGregTechObject, IItemBlock, IColorHandler, IModelProvider {
 
     private Material material;
     private OreType oreType;
@@ -46,7 +48,7 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
         return material;
     }
 
-    public OreType getType() {
+    public OreType getOreType() {
         return oreType;
     }
 
@@ -171,5 +173,15 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, IMod
     public static BlockState get(Material material, OreType oreType, StoneType stoneType) {
         BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId());
         return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
+    }
+
+    @Override
+    public void onItemModelBuild(GregTechItemModelProvider provider) {
+        provider.blockItem(this);
+    }
+
+    @Override
+    public void onBlockModelBuild(GregTechBlockStateProvider provider) {
+        provider.cubeAllLayeredTinted(this, getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType().getMaterialType(), 0), 0, 1);
     }
 }

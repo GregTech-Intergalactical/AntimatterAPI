@@ -9,7 +9,7 @@ import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
@@ -24,14 +24,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MaterialItem extends Item implements IGregTechObject, IModelProvider, IColorHandler {
+public class MaterialItem extends Item implements IGregTechObject, IColorHandler, IModelProvider {
 
     private Material material;
     private MaterialType type;
@@ -131,8 +128,7 @@ public class MaterialItem extends Item implements IGregTechObject, IModelProvide
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
-        provider.layered(builder, getMaterial().getSet().getTextures(getType()));
+    public void onItemModelBuild(GregTechItemModelProvider provider) {
+        provider.layered(this, getMaterial().getSet().getTextures(getType()));
     }
 }

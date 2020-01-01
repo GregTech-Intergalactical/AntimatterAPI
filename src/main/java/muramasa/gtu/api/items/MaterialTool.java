@@ -9,7 +9,7 @@ import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.api.tools.GregTechToolType;
-import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -23,17 +23,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends SwordItem implements IGregTechObject, IModelProvider, IColorHandler {
+public class MaterialTool extends SwordItem implements IGregTechObject, IColorHandler, IModelProvider {
 
     protected GregTechToolType type;
 
@@ -63,7 +60,9 @@ public class MaterialTool extends SwordItem implements IGregTechObject, IModelPr
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         Material mat = getPrimary(stack);
-        return (mat != null ? new TranslationTextComponent("") : mat.getDisplayName()).appendText(" ").appendSibling(type.getDisplayName());
+        return new StringTextComponent("im broken TODO");
+        //TODO fixme
+        //return (mat != null ? new TranslationTextComponent("") : mat.getDisplayName()).appendText(" ").appendSibling(type.getDisplayName());
     }
 
     //TODO: Localization
@@ -411,8 +410,7 @@ public class MaterialTool extends SwordItem implements IGregTechObject, IModelPr
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
-        provider.layered(builder, type.getTextures());
+    public void onItemModelBuild(GregTechItemModelProvider provider) {
+        provider.layered(this, getType().getTextures());
     }
 }

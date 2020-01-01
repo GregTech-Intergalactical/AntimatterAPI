@@ -69,7 +69,7 @@ public abstract class Cover {
 
     public Texture[] getTextures() {
         return new Texture[] {
-            new Texture("blocks/machine/cover/" + getId())
+            new Texture("block/machine/cover/" + getId())
         };
     }
 

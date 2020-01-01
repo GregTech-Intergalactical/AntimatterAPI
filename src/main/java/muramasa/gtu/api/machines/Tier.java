@@ -44,7 +44,7 @@ public class Tier implements IGregTechObject {
         this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
-        this.baseTexture = new Texture("blocks/machine/base/" + id);
+        this.baseTexture = new Texture("block/machine/base/" + id);
         TIER_NAME_LOOKUP.put(id, this);
         TIER_ID_LOOKUP.put(internalId, this);
     }

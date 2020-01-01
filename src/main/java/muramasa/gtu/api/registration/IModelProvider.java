@@ -1,19 +1,19 @@
 package muramasa.gtu.api.registration;
 
-import muramasa.gtu.proxy.providers.GregTechItemModelProvider;
+import muramasa.gtu.data.providers.GregTechBlockStateProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 public interface IModelProvider {
 
     @OnlyIn(Dist.CLIENT)
-    default void onItemModelBuild(GregTechItemModelProvider provider, ItemModelBuilder builder) {
+    default void onItemModelBuild(GregTechItemModelProvider provider) {
         //NOOP
     }
 
     @OnlyIn(Dist.CLIENT)
-    default void onBlockModelBuild() {
+    default void onBlockModelBuild(GregTechBlockStateProvider provider) {
         //NOOP
     }
 }

@@ -11,7 +11,7 @@ public class BlockBasic extends BlockBaked {
     private String type;
 
     public BlockBasic(String type, Block.Properties properties) {
-        super(properties, new TextureData().base(new Texture("blocks/basic/" + type)));
+        super(properties, new TextureData().base(new Texture("block/basic/" + type)));
         this.type = type;
         setRegistryName(getId());
         register(BlockBasic.class, this);

@@ -128,12 +128,12 @@ public class Machine implements IGregTechObject {
     public Texture[] getOverlayTextures(MachineState state) {
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
-            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
-            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
-            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
-            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
-            new Texture("blocks/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
+            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
+            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
+            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
+            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
         };
     }
 

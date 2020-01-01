@@ -4,6 +4,8 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.*;
+import muramasa.gtu.data.providers.GregTechBlockStateProvider;
+import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -21,7 +23,7 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IModelProvider, IStateOverride, IColorHandler {
+public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IColorHandler, IModelProvider {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
@@ -32,7 +34,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         super(Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
         this.material = material;
         this.type = type;
-        
         setRegistryName(getId());
         GregTechAPI.register(BlockStorage.class, this);
     }
@@ -191,11 +192,21 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 //    @OnlyIn(Dist.CLIENT)
 //    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
 //        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-//        //TODO registry.put(loc, ClientHandler.TYPE_SET_MAP.get(getType().getId() + "_" + material.getSet().getId()));
+//        //TODO registry.put(loc, ClientHandler.TYPE_SET_MAP.get(getOreType().getId() + "_" + material.getSet().getId()));
 //    }
 
     public static ItemStack get(Material material, MaterialType type, int count) {
         BlockStorage block = GregTechAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public void onItemModelBuild(GregTechItemModelProvider provider) {
+        provider.blockItem(this);
+    }
+
+    @Override
+    public void onBlockModelBuild(GregTechBlockStateProvider provider) {
+        provider.cubeAllTinted(this, getMaterial().getSet().getTexture(getType(), 0), 0);
     }
 }
