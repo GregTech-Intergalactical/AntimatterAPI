@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "block/diorite",
-    "overlay": "gtu:material/quartz/ore_small"
+    "overlay": "gtu:material/quartz/ore_small",
+    "particle": "block/diorite"
   },
   "elements": [
     {

@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "block/netherrack",
-    "overlay": "gtu:material/flint/ore"
+    "overlay": "gtu:material/flint/ore",
+    "particle": "block/netherrack"
   },
   "elements": [
     {

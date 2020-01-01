@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "gtu:block/stone/basalt",
-    "overlay": "gtu:material/metallic/ore"
+    "overlay": "gtu:material/metallic/ore",
+    "particle": "gtu:block/stone/basalt"
   },
   "elements": [
     {

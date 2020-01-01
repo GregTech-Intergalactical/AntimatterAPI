@@ -1,7 +1,8 @@
 {
   "parent": "block/block",
   "textures": {
-    "all": "gtu:material/gem_h/block"
+    "all": "gtu:material/gem_h/block",
+    "particle": "gtu:material/gem_h/block"
   },
   "elements": [
     {

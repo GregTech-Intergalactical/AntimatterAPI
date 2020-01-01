@@ -2,7 +2,8 @@
   "parent": "block/block",
   "textures": {
     "base": "block/andesite",
-    "overlay": "gtu:material/lapis/ore"
+    "overlay": "gtu:material/lapis/ore",
+    "particle": "block/andesite"
   },
   "elements": [
     {

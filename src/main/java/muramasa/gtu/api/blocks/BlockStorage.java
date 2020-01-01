@@ -3,9 +3,11 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
-import muramasa.gtu.api.registration.*;
+import muramasa.gtu.api.registration.IColorHandler;
+import muramasa.gtu.api.registration.IGregTechObject;
+import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.data.providers.GregTechBlockStateProvider;
-import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -198,11 +200,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     public static ItemStack get(Material material, MaterialType type, int count) {
         BlockStorage block = GregTechAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
-    }
-
-    @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
-        provider.blockItem(this);
     }
 
     @Override
