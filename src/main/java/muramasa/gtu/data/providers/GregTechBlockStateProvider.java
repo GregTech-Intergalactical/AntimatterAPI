@@ -6,6 +6,7 @@ import muramasa.gtu.api.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
@@ -29,33 +30,31 @@ public class GregTechBlockStateProvider extends PublicBlockStateProvider {
         });
     }
 
+    public BlockModelBuilder getBuilder(Block block) {
+        return getBuilder(block.getRegistryName().getPath());
+    }
+
+    public BlockModelBuilder cubeAll(Block block, ResourceLocation texture) {
+        return super.cubeAll(block.getRegistryName().toString(), texture);
+    }
+
     public void simpleBlock(Block block, ResourceLocation texture) {
-        simpleBlock(block, cubeAll(block.getRegistryName().toString(), texture));
+        simpleBlock(block, cubeAll(block, texture));
     }
 
-    public void cubeAllTinted(Block block, ResourceLocation texture, int tint) {
-        simpleBlock(block, getBuilder(block.getRegistryName().getPath())
-            .parent(getExistingFile(mcLoc("block/block")))
-            .texture("all", texture).texture("particle", texture)
-            .element().allFaces((d, f) -> f.texture("#all").tintindex(tint)).end()
-        );
+    public void simpleState(Block block, ResourceLocation texture) {
+        simpleBlock(block, getSimpleModel(block, texture));
     }
 
-    public void cubeAllLayered(Block block, ResourceLocation base, ResourceLocation overlay) {
-        simpleBlock(block, getBuilder(block.getRegistryName().getPath())
-            .parent(getExistingFile(mcLoc("block/block")))
-            .texture("base", base).texture("overlay", overlay).texture("particle", base)
-            .element().allFaces((d, f) -> f.texture("#base")).end()
-            .element().allFaces((d, f) -> f.texture("#overlay")).end()
-        );
+    public void layeredState(Block block, ResourceLocation base, ResourceLocation overlay) {
+        simpleBlock(block, getLayeredModel(block, base, overlay));
     }
 
-    public void cubeAllLayeredTinted(Block block, ResourceLocation base, ResourceLocation overlay, int baseTint, int overlayTint) {
-        simpleBlock(block, getBuilder(block.getRegistryName().getPath())
-            .parent(getExistingFile(mcLoc("block/block")))
-            .texture("base", base).texture("overlay", overlay).texture("particle", base)
-            .element().allFaces((d, f) -> f.texture("#base").tintindex(baseTint)).end()
-            .element().allFaces((d, f) -> f.texture("#overlay").tintindex(overlayTint)).end()
-        );
+    public BlockModelBuilder getSimpleModel(Block block, ResourceLocation texture) {
+        return getBuilder(block).parent(getExistingFile(modLoc("block/preset/simple"))).texture("all", texture);
+    }
+
+    public BlockModelBuilder getLayeredModel(Block block, ResourceLocation base, ResourceLocation overlay) {
+        return getBuilder(block).parent(getExistingFile(modLoc("block/preset/layered"))).texture("base", base).texture("overlay", overlay);
     }
 }

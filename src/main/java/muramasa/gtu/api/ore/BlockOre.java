@@ -2,9 +2,7 @@ package muramasa.gtu.api.ore;
 
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IItemBlock;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IModelProvider;
 import muramasa.gtu.data.providers.GregTechBlockStateProvider;
 import net.minecraft.block.Block;
@@ -12,30 +10,21 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 
-import javax.annotation.Nullable;
+public class BlockOre extends BlockMaterialStone implements IModelProvider {
 
-public class BlockOre extends Block implements IGregTechObject, IItemBlock, IColorHandler, IModelProvider {
+    private MaterialType oreType;
 
-    private Material material;
-    private OreType oreType;
-    private StoneType stoneType;
-
-    public BlockOre(Material material, OreType oreType, StoneType stoneType) {
-        super(Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
-        this.material = material;
+    public BlockOre(Material material, StoneType stoneType, MaterialType oreType) {
+        super(material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
         this.oreType = oreType;
-        this.stoneType = stoneType;
-
         setRegistryName(getId());
         GregTechAPI.register(BlockOre.class, this);
     }
 
     @Override
     public String getId() {
-        return material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId();
+        return getMaterial().getId() + "_" + getOreType().getId() + "_" + getStoneType().getId();
     }
 
     @Override
@@ -43,16 +32,8 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, ICol
         return getId();
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public OreType getOreType() {
+    public MaterialType getOreType() {
         return oreType;
-    }
-
-    public StoneType getStoneType() {
-        return stoneType;
     }
 
 //    @Override
@@ -133,29 +114,18 @@ public class BlockOre extends Block implements IGregTechObject, IItemBlock, ICol
 //        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
 //    }
 
-    @Override
-    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        if (world == null || pos == null || i != 1 || state.isAir(world, pos)) return -1;
-        return ((BlockOre) world.getBlockState(pos).getBlock()).getMaterial().getRGB();
-    }
-
-    @Override
-    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 1 && block != null ? ((BlockOre) block).getMaterial().getRGB() : -1;
-    }
-
-    public static ItemStack get(Material material, OreType oreType, StoneType stoneType, int count) {
-        BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId());
+    public static ItemStack get(Material material, MaterialType oreType, StoneType stoneType, int count) {
+        BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
     }
 
-    public static BlockState get(Material material, OreType oreType, StoneType stoneType) {
-        BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getMaterialType().getId() + "_" + stoneType.getId());
+    public static BlockState get(Material material, MaterialType oreType, StoneType stoneType) {
+        BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
         return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
     }
 
     @Override
     public void onBlockModelBuild(GregTechBlockStateProvider provider) {
-        provider.cubeAllLayeredTinted(this, getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType().getMaterialType(), 0), 0, 1);
+        provider.layeredState(this, getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType(), 0));
     }
 }

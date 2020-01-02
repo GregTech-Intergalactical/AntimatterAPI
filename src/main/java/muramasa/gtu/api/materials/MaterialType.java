@@ -59,7 +59,7 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     private String id;
     private ITextComponent namePre, namePost;
     private int unitValue, layers;
-    private boolean doesGenerate, visible, hasLocName;
+    private boolean active, visible, hasLocName;
     private Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
@@ -67,13 +67,13 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
         this.visible = visible;
         this.unitValue = unitValue;
         this.layers = layers;
-        doesGenerate = true;
+        active = true;
         register(MaterialType.class, this);
     }
 
-    public MaterialType(String id, int layers, boolean visible, int unitValue, boolean generatesItems) {
+    public MaterialType(String id, int layers, boolean visible, int unitValue, boolean active) {
         this(id, layers, visible, unitValue);
-        this.doesGenerate = generatesItems;
+        this.active = active;
     }
 
     @Override
@@ -121,6 +121,6 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return doesGenerate && material.has(this) && GregTechAPI.getReplacement(this, material).isEmpty();
+        return active && material.has(this) && GregTechAPI.getReplacement(this, material).isEmpty();
     }
 }

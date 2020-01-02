@@ -4,6 +4,7 @@ import muramasa.gtu.api.cover.Cover;
 import muramasa.gtu.api.machines.types.Machine;
 import muramasa.gtu.api.pipe.PipeSize;
 import muramasa.gtu.api.texture.TextureData;
+import net.minecraft.state.IntegerProperty;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
 
@@ -25,5 +26,6 @@ public class GregTechProperties {
     public static final ModelProperty<Byte> PIPE_CONNECTIONS = new ModelProperty<>();
 
     /** Block Rock Properties **/
-    public static final ModelProperty<Integer> ROCK_MODEL = new ModelProperty<>();
+    //public static final ModelProperty<Integer> ROCK_MODEL = new ModelProperty<>();
+    public static final IntegerProperty ROCK_MODEL = IntegerProperty.create("rock_model", 0, 6);
 }

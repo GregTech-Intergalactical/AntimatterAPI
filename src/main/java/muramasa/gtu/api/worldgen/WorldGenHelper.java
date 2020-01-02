@@ -5,8 +5,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.materials.Material;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.BlockOre;
-import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -88,7 +88,7 @@ public class WorldGenHelper {
 //        }
 //    }
 
-    private static void setOreState(World world, BlockPos pos, StoneType stone, Material material, OreType type) {
+    private static void setOreState(World world, BlockPos pos, StoneType stone, Material material, MaterialType type) {
         world.setBlockState(pos, BlockOre.get(material, type, stone), 2 | 16);
     }
 
@@ -98,12 +98,12 @@ public class WorldGenHelper {
 //        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
     }
 
-    public static boolean setOre(World world, BlockPos pos, BlockState existing, Material material, OreType type) {
+    public static boolean setOre(World world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
         if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
             StoneType stone = STONE_MAP.get(world.getBlockState(pos));
             if (stone == null) stone = StoneType.STONE;
             setOreState(world, pos, stone, material, type);
-            if (type == OreType.NORMAL && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
+            if (type == MaterialType.ORE && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
             return true;
         }
         return false;

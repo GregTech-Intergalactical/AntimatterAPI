@@ -30,7 +30,7 @@ public class GregTechItemModelProvider extends ItemModelProvider {
         });
         GregTechAPI.all(Block.class).forEach(b -> {
             if (b instanceof IModelProvider) {
-                blockItem(b);
+                //blockItem(b);
                 ((IModelProvider) b).onItemModelBuild(this);
             }
         });
