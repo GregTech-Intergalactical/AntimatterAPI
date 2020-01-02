@@ -83,6 +83,11 @@ minecraft {
                 }
             }
         }
+
+        intellijClient {
+            parent runs.client
+            environment 'MOD_CLASSES', "${project.file("out/production/resources").canonicalPath};${project.file("out/production/classes").canonicalPath}"
+        }
     }
 }
 

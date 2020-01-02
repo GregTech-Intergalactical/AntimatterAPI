@@ -6,6 +6,7 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.materials.TextureSet;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.util.SoundType;
+import muramasa.gtu.client.render.GregTechModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.data.resources.DynamicPackFinder;
 import net.minecraft.block.Block;
@@ -19,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -68,6 +70,7 @@ public class ClientHandler implements IProxyHandler {
         //MinecraftForge.EVENT_BUS.register(RenderGameOverlayHandler.class);
         //MinecraftForge.EVENT_BUS.register(TooltipHandler.class);
         //ModelLoaderRegistry.registerLoader(new GTModelLoader());
+        ModelLoaderRegistry.registerLoader(new GregTechModelLoader());
     }
 
     @SubscribeEvent

@@ -7,7 +7,6 @@ import muramasa.gtu.api.blocks.BlockStorage;
 import muramasa.gtu.api.data.Materials;
 import muramasa.gtu.api.items.MaterialItem;
 import muramasa.gtu.api.ore.BlockOre;
-import muramasa.gtu.api.ore.OreType;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.util.Utils;
@@ -601,17 +600,17 @@ public class Material implements IGregTechObject {
 
     public ItemStack getOre(int amount) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return BlockOre.get(this, OreType.NORMAL, StoneType.STONE, amount);
+        return BlockOre.get(this, ORE, StoneType.STONE, amount);
     }
 
     public ItemStack getBlock(int amount) {
         if (!has(BLOCK)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + BLOCK.getId() + ") M(" + id + ")");
-        return BlockStorage.get(this, MaterialType.BLOCK, amount);
+        return BlockStorage.get(this, BLOCK, amount);
     }
 
     public ItemStack getFrame(int amount) {
         if (!has(FRAME)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + FRAME.getId() + ") M(" + id + ")");
-        return BlockStorage.get(this, MaterialType.FRAME, amount);
+        return BlockStorage.get(this, FRAME, amount);
     }
 
     public FluidStack getLiquid(int amount) {

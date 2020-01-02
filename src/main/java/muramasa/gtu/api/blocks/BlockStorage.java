@@ -204,6 +204,6 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 
     @Override
     public void onBlockModelBuild(GregTechBlockStateProvider provider) {
-        provider.cubeAllTinted(this, getMaterial().getSet().getTexture(getType(), 0), 0);
+        provider.simpleState(this, getMaterial().getSet().getTexture(getType(), 0));
     }
 }

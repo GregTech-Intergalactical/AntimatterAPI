@@ -14,7 +14,7 @@ import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.network.GregTechNetwork;
 import muramasa.gtu.api.ore.BlockOre;
-import muramasa.gtu.api.ore.OreType;
+import muramasa.gtu.api.ore.BlockRock;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.registration.IItemBlock;
 import muramasa.gtu.api.registration.RegistrationEvent;
@@ -125,8 +125,11 @@ public class GregTech {
     @SubscribeEvent
     public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
         buildData(); //TODO this needs a better solution, registration event?
-        MaterialType.ORE.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, OreType.NORMAL, s)));
-        MaterialType.ORE_SMALL.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, OreType.SMALL, s)));
+        MaterialType.ORE.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> {
+            new BlockOre(m, s, MaterialType.ORE);
+            new BlockRock(m, s);
+        }));
+        MaterialType.ORE_SMALL.all().forEach(m -> Arrays.stream(StoneType.getAll()).forEach(s -> new BlockOre(m, s, MaterialType.ORE_SMALL)));
         MaterialType.BLOCK.all().forEach(m -> new BlockStorage(m, MaterialType.BLOCK));
         MaterialType.FRAME.all().forEach(m -> new BlockStorage(m, MaterialType.FRAME));
         //new BlockRock(StoneType.STONE);

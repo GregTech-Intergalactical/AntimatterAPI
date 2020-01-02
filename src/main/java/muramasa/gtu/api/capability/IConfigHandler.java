@@ -8,6 +8,7 @@ import net.minecraft.util.Hand;
 
 import javax.annotation.Nullable;
 
+//TODO rename to IInteractHandler?
 public interface IConfigHandler {
 
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable GregTechToolType type);

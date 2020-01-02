@@ -14,7 +14,6 @@ public abstract class PublicBlockStateProvider extends BlockStateProvider {
     }
 
     /** BlockStateProvider **/
-
     public VariantBlockStateBuilder getVariantBuilder(Block b) {
         return super.getVariantBuilder(b);
     }
@@ -232,6 +231,9 @@ public abstract class PublicBlockStateProvider extends BlockStateProvider {
     }
 
     /** Model Provider **/
+    public BlockModelBuilder getBuilder(String path) {
+        return super.getBuilder(path);
+    }
 
     public ResourceLocation modLoc(String name) {
         return super.modLoc(name);

@@ -4,7 +4,7 @@ import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.blocks.BlockStone;
-import muramasa.gtu.api.ore.OreType;
+import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.StoneType;
 import muramasa.gtu.api.util.XSTR;
 import net.minecraft.block.BlockState;
@@ -116,13 +116,13 @@ public class WorldGenAsteroid extends WorldGenBase {
                                             state = world.getBlockState(pos);
                                             int ranOre = rand.nextInt(50);
                                             if (ranOre < 3) {
-                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(0), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(0), MaterialType.ORE);
                                             } else if (ranOre < 6) {
-                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(1), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(1), MaterialType.ORE);
                                             } else if (ranOre < 8) {
-                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(2), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(2), MaterialType.ORE);
                                             } else if (ranOre < 10) {
-                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(3), OreType.NORMAL);
+                                                WorldGenHelper.setOre(world, pos, state, layerToGen.getMaterial(3), MaterialType.ORE);
                                             } else {
                                                 if (world.getDimension().getType().getId() == Ref.ASTEROIDS) {
                                                     WorldGenHelper.setState(world, pos, GRANITE_RED_STATE);
