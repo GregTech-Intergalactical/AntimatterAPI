@@ -2,7 +2,7 @@ package muramasa.antimatter.ore;
 
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IItemBlock;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -13,7 +13,7 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public abstract class BlockMaterialStone extends Block implements IGregTechObject, IItemBlock, IColorHandler, IModelProvider {
+public abstract class BlockMaterialStone extends Block implements IAntimatterObject, IItemBlock, IColorHandler, IModelProvider {
 
     private Material material;
     private StoneType stoneType;

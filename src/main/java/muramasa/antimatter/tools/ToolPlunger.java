@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 public class ToolPlunger extends MaterialTool {
 
     public ToolPlunger() {
-        super(GregTechToolType.PLUNGER);
+        super(AntimatterToolType.PLUNGER);
     }
 
     @Override

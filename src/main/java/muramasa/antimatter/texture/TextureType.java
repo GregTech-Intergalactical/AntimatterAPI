@@ -1,10 +1,10 @@
 package muramasa.antimatter.texture;
 
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Locale;
 
-public enum TextureType implements IGregTechObject {
+public enum TextureType implements IAntimatterObject {
 
     TOP,
     BOTTOM,

@@ -1,6 +1,6 @@
 package muramasa.antimatter.tileentities;
 
-import muramasa.antimatter.GregTechProperties;
+import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.blocks.BlockMachine;
 import muramasa.antimatter.capability.impl.*;
 import muramasa.antimatter.gui.GuiEvent;
@@ -184,8 +184,8 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
     @Nonnull
     @Override
     public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(GregTechProperties.MACHINE_TYPE, getMachineType()).withInitial(GregTechProperties.MACHINE_FACING, facing).withInitial(GregTechProperties.MACHINE_TEXTURE, getTextureData());
-        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(GregTechProperties.MACHINE_COVER, machineCoverHandler.getAll()));
+        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType()).withInitial(AntimatterProperties.MACHINE_FACING, facing).withInitial(AntimatterProperties.MACHINE_TEXTURE, getTextureData());
+        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getAll()));
         return builder.build();
     }
 

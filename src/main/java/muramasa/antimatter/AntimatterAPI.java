@@ -7,8 +7,8 @@ import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
-import muramasa.antimatter.registration.IGregTechObject;
-import muramasa.antimatter.registration.IGregTechRegistrar;
+import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.gtu.Configs;
 import muramasa.gtu.GregTech;
@@ -31,10 +31,10 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class GregTechAPI {
+public final class AntimatterAPI {
 
     private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
-    private static final IGregTechRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
+    private static final IAntimatterRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
 
     public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
@@ -65,7 +65,7 @@ public final class GregTechAPI {
         if (o instanceof Block && !hasBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
     }
 
-    public static void register(Class c, IGregTechObject o) {
+    public static void register(Class c, IAntimatterObject o) {
         register(c, o.getId(), o);
     }
 
@@ -92,7 +92,7 @@ public final class GregTechAPI {
     /** Registrar Section **/
     public static void onRegistration(RegistrationEvent event) {
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
-        all(IGregTechRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
+        all(IAntimatterRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
     }
 
@@ -101,17 +101,17 @@ public final class GregTechAPI {
         CALLBACKS.get(event.name()).add(runnable);
     }
 
-    public static void addRegistrar(IGregTechRegistrar registrar) {
-        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IGregTechRegistrar.class, registrar.getId(), registrar, true);
+    public static void addRegistrar(IAntimatterRegistrar registrar) {
+        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar, true);
     }
 
-    public static Optional<IGregTechRegistrar> getRegistrar(String id) {
-        IGregTechRegistrar registrar = get(IGregTechRegistrar.class, id);
+    public static Optional<IAntimatterRegistrar> getRegistrar(String id) {
+        IAntimatterRegistrar registrar = get(IAntimatterRegistrar.class, id);
         return registrar != null ? Optional.of(registrar) : Optional.empty();
     }
 
     public static boolean isRegistrarEnabled(String id) {
-        return getRegistrar(id).map(IGregTechRegistrar::isEnabled).orElse(false);
+        return getRegistrar(id).map(IAntimatterRegistrar::isEnabled).orElse(false);
     }
 
 //    @Nullable

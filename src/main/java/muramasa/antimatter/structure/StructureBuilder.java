@@ -1,6 +1,6 @@
 package muramasa.antimatter.structure;
 
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
 
@@ -35,23 +35,23 @@ public class StructureBuilder {
         return this;
     }
 
-    public StructureBuilder at(String key, IGregTechObject... objects) {
+    public StructureBuilder at(String key, IAntimatterObject... objects) {
         elementLookup.put(key, new ComponentElement(objects));
         return this;
     }
 
-    public StructureBuilder at(String key, String name, IGregTechObject... objects) {
+    public StructureBuilder at(String key, String name, IAntimatterObject... objects) {
         elementLookup.put(key, new ComponentElement(name, objects));
         return this;
     }
 
-    public StructureBuilder at(String key, Collection<? extends IGregTechObject> objects) {
-        elementLookup.put(key, new ComponentElement(objects.toArray(new IGregTechObject[0])));
+    public StructureBuilder at(String key, Collection<? extends IAntimatterObject> objects) {
+        elementLookup.put(key, new ComponentElement(objects.toArray(new IAntimatterObject[0])));
         return this;
     }
 
-    public StructureBuilder at(String key, String name, Collection<? extends IGregTechObject> objects) {
-        elementLookup.put(key, new ComponentElement(name, objects.toArray(new IGregTechObject[0])));
+    public StructureBuilder at(String key, String name, Collection<? extends IAntimatterObject> objects) {
+        elementLookup.put(key, new ComponentElement(name, objects.toArray(new IAntimatterObject[0])));
         return this;
     }
 

@@ -12,7 +12,7 @@ import muramasa.antimatter.machines.MachineState;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.recipe.RecipeBuilder;
 import muramasa.antimatter.recipe.RecipeMap;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 
 import static muramasa.antimatter.machines.MachineFlag.RECIPE;
 
-public class Machine implements IGregTechObject {
+public class Machine implements IAntimatterObject {
 
     /** Global Members **/
     private static int lastInternalId;

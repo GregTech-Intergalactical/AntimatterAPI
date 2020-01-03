@@ -5,12 +5,12 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 
-public abstract class GTContainer extends Container {
+public abstract class AntimatterContainer extends Container {
 
     protected PlayerInventory playerInv;
     protected int invSize;
 
-    public GTContainer(ContainerType<?> containerType, int windowId, PlayerInventory playerInv, int invSize) {
+    public AntimatterContainer(ContainerType<?> containerType, int windowId, PlayerInventory playerInv, int invSize) {
         super(containerType, windowId);
         this.playerInv = playerInv;
         this.invSize = invSize;

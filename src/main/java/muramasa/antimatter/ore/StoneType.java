@@ -2,10 +2,10 @@ package muramasa.antimatter.ore;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.gtu.data.Materials;
 import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class StoneType implements IGregTechObject {
+public class StoneType implements IAntimatterObject {
 
     private static List<StoneType> stoneGenerating = new LinkedList<>();
     
@@ -70,7 +70,7 @@ public class StoneType implements IGregTechObject {
         this.soundType = soundType;
         this.harvestLevel = harvestLevel;
         this.gravity = gravity;
-        GregTechAPI.register(StoneType.class, this);
+        AntimatterAPI.register(StoneType.class, this);
     }
 
     public StoneType(String id, String oreId, Material material, boolean generateStone, Texture texture, SoundType soundType, int harvestLevel) {
@@ -162,21 +162,21 @@ public class StoneType implements IGregTechObject {
 
     //TODO collection
     public static StoneType[] getAll() {
-        return GregTechAPI.all(StoneType.class).stream().toArray(size -> new StoneType[size]);
+        return AntimatterAPI.all(StoneType.class).stream().toArray(size -> new StoneType[size]);
     }
 
     //TODO collection
     public static StoneType[] getAllActive() {
-        return GregTechAPI.all(StoneType.class).stream().filter(s -> s.generate).toArray(size -> new StoneType[size]);
+        return AntimatterAPI.all(StoneType.class).stream().filter(s -> s.generate).toArray(size -> new StoneType[size]);
     }
 
     //TODO collection
     public static StoneType[] getVanillaTypes() {
-        return GregTechAPI.all(StoneType.class).stream().filter(s -> s.mod.isEmpty()).toArray(size -> new StoneType[size]);
+        return AntimatterAPI.all(StoneType.class).stream().filter(s -> s.mod.isEmpty()).toArray(size -> new StoneType[size]);
     }
     
     public static StoneType get(String id) {
-        return GregTechAPI.get(StoneType.class, id);
+        return AntimatterAPI.get(StoneType.class, id);
     }
     
 }

@@ -1,6 +1,6 @@
 package muramasa.antimatter.client.baked;
 
-import muramasa.antimatter.GregTechProperties;
+import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.blocks.BlockDynamic;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -30,9 +30,9 @@ public class BakedDynamic extends BakedBase {
     @Override
     public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
         if (((BlockDynamic) state.getBlock()).getLookup().size() == 0) {
-            data.setData(GregTechProperties.DYNAMIC_CONFIG, new int[1]);
+            data.setData(AntimatterProperties.DYNAMIC_CONFIG, new int[1]);
         } else {
-            data.setData(GregTechProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos));
+            data.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos));
         }
         return data;
     }
@@ -41,8 +41,8 @@ public class BakedDynamic extends BakedBase {
     public List<BakedQuad> getBakedQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         if (state == null) return Collections.emptyList();
         List<BakedQuad> quads = block.addDefaultModel() ? new LinkedList<>(block.getBaked().getQuads(state, side, rand)) : new LinkedList<>();
-        if (data.hasProperty(GregTechProperties.DYNAMIC_CONFIG)) {
-            int[] ct = data.getData(GregTechProperties.DYNAMIC_CONFIG);
+        if (data.hasProperty(AntimatterProperties.DYNAMIC_CONFIG)) {
+            int[] ct = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
             IBakedModel baked;
             for (int i = 0; i < ct.length; i++) {
                 if (ct[i] == 0) continue;

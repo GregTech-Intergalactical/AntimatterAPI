@@ -1,10 +1,10 @@
 package muramasa.antimatter.gui;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -17,14 +17,14 @@ import org.lwjgl.system.NonnullDefault;
 
 import javax.annotation.Nullable;
 
-public abstract class MenuHandler<T extends Container> implements IGregTechObject {
+public abstract class MenuHandler<T extends Container> implements IAntimatterObject {
 
     private ResourceLocation registryName;
     private ContainerType<T> containerType = null;
 
     public MenuHandler(ResourceLocation loc) {
         this.registryName = loc;
-        GregTechAPI.register(MenuHandler.class, this);
+        AntimatterAPI.register(MenuHandler.class, this);
     }
 
     public MenuHandler(String name) {

@@ -3,7 +3,7 @@ package muramasa.antimatter.worldgen;
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
@@ -51,7 +51,7 @@ public class WorldGenStone extends WorldGenBase {
     @Override
     public WorldGenBase build() {
         super.build();
-        this.block = GregTechAPI.get(BlockStone.class, type);
+        this.block = AntimatterAPI.get(BlockStone.class, type);
         if (block == null) throw new IllegalArgumentException("WorldGenStone - " + getId() + ": was given a invalid stone type");
         this.stone = block.getDefaultState();
         this.CHECKED_SEEDS = new LongOpenHashSet();

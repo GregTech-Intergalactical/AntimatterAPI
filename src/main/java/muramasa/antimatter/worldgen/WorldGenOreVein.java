@@ -119,7 +119,7 @@ public class WorldGenOreVein extends WorldGenBase {
     // in the dimension. For example veins that range above and below the average height
     // will be less, and veins that are completely above the average height will be much less.
     public static void generate(World world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ, BlockPos.MutableBlockPos pos, BlockState state) {
-        List<WorldGenOreVein> veins = GregTechWorldGenerator.getVeins(world.getDimension().getType().getId());
+        List<WorldGenOreVein> veins = AntimatterWorldGenerator.getVeins(world.getDimension().getType().getId());
         if (veins == null || veins.size() == 0) return;
 
         // Explanation of oreveinseed implementation.

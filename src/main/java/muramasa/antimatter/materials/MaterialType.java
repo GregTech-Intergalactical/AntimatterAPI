@@ -3,8 +3,8 @@ package muramasa.antimatter.materials;
 import com.google.common.base.CaseFormat;
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -13,7 +13,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class MaterialType implements IMaterialTag, IGregTechObject {
+public class MaterialType implements IMaterialTag, IAntimatterObject {
 
     //Item Types
     public static MaterialType DUST = new MaterialType("dust", 2, true, Ref.M);
@@ -121,6 +121,6 @@ public class MaterialType implements IMaterialTag, IGregTechObject {
     }
 
     public boolean allowGeneration(Material material) {
-        return active && material.has(this) && GregTechAPI.getReplacement(this, material).isEmpty();
+        return active && material.has(this) && AntimatterAPI.getReplacement(this, material).isEmpty();
     }
 }

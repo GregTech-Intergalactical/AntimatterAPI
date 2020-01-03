@@ -1,7 +1,7 @@
 package muramasa.antimatter.registration;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.blocks.GTItemBlock;
+import muramasa.antimatter.blocks.AntimatterItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -10,8 +10,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public interface IItemBlock {
 
-    default GTItemBlock getItemBlock(Block block) {
-        return new GTItemBlock(block);
+    default AntimatterItemBlock getItemBlock(Block block) {
+        return new AntimatterItemBlock(block);
     }
 
     default ItemGroup getItemGroup() {

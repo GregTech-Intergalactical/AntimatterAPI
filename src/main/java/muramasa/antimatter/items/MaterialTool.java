@@ -2,15 +2,15 @@ package muramasa.antimatter.items;
 
 import com.google.common.collect.ImmutableSet;
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.gtu.data.Materials;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -31,18 +31,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends SwordItem implements IGregTechObject, IColorHandler, ITextureProvider, IModelProvider {
+public class MaterialTool extends SwordItem implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    protected GregTechToolType type;
+    protected AntimatterToolType type;
 
-    public MaterialTool(GregTechToolType type) {
+    public MaterialTool(AntimatterToolType type) {
         super(ItemTier.WOOD, 1, 1.0f, new Item.Properties().group(Ref.TAB_ITEMS).maxStackSize(1));
         this.type = type;
         setRegistryName(getId());
-        GregTechAPI.register(MaterialTool.class, this);
+        AntimatterAPI.register(MaterialTool.class, this);
     }
 
-    public GregTechToolType getType() {
+    public AntimatterToolType getType() {
         return type;
     }
 

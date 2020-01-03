@@ -1,10 +1,10 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
@@ -16,9 +16,9 @@ public class MachineCoverHandler extends RotatableCoverHandler {
 
     public MachineCoverHandler(TileEntityMachine tile) {
         //TODO add valid covers to Machine class
-        super(tile, GregTechAPI.CoverPlate, GregTechAPI.CoverOutput);
+        super(tile, AntimatterAPI.CoverPlate, AntimatterAPI.CoverOutput);
         covers = new Cover[] {
-            GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverOutput, GregTechAPI.CoverNone, GregTechAPI.CoverNone
+            AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverOutput, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone
         };
     }
 
@@ -27,8 +27,8 @@ public class MachineCoverHandler extends RotatableCoverHandler {
     }
 
     public boolean setOutputFacing(Direction side) {
-        if (set(side, GregTechAPI.CoverOutput)) {
-            if (covers[outputSide].isEqual(GregTechAPI.CoverOutput)) covers[outputSide] = GregTechAPI.CoverNone;
+        if (set(side, AntimatterAPI.CoverOutput)) {
+            if (covers[outputSide].isEqual(AntimatterAPI.CoverOutput)) covers[outputSide] = AntimatterAPI.CoverNone;
             outputSide = Utils.rotateFacing(side, getTileFacing()).getIndex();
             return true;
         }
@@ -37,23 +37,23 @@ public class MachineCoverHandler extends RotatableCoverHandler {
 
     @Override
     public boolean set(Direction side, Cover cover) {
-        if (cover.isEqual(GregTechAPI.CoverNone) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
-            super.set(side, GregTechAPI.CoverNone);
-            return super.set(side, GregTechAPI.CoverOutput);
+        if (cover.isEqual(AntimatterAPI.CoverNone) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
+            super.set(side, AntimatterAPI.CoverNone);
+            return super.set(side, AntimatterAPI.CoverOutput);
         }
         return super.set(side, cover);
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
-        if (type == GregTechToolType.CROWBAR && get(side).isEqual(GregTechAPI.CoverOutput)) return false;
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+        if (type == AntimatterToolType.CROWBAR && get(side).isEqual(AntimatterAPI.CoverOutput)) return false;
         return super.onInteract(player, hand, side, type);
     }
 
     @Override
     public boolean isValid(Direction side, Cover existing, Cover replacement) {
         if (!validCovers.contains(replacement.getId())) return false;
-        return (existing.isEqual(GregTechAPI.CoverOutput) && !replacement.isEqual(GregTechAPI.CoverNone)) || super.isValid(side, existing, replacement);
+        return (existing.isEqual(AntimatterAPI.CoverOutput) && !replacement.isEqual(AntimatterAPI.CoverNone)) || super.isValid(side, existing, replacement);
     }
 
     @Override

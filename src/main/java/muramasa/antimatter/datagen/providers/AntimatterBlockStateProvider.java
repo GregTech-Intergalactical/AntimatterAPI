@@ -1,7 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -11,9 +11,9 @@ import net.minecraftforge.client.model.generators.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
 
-public class GregTechBlockStateProvider extends PublicBlockStateProvider {
+public class AntimatterBlockStateProvider extends PublicBlockStateProvider {
 
-    public GregTechBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
+    public AntimatterBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
         super(gen, Ref.MODID, exFileHelper);
     }
 
@@ -25,7 +25,7 @@ public class GregTechBlockStateProvider extends PublicBlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        GregTechAPI.all(Block.class).forEach(b -> {
+        AntimatterAPI.all(Block.class).forEach(b -> {
             if (b instanceof IModelProvider) ((IModelProvider) b).onBlockModelBuild(b, this);
         });
     }

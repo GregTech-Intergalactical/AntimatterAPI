@@ -2,7 +2,7 @@ package muramasa.antimatter.worldgen;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -41,14 +41,14 @@ public class WorldGenAsteroid extends WorldGenBase {
     @Override
     public WorldGenBase build() {
         END_STONE_STATE = Blocks.END_STONE.getDefaultState();
-        GRANITE_RED_STATE = GregTechAPI.get(BlockStone.class, StoneType.GRANITE_RED.getId()).getDefaultState();
+        GRANITE_RED_STATE = AntimatterAPI.get(BlockStone.class, StoneType.GRANITE_RED.getId()).getDefaultState();
         return this;
     }
 
     @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
-            List<WorldGenOreVein> layers = GregTechWorldGenerator.getVeins(world.getDimension().getType().getId());
+            List<WorldGenOreVein> layers = AntimatterWorldGenerator.getVeins(world.getDimension().getType().getId());
             int layerCount = layers.size();
             WorldGenOreVein layerToGen = null;
             if (WorldGenOreVein.TOTAL_WEIGHT > 0 && layerCount > 0) {

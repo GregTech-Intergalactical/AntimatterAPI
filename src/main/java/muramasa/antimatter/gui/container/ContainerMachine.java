@@ -9,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.IWorldPosCallable;
 
-public abstract class ContainerMachine extends GTContainer {
+public abstract class ContainerMachine extends AntimatterContainer {
 
     protected TileEntityMachine tile;
     private int lastState = -1;

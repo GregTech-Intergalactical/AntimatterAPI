@@ -1,6 +1,6 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
@@ -20,7 +20,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         super(material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
         this.oreType = oreType;
         setRegistryName(getId());
-        GregTechAPI.register(BlockOre.class, this);
+        AntimatterAPI.register(BlockOre.class, this);
     }
 
     @Override
@@ -116,12 +116,12 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //    }
 
     public static ItemStack get(Material material, MaterialType oreType, StoneType stoneType, int count) {
-        BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
+        BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
     }
 
     public static BlockState get(Material material, MaterialType oreType, StoneType stoneType) {
-        BlockOre block = GregTechAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
+        BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
         return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
     }
 

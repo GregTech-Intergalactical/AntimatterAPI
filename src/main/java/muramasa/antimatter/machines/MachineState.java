@@ -1,10 +1,10 @@
 package muramasa.antimatter.machines;
 
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Locale;
 
-public enum MachineState implements IGregTechObject {
+public enum MachineState implements IAntimatterObject {
 
     //OverlayID: 0(Idle), 1(Active), 2(Error)
 

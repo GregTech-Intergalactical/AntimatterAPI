@@ -1,12 +1,12 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.machines.MachineEvent;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import muramasa.antimatter.util.SoundType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,15 +23,15 @@ public class CoverHandler implements ICoverHandler {
 
     //TODO
     protected Cover[] covers = new Cover[] {
-        GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone, GregTechAPI.CoverNone
+        AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone
     };
 
     public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
         //TODO fix valid covers
         validCovers = new ArrayList<>();
-        validCovers.add(GregTechAPI.CoverNone.getId());
-        for (Cover cover : GregTechAPI.getRegisteredCovers()) {
+        validCovers.add(AntimatterAPI.CoverNone.getId());
+        for (Cover cover : AntimatterAPI.getRegisteredCovers()) {
             validCovers.add(cover.getId());
         }
     }
@@ -64,12 +64,12 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override /** Fires ones per hand **/
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
         Cover cover = get(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
         switch (type) {
-            case CROWBAR: return GregTechAPI.removeCover(player, this, side);
+            case CROWBAR: return AntimatterAPI.removeCover(player, this, side);
             default: return false;
         }
     }
@@ -89,7 +89,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean isValid(Direction side, Cover existing, Cover replacement) {
-        return (existing.isEmpty() || replacement.isEqual(GregTechAPI.CoverNone)) && validCovers.contains(replacement.getId());
+        return (existing.isEmpty() || replacement.isEqual(AntimatterAPI.CoverNone)) && validCovers.contains(replacement.getId());
     }
 
     @Override

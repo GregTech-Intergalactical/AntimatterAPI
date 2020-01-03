@@ -1,7 +1,7 @@
 package muramasa.antimatter.materials;
 
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,9 +11,9 @@ public interface IMaterialTag {
 
     Set<Material> all();
 
-    default void register(Class c, IGregTechObject o) {
-        GregTechAPI.register(c, o);
-        GregTechAPI.register(IMaterialTag.class, o);
+    default void register(Class c, IAntimatterObject o) {
+        AntimatterAPI.register(c, o);
+        AntimatterAPI.register(IMaterialTag.class, o);
     }
 
     default void add(Material... m) {
@@ -37,7 +37,7 @@ public interface IMaterialTag {
     static Set<IMaterialTag> getTags(String... ids) {
         Set<IMaterialTag> tags = new HashSet<>();
         for (String id : ids) {
-            IMaterialTag t = GregTechAPI.get(IMaterialTag.class, id);
+            IMaterialTag t = AntimatterAPI.get(IMaterialTag.class, id);
             if (t != null) tags.add(t);
         }
         return tags;

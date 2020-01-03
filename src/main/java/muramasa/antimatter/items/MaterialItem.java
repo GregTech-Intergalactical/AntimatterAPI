@@ -1,11 +1,11 @@
 package muramasa.antimatter.items;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MaterialItem extends Item implements IGregTechObject, IColorHandler, ITextureProvider, IModelProvider {
+public class MaterialItem extends Item implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
     private Material material;
     private MaterialType type;
@@ -39,7 +39,7 @@ public class MaterialItem extends Item implements IGregTechObject, IColorHandler
         this.material = material;
         this.type = type;
         setRegistryName(getId());
-        GregTechAPI.register(MaterialItem.class, this);
+        AntimatterAPI.register(MaterialItem.class, this);
     }
 
     public MaterialType getType() {
@@ -112,10 +112,10 @@ public class MaterialItem extends Item implements IGregTechObject, IColorHandler
     }
 
     public static ItemStack get(MaterialType type, Material material, int count) {
-        ItemStack replacement = GregTechAPI.getReplacement(type, material);
+        ItemStack replacement = AntimatterAPI.getReplacement(type, material);
         if (!replacement.isEmpty()) return Utils.ca(count, replacement);
         if (!type.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + type.getId() + ") M(" + material.getId() + ")");
-        MaterialItem item = GregTechAPI.get(MaterialItem.class, type.getId() + "_" + material.getId());
+        MaterialItem item = AntimatterAPI.get(MaterialItem.class, type.getId() + "_" + material.getId());
         if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + type.getId() + ") M(" + material.getId() + ")");
         if (count == 0) Utils.onInvalidData("GET ERROR - COUNT 0: T(" + type.getId() + ") M(" + material.getId() + ")");
         ItemStack stack = new ItemStack(item, count);

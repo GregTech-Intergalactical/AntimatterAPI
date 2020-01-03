@@ -3,7 +3,7 @@ package muramasa.gtu.client.render.bakedmodels;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.cover.Cover;
 import muramasa.gtu.data.Textures;
-import muramasa.antimatter.GregTechProperties;
+import muramasa.antimatter.AntimatterProperties;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.block.BlockState;
@@ -136,10 +136,10 @@ public class BakedPipe implements IDynamicBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        if (!(data.hasProperty(GregTechProperties.PIPE_SIZE) || data.hasProperty(GregTechProperties.PIPE_CONNECTIONS))) return Collections.emptyList();
+        if (!(data.hasProperty(AntimatterProperties.PIPE_SIZE) || data.hasProperty(AntimatterProperties.PIPE_CONNECTIONS))) return Collections.emptyList();
 
-        int size = data.getData(GregTechProperties.PIPE_SIZE).ordinal();
-        int connections = data.getData(GregTechProperties.PIPE_CONNECTIONS);
+        int size = data.getData(AntimatterProperties.PIPE_SIZE).ordinal();
+        int connections = data.getData(AntimatterProperties.PIPE_CONNECTIONS);
         //TextureData data = exState.getValue(GTProperties.TEXTURE);
         //Cover[] covers = exState.getValue(GTProperties.COVER);
 

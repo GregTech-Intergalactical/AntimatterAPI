@@ -1,9 +1,9 @@
 package muramasa.antimatter.recipe;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
+public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     private HashMap<RecipeInput, Recipe> LOOKUP;
     private String id;
@@ -27,7 +27,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
         this.builder = builder;
         this.builder.setMap(this);
         LOOKUP = new HashMap<>();
-        GregTechAPI.register(RecipeMap.class, this);
+        AntimatterAPI.register(RecipeMap.class, this);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IGregTechObject {
     public static void dumpHashCollisions() {
         HashMap<Integer, Map.Entry> previousHashes = new HashMap<>();
         System.out.println("DUMP START");
-        for (RecipeMap map : GregTechAPI.all(RecipeMap.class)) {
+        for (RecipeMap map : AntimatterAPI.all(RecipeMap.class)) {
             previousHashes.clear();
             map.getRawMap().entrySet().forEach(e -> {
                 Map.Entry entry = (Map.Entry) e;

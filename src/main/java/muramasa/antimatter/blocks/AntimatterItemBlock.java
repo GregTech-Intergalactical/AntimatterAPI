@@ -9,9 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class GTItemBlock extends BlockItem {
+public class AntimatterItemBlock extends BlockItem {
 
-    public GTItemBlock(Block block) {
+    public AntimatterItemBlock(Block block) {
         super(block, new Item.Properties().group(block instanceof IItemBlock ? ((IItemBlock) block).getItemGroup() : Ref.TAB_BLOCKS));
         if (block.getRegistryName() != null) setRegistryName(block.getRegistryName());
     }

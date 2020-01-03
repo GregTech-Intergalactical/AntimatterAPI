@@ -1,7 +1,7 @@
 package muramasa.antimatter.tileentities.multi;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.capability.GTCapabilities;
+import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.impl.HatchComponentHandler;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.gtu.data.Machines;
@@ -71,7 +71,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == GTCapabilities.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
+        if (cap == AntimatterCapabilities.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
         return super.getCapability(cap, side);
     }
 

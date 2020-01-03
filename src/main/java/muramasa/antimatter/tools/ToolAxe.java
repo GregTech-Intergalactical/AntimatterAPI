@@ -15,10 +15,10 @@ import java.util.Set;
 public class ToolAxe extends MaterialTool {
 
     public ToolAxe() {
-        super(GregTechToolType.AXE);
+        super(AntimatterToolType.AXE);
     }
 
-    public ToolAxe(GregTechToolType type) {
+    public ToolAxe(AntimatterToolType type) {
         super(type);
     }
 

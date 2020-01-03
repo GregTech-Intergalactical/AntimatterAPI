@@ -1,11 +1,11 @@
 package muramasa.antimatter.materials;
 
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class MaterialTag implements IGregTechObject, IMaterialTag {
+public class MaterialTag implements IAntimatterObject, IMaterialTag {
 
     public static MaterialTag ELEC = new MaterialTag("elec"); //Add Electrolyzer Recipes - SHOULD NOT SHARE MATS WITH CENT
     public static MaterialTag CENT = new MaterialTag("cent"); //Add Centrifuging Recipes - SHOULD NOT SHARE MATS WITH ELEC

@@ -1,6 +1,6 @@
 package muramasa.antimatter.blocks;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.TextureData;
 import net.minecraft.block.Block;
@@ -15,7 +15,7 @@ public class BlockStone extends BlockBaked {
         this.type = type;
         setRegistryName(getId());
         type.setBaseState(this.getDefaultState());
-        GregTechAPI.register(BlockStone.class, this);
+        AntimatterAPI.register(BlockStone.class, this);
     }
 
     public StoneType getType() {
@@ -28,6 +28,6 @@ public class BlockStone extends BlockBaked {
     }
 
     public static BlockStone get(StoneType stoneType) {
-        return GregTechAPI.get(BlockStone.class, stoneType.getId());
+        return AntimatterAPI.get(BlockStone.class, stoneType.getId());
     }
 }

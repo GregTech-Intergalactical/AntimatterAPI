@@ -4,12 +4,12 @@ import muramasa.gtu.Ref;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
-public class GregTechItemGroup extends ItemGroup {
+public class AntimatterItemGroup extends ItemGroup {
 
     private String name;
     private ItemStack icon;
 
-    public GregTechItemGroup(String name, ItemStack icon) {
+    public AntimatterItemGroup(String name, ItemStack icon) {
         super(Ref.MODID + "." + name);
         this.name = name;
         this.icon = icon;

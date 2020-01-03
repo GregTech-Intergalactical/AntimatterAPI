@@ -1,10 +1,10 @@
 package muramasa.antimatter.materials;
 
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Locale;
 
-public enum Element implements IGregTechObject {
+public enum Element implements IAntimatterObject {
 
     H(1, 0, 0, -1, null, "Hydrogen", false),
     D(1, 1, 0, -1, "H", "Deuterium", true),

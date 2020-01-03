@@ -1,12 +1,12 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.GregTechProperties;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.datagen.providers.GregTechBlockStateProvider;
-import muramasa.antimatter.datagen.providers.GregTechItemModelProvider;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -36,8 +36,8 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
         //setHardness(0.2f);
         //setResistance(0.2f);
         setRegistryName(getId());
-        GregTechAPI.register(BlockRock.class, this);
-        setDefaultState(getStateContainer().getBaseState().with(GregTechProperties.ROCK_MODEL, 0));
+        AntimatterAPI.register(BlockRock.class, this);
+        setDefaultState(getStateContainer().getBaseState().with(AntimatterProperties.ROCK_MODEL, 0));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(GregTechProperties.ROCK_MODEL);
+        builder.add(AntimatterProperties.ROCK_MODEL);
     }
 
     @Override
@@ -147,16 +147,16 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
     /** TileEntity Drops End **/
 
     public static BlockState get(Material material, StoneType stoneType) {
-        return GregTechAPI.get(BlockRock.class, "rock_" + material.getId() + "_" + stoneType.getId()).getDefaultState();
+        return AntimatterAPI.get(BlockRock.class, "rock_" + material.getId() + "_" + stoneType.getId()).getDefaultState();
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, GregTechItemModelProvider provider) {
+    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider provider) {
 
     }
 
     @Override
-    public void onBlockModelBuild(Block block, GregTechBlockStateProvider provider) {
+    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider provider) {
 //        ConfiguredModel[] models = new ConfiguredModel[7];
 //        for (int i = 0; i < models.length; i++) {
 //            models[i] = new ConfiguredModel(provider.getBuilder(getId()).parent(provider.getExistingFile(provider.modLoc("block/rock/rock_" + i))).texture("all", getStoneType().getTexture()));

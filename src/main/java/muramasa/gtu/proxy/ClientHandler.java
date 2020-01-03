@@ -1,6 +1,6 @@
 package muramasa.gtu.proxy;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.materials.TextureSet;
@@ -36,7 +36,7 @@ public class ClientHandler implements IProxyHandler {
 
     public static void init() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
-        GregTechAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+        AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
 
         //TODO crashes suring runData?
         //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
@@ -75,17 +75,17 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
-        GregTechAPI.all(Item.class).forEach(i -> {
+        AntimatterAPI.all(Item.class).forEach(i -> {
             if (i instanceof IColorHandler) e.getItemColors().register((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
         });
-        GregTechAPI.all(Block.class).forEach(b -> {
+        AntimatterAPI.all(Block.class).forEach(b -> {
             if (b instanceof IColorHandler) e.getItemColors().register((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), b.asItem());
         });
     }
 
     @SubscribeEvent
     public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
-        GregTechAPI.all(Block.class).forEach(b -> {
+        AntimatterAPI.all(Block.class).forEach(b -> {
             if (b instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) b)::getBlockColor, b);
         });
     }
@@ -94,7 +94,7 @@ public class ClientHandler implements IProxyHandler {
     public static void onTextureStitch(TextureStitchEvent.Pre e) {
         //Apparently forge does not load fluid textures automatically
         //TODO is this needed in 1.14/1.15?
-        GregTechAPI.all(TextureSet.class).forEach(s -> {
+        AntimatterAPI.all(TextureSet.class).forEach(s -> {
             e.addSprite(s.getTexture(MaterialType.LIQUID, 0));
             e.addSprite(s.getTexture(MaterialType.GAS, 0));
             e.addSprite(s.getTexture(MaterialType.PLASMA, 0));

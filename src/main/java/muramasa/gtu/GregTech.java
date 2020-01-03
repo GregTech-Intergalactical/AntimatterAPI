@@ -1,10 +1,10 @@
 package muramasa.gtu;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.blocks.GTItemBlock;
-import muramasa.antimatter.capability.GTCapabilities;
+import muramasa.antimatter.blocks.AntimatterItemBlock;
+import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.gtu.data.Machines;
 import muramasa.gtu.data.Materials;
 import muramasa.gtu.data.Structures;
@@ -12,19 +12,19 @@ import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.network.GregTechNetwork;
+import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockRock;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IItemBlock;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import muramasa.gtu.common.Data;
 import muramasa.gtu.proxy.ClientHandler;
 import muramasa.gtu.proxy.IProxyHandler;
 import muramasa.gtu.proxy.ServerHandler;
-import muramasa.antimatter.datagen.providers.GregTechBlockStateProvider;
-import muramasa.antimatter.datagen.providers.GregTechItemModelProvider;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
@@ -51,7 +51,7 @@ public class GregTech {
 
     public static GregTech INSTANCE;
     public static IProxyHandler PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
-    public static GregTechNetwork NETWORK = new GregTechNetwork();
+    public static AntimatterNetwork NETWORK = new AntimatterNetwork();
     public static Logger LOGGER = LogManager.getLogger(Ref.MODID);
 
     public GregTech() {
@@ -73,9 +73,9 @@ public class GregTech {
     }
 
     private void setup(final FMLCommonSetupEvent e) {
-        GregTechAPI.onRegistration(RegistrationEvent.INIT);
+        AntimatterAPI.onRegistration(RegistrationEvent.INIT);
 
-        GTCapabilities.register();
+        AntimatterCapabilities.register();
 
         //OreGenHandler.init();
 
@@ -85,10 +85,10 @@ public class GregTech {
 
 
 
-        GregTechAPI.onRegistration(RegistrationEvent.MATERIAL);
-        GregTechAPI.onRegistration(RegistrationEvent.DATA);
+        AntimatterAPI.onRegistration(RegistrationEvent.MATERIAL);
+        AntimatterAPI.onRegistration(RegistrationEvent.DATA);
 
-        GregTechAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
 
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
 
@@ -97,10 +97,10 @@ public class GregTech {
         Ref.TAB_MACHINES.setIcon(Data.DebugScanner.get(1));
         Ref.TAB_BLOCKS.setIcon(Data.DebugScanner.get(1));
 
-        GregTechAPI.onRegistration(RegistrationEvent.WORLDGEN);
+        AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN);
         //GregTechWorldGenerator.init();
         //if (!Configs.WORLD.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
-        GregTechAPI.onRegistration(RegistrationEvent.RECIPE);
+        AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
 
     }
 
@@ -111,15 +111,15 @@ public class GregTech {
 
     @SubscribeEvent
     public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
-        List<MaterialType> types = GregTechAPI.all(MaterialType.class);
-        List<Material> materials = GregTechAPI.all(Material.class);
+        List<MaterialType> types = AntimatterAPI.all(MaterialType.class);
+        List<Material> materials = AntimatterAPI.all(Material.class);
         types.forEach(t -> materials.forEach(m -> {
             if (t.allowGeneration(m)) new MaterialItem(t, m);
         }));
-        Arrays.stream(GregTechToolType.VALUES).forEach(GregTechToolType::instantiate);
-        GregTechAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
-        GregTechAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlock ? ((IItemBlock) b).getItemBlock(b) : new GTItemBlock(b)));
-        GregTechAPI.onRegistration(RegistrationEvent.ITEM);
+        Arrays.stream(AntimatterToolType.VALUES).forEach(AntimatterToolType::instantiate);
+        AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
+        AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlock ? ((IItemBlock) b).getItemBlock(b) : new AntimatterItemBlock(b)));
+        AntimatterAPI.onRegistration(RegistrationEvent.ITEM);
     }
 
     @SubscribeEvent
@@ -135,27 +135,27 @@ public class GregTech {
         //new BlockRock(StoneType.STONE);
         //GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
         StoneType.getStoneGenerating().forEach(BlockStone::new);
-        GregTechAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
-        GregTechAPI.onRegistration(RegistrationEvent.BLOCK);
+        AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
+        AntimatterAPI.onRegistration(RegistrationEvent.BLOCK);
     }
 
     @SubscribeEvent
     public static void onTileRegistry(RegistryEvent.Register<TileEntityType<?>> e) {
-        GregTechAPI.all(TileEntityType.class).forEach(t -> e.getRegistry().register(t));
+        AntimatterAPI.all(TileEntityType.class).forEach(t -> e.getRegistry().register(t));
     }
 
     @SubscribeEvent
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
-        GregTechAPI.onRegistration(RegistrationEvent.GUI);
-        GregTechAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
+        AntimatterAPI.onRegistration(RegistrationEvent.GUI);
+        AntimatterAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
     }
 
     @SubscribeEvent
     public static void onDataGather(GatherDataEvent e) {
         DataGenerator gen = e.getGenerator();
         if (e.includeClient()) {
-            gen.addProvider(new GregTechBlockStateProvider(gen, e.getExistingFileHelper()));
-            gen.addProvider(new GregTechItemModelProvider(gen, e.getExistingFileHelper()));
+            gen.addProvider(new AntimatterBlockStateProvider(gen, e.getExistingFileHelper()));
+            gen.addProvider(new AntimatterItemModelProvider(gen, e.getExistingFileHelper()));
         }
         if (e.includeServer()) {
 
