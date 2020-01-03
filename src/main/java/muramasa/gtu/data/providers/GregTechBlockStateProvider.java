@@ -26,7 +26,7 @@ public class GregTechBlockStateProvider extends PublicBlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         GregTechAPI.all(Block.class).forEach(b -> {
-            if (b instanceof IModelProvider) ((IModelProvider) b).onBlockModelBuild(this);
+            if (b instanceof IModelProvider) ((IModelProvider) b).onBlockModelBuild(b, this);
         });
     }
 
@@ -38,16 +38,20 @@ public class GregTechBlockStateProvider extends PublicBlockStateProvider {
         return super.cubeAll(block.getRegistryName().toString(), texture);
     }
 
-    public void simpleBlock(Block block, ResourceLocation texture) {
-        simpleBlock(block, cubeAll(block, texture));
-    }
-
     public void simpleState(Block block, ResourceLocation texture) {
         simpleBlock(block, getSimpleModel(block, texture));
     }
 
     public void layeredState(Block block, ResourceLocation base, ResourceLocation overlay) {
         simpleBlock(block, getLayeredModel(block, base, overlay));
+    }
+
+    public void texturedState(Block block, ResourceLocation[] textures) {
+        if (textures.length == 1) {
+            simpleState(block, textures[0]);
+        } else if (textures.length == 2) {
+            layeredState(block, textures[0], textures[1]);
+        }
     }
 
     public BlockModelBuilder getSimpleModel(Block block, ResourceLocation texture) {

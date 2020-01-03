@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -150,12 +151,12 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
     }
 
     @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
+    public void onItemModelBuild(IItemProvider item, GregTechItemModelProvider provider) {
 
     }
 
     @Override
-    public void onBlockModelBuild(GregTechBlockStateProvider provider) {
+    public void onBlockModelBuild(Block block, GregTechBlockStateProvider provider) {
 //        ConfiguredModel[] models = new ConfiguredModel[7];
 //        for (int i = 0; i < models.length; i++) {
 //            models[i] = new ConfiguredModel(provider.getBuilder(getId()).parent(provider.getExistingFile(provider.modLoc("block/rock/rock_" + i))).texture("all", getStoneType().getTexture()));

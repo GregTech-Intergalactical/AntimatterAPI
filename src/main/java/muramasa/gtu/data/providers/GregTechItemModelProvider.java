@@ -6,6 +6,7 @@ import muramasa.gtu.api.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -26,25 +27,18 @@ public class GregTechItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         GregTechAPI.all(Item.class).forEach(i -> {
-            if (i instanceof IModelProvider) ((IModelProvider) i).onItemModelBuild(this);
+            if (i instanceof IModelProvider) ((IModelProvider) i).onItemModelBuild(i, this);
         });
         GregTechAPI.all(Block.class).forEach(b -> {
-            if (b instanceof IModelProvider) {
-                //blockItem(b);
-                ((IModelProvider) b).onItemModelBuild(this);
-            }
+            if (b instanceof IModelProvider) ((IModelProvider) b).onItemModelBuild(b, this);
         });
     }
 
-    public ItemModelBuilder getBuilder(Item item) {
-        return getBuilder(item.getRegistryName().getPath());
+    public ItemModelBuilder getBuilder(IItemProvider item) {
+        return getBuilder(item.asItem().getRegistryName().getPath());
     }
 
-    public ItemModelBuilder single(Item item, ResourceLocation texture) {
-        return getBuilder(item).parent(new UncheckedModelFile("item/generated")).texture("layer0", texture);
-    }
-
-    public ItemModelBuilder layered(Item item, ResourceLocation[] textures) {
+    public ItemModelBuilder textured(IItemProvider item, ResourceLocation[] textures) {
         ItemModelBuilder builder = getBuilder(item);
         builder.parent(new UncheckedModelFile("item/generated"));
         for (int i = 0; i < textures.length; i++) {
@@ -54,6 +48,10 @@ public class GregTechItemModelProvider extends ItemModelProvider {
     }
 
     public ItemModelBuilder blockItem(Block block) {
-        return withExistingParent(block.asItem().getRegistryName().getPath(), modLoc("block/" + block.asItem().getRegistryName().getPath()));
+        return blockItem(block.asItem());
+    }
+
+    public ItemModelBuilder blockItem(IItemProvider item) {
+        return withExistingParent(item.asItem().getRegistryName().getPath(), modLoc("block/" + item.asItem().getRegistryName().getPath()));
     }
 }

@@ -12,10 +12,10 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.ore.BlockOre;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
+import muramasa.gtu.api.registration.ITextureProvider;
 import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.Utils;
 import muramasa.gtu.common.Data;
-import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BasicItem extends Item implements IGregTechObject, IModelProvider {
+public class BasicItem extends Item implements IGregTechObject, ITextureProvider, IModelProvider {
 
     protected String id, tooltip = "";
     protected boolean enabled = true;
@@ -210,17 +210,13 @@ public class BasicItem extends Item implements IGregTechObject, IModelProvider {
         return new ItemStack(this, count);
     }
 
-    public Texture getTexture() {
-        return new Texture("item/standard/" + id);
-    }
-
     @Override
     public ItemStack asItemStack() {
         return get(1);
     }
 
     @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
-        provider.single(this, getTexture());
+    public Texture[] getTextures() {
+        return new Texture[]{new Texture("item/standard/" + getId())};
     }
 }

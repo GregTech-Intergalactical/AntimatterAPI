@@ -3,11 +3,8 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.registration.IGregTechObject;
-import muramasa.gtu.api.registration.IItemBlock;
-import muramasa.gtu.api.registration.IModelProvider;
-import muramasa.gtu.data.providers.GregTechBlockStateProvider;
+import muramasa.gtu.api.registration.*;
+import muramasa.gtu.api.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -25,7 +22,7 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IColorHandler, IModelProvider {
+public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IColorHandler, ITextureProvider, IModelProvider {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
@@ -203,7 +200,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
     }
 
     @Override
-    public void onBlockModelBuild(GregTechBlockStateProvider provider) {
-        provider.simpleState(this, getMaterial().getSet().getTexture(getType(), 0));
+    public Texture[] getTextures() {
+        return getMaterial().getSet().getTextures(getType());
     }
 }

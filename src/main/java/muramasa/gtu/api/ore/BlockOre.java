@@ -4,14 +4,15 @@ import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IModelProvider;
-import muramasa.gtu.data.providers.GregTechBlockStateProvider;
+import muramasa.gtu.api.registration.ITextureProvider;
+import muramasa.gtu.api.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 
-public class BlockOre extends BlockMaterialStone implements IModelProvider {
+public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
     private MaterialType oreType;
 
@@ -125,7 +126,7 @@ public class BlockOre extends BlockMaterialStone implements IModelProvider {
     }
 
     @Override
-    public void onBlockModelBuild(GregTechBlockStateProvider provider) {
-        provider.layeredState(this, getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType(), 0));
+    public Texture[] getTextures() {
+        return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType(), 0)};
     }
 }

@@ -1,6 +1,0 @@
-{
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "gtu:blocks/tree/rubber_leaves"
-    }
-}

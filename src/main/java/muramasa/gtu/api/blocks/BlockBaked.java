@@ -3,14 +3,15 @@ package muramasa.gtu.api.blocks;
 import muramasa.gtu.api.GregTechAPI;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
+import muramasa.gtu.api.registration.ITextureProvider;
+import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.data.providers.GregTechBlockStateProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraftforge.client.model.IModel;
 
 //TODO support blockstate baking?
-public abstract class BlockBaked extends Block implements IGregTechObject, IModelProvider {
+public abstract class BlockBaked extends Block implements IGregTechObject, ITextureProvider, IModelProvider {
 
     protected TextureData data;
     protected IBakedModel baked;
@@ -44,8 +45,8 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IMode
     }
 
     @Override
-    public void onBlockModelBuild(GregTechBlockStateProvider provider) {
-        provider.simpleBlock(this, getData().getBase(0));
+    public Texture[] getTextures() {
+        return data.hasOverlay() ? new Texture[]{data.getBase(0), data.getOverlay(0)} : new Texture[]{data.getBase(0)};
     }
 
     //    @Override
