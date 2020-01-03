@@ -8,8 +8,9 @@ import muramasa.gtu.api.materials.Material;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
+import muramasa.gtu.api.registration.ITextureProvider;
+import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.tools.GregTechToolType;
-import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -30,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends SwordItem implements IGregTechObject, IColorHandler, IModelProvider {
+public class MaterialTool extends SwordItem implements IGregTechObject, IColorHandler, ITextureProvider, IModelProvider {
 
     protected GregTechToolType type;
 
@@ -410,7 +411,7 @@ public class MaterialTool extends SwordItem implements IGregTechObject, IColorHa
     }
 
     @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
-        provider.layered(this, getType().getTextures());
+    public Texture[] getTextures() {
+        return getType().getTextures();
     }
 }

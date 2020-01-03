@@ -7,9 +7,10 @@ import muramasa.gtu.api.materials.MaterialType;
 import muramasa.gtu.api.registration.IColorHandler;
 import muramasa.gtu.api.registration.IGregTechObject;
 import muramasa.gtu.api.registration.IModelProvider;
+import muramasa.gtu.api.registration.ITextureProvider;
+import muramasa.gtu.api.texture.Texture;
 import muramasa.gtu.api.util.SoundType;
 import muramasa.gtu.api.util.Utils;
-import muramasa.gtu.data.providers.GregTechItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
@@ -28,7 +29,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MaterialItem extends Item implements IGregTechObject, IColorHandler, IModelProvider {
+public class MaterialItem extends Item implements IGregTechObject, IColorHandler, ITextureProvider, IModelProvider {
 
     private Material material;
     private MaterialType type;
@@ -128,7 +129,7 @@ public class MaterialItem extends Item implements IGregTechObject, IColorHandler
     }
 
     @Override
-    public void onItemModelBuild(GregTechItemModelProvider provider) {
-        provider.layered(this, getMaterial().getSet().getTextures(getType()));
+    public Texture[] getTextures() {
+        return getMaterial().getSet().getTextures(getType());
     }
 }
