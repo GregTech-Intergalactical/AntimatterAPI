@@ -5,14 +5,14 @@
 //import mezz.jei.api.IModRegistry;
 //import mezz.jei.api.JEIPlugin;
 //import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-//import muramasa.gtu.api.data.Guis;
-//import muramasa.gtu.api.data.Machines;
+//import muramasa.gtu.data.Guis;
+//import muramasa.gtu.data.Machines;
 //import muramasa.gtu.api.guiold.GuiData;
-//import muramasa.gtu.api.machines.MachineFlag;
-//import muramasa.gtu.api.machines.Tier;
-//import muramasa.gtu.api.machines.types.Machine;
-//import muramasa.gtu.api.recipe.Recipe;
-//import muramasa.gtu.api.recipe.RecipeMap;
+//import muramasa.antimatter.machines.MachineFlag;
+//import muramasa.antimatter.machines.Tier;
+//import muramasa.antimatter.machines.types.Machine;
+//import muramasa.antimatter.recipe.Recipe;
+//import muramasa.antimatter.recipe.RecipeMap;
 //import muramasa.gtu.integration.jei.category.RecipeMapCategory;
 //import muramasa.gtu.integration.jei.wrapper.RecipeWrapper;
 //import net.minecraft.util.Tuple;
@@ -20,7 +20,7 @@
 //import javax.annotation.Nullable;
 //import java.util.*;
 //
-//import static muramasa.gtu.api.machines.MachineFlag.*;
+//import static muramasa.antimatter.machines.MachineFlag.*;
 //
 //@JEIPlugin
 //public class GregTechJEIPlugin implements IModPlugin {

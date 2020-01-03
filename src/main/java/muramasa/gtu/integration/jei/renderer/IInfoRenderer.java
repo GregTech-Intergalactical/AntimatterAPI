@@ -1,6 +1,6 @@
 package muramasa.gtu.integration.jei.renderer;
 
-import muramasa.gtu.api.recipe.Recipe;
+import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.client.Minecraft;
 
 public interface IInfoRenderer {

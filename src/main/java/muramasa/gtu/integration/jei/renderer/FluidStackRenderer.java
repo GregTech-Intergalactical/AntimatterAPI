@@ -2,7 +2,7 @@
 //
 //import mezz.jei.api.ingredients.IIngredientRenderer;
 //import muramasa.gtu.client.render.RenderHelper;
-//import muramasa.gtu.api.fluid.GregTechFluid;
+//import muramasa.antimatter.fluid.GregTechFluid;
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.renderer.GlStateManager;
 //import net.minecraft.client.util.ITooltipFlag;

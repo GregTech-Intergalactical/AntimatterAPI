@@ -1,9 +1,9 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.GregTechProperties;
+import muramasa.antimatter.cover.Cover;
+import muramasa.gtu.data.Textures;
+import muramasa.antimatter.GregTechProperties;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.block.BlockState;

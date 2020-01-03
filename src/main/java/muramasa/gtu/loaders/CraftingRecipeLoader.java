@@ -1,12 +1,12 @@
 //package muramasa.gtu.loaders;
 //
-//import muramasa.gtu.api.recipe.RecipeHelper;
-//import muramasa.gtu.api.tools.GregTechToolType;
+//import muramasa.antimatter.recipe.RecipeHelper;
+//import muramasa.antimatter.tools.GregTechToolType;
 //import net.minecraft.block.Blocks;
 //import net.minecraft.item.ItemStack;
 //import net.minecraft.item.Items;
 //
-//import static muramasa.gtu.api.data.Materials.*;
+//import static muramasa.gtu.data.Materials.*;
 //import static muramasa.gtu.common.Data.*;
 //
 //public class CraftingRecipeLoader {

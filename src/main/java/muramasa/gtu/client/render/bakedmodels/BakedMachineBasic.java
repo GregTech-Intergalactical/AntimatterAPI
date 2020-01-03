@@ -1,7 +1,7 @@
 //package muramasa.gtu.client.render.bakedmodels;
 //
-//import muramasa.gtu.api.GregTechProperties;
-//import muramasa.gtu.api.texture.TextureData;
+//import muramasa.antimatter.GregTechProperties;
+//import muramasa.antimatter.texture.TextureData;
 //import muramasa.gtu.client.render.ModelUtils;
 //import muramasa.gtu.client.render.QuadLayer;
 //import net.minecraft.block.BlockState;

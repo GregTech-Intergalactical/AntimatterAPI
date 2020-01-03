@@ -1,17 +1,17 @@
 //package muramasa.gtu.integration;
 //
 //import muramasa.gtu.Ref;
-//import muramasa.gtu.api.blocks.BlockStorage;
-//import muramasa.gtu.api.data.Materials;
-//import muramasa.gtu.api.materials.Material;
-//import muramasa.gtu.api.materials.MaterialTag;
-//import muramasa.gtu.api.materials.MaterialType;
-//import muramasa.gtu.api.registration.IGregTechRegistrar;
-//import muramasa.gtu.api.registration.RegistrationEvent;
+//import muramasa.antimatter.blocks.BlockStorage;
+//import muramasa.gtu.data.Materials;
+//import muramasa.antimatter.materials.Material;
+//import muramasa.antimatter.materials.MaterialTag;
+//import muramasa.antimatter.materials.MaterialType;
+//import muramasa.antimatter.registration.IGregTechRegistrar;
+//import muramasa.antimatter.registration.RegistrationEvent;
 //import net.minecraftforge.fml.ModList;
 //
-//import static muramasa.gtu.api.materials.MaterialType.ORE;
-//import static muramasa.gtu.api.materials.TextureSet.METALLIC;
+//import static muramasa.antimatter.materials.MaterialType.ORE;
+//import static muramasa.antimatter.materials.TextureSet.METALLIC;
 //
 //public class GalacticraftRegistrar implements IGregTechRegistrar {
 //

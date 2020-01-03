@@ -1,14 +1,14 @@
 package muramasa.gtu.proxy;
 
-import muramasa.gtu.api.GregTechAPI;
-import muramasa.gtu.api.gui.MenuHandler;
-import muramasa.gtu.api.materials.MaterialType;
-import muramasa.gtu.api.materials.TextureSet;
-import muramasa.gtu.api.registration.IColorHandler;
-import muramasa.gtu.api.util.SoundType;
+import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.materials.TextureSet;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.util.SoundType;
 import muramasa.gtu.client.render.GregTechModelLoader;
 import muramasa.gtu.client.render.ModelUtils;
-import muramasa.gtu.data.resources.DynamicPackFinder;
+import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;

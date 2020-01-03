@@ -2,8 +2,8 @@ package muramasa.gtu;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import muramasa.gtu.api.util.XSTR;
-import muramasa.gtu.client.itemgroup.GregTechItemGroup;
+import muramasa.antimatter.util.XSTR;
+import muramasa.antimatter.client.itemgroup.GregTechItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;

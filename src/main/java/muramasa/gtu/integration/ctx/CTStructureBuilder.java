@@ -1,8 +1,8 @@
 //package muramasa.gtu.integration.ctx;
 //
-//import muramasa.gtu.api.machines.types.Machine;
-//import muramasa.gtu.api.structure.Structure;
-//import muramasa.gtu.api.structure.StructureBuilder;
+//import muramasa.antimatter.machines.types.Machine;
+//import muramasa.antimatter.structure.Structure;
+//import muramasa.antimatter.structure.StructureBuilder;
 //import stanhebben.zenscript.annotations.ZenMethod;
 //
 //public class CTStructureBuilder {

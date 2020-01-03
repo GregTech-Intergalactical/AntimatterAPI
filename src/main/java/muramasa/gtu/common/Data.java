@@ -1,9 +1,9 @@
 package muramasa.gtu.common;
 
+import muramasa.antimatter.blocks.*;
+import muramasa.antimatter.items.BasicItem;
 import muramasa.gtu.Configs;
-import muramasa.gtu.api.blocks.*;
-import muramasa.gtu.api.data.Textures;
-import muramasa.gtu.api.items.BasicItem;
+import muramasa.gtu.data.Textures;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
 

@@ -1,10 +1,11 @@
 package muramasa.gtu.client.render.bakedmodels;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.gtu.api.cover.Cover;
-import muramasa.gtu.api.texture.Texture;
-import muramasa.gtu.api.texture.TextureData;
-import muramasa.gtu.api.texture.TextureMode;
+import muramasa.antimatter.client.baked.BakedBase;
+import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.texture.TextureData;
+import muramasa.antimatter.texture.TextureMode;
 import muramasa.gtu.client.render.ModelUtils;
 import muramasa.gtu.client.render.QuadLayer;
 import net.minecraft.block.BlockState;
@@ -19,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import static muramasa.gtu.api.GregTechProperties.*;
+import static muramasa.antimatter.GregTechProperties.*;
 
 public class BakedMachine extends BakedBase {
 
