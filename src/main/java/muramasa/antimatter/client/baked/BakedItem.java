@@ -1,6 +1,6 @@
 package muramasa.antimatter.client.baked;
 
-import muramasa.gtu.client.render.ModelUtils;
+import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;

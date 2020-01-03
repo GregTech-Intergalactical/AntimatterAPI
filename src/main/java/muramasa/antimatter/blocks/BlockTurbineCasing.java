@@ -2,7 +2,7 @@ package muramasa.antimatter.blocks;
 
 import muramasa.gtu.Ref;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.gtu.client.render.ModelUtils;
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.gtu.common.tileentities.multi.TileEntityLargeTurbine;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;

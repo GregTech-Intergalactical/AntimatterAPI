@@ -1,7 +1,7 @@
 package muramasa.antimatter.client.baked;
 
 import muramasa.antimatter.texture.Texture;
-import muramasa.gtu.client.render.ModelUtils;
+import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -22,8 +22,8 @@ import java.util.Random;
 
 public class BakedBase implements IDynamicBakedModel {
 
-    private IBakedModel bakedModel;
-    private TextureAtlasSprite particle;
+    protected IBakedModel bakedModel;
+    protected TextureAtlasSprite particle;
 
     public BakedBase() {
 

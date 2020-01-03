@@ -1,6 +1,6 @@
 //package muramasa.antimatter.client.bakedblockold;
 //
-//import muramasa.gtu.client.render.ModelUtils;
+//import muramasa.antimatter.client.ModelUtils;
 //import net.minecraft.client.renderer.model.IBakedModel;
 //import net.minecraft.client.renderer.block.model.ItemOverrideList;
 //import net.minecraft.client.renderer.texture.TextureAtlasSprite;

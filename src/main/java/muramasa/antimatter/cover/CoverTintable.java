@@ -1,7 +1,7 @@
 package muramasa.antimatter.cover;
 
-import muramasa.gtu.client.render.ModelUtils;
-import muramasa.gtu.client.render.QuadLayer;
+import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.client.QuadLayer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 

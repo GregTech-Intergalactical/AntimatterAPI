@@ -1,68 +1,58 @@
-//package muramasa.antimatter.blocks.pipe;
-//
-//import muramasa.gtu.Ref;
-//import muramasa.antimatter.GregTechAPI;
-//import muramasa.antimatter.blocks.BlockDynamic;
-//import muramasa.gtu.data.Textures;
-//import muramasa.antimatter.materials.Material;
-//import muramasa.antimatter.pipe.PipeSize;
-//import muramasa.antimatter.registration.*;
-//import muramasa.antimatter.texture.TextureData;
-//import muramasa.antimatter.util.Utils;
-//import muramasa.gtu.client.render.bakedmodels.BakedPipe;
-//import net.minecraft.block.Block;
-//import net.minecraft.block.BlockState;
-//import net.minecraft.client.renderer.model.IBakedModel;
-//import net.minecraft.client.renderer.model.ModelResourceLocation;
-//import net.minecraft.entity.player.PlayerEntity;
-//import net.minecraft.item.ItemStack;
-//import net.minecraft.tileentity.TileEntity;
-//import net.minecraft.util.Direction;
-//import net.minecraft.util.Hand;
-//import net.minecraft.util.ResourceLocation;
-//import net.minecraft.util.math.AxisAlignedBB;
-//import net.minecraft.util.math.BlockPos;
-//import net.minecraft.world.IBlockReader;
-//import net.minecraft.world.World;
-//import net.minecraftforge.api.distmarker.Dist;
-//import net.minecraftforge.api.distmarker.OnlyIn;
-//
-//import javax.annotation.Nullable;
-//import java.util.Map;
-//
-//import static muramasa.antimatter.GregTechProperties.*;
-//
-//public abstract class BlockPipe extends BlockDynamic implements IGregTechObject, IItemBlock, IModelOverride, IStateOverride, IColorHandler {
-//
-//    protected String type, id;
-//    protected Material material;
-//    protected PipeSize size;
-//
-//    //TODO merge functionality with BlockDynamic
-//    public BlockPipe(String type, Material material, PipeSize size, TextureData data) {
-//        super(net.minecraft.block.material.Material.IRON, data);
-//        this.type = type;
-//        this.id = material.getId();
-//        this.material = material;
-//        this.size = size;
-//
-//        setRegistryName(getId());
-//        GregTechAPI.register(BlockPipe.class, this);
-//    }
-//
-//    @Override
-//    public String getId() {
-//        return type + "_" + id;
-//    }
-//
-//    public int getRGB() {
-//        return material.getRGB();
-//    }
-//
-//    public PipeSize getSize() {
-//        return size;
-//    }
-//
+package muramasa.antimatter.blocks.pipe;
+
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.IItemBlock;
+import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.texture.TextureData;
+import muramasa.gtu.data.Textures;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IItemProvider;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
+import net.minecraftforge.common.ToolType;
+
+import javax.annotation.Nullable;
+
+public abstract class BlockPipe extends BlockDynamic implements IAntimatterObject, IItemBlock, IColorHandler, IModelProvider {
+
+    protected String prefix, id;
+    protected Material material;
+    protected PipeSize size;
+
+    //TODO merge functionality with BlockDynamic
+    public BlockPipe(String prefix, Material material, PipeSize size, TextureData data) {
+        super(Block.Properties.create(net.minecraft.block.material.Material.IRON), data);
+        this.prefix = prefix;
+        this.id = material.getId();
+        this.material = material;
+        this.size = size;
+
+        setRegistryName(getId());
+        AntimatterAPI.register(BlockPipe.class, this);
+    }
+
+    @Override
+    public String getId() {
+        return prefix + "_" + id + "_" + size.getId();
+    }
+
+    public int getRGB() {
+        return material.getRGB();
+    }
+
+    public PipeSize getSize() {
+        return size;
+    }
+
 //    @Override
 //    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
 //        IExtendedBlockState exState = (IExtendedBlockState) state;
@@ -77,7 +67,7 @@
 //        }
 //        return exState;
 //    }
-//
+
 //    @Override
 //    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
 //        TileEntity tile = Utils.getTile(source, pos);
@@ -95,7 +85,7 @@
 //        }
 //        return FULL_BLOCK_AABB;
 //    }
-//
+
 //    @Override
 //    public boolean hasTileEntity(BlockState state) {
 //        return true;
@@ -104,27 +94,28 @@
 //    @Nullable
 //    @Override
 //    public abstract TileEntity createTileEntity(World world, BlockState state);
-//
-//    @Nullable
-//    @Override
-//    public String getHarvestTool(BlockState state) {
-//        return "wrench";
-//    }
-//
-//    @Override
+
+    @Nullable
+    @Override
+    public ToolType getHarvestTool(BlockState state) {
+        return AntimatterAPI.WRENCH_TOOL_TYPE;
+    }
+
+    //    @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 //        TileEntity tile = Utils.getTile(world, pos);
 //        return tile != null && GregTechAPI.interact(tile, player, hand, side, hitX, hitY, hitZ);
 //    }
-//
+
+    //not needed probably
 //    @Override
 //    public void onBlockAdded(World world, BlockPos pos, BlockState state) {
-////        TileEntity tile = Utils.getTile(world, pos);
-////        if (tile instanceof TileEntityPipe) {
-//////            ((TileEntityPipe) tile).refreshConnections();
-////        }
+//        TileEntity tile = Utils.getTile(world, pos);
+//        if (tile instanceof TileEntityPipe) {
+////            ((TileEntityPipe) tile).refreshConnections();
+//        }
 //    }
-//
+
 //    @Override
 //    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
 //        TileEntity tile = Utils.getTile(world, pos);
@@ -132,7 +123,7 @@
 //            ((TileEntityPipe) tile).refreshConnections();
 //        }
 //    }
-//
+
 //    @Override
 //    public boolean isFullCube(BlockState state) {
 //        return false;
@@ -142,30 +133,40 @@
 //    public boolean isOpaqueCube(BlockState state) {
 //        return false;
 //    }
-//
+
+    @Override
+    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockPipe) && world == null || pos == null) return -1;
+        return i == 0 || i == 1 || i == 2 ? getRGB() : -1;
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        if (!(block instanceof BlockPipe)) return -1;
+        return i == 0 || i == 1 || i == 2 ? ((BlockPipe) block).getRGB() : -1;
+    }
+
 //    @Override
-//    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-//        if (!(state.getBlock() instanceof BlockPipe) && world == null || pos == null) return -1;
-//        return i == 0 || i == 1 || i == 2 ? getRGB() : -1;
+//    @SideOnly(Side.CLIENT)
+//    public void onModelRegistration() {
+//        for (int i = 0; i < sizes.length; i++) {
+//            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), sizes[i].ordinal(), new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + sizes[i].getName()));
+//        }
+//        //Redirect block model to custom baked model handling
+//        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
 //    }
-//
-//    @Override
-//    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-//        if (!(block instanceof BlockPipe)) return -1;
-//        return i == 0 || i == 1 || i == 2 ? ((BlockPipe) block).getRGB() : -1;
-//    }
-//
-////    @Override
-////    @SideOnly(Side.CLIENT)
-////    public void onModelRegistration() {
-////        for (int i = 0; i < sizes.length; i++) {
-////            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), sizes[i].ordinal(), new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + sizes[i].getName()));
-////        }
-////        //Redirect block model to custom baked model handling
-////        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
-////    }
-//
-//
+
+
+    @Override
+    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider provider) {
+
+    }
+
+    @Override
+    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider provider) {
+        provider.simpleBlock(block, provider.getBuilder(block).parent(provider.getExistingFile(provider.modLoc("block/pipe/" + getSize().getId() + "/line"))).texture("0", Textures.PIPE));
+    }
+
 //    @Override
 //    @OnlyIn(Dist.CLIENT)
 //    public void onModelBuild(Map<ResourceLocation, IBakedModel> registry) {
@@ -174,4 +175,21 @@
 //        IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay(size.ordinal())));
 //        registry.put(loc, baked);
 //    }
-//}
+
+    public abstract static class BlockPipeBuilder {
+
+        protected Material material;
+        protected PipeSize[] sizes;
+
+        public BlockPipeBuilder(Material material, PipeSize[] sizes) {
+            this.material = material;
+            this.sizes = sizes;
+        }
+
+        public BlockPipeBuilder(Material material) {
+            this(material, PipeSize.VALUES);
+        }
+
+        public abstract void build();
+    }
+}

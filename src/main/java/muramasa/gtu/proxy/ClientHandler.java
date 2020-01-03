@@ -6,8 +6,8 @@ import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.materials.TextureSet;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
-import muramasa.gtu.client.render.GregTechModelLoader;
-import muramasa.gtu.client.render.ModelUtils;
+import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -70,7 +70,7 @@ public class ClientHandler implements IProxyHandler {
         //MinecraftForge.EVENT_BUS.register(RenderGameOverlayHandler.class);
         //MinecraftForge.EVENT_BUS.register(TooltipHandler.class);
         //ModelLoaderRegistry.registerLoader(new GTModelLoader());
-        ModelLoaderRegistry.registerLoader(new GregTechModelLoader());
+        ModelLoaderRegistry.registerLoader(new AntimatterModelLoader());
     }
 
     @SubscribeEvent

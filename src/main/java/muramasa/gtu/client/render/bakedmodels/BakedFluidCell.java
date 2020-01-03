@@ -1,6 +1,6 @@
 //package muramasa.gtu.client.render.bakedmodels;
 //
-//import muramasa.gtu.client.render.ModelUtils;
+//import muramasa.antimatter.client.ModelUtils;
 //import muramasa.gtu.client.render.models.ModelFluidCell;
 //import muramasa.gtu.client.render.overrides.ItemOverrideFluidCell;
 //import net.minecraft.block.BlockState;

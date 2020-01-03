@@ -1,69 +1,30 @@
-//package muramasa.antimatter.blocks.pipe;
-//
-//import muramasa.gtu.Ref;
-//import muramasa.antimatter.GregTechAPI;
-//import muramasa.gtu.data.Textures;
-//import muramasa.antimatter.machines.Tier;
-//import muramasa.antimatter.materials.Material;
-//import muramasa.antimatter.pipe.PipeSize;
-//import muramasa.antimatter.registration.IColorHandler;
-//import muramasa.antimatter.registration.IItemBlock;
-//import muramasa.antimatter.texture.TextureData;
-//import muramasa.antimatter.tileentities.pipe.TileEntityCable;
-//import muramasa.antimatter.util.Utils;
-//import muramasa.antimatter.client.bakedblockold.BakedTextureDataItem;
-//import muramasa.gtu.client.render.bakedmodels.BakedPipe;
-//import net.minecraft.block.Block;
-//import net.minecraft.block.state.BlockStateContainer;
-//import net.minecraft.block.BlockState;
-//import net.minecraft.client.renderer.model.IBakedModel;
-//import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-//import net.minecraft.client.util.ITooltipFlag;
-//import net.minecraft.creativetab.CreativeTabs;
-//import net.minecraft.entity.EntityLivingBase;
-//import net.minecraft.item.Item;
-//import net.minecraft.item.ItemStack;
-//import net.minecraft.tileentity.TileEntity;
-//import net.minecraft.util.Direction;
-//import net.minecraft.util.Hand;
-//import net.minecraft.util.NonNullList;
-//import net.minecraft.util.ResourceLocation;
-//import net.minecraft.util.math.BlockPos;
-//import net.minecraft.util.registry.IRegistry;
-//import net.minecraft.util.text.TextFormatting;
-//import net.minecraft.world.IBlockReader;
-//import net.minecraft.world.World;
-//import net.minecraftforge.client.model.ModelLoader;
-//import net.minecraftforge.common.property.IExtendedBlockState;
-//import net.minecraftforge.fml.relauncher.Side;
-//import net.minecraftforge.fml.relauncher.SideOnly;
-//
-//import javax.annotation.Nullable;
-//import java.util.List;
-//import java.util.Locale;
-//
-//import static muramasa.antimatter.GregTechProperties.*;
-//
-//public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
-//
-//    protected int loss, lossInsulated;
-//    protected int[] amps;
-//    protected Tier tier;
-//
-//    public BlockCable(Material material, int loss, int lossInsulated, int baseAmps, Tier tier, PipeSize... sizes) {
-//        super("cable", material, Textures.PIPE_DATA[1], sizes);
-//        this.loss = loss;
-//        this.lossInsulated = lossInsulated;
-//        this.tier = tier;
-//        this.amps = new int[] {
-//            baseAmps, baseAmps * 2, baseAmps * 4, baseAmps * 8, baseAmps * 12, baseAmps * 16
-//        };
-//
-//        overrideState(this, new BlockStateContainer.Builder(this).add(PIPE_SIZE, PIPE_INSULATED).add(PIPE_CONNECTIONS, TEXTURE, COVER).build());
-//
-//        GregTechAPI.register(BlockCable.class, this);
-//    }
-//
+package muramasa.antimatter.blocks.pipe;
+
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.machines.Tier;
+import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.IItemBlock;
+import muramasa.gtu.data.Textures;
+
+public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
+
+    protected boolean insulated;
+    protected int loss, lossInsulated;
+    protected int amps;
+    protected Tier tier;
+
+    public BlockCable(Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
+        super("cable", material, size, Textures.PIPE_DATA[1]);
+        this.insulated = insulated;
+        this.loss = loss;
+        this.lossInsulated = lossInsulated;
+        this.tier = tier;
+        this.amps = amps;
+        AntimatterAPI.register(BlockCable.class, this);
+    }
+
 //    @Override
 //    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
 //        IExtendedBlockState exState = (IExtendedBlockState) state;
@@ -75,20 +36,7 @@
 //        }
 //        return exState;
 //    }
-//
-//    @Override
-//    public BlockState getStateFromMeta(int meta) {
-//        boolean ins = meta > 7;
-//        int size = ins ? meta - 8 : meta;
-//        return getDefaultState().withProperty(PIPE_SIZE, PipeSize.VALUES[size]).withProperty(PIPE_INSULATED, ins);
-//    }
-//
-//    @Override
-//    public int getMetaFromState(BlockState state) {
-//        int meta = state.getValue(PIPE_SIZE).ordinal();
-//        return state.getValue(PIPE_INSULATED) ? meta + 8 : meta;
-//    }
-//
+
 //    @Override
 //    public BlockState getStateForPlacement(World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, Hand hand) {
 //        int stackMeta = placer.getHeldItem(hand).getMetadata();
@@ -105,35 +53,35 @@
 //            items.add(new ItemStack(this, 1, sizes[i].ordinal() + 8));
 //        }
 //    }
-//
-//    public long getVoltage() {
-//        return tier.getVoltage();
-//    }
-//
-//    public int getLoss(boolean insulated) {
-//        return insulated ? lossInsulated : loss;
-//    }
-//
-//    public int getAmps(PipeSize size) {
-//        return amps[size.ordinal()];
-//    }
-//
-//    public Tier getTier() {
-//        return tier;
-//    }
-//
+
+    public long getVoltage() {
+        return tier.getVoltage();
+    }
+
+    public int getLoss() {
+        return insulated ? lossInsulated : loss;
+    }
+
+    public int getAmps() {
+        return amps;
+    }
+
+    public Tier getTier() {
+        return tier;
+    }
+
 //    @Nullable
 //    @Override
 //    public TileEntity createTileEntity(World world, BlockState state) {
 //        return new TileEntityCable();
 //    }
-//
+
 //    @Nullable
 //    @Override
 //    public String getHarvestTool(BlockState state) {
 //        return "wire_cutter";
 //    }
-//
+
 //    @Override
 //    public String getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
@@ -163,7 +111,7 @@
 //    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
 //        return stack.getMetadata() > 7 ? i == 1 ? getRGB() : -1 : getRGB();
 //    }
-//
+
 //    @Override
 //    @SideOnly(Side.CLIENT)
 //    public void onModelRegistration() {
@@ -188,4 +136,47 @@
 //            registry.putObject(loc, baked);
 //        }
 //    }
-//}
+
+    public static class BlockCableBuilder extends BlockPipeBuilder {
+
+        protected int loss, lossInsulated;
+        protected Tier tier;
+        protected int[] amps;
+        protected boolean buildUninsulated = true, buildInsulated = true;
+
+        public BlockCableBuilder(Material material, int loss, int lossInsulated, Tier tier, PipeSize[] sizes) {
+            super(material, sizes);
+            this.loss = loss;
+            this.lossInsulated = lossInsulated;
+            this.tier = tier;
+        }
+
+        public BlockCableBuilder(Material material, int loss, int lossInsulated, Tier tier) {
+            this(material, loss, lossInsulated, tier, PipeSize.VALUES);
+        }
+
+        public BlockCableBuilder amps(int baseAmps) {
+            this.amps = new int[]{baseAmps, baseAmps * 2, baseAmps * 4, baseAmps * 8, baseAmps * 12, baseAmps * 16};
+            return this;
+        }
+
+        public BlockCableBuilder amps(int... amps) {
+            this.amps = amps;
+            return this;
+        }
+
+        public BlockCableBuilder insul(boolean buildInsulated, boolean buildUninsulated) {
+            this.buildInsulated = buildInsulated;
+            this.buildUninsulated = buildUninsulated;
+            return this;
+        }
+
+        @Override
+        public void build() {
+            for (int i = 0; i < sizes.length; i++) {
+                if (buildInsulated) new BlockCable(material, sizes[i], true, loss, lossInsulated, amps[i], tier);
+                if (buildUninsulated) new BlockCable(material, sizes[i], false, loss, lossInsulated, amps[i], tier);
+            }
+        }
+    }
+}

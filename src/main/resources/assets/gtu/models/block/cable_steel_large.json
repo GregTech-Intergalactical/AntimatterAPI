@@ -1,0 +1,6 @@
+{
+  "parent": "gtu:block/pipe/large/line",
+  "textures": {
+    "0": "gtu:block/pipe/pipe_side"
+  }
+}

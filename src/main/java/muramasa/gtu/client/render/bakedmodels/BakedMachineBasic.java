@@ -2,8 +2,8 @@
 //
 //import muramasa.antimatter.GregTechProperties;
 //import muramasa.antimatter.texture.TextureData;
-//import muramasa.gtu.client.render.ModelUtils;
-//import muramasa.gtu.client.render.QuadLayer;
+//import muramasa.antimatter.client.ModelUtils;
+//import muramasa.antimatter.client.QuadLayer;
 //import net.minecraft.block.BlockState;
 //import net.minecraft.client.renderer.model.BakedQuad;
 //import net.minecraft.util.Direction;
