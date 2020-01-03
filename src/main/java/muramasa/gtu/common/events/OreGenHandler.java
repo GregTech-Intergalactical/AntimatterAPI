@@ -1,8 +1,8 @@
 //package muramasa.gtu.common.events;
 //
 //import muramasa.gtu.Configs;
-//import muramasa.gtu.api.data.Materials;
-//import muramasa.gtu.api.worldgen.WorldGenHelper;
+//import muramasa.gtu.data.Materials;
+//import muramasa.antimatter.worldgen.WorldGenHelper;
 //import net.minecraftforge.common.MinecraftForge;
 //import net.minecraftforge.eventbus.api.Event;
 //import net.minecraftforge.eventbus.api.SubscribeEvent;

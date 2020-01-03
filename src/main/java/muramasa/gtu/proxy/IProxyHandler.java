@@ -1,6 +1,6 @@
 package muramasa.gtu.proxy;
 
-import muramasa.gtu.api.util.SoundType;
+import muramasa.antimatter.util.SoundType;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;

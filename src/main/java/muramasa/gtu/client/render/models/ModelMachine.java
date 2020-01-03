@@ -2,16 +2,16 @@
 //
 //import muramasa.gtu.Configs;
 //import muramasa.gtu.Ref;
-//import muramasa.gtu.api.GregTechAPI;
-//import muramasa.gtu.api.cover.Cover;
-//import muramasa.gtu.api.data.Machines;
-//import muramasa.gtu.api.machines.MachineState;
-//import muramasa.gtu.api.machines.Tier;
-//import muramasa.gtu.api.machines.types.Machine;
-//import muramasa.gtu.api.texture.TextureData;
-//import muramasa.gtu.api.texture.TextureType;
+//import muramasa.antimatter.GregTechAPI;
+//import muramasa.antimatter.cover.Cover;
+//import muramasa.gtu.data.Machines;
+//import muramasa.antimatter.machines.MachineState;
+//import muramasa.antimatter.machines.Tier;
+//import muramasa.antimatter.machines.types.Machine;
+//import muramasa.antimatter.texture.TextureData;
+//import muramasa.antimatter.texture.TextureType;
 //import muramasa.gtu.client.render.ModelUtils;
-//import muramasa.gtu.client.render.bakedmodels.BakedBase;
+//import muramasa.antimatter.client.baked.BakedBase;
 //import muramasa.gtu.client.render.bakedmodels.BakedMachine;
 //import muramasa.gtu.client.render.bakedmodels.BakedMachineBasic;
 //import net.minecraft.client.renderer.model.IBakedModel;
@@ -29,7 +29,7 @@
 //import java.util.Collection;
 //import java.util.function.Function;
 //
-//import static muramasa.gtu.api.machines.MachineFlag.*;
+//import static muramasa.antimatter.machines.MachineFlag.*;
 //
 //public class ModelMachine implements IModel {
 //

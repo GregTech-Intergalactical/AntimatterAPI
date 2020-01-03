@@ -1,10 +1,10 @@
 package muramasa.gtu.loaders;
 
-import muramasa.gtu.api.worldgen.*;
+import muramasa.antimatter.worldgen.*;
 
+import static muramasa.antimatter.ore.StoneType.*;
 import static muramasa.gtu.Ref.*;
-import static muramasa.gtu.api.data.Materials.*;
-import static muramasa.gtu.api.ore.StoneType.*;
+import static muramasa.gtu.data.Materials.*;
 
 public class WorldGenLoader {
 

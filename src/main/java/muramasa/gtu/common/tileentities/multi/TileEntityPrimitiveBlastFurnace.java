@@ -1,7 +1,7 @@
 package muramasa.gtu.common.tileentities.multi;
 
-import muramasa.gtu.api.tileentities.multi.TileEntityBasicMultiMachine;
-import muramasa.gtu.api.util.int3;
+import muramasa.antimatter.tileentities.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.util.int3;
 import net.minecraft.block.Blocks;
 
 public class TileEntityPrimitiveBlastFurnace extends TileEntityBasicMultiMachine {

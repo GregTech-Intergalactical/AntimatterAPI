@@ -1,8 +1,8 @@
 package muramasa.gtu.integration;
 
 import muramasa.gtu.Ref;
-import muramasa.gtu.api.registration.IGregTechRegistrar;
-import muramasa.gtu.api.registration.RegistrationEvent;
+import muramasa.antimatter.registration.IGregTechRegistrar;
+import muramasa.antimatter.registration.RegistrationEvent;
 
 public class AppliedEnergisticsRegistrar implements IGregTechRegistrar {
 

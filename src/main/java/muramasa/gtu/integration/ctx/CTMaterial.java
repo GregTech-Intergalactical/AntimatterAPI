@@ -1,9 +1,9 @@
 //package muramasa.gtu.integration.ctx;
 //
-//import muramasa.gtu.api.GregTechAPI;
-//import muramasa.gtu.api.materials.IMaterialTag;
-//import muramasa.gtu.api.materials.Material;
-//import muramasa.gtu.api.materials.TextureSet;
+//import muramasa.antimatter.GregTechAPI;
+//import muramasa.antimatter.materials.IMaterialTag;
+//import muramasa.antimatter.materials.Material;
+//import muramasa.antimatter.materials.TextureSet;
 //import stanhebben.zenscript.annotations.ZenMethod;
 //
 //public class CTMaterial {
