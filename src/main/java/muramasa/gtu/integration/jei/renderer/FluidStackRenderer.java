@@ -1,7 +1,7 @@
 //package muramasa.gtu.integration.jei.renderer;
 //
 //import mezz.jei.api.ingredients.IIngredientRenderer;
-//import muramasa.gtu.client.render.RenderHelper;
+//import muramasa.antimatter.client.RenderHelper;
 //import muramasa.antimatter.fluid.GregTechFluid;
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.renderer.GlStateManager;

@@ -1,38 +1,24 @@
-//package muramasa.antimatter.blocks.pipe;
-//
-//import muramasa.antimatter.GregTechAPI;
-//import muramasa.gtu.data.Textures;
-//import muramasa.antimatter.materials.Material;
-//import muramasa.antimatter.pipe.PipeSize;
-//import muramasa.antimatter.tileentities.pipe.TileEntityFluidPipe;
-//import net.minecraft.block.BlockState;
-//import net.minecraft.client.util.ITooltipFlag;
-//import net.minecraft.item.ItemStack;
-//import net.minecraft.tileentity.TileEntity;
-//import net.minecraft.util.text.TextFormatting;
-//import net.minecraft.world.World;
-//import net.minecraftforge.fml.relauncher.Side;
-//import net.minecraftforge.fml.relauncher.SideOnly;
-//
-//import javax.annotation.Nullable;
-//import java.util.List;
-//
-//public class BlockFluidPipe extends BlockPipe {
-//
-//    protected int heatResistance;
-//    protected int[] capacities;
-//    protected boolean gasProof;
-//
-//    public BlockFluidPipe(Material material, int baseCapacity, int heatResistance, boolean gasProof, PipeSize... sizes) {
-//        super("fluid_pipe", material, Textures.PIPE_DATA[0], sizes.length > 0 ? sizes : new PipeSize[]{PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE});
-//        this.heatResistance = heatResistance;
-//        this.gasProof = gasProof;
-//        this.capacities = new int[] {
-//            baseCapacity / 6, baseCapacity / 6, baseCapacity / 3, baseCapacity, baseCapacity * 2, baseCapacity * 4
-//        };
-//        GregTechAPI.register(BlockFluidPipe.class, this);
-//    }
-//
+package muramasa.antimatter.blocks.pipe;
+
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.pipe.PipeSize;
+import muramasa.gtu.data.Textures;
+
+public class BlockFluidPipe extends BlockPipe {
+
+    protected int heatResistance;
+    protected int capacity;
+    protected boolean gasProof;
+
+    public BlockFluidPipe(Material material, PipeSize size, int capacity, int heatResistance, boolean gasProof) {
+        super("fluid_pipe", material, size, Textures.PIPE_DATA[0]);
+        this.heatResistance = heatResistance;
+        this.gasProof = gasProof;
+        this.capacity = capacity;
+        AntimatterAPI.register(BlockFluidPipe.class, this);
+    }
+
 //    public BlockFluidPipe setCapacities(int... capacities) {
 //        this.capacities = capacities;
 //        return this;
@@ -59,4 +45,38 @@
 //        tooltip.add("Fluid Capacity: " + TextFormatting.BLUE + (capacities[size.ordinal()] * 20) + "L/s");
 //        tooltip.add("Heat Limit: " + TextFormatting.RED + heatResistance + " K");
 //    }
-//}
+
+    public static class BlockFluidPipeBuilder extends BlockPipeBuilder {
+
+        protected int heatResistance;
+        protected boolean gasProof;
+        protected int[] caps;
+
+        public BlockFluidPipeBuilder(Material material, int heatResistance, boolean gasProof, PipeSize... sizes) {
+            super(material, sizes);
+            this.heatResistance = heatResistance;
+            this.gasProof = gasProof;
+        }
+
+        public BlockFluidPipeBuilder(Material material, int heatResistance, boolean gasProof) {
+            this(material, heatResistance, gasProof, PipeSize.VALUES);
+        }
+
+        public BlockFluidPipeBuilder caps(int baseCap) {
+            this.caps = new int[]{baseCap / 6, baseCap / 6, baseCap / 3, baseCap, baseCap * 2, baseCap * 4};
+            return this;
+        }
+
+        public BlockFluidPipeBuilder caps(int... caps) {
+            this.caps = caps;
+            return this;
+        }
+
+        @Override
+        public void build() {
+            for (int i = 0; i < sizes.length; i++) {
+                new BlockFluidPipe(material, sizes[i], caps[i], heatResistance, gasProof);
+            }
+        }
+    }
+}

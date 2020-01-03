@@ -1,14 +1,13 @@
 package muramasa.antimatter.pipe;
 
-import net.minecraft.util.IStringSerializable;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Locale;
 
-//TODO 1.14+ remove the limit of 8 pipe sizes, as Item/Cable need an extra boolean property
-public enum PipeSize implements IStringSerializable {
+public enum PipeSize implements IAntimatterObject {
 
     VTINY(1),
     TINY(2),
@@ -33,12 +32,12 @@ public enum PipeSize implements IStringSerializable {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("pipe." + getName());
+        return new TranslationTextComponent("pipe." + getId());
     }
 
     public int getCableThickness() {

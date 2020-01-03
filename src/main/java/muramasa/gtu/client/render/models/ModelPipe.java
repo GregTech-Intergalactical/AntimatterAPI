@@ -3,7 +3,7 @@
 //import muramasa.gtu.Ref;
 //import muramasa.gtu.data.Textures;
 //import muramasa.antimatter.pipe.PipeSize;
-//import muramasa.gtu.client.render.ModelUtils;
+//import muramasa.antimatter.client.ModelUtils;
 //import muramasa.antimatter.client.baked.BakedBase;
 //import muramasa.gtu.client.render.bakedmodels.BakedPipe;
 //import net.minecraft.client.renderer.model.IBakedModel;
@@ -23,6 +23,7 @@
 //
 //public class ModelPipe implements IModel {
 //
+        //TODO just make culled versions of all pipe models, and bake and store all of them.
 //    @Override
 //    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> getter) {
 //        BakedPipe.BAKED = new IBakedModel[PipeSize.VALUES.length][10];
