@@ -2,7 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.capability.IConfigHandler;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -16,7 +16,7 @@ public class MachineConfigHandler implements IConfigHandler {
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
         if (type == null) return false;
         switch (type) {
             case WRENCH:

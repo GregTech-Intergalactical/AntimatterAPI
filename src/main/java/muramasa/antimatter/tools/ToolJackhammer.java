@@ -14,7 +14,7 @@ import java.util.Set;
 public class ToolJackhammer extends MaterialTool {
 
     public ToolJackhammer() {
-        super(GregTechToolType.JACKHAMMER);
+        super(AntimatterToolType.JACKHAMMER);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package muramasa.gtu.data;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.types.*;
 import muramasa.antimatter.tileentities.TileEntitySteamMachine;
@@ -107,13 +107,13 @@ public class Machines {
     }
 
     public static void add(Machine machine) {
-        GregTechAPI.register(Machine.class, machine);
-        GregTechAPI.register(TileEntityType.class, machine.getId(), machine.getTileType());
+        AntimatterAPI.register(Machine.class, machine);
+        AntimatterAPI.register(TileEntityType.class, machine.getId(), machine.getTileType());
         ID_LOOKUP.add(machine.getInternalId(), machine);
     }
 
     public static Machine get(String name) {
-        Machine machine = GregTechAPI.get(Machine.class, name);
+        Machine machine = AntimatterAPI.get(Machine.class, name);
         return machine != null ? machine : INVALID;
     }
 

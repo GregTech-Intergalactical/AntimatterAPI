@@ -1,6 +1,6 @@
 package muramasa.antimatter.network;
 
-public enum GTNetworkEvent {
+public enum AntimatterNetworkEvent {
 
     SOUND,
     FLUID,

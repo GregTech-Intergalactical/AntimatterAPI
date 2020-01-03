@@ -2,13 +2,13 @@ package muramasa.antimatter.materials;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.gtu.data.Materials;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static muramasa.antimatter.materials.MaterialTag.METAL;
 import static muramasa.antimatter.materials.MaterialType.*;
 
-public class Material implements IGregTechObject {
+public class Material implements IAntimatterObject {
 
     private int hash;
 
@@ -67,7 +67,7 @@ public class Material implements IGregTechObject {
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         Materials.HASH_LOOKUP.put(hash, this);
-        GregTechAPI.register(Material.class, this);
+        AntimatterAPI.register(Material.class, this);
     }
 
     public Material(String id, int rgb, TextureSet set, Element element) {

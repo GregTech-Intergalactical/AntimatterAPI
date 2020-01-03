@@ -1,10 +1,10 @@
 package muramasa.antimatter.items;
 
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 
 //TODO replace with vanilla tag system
-public class ItemTag implements IGregTechObject {
+public class ItemTag implements IAntimatterObject {
 
     public static ItemTag SHOW_EXTENDED_HIGHLIGHT = new ItemTag("show_extended_highlight");
 
@@ -12,7 +12,7 @@ public class ItemTag implements IGregTechObject {
 
     public ItemTag(String id) {
         this.id = id;
-        GregTechAPI.register(ItemTag.class, this);
+        AntimatterAPI.register(ItemTag.class, this);
     }
 
     @Override

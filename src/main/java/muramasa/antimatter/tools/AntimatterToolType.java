@@ -1,7 +1,7 @@
 package muramasa.antimatter.tools;
 
 import com.google.common.collect.Sets;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.items.MaterialTool;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.texture.Texture;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 //TODO refactor to class? yeah...
 //TODO maybe extend forge ToolType?
-public enum GregTechToolType {
+public enum AntimatterToolType {
 
     SWORD("", "craftingToolSword", null, Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
     PICKAXE("", "craftingToolPickaxe", null, Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),
@@ -49,7 +49,7 @@ public enum GregTechToolType {
     BUZZSAW("", "craftingToolBuzzsaw", null, Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("", "craftingToolTurbine", null, Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
 
-    public static GregTechToolType[] VALUES;
+    public static AntimatterToolType[] VALUES;
 
     static {
         VALUES = values();
@@ -63,7 +63,7 @@ public enum GregTechToolType {
     private int baseQuality, damageMining, damageEntity, damageCrafting;
     private float baseAttackDamage, baseAttackSpeed, miningSpeedMulti, duraMulti;
 
-    GregTechToolType(String tooltip, String oreDict, Class toolClass, Set<String> toolClasses, SoundType useSound, boolean powered, int baseQuality, float baseAttackDamage, float baseAttackSpeed, float miningSpeedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
+    AntimatterToolType(String tooltip, String oreDict, Class toolClass, Set<String> toolClasses, SoundType useSound, boolean powered, int baseQuality, float baseAttackDamage, float baseAttackSpeed, float miningSpeedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
         this.tooltip = tooltip;
         this.oreDict = oreDict;
         this.toolClass = toolClass;
@@ -164,7 +164,7 @@ public enum GregTechToolType {
     }
 
     public ItemStack get(Material primary, Material secondary) {
-        return GregTechAPI.get(MaterialTool.class, getName()).get(primary, secondary);
+        return AntimatterAPI.get(MaterialTool.class, getName()).get(primary, secondary);
     }
 
     public Texture[] getTextures() {
@@ -181,27 +181,27 @@ public enum GregTechToolType {
     }
 
     @Nullable
-    public static GregTechToolType get(ItemStack stack) {
+    public static AntimatterToolType get(ItemStack stack) {
         return stack.getItem() instanceof MaterialTool ? ((MaterialTool) stack.getItem()).getType() : null;
     }
 
     public static boolean hasBowAnimation(ItemStack stack) {
-        GregTechToolType type = get(stack);
+        AntimatterToolType type = get(stack);
         return type == DRILL;
     }
 
     public static boolean isWrench(ItemStack stack) {
-        GregTechToolType type = get(stack);
+        AntimatterToolType type = get(stack);
         return type == WRENCH || type == WRENCH_P;
     }
 
     public static boolean isCrowbar(ItemStack stack) {
-        GregTechToolType type = get(stack);
+        AntimatterToolType type = get(stack);
         return type == CROWBAR;
     }
 
     public static boolean isScrewdriver(ItemStack stack) {
-        GregTechToolType type = get(stack);
+        AntimatterToolType type = get(stack);
         return type == SCREWDRIVER || type == SCREWDRIVER_P;
     }
 

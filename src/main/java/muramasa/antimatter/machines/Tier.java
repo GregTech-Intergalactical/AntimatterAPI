@@ -1,7 +1,7 @@
 package muramasa.antimatter.machines;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.text.TextFormatting;
 
@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Tier implements IGregTechObject {
+public class Tier implements IAntimatterObject {
 
     private static HashMap<String, Tier> TIER_NAME_LOOKUP = new HashMap<>();
     private static Int2ObjectOpenHashMap<Tier> TIER_ID_LOOKUP = new Int2ObjectOpenHashMap<>();

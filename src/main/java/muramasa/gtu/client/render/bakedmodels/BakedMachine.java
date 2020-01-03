@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import static muramasa.antimatter.GregTechProperties.*;
+import static muramasa.antimatter.AntimatterProperties.*;
 
 public class BakedMachine extends BakedBase {
 

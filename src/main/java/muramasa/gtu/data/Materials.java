@@ -2,8 +2,8 @@ package muramasa.gtu.data;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.gtu.Configs;
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.fluid.GregTechFluid;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.materials.Material;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
@@ -411,26 +411,26 @@ public class Materials {
 
     static {
         if (Configs.DATA.ENABLE_ITEM_REPLACEMENTS) {
-            GregTechAPI.addReplacement(INGOT, Iron, new ItemStack(Items.IRON_INGOT));
-            GregTechAPI.addReplacement(INGOT, Gold, new ItemStack(Items.GOLD_INGOT));
-            GregTechAPI.addReplacement(NUGGET, Iron, new ItemStack(Items.IRON_NUGGET));
-            GregTechAPI.addReplacement(NUGGET, Gold, new ItemStack(Items.GOLD_NUGGET));
-            GregTechAPI.addReplacement(GEM, Coal, new ItemStack(Items.COAL));
-            GregTechAPI.addReplacement(GEM, Charcoal, new ItemStack(Items.CHARCOAL));
-            GregTechAPI.addReplacement(GEM, Emerald, new ItemStack(Items.EMERALD));
-            GregTechAPI.addReplacement(GEM, Diamond, new ItemStack(Items.DIAMOND));
-            GregTechAPI.addReplacement(GEM, Lapis, new ItemStack(Items.LAPIS_LAZULI));
-            GregTechAPI.addReplacement(DUST, Redstone, new ItemStack(Items.REDSTONE));
-            GregTechAPI.addReplacement(DUST, Glowstone, new ItemStack(Items.GLOWSTONE_DUST));
-            GregTechAPI.addReplacement(BLOCK, Coal, new ItemStack(Blocks.COAL_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Iron, new ItemStack(Blocks.IRON_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Gold, new ItemStack(Blocks.GOLD_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Lapis, new ItemStack(Blocks.LAPIS_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Emerald, new ItemStack(Blocks.EMERALD_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Diamond, new ItemStack(Blocks.DIAMOND_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Redstone, new ItemStack(Blocks.REDSTONE_BLOCK));
-            GregTechAPI.addReplacement(BLOCK, Glowstone, new ItemStack(Blocks.GLOWSTONE));
-            GregTechAPI.addReplacement(ROD, Wood, new ItemStack(Items.STICK));
+            AntimatterAPI.addReplacement(INGOT, Iron, new ItemStack(Items.IRON_INGOT));
+            AntimatterAPI.addReplacement(INGOT, Gold, new ItemStack(Items.GOLD_INGOT));
+            AntimatterAPI.addReplacement(NUGGET, Iron, new ItemStack(Items.IRON_NUGGET));
+            AntimatterAPI.addReplacement(NUGGET, Gold, new ItemStack(Items.GOLD_NUGGET));
+            AntimatterAPI.addReplacement(GEM, Coal, new ItemStack(Items.COAL));
+            AntimatterAPI.addReplacement(GEM, Charcoal, new ItemStack(Items.CHARCOAL));
+            AntimatterAPI.addReplacement(GEM, Emerald, new ItemStack(Items.EMERALD));
+            AntimatterAPI.addReplacement(GEM, Diamond, new ItemStack(Items.DIAMOND));
+            AntimatterAPI.addReplacement(GEM, Lapis, new ItemStack(Items.LAPIS_LAZULI));
+            AntimatterAPI.addReplacement(DUST, Redstone, new ItemStack(Items.REDSTONE));
+            AntimatterAPI.addReplacement(DUST, Glowstone, new ItemStack(Items.GLOWSTONE_DUST));
+            AntimatterAPI.addReplacement(BLOCK, Coal, new ItemStack(Blocks.COAL_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Iron, new ItemStack(Blocks.IRON_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Gold, new ItemStack(Blocks.GOLD_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Lapis, new ItemStack(Blocks.LAPIS_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Emerald, new ItemStack(Blocks.EMERALD_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Diamond, new ItemStack(Blocks.DIAMOND_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Redstone, new ItemStack(Blocks.REDSTONE_BLOCK));
+            AntimatterAPI.addReplacement(BLOCK, Glowstone, new ItemStack(Blocks.GLOWSTONE));
+            AntimatterAPI.addReplacement(ROD, Wood, new ItemStack(Items.STICK));
         }
         ELECSEPI.add(Bastnasite/*, Monazite*/);
         ELECSEPG.add(Magnetite, VanadiumMagnetite);
@@ -680,18 +680,18 @@ public class Materials {
 //            }
 //        }
 
-        LIQUID.all().forEach(m -> m.setLiquid(new GregTechFluid(m, LIQUID)));
-        GAS.all().forEach(m -> m.setGas(new GregTechFluid(m, GAS)));
-        PLASMA.all().forEach(m -> m.setPlasma(new GregTechFluid(m, PLASMA)));
+        LIQUID.all().forEach(m -> m.setLiquid(new AntimatterFluid(m, LIQUID)));
+        GAS.all().forEach(m -> m.setGas(new AntimatterFluid(m, GAS)));
+        PLASMA.all().forEach(m -> m.setPlasma(new AntimatterFluid(m, PLASMA)));
         
-        GregTechAPI.all(Material.class).forEach(Material::setChemicalFormula);
+        AntimatterAPI.all(Material.class).forEach(Material::setChemicalFormula);
 
         //If using small ore markers, every normal ore needs a small version. This greatly increases block usage
         if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.all().forEach(m -> m.add(ORE_SMALL));
     }
 
     public static Material get(String name) {
-        return GregTechAPI.get(Material.class, name);
+        return AntimatterAPI.get(Material.class, name);
     }
 
     public static Material get(int hash) {

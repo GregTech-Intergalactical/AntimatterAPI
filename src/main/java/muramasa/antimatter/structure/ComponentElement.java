@@ -1,7 +1,7 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int3;
@@ -10,14 +10,14 @@ import net.minecraft.tileentity.TileEntity;
 
 public class ComponentElement extends StructureElement {
 
-    private IGregTechObject[] objects;
+    private IAntimatterObject[] objects;
 
-    public ComponentElement(String elementId, IGregTechObject... objects) {
+    public ComponentElement(String elementId, IAntimatterObject... objects) {
         super(elementId);
         this.objects = objects;
     }
 
-    public ComponentElement(IGregTechObject... objects) {
+    public ComponentElement(IAntimatterObject... objects) {
         this.objects = objects;
     }
 
@@ -38,10 +38,10 @@ public class ComponentElement extends StructureElement {
             }
         }
         BlockState state = machine.getWorld().getBlockState(pos.asBP());
-        if (state.getBlock() instanceof IGregTechObject) {
+        if (state.getBlock() instanceof IAntimatterObject) {
             for (int i = 0; i < objects.length; i++) {
-                if (objects[i].getId().equals(((IGregTechObject) state.getBlock()).getId())) {
-                    result.addState(((IGregTechObject) state.getBlock()).getId(), pos.asBP(), state);
+                if (objects[i].getId().equals(((IAntimatterObject) state.getBlock()).getId())) {
+                    result.addState(((IAntimatterObject) state.getBlock()).getId(), pos.asBP(), state);
                     return true;
                 }
             }

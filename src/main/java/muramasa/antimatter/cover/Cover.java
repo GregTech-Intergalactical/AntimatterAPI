@@ -1,11 +1,11 @@
 package muramasa.antimatter.cover;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machines.MachineEvent;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -39,7 +39,7 @@ public abstract class Cover {
     }
 
     /** Fires once per Side **/
-    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable GregTechToolType type) {
+    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         return true;
     }
 
@@ -64,7 +64,7 @@ public abstract class Cover {
     }
 
     public boolean isEmpty() {
-        return getId().equals(GregTechAPI.CoverNone.getId());
+        return getId().equals(AntimatterAPI.CoverNone.getId());
     }
 
     public Texture[] getTextures() {

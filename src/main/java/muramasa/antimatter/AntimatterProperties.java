@@ -8,7 +8,7 @@ import net.minecraft.state.IntegerProperty;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-public class GregTechProperties {
+public class AntimatterProperties {
 
     /** Block Dynamic Properties **/
     public static final ModelProperty<int[]> DYNAMIC_CONFIG = new ModelProperty<>();

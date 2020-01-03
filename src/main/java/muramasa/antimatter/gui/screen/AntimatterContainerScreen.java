@@ -11,9 +11,9 @@ import net.minecraft.util.text.ITextComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GTContainerScreen<T extends Container> extends ContainerScreen<T> {
+public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> {
 
-    public GTContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
+    public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
     }
 

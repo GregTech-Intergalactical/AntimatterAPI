@@ -1,6 +1,6 @@
 package muramasa.gtu.data;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilder;
@@ -71,7 +71,7 @@ public class RecipeBuilders {
         public static ItemStack[] FUELS;
 
         static {
-            GregTechAPI.onEvent(RegistrationEvent.DATA_READY, () -> FUELS = new ItemStack[] {
+            AntimatterAPI.onEvent(RegistrationEvent.DATA_READY, () -> FUELS = new ItemStack[] {
                 Materials.Coal.getGem(1),
                 Materials.Coal.getDust(1),
                 Materials.Charcoal.getGem(1),

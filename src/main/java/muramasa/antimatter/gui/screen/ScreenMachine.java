@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.ModList;
 
-public class ScreenMachine extends GTContainerScreen<ContainerMachine> {
+public class ScreenMachine extends AntimatterContainerScreen<ContainerMachine> {
 
     protected ContainerMachine container;
     protected String name;

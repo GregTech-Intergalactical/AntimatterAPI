@@ -2,7 +2,7 @@ package muramasa.antimatter.recipe;
 
 import com.google.common.collect.Lists;
 import muramasa.antimatter.items.MaterialItem;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -17,14 +17,14 @@ public class RecipeHelper {
     public static boolean ALWAYS_USE_ORE_DICT = true;
 
     static {
-        REPLACEMENTS.put('d', GregTechToolType.SCREWDRIVER.getOreDict());
-        REPLACEMENTS.put('f', GregTechToolType.FILE.getOreDict());
-        REPLACEMENTS.put('h', GregTechToolType.HAMMER.getOreDict());
-        REPLACEMENTS.put('k', GregTechToolType.KNIFE.getOreDict());
-        REPLACEMENTS.put('m', GregTechToolType.MORTAR.getOreDict());
-        REPLACEMENTS.put('s', GregTechToolType.SAW.getOreDict());
-        REPLACEMENTS.put('w', GregTechToolType.WRENCH.getOreDict());
-        REPLACEMENTS.put('x', GregTechToolType.WIRE_CUTTER.getOreDict());
+        REPLACEMENTS.put('d', AntimatterToolType.SCREWDRIVER.getOreDict());
+        REPLACEMENTS.put('f', AntimatterToolType.FILE.getOreDict());
+        REPLACEMENTS.put('h', AntimatterToolType.HAMMER.getOreDict());
+        REPLACEMENTS.put('k', AntimatterToolType.KNIFE.getOreDict());
+        REPLACEMENTS.put('m', AntimatterToolType.MORTAR.getOreDict());
+        REPLACEMENTS.put('s', AntimatterToolType.SAW.getOreDict());
+        REPLACEMENTS.put('w', AntimatterToolType.WRENCH.getOreDict());
+        REPLACEMENTS.put('x', AntimatterToolType.WIRE_CUTTER.getOreDict());
     }
 
     /**
@@ -94,8 +94,8 @@ public class RecipeHelper {
         //Format supported alternate entries into valid types
         int start = shaped ? 3 : 0;
         for (int i = start; i < dataList.size(); i++) {
-            if (dataList.get(i) instanceof GregTechToolType) {
-                dataList.set(i, ((GregTechToolType) dataList.get(i)).getOreDict());
+            if (dataList.get(i) instanceof AntimatterToolType) {
+                dataList.set(i, ((AntimatterToolType) dataList.get(i)).getOreDict());
             } else if (dataList.get(i) instanceof ItemStack) {
                 Item item = ((ItemStack) dataList.get(i)).getItem();
                 if (ALWAYS_USE_ORE_DICT && item instanceof MaterialItem) {

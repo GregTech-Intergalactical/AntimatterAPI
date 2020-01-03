@@ -1,6 +1,6 @@
 package muramasa.antimatter.blocks;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.*;
@@ -22,7 +22,7 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockStorage extends Block implements IGregTechObject, IItemBlock, IColorHandler, ITextureProvider, IModelProvider {
+public class BlockStorage extends Block implements IAntimatterObject, IItemBlock, IColorHandler, ITextureProvider, IModelProvider {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
@@ -34,7 +34,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
         this.material = material;
         this.type = type;
         setRegistryName(getId());
-        GregTechAPI.register(BlockStorage.class, this);
+        AntimatterAPI.register(BlockStorage.class, this);
     }
 
     @Override
@@ -195,7 +195,7 @@ public class BlockStorage extends Block implements IGregTechObject, IItemBlock, 
 //    }
 
     public static ItemStack get(Material material, MaterialType type, int count) {
-        BlockStorage block = GregTechAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());
+        BlockStorage block = AntimatterAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
     }
 

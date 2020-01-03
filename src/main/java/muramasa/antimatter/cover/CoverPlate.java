@@ -1,6 +1,6 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
@@ -55,7 +55,7 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public Texture[] getTextures() {
         ArrayList<Texture> textures = new ArrayList<>();
-        for (TextureSet set : GregTechAPI.all(TextureSet.class)) {
+        for (TextureSet set : AntimatterAPI.all(TextureSet.class)) {
             textures.addAll(Arrays.asList(set.getTextures(MaterialType.BLOCK)));
         }
         return textures.toArray(new Texture[0]);

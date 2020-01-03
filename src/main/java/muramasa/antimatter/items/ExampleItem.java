@@ -1,14 +1,14 @@
 package muramasa.antimatter.items;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.item.Item;
 
-public class ExampleItem extends Item implements IGregTechObject, ITextureProvider, IModelProvider {
+public class ExampleItem extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     private String id;
 
@@ -16,7 +16,7 @@ public class ExampleItem extends Item implements IGregTechObject, ITextureProvid
         super(properties);
         this.id = id;
         setRegistryName(Ref.MODID, getId());
-        GregTechAPI.register(ExampleItem.class, this);
+        AntimatterAPI.register(ExampleItem.class, this);
     }
 
     @Override

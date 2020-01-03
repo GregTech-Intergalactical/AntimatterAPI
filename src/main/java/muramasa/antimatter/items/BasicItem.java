@@ -2,7 +2,7 @@ package muramasa.antimatter.items;
 
 import muramasa.gtu.Configs;
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockCoil;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.blocks.BlockStorage;
@@ -10,7 +10,7 @@ import muramasa.gtu.data.Machines;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BasicItem extends Item implements IGregTechObject, ITextureProvider, IModelProvider {
+public class BasicItem extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     protected String id, tooltip = "";
     protected boolean enabled = true;
@@ -43,7 +43,7 @@ public class BasicItem extends Item implements IGregTechObject, ITextureProvider
         super(properties);
         this.id = id;
         setRegistryName(getId());
-        GregTechAPI.register(BasicItem.class, this);
+        AntimatterAPI.register(BasicItem.class, this);
     }
 
     public BasicItem(String id) {
@@ -86,14 +86,14 @@ public class BasicItem extends Item implements IGregTechObject, ITextureProvider
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(new StringTextComponent(this.tooltip));
         if (Data.DebugScanner.equals(this)) {
-            tooltip.add(new StringTextComponent("Blocks: " + GregTechAPI.all(Block.class).size()));
+            tooltip.add(new StringTextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
             tooltip.add(new StringTextComponent("Machines: " + Machines.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(new StringTextComponent("Pipes: " + /*GregTechAPI.all(BlockPipe.class).size()*/ "TODO"));
             tooltip.add(new StringTextComponent("Casings: " + /*GregTechAPI.all(BlockCasing.class).size()*/ "TODO"));
-            tooltip.add(new StringTextComponent("Coils: " + GregTechAPI.all(BlockCoil.class).size()));
-            tooltip.add(new StringTextComponent("Storage: " + GregTechAPI.all(BlockStorage.class).size()));
-            tooltip.add(new StringTextComponent("Ores: " + GregTechAPI.all(BlockOre.class).size()));
-            tooltip.add(new StringTextComponent("Stones: " + GregTechAPI.all(BlockStone.class).size()));
+            tooltip.add(new StringTextComponent("Coils: " + AntimatterAPI.all(BlockCoil.class).size()));
+            tooltip.add(new StringTextComponent("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
+            tooltip.add(new StringTextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
+            tooltip.add(new StringTextComponent("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
             tooltip.add(new StringTextComponent("Data:"));
             tooltip.add(new StringTextComponent("Ore Materials: " + MaterialType.ORE.all().size()));
             tooltip.add(new StringTextComponent("Small Ore Materials: " + MaterialType.ORE_SMALL.all().size()));
@@ -201,7 +201,7 @@ public class BasicItem extends Item implements IGregTechObject, ITextureProvider
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return GregTechAPI.getCoverFromCatalyst(stack) != null;
+        return AntimatterAPI.getCoverFromCatalyst(stack) != null;
     }
 
     public ItemStack get(int count) {

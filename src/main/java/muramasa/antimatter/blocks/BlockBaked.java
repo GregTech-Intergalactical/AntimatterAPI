@@ -1,7 +1,7 @@
 package muramasa.antimatter.blocks;
 
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraftforge.client.model.IModel;
 
 //TODO support blockstate baking?
-public abstract class BlockBaked extends Block implements IGregTechObject, ITextureProvider, IModelProvider {
+public abstract class BlockBaked extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     protected TextureData data;
     protected IBakedModel baked;
@@ -24,9 +24,9 @@ public abstract class BlockBaked extends Block implements IGregTechObject, IText
         this.data = data;
     }
 
-    protected void register(Class c, IGregTechObject o) {
-        GregTechAPI.register(c, o);
-        GregTechAPI.register(BlockBaked.class, this);
+    protected void register(Class c, IAntimatterObject o) {
+        AntimatterAPI.register(c, o);
+        AntimatterAPI.register(BlockBaked.class, this);
     }
 
     public TextureData getData() {

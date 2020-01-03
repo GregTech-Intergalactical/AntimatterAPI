@@ -1,10 +1,10 @@
 package muramasa.antimatter.materials;
 
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 
-public class TextureSet implements IGregTechObject {
+public class TextureSet implements IAntimatterObject {
 
     private static int LAST_INTERNAL_ID;
 
@@ -30,7 +30,7 @@ public class TextureSet implements IGregTechObject {
     public TextureSet(String id) {
         this.id = id;
         this.internalId = LAST_INTERNAL_ID++;
-        GregTechAPI.register(TextureSet.class, this);
+        AntimatterAPI.register(TextureSet.class, this);
     }
 
     @Override

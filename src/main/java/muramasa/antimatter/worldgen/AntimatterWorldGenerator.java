@@ -29,7 +29,7 @@ import java.util.Random;
  * Written in 1.7 by moronwmachinegun and mitchej123, adapted by Muramasa
  * **/
 @Mod.EventBusSubscriber
-public class GregTechWorldGenerator implements IWorldGenerator {
+public class AntimatterWorldGenerator implements IWorldGenerator {
 
     private static HashMap<String, HashMap<String, WorldGenBase>> REGISTRY = new HashMap<>();
     private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
@@ -48,7 +48,7 @@ public class GregTechWorldGenerator implements IWorldGenerator {
         REGISTRY.put("base", new HashMap<>());
     }
 
-    public GregTechWorldGenerator() {
+    public AntimatterWorldGenerator() {
         //TODO
         //GameRegistry.registerWorldGenerator(this, Integer.MAX_VALUE);
     }
@@ -77,13 +77,13 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             WorldGenHelper.init();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("GregTechWorldGenerator caught an exception while initializing");
+            throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
         }
     }
 
     public static void reload() {
         try {
-            GregTech.LOGGER.info("GregTechWorldGenerator: Started data rebuild!");
+            GregTech.LOGGER.info("AntimatterWorldGenerator: Started data rebuild!");
             //Clear compiled maps
             LAYER.clear(); SMALL.clear(); STONE.clear();
 
@@ -128,10 +128,10 @@ public class GregTechWorldGenerator implements IWorldGenerator {
             REGISTRY.get("base").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
                 BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
             }));
-            GregTech.LOGGER.info("GregTechWorldGenerator: Finished data rebuild!");
+            GregTech.LOGGER.info("AntimatterWorldGenerator: Finished data rebuild!");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("GregTechWorldGenerator caught an exception while reloading");
+            throw new RuntimeException("AntimatterWorldGenerator caught an exception while reloading");
         }
     }
 

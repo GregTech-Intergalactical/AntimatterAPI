@@ -28,7 +28,7 @@ public class WorldGenBase {
     public WorldGenBase(String id, int... dimensions) {
         this.id = id;
         this.dimensions = Sets.newLinkedHashSet(Arrays.stream(dimensions).boxed().collect(Collectors.toList()));
-        GregTechWorldGenerator.register(this);
+        AntimatterWorldGenerator.register(this);
     }
 
     public String getId() {

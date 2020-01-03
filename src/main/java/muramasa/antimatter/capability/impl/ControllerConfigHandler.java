@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
@@ -13,8 +13,8 @@ public class ControllerConfigHandler extends MachineConfigHandler {
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, GregTechToolType type) {
-        if (type == GregTechToolType.HAMMER) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+        if (type == AntimatterToolType.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
             if (!machine.isStructureValid()) {
                 machine.checkStructure();

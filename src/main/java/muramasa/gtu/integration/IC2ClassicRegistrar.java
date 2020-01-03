@@ -1,10 +1,10 @@
 package muramasa.gtu.integration;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.registration.IGregTechRegistrar;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
 
-public class IC2ClassicRegistrar implements IGregTechRegistrar {
+public class IC2ClassicRegistrar implements IAntimatterRegistrar {
 
     @Override
     public String getId() {

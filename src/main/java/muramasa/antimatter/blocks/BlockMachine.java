@@ -1,12 +1,12 @@
 package muramasa.antimatter.blocks;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IItemBlock;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -42,7 +42,7 @@ import java.util.List;
 
 import static muramasa.antimatter.machines.MachineFlag.BASIC;
 
-public class BlockMachine extends Block implements IGregTechObject, IItemBlock, IColorHandler {
+public class BlockMachine extends Block implements IAntimatterObject, IItemBlock, IColorHandler {
 
     protected Machine type;
     protected Tier tier;
@@ -52,7 +52,7 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
         this.type = type;
         this.tier = tier;
         setRegistryName(getId());
-        GregTechAPI.register(BlockMachine.class, this);
+        AntimatterAPI.register(BlockMachine.class, this);
     }
 
     public Machine getType() {
@@ -141,7 +141,7 @@ public class BlockMachine extends Block implements IGregTechObject, IItemBlock, 
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return GregTechAPI.WRENCH_TOOL_TYPE;
+        return AntimatterAPI.WRENCH_TOOL_TYPE;
     }
 
     /** TileEntity Drops Start **/

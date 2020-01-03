@@ -6,7 +6,7 @@ import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialStack;
 import muramasa.antimatter.recipe.RecipeHelper;
-import muramasa.antimatter.tools.GregTechToolType;
+import muramasa.antimatter.tools.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -481,7 +481,7 @@ public class MaterialRecipeLoader {
             if (m.has(DUST)) {
                 ItemStack dustTiny = m.getDustTiny(1);
                 //RecipeHelper.addShapeless(m.getId() + "_rock_to_dust", dust, rock, rock, rock, rock, rock, rock, rock, rock, ToolType.MORTAR.getOreDict());
-                RecipeHelper.addShapeless(m.getId() + "_rock_to_tiny_dust", dustTiny, rock, GregTechToolType.MORTAR.getOreDict());
+                RecipeHelper.addShapeless(m.getId() + "_rock_to_tiny_dust", dustTiny, rock, AntimatterToolType.MORTAR.getOreDict());
                 PULVERIZING.RB().ii(rock).io(dustTiny).add(80, 2);
                 HAMMERING.RB().ii(rock).io(dustTiny).add(20, 4);
             }
@@ -627,42 +627,42 @@ public class MaterialRecipeLoader {
             //TODO: Scoop done in the Forestry Registrar
             if (m.has(ROD)) {
                 ItemStack rod = m.getRod(1);
-                RecipeHelper.addShaped("crowbar_" + m.getId(), GregTechToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', rod);
-                RecipeHelper.addShaped("screwdriver_" + m.getId(), GregTechToolType.SCREWDRIVER.get(m), " fR", " Rh", "S  ", 'R', rod, 'S', "stickWood");
+                RecipeHelper.addShaped("crowbar_" + m.getId(), AntimatterToolType.CROWBAR.get(m), "hDR", "DRD", "RDf", 'D', "dyeBlue", 'R', rod);
+                RecipeHelper.addShaped("screwdriver_" + m.getId(), AntimatterToolType.SCREWDRIVER.get(m), " fR", " Rh", "S  ", 'R', rod, 'S', "stickWood");
                 if (m.has(SCREW)) {
-                    RecipeHelper.addShaped("wire_cutter_" + m.getId(), GregTechToolType.WIRE_CUTTER.get(m), "PfP", "hPd", "RSR", 'P', m.getPlate(1), 'R', rod, 'S', m.getScrew(1));
+                    RecipeHelper.addShaped("wire_cutter_" + m.getId(), AntimatterToolType.WIRE_CUTTER.get(m), "PfP", "hPd", "RSR", 'P', m.getPlate(1), 'R', rod, 'S', m.getScrew(1));
                 }
             }
             if (m.has(INGOT)) {
                 ItemStack main = m.getIngot(1), plate = m.getPlate(1);
-                RecipeHelper.addShaped("sword_" + m.getId(), GregTechToolType.SWORD.get(m), " M ", "fPh", " S ", 'M', main, 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("pickaxe_" + m.getId(), GregTechToolType.PICKAXE.get(m), "MPM", "fSh", " S ", 'P', plate, 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("shovel_" + m.getId(), GregTechToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("axe_" + m.getId(), GregTechToolType.AXE.get(m), "PMh", "PS ", "fS ", 'M', main, 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("hoe_" + m.getId(), GregTechToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("wrench_" + m.getId(), GregTechToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
-                RecipeHelper.addShaped("hammer_" + m.getId(), GregTechToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
-                RecipeHelper.addShaped("file_" + m.getId(), GregTechToolType.FILE.get(m), "P", "P", "S", 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("saw_" + m.getId(), GregTechToolType.SAW.get(m), "PPP", "fSS", "   ", 'P', plate, 'S', "stickWood");
-                RecipeHelper.addShaped("knife_" + m.getId(), GregTechToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("sword_" + m.getId(), AntimatterToolType.SWORD.get(m), " M ", "fPh", " S ", 'M', main, 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("pickaxe_" + m.getId(), AntimatterToolType.PICKAXE.get(m), "MPM", "fSh", " S ", 'P', plate, 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("shovel_" + m.getId(), AntimatterToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("axe_" + m.getId(), AntimatterToolType.AXE.get(m), "PMh", "PS ", "fS ", 'M', main, 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("hoe_" + m.getId(), AntimatterToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("wrench_" + m.getId(), AntimatterToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
+                RecipeHelper.addShaped("hammer_" + m.getId(), AntimatterToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
+                RecipeHelper.addShaped("file_" + m.getId(), AntimatterToolType.FILE.get(m), "P", "P", "S", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("saw_" + m.getId(), AntimatterToolType.SAW.get(m), "PPP", "fSS", "   ", 'P', plate, 'S', "stickWood");
+                RecipeHelper.addShaped("knife_" + m.getId(), AntimatterToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', plate, 'S', "stickWood");
                 if (!m.has(NOSMASH)) {
-                    RecipeHelper.addShaped("mortar_" + m.getId(), GregTechToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
+                    RecipeHelper.addShaped("mortar_" + m.getId(), AntimatterToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
                 }
             }
             else if (m.has(GEM)) {
                 ItemStack main = m.getGem(1);
-                RecipeHelper.addShaped("sword_" + m.getId(), GregTechToolType.SWORD.get(m), " M ", "fMh", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("pickaxe_" + m.getId(), GregTechToolType.PICKAXE.get(m), "MMM", "fSh", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("shovel_" + m.getId(), GregTechToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("axe_" + m.getId(), GregTechToolType.AXE.get(m), "MMh", "MS ", "fS ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("hoe_" + m.getId(), GregTechToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("wrench_" + m.getId(), GregTechToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
-                RecipeHelper.addShaped("hammer_" + m.getId(), GregTechToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
-                RecipeHelper.addShaped("file_" + m.getId(), GregTechToolType.FILE.get(m), "M", "M", "S", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("saw_" + m.getId(), GregTechToolType.SAW.get(m), "MMM", "fSS", "   ", 'M', main, 'S', "stickWood");
-                RecipeHelper.addShaped("knife_" + m.getId(), GregTechToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', main, 'S', "stickWood");
+                RecipeHelper.addShaped("sword_" + m.getId(), AntimatterToolType.SWORD.get(m), " M ", "fMh", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("pickaxe_" + m.getId(), AntimatterToolType.PICKAXE.get(m), "MMM", "fSh", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("shovel_" + m.getId(), AntimatterToolType.SHOVEL.get(m), "fM ", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("axe_" + m.getId(), AntimatterToolType.AXE.get(m), "MMh", "MS ", "fS ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("hoe_" + m.getId(), AntimatterToolType.HOE.get(m), "MMf", " S ", " S ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("wrench_" + m.getId(), AntimatterToolType.WRENCH.get(m), "IhI", "III", " I ", 'I', main);
+                RecipeHelper.addShaped("hammer_" + m.getId(), AntimatterToolType.HAMMER.get(m), "II ", "IIS", "II ", 'I', main, 'S', "stickWood");
+                RecipeHelper.addShaped("file_" + m.getId(), AntimatterToolType.FILE.get(m), "M", "M", "S", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("saw_" + m.getId(), AntimatterToolType.SAW.get(m), "MMM", "fSS", "   ", 'M', main, 'S', "stickWood");
+                RecipeHelper.addShaped("knife_" + m.getId(), AntimatterToolType.KNIFE.get(m), "fPh", " S ", "   ", 'P', main, 'S', "stickWood");
                 if (!m.has(NOSMASH)) {
-                    RecipeHelper.addShaped("mortar_" + m.getId(), GregTechToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
+                    RecipeHelper.addShaped("mortar_" + m.getId(), AntimatterToolType.MORTAR.get(m), " M ", "SMS", "SSS", 'M', main, 'S', "stone");
                 }
             }
             /*

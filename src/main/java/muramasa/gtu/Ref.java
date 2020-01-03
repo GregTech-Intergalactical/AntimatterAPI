@@ -3,7 +3,7 @@ package muramasa.gtu;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import muramasa.antimatter.util.XSTR;
-import muramasa.antimatter.client.itemgroup.GregTechItemGroup;
+import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
@@ -26,10 +26,10 @@ public class Ref {
     public static final String SERVER = "muramasa.gtu.proxy.ServerProxy";
 
     /** Creative Tabs **/
-    public static GregTechItemGroup TAB_ITEMS = new GregTechItemGroup("items", new ItemStack(Items.NETHER_BRICK));
-    public static GregTechItemGroup TAB_BLOCKS = new GregTechItemGroup("blocks", new ItemStack(Items.NETHER_BRICK));
-    public static GregTechItemGroup TAB_MATERIALS = new GregTechItemGroup("materials", new ItemStack(Items.NETHER_BRICK));
-    public static GregTechItemGroup TAB_MACHINES = new GregTechItemGroup("machines", new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup("items", new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup("blocks", new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup("materials", new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup("machines", new ItemStack(Items.NETHER_BRICK));
 
     /** GUI IDs **/
     public static final int GUI_ID_MACHINE = 0;

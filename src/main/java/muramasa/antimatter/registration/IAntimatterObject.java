@@ -2,7 +2,7 @@ package muramasa.antimatter.registration;
 
 import net.minecraft.item.ItemStack;
 
-public interface IGregTechObject {
+public interface IAntimatterObject {
 
     String getId();
 

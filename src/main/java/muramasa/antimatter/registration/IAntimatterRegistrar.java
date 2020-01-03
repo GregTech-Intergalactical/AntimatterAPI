@@ -2,7 +2,7 @@ package muramasa.antimatter.registration;
 
 import net.minecraftforge.fml.ModList;
 
-public interface IGregTechRegistrar {
+public interface IAntimatterRegistrar {
 
     String getId();
 

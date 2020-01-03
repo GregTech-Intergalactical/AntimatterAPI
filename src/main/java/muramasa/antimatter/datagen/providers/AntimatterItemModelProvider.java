@@ -1,7 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.gtu.Ref;
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -13,9 +13,9 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
-public class GregTechItemModelProvider extends ItemModelProvider {
+public class AntimatterItemModelProvider extends ItemModelProvider {
 
-    public GregTechItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
+    public AntimatterItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
         super(generator, Ref.MODID, existingFileHelper);
     }
 
@@ -26,10 +26,10 @@ public class GregTechItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        GregTechAPI.all(Item.class).forEach(i -> {
+        AntimatterAPI.all(Item.class).forEach(i -> {
             if (i instanceof IModelProvider) ((IModelProvider) i).onItemModelBuild(i, this);
         });
-        GregTechAPI.all(Block.class).forEach(b -> {
+        AntimatterAPI.all(Block.class).forEach(b -> {
             if (b instanceof IModelProvider) ((IModelProvider) b).onItemModelBuild(b, this);
         });
     }

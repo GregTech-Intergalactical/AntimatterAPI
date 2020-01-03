@@ -1,10 +1,10 @@
 package muramasa.antimatter.machines;
 
 import muramasa.antimatter.machines.types.Machine;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.item.ItemStack;
 
-public class MachineStack implements IGregTechObject {
+public class MachineStack implements IAntimatterObject {
 
     private Machine type;
     private Tier tier;

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
-public class GregTechNetwork {
+public class AntimatterNetwork {
 
     private static final String MAIN_CHANNEL = "main_channel";
     private static final String PROTOCOL_VERSION = Integer.toString(1);
@@ -17,7 +17,7 @@ public class GregTechNetwork {
     private SimpleChannel handler;
     private int currMessageId;
 
-    public GregTechNetwork() {
+    public AntimatterNetwork() {
         handler = NetworkRegistry.ChannelBuilder.
             named(new ResourceLocation(Ref.MODID, MAIN_CHANNEL)).
             clientAcceptedVersions(PROTOCOL_VERSION::equals).

@@ -1,9 +1,9 @@
 package muramasa.antimatter.recipe;
 
-import muramasa.antimatter.GregTechAPI;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.IAntimatterObject;
 
-public class RecipeTag implements IGregTechObject {
+public class RecipeTag implements IAntimatterObject {
 
     public static RecipeTag IGNORE_NBT = new RecipeTag("ignore_nbt");
 
@@ -11,7 +11,7 @@ public class RecipeTag implements IGregTechObject {
 
     public RecipeTag(String id) {
         this.id = id;
-        GregTechAPI.register(RecipeTag.class, this);
+        AntimatterAPI.register(RecipeTag.class, this);
     }
 
     @Override

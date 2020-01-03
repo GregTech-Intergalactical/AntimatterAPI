@@ -9,7 +9,7 @@ import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.MachineState;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.registration.IGregTechObject;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
@@ -74,7 +74,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     /** Returns a list of Components **/
-    public List<IComponentHandler> getComponents(IGregTechObject object) {
+    public List<IComponentHandler> getComponents(IAntimatterObject object) {
         return getComponents(object.getId());
     }
 

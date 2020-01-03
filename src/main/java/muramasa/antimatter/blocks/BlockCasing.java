@@ -1,6 +1,6 @@
 package muramasa.antimatter.blocks;
 
-import muramasa.antimatter.GregTechAPI;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
 import net.minecraft.block.Block;
@@ -44,7 +44,7 @@ public class BlockCasing extends BlockDynamic {
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return GregTechAPI.WRENCH_TOOL_TYPE;
+        return AntimatterAPI.WRENCH_TOOL_TYPE;
     }
 
     @Override
