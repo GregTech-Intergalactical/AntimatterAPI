@@ -21,10 +21,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+//TODO 1.14-NewModelLoaders: The Dynamic loader could have a "defaultModel" property
+//TODO Support multi layer models
 public class ModelDynamic extends ModelBase implements IModelDynamicConfig {
 
     protected Int2ObjectOpenHashMap<Texture[]> configLookup = new Int2ObjectOpenHashMap<>();
+    protected Int2ObjectOpenHashMap<IUnbakedModel> modelLookup = new Int2ObjectOpenHashMap<>();
     protected Int2ObjectOpenHashMap<IBakedModel> bakedLookup = new Int2ObjectOpenHashMap<>();
+
     protected Set<ResourceLocation> configTextures = new HashSet<>();
     protected Consumer<ModelDynamic> configConsumer = b -> {};
     protected BlockDynamic block;
@@ -37,13 +41,15 @@ public class ModelDynamic extends ModelBase implements IModelDynamicConfig {
         return block;
     }
 
-    public void add(int config, Texture... textures) {
+    public ModelDynamic add(int config, Texture... textures) {
         configLookup.put(config, textures);
         configTextures.addAll(Arrays.asList(textures));
+        return this;
     }
 
-    public void add(int config, IBakedModel baked) {
-        bakedLookup.put(config, baked);
+    public ModelDynamic add(int config, IUnbakedModel model) {
+        modelLookup.put(config, model);
+        return this;
     }
 
     public ModelDynamic setConfig(Consumer<ModelDynamic> configConsumer) {
@@ -52,7 +58,7 @@ public class ModelDynamic extends ModelBase implements IModelDynamicConfig {
     }
 
     protected ModelContainer getDefaultModel() {
-        return load(block.getRegistryName());
+        return load(mod("block/preset/simple")).tex("all", block.getTextures()[0]);
     }
 
     protected ModelContainer getConfigModel(int config, Texture[] textures) {
@@ -66,7 +72,10 @@ public class ModelDynamic extends ModelBase implements IModelDynamicConfig {
     @Nullable
     @Override
     public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
-        configLookup.forEach((i, t) -> bakedLookup.put((int) i, getConfigModel(i, t).bake(bakery, getter, sprite, format)));
+        configLookup.forEach((i, t) -> {
+            IUnbakedModel model = modelLookup.get((int) i);
+            bakedLookup.put((int) i, (model != null ? model : getConfigModel(i, t).get()).bake(bakery, getter, sprite, format));
+        });
         return new BakedDynamic(block, bakedLookup, getDefaultModel().bake(bakery, getter, sprite, format));
     }
 
