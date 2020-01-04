@@ -31,7 +31,7 @@ public class BakedDynamic extends BakedBase {
         this.block = block;
         this.bakedLookup = bakedLookup;
         this.defaultModel = defaultModel;
-        this.hasConfig = block.getConfigLookup().size() > 0;
+        this.hasConfig = bakedLookup.size() > 0;
     }
 
     @Nonnull

@@ -4,14 +4,10 @@ import muramasa.antimatter.blocks.*;
 import muramasa.antimatter.blocks.pipe.BlockCable.BlockCableBuilder;
 import muramasa.antimatter.blocks.pipe.BlockFluidPipe.BlockFluidPipeBuilder;
 import muramasa.antimatter.blocks.pipe.BlockItemPipe.BlockItemPipeBuilder;
-import muramasa.antimatter.client.AntimatterModelLoader;
-import muramasa.antimatter.client.model.ModelDynamic;
 import muramasa.antimatter.items.BasicItem;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.gtu.Configs;
-import muramasa.gtu.client.render.models.ModelNichrome;
-import muramasa.gtu.data.Textures;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Mod;
 
@@ -274,9 +270,9 @@ public class Data {
     public static BlockCasing CASING_PIPE_TITANIUM = new BlockCasing("pipe_titanium");
     public static BlockCasing CASING_PIPE_TUNGSTENSTEEL = new BlockCasing("pipe_tungstensteel");
     public static BlockCasing CASING_ENGINE_INTAKE = new BlockCasing("engine_intake");
-    public static BlockCasing CASING_FUSION_1 = new BlockCasing("fusion_1", Textures.FUSION_1_CT);
-    public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2", Textures.FUSION_2_CT);
-    public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3", Textures.FUSION_3_CT);
+    public static BlockCasing CASING_FUSION_1 = new BlockCasing("fusion_1");
+    public static BlockCasing CASING_FUSION_2 = new BlockCasing("fusion_2");
+    public static BlockCasing CASING_FUSION_3 = new BlockCasing("fusion_3");
 
     public static BlockCasing CASING_TURBINE_1 = new BlockTurbineCasing("turbine_1");
     public static BlockCasing CASING_TURBINE_2 = new BlockTurbineCasing("turbine_2");
@@ -294,9 +290,6 @@ public class Data {
     public static BlockCoil COIL_SUPERCONDUCTOR = new BlockCoil("superconductor", 563); //9008
 
     static {
-        AntimatterModelLoader.register(COIL_NICHROME, new ModelNichrome());
-        AntimatterModelLoader.register(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3));
-        
         new BlockCableBuilder(RedAlloy, 0, 1, Tier.ULV).amps(1).build(); //ULV
         new BlockCableBuilder(Cobalt, 2, 4, Tier.LV).amps(2).build(); //LV
         new BlockCableBuilder(Lead, 2, 4, Tier.LV).amps(2).build();

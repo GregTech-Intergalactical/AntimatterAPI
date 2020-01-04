@@ -33,8 +33,8 @@ public class BlockTurbineCasing extends BlockCasing {
         return ct;
     }
 
-    @Override
-    public void onConfigBuild() {
+//    @Override
+//    public void onConfigBuild() {
 //        add(216, () -> ModelUtils.bakeQuad(LARGE_TURBINE[3], 2)); //North
 //        add(232, () -> ModelUtils.bakeQuad(LARGE_TURBINE[5], 2));
 //        add(201, () -> ModelUtils.bakeQuad(LARGE_TURBINE[1], 2));
@@ -114,7 +114,7 @@ public class BlockTurbineCasing extends BlockCasing {
 //        add(1509, () -> ModelUtils.bakeQuad(LARGE_TURBINE_ACTIVE[2], 5));
 //        add(1506, () -> ModelUtils.bakeQuad(LARGE_TURBINE_ACTIVE[6], 5));
 //        add(1510, () -> ModelUtils.bakeQuad(LARGE_TURBINE_ACTIVE[8], 5));
-    }
+//    }
 
 //    @Override
 //    @OnlyIn(Dist.CLIENT)
