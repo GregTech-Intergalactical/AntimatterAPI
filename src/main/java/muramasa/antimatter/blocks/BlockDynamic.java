@@ -1,6 +1,5 @@
 package muramasa.antimatter.blocks;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -11,9 +10,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 
-public abstract class BlockDynamic extends Block implements IBlockDynamicConfig, IAntimatterObject, ITextureProvider, IModelProvider {
+public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    protected Int2ObjectOpenHashMap<Texture[]> configLookup = new Int2ObjectOpenHashMap<>();
     protected Texture[] defaultTextures;
 
     public BlockDynamic(Block.Properties properties, Texture... defaultTextures) {
@@ -21,25 +19,9 @@ public abstract class BlockDynamic extends Block implements IBlockDynamicConfig,
         this.defaultTextures = defaultTextures;
     }
 
-    public Int2ObjectOpenHashMap<Texture[]> getConfigLookup() {
-        return configLookup;
-    }
-
     @Override
     public Texture[] getTextures() {
         return defaultTextures;
-    }
-
-    public Texture[] getConfigTextures() {
-        return new Texture[0];
-    }
-
-    public void add(int config, Texture... textures) {
-        configLookup.put(config, textures);
-    }
-
-    public void onConfigBuild() {
-        //NOOP
     }
 
     /** Connection Logic **/

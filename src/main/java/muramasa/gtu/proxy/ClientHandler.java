@@ -7,7 +7,7 @@ import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
-import muramasa.gtu.data.Textures;
+import muramasa.gtu.client.Models;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -25,8 +25,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import java.util.Arrays;
 
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ClientHandler implements IProxyHandler {
@@ -65,6 +63,8 @@ public class ClientHandler implements IProxyHandler {
 //                GTI_RESOURCES.getPack().addModel(Ref.MODID, "item", b.getId(), itemBuilder);
 //            });
 //        });
+
+        Models.init();
     }
 
     public static void setup(FMLClientSetupEvent e) {
@@ -101,8 +101,6 @@ public class ClientHandler implements IProxyHandler {
 //            e.addSprite(s.getTexture(MaterialType.GAS, 0));
 //            e.addSprite(s.getTexture(MaterialType.PLASMA, 0));
 //        });
-
-        Arrays.stream(Textures.FUSION_3_CT).forEach(e::addSprite);
     }
 
     @SubscribeEvent
