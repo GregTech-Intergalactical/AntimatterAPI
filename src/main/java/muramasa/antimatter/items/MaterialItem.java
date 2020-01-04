@@ -68,7 +68,7 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getMaterial().getChemicalFormula() != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_AQUA + getMaterial().getChemicalFormula()));
-        if (type == MaterialType.ROCK) tooltip.add(new StringTextComponent("Indicates occurrence of " + TextFormatting.YELLOW + material.getDisplayName()));
+        if (type == MaterialType.ROCK) tooltip.add(new StringTextComponent("Indicates occurrence of " + TextFormatting.YELLOW).appendSibling(material.getDisplayName()));
     }
 
     @Override

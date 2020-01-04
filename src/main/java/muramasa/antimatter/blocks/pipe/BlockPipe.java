@@ -186,10 +186,6 @@ public abstract class BlockPipe extends BlockDynamic implements IAntimatterObjec
             this.sizes = sizes;
         }
 
-        public BlockPipeBuilder(Material material) {
-            this(material, PipeSize.VALUES);
-        }
-
         public abstract void build();
     }
 }

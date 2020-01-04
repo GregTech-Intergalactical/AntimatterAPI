@@ -9,15 +9,14 @@ import muramasa.antimatter.client.QuadLayer;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.BasicState;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.*;
 
 import java.util.List;
 
 import static muramasa.antimatter.texture.TextureMode.SINGLE;
 
+
+//TODO this entire thing either needs removed or rethought
 public class TextureData {
 
     private TextureMode baseMode = SINGLE, overlayMode = SINGLE;
@@ -58,18 +57,25 @@ public class TextureData {
         return quads;
     }
 
+    @Deprecated
     public IBakedModel bakeAsItem() {
         IModel model = new ItemLayerModel(ImmutableList.<ResourceLocation>builder().add(base).add(overlay).build());
         return model.bake(GregTech.PROXY.getModelBakery(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.ITEM);
     }
 
+    @Deprecated
     public IBakedModel bakeAsBlock() {
         ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
         for (int i = 0; i < base.length; i++) {
             builder.put("" + i, base[i].toString());
         }
-        IModel model = GregTech.PROXY.getModelBakery().getUnbakedModel(ModelUtils.MODEL_BASIC_LOC).retexture(builder.build());
-        return model.bake(GregTech.PROXY.getModelBakery(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.BLOCK);
+
+        //TODO broken, probably will be removed
+        return ModelLoaderRegistry.getMissingModel().bake(GregTech.PROXY.getModelBakery(), ModelLoader.defaultTextureGetter(), new BasicState(ModelLoaderRegistry.getMissingModel().getDefaultState(), false), DefaultVertexFormats.BLOCK);
+        //IModel model = GregTech.PROXY.getModelBakery().getUnbakedModel(ModelUtils.MODEL_BASIC_LOC).retexture(builder.build());
+        //return model.bake(GregTech.PROXY.getModelBakery(), ModelLoader.defaultTextureGetter(), new BasicState(model.getDefaultState(), false), DefaultVertexFormats.BLOCK);
+
+
 //        if (hasOverlay()) {
 //            return ModelUtils.texBake(ModelUtils.MODEL_LAYERED, new String[]{"0", "1"}, new Texture[]{getBase(0), getOverlay(0)});
 //        } else {

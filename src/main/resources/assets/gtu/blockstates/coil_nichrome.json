@@ -1,7 +1,9 @@
 {
+  "forge_marker": 1,
   "variants": {
-    "": {
-      "model": "gtu:block/coil_nichrome"
-    }
+    "": [{
+      "model": "gtu:block/coil_nichrome",
+      "textures": { "particle": "something" }
+    }]
   }
 }
