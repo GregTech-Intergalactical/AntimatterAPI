@@ -10,7 +10,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraftforge.client.model.IModel;
 
+//TODO pointless with automatic model gen?
 //TODO support blockstate baking?
+@Deprecated
 public abstract class BlockBaked extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     protected TextureData data;

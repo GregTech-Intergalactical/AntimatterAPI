@@ -5,10 +5,9 @@ import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.gui.MenuHandler;
-import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.materials.TextureSet;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
+import muramasa.gtu.data.Textures;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -26,6 +25,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import java.util.Arrays;
 
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ClientHandler implements IProxyHandler {
@@ -95,11 +96,13 @@ public class ClientHandler implements IProxyHandler {
     public static void onTextureStitch(TextureStitchEvent.Pre e) {
         //Apparently forge does not load fluid textures automatically
         //TODO is this needed in 1.14/1.15?
-        AntimatterAPI.all(TextureSet.class).forEach(s -> {
-            e.addSprite(s.getTexture(MaterialType.LIQUID, 0));
-            e.addSprite(s.getTexture(MaterialType.GAS, 0));
-            e.addSprite(s.getTexture(MaterialType.PLASMA, 0));
-        });
+//        AntimatterAPI.all(TextureSet.class).forEach(s -> {
+//            e.addSprite(s.getTexture(MaterialType.LIQUID, 0));
+//            e.addSprite(s.getTexture(MaterialType.GAS, 0));
+//            e.addSprite(s.getTexture(MaterialType.PLASMA, 0));
+//        });
+
+        Arrays.stream(Textures.FUSION_3_CT).forEach(e::addSprite);
     }
 
     @SubscribeEvent
