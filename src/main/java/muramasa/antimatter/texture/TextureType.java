@@ -4,6 +4,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Locale;
 
+@Deprecated
 public enum TextureType implements IAntimatterObject {
 
     TOP,

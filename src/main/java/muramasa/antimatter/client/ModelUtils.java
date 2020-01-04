@@ -1,23 +1,27 @@
 package muramasa.antimatter.client;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import muramasa.gtu.Ref;
-import muramasa.gtu.data.Textures;
+import muramasa.antimatter.client.baked.BakedBase;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureMode;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.client.baked.BakedBase;
+import muramasa.gtu.Ref;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.state.IProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
 
@@ -34,11 +38,15 @@ public class ModelUtils {
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
-    //TODO convert from IModel to ModelWrapper for calling tex, bake etc
+    public static IModel MISSING_MODEL;
+    public static IBakedModel MISSING_BAKED;
+
+    public static IModelData EMPTY_MODEL_DATA = new ModelDataMap.Builder().build();
+
     public static IModel MODEL_QUAD, MODEL_QUAD_L, MODEL_BASIC, MODEL_LAYERED, MODEL_BASIC_FULL, MODEL_LAYERED_FULL, MODEL_COMPLEX;
     public static IBakedModel BAKED_MISSING, BAKED_QUAD, BAKED_BASIC, BAKED_LAYERED, BAKED_BASIC_FULL, BAKED_LAYERED_FULL, BAKED_COMPLEX;
 
-    public static ResourceLocation MODEL_BASIC_LOC = new ResourceLocation(Ref.MODID, "block/templates/basic");
+    //public static ResourceLocation MODEL_BASIC_LOC = new ResourceLocation(Ref.MODID, "block/templates/basic");
 
     private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
@@ -66,14 +74,14 @@ public class ModelUtils {
     }
 
     public static void buildDefaultModels() {
-        if (MODEL_BASIC != null) return;
-        MODEL_QUAD = load("templates/quad");
-        MODEL_QUAD_L = load("templates/quad_layered");
-        MODEL_BASIC = load("templates/basic");
-        MODEL_LAYERED = load("templates/layered");
-        MODEL_BASIC_FULL = load("templates/basic_full");
-        MODEL_LAYERED_FULL = load("templates/layered_full");
-        MODEL_COMPLEX = load("templates/complex");
+        //if (MODEL_BASIC != null) return;
+//        MODEL_QUAD = load("templates/quad");
+//        MODEL_QUAD_L = load("templates/quad_layered");
+//        MODEL_BASIC = load("templates/basic");
+//        MODEL_LAYERED = load("templates/layered");
+//        MODEL_BASIC_FULL = load("templates/basic_full");
+//        MODEL_LAYERED_FULL = load("templates/layered_full");
+//        MODEL_COMPLEX = load("templates/complex");
         //BAKED_QUAD = MODEL_QUAD.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         //BAKED_BASIC = MODEL_BASIC.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         //BAKED_LAYERED = MODEL_LAYERED.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
@@ -81,6 +89,12 @@ public class ModelUtils {
         //BAKED_LAYERED_FULL = MODEL_LAYERED_FULL.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         //BAKED_COMPLEX = MODEL_COMPLEX.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         //BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
+        MISSING_MODEL = ModelLoaderRegistry.getMissingModel();
+        //MISSING_BAKED = MISSING_MODEL.bake()
+    }
+
+    public static IModel getMissingModel() {
+        return MISSING_MODEL;
     }
 
     public static Function<ResourceLocation, TextureAtlasSprite> getTextureGetter() {
@@ -124,52 +138,11 @@ public class ModelUtils {
         return new BakedBase(new SimpleBakedModel(quads, faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides()));
     }
 
-    /** Model Helpers **/
-    public static IModel load(String path) {
-        return load(new ModelResourceLocation(Ref.MODID + ":" + path));
+    public static IBakedModel getBakedFromState(BlockState state) {
+        return Minecraft.getInstance().getModelManager().getModel(BlockModelShapes.getModelLocation(state));
     }
 
-    public static IModel load(String domain, String path) {
-        return load(new ModelResourceLocation(domain + ":" + path));
-    }
 
-    public static IModel load(ModelResourceLocation loc) {
-        try {
-            return ModelLoaderRegistry.getModel(loc);
-        } catch (Exception e) {
-            System.err.println("ModelBase.load() failed due to " + e + ":");
-            e.printStackTrace();
-            return ModelLoaderRegistry.getMissingModel();
-        }
-    }
-
-    public static IModel tex(IModel model, ResourceLocation loc) {
-        return tex(model, "0", loc);
-    }
-
-    public static IModel tex(IModel model, ResourceLocation loc, String... elements) {
-        for (int i = 0; i < elements.length; i++) {
-            model = tex(model, elements[i], loc);
-        }
-        return model;
-    }
-
-    public static IModel tex(IModel model, String[] elements, ResourceLocation[] locs) {
-        for (int i = 0; i < elements.length; i++) {
-            model = tex(model, elements[i], locs[i]);
-        }
-        return model;
-    }
-
-    public static IModel tex(IModel model, String element, ResourceLocation loc) {
-        try {
-            return model.retexture(ImmutableMap.of(element, loc.toString()));
-        } catch (Exception e) {
-            System.err.println("ModelBase.tex() failed due to " + e + ":");
-            e.printStackTrace();
-            return model;
-        }
-    }
 
     public static IBakedModel bake(IModel model, Direction... rotations) {
 //        TRSRTransformation transformation = TRSRTransformation.identity();
@@ -180,37 +153,36 @@ public class ModelUtils {
         return null;
     }
 
-    public static IBakedModel bake(IModel model, Texture particle, Direction... rotations) {
-        return new BakedBase(bake(model, rotations), particle);
-    }
-
-    public static IBakedModel texBake(IModel model, Texture loc, Direction... rotations) {
-        return texBake(model, "0", loc, rotations);
-    }
-
-    public static IBakedModel texBake(IModel model, String element, Texture loc, Direction... rotations) {
-        return texBake(model, new String[]{element}, new Texture[]{loc}, rotations);
-    }
-
-    public static IBakedModel texBake(IModel model, Texture[] locs, Direction... rotations) {
-        String[] elements = new String[locs.length];
-        for (int i = 0; i < locs.length; i++) {
-            elements[i] = "" + i;
-        }
-        return texBake(model, elements, locs, rotations);
-    }
-
-    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs, Direction... rotations) {
-        return bake(tex(model, elements, locs), locs.length >= 1 ? locs[0] : Textures.ERROR, rotations);
-    }
-    
-    public static IBakedModel bakeQuad(Texture texture, Direction... rotations) {
-        return bake(tex(MODEL_QUAD, texture), rotations);
-    }
-
-    public static IBakedModel bakeQuad(Texture texture, int... rotations) {
-        return bake(tex(MODEL_QUAD, texture), Arrays.stream(rotations).mapToObj(i -> Ref.DIRECTIONS[i]).toArray(Direction[]::new));
-    }
+//    public static IBakedModel bake(IModel model, Texture particle, Direction... rotations) {
+//        return new BakedBase(bake(model, rotations), particle);
+//    }
+//
+//    public static IBakedModel texBake(IModel model, Texture loc, Direction... rotations) {
+//        return texBake(model, "0", loc, rotations);
+//    }
+//
+//    public static IBakedModel texBake(IModel model, String element, Texture loc, Direction... rotations) {
+//        return texBake(model, new String[]{element}, new Texture[]{loc}, rotations);
+//    }
+//
+//    public static IBakedModel texBake(IModel model, Texture[] locs, Direction... rotations) {
+//        String[] elements = new String[locs.length];
+//        for (int i = 0; i < locs.length; i++) {
+//            elements[i] = "" + i;
+//        }
+//        return texBake(model, elements, locs, rotations);
+//    }
+//
+//    public static IBakedModel texBake(IModel model, String[] elements, Texture[] locs, Direction... rotations) {
+//        return bake(tex(model, elements, locs), locs.length >= 1 ? locs[0] : Textures.ERROR, rotations);
+//    }
+//    public static IBakedModel bakeQuad(Texture texture, Direction... rotations) {
+//        return bake(tex(MODEL_QUAD, texture), rotations);
+//    }
+//
+//    public static IBakedModel bakeQuad(Texture texture, int... rotations) {
+//        return bake(tex(MODEL_QUAD, texture), Arrays.stream(rotations).mapToObj(i -> Ref.DIRECTIONS[i]).toArray(Direction[]::new));
+//    }
 
     /** Baked Model Helpers **/
     public static List<BakedQuad> trans(List<BakedQuad> quads, int rotation) {

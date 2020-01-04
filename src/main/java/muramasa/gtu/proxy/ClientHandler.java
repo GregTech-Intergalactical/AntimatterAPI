@@ -1,14 +1,14 @@
 package muramasa.gtu.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.materials.TextureSet;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
-import muramasa.antimatter.client.AntimatterModelLoader;
-import muramasa.antimatter.client.ModelUtils;
-import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,7 +39,7 @@ public class ClientHandler implements IProxyHandler {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
 
-        //TODO crashes suring runData?
+        //TODO crashes during runData?
         //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
 
 //        GregTechAPI.onEvent(RegistrationEvent.DATA_READY, () -> {
@@ -99,6 +100,11 @@ public class ClientHandler implements IProxyHandler {
             e.addSprite(s.getTexture(MaterialType.GAS, 0));
             e.addSprite(s.getTexture(MaterialType.PLASMA, 0));
         });
+    }
+
+    @SubscribeEvent
+    public static void onModelRegistry(ModelRegistryEvent e) {
+        ModelUtils.buildDefaultModels();
     }
 
     @SubscribeEvent

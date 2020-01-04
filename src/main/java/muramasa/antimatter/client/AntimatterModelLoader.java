@@ -1,6 +1,6 @@
 package muramasa.antimatter.client;
 
-import muramasa.gtu.Ref;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -11,13 +11,12 @@ import java.util.HashMap;
 
 public class AntimatterModelLoader implements ICustomModelLoader {
 
-    private static HashMap<ResourceLocation, IUnbakedModel> modelLookup = new HashMap<>();
+    private static HashMap<ResourceLocation, IUnbakedModel> LOOKUP = new HashMap<>();
 
     private IResourceManager resourceManager;
 
-    public static void register(String path, IUnbakedModel model) {
-        ResourceLocation loc = new ResourceLocation(Ref.MODID, path);
-        if (!modelLookup.containsKey(loc)) modelLookup.put(loc, model);
+    public static void register(Block block, IUnbakedModel model) {
+        LOOKUP.put(new ResourceLocation(block.getRegistryName().getNamespace(), "models/block/" + block.getRegistryName().getPath()), model);
     }
 
 //    public static void register(String registryPath, BlockBakedOld block) {
@@ -30,13 +29,14 @@ public class AntimatterModelLoader implements ICustomModelLoader {
     }
 
     @Override
-    public boolean accepts(ResourceLocation loc) {
-        return modelLookup.containsKey(loc);
+    public boolean accepts(ResourceLocation path) {
+        //return LOOKUP.containsKey(path);
+        return path.getPath().contains("coil");
     }
 
     @Override
-    public IUnbakedModel loadModel(ResourceLocation modelLoc) {
-        IUnbakedModel model = modelLookup.get(modelLoc);
+    public IUnbakedModel loadModel(ResourceLocation path) {
+        IUnbakedModel model = LOOKUP.get(path);
         return model != null ? model : ModelLoaderRegistry.getMissingModel();
     }
 }

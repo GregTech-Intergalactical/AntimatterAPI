@@ -293,7 +293,7 @@ public class Data {
     public static BlockCoil COIL_SUPERCONDUCTOR = new BlockCoil("superconductor", 563); //9008
 
     static {
-        AntimatterModelLoader.register(COIL_NICHROME.getId(), new ModelNichrome());
+        AntimatterModelLoader.register(COIL_NICHROME, new ModelNichrome());
         
         new BlockCableBuilder(RedAlloy, 0, 1, Tier.ULV).amps(1).build(); //ULV
         new BlockCableBuilder(Cobalt, 2, 4, Tier.LV).amps(2).build(); //LV

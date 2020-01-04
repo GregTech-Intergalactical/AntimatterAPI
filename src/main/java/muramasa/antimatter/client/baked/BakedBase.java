@@ -1,7 +1,8 @@
 package muramasa.antimatter.client.baked;
 
-import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.texture.Texture;
+import muramasa.gtu.data.Textures;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -84,6 +85,11 @@ public class BakedBase implements IDynamicBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return particle != null ? particle : ModelUtils.BAKED_MISSING.getParticleTexture();
+        return getParticleTexture(ModelUtils.EMPTY_MODEL_DATA);
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data) {
+        return particle != null ? particle : Textures.ERROR.getSprite();
     }
 }
