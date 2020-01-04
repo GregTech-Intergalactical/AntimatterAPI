@@ -2,6 +2,7 @@ package muramasa.antimatter.client.model;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.gtu.Ref;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelBakery;
@@ -60,6 +61,10 @@ public abstract class ModelBase implements IUnbakedModel {
             return model;
         }
 
+        public ModelContainer tex(String element, Block block) {
+            return tex(element, new ResourceLocation(block.getRegistryName().getNamespace(), "block/" + block.getRegistryName().getPath()));
+        }
+
         public ModelContainer tex(ResourceLocation loc, String... elements) {
             for (int i = 0; i < elements.length; i++) {
                 tex(elements[i], loc);
@@ -74,13 +79,13 @@ public abstract class ModelBase implements IUnbakedModel {
             return this;
         }
 
-        public ModelContainer tex(String element, ResourceLocation texture) {
-            return tex(element, texture.toString());
+        public ModelContainer tex(String element, String texture) {
+            return tex(element, new ResourceLocation(texture));
         }
 
-        public ModelContainer tex(String element, String texture) {
+        public ModelContainer tex(String element, ResourceLocation texture) {
             try {
-                model = model.retexture(ImmutableMap.of(element, texture));
+                model = model.retexture(ImmutableMap.of(element, texture.toString()));
                 return this;
             } catch (Exception e) {
                 System.err.println("ModelContainer.tex() failed due to " + e + ":");
