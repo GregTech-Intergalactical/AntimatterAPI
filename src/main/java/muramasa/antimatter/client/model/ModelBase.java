@@ -80,7 +80,7 @@ public abstract class ModelBase implements IUnbakedModel {
 
         public ModelContainer tex(String element, String texture) {
             try {
-                model.retexture(ImmutableMap.of(element, texture));
+                model = model.retexture(ImmutableMap.of(element, texture));
                 return this;
             } catch (Exception e) {
                 System.err.println("ModelContainer.tex() failed due to " + e + ":");

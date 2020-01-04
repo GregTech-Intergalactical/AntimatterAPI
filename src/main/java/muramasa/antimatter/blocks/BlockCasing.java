@@ -2,7 +2,6 @@ package muramasa.antimatter.blocks;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.texture.TextureData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -17,10 +16,10 @@ public class BlockCasing extends BlockDynamic {
     private Texture[] textures;
 
     public BlockCasing(String type, Block.Properties properties) {
-        super(properties, new TextureData().base(new Texture("block/casing/" + type)));
+        super(properties, new Texture("block/casing/" + type));
         this.type = type;
         setRegistryName(getId());
-        register(BlockCasing.class, this);
+        AntimatterAPI.register(BlockCasing.class, this);
     }
 
     public BlockCasing(String type) {
@@ -48,7 +47,12 @@ public class BlockCasing extends BlockDynamic {
     }
 
     @Override
-    public void onConfig() {
-        if (textures != null) buildBasicConfig(textures);
+    public Texture[] getConfigTextures() {
+        return textures != null ? textures : new Texture[0];
+    }
+
+    @Override
+    public void onConfigBuild() {
+        if (textures != null) buildBasic(this, textures);
     }
 }

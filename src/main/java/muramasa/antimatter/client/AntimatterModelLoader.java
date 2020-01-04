@@ -30,8 +30,7 @@ public class AntimatterModelLoader implements ICustomModelLoader {
 
     @Override
     public boolean accepts(ResourceLocation path) {
-        //return LOOKUP.containsKey(path);
-        return path.getPath().contains("coil");
+        return LOOKUP.containsKey(path);
     }
 
     @Override

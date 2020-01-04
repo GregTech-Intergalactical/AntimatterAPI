@@ -20,15 +20,18 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ModelUtils {
@@ -41,7 +44,7 @@ public class ModelUtils {
     public static IModel MISSING_MODEL;
     public static IBakedModel MISSING_BAKED;
 
-    public static IModelData EMPTY_MODEL_DATA = new ModelDataMap.Builder().build();
+    public static IModelData EMPTY_MODEL_DATA = EmptyModelData.INSTANCE;
 
     public static IModel MODEL_QUAD, MODEL_QUAD_L, MODEL_BASIC, MODEL_LAYERED, MODEL_BASIC_FULL, MODEL_LAYERED_FULL, MODEL_COMPLEX;
     public static IBakedModel BAKED_MISSING, BAKED_QUAD, BAKED_BASIC, BAKED_LAYERED, BAKED_BASIC_FULL, BAKED_LAYERED_FULL, BAKED_COMPLEX;

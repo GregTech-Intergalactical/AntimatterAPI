@@ -5,6 +5,7 @@ import muramasa.antimatter.blocks.pipe.BlockCable.BlockCableBuilder;
 import muramasa.antimatter.blocks.pipe.BlockFluidPipe.BlockFluidPipeBuilder;
 import muramasa.antimatter.blocks.pipe.BlockItemPipe.BlockItemPipeBuilder;
 import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.model.ModelDynamic;
 import muramasa.antimatter.items.BasicItem;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.pipe.PipeSize;
@@ -294,6 +295,7 @@ public class Data {
 
     static {
         AntimatterModelLoader.register(COIL_NICHROME, new ModelNichrome());
+        AntimatterModelLoader.register(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3));
         
         new BlockCableBuilder(RedAlloy, 0, 1, Tier.ULV).amps(1).build(); //ULV
         new BlockCableBuilder(Cobalt, 2, 4, Tier.LV).amps(2).build(); //LV

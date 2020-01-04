@@ -1,7 +1,7 @@
 package muramasa.antimatter.blocks.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.blocks.BlockDynamicOld;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
@@ -22,7 +22,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public abstract class BlockPipe extends BlockDynamic implements IAntimatterObject, IItemBlock, IColorHandler, IModelProvider {
+public abstract class BlockPipe extends BlockDynamicOld implements IAntimatterObject, IItemBlock, IColorHandler, IModelProvider {
 
     protected String prefix, id;
     protected Material material;

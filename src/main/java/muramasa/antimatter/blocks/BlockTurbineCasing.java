@@ -14,7 +14,7 @@ public class BlockTurbineCasing extends BlockCasing {
 
     public BlockTurbineCasing(String id) {
         super(id);
-        setDefaultModel(true);
+        //setDefaultModel(true);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class BlockTurbineCasing extends BlockCasing {
     }
 
     @Override
-    public void onConfig() {
+    public void onConfigBuild() {
 //        add(216, () -> ModelUtils.bakeQuad(LARGE_TURBINE[3], 2)); //North
 //        add(232, () -> ModelUtils.bakeQuad(LARGE_TURBINE[5], 2));
 //        add(201, () -> ModelUtils.bakeQuad(LARGE_TURBINE[1], 2));
