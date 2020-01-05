@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 //TODO 1.14-NewModelLoaders: The Dynamic loader could have a "defaultModel" property
+//TODO defaultModel needs a better solution
 //TODO Support multi layer models
 public class ModelDynamic extends ModelBase implements IModelDynamicConfig {
 

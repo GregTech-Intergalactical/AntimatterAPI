@@ -13,10 +13,9 @@ public class Models {
 
     public static void init() {
         AntimatterModelLoader.register(COIL_NICHROME, new ModelNichrome());
-
-AntimatterModelLoader.register(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3)
-    .setConfig((b) -> b.basic(b, Textures.FUSION_3_CT))
-    .add(32, new ModelTextured("block/preset/simple").of(m -> m.tex("all", "minecraft:block/diamond_block")))
-);
+        AntimatterModelLoader.register(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3)
+            .setConfig((b) -> b.basic(b, Textures.FUSION_3_CT))
+            .add(32, new ModelTextured("block/preset/simple").of(m -> m.tex("all", "minecraft:block/diamond_block")))
+        );
     }
 }

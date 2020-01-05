@@ -1,32 +1,28 @@
 package muramasa.antimatter.blocks;
 
+import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.texture.TextureData;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 
-public class BlockBasic extends BlockBaked {
+public abstract class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    private String type;
+    protected Texture[] textures;
 
-    public BlockBasic(String type, Block.Properties properties) {
-        super(properties, new TextureData().base(new Texture("block/basic/" + type)));
-        this.type = type;
-        setRegistryName(getId());
-        register(BlockBasic.class, this);
+    public BlockBasic(Block.Properties properties, Texture... textures) {
+        super(properties);
+        this.textures = textures;
     }
 
-    public BlockBasic(String type) {
-        this(type, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE));
+    public BlockBasic() {
+        this(Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE));
     }
 
     @Override
-    public String getId() {
-        return "basic_" + type;
-    }
-
-    public String getType() {
-        return type;
+    public Texture[] getTextures() {
+        return textures;
     }
 }

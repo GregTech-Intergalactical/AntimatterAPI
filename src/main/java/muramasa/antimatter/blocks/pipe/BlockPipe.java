@@ -1,15 +1,13 @@
 package muramasa.antimatter.blocks.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockDynamicOld;
+import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlock;
-import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.gtu.data.Textures;
 import net.minecraft.block.Block;
@@ -22,7 +20,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public abstract class BlockPipe extends BlockDynamicOld implements IAntimatterObject, IItemBlock, IColorHandler, IModelProvider {
+public abstract class BlockPipe extends BlockDynamic implements IItemBlock, IColorHandler {
 
     protected String prefix, id;
     protected Material material;
@@ -30,7 +28,7 @@ public abstract class BlockPipe extends BlockDynamicOld implements IAntimatterOb
 
     //TODO merge functionality with BlockDynamic
     public BlockPipe(String prefix, Material material, PipeSize size, TextureData data) {
-        super(Block.Properties.create(net.minecraft.block.material.Material.IRON), data);
+        super(Block.Properties.create(net.minecraft.block.material.Material.IRON));
         this.prefix = prefix;
         this.id = material.getId();
         this.material = material;

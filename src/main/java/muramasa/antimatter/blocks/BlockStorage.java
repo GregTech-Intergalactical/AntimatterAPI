@@ -3,8 +3,8 @@ package muramasa.antimatter.blocks;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.registration.*;
-import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.IItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -22,7 +22,7 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockStorage extends Block implements IAntimatterObject, IItemBlock, IColorHandler, ITextureProvider, IModelProvider {
+public class BlockStorage extends BlockBasic implements IItemBlock, IColorHandler {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
@@ -30,11 +30,19 @@ public class BlockStorage extends Block implements IAntimatterObject, IItemBlock
     private MaterialType type;
     
     public BlockStorage(Material material, MaterialType type) {
-        super(Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
+        super(Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(type));
         this.material = material;
         this.type = type;
         setRegistryName(getId());
         AntimatterAPI.register(BlockStorage.class, this);
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public MaterialType getType() {
+        return type;
     }
 
     @Override
@@ -47,14 +55,6 @@ public class BlockStorage extends Block implements IAntimatterObject, IItemBlock
         return getId();
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public MaterialType getType() {
-        return type;
-    }
-    
     /** Frame Placing Stuffs - Start **/
 //    @Override
 //    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, EntityPlayer player, EnumHand hand, Direction facing, float hitX, float hitY, float hitZ) {
@@ -197,10 +197,5 @@ public class BlockStorage extends Block implements IAntimatterObject, IItemBlock
     public static ItemStack get(Material material, MaterialType type, int count) {
         BlockStorage block = AntimatterAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
-    }
-
-    @Override
-    public Texture[] getTextures() {
-        return getMaterial().getSet().getTextures(getType());
     }
 }
