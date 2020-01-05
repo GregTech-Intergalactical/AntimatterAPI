@@ -2,7 +2,6 @@ package muramasa.antimatter.blocks;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.texture.TextureData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -11,13 +10,13 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public class BlockCoil extends BlockBaked {
+public class BlockCoil extends BlockBasic {
 
     private String id;
     private int heatCapacity;
 
     public BlockCoil(String id, int heatCapacity, Block.Properties properties) {
-        super(properties, new TextureData().base(new Texture("block/coil/" + id)));
+        super(properties, new Texture("block/coil/" + id));
         this.id = id;
         this.heatCapacity = heatCapacity;
         setRegistryName(getId());

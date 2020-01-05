@@ -7,16 +7,27 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 
 public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
+    protected ResourceLocation defaultModel = new ResourceLocation(Ref.MODID, "block/preset/simple");
     protected Texture[] defaultTextures;
 
     public BlockDynamic(Block.Properties properties, Texture... defaultTextures) {
         super(properties);
         this.defaultTextures = defaultTextures;
+    }
+
+    public BlockDynamic setDefaultModel(ResourceLocation model) {
+        this.defaultModel = model;
+        return this;
+    }
+
+    public ResourceLocation getDefaultModel() {
+        return defaultModel;
     }
 
     @Override

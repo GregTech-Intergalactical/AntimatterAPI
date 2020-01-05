@@ -232,8 +232,6 @@ public class Data {
     //public static BlockRubberLog RUBBER_LOG = new BlockRubberLog();
     //public static BlockLeavesBase RUBBER_LEAVES = new BlockLeavesBase("rubber_leaves", RUBBER_SAPLING);
 
-    public static BlockBasic CASING_FIRE_BRICK = new BlockBasic("fire_brick");
-
     public static BlockCasingMachine CASING_ULV = new BlockCasingMachine("ulv");
     public static BlockCasingMachine CASING_LV = new BlockCasingMachine("lv");
     public static BlockCasingMachine CASING_MV = new BlockCasingMachine("mv");
@@ -245,6 +243,7 @@ public class Data {
     public static BlockCasingMachine CASING_UV = new BlockCasingMachine("uv");
     public static BlockCasingMachine CASING_MAX = new BlockCasingMachine("max");
 
+    public static BlockCasing CASING_FIRE_BRICK = new BlockCasing("fire_brick");
     public static BlockCasing CASING_BRONZE = new BlockCasing("bronze");
     public static BlockCasing CASING_BRICKED_BRONZE = new BlockCasing("bricked_bronze");
     public static BlockCasing CASING_BRONZE_PLATED_BRICK = new BlockCasing("bronze_plated_brick");
