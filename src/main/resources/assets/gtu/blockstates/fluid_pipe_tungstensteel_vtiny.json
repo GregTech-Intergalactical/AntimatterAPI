@@ -1,7 +1,9 @@
 {
+	"forge_marker": 1,
   "variants": {
-    "": {
-      "model": "gtu:block/fluid_pipe_tungstensteel_vtiny"
-    }
+    "": [{
+      "model": "gtu:block/fluid_pipe_tungstensteel_vtiny",
+      "textures": { "particle": "something" }
+    }]
   }
 }

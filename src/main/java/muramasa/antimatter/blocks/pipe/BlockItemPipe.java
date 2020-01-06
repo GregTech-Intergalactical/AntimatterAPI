@@ -3,7 +3,7 @@ package muramasa.antimatter.blocks.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.gtu.data.Textures;
+import muramasa.antimatter.pipe.PipeType;
 
 public class BlockItemPipe extends BlockPipe {
 
@@ -11,7 +11,7 @@ public class BlockItemPipe extends BlockPipe {
     protected int slots, steps;
 
     public BlockItemPipe(Material material, PipeSize size, boolean restrictive, int slots, int steps) {
-        super("item_pipe", material, size, Textures.PIPE_DATA[0]);
+        super(PipeType.ITEM, material, size);
         this.restrictive = restrictive;
         this.slots = slots;
         this.steps = steps;

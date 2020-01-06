@@ -5,13 +5,13 @@ import muramasa.antimatter.blocks.pipe.BlockFluidPipe;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.model.ModelDynamic;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.client.render.models.ModelNichrome;
 
-import static muramasa.gtu.common.Data.CASING_FUSION_3;
-import static muramasa.gtu.common.Data.COIL_NICHROME;
-import static muramasa.gtu.data.Textures.FUSION_3_CT;
-import static muramasa.gtu.data.Textures.PIPE;
+import static muramasa.antimatter.blocks.pipe.BlockPipe.getPipeID;
+import static muramasa.gtu.common.Data.*;
+import static muramasa.gtu.data.Textures.*;
 import static net.minecraft.util.Direction.*;
 
 public class Models {
@@ -19,16 +19,15 @@ public class Models {
     public static void init() {
         AntimatterModelLoader.put(COIL_NICHROME, new ModelNichrome());
 
-        AntimatterModelLoader.put(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3)
-            .config(m -> basic(m, FUSION_3_CT))
-            .add(32, b -> b.of("block/preset/simple").tex("all", "minecraft:block/diamond_block"))
-        );
+        AntimatterModelLoader.put(CASING_FUSION_1, new ModelDynamic(CASING_FUSION_1).config(m -> basic(m, FUSION_1_CT)));
+        AntimatterModelLoader.put(CASING_FUSION_2, new ModelDynamic(CASING_FUSION_2).config(m -> basic(m, FUSION_2_CT)));
+        AntimatterModelLoader.put(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3).config(m -> basic(m, FUSION_3_CT)));
 
-        ModelDynamic modelPipe = new ModelDynamic(PIPE).config(m -> pipe(m)).staticBaking();
+        ModelDynamic modelPipe = new ModelDynamic().config(Models::pipe).staticBaking();
 
-        BlockFluidPipe pipe = AntimatterAPI.get(BlockFluidPipe.class, "fluid_pipe_tungstensteel_normal");
-        if (pipe != null) {
-            AntimatterModelLoader.put(pipe, modelPipe);
+        for (PipeSize s : PipeSize.VALUES) {
+            BlockFluidPipe pipe = AntimatterAPI.get(BlockFluidPipe.class, "fluid_pipe_tungstensteel_" + s.getId());
+            if (pipe != null) AntimatterModelLoader.put(pipe, modelPipe);
         }
     }
 
@@ -117,90 +116,96 @@ public class Models {
     }
 
     public static void pipe(ModelDynamic model) {
-        for (PipeSize s : new PipeSize[]{PipeSize.NORMAL}) {
-            //Default Shape (0 Connections)
-            model.add(0, b -> b.of(s.getLoc("base")).tex("0", PIPE));
+        for (PipeType t : AntimatterAPI.all(PipeType.class)) {
+            for (PipeSize s : PipeSize.VALUES) {
+                model.add(t.getFace(s), t.getSide());
 
-            //Single Shapes (1 Connections)
-            model.add(1, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(DOWN));
-            model.add(2, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(UP));
-            model.add(4, b -> b.of(s.getLoc("single")).tex("0", PIPE));
-            model.add(8, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(SOUTH));
-            model.add(16, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(WEST));
-            model.add(32, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(EAST));
+                //Model tint tint indices: 1 = culling, 2 = overlay
 
-            //Line Shapes (2 Connections)
-            model.add(3, b -> b.of(s.getLoc("line")).tex("0", PIPE).rot(UP));
-            model.add(12, b -> b.of(s.getLoc("line")).tex("0", PIPE));
-            model.add(48, b -> b.of(s.getLoc("line")).tex("0", PIPE).rot(WEST));
+                //Default Shape (0 Connections)
+                model.add(getPipeID(0, s, t), b -> b.of(s.getLoc("base")).tex("0", t.getSide()).tex("1", t.getFace(s)));
 
-            //Elbow Shapes (2 Connections)
-            model.add(5, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(WEST, UP, EAST));
-            model.add(6, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(WEST, DOWN, EAST));
-            model.add(9, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(EAST, UP, EAST));
-            model.add(10, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(EAST, DOWN, EAST));
-            model.add(17, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(NORTH, DOWN, WEST));
-            model.add(18, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(SOUTH, DOWN, EAST));
-            model.add(20, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(WEST));
-            model.add(24, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(SOUTH));
-            model.add(33, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(NORTH, UP, EAST));
-            model.add(34, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(NORTH, DOWN, EAST));
-            model.add(36, b -> b.of(s.getLoc("elbow")).tex("0", PIPE));
-            model.add(40, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(EAST));
+                //Single Shapes (1 Connections)
+                model.add(getPipeID(1, s, t), b -> b.of(s.getLoc("single")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(DOWN));
+                model.add(getPipeID(2, s, t), b -> b.of(s.getLoc("single")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(UP));
+                model.add(getPipeID(4, s, t), b -> b.of(s.getLoc("single")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+                model.add(getPipeID(8, s, t), b -> b.of(s.getLoc("single")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH));
+                model.add(getPipeID(16, s, t), b -> b.of(s.getLoc("single")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST));
+                model.add(getPipeID(32, s, t), b -> b.of(s.getLoc("single")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST));
 
-            //Side Shapes (3 Connections)
-            model.add(7, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(SOUTH, UP));
-            model.add(11, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(NORTH, UP));
-            model.add(13, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(DOWN, DOWN));
-            model.add(14, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST, UP));
-            model.add(19, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(WEST, DOWN, EAST));
-            model.add(28, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(WEST, UP));
-            model.add(35, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST, DOWN, WEST));
-            model.add(44, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST, DOWN, DOWN));
-            model.add(49, b -> b.of(s.getLoc("side")).tex("0", PIPE));
-            model.add(50, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST));
-            model.add(52, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(NORTH, DOWN, WEST));
-            model.add(56, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(SOUTH, DOWN, WEST));
+                //Line Shapes (2 Connections)
+                model.add(getPipeID(3, s, t), b -> b.of(s.getLoc("line")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(UP));
+                model.add(getPipeID(12, s, t), b -> b.of(s.getLoc("line")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+                model.add(getPipeID(48, s, t), b -> b.of(s.getLoc("line")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST));
 
-            //Corner Shapes (3 Connections)
-            model.add(21, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(WEST, DOWN));
-            model.add(22, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(WEST));
-            model.add(25, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(SOUTH, DOWN));
-            model.add(26, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(SOUTH));
-            model.add(41, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(EAST, DOWN));
-            model.add(42, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(EAST));
-            model.add(37, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(NORTH, DOWN));
-            model.add(38, b -> b.of(s.getLoc("corner")).tex("0", PIPE));
+                //Elbow Shapes (2 Connections)
+                model.add(getPipeID(5, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, UP, EAST));
+                model.add(getPipeID(6, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, DOWN, EAST));
+                model.add(getPipeID(9, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, UP, EAST));
+                model.add(getPipeID(10, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, DOWN, EAST));
+                model.add(getPipeID(17, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, DOWN, WEST));
+                model.add(getPipeID(18, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, DOWN, EAST));
+                model.add(getPipeID(20, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST));
+                model.add(getPipeID(24, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH));
+                model.add(getPipeID(33, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, UP, EAST));
+                model.add(getPipeID(34, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, DOWN, EAST));
+                model.add(getPipeID(36, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+                model.add(getPipeID(40, s, t), b -> b.of(s.getLoc("elbow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST));
 
-            //Arrow Shapes (4 Connections)
-            model.add(23, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST, DOWN, EAST));
-            model.add(27, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH, DOWN, EAST));
-            model.add(29, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST, DOWN));
-            model.add(30, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST));
-            model.add(39, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(EAST, DOWN, WEST));
-            model.add(43, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH, DOWN, WEST));
-            model.add(45, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(EAST, DOWN));
-            model.add(46, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST));
-            model.add(53, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(DOWN));
-            model.add(54, b -> b.of(s.getLoc("arrow")).tex("0", PIPE));
-            model.add(57, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH, DOWN));
-            model.add(58, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH));
+                //Side Shapes (3 Connections)
+                model.add(getPipeID(7, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, UP));
+                model.add(getPipeID(11, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, UP));
+                model.add(getPipeID(13, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(DOWN, DOWN));
+                model.add(getPipeID(14, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+                model.add(getPipeID(19, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, UP));
+                model.add(getPipeID(28, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, DOWN, EAST));
+                model.add(getPipeID(35, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, UP));
+                model.add(getPipeID(44, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, DOWN, WEST));
+                model.add(getPipeID(49, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, DOWN, DOWN));
+                model.add(getPipeID(50, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST));
+                model.add(getPipeID(52, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, DOWN, WEST));
+                model.add(getPipeID(56, s, t), b -> b.of(s.getLoc("side")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, DOWN, WEST));
 
-            //Cross Shapes (4 Connections)
-            model.add(15, b -> b.of(s.getLoc("cross")).tex("0", PIPE).rot(WEST, UP));
-            model.add(51, b -> b.of(s.getLoc("cross")).tex("0", PIPE).rot(UP));
-            model.add(60, b -> b.of(s.getLoc("cross")).tex("0", PIPE));
+                //Corner Shapes (3 Connections)
+                model.add(getPipeID(21, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, DOWN));
+                model.add(getPipeID(22, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST));
+                model.add(getPipeID(25, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, DOWN));
+                model.add(getPipeID(26, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH));
+                model.add(getPipeID(41, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, DOWN));
+                model.add(getPipeID(42, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST));
+                model.add(getPipeID(37, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, DOWN));
+                model.add(getPipeID(38, s, t), b -> b.of(s.getLoc("corner")).tex("0", t.getSide()).tex("1", t.getFace(s)));
 
-            //Five Shapes (5 Connections)
-            model.add(31, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(EAST, UP));
-            model.add(47, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(WEST, UP));
-            model.add(55, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(SOUTH, UP));
-            model.add(59, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(NORTH, UP));
-            model.add(61, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(DOWN, DOWN));
-            model.add(62, b -> b.of(s.getLoc("five")).tex("0", PIPE));
+                //Arrow Shapes (4 Connections)
+                model.add(getPipeID(23, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, DOWN, EAST));
+                model.add(getPipeID(27, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, DOWN, EAST));
+                model.add(getPipeID(29, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, DOWN));
+                model.add(getPipeID(30, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST));
+                model.add(getPipeID(39, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, DOWN, WEST));
+                model.add(getPipeID(43, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, DOWN, WEST));
+                model.add(getPipeID(45, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, DOWN));
+                model.add(getPipeID(46, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST));
+                model.add(getPipeID(53, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(DOWN));
+                model.add(getPipeID(54, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+                model.add(getPipeID(57, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, DOWN));
+                model.add(getPipeID(58, s, t), b -> b.of(s.getLoc("arrow")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH));
 
-            //All Shapes (6 Connections)
-            model.add(63, b -> b.of(s.getLoc("all")).tex("0", PIPE));
+                //Cross Shapes (4 Connections)
+                model.add(getPipeID(15, s, t), b -> b.of(s.getLoc("cross")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, UP));
+                model.add(getPipeID(51, s, t), b -> b.of(s.getLoc("cross")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(UP));
+                model.add(getPipeID(60, s, t), b -> b.of(s.getLoc("cross")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+
+                //Five Shapes (5 Connections)
+                model.add(getPipeID(31, s, t), b -> b.of(s.getLoc("five")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(EAST, UP));
+                model.add(getPipeID(47, s, t), b -> b.of(s.getLoc("five")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(WEST, UP));
+                model.add(getPipeID(55, s, t), b -> b.of(s.getLoc("five")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(SOUTH, UP));
+                model.add(getPipeID(59, s, t), b -> b.of(s.getLoc("five")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(NORTH, UP));
+                model.add(getPipeID(61, s, t), b -> b.of(s.getLoc("five")).tex("0", t.getSide()).tex("1", t.getFace(s)).rot(DOWN, DOWN));
+                model.add(getPipeID(62, s, t), b -> b.of(s.getLoc("five")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+
+                //All Shapes (6 Connections)
+                model.add(getPipeID(63, s, t), b -> b.of(s.getLoc("all")).tex("0", t.getSide()).tex("1", t.getFace(s)));
+            }   
         }
     }
 }

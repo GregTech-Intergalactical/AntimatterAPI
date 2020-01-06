@@ -7,18 +7,15 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
+import java.util.List;
 
-public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
+public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider, IInfoProvider {
 
     protected ResourceLocation defaultModel = new ResourceLocation(Ref.MODID, "block/preset/simple");
     protected Texture[] defaultTextures;
@@ -56,8 +53,8 @@ public abstract class BlockDynamic extends Block implements IAntimatterObject, I
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        player.sendMessage(new StringTextComponent(Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos))));
-        return true;
+    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        info.add("Dynamic Config: " + Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos)));
+        return info;
     }
 }

@@ -19,10 +19,6 @@ public class AntimatterModelLoader implements ICustomModelLoader {
         LOOKUP.put(new ResourceLocation(block.getRegistryName().getNamespace(), "models/block/" + block.getRegistryName().getPath()), model);
     }
 
-//    public static void register(String registryPath, BlockBakedOld block) {
-//        if (!modelLookup.containsKey(registryPath)) modelLookup.put(registryPath, new ModelTextureData(block));
-//    }
-
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         this.resourceManager = resourceManager;

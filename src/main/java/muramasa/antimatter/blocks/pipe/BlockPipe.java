@@ -7,10 +7,10 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlock;
-import muramasa.antimatter.texture.TextureData;
-import muramasa.gtu.data.Textures;
+import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -24,34 +24,30 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class BlockPipe extends BlockDynamic implements IItemBlock, IColorHandler, IInfoProvider {
 
-    protected String prefix, id;
+    protected PipeType type;
     protected Material material;
     protected PipeSize size;
 
-    //TODO merge functionality with BlockDynamic
-    public BlockPipe(String prefix, Material material, PipeSize size, TextureData data) {
+    public BlockPipe(PipeType type, Material material, PipeSize size) {
         super(Block.Properties.create(net.minecraft.block.material.Material.IRON));
-        this.prefix = prefix;
-        this.id = material.getId();
+        this.type = type;
         this.material = material;
         this.size = size;
-
         setRegistryName(getId());
         AntimatterAPI.register(BlockPipe.class, this);
     }
 
     @Override
     public String getId() {
-        return prefix + "_" + id + "_" + size.getId();
+        return type.getId() + "_" + material.getId() + "_" + size.getId();
     }
 
-    public String getPrefix() {
-        return prefix;
+    public PipeType getType() {
+        return type;
     }
 
     public Material getMaterial() {
@@ -154,6 +150,19 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
     }
 
     @Override
+    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+        int ct = 0;
+        for (int s = 0; s < 6; s++) {
+            if (canConnect(world, mut.setPos(pos.offset(Ref.DIRECTIONS[s])))) ct += 1 << s;
+        }
+        return new int[]{getPipeID(ct, getSize(), getType())};
+    }
+
+    public static int getPipeID(int config, PipeSize size, PipeType type) {
+        return ((size.ordinal() + 1) * 100) + ((type.getModelId() + 1) * 1000) + config;
+    }
+
+    @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockPipe) && world == null || pos == null) return -1;
         return i == 0 || i == 1 || i == 2 ? getRGB() : -1;
@@ -183,7 +192,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider provider) {
-        provider.simpleBlock(block, provider.getBuilder(block).parent(provider.getExistingFile(provider.modLoc("block/pipe/" + getSize().getId() + "/line"))).texture("0", Textures.PIPE));
+        provider.simpleBlock(block, provider.getBuilder(block).parent(provider.getExistingFile(provider.modLoc("block/pipe/" + getSize().getId() + "/line"))).texture("0", getType().getSide()));
     }
 
     //    @Override
@@ -195,13 +204,12 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
 //        registry.put(loc, baked);
 //    }
 
-
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        info.add("Pipe Type: " + getPrefix());
+        super.getInfo(info, world, state, pos);
+        info.add("Pipe Type: " + getType().getId());
         info.add("Pipe Material: " + getMaterial().getId());
         info.add("Pipe Size: " + getSize().getId());
-        info.add("Pipe Config: " + Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos)));
         return info;
     }
 

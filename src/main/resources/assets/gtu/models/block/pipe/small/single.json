@@ -16,7 +16,7 @@
 			"from": [6, 6, 11.01],
 			"to": [10, 10, 11.01],
 			"faces": {
-				"south": {"uv": [6, 6, 10, 10], "texture": "#0", "tintindex": 2}
+				"south": {"uv": [6, 6, 10, 10], "texture": "#1", "tintindex": 2}
 			}
 		}
 	]
