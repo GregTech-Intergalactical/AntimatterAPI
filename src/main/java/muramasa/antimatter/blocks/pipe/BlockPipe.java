@@ -2,6 +2,7 @@ package muramasa.antimatter.blocks.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
@@ -19,11 +20,14 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
-public abstract class BlockPipe extends BlockDynamic implements IItemBlock, IColorHandler {
+public abstract class BlockPipe extends BlockDynamic implements IItemBlock, IColorHandler, IInfoProvider {
 
     protected String prefix, id;
     protected Material material;
@@ -46,12 +50,20 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
         return prefix + "_" + id + "_" + size.getId();
     }
 
-    public int getRGB() {
-        return material.getRGB();
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     public PipeSize getSize() {
         return size;
+    }
+
+    public int getRGB() {
+        return getMaterial().getRGB();
     }
 
 //    @Override
@@ -182,6 +194,16 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
 //        IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay(size.ordinal())));
 //        registry.put(loc, baked);
 //    }
+
+
+    @Override
+    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        info.add("Pipe Type: " + getPrefix());
+        info.add("Pipe Material: " + getMaterial().getId());
+        info.add("Pipe Size: " + getSize().getId());
+        info.add("Pipe Config: " + Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos)));
+        return info;
+    }
 
     public abstract static class BlockPipeBuilder {
 
