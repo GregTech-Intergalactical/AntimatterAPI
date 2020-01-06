@@ -50,7 +50,6 @@ public class BakedDynamic extends BakedBase {
         if (ct == null || ct.length == 0) return quads;
         IBakedModel baked;
         for (int i = 0; i < ct.length; i++) {
-            if (ct[i] == 0) continue;
             baked = bakedLookup.get(ct[i]);
             if (baked != null) quads.addAll(baked.getQuads(state, side, rand, data));
         }

@@ -192,6 +192,14 @@ public class ModelUtils {
         return trans(quads, FACING_TO_MATRIX[rotation], Ref.DIRECTIONS[rotation]);
     }
 
+    public static List<BakedQuad> trans(List<BakedQuad> quads, Direction... rotations) {
+        int[] indices = new int[rotations.length];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = rotations[i].getIndex();
+        }
+        return trans(quads, 0, indices);
+    }
+
     public static List<BakedQuad> trans(List<BakedQuad> quads, int offset, int... rotations) {
         Matrix4f mat = new Matrix4f(FACING_TO_MATRIX[rotations[offset]]);
         for (int i = offset + 1; i < rotations.length; i++) {
