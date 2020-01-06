@@ -15,6 +15,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.ToolType;
 
@@ -132,6 +135,12 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
 //        return false;
 //    }
 
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+    }
+
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockPipe) && world == null || pos == null) return -1;
@@ -165,7 +174,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
         provider.simpleBlock(block, provider.getBuilder(block).parent(provider.getExistingFile(provider.modLoc("block/pipe/" + getSize().getId() + "/line"))).texture("0", Textures.PIPE));
     }
 
-//    @Override
+    //    @Override
 //    @OnlyIn(Dist.CLIENT)
 //    public void onModelBuild(Map<ResourceLocation, IBakedModel> registry) {
 //        //TODO keep copy of PipeModels and remove BakedTextureDataItem

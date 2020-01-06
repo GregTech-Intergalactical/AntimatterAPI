@@ -20,7 +20,6 @@ import java.util.Random;
 
 public class BakedDynamic extends BakedBase {
 
-    private BlockDynamic block;
     private Int2ObjectOpenHashMap<IBakedModel> bakedLookup;
     private IBakedModel defaultModel;
     private boolean hasConfig;
@@ -28,8 +27,7 @@ public class BakedDynamic extends BakedBase {
     private BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
     private IModelData configData = new ModelDataMap.Builder().withInitial(AntimatterProperties.DYNAMIC_CONFIG, new int[0]).build();
 
-    public BakedDynamic(BlockDynamic block, Int2ObjectOpenHashMap<IBakedModel> bakedLookup, IBakedModel defaultModel) {
-        this.block = block;
+    public BakedDynamic(Int2ObjectOpenHashMap<IBakedModel> bakedLookup, IBakedModel defaultModel) {
         this.bakedLookup = bakedLookup;
         this.defaultModel = defaultModel;
         this.hasConfig = bakedLookup.size() > 0;
@@ -38,9 +36,9 @@ public class BakedDynamic extends BakedBase {
     @Nonnull
     @Override
     public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
-        if (!hasConfig) return data;
+        if (!hasConfig || !(state.getBlock() instanceof BlockDynamic)) return data;
         mutablePos.setPos(pos);
-        configData.setData(AntimatterProperties.DYNAMIC_CONFIG, block.getConfig(state, world, mutablePos, pos));
+        configData.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));
         return configData;
     }
 
