@@ -4,14 +4,15 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.pipe.BlockFluidPipe;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.model.ModelDynamic;
-import muramasa.antimatter.client.model.ModelPipe;
+import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.client.render.models.ModelNichrome;
-import muramasa.gtu.data.Textures;
-import net.minecraft.util.Direction;
 
 import static muramasa.gtu.common.Data.CASING_FUSION_3;
 import static muramasa.gtu.common.Data.COIL_NICHROME;
+import static muramasa.gtu.data.Textures.FUSION_3_CT;
+import static muramasa.gtu.data.Textures.PIPE;
+import static net.minecraft.util.Direction.*;
 
 public class Models {
 
@@ -19,11 +20,11 @@ public class Models {
         AntimatterModelLoader.put(COIL_NICHROME, new ModelNichrome());
 
         AntimatterModelLoader.put(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3)
-            .config(m -> basic(m, Textures.FUSION_3_CT))
+            .config(m -> basic(m, FUSION_3_CT))
             .add(32, b -> b.of("block/preset/simple").tex("all", "minecraft:block/diamond_block"))
         );
 
-        ModelDynamic modelPipe = new ModelPipe(Textures.PIPE).config(Models::pipe);
+        ModelDynamic modelPipe = new ModelDynamic(PIPE).config(m -> pipe(m)).staticBaking();
 
         BlockFluidPipe pipe = AntimatterAPI.get(BlockFluidPipe.class, "fluid_pipe_tungstensteel_normal");
         if (pipe != null) {
@@ -31,183 +32,175 @@ public class Models {
         }
     }
 
-    public static void basic(ModelDynamic model, Texture[] textures) {
-        if (textures.length < 13) return;
+    public static void basic(ModelDynamic model, Texture[] tex) {
+        if (tex.length < 13) return;
         //Single (1)
-        model.add(1, textures[12], textures[12], textures[1], textures[1], textures[1], textures[1]);
-        model.add(2, textures[12], textures[12], textures[1], textures[1], textures[1], textures[1]);
-        model.add(4, textures[1], textures[1], textures[0], textures[12], textures[0], textures[0]);
-        model.add(8, textures[1], textures[1], textures[12], textures[0], textures[0], textures[0]);
-        model.add(16, textures[0], textures[0], textures[0], textures[0], textures[0], textures[12]);
-        model.add(32, textures[0], textures[0], textures[0], textures[0], textures[12], textures[0]);
+        model.add(1, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
+        model.add(2, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
+        model.add(4, tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]);
+        model.add(8, tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]);
+        model.add(16, tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]);
+        model.add(32, tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]);
 
         //Lines (2)
-        model.add(3, textures[12], textures[12], textures[1], textures[1], textures[1], textures[1]);
-        model.add(12, textures[1], textures[1], textures[12], textures[12], textures[0], textures[0]);
-        model.add(48, textures[0], textures[0], textures[0], textures[0], textures[12], textures[12]);
+        model.add(3, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
+        model.add(12, tex[1], tex[1], tex[12], tex[12], tex[0], tex[0]);
+        model.add(48, tex[0], tex[0], tex[0], tex[0], tex[12], tex[12]);
 
         //Elbows (2)
-        model.add(6, textures[1], textures[12], textures[0], textures[1], textures[10], textures[11]);
-        model.add(5, textures[12], textures[1], textures[12], textures[1], textures[9], textures[8]);
-        model.add(9, textures[12], textures[1], textures[1], textures[12], textures[8], textures[9]);
-        model.add(10, textures[1], textures[12], textures[1], textures[12], textures[11], textures[10]);
-        model.add(17, textures[12], textures[0], textures[8], textures[9], textures[12], textures[1]);
-        model.add(18, textures[0], textures[12], textures[11], textures[10], textures[12], textures[1]);
-        model.add(33, textures[12], textures[0], textures[9], textures[8], textures[1], textures[12]);
-        model.add(34, textures[0], textures[12], textures[10], textures[11], textures[1], textures[10]);
-        model.add(20, textures[10], textures[10], textures[0], textures[0], textures[0], textures[0]);
-        model.add(24, textures[9], textures[9], textures[0], textures[0], textures[0], textures[0]);
-        model.add(36, textures[11], textures[11], textures[0], textures[0], textures[0], textures[0]);
-        model.add(40, textures[8], textures[8], textures[0], textures[0], textures[0], textures[0]);
+        model.add(6, tex[1], tex[12], tex[0], tex[1], tex[10], tex[11]);
+        model.add(5, tex[12], tex[1], tex[12], tex[1], tex[9], tex[8]);
+        model.add(9, tex[12], tex[1], tex[1], tex[12], tex[8], tex[9]);
+        model.add(10, tex[1], tex[12], tex[1], tex[12], tex[11], tex[10]);
+        model.add(17, tex[12], tex[0], tex[8], tex[9], tex[12], tex[1]);
+        model.add(18, tex[0], tex[12], tex[11], tex[10], tex[12], tex[1]);
+        model.add(33, tex[12], tex[0], tex[9], tex[8], tex[1], tex[12]);
+        model.add(34, tex[0], tex[12], tex[10], tex[11], tex[1], tex[10]);
+        model.add(20, tex[10], tex[10], tex[0], tex[0], tex[0], tex[0]);
+        model.add(24, tex[9], tex[9], tex[0], tex[0], tex[0], tex[0]);
+        model.add(36, tex[11], tex[11], tex[0], tex[0], tex[0], tex[0]);
+        model.add(40, tex[8], tex[8], tex[0], tex[0], tex[0], tex[0]);
 
         //Side (3)
-        model.add(7, textures[12], textures[12], textures[12], textures[1], textures[4], textures[2]);
-        model.add(11, textures[12], textures[12], textures[1], textures[12], textures[2], textures[4]);
-        model.add(13, textures[12], textures[1], textures[12], textures[12], textures[3], textures[3]);
-        model.add(14, textures[1], textures[12], textures[12], textures[12], textures[5], textures[5]);
-        model.add(19, textures[12], textures[12], textures[2], textures[4], textures[12], textures[1]);
-        model.add(28, textures[4], textures[4], textures[12], textures[12], textures[12], textures[0]);
-        model.add(35, textures[12], textures[12], textures[4], textures[2], textures[1], textures[12]);
-        model.add(44, textures[2], textures[2], textures[12], textures[12], textures[0], textures[12]);
-        model.add(49, textures[12], textures[0], textures[3], textures[3], textures[12], textures[12]);
-        model.add(50, textures[0], textures[12], textures[5], textures[5], textures[12], textures[12]);
-        model.add(52, textures[3], textures[5], textures[12], textures[0], textures[12], textures[12]);
-        model.add(56, textures[5], textures[3], textures[0], textures[12], textures[12], textures[12]);
+        model.add(7, tex[12], tex[12], tex[12], tex[1], tex[4], tex[2]);
+        model.add(11, tex[12], tex[12], tex[1], tex[12], tex[2], tex[4]);
+        model.add(13, tex[12], tex[1], tex[12], tex[12], tex[3], tex[3]);
+        model.add(14, tex[1], tex[12], tex[12], tex[12], tex[5], tex[5]);
+        model.add(19, tex[12], tex[12], tex[2], tex[4], tex[12], tex[1]);
+        model.add(28, tex[4], tex[4], tex[12], tex[12], tex[12], tex[0]);
+        model.add(35, tex[12], tex[12], tex[4], tex[2], tex[1], tex[12]);
+        model.add(44, tex[2], tex[2], tex[12], tex[12], tex[0], tex[12]);
+        model.add(49, tex[12], tex[0], tex[3], tex[3], tex[12], tex[12]);
+        model.add(50, tex[0], tex[12], tex[5], tex[5], tex[12], tex[12]);
+        model.add(52, tex[3], tex[5], tex[12], tex[0], tex[12], tex[12]);
+        model.add(56, tex[5], tex[3], tex[0], tex[12], tex[12], tex[12]);
 
         //Corner (3)
-        model.add(21, textures[10], textures[10], textures[0], textures[9], textures[0], textures[8]);
-        model.add(22, textures[10], textures[10], textures[0], textures[10], textures[0], textures[11]);
-        model.add(25, textures[9], textures[9], textures[8], textures[0], textures[0], textures[9]);
-        model.add(26, textures[9], textures[9], textures[11], textures[0], textures[0], textures[10]);
-        model.add(37, textures[11], textures[11], textures[0], textures[8], textures[9], textures[0]);
-        model.add(38, textures[11], textures[11], textures[0], textures[11], textures[10], textures[0]);
-        model.add(41, textures[8], textures[8], textures[9], textures[0], textures[8], textures[0]);
-        model.add(42, textures[8], textures[8], textures[10], textures[0], textures[11], textures[0]);
+        model.add(21, tex[10], tex[10], tex[0], tex[9], tex[0], tex[8]);
+        model.add(22, tex[10], tex[10], tex[0], tex[10], tex[0], tex[11]);
+        model.add(25, tex[9], tex[9], tex[8], tex[0], tex[0], tex[9]);
+        model.add(26, tex[9], tex[9], tex[11], tex[0], tex[0], tex[10]);
+        model.add(37, tex[11], tex[11], tex[0], tex[8], tex[9], tex[0]);
+        model.add(38, tex[11], tex[11], tex[0], tex[11], tex[10], tex[0]);
+        model.add(41, tex[8], tex[8], tex[9], tex[0], tex[8], tex[0]);
+        model.add(42, tex[8], tex[8], tex[10], tex[0], tex[11], tex[0]);
 
         //Arrow (4)
-        model.add(23, textures[12], textures[12], textures[12], textures[4], textures[12], textures[2]);
-        model.add(27, textures[12], textures[12], textures[2], textures[12], textures[12], textures[4]);
-        model.add(29, textures[12], textures[4], textures[12], textures[12], textures[12], textures[3]);
-        model.add(30, textures[4], textures[12], textures[12], textures[12], textures[12], textures[5]);
-        model.add(39, textures[12], textures[12], textures[12], textures[2], textures[4], textures[12]);
-        model.add(43, textures[12], textures[12], textures[4], textures[12], textures[2], textures[12]);
-        model.add(45, textures[12], textures[2], textures[12], textures[12], textures[3], textures[12]);
-        model.add(46, textures[2], textures[12], textures[12], textures[12], textures[5], textures[12]);
-        model.add(53, textures[12], textures[5], textures[12], textures[3], textures[12], textures[12]);
-        model.add(54, textures[3], textures[12], textures[12], textures[5], textures[12], textures[12]);
-        model.add(57, textures[12], textures[3], textures[3], textures[12], textures[12], textures[12]);
-        model.add(58, textures[5], textures[12], textures[5], textures[12], textures[12], textures[12]);
+        model.add(23, tex[12], tex[12], tex[12], tex[4], tex[12], tex[2]);
+        model.add(27, tex[12], tex[12], tex[2], tex[12], tex[12], tex[4]);
+        model.add(29, tex[12], tex[4], tex[12], tex[12], tex[12], tex[3]);
+        model.add(30, tex[4], tex[12], tex[12], tex[12], tex[12], tex[5]);
+        model.add(39, tex[12], tex[12], tex[12], tex[2], tex[4], tex[12]);
+        model.add(43, tex[12], tex[12], tex[4], tex[12], tex[2], tex[12]);
+        model.add(45, tex[12], tex[2], tex[12], tex[12], tex[3], tex[12]);
+        model.add(46, tex[2], tex[12], tex[12], tex[12], tex[5], tex[12]);
+        model.add(53, tex[12], tex[5], tex[12], tex[3], tex[12], tex[12]);
+        model.add(54, tex[3], tex[12], tex[12], tex[5], tex[12], tex[12]);
+        model.add(57, tex[12], tex[3], tex[3], tex[12], tex[12], tex[12]);
+        model.add(58, tex[5], tex[12], tex[5], tex[12], tex[12], tex[12]);
 
         //Cross (4)
-        model.add(15, textures[12], textures[12], textures[12], textures[12], textures[6], textures[6]);
-        model.add(51, textures[12], textures[12], textures[6], textures[6], textures[12], textures[12]);
-        model.add(60, textures[6], textures[6], textures[12], textures[12], textures[12], textures[12]);
+        model.add(15, tex[12], tex[12], tex[12], tex[12], tex[6], tex[6]);
+        model.add(51, tex[12], tex[12], tex[6], tex[6], tex[12], tex[12]);
+        model.add(60, tex[6], tex[6], tex[12], tex[12], tex[12], tex[12]);
 
         //Five (5)
-        model.add(31, textures[12], textures[12], textures[12], textures[12], textures[12], textures[6]);
-        model.add(47, textures[12], textures[12], textures[12], textures[12], textures[6], textures[12]);
-        model.add(55, textures[12], textures[12], textures[12], textures[6], textures[12], textures[12]);
-        model.add(59, textures[12], textures[12], textures[6], textures[12], textures[12], textures[12]);
-        model.add(61, textures[12], textures[6], textures[12], textures[12], textures[12], textures[12]);
-        model.add(62, textures[6], textures[12], textures[12], textures[12], textures[12], textures[12]);
+        model.add(31, tex[12], tex[12], tex[12], tex[12], tex[12], tex[6]);
+        model.add(47, tex[12], tex[12], tex[12], tex[12], tex[6], tex[12]);
+        model.add(55, tex[12], tex[12], tex[12], tex[6], tex[12], tex[12]);
+        model.add(59, tex[12], tex[12], tex[6], tex[12], tex[12], tex[12]);
+        model.add(61, tex[12], tex[6], tex[12], tex[12], tex[12], tex[12]);
+        model.add(62, tex[6], tex[12], tex[12], tex[12], tex[12], tex[12]);
 
         //All (6)
-        model.add(63, textures[12], textures[12], textures[12], textures[12], textures[12], textures[12]);
+        model.add(63, tex[12], tex[12], tex[12], tex[12], tex[12], tex[12]);
     }
 
     public static void pipe(ModelDynamic model) {
+        for (PipeSize s : new PipeSize[]{PipeSize.NORMAL}) {
+            //Default Shape (0 Connections)
+            model.add(0, b -> b.of(s.getLoc("base")).tex("0", PIPE));
 
-        model.add(0, b -> b.of("block/pipe/normal/base").tex("0", Textures.PIPE));
+            //Single Shapes (1 Connections)
+            model.add(1, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(DOWN));
+            model.add(2, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(UP));
+            model.add(4, b -> b.of(s.getLoc("single")).tex("0", PIPE));
+            model.add(8, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(SOUTH));
+            model.add(16, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(WEST));
+            model.add(32, b -> b.of(s.getLoc("single")).tex("0", PIPE).rot(EAST));
 
-        model.add(4, b -> b.of("block/pipe/normal/single").tex("0", Textures.PIPE));
-        model.add(8, b -> b.of("block/pipe/normal/single").tex("0", Textures.PIPE).rot(Direction.SOUTH));
+            //Line Shapes (2 Connections)
+            model.add(3, b -> b.of(s.getLoc("line")).tex("0", PIPE).rot(UP));
+            model.add(12, b -> b.of(s.getLoc("line")).tex("0", PIPE));
+            model.add(48, b -> b.of(s.getLoc("line")).tex("0", PIPE).rot(WEST));
 
-        model.add(16, b -> b.of("block/pipe/normal/single").tex("0", Textures.PIPE).rot(Direction.WEST));
-        model.add(32, b -> b.of("block/pipe/normal/single").tex("0", Textures.PIPE).rot(Direction.EAST));
+            //Elbow Shapes (2 Connections)
+            model.add(5, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(WEST, UP, EAST));
+            model.add(6, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(WEST, DOWN, EAST));
+            model.add(9, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(EAST, UP, EAST));
+            model.add(10, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(EAST, DOWN, EAST));
+            model.add(17, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(NORTH, DOWN, WEST));
+            model.add(18, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(SOUTH, DOWN, EAST));
+            model.add(20, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(WEST));
+            model.add(24, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(SOUTH));
+            model.add(33, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(NORTH, UP, EAST));
+            model.add(34, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(NORTH, DOWN, EAST));
+            model.add(36, b -> b.of(s.getLoc("elbow")).tex("0", PIPE));
+            model.add(40, b -> b.of(s.getLoc("elbow")).tex("0", PIPE).rot(EAST));
 
+            //Side Shapes (3 Connections)
+            model.add(7, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(SOUTH, UP));
+            model.add(11, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(NORTH, UP));
+            model.add(13, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(DOWN, DOWN));
+            model.add(14, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST, UP));
+            model.add(19, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(WEST, DOWN, EAST));
+            model.add(28, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(WEST, UP));
+            model.add(35, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST, DOWN, WEST));
+            model.add(44, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST, DOWN, DOWN));
+            model.add(49, b -> b.of(s.getLoc("side")).tex("0", PIPE));
+            model.add(50, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(EAST));
+            model.add(52, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(NORTH, DOWN, WEST));
+            model.add(56, b -> b.of(s.getLoc("side")).tex("0", PIPE).rot(SOUTH, DOWN, WEST));
 
-//        //Default Shape (0 Connections)
-//        CONFIG[0] = new int[]{0};
-//
-//        //Single Shapes (1 Connections)
-//        CONFIG[1] = new int[]{1, DOWN.getIndex()};
-//        CONFIG[2] = new int[]{1, UP.getIndex()};
-//        CONFIG[4] = new int[]{1};
-//        CONFIG[8] = new int[]{1, SOUTH.getIndex()};
-//        CONFIG[16] = new int[]{1, WEST.getIndex()};
-//        CONFIG[32] = new int[]{1, EAST.getIndex()};
-//
-//        //Line Shapes (2 Connections)
-//        CONFIG[3] = new int[]{2, UP.getIndex()};
-//        CONFIG[12] = new int[]{2};
-//        CONFIG[48] = new int[]{2, WEST.getIndex()};
-//
-//        //Elbow Shapes (2 Connections)
-//        CONFIG[5] = new int[]{3, WEST.getIndex(), UP.getIndex(), EAST.getIndex()};
-//        CONFIG[6] = new int[]{3, WEST.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[9] = new int[]{3, EAST.getIndex(), UP.getIndex(), EAST.getIndex()};
-//        CONFIG[10] = new int[]{3, EAST.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[17] = new int[]{3, NORTH.getIndex(), DOWN.getIndex(), WEST.getIndex()};
-//        CONFIG[18] = new int[]{3, SOUTH.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[20] = new int[]{3, WEST.getIndex()};
-//        CONFIG[24] = new int[]{3, SOUTH.getIndex()};
-//        CONFIG[33] = new int[]{3, NORTH.getIndex(), UP.getIndex(), EAST.getIndex()};
-//        CONFIG[34] = new int[]{3, NORTH.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[36] = new int[]{3};
-//        CONFIG[40] = new int[]{3, EAST.getIndex()};
-//
-//        //Side Shapes (3 Connections)
-//        CONFIG[7] = new int[]{4, SOUTH.getIndex(), UP.getIndex()};
-//        CONFIG[11] = new int[]{4, NORTH.getIndex(), UP.getIndex()};
-//        CONFIG[13] = new int[]{4, DOWN.getIndex(), DOWN.getIndex()};
-//        CONFIG[14] = new int[]{4};
-//        CONFIG[19] = new int[]{4, EAST.getIndex(), UP.getIndex()};
-//        CONFIG[28] = new int[]{4, WEST.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[35] = new int[]{4, WEST.getIndex(), UP.getIndex()};
-//        CONFIG[44] = new int[]{4, EAST.getIndex(), DOWN.getIndex(), WEST.getIndex()};
-//        CONFIG[49] = new int[]{4, EAST.getIndex(), DOWN.getIndex(), DOWN.getIndex()};
-//        CONFIG[50] = new int[]{4, EAST.getIndex()};
-//        CONFIG[52] = new int[]{4, NORTH.getIndex(), DOWN.getIndex(), WEST.getIndex()};
-//        CONFIG[56] = new int[]{4, SOUTH.getIndex(), DOWN.getIndex(), WEST.getIndex()};
-//
-//        //Corner Shapes (3 Connections)
-//        CONFIG[21] = new int[]{5, WEST.getIndex(), DOWN.getIndex()};
-//        CONFIG[22] = new int[]{5, WEST.getIndex()};
-//        CONFIG[25] = new int[]{5, SOUTH.getIndex(), DOWN.getIndex()};
-//        CONFIG[26] = new int[]{5, SOUTH.getIndex()};
-//        CONFIG[41] = new int[]{5, EAST.getIndex(), DOWN.getIndex()};
-//        CONFIG[42] = new int[]{5, EAST.getIndex()};
-//        CONFIG[37] = new int[]{5, NORTH.getIndex(), DOWN.getIndex()};
-//        CONFIG[38] = new int[]{5};
-//
-//        //Arrow Shapes (4 Connections)
-//        CONFIG[23] = new int[]{6, WEST.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[27] = new int[]{6, SOUTH.getIndex(), DOWN.getIndex(), EAST.getIndex()};
-//        CONFIG[29] = new int[]{6, WEST.getIndex(), DOWN.getIndex()};
-//        CONFIG[30] = new int[]{6, WEST.getIndex()};
-//        CONFIG[39] = new int[]{6, EAST.getIndex(), DOWN.getIndex(), WEST.getIndex()};
-//        CONFIG[43] = new int[]{6, SOUTH.getIndex(), DOWN.getIndex(), WEST.getIndex()};
-//        CONFIG[45] = new int[]{6, EAST.getIndex(), DOWN.getIndex()};
-//        CONFIG[46] = new int[]{6, EAST.getIndex()};
-//        CONFIG[53] = new int[]{6, DOWN.getIndex()};
-//        CONFIG[54] = new int[]{6};
-//        CONFIG[57] = new int[]{6, SOUTH.getIndex(), DOWN.getIndex()};
-//        CONFIG[58] = new int[]{6, SOUTH.getIndex()};
-//
-//        //Cross Shapes (4 Connections)
-//        CONFIG[15] = new int[]{7, WEST.getIndex(), UP.getIndex()};
-//        CONFIG[51] = new int[]{7, UP.getIndex()};
-//        CONFIG[60] = new int[]{7};
-//
-//        //Five Shapes (5 Connections)
-//        CONFIG[31] = new int[]{8, EAST.getIndex(), UP.getIndex()};
-//        CONFIG[47] = new int[]{8, WEST.getIndex(), UP.getIndex()};
-//        CONFIG[55] = new int[]{8, SOUTH.getIndex(), UP.getIndex()};
-//        CONFIG[59] = new int[]{8, NORTH.getIndex(), UP.getIndex()};
-//        CONFIG[61] = new int[]{8, DOWN.getIndex(), DOWN.getIndex()};
-//        CONFIG[62] = new int[]{8};
-//
-//        //All Shapes (6 Connections)
-//        CONFIG[63] = new int[]{9};
+            //Corner Shapes (3 Connections)
+            model.add(21, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(WEST, DOWN));
+            model.add(22, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(WEST));
+            model.add(25, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(SOUTH, DOWN));
+            model.add(26, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(SOUTH));
+            model.add(41, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(EAST, DOWN));
+            model.add(42, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(EAST));
+            model.add(37, b -> b.of(s.getLoc("corner")).tex("0", PIPE).rot(NORTH, DOWN));
+            model.add(38, b -> b.of(s.getLoc("corner")).tex("0", PIPE));
+
+            //Arrow Shapes (4 Connections)
+            model.add(23, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST, DOWN, EAST));
+            model.add(27, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH, DOWN, EAST));
+            model.add(29, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST, DOWN));
+            model.add(30, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST));
+            model.add(39, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(EAST, DOWN, WEST));
+            model.add(43, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH, DOWN, WEST));
+            model.add(45, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(EAST, DOWN));
+            model.add(46, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(WEST));
+            model.add(53, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(DOWN));
+            model.add(54, b -> b.of(s.getLoc("arrow")).tex("0", PIPE));
+            model.add(57, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH, DOWN));
+            model.add(58, b -> b.of(s.getLoc("arrow")).tex("0", PIPE).rot(SOUTH));
+
+            //Cross Shapes (4 Connections)
+            model.add(15, b -> b.of(s.getLoc("cross")).tex("0", PIPE).rot(WEST, UP));
+            model.add(51, b -> b.of(s.getLoc("cross")).tex("0", PIPE).rot(UP));
+            model.add(60, b -> b.of(s.getLoc("cross")).tex("0", PIPE));
+
+            //Five Shapes (5 Connections)
+            model.add(31, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(EAST, UP));
+            model.add(47, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(WEST, UP));
+            model.add(55, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(SOUTH, UP));
+            model.add(59, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(NORTH, UP));
+            model.add(61, b -> b.of(s.getLoc("five")).tex("0", PIPE).rot(DOWN, DOWN));
+            model.add(62, b -> b.of(s.getLoc("five")).tex("0", PIPE));
+
+            //All Shapes (6 Connections)
+            model.add(63, b -> b.of(s.getLoc("all")).tex("0", PIPE));
+        }
     }
 }

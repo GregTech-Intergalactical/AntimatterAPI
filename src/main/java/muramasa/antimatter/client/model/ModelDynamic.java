@@ -13,17 +13,17 @@ import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-//TODO 1.14-NewModelLoaders: The Dynamic loader could have a "defaultModel" property
-//TODO defaultModel needs a better solution
 //TODO Support multi layer models
 public class ModelDynamic extends ModelBase {
 
@@ -34,6 +34,8 @@ public class ModelDynamic extends ModelBase {
 
     protected Set<ResourceLocation> configTextures = new HashSet<>();
     protected Consumer<ModelDynamic> configConsumer = b -> {};
+    protected Function<ModelBuilder, ModelBuilder> baseBuilder;
+    protected BiFunction<Tuple<Integer, Texture[]>, ModelBuilder, ModelBuilder> configBuilder;
     protected Texture[] defaultTextures;
 
     protected boolean shouldBakeStatically;
@@ -41,6 +43,8 @@ public class ModelDynamic extends ModelBase {
 
     public ModelDynamic(Texture... defaultTextures) {
         this.defaultTextures = defaultTextures;
+        baseBuilder = b -> b.of("block/preset/simple").tex("all", defaultTextures[0]);
+        configBuilder = (t, b) -> b.of("block/preset/simple").tex(Ref.DIRECTIONS, t.getB());
     }
 
     public ModelDynamic(ITextureProvider provider) {
@@ -49,6 +53,11 @@ public class ModelDynamic extends ModelBase {
 
     public ModelDynamic staticBaking() {
         shouldBakeStatically = true;
+        return this;
+    }
+
+    public ModelDynamic base(Function<ModelBuilder, ModelBuilder> builder) {
+        baseBuilder = builder;
         return this;
     }
 
@@ -77,22 +86,14 @@ public class ModelDynamic extends ModelBase {
         configConsumer.accept(this);
     }
 
-    protected ModelBuilder getDefaultModel() {
-        return load(mod("block/preset/simple")).tex("all", defaultTextures[0]);
-    }
-
-    protected ModelBuilder getConfigModel(int config, Texture[] textures) {
-        return new ModelBuilder().of("block/preset/simple").tex(Ref.DIRECTIONS, textures);
-    }
-
     @Nullable
     @Override
     public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
         if (bakedModel != null) return bakedModel;
-        configs.forEach((i, t) -> baked.put((int) i, getConfigModel(i, t).bake(bakery, getter, sprite, format)));
+        configs.forEach((i, t) -> baked.put((int) i, configBuilder.apply(new Tuple<>(i, t), new ModelBuilder()).bake(bakery, getter, sprite, format)));
         models.forEach((i, m) -> baked.put((int) i, m.bake(bakery, getter, sprite, format)));
         builders.forEach((i, b) -> baked.put((int) i, b.apply(new ModelBuilder()).bake(bakery, getter, sprite, format)));
-        return new BakedDynamic(baked, getDefaultModel().bake(bakery, getter, sprite, format));
+        return new BakedDynamic(baked, baseBuilder.apply(new ModelBuilder()).bake(bakery, getter, sprite, format));
     }
 
     @Override

@@ -1,8 +1,10 @@
 package muramasa.antimatter.client;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.antimatter.client.baked.QuadContainer;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.ISprite;
@@ -12,9 +14,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class ModelBuilder {
@@ -99,14 +100,24 @@ public class ModelBuilder {
 //            for (int i = 1; i < directions.length; i++) {
 //                mat.mul(new Matrix4f(ModelUtils.FACING_TO_MATRIX[directions[i].getIndex()]));
 //            }
-            TRSRTransformation trans = TRSRTransformation.from(rotations[0]);
+//            TRSRTransformation trans = TRSRTransformation.from(rotations[0]);
+//            for (int i = 1; i < rotations.length; i++) {
+                //trans.mul(null, ModelUtils.FACING_TO_MATRIX[rotations[i].getIndex()].);
+//                trans.compose(TRSRTransformation.from(rotations[i]));
+//            }
 
-            return model.bake(bakery, getter, new ISprite() {
-                @Override
-                public IModelState getState() {
-                    return trans;
-                }
-            }, format);
+//            return model.bake(bakery, getter, new ISprite() {
+//                @Override
+//                public IModelState getState() {
+//                    return trans;
+//                }
+//            }, format);
+
+            //TODO find a better solution
+            List<BakedQuad> originalQuads = model.bake(bakery, getter, sprite, format).getQuads(null, null, Ref.RNG, ModelUtils.EMPTY_MODEL_DATA);
+            List<BakedQuad> transformedQuads = ModelUtils.trans(originalQuads, rotations);
+            return new QuadContainer(transformedQuads);
+
         }
         return model.bake(bakery, getter, sprite, format);
     }
