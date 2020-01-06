@@ -38,10 +38,10 @@ public abstract class Cover {
         return this;
     }
 
-/** Fires once per Side **/
-public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-    return true;
-}
+    /** Fires once per Side **/
+    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+        return true;
+    }
 
     /**
      * @param tile containing the cover
