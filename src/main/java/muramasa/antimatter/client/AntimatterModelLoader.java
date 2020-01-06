@@ -15,7 +15,7 @@ public class AntimatterModelLoader implements ICustomModelLoader {
 
     private IResourceManager resourceManager;
 
-    public static void register(Block block, IUnbakedModel model) {
+    public static void put(Block block, IUnbakedModel model) {
         LOOKUP.put(new ResourceLocation(block.getRegistryName().getNamespace(), "models/block/" + block.getRegistryName().getPath()), model);
     }
 

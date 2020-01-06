@@ -5,7 +5,7 @@
 //import muramasa.antimatter.pipe.PipeSize;
 //import muramasa.antimatter.client.ModelUtils;
 //import muramasa.antimatter.client.baked.BakedBase;
-//import muramasa.gtu.client.render.bakedmodels.BakedPipe;
+//import muramasa.antimatter.client.baked.BakedPipe;
 //import net.minecraft.client.renderer.model.IBakedModel;
 //import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 //import net.minecraft.client.renderer.texture.TextureAtlasSprite;

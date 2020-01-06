@@ -7,9 +7,16 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+
+import java.util.Arrays;
 
 public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
@@ -46,5 +53,11 @@ public abstract class BlockDynamic extends Block implements IAntimatterObject, I
 
     public boolean canConnect(IBlockReader world, BlockPos pos) {
         return world.getBlockState(pos).getBlock() == this;
+    }
+
+    @Override
+    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        player.sendMessage(new StringTextComponent(Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos))));
+        return true;
     }
 }

@@ -51,7 +51,7 @@ public class ModelUtils {
 
     //public static ResourceLocation MODEL_BASIC_LOC = new ResourceLocation(Ref.MODID, "block/templates/basic");
 
-    private static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
+    public static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 4.7124f)),
         getMat(new AxisAngle4f(new Vector3f(1, 0, 0), 1.5708f)),
         getMat(new AxisAngle4f(new Vector3f(0, 1, 0), 0f)),

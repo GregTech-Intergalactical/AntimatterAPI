@@ -1,4 +1,4 @@
-package muramasa.gtu.client.render.bakedmodels;
+package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.cover.Cover;
@@ -29,7 +29,7 @@ import java.util.Random;
 
 import static net.minecraft.util.Direction.*;
 
-public class BakedPipe implements IDynamicBakedModel {
+public class BakedPipeOld implements IDynamicBakedModel {
 
     protected static TextureAtlasSprite PARTICLE = Textures.PIPE.getSprite();
 
