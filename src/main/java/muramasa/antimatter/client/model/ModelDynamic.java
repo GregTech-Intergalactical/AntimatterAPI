@@ -6,6 +6,7 @@ import muramasa.antimatter.client.baked.BakedDynamic;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.Ref;
+import muramasa.gtu.data.Textures;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelBakery;
@@ -41,8 +42,8 @@ public class ModelDynamic extends ModelBase {
     protected boolean shouldBakeStatically;
     protected IBakedModel bakedModel;
 
-    public ModelDynamic(Texture... defaultTextures) {
-        this.defaultTextures = defaultTextures;
+    public ModelDynamic(Texture... textures) {
+        defaultTextures = textures.length > 0 ? textures : new Texture[]{Textures.ERROR};
         baseBuilder = b -> b.of("block/preset/simple").tex("all", defaultTextures[0]);
         configBuilder = (t, b) -> b.of("block/preset/simple").tex(Ref.DIRECTIONS, t.getB());
     }
@@ -77,6 +78,11 @@ public class ModelDynamic extends ModelBase {
         return this;
     }
 
+    public ModelDynamic add(ResourceLocation... textures) {
+        configTextures.addAll(Arrays.asList(textures));
+        return this;
+    }
+
     public ModelDynamic config(Consumer<ModelDynamic> configConsumer) {
         this.configConsumer = configConsumer;
         return this;
@@ -88,7 +94,7 @@ public class ModelDynamic extends ModelBase {
 
     @Nullable
     @Override
-    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
+    public IBakedModel bakeModel(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
         if (bakedModel != null) return bakedModel;
         configs.forEach((i, t) -> baked.put((int) i, configBuilder.apply(new Tuple<>(i, t), new ModelBuilder()).bake(bakery, getter, sprite, format)));
         models.forEach((i, m) -> baked.put((int) i, m.bake(bakery, getter, sprite, format)));
@@ -100,5 +106,9 @@ public class ModelDynamic extends ModelBase {
     public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) {
         onConfigConsume();
         return configTextures;
+    }
+
+    public int getModelCount() {
+        return baked.size();
     }
 }

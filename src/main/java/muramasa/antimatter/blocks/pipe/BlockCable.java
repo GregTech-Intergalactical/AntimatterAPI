@@ -4,9 +4,9 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlock;
-import muramasa.gtu.data.Textures;
 
 public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
 
@@ -16,7 +16,7 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
     protected Tier tier;
 
     public BlockCable(Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
-        super("cable", material, size, Textures.PIPE_DATA[1]);
+        super(PipeType.CABLE, material, size);
         this.insulated = insulated;
         this.loss = loss;
         this.lossInsulated = lossInsulated;

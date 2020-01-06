@@ -2,7 +2,6 @@ package muramasa.gtu.data;
 
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.texture.TextureData;
 
 public class Textures {
 
@@ -20,38 +19,6 @@ public class Textures {
     };
 
     public static final ITextureHandler MULTI_HANDLER = (m, t) -> m.getTiers().size() > 1 ? new Texture[]{new Texture("block/machine/base/" + m.getId() + "_" + t.getId())} : new Texture[]{new Texture("block/machine/base/" + m.getId())};
-
-    public static final Texture PIPE = new Texture("block/pipe/pipe_side");
-    public static final Texture WIRE = new Texture("block/pipe/wire_side");
-    public static final Texture CABLE = new Texture("block/pipe/cable_side");
-
-    public static final Texture[] PIPE_FACE = new Texture[] {
-        new Texture("block/pipe/pipe_vtiny"),
-        new Texture("block/pipe/pipe_tiny"),
-        new Texture("block/pipe/pipe_small"),
-        new Texture("block/pipe/pipe_normal"),
-        new Texture("block/pipe/pipe_large"),
-        new Texture("block/pipe/pipe_huge")
-    };
-
-    public static final Texture[] CABLE_FACE = new Texture[] {
-        new Texture("block/pipe/cable_vtiny"),
-        new Texture("block/pipe/cable_tiny"),
-        new Texture("block/pipe/cable_small"),
-        new Texture("block/pipe/cable_normal"),
-        new Texture("block/pipe/cable_large"),
-        new Texture("block/pipe/cable_huge")
-    };
-
-    public static final Texture[] WIRE_FACE = new Texture[] {
-        WIRE, WIRE, WIRE, WIRE, WIRE, WIRE
-    };
-
-    public static final TextureData[] PIPE_DATA = new TextureData[] {
-        new TextureData().base(PIPE).overlay(PIPE_FACE),
-        new TextureData().base(WIRE).overlay(WIRE_FACE),
-        new TextureData().base(CABLE).overlay(CABLE_FACE)
-    };
 
     public static final Texture[] LARGE_TURBINE = new Texture[] {
         new Texture("block/ct/turbine/large_turbine_0"),

@@ -3,7 +3,7 @@ package muramasa.antimatter.blocks.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.gtu.data.Textures;
+import muramasa.antimatter.pipe.PipeType;
 
 public class BlockFluidPipe extends BlockPipe {
 
@@ -12,7 +12,7 @@ public class BlockFluidPipe extends BlockPipe {
     protected boolean gasProof;
 
     public BlockFluidPipe(Material material, PipeSize size, int capacity, int heatResistance, boolean gasProof) {
-        super("fluid_pipe", material, size, Textures.PIPE_DATA[0]);
+        super(PipeType.FLUID, material, size);
         this.heatResistance = heatResistance;
         this.gasProof = gasProof;
         this.capacity = capacity;
