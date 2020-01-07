@@ -23,7 +23,7 @@ public class ModelBase implements IUnbakedModel {
 
     public ModelBase(Texture... textures) {
         Texture[] defaultTextures = textures.length > 0 ? textures : new Texture[]{ModelUtils.ERROR};
-        allTextures.addAll(Arrays.asList(defaultTextures)); //In case supplied textures are not already tied to a loaded model
+        allTextures.addAll(Arrays.asList(defaultTextures)); //If supplied textures are not already loaded by a model
         particle = defaultTextures[0];
         baseBuilder = b -> b.simple().tex("all", defaultTextures[0]);
     }

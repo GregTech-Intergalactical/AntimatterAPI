@@ -4,7 +4,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
-import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
@@ -14,7 +13,6 @@ import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -188,13 +186,8 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider provider) {
-        super.onItemModelBuild(item, provider);
-    }
-
-    @Override
-    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider provider) {
-        provider.simpleBlock(block, provider.getBuilder(block).parent(provider.getExistingFile(provider.modLoc("block/pipe/" + getSize().getId() + "/line"))).texture("0", getType().getSide()));
+    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
+        prov.simpleBlock(this, prov.getBuilder(this).parent(prov.getExistingFile(prov.modLoc("block/pipe/" + getSize().getId() + "/line_inv"))).texture("0", getType().getSide()).texture("1", getType().getFace(getSize())));
     }
 
     @Override

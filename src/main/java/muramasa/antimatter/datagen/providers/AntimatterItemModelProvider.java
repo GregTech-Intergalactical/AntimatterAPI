@@ -38,7 +38,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
         return getBuilder(item.asItem().getRegistryName().getPath());
     }
 
-    public ItemModelBuilder textured(IItemProvider item, ResourceLocation[] textures) {
+    public ItemModelBuilder tex(IItemProvider item, ResourceLocation... textures) {
         ItemModelBuilder builder = getBuilder(item);
         builder.parent(new UncheckedModelFile("item/generated"));
         for (int i = 0; i < textures.length; i++) {

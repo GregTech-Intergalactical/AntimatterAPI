@@ -22,7 +22,7 @@ public class BlockCable extends BlockPipe implements IItemBlock, IColorHandler {
     protected Tier tier;
 
     public BlockCable(Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
-        super(PipeType.CABLE, material, size);
+        super(insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
         this.insulated = insulated;
         this.loss = loss;
         this.lossInsulated = lossInsulated;

@@ -151,12 +151,12 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider provider) {
+    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
 
     }
 
     @Override
-    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider provider) {
+    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
 //        ConfiguredModel[] models = new ConfiguredModel[7];
 //        for (int i = 0; i < models.length; i++) {
 //            models[i] = new ConfiguredModel(provider.getBuilder(getId()).parent(provider.getExistingFile(provider.modLoc("block/rock/rock_" + i))).texture("all", getStoneType().getTexture()));

@@ -111,11 +111,9 @@ public class Models {
         model.add(63, tex[12], tex[12], tex[12], tex[12], tex[12], tex[12]);
     }
 
-    //Model tint tint indices: 1 = culling, 2 = overlay
     public static void pipe(ModelDynamic model) {
         for (PipeType t : AntimatterAPI.all(PipeType.class)) {
             for (PipeSize s : PipeSize.VALUES) {
-                model.add(t.getFace(s), t.getSide());
                 for (int c = 0; c < 2; c++) {
                     int cc = c; //Cause Java
                     //Default Shape (0 Connections)
