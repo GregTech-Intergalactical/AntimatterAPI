@@ -7,7 +7,6 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -17,21 +16,11 @@ import java.util.List;
 
 public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider, IInfoProvider {
 
-    protected ResourceLocation defaultModel = new ResourceLocation(Ref.MODID, "block/preset/simple");
     protected Texture[] defaultTextures;
 
     public BlockDynamic(Block.Properties properties, Texture... defaultTextures) {
         super(properties);
         this.defaultTextures = defaultTextures;
-    }
-
-    public BlockDynamic setDefaultModel(ResourceLocation model) {
-        this.defaultModel = model;
-        return this;
-    }
-
-    public ResourceLocation getDefaultModel() {
-        return defaultModel;
     }
 
     @Override
@@ -42,14 +31,16 @@ public abstract class BlockDynamic extends Block implements IAntimatterObject, I
     /** Connection Logic **/
     public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int[] ct = new int[1];
+        BlockState adjState;
         for (int s = 0; s < 6; s++) {
-            if (canConnect(world, mut.setPos(pos.offset(Ref.DIRECTIONS[s])))) ct[0] += 1 << s;
+            adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
+            if (canConnect(world, adjState, mut)) ct[0] += 1 << s;
         }
         return ct;
     }
 
-    public boolean canConnect(IBlockReader world, BlockPos pos) {
-        return world.getBlockState(pos).getBlock() == this;
+    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
+        return state.getBlock() == this;
     }
 
     @Override

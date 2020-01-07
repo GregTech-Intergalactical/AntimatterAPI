@@ -1,6 +1,6 @@
 package muramasa.antimatter.client.baked;
 
-import muramasa.gtu.data.Textures;
+import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.ItemOverrideList;
@@ -45,7 +45,7 @@ public class QuadContainer implements IDynamicBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return Textures.ERROR.getSprite();
+        return ModelUtils.getErrorSprite();
     }
 
     @Override

@@ -36,6 +36,9 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
+    public static final Texture ERROR = new Texture("block/machine/overlay/invalid/front");
+    private static TextureAtlasSprite ERROR_SPRITE = null;
+
     private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;
 
     private static EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
@@ -94,6 +97,14 @@ public class ModelUtils {
         //BAKED_MISSING = ModelLoaderRegistry.getMissingModel().bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, getTextureGetter());
         MISSING_MODEL = ModelLoaderRegistry.getMissingModel();
         //MISSING_BAKED = MISSING_MODEL.bake()
+    }
+
+    public static TextureAtlasSprite getErrorSprite() {
+        return ERROR_SPRITE != null ? ERROR_SPRITE : (ERROR_SPRITE = ERROR.getSprite());
+    }
+
+    public static TextureAtlasSprite getSprite(ResourceLocation loc) {
+        return Minecraft.getInstance().getTextureMap().getSprite(loc);
     }
 
     public static IModel getMissingModel() {

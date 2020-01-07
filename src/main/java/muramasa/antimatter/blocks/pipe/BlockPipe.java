@@ -38,7 +38,11 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
         this.material = material;
         this.size = size;
         setRegistryName(getId());
+    }
+
+    public void register(Class c) {
         AntimatterAPI.register(BlockPipe.class, this);
+        AntimatterAPI.register(c, this);
     }
 
     @Override
@@ -149,60 +153,49 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
         return VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
     }
 
+    public static int getPipeID(int config, PipeSize size, PipeType type, int cull) {
+        return ((size.ordinal() + 1) * 100) + ((type.getModelId() + 1) * 1000) + (cull == 0 ? 0 : 10000) + config;
+    }
+
     @Override
     public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int ct = 0;
+        boolean cull = false;
+        BlockState adjState;
         for (int s = 0; s < 6; s++) {
-            if (canConnect(world, mut.setPos(pos.offset(Ref.DIRECTIONS[s])))) ct += 1 << s;
+            adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
+            if (canConnect(world, adjState, mut)) {
+                ct += 1 << s;
+                cull = ((BlockPipe) adjState.getBlock()).getSize().ordinal() >= getSize().ordinal();
+            }
         }
-        return new int[]{getPipeID(ct, getSize(), getType())};
+        return new int[]{getPipeID(ct, getSize(), getType(), cull ? 1 : 0)};
     }
 
-    public static int getPipeID(int config, PipeSize size, PipeType type) {
-        return ((size.ordinal() + 1) * 100) + ((type.getModelId() + 1) * 1000) + config;
+    @Override
+    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
+        return state.getBlock() instanceof BlockPipe;
     }
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        if (!(state.getBlock() instanceof BlockPipe) && world == null || pos == null) return -1;
-        return i == 0 || i == 1 || i == 2 ? getRGB() : -1;
+        return state.getBlock() instanceof BlockPipe ? getRGB() : -1;
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        if (!(block instanceof BlockPipe)) return -1;
-        return i == 0 || i == 1 || i == 2 ? ((BlockPipe) block).getRGB() : -1;
+        return block instanceof BlockPipe ? ((BlockPipe) block).getRGB() : -1;
     }
-
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void onModelRegistration() {
-//        for (int i = 0; i < sizes.length; i++) {
-//            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), sizes[i].ordinal(), new ModelResourceLocation(Ref.MODID + ":" + getId(), "size=" + sizes[i].getName()));
-//        }
-//        //Redirect block model to custom baked model handling
-//        ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_pipe")));
-//    }
-
 
     @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider provider) {
-
+        super.onItemModelBuild(item, provider);
     }
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider provider) {
         provider.simpleBlock(block, provider.getBuilder(block).parent(provider.getExistingFile(provider.modLoc("block/pipe/" + getSize().getId() + "/line"))).texture("0", getType().getSide()));
     }
-
-    //    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelBuild(Map<ResourceLocation, IBakedModel> registry) {
-//        //TODO keep copy of PipeModels and remove BakedTextureDataItem
-//        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-//        IBakedModel baked = new BakedTextureDataItem(BakedPipe.BAKED[size.ordinal()][2], new TextureData().base(Textures.PIPE_DATA[0].getBase()).overlay(Textures.PIPE_DATA[0].getOverlay(size.ordinal())));
-//        registry.put(loc, baked);
-//    }
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {

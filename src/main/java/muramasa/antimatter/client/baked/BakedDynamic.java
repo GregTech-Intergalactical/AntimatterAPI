@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -27,7 +28,8 @@ public class BakedDynamic extends BakedBase {
     private BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
     private IModelData configData = new ModelDataMap.Builder().withInitial(AntimatterProperties.DYNAMIC_CONFIG, new int[0]).build();
 
-    public BakedDynamic(Int2ObjectOpenHashMap<IBakedModel> bakedLookup, IBakedModel defaultModel) {
+    public BakedDynamic(Int2ObjectOpenHashMap<IBakedModel> bakedLookup, IBakedModel defaultModel, ResourceLocation particle) {
+        super(particle);
         this.bakedLookup = bakedLookup;
         this.defaultModel = defaultModel;
         this.hasConfig = bakedLookup.size() > 0;

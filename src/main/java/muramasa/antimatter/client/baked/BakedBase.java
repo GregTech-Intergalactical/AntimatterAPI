@@ -1,22 +1,18 @@
 package muramasa.antimatter.client.baked;
 
 import muramasa.antimatter.client.ModelUtils;
-import muramasa.antimatter.texture.Texture;
-import muramasa.gtu.data.Textures;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -26,25 +22,25 @@ public class BakedBase implements IDynamicBakedModel {
     protected IBakedModel bakedModel;
     protected TextureAtlasSprite particle;
 
-    public BakedBase() {
-
-    }
-
-    public BakedBase(IBakedModel bakedModel) {
+    public BakedBase(@Nullable IBakedModel bakedModel, ResourceLocation particle) {
         this.bakedModel = bakedModel;
+        this.particle = ModelUtils.getSprite(particle);
     }
 
-    public BakedBase(Texture texture) {
-        this.particle = texture.getSprite();
+    public BakedBase(@Nullable IBakedModel bakedModel) {
+        this(bakedModel, ModelUtils.ERROR);
     }
 
-    public BakedBase(IBakedModel bakedModel, Texture texture) {
-        this(bakedModel);
-        particle = texture.getSprite();
+    public BakedBase(ResourceLocation texture) {
+        this(null, texture);
+    }
+
+    public BakedBase() {
+        this(null, ModelUtils.ERROR);
     }
 
     public List<BakedQuad> getBakedQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        return bakedModel.getQuads(state, side, rand, data);
+        return bakedModel != null ? bakedModel.getQuads(state, side, rand, data) : Collections.emptyList();
     }
 
     @Nonnull
@@ -56,11 +52,6 @@ public class BakedBase implements IDynamicBakedModel {
             e.printStackTrace();
             return Collections.emptyList();
         }
-    }
-
-    @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        return Pair.of(this, ModelUtils.getBlockTransform(cameraTransformType));
     }
 
     @Override
@@ -90,6 +81,6 @@ public class BakedBase implements IDynamicBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data) {
-        return particle != null ? particle : Textures.ERROR.getSprite();
+        return particle;
     }
 }

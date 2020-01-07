@@ -5,10 +5,6 @@ import muramasa.antimatter.texture.Texture;
 
 public class Textures {
 
-    //TODO move some of these to the API somehow
-
-    public static final Texture ERROR = new Texture("block/machine/overlay/invalid/front");
-
     public static final ITextureHandler BOILER_HANDLER = (m, t) -> new Texture[] {
         new Texture("block/machine/base/" + t.getId()),
         new Texture("block/machine/base/" + t.getId()),
