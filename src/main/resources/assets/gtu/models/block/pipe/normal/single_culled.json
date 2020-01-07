@@ -1,4 +1,5 @@
 {
+	"parent": "block/block",
 	"elements": [
 		{
 			"from": [4, 4, 0],
@@ -17,7 +18,7 @@
 			"to": [11, 11, 12.01],
 			"color": 1,
 			"faces": {
-				"south": {"uv": [5, 5, 11, 11], "texture": "#1", "tintindex": 2}
+				"south": {"uv": [5, 5, 11, 11], "texture": "#1", "tintindex": 1}
 			}
 		}
 	]
