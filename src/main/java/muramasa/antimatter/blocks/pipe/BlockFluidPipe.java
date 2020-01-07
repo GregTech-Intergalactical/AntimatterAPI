@@ -1,6 +1,5 @@
 package muramasa.antimatter.blocks.pipe;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
@@ -16,19 +15,9 @@ public class BlockFluidPipe extends BlockPipe {
         this.heatResistance = heatResistance;
         this.gasProof = gasProof;
         this.capacity = capacity;
-        AntimatterAPI.register(BlockFluidPipe.class, this);
+        register(BlockFluidPipe.class);
     }
 
-//    public BlockFluidPipe setCapacities(int... capacities) {
-//        this.capacities = capacities;
-//        return this;
-//    }
-//
-//    @Nullable
-//    @Override
-//    public TileEntity createTileEntity(World world, BlockState state) {
-//        return new TileEntityFluidPipe();
-//    }
 //
 //    @Override
 //    public String getDisplayName(ItemStack stack) {

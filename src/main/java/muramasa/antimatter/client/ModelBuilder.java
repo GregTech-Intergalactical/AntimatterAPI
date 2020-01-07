@@ -15,12 +15,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class ModelBuilder {
 
     private IModel model;
+    private Set<ResourceLocation> textures = new HashSet<>();
     private Direction[] rotations = new Direction[0];
 
     public ModelBuilder() {
@@ -35,6 +38,10 @@ public class ModelBuilder {
         return model;
     }
 
+    public Set<ResourceLocation> getTextures() {
+        return textures;
+    }
+
     public ModelBuilder of(ResourceLocation loc) {
         try {
             return new ModelBuilder(ModelLoaderRegistry.getModel(loc));
@@ -47,6 +54,10 @@ public class ModelBuilder {
 
     public ModelBuilder of(String path) {
         return of(new ResourceLocation(Ref.MODID, path));
+    }
+
+    public ModelBuilder simple() {
+        return of("block/preset/simple");
     }
 
     public ModelBuilder tex(String element, Block block) {
@@ -75,12 +86,13 @@ public class ModelBuilder {
     }
 
     public ModelBuilder tex(String element, String texture) {
-        return tex(element, new ResourceLocation(texture));
+        return tex(element, new ResourceLocation(texture.replace("mc", "minecraft")));
     }
 
     public ModelBuilder tex(String element, ResourceLocation texture) {
         try {
             model = model.retexture(ImmutableMap.of(element, texture.toString()));
+            textures.add(texture);
             return this;
         } catch (Exception e) {
             System.err.println("ModelContainer.tex() failed due to " + e + ":");

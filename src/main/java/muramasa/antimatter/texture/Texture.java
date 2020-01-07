@@ -1,7 +1,7 @@
 package muramasa.antimatter.texture;
 
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.gtu.Ref;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,6 +16,6 @@ public class Texture extends ResourceLocation {
     }
 
     public TextureAtlasSprite getSprite() {
-        return Minecraft.getInstance().getTextureMap().getSprite(this);
+        return ModelUtils.getSprite(this);
     }
 }

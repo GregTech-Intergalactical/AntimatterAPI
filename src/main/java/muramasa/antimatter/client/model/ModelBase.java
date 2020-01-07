@@ -1,7 +1,8 @@
 package muramasa.antimatter.client.model;
 
 import muramasa.antimatter.client.ModelBuilder;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.texture.Texture;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelBakery;
@@ -11,20 +12,32 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
-public abstract class ModelBase implements IUnbakedModel {
+public class ModelBase implements IUnbakedModel {
 
-    public ModelBase() {
+    protected Function<ModelBuilder, ModelBuilder> baseBuilder;
+    protected Set<ResourceLocation> allTextures = new HashSet<>();
+    protected ResourceLocation particle;
 
+    public ModelBase(Texture... textures) {
+        Texture[] defaultTextures = textures.length > 0 ? textures : new Texture[]{ModelUtils.ERROR};
+        allTextures.addAll(Arrays.asList(defaultTextures)); //In case supplied textures are not already tied to a loaded model
+        particle = defaultTextures[0];
+        baseBuilder = b -> b.simple().tex("all", defaultTextures[0]);
+    }
+
+    public ModelBase(Function<ModelBuilder, ModelBuilder> builder, Texture... textures) {
+        this(textures);
+        baseBuilder = builder;
     }
 
     @Nullable
     public IBakedModel bakeModel(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
-        return null;
+        ModelBuilder builder = baseBuilder.apply(new ModelBuilder());
+        allTextures.addAll(builder.getTextures());
+        return builder.bake(bakery, getter, sprite, format);
     }
 
     @Nullable
@@ -41,24 +54,11 @@ public abstract class ModelBase implements IUnbakedModel {
 
     @Override
     public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) {
-        return Collections.emptyList();
+        return allTextures;
     }
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
         return Collections.emptyList();
-    }
-
-    /** Model Helpers **/
-    public static ResourceLocation mc(String path) {
-        return new ResourceLocation(path);
-    }
-
-    public static ResourceLocation mod(String path) {
-        return new ResourceLocation(Ref.MODID, path);
-    }
-
-    public static ModelBuilder load(ResourceLocation loc) {
-        return new ModelBuilder().of(loc);
     }
 }

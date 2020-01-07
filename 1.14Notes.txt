@@ -7,4 +7,5 @@
 1.13 - Sounds: https://github.com/sinkillerj/ProjectE/blob/mc1.13.x/src/main/java/moze_intel/projecte/utils/SoundHandler.java
 1.14 - Config: https://github.com/gigaherz/ToolBelt/blob/master/src/main/java/gigaherz/toolbelt/ToolBelt.java#L71
 1.15 - Quad Transformation: https://github.com/MinecraftForge/MinecraftForge/commit/90035ab084d02e8b72a985845591f3767d1e721c#diff-a5c349c8ea649869f023200709a19a8cL105
+1.15 - Voxel Shape Rotation: https://github.com/mekanism/Mekanism/blob/1.15x/src/main/java/mekanism/common/util/VoxelShapeUtils.java
 
