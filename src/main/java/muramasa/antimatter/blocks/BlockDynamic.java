@@ -17,6 +17,7 @@ import java.util.List;
 public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider, IInfoProvider {
 
     protected Texture[] defaultTextures;
+    protected int[] DEFAULT_CONFIG = new int[]{-1};
 
     public BlockDynamic(Block.Properties properties, Texture... defaultTextures) {
         super(properties);
@@ -36,7 +37,7 @@ public abstract class BlockDynamic extends Block implements IAntimatterObject, I
             adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
             if (canConnect(world, adjState, mut)) ct[0] += 1 << s;
         }
-        return ct;
+        return ct[0] == 0 ? DEFAULT_CONFIG : ct;
     }
 
     public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {

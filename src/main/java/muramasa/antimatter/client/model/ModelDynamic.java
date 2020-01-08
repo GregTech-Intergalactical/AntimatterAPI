@@ -1,6 +1,7 @@
 package muramasa.antimatter.client.model;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.client.IDynamicModelBaker;
 import muramasa.antimatter.client.ModelBuilder;
 import muramasa.antimatter.client.baked.BakedDynamic;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -33,8 +34,8 @@ public class ModelDynamic extends ModelBase {
 
     protected Consumer<ModelDynamic> configConsumer = b -> {};
     protected BiFunction<Tuple<Integer, Texture[]>, ModelBuilder, ModelBuilder> configBuilder;
+    protected IDynamicModelBaker modelBaker = BakedDynamic::new;
 
-    protected boolean shouldBakeStatically;
     protected IBakedModel bakedModel;
 
     public ModelDynamic(Texture... textures) {
@@ -44,11 +45,6 @@ public class ModelDynamic extends ModelBase {
 
     public ModelDynamic(ITextureProvider provider) {
         this(provider.getTextures());
-    }
-
-    public ModelDynamic staticBaking() {
-        shouldBakeStatically = true;
-        return this;
     }
 
     public ModelDynamic add(int config, Texture... textures) {
@@ -81,6 +77,11 @@ public class ModelDynamic extends ModelBase {
         configConsumer.accept(this);
     }
 
+    public ModelDynamic onBake(IDynamicModelBaker baker) {
+        modelBaker = baker;
+        return this;
+    }
+
     @Nullable
     @Override
     public IBakedModel bakeModel(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
@@ -94,16 +95,12 @@ public class ModelDynamic extends ModelBase {
         });
         configs.clear();
         models.clear();
-        return new BakedDynamic(baked, baseBuilder.apply(new ModelBuilder()).bake(bakery, getter, sprite, format), particle);
+        return (bakedModel = modelBaker.get(baked, baseBuilder.apply(new ModelBuilder()).bake(bakery, getter, sprite, format), particle));
     }
 
     @Override
     public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) {
         onConfigConsume();
         return allTextures;
-    }
-
-    public int getModelCount() {
-        return baked.size();
     }
 }
