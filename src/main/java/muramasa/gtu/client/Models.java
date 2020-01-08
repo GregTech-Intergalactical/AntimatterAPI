@@ -3,6 +3,7 @@ package muramasa.gtu.client;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.pipe.BlockPipe;
 import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.baked.BakedDynamic;
 import muramasa.antimatter.client.model.ModelBase;
 import muramasa.antimatter.client.model.ModelDynamic;
 import muramasa.antimatter.pipe.PipeSize;
@@ -23,7 +24,7 @@ public class Models {
         AntimatterModelLoader.put(CASING_FUSION_2, new ModelDynamic(CASING_FUSION_2).config(m -> basic(m, FUSION_2_CT)));
         AntimatterModelLoader.put(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3).config(m -> basic(m, FUSION_3_CT)));
 
-        ModelDynamic modelPipe = new ModelDynamic().config(Models::pipe).staticBaking();
+        ModelDynamic modelPipe = new ModelDynamic().config(Models::pipe).onBake((l, d, p) -> new BakedDynamic(l, d, p).onlyNullSide());
         AntimatterAPI.all(BlockPipe.class).forEach(p -> AntimatterModelLoader.put(p, modelPipe));
     }
 

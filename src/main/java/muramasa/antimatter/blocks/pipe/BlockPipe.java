@@ -158,16 +158,16 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
     @Override
     public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int ct = 0;
-        boolean cull = false;
+        int cull = 0;
         BlockState adjState;
         for (int s = 0; s < 6; s++) {
             adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
             if (canConnect(world, adjState, mut)) {
                 ct += 1 << s;
-                cull = ((BlockPipe) adjState.getBlock()).getSize().ordinal() >= getSize().ordinal();
+                if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
             }
         }
-        return new int[]{getPipeID(ct, getSize(), getType(), cull ? 1 : 0)};
+        return new int[]{getPipeID(ct, getSize(), getType(), cull > 0 ? 0 : 1)};
     }
 
     @Override
