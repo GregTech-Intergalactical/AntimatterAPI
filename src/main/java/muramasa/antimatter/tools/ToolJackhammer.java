@@ -19,7 +19,7 @@ public class ToolJackhammer extends MaterialTool {
 
     @Override
     public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, PlayerEntity player, BlockPos origin) {
-        if (!player.isSneaking()) return Sets.newHashSet();
+        if (!player.isCrouching()) return Sets.newHashSet();
         RayTraceResult result = rayTrace(player.world, player, RayTraceContext.FluidMode.NONE);
 
         //TODO use player looking dir?

@@ -1,15 +1,15 @@
 package muramasa.antimatter.blocks;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.machines.types.Machine;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlock;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -24,7 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -103,12 +103,12 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = Utils.getTile(world, pos);
             if (type.hasFlag(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
-                return true;
+                return ActionResultType.SUCCESS;
             }
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
@@ -176,11 +176,6 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
 //            });
 //        }
 //    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
-    }
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {

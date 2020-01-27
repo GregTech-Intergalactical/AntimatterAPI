@@ -32,7 +32,7 @@ public class AntimatterCapabilities {
         CapabilityManager.INSTANCE.register(IEnergyHandler.class, new Capability.IStorage<IEnergyHandler>() {
             @Override
             public INBT writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side) {
-                return new LongNBT(instance.getPower());
+                return LongNBT.valueOf(instance.getPower());
             }
 
             @Override

@@ -2,11 +2,11 @@ package muramasa.antimatter.ore;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
-import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -14,7 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
@@ -58,11 +58,6 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
     @Override
     public boolean canHarvestBlock(BlockState state, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return true;
-    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
@@ -138,10 +133,13 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
 //    }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        if (player.isSneaking()) return false;
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        if (player.isCrouching()) return ActionResultType.FAIL;
         harvestBlock(world, player, pos, state, Utils.getTile(world, pos), player.getHeldItem(hand));
-        return super.removedByPlayer(state, world, pos, player, true, null);
+        if (super.removedByPlayer(state, world, pos, player, true, null)) {
+            return ActionResultType.SUCCESS;
+        }
+        return ActionResultType.FAIL;
     }
 
     /** TileEntity Drops End **/

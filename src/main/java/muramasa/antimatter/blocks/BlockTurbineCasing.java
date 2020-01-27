@@ -1,11 +1,11 @@
 package muramasa.antimatter.blocks;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.gtu.Ref;
 import muramasa.gtu.common.tileentities.multi.TileEntityLargeTurbine;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -14,11 +14,12 @@ public class BlockTurbineCasing extends BlockCasing {
 
     public BlockTurbineCasing(String id) {
         super(id);
+        AntimatterAPI.register(BlockTurbineCasing.class, this);
         //setDefaultModel(true);
     }
 
     @Override
-    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[6];
         TileEntity tile;
         for (int s = 0; s < 6; s++) {
@@ -123,9 +124,4 @@ public class BlockTurbineCasing extends BlockCasing {
 //        textures.addAll(Arrays.asList(LARGE_TURBINE));
 //        textures.addAll(Arrays.asList(LARGE_TURBINE_ACTIVE));
 //    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
-    }
 }

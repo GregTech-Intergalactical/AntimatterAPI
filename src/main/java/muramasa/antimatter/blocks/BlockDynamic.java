@@ -30,7 +30,7 @@ public abstract class BlockDynamic extends Block implements IAntimatterObject, I
     }
 
     /** Connection Logic **/
-    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[1];
         BlockState adjState;
         for (int s = 0; s < 6; s++) {
@@ -46,7 +46,7 @@ public abstract class BlockDynamic extends Block implements IAntimatterObject, I
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        info.add("Dynamic Config: " + Arrays.toString(getConfig(state, world, new BlockPos.MutableBlockPos(pos), pos)));
+        info.add("Dynamic Config: " + Arrays.toString(getConfig(state, world, new BlockPos.Mutable(pos), pos)));
         return info;
     }
 }

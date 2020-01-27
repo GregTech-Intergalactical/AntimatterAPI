@@ -3,16 +3,15 @@ package muramasa.antimatter.worldgen;
 import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.gtu.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.gtu.Ref;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 
 public class WorldGenHelper {
 
@@ -122,7 +121,9 @@ public class WorldGenHelper {
     }
 
     public static boolean canSetTree(World world, BlockPos pos) {
-        Biome biome = world.getBiome(pos);
-        return biome.getRegistryName() != null && TREE_BIOME_SET.contains(biome.getRegistryName().toString()) && TREE_SET.contains(world.getBlockState(pos));
+        //Biome biome = world.getBiome(pos);
+        //return biome.getRegistryName() != null && TREE_BIOME_SET.contains(biome.getRegistryName().toString()) && TREE_SET.contains(world.getBlockState(pos));
+        //TODO
+        return false;
     }
 }

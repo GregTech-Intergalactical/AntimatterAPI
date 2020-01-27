@@ -43,7 +43,7 @@ public class WorldGenOreSmall extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         //int count=0;
         int j = Math.max(1, amount / 2 + rand.nextInt(amount) / 2);
         for (int i = 0; i < j; i++) {

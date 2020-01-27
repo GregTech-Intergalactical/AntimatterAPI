@@ -118,7 +118,7 @@ public class WorldGenOreVein extends WorldGenBase {
     // Actual spawn rates will vary based upon the average height of the stone layers
     // in the dimension. For example veins that range above and below the average height
     // will be less, and veins that are completely above the average height will be much less.
-    public static void generate(World world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ, BlockPos.MutableBlockPos pos, BlockState state) {
+    public static void generate(World world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ, BlockPos.Mutable pos, BlockState state) {
         List<WorldGenOreVein> veins = AntimatterWorldGenerator.getVeins(world.getDimension().getType().getId());
         if (veins == null || veins.size() == 0) return;
 
@@ -199,7 +199,7 @@ public class WorldGenOreVein extends WorldGenBase {
         }
     }
 
-    public int generateChunkified(World world, XSTR rand, int chunkX, int chunkZ, int seedX, int seedZ, BlockPos.MutableBlockPos pos, BlockState state) {
+    public int generateChunkified(World world, XSTR rand, int chunkX, int chunkZ, int seedX, int seedZ, BlockPos.Mutable pos, BlockState state) {
         int[] placeCount = new int[4];
 
         int tMinY = minY + rand.nextInt(maxY - minY - 5);

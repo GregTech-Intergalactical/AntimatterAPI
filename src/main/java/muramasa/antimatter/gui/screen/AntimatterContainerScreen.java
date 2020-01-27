@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -25,7 +25,7 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     }
 
     public void drawTexture(ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderSystem.color4f(1, 1, 1, 1);
         Minecraft.getInstance().textureManager.bindTexture(loc);
         blit(left, top, x, y, sizeX, sizeY);
     }

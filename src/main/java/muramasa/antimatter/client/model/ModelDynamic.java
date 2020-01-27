@@ -1,5 +1,6 @@
 package muramasa.antimatter.client.model;
 
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.client.IDynamicModelBaker;
 import muramasa.antimatter.client.ModelBuilder;
@@ -7,17 +8,13 @@ import muramasa.antimatter.client.baked.BakedDynamic;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.gtu.Ref;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.texture.ISprite;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.client.model.IModelConfiguration;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -25,7 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 //TODO Support multi layer models
-public class ModelDynamic extends ModelBase {
+public class ModelDynamic extends AntimatterModel {
 
     protected Int2ObjectOpenHashMap<Texture[]> configs = new Int2ObjectOpenHashMap<>();
     protected Int2ObjectOpenHashMap<IUnbakedModel> models = new Int2ObjectOpenHashMap<>();
@@ -39,7 +36,7 @@ public class ModelDynamic extends ModelBase {
     protected IBakedModel bakedModel;
 
     public ModelDynamic(Texture... textures) {
-        super(textures);
+        add(textures);
         configBuilder = (t, b) -> b.simple().tex(Ref.DIRECTIONS, t.getB());
     }
 
@@ -49,7 +46,7 @@ public class ModelDynamic extends ModelBase {
 
     public ModelDynamic add(int config, Texture... textures) {
         configs.put(config, textures);
-        allTextures.addAll(Arrays.asList(textures));
+        add(textures);
         return this;
     }
 
@@ -63,11 +60,6 @@ public class ModelDynamic extends ModelBase {
         return this;
     }
 
-    public ModelDynamic add(ResourceLocation... textures) {
-        allTextures.addAll(Arrays.asList(textures));
-        return this;
-    }
-
     public ModelDynamic config(Consumer<ModelDynamic> configConsumer) {
         this.configConsumer = configConsumer;
         return this;
@@ -77,29 +69,29 @@ public class ModelDynamic extends ModelBase {
         configConsumer.accept(this);
     }
 
-    public ModelDynamic onBake(IDynamicModelBaker baker) {
+    public ModelDynamic bake(IDynamicModelBaker baker) {
         modelBaker = baker;
         return this;
     }
 
     @Nullable
     @Override
-    public IBakedModel bakeModel(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         if (bakedModel != null) return bakedModel;
-        configs.forEach((i, t) -> baked.put((int) i, configBuilder.apply(new Tuple<>(i, t), new ModelBuilder()).bake(bakery, getter, sprite, format)));
-        models.forEach((i, m) -> baked.put((int) i, m.bake(bakery, getter, sprite, format)));
+        configs.forEach((i, t) -> baked.put((int) i, configBuilder.apply(new Tuple<>(i, t), new ModelBuilder()).bake(owner, bakery, getter, transform, overrides, loc)));
+        models.forEach((i, m) -> baked.put((int) i, m.func_225613_a_(bakery, getter, transform, loc)));
         builders.forEach((i, b) -> {
             ModelBuilder builder = b.apply(new ModelBuilder());
             allTextures.addAll(builder.getTextures());
-            baked.put((int) i, builder.bake(bakery, getter, sprite, format));
+            baked.put((int) i, builder.bake(owner, bakery, getter, transform, overrides, loc));
         });
         configs.clear();
         models.clear();
-        return (bakedModel = modelBaker.get(baked, baseBuilder.apply(new ModelBuilder()).bake(bakery, getter, sprite, format), particle));
+        return (bakedModel = modelBaker.get(baked, super.bake(owner, bakery, getter, transform, overrides, loc), particle));
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) {
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         onConfigConsume();
         return allTextures;
     }

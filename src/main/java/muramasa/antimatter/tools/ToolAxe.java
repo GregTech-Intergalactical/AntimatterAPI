@@ -24,7 +24,7 @@ public class ToolAxe extends MaterialTool {
 
     @Override
     public Set<BlockPos> getAOEBlocks(ItemStack stack, World world, PlayerEntity player, BlockPos origin) {
-        if (Configs.GAMEPLAY.AXE_TIMBER && player.isSneaking()) {
+        if (Configs.GAMEPLAY.AXE_TIMBER && player.isCrouching()) {
             Set<BlockPos> set = new HashSet<>();
             BlockPos tempPos;
             BlockState state;

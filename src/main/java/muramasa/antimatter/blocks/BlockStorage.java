@@ -11,7 +11,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -148,11 +147,6 @@ public class BlockStorage extends BlockBasic implements IItemBlock, IColorHandle
     @Override
     public PushReaction getPushReaction(BlockState state) {
         return type == MaterialType.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
-    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return type == MaterialType.BLOCK ? BlockRenderLayer.SOLID : BlockRenderLayer.CUTOUT_MIPPED;
     }
 
 //    @Override

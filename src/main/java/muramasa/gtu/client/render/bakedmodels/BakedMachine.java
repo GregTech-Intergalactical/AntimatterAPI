@@ -3,11 +3,7 @@ package muramasa.gtu.client.render.bakedmodels;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.client.baked.BakedBase;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
-import muramasa.antimatter.texture.TextureMode;
-import muramasa.antimatter.client.ModelUtils;
-import muramasa.antimatter.client.QuadLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -43,30 +39,30 @@ public class BakedMachine extends BakedBase {
         if (covers != null) {
             for (int s = 0; s < 6; s++) {
                 if (!covers[s].isEmpty()) {
-                    quads.addAll(covers[s].onRender(this, getCovers(covers[s], s, state, rand), s));
+                    //quads.addAll(covers[s].onRender(this, getCovers(covers[s], s, state, rand), s));
                 } else {
-                    quads.addAll(getOverlays(type, s, textureData.getOverlay(), state, rand));
+                    //quads.addAll(getOverlays(type, s, textureData.getOverlay(), state, rand));
                 }
             }
         } else {
             for (int s = 0; s < 6; s++) {
-                quads.addAll(getOverlays(type, s, textureData.getOverlay(), state, rand));
+                //quads.addAll(getOverlays(type, s, textureData.getOverlay(), state, rand));
             }
         }
 
-        ModelUtils.tex(quads, TextureMode.SINGLE, textureData.getBase(), QuadLayer.BASE); //Machine Base
-        ModelUtils.tex(quads, TextureMode.SINGLE, textureData.getBase(), QuadLayer.COVER_BASE); //Cover Base
+        //ModelUtils.tex(quads, TextureMode.SINGLE, textureData.getBase(), QuadLayer.BASE); //Machine Base
+        //ModelUtils.tex(quads, TextureMode.SINGLE, textureData.getBase(), QuadLayer.COVER_BASE); //Cover Base
 //        texOverlays(quads, data.getOverlayMode(), data.getOverlay());`
-        quads = ModelUtils.trans(quads, facing);
+        //quads = ModelUtils.trans(quads, facing);
 
         return quads;
     }
 
-    public List<BakedQuad> getOverlays(int t, int s, Texture[] data, BlockState state, Random rand) {
-        return OVERLAYS[t][s] != null ? ModelUtils.tex(OVERLAYS[t][s].getQuads(state, null, rand), QuadLayer.OVERLAY, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, rand);
-    }
-
-    public List<BakedQuad> getCovers(Cover cover, int s, BlockState state, Random rand) {
-        return ModelUtils.trans(COVERS.get(cover.getId()).getQuads(state, null, rand), s);
-    }
+//    public List<BakedQuad> getOverlays(int t, int s, Texture[] data, BlockState state, Random rand) {
+//        return OVERLAYS[t][s] != null ? ModelUtils.tex(OVERLAYS[t][s].getQuads(state, null, rand), QuadLayer.OVERLAY, data[s]) : OVERLAY_EMPTY[s].getQuads(state, null, rand);
+//    }
+//
+//    public List<BakedQuad> getCovers(Cover cover, int s, BlockState state, Random rand) {
+//        return ModelUtils.trans(COVERS.get(cover.getId()).getQuads(state, null, rand), s);
+//    }
 }

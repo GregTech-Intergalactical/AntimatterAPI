@@ -32,7 +32,7 @@ public class ClientEvents {
             e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
             e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ArrayList<>(), world, state, pos));
         }
-        if (MC.player.isSneaking()) {
+        if (MC.player.isCrouching()) {
             //TODO
             e.getLeft().add("");
             e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Client]");

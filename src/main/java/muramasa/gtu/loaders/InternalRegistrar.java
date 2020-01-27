@@ -55,8 +55,8 @@ public class InternalRegistrar implements IAntimatterRegistrar {
             case RECIPE:
                 //OreDictLoader.init();
                 //CraftingRecipeLoader.init();
-                MaterialRecipeLoader.init();
-                MachineRecipeLoader.init();
+                //MaterialRecipeLoader.init();
+                //MachineRecipeLoader.init();
                 break;
         }
     }

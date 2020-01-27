@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -70,13 +71,18 @@ public class BakedBase implements IDynamicBakedModel {
     }
 
     @Override
+    public boolean func_230044_c_() {
+        return true; //TODO huh?
+    }
+
+    @Override
     public boolean isBuiltInRenderer() {
         return false;
     }
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return getParticleTexture(ModelUtils.EMPTY_MODEL_DATA);
+        return getParticleTexture(EmptyModelData.INSTANCE);
     }
 
     @Override

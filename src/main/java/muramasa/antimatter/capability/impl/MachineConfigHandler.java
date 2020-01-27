@@ -21,7 +21,7 @@ public class MachineConfigHandler implements IConfigHandler {
         switch (type) {
             case WRENCH:
             case WRENCH_P:
-                if (player.isSneaking()) {
+                if (player.isCrouching()) {
                     return getTile().setFacing(side);
                 } else {
                     if (getTile().coverHandler.isPresent()) return getTile().coverHandler.get().setOutputFacing(side);

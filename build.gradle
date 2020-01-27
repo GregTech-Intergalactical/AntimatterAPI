@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.1.0'
+version = "${gtu_version}"
 group = 'muramasa.gtu' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'gtu'
 
@@ -25,7 +25,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: "${mcp_mappings}"
+    mappings channel: 'snapshot', version: "${mappings_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -83,14 +83,6 @@ minecraft {
                 }
             }
         }
-
-        intellijClient {
-            parent runs.client
-
-            ideaModule "${project.name}.main"
-
-            environment 'MOD_CLASSES', "${project.file("out/production/resources").canonicalPath};${project.file("out/production/classes").canonicalPath}"
-        }
     }
 }
 
@@ -107,13 +99,14 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-
     if (local_dev_dependancies.toBoolean()) {
         compile project(":tesseractapi")
+
+        //compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+        //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
     } else {
-        //TODO maven?
+        //compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+        //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
     }
 }
 
@@ -130,6 +123,14 @@ jar {
         ])
     }
 }
+
+//processResources {
+//    outputs.upToDateWhen { false }
+//    filesMatching('META-INF/mods.toml') {
+//        //Replace some keys from the mods.toml with values from the gradle.properties file
+//        expand "version": gtu_version, "mc_version": minecraft_version, "forge_version": min_forge_version, "loader_version": loader_version
+//    }
+//}
 
 // Example configuration to allow publishing using the maven-publish task
 // we define a custom artifact that is sourced from the reobfJar output task
