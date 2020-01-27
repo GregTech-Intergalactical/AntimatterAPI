@@ -1,14 +1,27 @@
 package muramasa.gtu.client;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.blocks.BlockMachine;
+import muramasa.antimatter.blocks.BlockStorage;
+import muramasa.antimatter.blocks.BlockTurbineCasing;
 import muramasa.antimatter.blocks.pipe.BlockPipe;
 import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.ModelBuilder;
 import muramasa.antimatter.client.baked.BakedDynamic;
-import muramasa.antimatter.client.model.ModelBase;
+import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.client.model.ModelDynamic;
+import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.texture.Texture;
+import muramasa.gtu.Ref;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
+
+import java.util.function.Function;
 
 import static muramasa.antimatter.blocks.pipe.BlockPipe.getPipeID;
 import static muramasa.gtu.common.Data.*;
@@ -18,13 +31,22 @@ import static net.minecraft.util.Direction.*;
 public class Models {
 
     public static void init() {
-        AntimatterModelLoader.put(COIL_NICHROME, new ModelBase(b -> b.simple().tex("all", "mc:block/bedrock").tex("up", "mc:block/diamond_block")));
+        ModelLoader.addSpecialModel(new ResourceLocation(Ref.MODID, "block/preset/simple"));
+        ModelLoader.addSpecialModel(new ResourceLocation(Ref.MODID, "block/preset/layered"));
 
-        AntimatterModelLoader.put(CASING_FUSION_1, new ModelDynamic(CASING_FUSION_1).config(m -> basic(m, FUSION_1_CT)));
-        AntimatterModelLoader.put(CASING_FUSION_2, new ModelDynamic(CASING_FUSION_2).config(m -> basic(m, FUSION_2_CT)));
-        AntimatterModelLoader.put(CASING_FUSION_3, new ModelDynamic(CASING_FUSION_3).config(m -> basic(m, FUSION_3_CT)));
+        AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutoutMipped()));
+        AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutoutMipped()));
+        AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutoutMipped()));
 
-        ModelDynamic modelPipe = new ModelDynamic().config(Models::pipe).onBake((l, d, p) -> new BakedDynamic(l, d, p).onlyNullSide());
+        AntimatterAPI.all(BlockTurbineCasing.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutoutMipped()));
+
+        AntimatterModelLoader.put(COIL_NICHROME, b -> new AntimatterModel(b.tex("all", "mc:block/bedrock").tex("up", "mc:block/diamond_block")));
+
+        AntimatterModelLoader.put(CASING_FUSION_1, $ -> new ModelDynamic(CASING_FUSION_1).config(m -> basic(m, FUSION_1_CT)));
+        AntimatterModelLoader.put(CASING_FUSION_2, $ -> new ModelDynamic(CASING_FUSION_2).config(m -> basic(m, FUSION_2_CT)));
+        AntimatterModelLoader.put(CASING_FUSION_3, $ -> new ModelDynamic(CASING_FUSION_3).config(m -> basic(m, FUSION_3_CT)));
+
+        Function<ModelBuilder, AntimatterModel> modelPipe = $ -> new ModelDynamic().config(Models::pipe).bake((l, d, p) -> new BakedDynamic(l, d, p).onlyNullSide());
         AntimatterAPI.all(BlockPipe.class).forEach(p -> AntimatterModelLoader.put(p, modelPipe));
     }
 
@@ -201,7 +223,7 @@ public class Models {
                     //All Shapes (6 Connections)
                     model.add(getPipeID(63, s, t, c), b -> b.of(s.getLoc("all", cc)).tex("0", t.getSide()).tex("1", t.getFace(s)));
                 }
-            }   
+            }
         }
     }
 }

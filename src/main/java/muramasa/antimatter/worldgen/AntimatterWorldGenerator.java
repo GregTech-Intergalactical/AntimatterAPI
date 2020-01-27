@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.BufferedWriter;
@@ -29,7 +28,7 @@ import java.util.Random;
  * Written in 1.7 by moronwmachinegun and mitchej123, adapted by Muramasa
  * **/
 @Mod.EventBusSubscriber
-public class AntimatterWorldGenerator implements IWorldGenerator {
+public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 
     private static HashMap<String, HashMap<String, WorldGenBase>> REGISTRY = new HashMap<>();
     private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
@@ -147,11 +146,11 @@ public class AntimatterWorldGenerator implements IWorldGenerator {
         return STONE.get(dimension);
     }
 
-    @Override
+    /*@Override*/
     public void generate(Random random, int chunkX, int chunkZ, World world, ChunkGenerator generator, AbstractChunkProvider provider) {
         try {
             XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
-            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+            BlockPos.Mutable pos = new BlockPos.Mutable();
             List<WorldGenBase> worldGenObjects = BASE.get(world.getDimension().getType().getId());
             if (worldGenObjects != null && worldGenObjects.size() > 0) {
                 worldGenObjects.forEach(o -> o.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider));

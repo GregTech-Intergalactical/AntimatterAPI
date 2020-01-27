@@ -7,6 +7,7 @@ import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
+import muramasa.gtu.Ref;
 import muramasa.gtu.client.Models;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -37,6 +39,9 @@ public class ClientHandler implements IProxyHandler {
     public static void init() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+
+        Models.init();
+        ModelLoaderRegistry.registerLoader(new ResourceLocation(Ref.MODID, "all"), new AntimatterModelLoader());
 
         //TODO crashes during runData?
         //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
@@ -63,8 +68,6 @@ public class ClientHandler implements IProxyHandler {
 //                GTI_RESOURCES.getPack().addModel(Ref.MODID, "item", b.getId(), itemBuilder);
 //            });
 //        });
-
-        Models.init();
     }
 
     public static void setup(FMLClientSetupEvent e) {
@@ -72,7 +75,6 @@ public class ClientHandler implements IProxyHandler {
         //MinecraftForge.EVENT_BUS.register(RenderGameOverlayHandler.class);
         //MinecraftForge.EVENT_BUS.register(TooltipHandler.class);
         //ModelLoaderRegistry.registerLoader(new GTModelLoader());
-        ModelLoaderRegistry.registerLoader(new AntimatterModelLoader());
     }
 
     @SubscribeEvent

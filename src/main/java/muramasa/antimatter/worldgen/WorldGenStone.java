@@ -59,7 +59,7 @@ public class WorldGenStone extends WorldGenBase {
     }
 
     @Override
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.MutableBlockPos pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         // I think the real size of the balls is mSize/8, but the original code was difficult to understand.
         // Overall there will be less GT stones since they aren't spheres any more. /16 since this code uses it as a radius.
         int realSize = size / 16;

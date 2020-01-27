@@ -1,16 +1,16 @@
 package muramasa.antimatter.items;
 
 import com.google.common.collect.ImmutableSet;
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.gtu.data.Materials;
 import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.gtu.Ref;
+import muramasa.gtu.data.Materials;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -60,7 +60,7 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
-        Material mat = getPrimary(stack);
+        //Material mat = getPrimary(stack);
         return new StringTextComponent("im broken TODO");
         //TODO fixme
         //return (mat != null ? new TranslationTextComponent("") : mat.getDisplayName()).appendText(" ").appendSibling(type.getDisplayName());
@@ -332,8 +332,10 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
     }
 
     public int getRGB(ItemStack stack, int i) {
-        Material mat = i == 0 ? getPrimary(stack) : getSecondary(stack);
-        return mat != null ? mat.getRGB() : 0xffffff;
+        //TODO broken
+        //Material mat = i == 0 ? getPrimary(stack) : getSecondary(stack);
+        //return mat != null ? mat.getRGB() : 0xffffff;
+        return -1;
     }
 
     /** NBT Section **/
@@ -358,7 +360,9 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
     }
 
     public int getDurability(ItemStack stack) {
-        return getTag(stack).getInt(Ref.KEY_TOOL_DATA_DURABILITY);
+        //TODO broken
+        //return getTag(stack).getInt(Ref.KEY_TOOL_DATA_DURABILITY);
+        return 1;
     }
 
     public int getMaxDurability(ItemStack stack) {

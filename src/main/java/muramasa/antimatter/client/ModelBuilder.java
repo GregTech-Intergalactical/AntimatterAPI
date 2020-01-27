@@ -1,59 +1,64 @@
 package muramasa.antimatter.client;
 
-import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.client.baked.QuadContainer;
+import com.mojang.datafixers.util.Either;
 import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.texture.ISprite;
+import net.minecraft.client.renderer.TransformationMatrix;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.IModelConfiguration;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.SimpleModelTransform;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
 public class ModelBuilder {
 
-    private IModel model;
-    private Set<ResourceLocation> textures = new HashSet<>();
+    private IUnbakedModel model;
+    private Set<Material> textures = new HashSet<>();
     private Direction[] rotations = new Direction[0];
 
     public ModelBuilder() {
 
     }
 
-    public ModelBuilder(IModel model) {
+    public ModelBuilder(IUnbakedModel model) {
         this.model = model;
     }
 
-    public IModel get() {
+    public IUnbakedModel get() {
         return model;
     }
 
-    public Set<ResourceLocation> getTextures() {
+    public Set<Material> getTextures() {
         return textures;
     }
 
-    public ModelBuilder of(ResourceLocation loc) {
-        try {
-            return new ModelBuilder(ModelLoaderRegistry.getModel(loc));
-        } catch (Exception e) {
-            System.err.println("ModelBase.load() failed due to " + e + ":");
-            e.printStackTrace();
-            return new ModelBuilder(ModelLoaderRegistry.getMissingModel());
-        }
+    public ModelBuilder of(IUnbakedModel model) {
+        this.model = model;
+        return this;
     }
 
     public ModelBuilder of(String path) {
         return of(new ResourceLocation(Ref.MODID, path));
+    }
+
+    public ModelBuilder of(ResourceLocation loc) {
+        assert ModelLoader.instance() != null;
+        IUnbakedModel unbaked = ModelLoader.instance().getModelOrMissing(loc);
+        if (unbaked instanceof BlockModel) {
+            BlockModel toCopy = ((BlockModel) unbaked);
+            HashMap<String, Either<Material, String>> textures = new HashMap<>();
+            toCopy.textures.forEach(textures::put);
+            model = new BlockModel(toCopy.getParentLocation(), toCopy.getElements(), textures, toCopy.ambientOcclusion, toCopy.func_230176_c_(), toCopy.getAllTransforms(), toCopy.getOverrides());
+            return this;
+        }
+        return new ModelBuilder(ModelLoader.instance().getModelOrMissing(ModelBakery.MODEL_MISSING));
     }
 
     public ModelBuilder simple() {
@@ -90,15 +95,11 @@ public class ModelBuilder {
     }
 
     public ModelBuilder tex(String element, ResourceLocation texture) {
-        try {
-            model = model.retexture(ImmutableMap.of(element, texture.toString()));
-            textures.add(texture);
-            return this;
-        } catch (Exception e) {
-            System.err.println("ModelContainer.tex() failed due to " + e + ":");
-            e.printStackTrace();
-            return this;
+        if (model instanceof BlockModel) {
+            ((BlockModel) model).textures.put(element, Either.left(ModelUtils.getBlockMaterial(texture)));
         }
+        textures.add(ModelUtils.getBlockMaterial(texture));
+        return this;
     }
 
     public ModelBuilder rot(Direction... rotations) {
@@ -106,7 +107,7 @@ public class ModelBuilder {
         return this;
     }
 
-    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> getter, ISprite sprite, VertexFormat format) {
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         if (rotations.length > 0) {
 //            Matrix4f mat = new Matrix4f(ModelUtils.FACING_TO_MATRIX[directions[0].getIndex()]);
 //            for (int i = 1; i < directions.length; i++) {
@@ -125,12 +126,19 @@ public class ModelBuilder {
 //                }
 //            }, format);
 
-            //TODO find a better solution
-            List<BakedQuad> originalQuads = model.bake(bakery, getter, sprite, format).getQuads(null, null, Ref.RNG, ModelUtils.EMPTY_MODEL_DATA);
-            List<BakedQuad> transformedQuads = ModelUtils.trans(originalQuads, rotations);
-            return new QuadContainer(transformedQuads);
+//            //TODO find a better solution
+//            List<BakedQuad> originalQuads = model.bake(owner, bakery, getter, transform, overrides, loc).getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE);
+//            List<BakedQuad> transformedQuads = ModelUtils.trans(originalQuads, rotations);
+//            return new QuadContainer(transformedQuads);
+
+            TransformationMatrix rotatedTrans = TransformationMatrix.func_227983_a_(); //Identity;
+            rotatedTrans = rotatedTrans.blockCenterToCorner();
+            for (int i = 0; i < rotations.length; i++) {
+                rotatedTrans = rotatedTrans.compose(new TransformationMatrix(ModelUtils.FACING_TO_MATRIX[rotations[i].getIndex()]));
+            }
+            return model.func_225613_a_(bakery, getter, new SimpleModelTransform(rotatedTrans), loc);
 
         }
-        return model.bake(bakery, getter, sprite, format);
+        return model.func_225613_a_(bakery, getter, transform, loc);
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
@@ -99,11 +98,6 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //    public boolean canSilkHarvest(World world, BlockPos pos, BlockState state, EntityPlayer player) {
 //        return false;
 //    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
-    }
 
     //    @Override
 //    public boolean shouldSideBeRendered(BlockState state, IBlockReader world, BlockPos pos, Direction side) {

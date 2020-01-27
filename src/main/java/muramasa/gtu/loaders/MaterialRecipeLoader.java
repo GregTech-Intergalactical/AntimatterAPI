@@ -31,7 +31,7 @@ public class MaterialRecipeLoader {
     //TODO: When we do have MaterialInfo or a MaterialType 'amount' system, some of this would need to adapt to it!
     //TODO: Plasma Arc/Normal Arc smelting will be handled differently, when we have said amount system.    
     
-    public static void init() {       
+    public static void init() {
         //ELEMENTAL.all().forEach();
 //            ItemStack aDataOrb = ItemType.Tool_DataO.RB(1);
 //            Behaviour_DataOrb.setDataTitle(aDataOrb, "Elemental-Scan");

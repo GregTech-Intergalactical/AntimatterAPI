@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
@@ -26,7 +26,7 @@ public class BakedDynamic extends BakedBase {
     private IBakedModel defaultModel;
     private boolean hasConfig, onlyNullSide;
 
-    private BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+    private BlockPos.Mutable mutablePos = new BlockPos.Mutable();
     private IModelData configData = new ModelDataMap.Builder().withInitial(AntimatterProperties.DYNAMIC_CONFIG, new int[0]).build();
 
     public BakedDynamic(Int2ObjectOpenHashMap<IBakedModel> bakedLookup, IBakedModel defaultModel, ResourceLocation particle) {
@@ -43,7 +43,7 @@ public class BakedDynamic extends BakedBase {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
         if (!hasConfig || !(state.getBlock() instanceof BlockDynamic)) return data;
         mutablePos.setPos(pos);
         configData.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));

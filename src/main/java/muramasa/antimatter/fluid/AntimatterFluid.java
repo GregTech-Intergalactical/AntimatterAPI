@@ -4,7 +4,6 @@ import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialTag;
 import muramasa.antimatter.materials.MaterialType;
 import net.minecraft.fluid.EmptyFluid;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidAttributes;
 
@@ -36,10 +35,10 @@ public class AntimatterFluid extends EmptyFluid {
         }
     }
 
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
-    }
+//    @Override
+//    public BlockRenderLayer getRenderLayer() {
+//        return BlockRenderLayer.TRANSLUCENT;
+//    }
 
     public String getLocalizedName() {
         //TODO localize

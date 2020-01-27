@@ -156,7 +156,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
     }
 
     @Override
-    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.MutableBlockPos mut, BlockPos pos) {
+    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int ct = 0;
         int cull = 0;
         BlockState adjState;
@@ -187,7 +187,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        prov.simpleBlock(this, prov.getBuilder(this).parent(prov.getExistingFile(prov.modLoc("block/pipe/" + getSize().getId() + "/line_inv"))).texture("0", getType().getSide()).texture("1", getType().getFace(getSize())));
+        prov.simpleBlock(this, prov.getBuilder(this).parent(prov.models().getExistingFile(prov.modLoc("block/pipe/" + getSize().getId() + "/line_inv"))).texture("0", getType().getSide()).texture("1", getType().getFace(getSize())));
     }
 
     @Override

@@ -2,7 +2,6 @@ package muramasa.antimatter.datagen.resources;
 
 import net.minecraft.resources.IPackFinder;
 import net.minecraft.resources.ResourcePackInfo;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.util.Map;
 
@@ -26,7 +25,8 @@ public class DynamicPackFinder implements IPackFinder {
     public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packs, ResourcePackInfo.IFactory<T> factory) {
         final T packInfo = ResourcePackInfo.createResourcePack(packId, true, () -> pack, factory, ResourcePackInfo.Priority.TOP);
         if (packInfo != null) {
-            ObfuscationReflectionHelper.setPrivateValue(ResourcePackInfo.class, packInfo, hidden, 10);
+            //TODO
+            //ObfuscationReflectionHelper.setPrivateValue(ResourcePackInfo.class, packInfo, hidden, 10);
             packs.put(packId, packInfo);
         }
     }

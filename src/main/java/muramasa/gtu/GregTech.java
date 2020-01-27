@@ -100,7 +100,7 @@ public class GregTech {
         AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN);
         //GregTechWorldGenerator.init();
         //if (!Configs.WORLD.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
-        AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
+        //AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
 
     }
 

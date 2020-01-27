@@ -1,7 +1,6 @@
 package muramasa.antimatter.tools;
 
 import com.google.common.collect.Sets;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.items.MaterialTool;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.texture.Texture;
@@ -156,15 +155,19 @@ public enum AntimatterToolType {
     }
 
     public ItemStack get() {
-        return get(null, null);
+        return ItemStack.EMPTY;
+        //return get(null, null);
     }
 
     public ItemStack get(Material primary) {
-        return get(primary, primary.getHandleMaterial());
+        return ItemStack.EMPTY;
+        //return get(primary, primary.getHandleMaterial());
     }
 
     public ItemStack get(Material primary, Material secondary) {
-        return AntimatterAPI.get(MaterialTool.class, getName()).get(primary, secondary);
+        //TODO
+        //return AntimatterAPI.get(MaterialTool.class, getName()).get(primary, secondary);
+        return ItemStack.EMPTY;
     }
 
     public Texture[] getTextures() {

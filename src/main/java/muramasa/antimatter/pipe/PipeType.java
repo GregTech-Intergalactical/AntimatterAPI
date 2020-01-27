@@ -20,7 +20,7 @@ public class PipeType implements IAntimatterObject {
     );
 
     public static final PipeType FLUID = new PipeType(
-        "fluid_pipe", 1,
+        "fluid_pipe", 0,
         //new Texture("block/pipe/wire_side"),
         new Texture("block/pipe/pipe_side"),
         new Texture[] {
@@ -34,7 +34,7 @@ public class PipeType implements IAntimatterObject {
     );
 
     public static final PipeType WIRE = new PipeType(
-        "cable", 2,
+        "cable", 1,
         new Texture("block/pipe/wire_side"),
         new Texture[] {
             new Texture("block/pipe/wire_side"),
@@ -47,7 +47,7 @@ public class PipeType implements IAntimatterObject {
     );
 
     public static final PipeType CABLE = new PipeType(
-        "cable", 3,
+        "cable", 2,
         new Texture("block/pipe/cable_side"),
         new Texture[] {
             new Texture("block/pipe/cable_vtiny"),

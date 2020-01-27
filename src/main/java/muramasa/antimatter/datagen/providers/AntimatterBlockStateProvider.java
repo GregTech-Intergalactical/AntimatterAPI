@@ -7,11 +7,12 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
 
-public class AntimatterBlockStateProvider extends PublicBlockStateProvider {
+public class AntimatterBlockStateProvider extends BlockStateProvider {
 
     public AntimatterBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
         super(gen, Ref.MODID, exFileHelper);
@@ -31,11 +32,11 @@ public class AntimatterBlockStateProvider extends PublicBlockStateProvider {
     }
 
     public BlockModelBuilder getBuilder(Block block) {
-        return getBuilder(block.getRegistryName().getPath());
+        return models().getBuilder(block.getRegistryName().getPath());
     }
 
     public BlockModelBuilder cubeAll(Block block, ResourceLocation texture) {
-        return super.cubeAll(block.getRegistryName().toString(), texture);
+        return models().cubeAll(block.getRegistryName().toString(), texture);
     }
 
     public void simpleState(Block block, ResourceLocation texture) {
@@ -55,10 +56,10 @@ public class AntimatterBlockStateProvider extends PublicBlockStateProvider {
     }
 
     public BlockModelBuilder getSimpleModel(Block block, ResourceLocation texture) {
-        return getBuilder(block).parent(getExistingFile(modLoc("block/preset/simple"))).texture("all", texture);
+        return getBuilder(block).parent(models().getExistingFile(modLoc("block/preset/simple"))).texture("all", texture);
     }
 
     public BlockModelBuilder getLayeredModel(Block block, ResourceLocation base, ResourceLocation overlay) {
-        return getBuilder(block).parent(getExistingFile(modLoc("block/preset/layered"))).texture("base", base).texture("overlay", overlay);
+        return getBuilder(block).parent(models().getExistingFile(modLoc("block/preset/layered"))).texture("base", base).texture("overlay", overlay);
     }
 }
