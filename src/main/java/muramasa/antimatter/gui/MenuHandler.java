@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
@@ -22,13 +21,9 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
     private ResourceLocation registryName;
     private ContainerType<T> containerType = null;
 
-    public MenuHandler(ResourceLocation loc) {
-        this.registryName = loc;
+    public MenuHandler(String namespace, String id) {
+        this.registryName = new ResourceLocation(namespace, id);
         AntimatterAPI.register(MenuHandler.class, this);
-    }
-
-    public MenuHandler(String name) {
-        this(new ResourceLocation(Ref.MODID, name));
     }
 
     @Override

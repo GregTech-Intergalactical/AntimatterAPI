@@ -9,9 +9,9 @@ import java.util.List;
 
 public abstract class CoverMaterial extends CoverTintable {
 
-    abstract MaterialType getType();
+    public abstract MaterialType getType();
 
-    abstract Material getMaterial();
+    public abstract Material getMaterial();
 
     @Override
     public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {

@@ -1,7 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -14,21 +14,29 @@ import javax.annotation.Nonnull;
 
 public class AntimatterBlockStateProvider extends BlockStateProvider {
 
-    public AntimatterBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
-        super(gen, Ref.MODID, exFileHelper);
+    protected String providerNamespace, providerName;
+
+    public AntimatterBlockStateProvider(String providerNamespace, String providerName, DataGenerator gen, ExistingFileHelper exFileHelper) {
+        super(gen, providerNamespace, exFileHelper);
+        this.providerNamespace = providerNamespace;
+        this.providerName = providerName;
     }
 
     @Nonnull
     @Override
     public String getName() {
-        return Ref.MODID + " BlockStates";
+        return providerName;
     }
 
     @Override
     protected void registerStatesAndModels() {
-        AntimatterAPI.all(Block.class).forEach(b -> {
-            if (b instanceof IModelProvider) ((IModelProvider) b).onBlockModelBuild(b, this);
-        });
+        processBlocks(providerNamespace);
+    }
+
+    public void processBlocks(String namespace) {
+        AntimatterAPI.all(Block.class)
+            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(namespace))
+            .forEach(b -> ((IModelProvider) b).onBlockModelBuild(b, this));
     }
 
     public BlockModelBuilder getBuilder(Block block) {
@@ -56,10 +64,14 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
     }
 
     public BlockModelBuilder getSimpleModel(Block block, ResourceLocation texture) {
-        return getBuilder(block).parent(models().getExistingFile(modLoc("block/preset/simple"))).texture("all", texture);
+        return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/simple"))).texture("all", texture);
     }
 
     public BlockModelBuilder getLayeredModel(Block block, ResourceLocation base, ResourceLocation overlay) {
-        return getBuilder(block).parent(models().getExistingFile(modLoc("block/preset/layered"))).texture("base", base).texture("overlay", overlay);
+        return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/layered"))).texture("base", base).texture("overlay", overlay);
+    }
+
+    public ResourceLocation loc(String namespace, String path) {
+        return new ResourceLocation(namespace, path);
     }
 }

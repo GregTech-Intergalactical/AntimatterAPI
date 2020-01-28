@@ -1,6 +1,6 @@
 package muramasa.antimatter.network;
 
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +19,7 @@ public class AntimatterNetwork {
 
     public AntimatterNetwork() {
         handler = NetworkRegistry.ChannelBuilder.
-            named(new ResourceLocation(Ref.MODID, MAIN_CHANNEL)).
+            named(new ResourceLocation(Ref.ID, MAIN_CHANNEL)).
             clientAcceptedVersions(PROTOCOL_VERSION::equals).
             serverAcceptedVersions(PROTOCOL_VERSION::equals).
             networkProtocolVersion(() -> PROTOCOL_VERSION).

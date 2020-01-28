@@ -1,7 +1,8 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.machines.MachineEvent;
@@ -23,15 +24,14 @@ public class CoverHandler implements ICoverHandler {
 
     //TODO
     protected Cover[] covers = new Cover[] {
-        AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone
+        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
     };
 
     public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
-        //TODO fix valid covers
         validCovers = new ArrayList<>();
-        validCovers.add(AntimatterAPI.CoverNone.getId());
-        for (Cover cover : AntimatterAPI.getRegisteredCovers()) {
+        validCovers.add(Data.COVER_NONE.getId());
+        for (Cover cover : covers) {
             validCovers.add(cover.getId());
         }
     }
@@ -89,7 +89,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean isValid(Direction side, Cover existing, Cover replacement) {
-        return (existing.isEmpty() || replacement.isEqual(AntimatterAPI.CoverNone)) && validCovers.contains(replacement.getId());
+        return (existing.isEmpty() || replacement.isEqual(Data.COVER_NONE)) && validCovers.contains(replacement.getId());
     }
 
     @Override

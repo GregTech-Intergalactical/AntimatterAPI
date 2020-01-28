@@ -1,11 +1,10 @@
 package muramasa.antimatter.worldgen;
 
-import muramasa.gtu.Configs;
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Configs;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -41,7 +40,7 @@ public class WorldGenAsteroid extends WorldGenBase {
     @Override
     public WorldGenBase build() {
         END_STONE_STATE = Blocks.END_STONE.getDefaultState();
-        GRANITE_RED_STATE = AntimatterAPI.get(BlockStone.class, StoneType.GRANITE_RED.getId()).getDefaultState();
+        GRANITE_RED_STATE = AntimatterAPI.get(BlockStone.class, "granite_red").getDefaultState();
         return this;
     }
 

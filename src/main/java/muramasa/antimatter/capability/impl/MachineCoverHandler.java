@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.gtu.Ref;
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.tools.AntimatterToolType;
@@ -15,10 +15,9 @@ public class MachineCoverHandler extends RotatableCoverHandler {
     protected int outputSide = 3;
 
     public MachineCoverHandler(TileEntityMachine tile) {
-        //TODO add valid covers to Machine class
-        super(tile, AntimatterAPI.CoverPlate, AntimatterAPI.CoverOutput);
+        super(tile, tile.getValidCovers());
         covers = new Cover[] {
-            AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone, AntimatterAPI.CoverOutput, AntimatterAPI.CoverNone, AntimatterAPI.CoverNone
+            Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_OUTPUT, Data.COVER_NONE, Data.COVER_NONE
         };
     }
 
@@ -27,8 +26,8 @@ public class MachineCoverHandler extends RotatableCoverHandler {
     }
 
     public boolean setOutputFacing(Direction side) {
-        if (set(side, AntimatterAPI.CoverOutput)) {
-            if (covers[outputSide].isEqual(AntimatterAPI.CoverOutput)) covers[outputSide] = AntimatterAPI.CoverNone;
+        if (set(side, Data.COVER_OUTPUT)) {
+            if (covers[outputSide].isEqual(Data.COVER_OUTPUT)) covers[outputSide] = Data.COVER_NONE;
             outputSide = Utils.rotateFacing(side, getTileFacing()).getIndex();
             return true;
         }
@@ -37,23 +36,23 @@ public class MachineCoverHandler extends RotatableCoverHandler {
 
     @Override
     public boolean set(Direction side, Cover cover) {
-        if (cover.isEqual(AntimatterAPI.CoverNone) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
-            super.set(side, AntimatterAPI.CoverNone);
-            return super.set(side, AntimatterAPI.CoverOutput);
+        if (cover.isEqual(Data.COVER_NONE) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
+            super.set(side, Data.COVER_NONE);
+            return super.set(side, Data.COVER_OUTPUT);
         }
         return super.set(side, cover);
     }
 
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
-        if (type == AntimatterToolType.CROWBAR && get(side).isEqual(AntimatterAPI.CoverOutput)) return false;
+        if (type == AntimatterToolType.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
     }
 
     @Override
     public boolean isValid(Direction side, Cover existing, Cover replacement) {
         if (!validCovers.contains(replacement.getId())) return false;
-        return (existing.isEqual(AntimatterAPI.CoverOutput) && !replacement.isEqual(AntimatterAPI.CoverNone)) || super.isValid(side, existing, replacement);
+        return (existing.isEqual(Data.COVER_OUTPUT) && !replacement.isEqual(Data.COVER_NONE)) || super.isValid(side, existing, replacement);
     }
 
     @Override

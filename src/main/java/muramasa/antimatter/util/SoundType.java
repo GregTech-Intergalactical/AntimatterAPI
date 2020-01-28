@@ -1,6 +1,6 @@
 package muramasa.antimatter.util;
 
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -16,8 +16,8 @@ public class SoundType {
 
     private static HashMap<Integer, SoundType> LOOKUP = new HashMap<>();
 
-    public static SoundType WRENCH = new SoundType(Ref.MODID, "wrench");
-    public static SoundType DRILL = new SoundType(Ref.MODID, "drill");
+    public static SoundType WRENCH = new SoundType(Ref.ID, "wrench");
+    public static SoundType DRILL = new SoundType(Ref.ID, "drill");
     public static SoundType BREAK = new SoundType("minecraft", "entity.item.break");
     public static SoundType PLACE_METAL = new SoundType("minecraft", "block.metal.place");
     public static SoundType BUCKET_EMPTY = new SoundType("minecraft", "item.bucket.empty");

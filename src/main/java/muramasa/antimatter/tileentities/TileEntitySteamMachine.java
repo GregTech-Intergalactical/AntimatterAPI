@@ -1,12 +1,13 @@
 package muramasa.antimatter.tileentities;
 
-import muramasa.gtu.data.Materials;
+import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraftforge.fluids.FluidStack;
 
+//TODO change to generic "FluidPoweredMachine" and pass FluidStack somehow
 public class TileEntitySteamMachine extends TileEntityRecipeMachine {
 
-    protected static FluidStack[] STEAM = new FluidStack[]{Materials.Steam.getGas(1)};
+    protected static FluidStack[] STEAM = new FluidStack[]{Material.get("steam").getGas(1)};
 
     @Override
     public void consumeInputs() {

@@ -1,6 +1,7 @@
 package muramasa.antimatter.blocks.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -9,7 +10,6 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlock;
-import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;

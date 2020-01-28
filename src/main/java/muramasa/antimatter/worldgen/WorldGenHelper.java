@@ -3,11 +3,11 @@ package muramasa.antimatter.worldgen;
 import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.gtu.Ref;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +32,6 @@ public class WorldGenHelper {
 
         for (StoneType stoneType : StoneType.getAllActive()) {
             BlockState state = stoneType.getBaseState();
-            if (state == StoneType.AIR) continue;
             STONE_MAP.put(state, stoneType);
             if (state.getBlock() == Blocks.STONE) {
                 //ROCK_MAP.put(state, ROCK_DEFAULT);
@@ -99,9 +98,9 @@ public class WorldGenHelper {
 
     public static boolean setOre(World world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
         if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
-            StoneType stone = STONE_MAP.get(world.getBlockState(pos));
-            if (stone == null) stone = StoneType.STONE;
-            setOreState(world, pos, stone, material, type);
+            StoneType stoneType = STONE_MAP.get(world.getBlockState(pos));
+            if (stoneType == null) return false;
+            setOreState(world, pos, stoneType, material, type);
             if (type == MaterialType.ORE && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
             return true;
         }

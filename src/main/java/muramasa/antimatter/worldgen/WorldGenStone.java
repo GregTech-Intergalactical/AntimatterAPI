@@ -73,7 +73,7 @@ public class WorldGenStone extends WorldGenBase {
                 if (CHECKED_SEEDS.contains(hash)) {
                     int x = chunkX * 16;
                     int z = chunkZ * 16;
-                    rand.setSeed(world.getSeed() ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL) + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + (block.getType() == StoneType.GRANITE_RED || block.getType() == StoneType.GRANITE_BLACK ? 32768 : 0));  //Don't judge me
+                    rand.setSeed(world.getSeed() ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | ((long) x & 0x000000000fffffffL) << 28 | (long) z & 0x000000000fffffffL) + Math.abs(0/*mBlockMeta*/) + Math.abs(size) + (block.getType().getId().equals("granite_red") || block.getType().getId().equals("granite_black") ? 32768 : 0));  //Don't judge me
                     for (int i = 0; i < amount; i++) { // Not sure why you would want more than one in a chunk! Left alone though.
                         // Locate the stoneseed XYZ. Original code would request an isAir at the seed location, causing a chunk generation request.
                         // To reduce potential worldgen cascade, we just always try to place a ball and use the check inside the for loop to prevent

@@ -1,11 +1,11 @@
 package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.util.int4;
-import muramasa.gtu.integration.jei.renderer.IInfoRenderer;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -57,10 +57,14 @@ public class GuiData {
 
     public ResourceLocation getTexture(Tier tier) {
         if (hasSlots(tier)) {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + id + "_" + tier.getId() + ".png");
+            return new ResourceLocation(Ref.ID, "textures/gui/machine/" + getId() + "_" + tier.getId() + ".png");
         } else {
-            return new ResourceLocation(Ref.MODID, "textures/gui/machine/" + id + ".png");
+            return new ResourceLocation(Ref.ID, "textures/gui/machine/" + getId() + ".png");
         }
+    }
+
+    public String getId() {
+        return id;
     }
 
     public int4 getArea() {

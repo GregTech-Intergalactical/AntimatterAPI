@@ -1,6 +1,7 @@
 package muramasa.antimatter.materials;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 
@@ -44,7 +45,7 @@ public class TextureSet implements IAntimatterObject {
 
     public Texture getTexture(MaterialType type, int layer) {
         //TODO return different numbered overlay based on current layer
-        return new Texture("material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/));
+        return new Texture(Ref.ID, "material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/));
     }
 
     public Texture[] getTextures(MaterialType type) {

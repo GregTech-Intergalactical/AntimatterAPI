@@ -1,8 +1,8 @@
 package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
-import muramasa.gtu.GregTech;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -268,7 +268,7 @@ public class Utils {
     @Nullable
     public static TileEntity getTileFromBuf(PacketBuffer buf) {
         return DistExecutor.runForDist(() -> () -> {
-            return GregTech.PROXY.getClientWorld().getTileEntity(buf.readBlockPos());
+            return Antimatter.PROXY.getClientWorld().getTileEntity(buf.readBlockPos());
         }, () -> () -> {
             throw new RuntimeException("Shouldn't be called on server!");
         });
@@ -534,12 +534,12 @@ public class Utils {
 
     public static void onInvalidData(String msg) {
         if (Ref.DATA_EXCEPTIONS) throw new IllegalStateException(msg);
-        GregTech.LOGGER.error(msg);
+        Antimatter.LOGGER.error(msg);
     }
 
     public static void printError(String msg) {
-        GregTech.LOGGER.error("====================================================");
-        GregTech.LOGGER.error(msg);
-        GregTech.LOGGER.error("====================================================");
+        Antimatter.LOGGER.error("====================================================");
+        Antimatter.LOGGER.error(msg);
+        Antimatter.LOGGER.error("====================================================");
     }
 }

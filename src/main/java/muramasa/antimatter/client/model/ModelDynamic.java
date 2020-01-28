@@ -2,12 +2,12 @@ package muramasa.antimatter.client.model;
 
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.IDynamicModelBaker;
 import muramasa.antimatter.client.ModelBuilder;
 import muramasa.antimatter.client.baked.BakedDynamic;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.gtu.Ref;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;

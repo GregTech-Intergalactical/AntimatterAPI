@@ -2,7 +2,6 @@ package muramasa.antimatter.structure;
 
 import com.google.common.collect.Lists;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.gtu.data.Structures;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
@@ -50,7 +49,7 @@ public class StructureResult {
     }
 
     public void addState(String elementId, BlockPos pos, BlockState state) {
-        if (!elementId.equals(Structures.X.elementId)) {
+        if (!elementId.equals(StructureElement.X.elementId)) {
             ArrayList<BlockState> existing = states.get(elementId);
             if (existing == null) states.put(elementId, Lists.newArrayList(state));
             else existing.add(state);

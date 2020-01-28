@@ -1,9 +1,9 @@
 package muramasa.antimatter.materials;
 
 import com.google.common.base.CaseFormat;
-import muramasa.gtu.Configs;
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.Configs;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;

@@ -1,21 +1,15 @@
 package muramasa.antimatter;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.cover.*;
+import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.gtu.Configs;
-import muramasa.gtu.GregTech;
-import muramasa.gtu.Ref;
-import muramasa.gtu.data.Guis;
-import muramasa.gtu.data.RecipeMaps;
-import muramasa.gtu.loaders.InternalRegistrar;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -34,24 +28,16 @@ import java.util.stream.Collectors;
 public final class AntimatterAPI {
 
     private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
-    private static final IAntimatterRegistrar INTERNAL_REGISTRAR = new InternalRegistrar();
+    private static final List<IAntimatterRegistrar> INTERNAL_REGISTRARS = new LinkedList<>();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
+
+    private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
 
     public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
 
-    static {
-        registerJEICategory(RecipeMaps.ORE_BYPRODUCTS, Guis.ORE_BYPRODUCTS);
-//        GregTechAPI.registerJEICategory(RecipeMaps.SMELTING, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(RecipeMaps.STEAM_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(RecipeMaps.GAS_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(RecipeMaps.COMBUSTION_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(RecipeMaps.NAQUADAH_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-        registerJEICategory(RecipeMaps.PLASMA_FUELS, Guis.MULTI_DISPLAY_COMPACT);
-    }
-
     private static void registerInternal(Class c, String id, Object o, boolean checkDuplicates) {
         OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
-        if (checkDuplicates && OBJECTS.get(c).containsKey(id)) GregTech.LOGGER.error("Object: " + id + " has already been registered! This is a error!");
+        if (checkDuplicates && OBJECTS.get(c).containsKey(id)) Antimatter.LOGGER.error("Object: " + id + " has already been registered! This is a error!");
         OBJECTS.get(c).put(id, o);
     }
 
@@ -63,6 +49,7 @@ public final class AntimatterAPI {
         registerInternal(c, id, o, true);
         if (o instanceof Item && !hasBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
         if (o instanceof Block && !hasBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
+        if (o instanceof Material) MATERIAL_HASH_LOOKUP.put(((Material) o).getHash(), (Material) o);
     }
 
     public static void register(Class c, IAntimatterObject o) {
@@ -71,6 +58,10 @@ public final class AntimatterAPI {
 
     public static void overrideRegistryObject(Class c, String id, Object o) {
         registerInternal(c, id, o, false);
+    }
+
+    public static void registerInternalRegistrar(IAntimatterRegistrar registrar) {
+        INTERNAL_REGISTRARS.add(registrar);
     }
 
     @Nullable
@@ -89,9 +80,19 @@ public final class AntimatterAPI {
         return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
+    public static Material getMaterial(String id) {
+        Material material = get(Material.class, id);
+        return material != null ? material : Data.NULL;
+    }
+
+    @Nullable
+    public static Material getMaterialById(int hash) {
+        return MATERIAL_HASH_LOOKUP.get(hash);
+    }
+
     /** Registrar Section **/
     public static void onRegistration(RegistrationEvent event) {
-        INTERNAL_REGISTRAR.onRegistrationEvent(event);
+        INTERNAL_REGISTRARS.forEach(r -> r.onRegistrationEvent(event));
         all(IAntimatterRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
     }
@@ -175,13 +176,6 @@ public final class AntimatterAPI {
     private final static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
     private final static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
 
-    /** IMPORTANT: These should only be used to compare instances. **/
-    public static final Cover CoverNone = new CoverNone();
-    public static final Cover CoverPlate = new CoverPlate();
-    public static final Cover CoverOutput = new CoverOutput();
-    public static final Cover CoverConveyor = new CoverConveyor(Tier.LV);
-    public static final Cover CoverPump = new CoverPump(Tier.LV);
-
     /**
      * Registers a cover behaviour. This must be done during preInit.
      * @param cover The behaviour instance to be attached.
@@ -239,7 +233,7 @@ public final class AntimatterAPI {
     /** Attempts to remove a cover at a given side **/
     public static boolean removeCover(PlayerEntity player, ICoverHandler coverHandler, Direction side) {
         ItemStack toDrop = coverHandler.get(side).getDroppedStack();
-        if (coverHandler.set(side, CoverNone)) {
+        if (coverHandler.set(side, Data.COVER_NONE)) {
             if (!player.isCreative()) player.dropItem(toDrop, false);
             return true;
         }

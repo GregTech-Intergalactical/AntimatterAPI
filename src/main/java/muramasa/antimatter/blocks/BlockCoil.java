@@ -12,24 +12,29 @@ import javax.annotation.Nullable;
 
 public class BlockCoil extends BlockBasic {
 
-    private String id;
-    private int heatCapacity;
+    protected String namespace, id;
+    protected int heatCapacity;
 
-    public BlockCoil(String id, int heatCapacity, Block.Properties properties) {
-        super(properties, new Texture("block/coil/" + id));
-        this.id = id;
+    public BlockCoil(String namespace, String id, int heatCapacity, Block.Properties properties) {
+        super(properties, new Texture(namespace, "block/coil/" + id));
+        this.namespace = namespace;
+        this.id = "coil_" + id;
         this.heatCapacity = heatCapacity;
-        setRegistryName(getId());
+        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(BlockCoil.class, this);
     }
 
-    public BlockCoil(String id, int heatCapacity) {
-        this(id, heatCapacity, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+    public BlockCoil(String namespace, String id, int heatCapacity) {
+        this(namespace, id, heatCapacity, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
     }
 
     @Override
     public String getId() {
-        return "coil_" + id;
+        return id;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     public int getHeatCapacity() {

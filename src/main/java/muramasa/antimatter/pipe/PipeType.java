@@ -1,6 +1,7 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 
@@ -8,54 +9,54 @@ public class PipeType implements IAntimatterObject {
 
     public static final PipeType ITEM = new PipeType(
         "item_pipe", 0,
-        new Texture("block/pipe/pipe_side"),
+        new Texture(Ref.ID, "block/pipe/pipe_side"),
         new Texture[] {
-            new Texture("block/pipe/pipe_vtiny"),
-            new Texture("block/pipe/pipe_tiny"),
-            new Texture("block/pipe/pipe_small"),
-            new Texture("block/pipe/pipe_normal"),
-            new Texture("block/pipe/pipe_large"),
-            new Texture("block/pipe/pipe_huge")
+            new Texture(Ref.ID, "block/pipe/pipe_vtiny"),
+            new Texture(Ref.ID, "block/pipe/pipe_tiny"),
+            new Texture(Ref.ID, "block/pipe/pipe_small"),
+            new Texture(Ref.ID, "block/pipe/pipe_normal"),
+            new Texture(Ref.ID, "block/pipe/pipe_large"),
+            new Texture(Ref.ID, "block/pipe/pipe_huge")
         }
     );
 
     public static final PipeType FLUID = new PipeType(
         "fluid_pipe", 0,
         //new Texture("block/pipe/wire_side"),
-        new Texture("block/pipe/pipe_side"),
+        new Texture(Ref.ID, "block/pipe/pipe_side"),
         new Texture[] {
-            new Texture("block/pipe/pipe_vtiny"),
-            new Texture("block/pipe/pipe_tiny"),
-            new Texture("block/pipe/pipe_small"),
-            new Texture("block/pipe/pipe_normal"),
-            new Texture("block/pipe/pipe_large"),
-            new Texture("block/pipe/pipe_huge")
+            new Texture(Ref.ID, "block/pipe/pipe_vtiny"),
+            new Texture(Ref.ID, "block/pipe/pipe_tiny"),
+            new Texture(Ref.ID, "block/pipe/pipe_small"),
+            new Texture(Ref.ID, "block/pipe/pipe_normal"),
+            new Texture(Ref.ID, "block/pipe/pipe_large"),
+            new Texture(Ref.ID, "block/pipe/pipe_huge")
         }
     );
 
     public static final PipeType WIRE = new PipeType(
         "cable", 1,
-        new Texture("block/pipe/wire_side"),
+        new Texture(Ref.ID, "block/pipe/wire_side"),
         new Texture[] {
-            new Texture("block/pipe/wire_side"),
-            new Texture("block/pipe/wire_side"),
-            new Texture("block/pipe/wire_side"),
-            new Texture("block/pipe/wire_side"),
-            new Texture("block/pipe/wire_side"),
-            new Texture("block/pipe/wire_side")
+            new Texture(Ref.ID, "block/pipe/wire_side"),
+            new Texture(Ref.ID, "block/pipe/wire_side"),
+            new Texture(Ref.ID, "block/pipe/wire_side"),
+            new Texture(Ref.ID, "block/pipe/wire_side"),
+            new Texture(Ref.ID, "block/pipe/wire_side"),
+            new Texture(Ref.ID, "block/pipe/wire_side")
         }
     );
 
     public static final PipeType CABLE = new PipeType(
         "cable", 2,
-        new Texture("block/pipe/cable_side"),
+        new Texture(Ref.ID, "block/pipe/cable_side"),
         new Texture[] {
-            new Texture("block/pipe/cable_vtiny"),
-            new Texture("block/pipe/cable_tiny"),
-            new Texture("block/pipe/cable_small"),
-            new Texture("block/pipe/cable_normal"),
-            new Texture("block/pipe/cable_large"),
-            new Texture("block/pipe/cable_huge")
+            new Texture(Ref.ID, "block/pipe/cable_vtiny"),
+            new Texture(Ref.ID, "block/pipe/cable_tiny"),
+            new Texture(Ref.ID, "block/pipe/cable_small"),
+            new Texture(Ref.ID, "block/pipe/cable_normal"),
+            new Texture(Ref.ID, "block/pipe/cable_large"),
+            new Texture(Ref.ID, "block/pipe/cable_huge")
         }
     );
 

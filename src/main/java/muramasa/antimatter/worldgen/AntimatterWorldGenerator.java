@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.Configs;
-import muramasa.gtu.GregTech;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.Configs;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -82,7 +82,7 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 
     public static void reload() {
         try {
-            GregTech.LOGGER.info("AntimatterWorldGenerator: Started data rebuild!");
+            Antimatter.LOGGER.info("AntimatterWorldGenerator: Started data rebuild!");
             //Clear compiled maps
             LAYER.clear(); SMALL.clear(); STONE.clear();
 
@@ -127,7 +127,7 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
             REGISTRY.get("base").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
                 BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
             }));
-            GregTech.LOGGER.info("AntimatterWorldGenerator: Finished data rebuild!");
+            Antimatter.LOGGER.info("AntimatterWorldGenerator: Finished data rebuild!");
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while reloading");

@@ -1,6 +1,6 @@
 package muramasa.antimatter.registration;
 
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.AntimatterItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
