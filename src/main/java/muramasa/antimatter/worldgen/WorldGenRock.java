@@ -2,7 +2,7 @@ package muramasa.antimatter.worldgen;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
-import muramasa.gtu.data.Materials;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.block.BlockState;
@@ -41,7 +41,7 @@ public class WorldGenRock extends WorldGenBase {
         for (int i = 0; i < j; i++) {
             pos.setPos(passedX + 8 + rand.nextInt(16), 0, passedZ + 8 + rand.nextInt(16));
             pos.setY(world.getHeight(Heightmap.Type.WORLD_SURFACE, pos).getY());
-            WorldGenHelper.setRock(world, pos, Materials.NULL);
+            WorldGenHelper.setRock(world, pos, Data.NULL);
         }
         return true;
     }

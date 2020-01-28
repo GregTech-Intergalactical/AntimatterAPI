@@ -12,11 +12,11 @@ issueTrackerURL="http://my.issue.tracker/" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
-modId="gtu" #mandatory
+modId="antimatter" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
+version="0.0.1" #mandatory
  # A display name for the mod
-displayName="GregTech Intergalactical" #mandatory
+displayName="Antimatter API" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -28,9 +28,9 @@ credits="GregoriusTechneticies for his work on GregTech" #optional
 # A text field displayed in the mod UI
 authors="Muramasa" #optional
 # The description text for the mod (multi line!) (#mandatory)
-description='''The approved continuation of GregTech 5 Unoficial'''
+description='''The foundation for GregTech'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.gtu]] #optional
+[[dependencies.antimatter]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -42,7 +42,7 @@ description='''The approved continuation of GregTech 5 Unoficial'''
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.gtu]]
+[[dependencies.antimatter]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.15.2]"

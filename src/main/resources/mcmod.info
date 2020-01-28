@@ -1,8 +1,8 @@
 [
 {
-  "modid": "gtu",
-  "name": "GregTech",
-  "description": "A continuation of GregTech 5 Unofficial",
+  "modid": "antimatter",
+  "name": "AntimatterAPI",
+  "description": "The foundation for GregTech",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

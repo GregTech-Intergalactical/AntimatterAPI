@@ -25,14 +25,17 @@ public class BlockStorage extends BlockBasic implements IItemBlock, IColorHandle
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
-    private Material material;
-    private MaterialType type;
+    protected String namespace, id;
+    protected Material material;
+    protected MaterialType type;
     
-    public BlockStorage(Material material, MaterialType type) {
+    public BlockStorage(String namespace, Material material, MaterialType type) {
         super(Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(type));
         this.material = material;
         this.type = type;
-        setRegistryName(getId());
+        this.namespace = namespace;
+        this.id = "storage_" + getMaterial().getId() + "_" + getType().getId();
+        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(BlockStorage.class, this);
     }
 
@@ -46,7 +49,11 @@ public class BlockStorage extends BlockBasic implements IItemBlock, IColorHandle
 
     @Override
     public String getId() {
-        return "storage_" + material.getId() + "_" + type.getId();
+        return id;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     @Override

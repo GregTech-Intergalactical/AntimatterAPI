@@ -1,10 +1,9 @@
 package muramasa.antimatter.materials;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.gtu.data.Materials;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
@@ -65,8 +64,7 @@ public class Material implements IAntimatterObject {
         this.hash = id.hashCode();
         this.rgb = rgb;
         this.set = set;
-        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
-        Materials.HASH_LOOKUP.put(hash, this);
+        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = handleMaterial = this;
         AntimatterAPI.register(Material.class, this);
     }
 
@@ -176,6 +174,7 @@ public class Material implements IAntimatterObject {
         return this;
     }
 
+    //TODO handle material now must be set manually to wood, since Antimatter may not have Wood
     public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) {
             add(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
@@ -185,7 +184,6 @@ public class Material implements IAntimatterObject {
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
-        this.handleMaterial = Materials.Wood;
         this.toolEnchantment = ImmutableMap.of();
         return this;
     }
@@ -598,9 +596,9 @@ public class Material implements IAntimatterObject {
         return Utils.ca(amount, MaterialItem.get(ROCK, this, amount));
     }
 
-    public ItemStack getOre(int amount) {
+    public ItemStack getOre(int amount, StoneType type) {
         if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return BlockOre.get(this, ORE, StoneType.STONE, amount);
+        return BlockOre.get(this, ORE, type, amount);
     }
 
     public ItemStack getBlock(int amount) {
@@ -626,5 +624,13 @@ public class Material implements IAntimatterObject {
     public FluidStack getPlasma(int amount) {
         if (plasma == null) throw new NullPointerException(getId() + ": Plasma is null");
         return new FluidStack(getPlasma(), amount);
+    }
+
+    public static Material get(String id) {
+        return AntimatterAPI.getMaterial(id);
+    }
+
+    public static Material get(int hash) {
+        return AntimatterAPI.getMaterialById(hash);
     }
 }

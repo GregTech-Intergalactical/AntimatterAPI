@@ -1,6 +1,7 @@
 package muramasa.antimatter.machines;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.text.TextFormatting;
@@ -17,34 +18,35 @@ public class Tier implements IAntimatterObject {
     private static int lastInternalId = 0;
 
     /** Electricity Tiers **/
-    public static Tier ULV = new Tier("ulv", 8, TextFormatting.WHITE); //Tier 1
-    public static Tier LV = new Tier("lv", 32, TextFormatting.WHITE); //Tier 2
-    public static Tier MV = new Tier("mv", 128, TextFormatting.WHITE); //Tier 3
-    public static Tier HV = new Tier("hv", 512, TextFormatting.YELLOW); //Tier 4
-    public static Tier EV = new Tier("ev", 2048, TextFormatting.AQUA); //Tier 5
-    public static Tier IV = new Tier("iv", 8192, TextFormatting.LIGHT_PURPLE); //Tier 6
-    public static Tier LUV = new Tier("luv", 32768, TextFormatting.LIGHT_PURPLE); //Tier 7
-    public static Tier ZPM = new Tier("zpm", 131072, TextFormatting.LIGHT_PURPLE); //Tier 8
-    public static Tier UV = new Tier("uv", 524288, TextFormatting.LIGHT_PURPLE); //Tier 9
-    public static Tier MAX = new Tier("max", 2147483647, TextFormatting.LIGHT_PURPLE); //Tier 15
+    public static Tier ULV = new Tier(Ref.ID, "ulv", 8, TextFormatting.WHITE); //Tier 1
+    public static Tier LV = new Tier(Ref.ID, "lv", 32, TextFormatting.WHITE); //Tier 2
+    public static Tier MV = new Tier(Ref.ID, "mv", 128, TextFormatting.WHITE); //Tier 3
+    public static Tier HV = new Tier(Ref.ID, "hv", 512, TextFormatting.YELLOW); //Tier 4
+    public static Tier EV = new Tier(Ref.ID, "ev", 2048, TextFormatting.AQUA); //Tier 5
+    public static Tier IV = new Tier(Ref.ID, "iv", 8192, TextFormatting.LIGHT_PURPLE); //Tier 6
+    public static Tier LUV = new Tier(Ref.ID, "luv", 32768, TextFormatting.LIGHT_PURPLE); //Tier 7
+    public static Tier ZPM = new Tier(Ref.ID, "zpm", 131072, TextFormatting.LIGHT_PURPLE); //Tier 8
+    public static Tier UV = new Tier(Ref.ID, "uv", 524288, TextFormatting.LIGHT_PURPLE); //Tier 9
+    public static Tier MAX = new Tier(Ref.ID, "max", 2147483647, TextFormatting.LIGHT_PURPLE); //Tier 15
 
     /** Special Tiers **/
     //TODO make these Tier 0 and 1?
-    public static Tier BRONZE = new Tier("bronze", 0, TextFormatting.WHITE);
-    public static Tier STEEL = new Tier("steel", 0, TextFormatting.WHITE);
+    public static Tier BRONZE = new Tier(Ref.ID, "bronze", 0, TextFormatting.WHITE);
+    public static Tier STEEL = new Tier(Ref.ID, "steel", 0, TextFormatting.WHITE);
 
     private int internalId;
-    private String id;
+    private String namespace, id;
     private long voltage;
     private TextFormatting rarityColor;
     private Texture baseTexture;
 
-    public Tier(String id, long voltage, TextFormatting rarityColor) {
+    public Tier(String namespace, String id, long voltage, TextFormatting rarityColor) {
         internalId = lastInternalId++;
+        this.namespace = namespace;
         this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
-        this.baseTexture = new Texture("block/machine/base/" + id);
+        this.baseTexture = new Texture(namespace, "block/machine/base/" + id);
         TIER_NAME_LOOKUP.put(id, this);
         TIER_ID_LOOKUP.put(internalId, this);
     }
@@ -87,8 +89,8 @@ public class Tier implements IAntimatterObject {
     }
 
     @Nullable
-    public static Tier get(String name) {
-        return TIER_NAME_LOOKUP.get(name);
+    public static Tier get(String id) {
+        return TIER_NAME_LOOKUP.get(id);
     }
 
     @Nullable

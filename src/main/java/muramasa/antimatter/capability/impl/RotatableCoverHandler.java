@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;

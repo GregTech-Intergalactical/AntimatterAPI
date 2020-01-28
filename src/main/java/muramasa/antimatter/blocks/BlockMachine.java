@@ -1,6 +1,7 @@
 package muramasa.antimatter.blocks;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.machines.types.Machine;
@@ -9,7 +10,6 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlock;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import muramasa.gtu.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -44,14 +44,16 @@ import static muramasa.antimatter.machines.MachineFlag.BASIC;
 
 public class BlockMachine extends Block implements IAntimatterObject, IItemBlock, IColorHandler {
 
+    protected String id;
     protected Machine type;
     protected Tier tier;
 
     public BlockMachine(Machine type, Tier tier) {
         super(Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+        this.id = type.getId() + "_" + tier.getId();
         this.type = type;
         this.tier = tier;
-        setRegistryName(getId());
+        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(BlockMachine.class, this);
     }
 
@@ -65,7 +67,11 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
 
     @Override
     public String getId() {
-        return type.getId() + "_" + tier.getId();
+        return id;
+    }
+
+    public String getNamespace() {
+        return getType().getNamespace();
     }
 
     @Override
@@ -83,7 +89,7 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return type.getTileType().create();
+        return getType().getTileType().create();
     }
 
 //    @Nullable
@@ -106,7 +112,7 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = Utils.getTile(world, pos);
-            if (type.hasFlag(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
+            if (getType().hasFlag(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                 return ActionResultType.SUCCESS;
             }
@@ -179,7 +185,7 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
-        return type.getDisplayName(tier);
+        return getType().getDisplayName(getTier());
     }
 
     @Override
@@ -189,9 +195,9 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
 
     @Override
     public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        if (type.hasFlag(BASIC)) {
-            tooltip.add(new TranslationTextComponent("machine.voltage.in").appendText(TextFormatting.GREEN + "" + tier.getVoltage() + " (" + tier.getId().toUpperCase() + ")"));
-            tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(TextFormatting.BLUE + "" + (tier.getVoltage() * 64)));
+        if (getType().hasFlag(BASIC)) {
+            tooltip.add(new TranslationTextComponent("machine.voltage.in").appendText(TextFormatting.GREEN + "" + getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")"));
+            tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(TextFormatting.BLUE + "" + (getTier().getVoltage() * 64)));
         }
     }
 

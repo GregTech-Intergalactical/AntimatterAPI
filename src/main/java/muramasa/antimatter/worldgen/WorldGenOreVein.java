@@ -3,8 +3,7 @@ package muramasa.antimatter.worldgen;
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import muramasa.gtu.Configs;
-import muramasa.gtu.data.Materials;
+import muramasa.antimatter.Configs;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.util.Utils;
@@ -68,7 +67,7 @@ public class WorldGenOreVein extends WorldGenBase {
     public WorldGenBase build() {
         super.build();
 
-        materials = new Material[] {Materials.get(primary), Materials.get(secondary), Materials.get(between), Materials.get(sporadic)};
+        materials = new Material[] {Material.get(primary), Material.get(secondary), Material.get(between), Material.get(sporadic)};
         if (materials[0] == null || !materials[0].has(MaterialType.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " material either doesn't exist or doesn't have the ORE tag");
         if (materials[0] == null || !materials[0].has(MaterialType.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " material either doesn't exist or doesn't have the ORE tag");
         if (materials[0] == null || !materials[0].has(MaterialType.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE tag");

@@ -1,7 +1,7 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.Sets;
-import muramasa.gtu.Configs;
+import muramasa.antimatter.Configs;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;

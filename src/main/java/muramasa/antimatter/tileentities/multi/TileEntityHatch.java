@@ -1,12 +1,12 @@
 package muramasa.antimatter.tileentities.multi;
 
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.impl.HatchComponentHandler;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
-import muramasa.gtu.data.Machines;
 import muramasa.antimatter.machines.ContentEvent;
 import muramasa.antimatter.machines.Tier;
+import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tileentities.TileEntityMachine;
@@ -59,7 +59,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Override
     public TextureData getTextureData() {
         TextureData data = super.getTextureData();
-        if (textureOverride > -1) data.base(Machines.get(textureOverride / 1000).getBaseTexture(Tier.get(textureOverride % 1000)));
+        if (textureOverride > -1) data.base(Machine.get(textureOverride / 1000).getBaseTexture(Tier.get(textureOverride % 1000)));
         return data;
     }
 

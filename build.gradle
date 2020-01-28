@@ -13,11 +13,24 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${gtu_version}"
-group = 'muramasa.gtu' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'gtu'
+version = "${antimatter_version}"
+group = 'muramasa.antimatter' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'antimatter'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            include '**/**'
+            srcDirs += 'src/generated/resources' //Add the generated main module resources
+            exclude '.cache' //But exclude the cache of the generated data from what gets built
+        }
+    }
+}
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -43,8 +56,9 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                gtu {
+                antimatter {
                     source sourceSets.main
+//                    source sourceSets.generated
                 }
             }
         }
@@ -59,7 +73,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                gtu {
+                antimatter {
                     source sourceSets.main
                 }
             }
@@ -74,21 +88,17 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'gtu', '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"',
+            args '--mod', 'antimatter', '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"',
                     '--existing', '"' + sourceSets.main.resources.srcDirs[0] + '"'
 
             mods {
-                gtu {
+                antimatter {
                     source sourceSets.main
                 }
             }
         }
     }
 }
-
-//sourceSets.main.resources {
-//    srcDir "src/generated/resources"
-//}
 
 repositories {
     maven { // JEI
@@ -113,7 +123,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "gtu",
+            "Specification-Title": "antimatter",
             "Specification-Vendor": "examplemodsareus",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,
@@ -128,7 +138,7 @@ jar {
 //    outputs.upToDateWhen { false }
 //    filesMatching('META-INF/mods.toml') {
 //        //Replace some keys from the mods.toml with values from the gradle.properties file
-//        expand "version": gtu_version, "mc_version": minecraft_version, "forge_version": min_forge_version, "loader_version": loader_version
+//        expand "version": antimatter_version, "mc_version": minecraft_version, "forge_version": min_forge_version, "loader_version": loader_version
 //    }
 //}
 

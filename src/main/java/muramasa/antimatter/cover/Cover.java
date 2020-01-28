@@ -1,7 +1,7 @@
 package muramasa.antimatter.cover;
 
-import muramasa.gtu.Ref;
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.machines.MachineEvent;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tileentities.TileEntityMachine;
@@ -64,20 +64,21 @@ public abstract class Cover {
     }
 
     public boolean isEmpty() {
-        return getId().equals(AntimatterAPI.CoverNone.getId());
+        return getId().equals(Data.COVER_NONE.getId());
     }
 
     public Texture[] getTextures() {
         return new Texture[] {
-            new Texture("block/machine/cover/" + getId())
+            new Texture(Ref.ID, "block/machine/cover/" + getId())
         };
     }
 
     public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine/cover/" + getId());
+        return new ModelResourceLocation(Ref.ID + ":machine/cover/" + getId());
     }
 
+    //The default cover model
     public static ModelResourceLocation getBasicModel() {
-        return new ModelResourceLocation(Ref.MODID + ":machine/cover/basic");
+        return new ModelResourceLocation(Ref.ID + ":block/cover/basic");
     }
 }

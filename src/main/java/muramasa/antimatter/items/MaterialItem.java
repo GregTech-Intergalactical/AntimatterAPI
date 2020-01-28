@@ -1,11 +1,11 @@
 package muramasa.antimatter.items;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
@@ -31,14 +31,17 @@ import java.util.List;
 
 public class MaterialItem extends Item implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    private Material material;
-    private MaterialType type;
+    protected String namespace, id;
+    protected Material material;
+    protected MaterialType type;
 
-    public MaterialItem(MaterialType type, Material material) {
+    public MaterialItem(String namespace, MaterialType type, Material material) {
         super(new Properties().group(Ref.TAB_MATERIALS));
         this.material = material;
         this.type = type;
-        setRegistryName(getId());
+        this.namespace = namespace;
+        this.id = getType().getId() + "_" + getMaterial().getId();
+        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(MaterialItem.class, this);
     }
 
@@ -52,7 +55,11 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     @Override
     public String getId() {
-        return type.getId() + "_" + material.getId();
+        return id;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     @Override

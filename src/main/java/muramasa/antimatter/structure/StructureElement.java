@@ -5,6 +5,9 @@ import muramasa.antimatter.util.int3;
 
 public class StructureElement {
 
+    public static StructureElement X = new StructureElement("x").exclude(); //Used to skip positions for non-cubic structures
+    public static BlockStateElement AIR = new BlockStateElement("air", (r, p, s) -> s.isAir(r, p)); //Air check
+
     protected String elementId = "";
     protected boolean exclude;
 

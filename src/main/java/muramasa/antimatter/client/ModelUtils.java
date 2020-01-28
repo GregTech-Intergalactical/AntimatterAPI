@@ -1,5 +1,6 @@
 package muramasa.antimatter.client;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -18,7 +19,8 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
-    public static final Texture ERROR = new Texture("block/machine/overlay/invalid/front");
+    public static final Texture ERROR = new Texture(Ref.ID, "other/error");
+
     private static TextureAtlasSprite ERROR_SPRITE = null;
 
     private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;

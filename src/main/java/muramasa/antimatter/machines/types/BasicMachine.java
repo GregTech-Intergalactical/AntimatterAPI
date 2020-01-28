@@ -1,6 +1,6 @@
 package muramasa.antimatter.machines.types;
 
-import muramasa.gtu.data.Guis;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.tileentities.TileEntityRecipeMachine;
 
@@ -10,13 +10,13 @@ import static muramasa.antimatter.machines.MachineFlag.*;
 
 public class BasicMachine extends Machine {
 
-    public BasicMachine(String name, Supplier<? extends TileEntityMachine> tile, Object... data) {
-        super(name, tile, data);
+    public BasicMachine(String namespace, String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
+        super(namespace, id, tile, data);
         addFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
-        setGUI(Guis.BASIC_MENU_HANDLER);
+        setGUI(Data.BASIC_MENU_HANDLER);
     }
 
-    public BasicMachine(String name, Object... data) {
-        this(name, TileEntityRecipeMachine::new, data);
+    public BasicMachine(String namespace, String name, Object... data) {
+        this(namespace, name, TileEntityRecipeMachine::new, data);
     }
 }

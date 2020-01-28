@@ -1,10 +1,9 @@
 package muramasa.antimatter.tileentities.multi;
 
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerConfigHandler;
-import muramasa.gtu.data.Machines;
 import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.MachineState;
@@ -165,7 +164,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public ItemStack[] getStoredItems() {
         if (!hasFlag(MachineFlag.ITEM)) return new ItemStack[0];
         ArrayList<ItemStack> all = new ArrayList<>();
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
+        for (IComponentHandler hatch : getComponents("hatch_item_input")) {
             hatch.getItemHandler().ifPresent(h -> Utils.mergeItems(all, h.getInputList()));
         }
         System.out.println(all.toString());
@@ -176,7 +175,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public FluidStack[] getStoredFluids() {
         if (!hasFlag(MachineFlag.FLUID)) return new FluidStack[0];
         ArrayList<FluidStack> all = new ArrayList<>();
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
+        for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             hatch.getFluidHandler().ifPresent(h -> Utils.mergeFluids(all, h.getInputList()));
         }
         System.out.println(all.toString());
@@ -186,7 +185,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Returns the total energy stored across all energy hatches **/
     public long getStoredEnergy() {
         long total = 0;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ENERGY)) {
+        for (IComponentHandler hatch : getComponents("hatch_energy")) {
             if (hatch.getEnergyHandler().isPresent()) total += hatch.getEnergyHandler().get().getEnergyStored();
         }
         return total;
@@ -195,7 +194,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Consumes inputs from all input hatches. Assumes Utils.doItemsMatchAndSizeValid has been used **/
     public void consumeItems(ItemStack[] items) {
         if (items == null) return;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_I)) {
+        for (IComponentHandler hatch : getComponents("hatch_item_input")) {
             if (hatch.getItemHandler().isPresent()) {
                 items = hatch.getItemHandler().get().consumeAndReturnInputs(items.clone());
                 if (items.length == 0) break;
@@ -207,7 +206,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
     public void consumeFluids(FluidStack[] fluids) {
         if (fluids == null) return;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_I)) {
+        for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             if (hatch.getFluidHandler().isPresent()) {
                 fluids = hatch.getFluidHandler().get().consumeAndReturnInputs(fluids);
                 if (fluids.length == 0) break;
@@ -219,7 +218,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Consumes energy from all energy hatches. Assumes enough energy is present in hatches **/
     public void consumeEnergy(long energy) {
         if (energy <= 0) return;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ENERGY)) {
+        for (IComponentHandler hatch : getComponents("hatch_energy")) {
             if (hatch.getEnergyHandler().isPresent()) {
                 energy -= hatch.getEnergyHandler().get().extract(energy, false);
                 if (energy == 0) break;
@@ -230,7 +229,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
+        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getItemHandler().isPresent()) {
                 items = hatch.getItemHandler().get().exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
                 if (items.length == 0) break;
@@ -242,7 +241,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     /** Export fluids to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputFluids(FluidStack[] fluids) {
         if (fluids == null) return;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
+        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getFluidHandler().isPresent()) {
                 fluids = hatch.getFluidHandler().get().exportAndReturnOutputs(fluids.clone());
                 if (fluids.length == 0) break;
@@ -255,7 +254,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public boolean canItemsFit(ItemStack[] items) {
         if (items == null) return true;
         int matchCount = 0;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_ITEM_O)) {
+        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getItemHandler().isPresent()) {
                 matchCount += hatch.getItemHandler().get().getSpaceForOutputs(items);
             }
@@ -267,7 +266,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     public boolean canFluidsFit(FluidStack[] fluids) {
         if (fluids == null) return true;
         int matchCount = 0;
-        for (IComponentHandler hatch : getComponents(Machines.HATCH_FLUID_O)) {
+        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getFluidHandler().isPresent()) {
                 matchCount += hatch.getFluidHandler().get().getSpaceForOutputs(fluids);
             }
@@ -277,7 +276,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public long getMaxInputVoltage() {
-        List<IComponentHandler> hatches = getComponents(Machines.HATCH_ENERGY);
+        List<IComponentHandler> hatches = getComponents("hatch_energy");
         return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getMaxInsert() : Ref.V[0] : Ref.V[0];
     }
 

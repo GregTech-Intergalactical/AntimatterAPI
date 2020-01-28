@@ -1,15 +1,17 @@
 package muramasa.antimatter.tileentities;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockMachine;
 import muramasa.antimatter.capability.impl.*;
+import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machines.*;
 import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.texture.IBakedTile;
 import muramasa.antimatter.texture.TextureData;
-import muramasa.gtu.Ref;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -160,6 +162,10 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
             System.out.println("RENDER UPDATE");
         }
         machineState = newState;
+    }
+
+    public Cover[] getValidCovers() {
+        return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
     }
 
     @Override

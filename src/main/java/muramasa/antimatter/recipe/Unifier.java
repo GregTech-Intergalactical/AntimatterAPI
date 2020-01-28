@@ -1,8 +1,8 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.gtu.Configs;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Configs;
+import muramasa.antimatter.Ref;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 
@@ -16,7 +16,7 @@ public class Unifier {
     private static Object2ObjectOpenHashMap<Fluid, Fluid> FLUID_DICT = new Object2ObjectOpenHashMap<>();
 
     static {
-        if (Configs.RECIPE.MOD_PRIORITY.length == 0 || Configs.RECIPE.MOD_PRIORITY[0].equals(Ref.MODID)) {
+        if (Configs.RECIPE.MOD_PRIORITY.length == 0 || Configs.RECIPE.MOD_PRIORITY[0].equals(Ref.ID)) {
             Configs.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
         }
     }

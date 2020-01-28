@@ -1,6 +1,5 @@
 package muramasa.antimatter.example;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
@@ -10,13 +9,18 @@ import net.minecraft.item.Item;
 
 public class ExampleItem extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    private String id;
+    private String namespace, id;
 
-    public ExampleItem(String id, Item.Properties properties) {
+    public ExampleItem(String namespace, String id, Item.Properties properties) {
         super(properties);
+        this.namespace = namespace;
         this.id = id;
-        setRegistryName(Ref.MODID, getId());
+        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(ExampleItem.class, this);
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     @Override
@@ -26,6 +30,6 @@ public class ExampleItem extends Item implements IAntimatterObject, ITextureProv
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture("item/" + getId())};
+        return new Texture[]{new Texture(getNamespace(), "item/" + getId())};
     }
 }

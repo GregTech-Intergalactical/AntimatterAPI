@@ -2,6 +2,7 @@ package muramasa.antimatter.registration;
 
 public enum RegistrationEvent {
 
+    DATA_BUILD,
     INIT,
     GUI,
     BLOCK,

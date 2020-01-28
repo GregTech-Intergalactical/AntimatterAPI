@@ -2,11 +2,11 @@ package muramasa.antimatter.machines.types;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.blocks.BlockMachine;
-import muramasa.antimatter.gui.MenuHandler;
-import muramasa.gtu.data.Machines;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.MachineState;
 import muramasa.antimatter.machines.Tier;
@@ -34,6 +34,8 @@ import static muramasa.antimatter.machines.MachineFlag.RECIPE;
 
 public class Machine implements IAntimatterObject {
 
+    private static ArrayList<Machine> ID_LOOKUP = new ArrayList<>();
+
     /** Global Members **/
     private static int lastInternalId;
 
@@ -41,7 +43,7 @@ public class Machine implements IAntimatterObject {
     protected int internalId; //TODO needed?
     protected Object2ObjectOpenHashMap<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
     protected TileEntityType tileType;
-    protected String id;
+    protected String namespace, id;
     protected ArrayList<Tier> tiers = new ArrayList<>();
 
     /** Recipe Members **/
@@ -59,17 +61,24 @@ public class Machine implements IAntimatterObject {
 
     //TODO get valid covers
 
-    public Machine(String id, Object... data) {
-        this(id, TileEntityMachine::new, data);
-    }
-
-    public Machine(String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
+    public Machine(String namespace, String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
         internalId = lastInternalId++;
         addData(data);
+        this.namespace = namespace;
         this.id = id;
         tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
-        this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(Ref.MODID, id);
-        Machines.add(this);
+        this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(namespace, id);
+        register(this);
+    }
+
+    public Machine(String namespace, String id, Object... data) {
+        this(namespace, id, TileEntityMachine::new, data);
+    }
+
+    protected void register(Machine machine) {
+        AntimatterAPI.register(Machine.class, machine);
+        AntimatterAPI.register(TileEntityType.class, machine.getId(), machine.getTileType());
+        ID_LOOKUP.add(machine.getInternalId(), machine);
     }
 
     protected void addData(Object... data) {
@@ -96,6 +105,10 @@ public class Machine implements IAntimatterObject {
     @Override
     public String getId() {
         return id;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     public ITextComponent getDisplayName(Tier tier) {
@@ -128,17 +141,17 @@ public class Machine implements IAntimatterObject {
     public Texture[] getOverlayTextures(MachineState state) {
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
-            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
-            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
-            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
-            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
-            new Texture("block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
+            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
+            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
+            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
+            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
         };
     }
 
     public ModelResourceLocation getOverlayModel(TextureType side) {
-        return new ModelResourceLocation(Ref.MODID + ":machine/overlay/" + id + "/" + side.getId());
+        return new ModelResourceLocation(namespace + ":machine/overlay/" + id + "/" + side.getId());
     }
 
     public RecipeMap getRecipeMap() {
@@ -213,4 +226,35 @@ public class Machine implements IAntimatterObject {
     public static int getLastInternalId() {
         return lastInternalId;
     }
+
+    public static Machine get(String name) {
+        Machine machine = AntimatterAPI.get(Machine.class, name);
+        return machine != null ? machine : Data.MACHINE_INVALID;
+    }
+
+    public static Machine get(int id) {
+        Machine machine = ID_LOOKUP.get(id);
+        return machine != null ? machine : Data.MACHINE_INVALID;
+    }
+
+//    public static MachineStack get(Machine type, Tier tier) {
+//        return new MachineStack(type, tier);
+//    }
+
+    //TODO move to Antimatter
+    public static Collection<Machine> getTypes(MachineFlag... flags) {
+        ArrayList<Machine> types = new ArrayList<>();
+        for (MachineFlag flag : flags) {
+            types.addAll(flag.getTypes());
+        }
+        return types;
+    }
+
+//    public static Collection<MachineStack> getStacks(MachineFlag... flags) {
+//        ArrayList<MachineStack> stacks = new ArrayList<>();
+//        for (MachineFlag flag : flags) {
+//            stacks.addAll(flag.getStacks());
+//        }
+//        return stacks;
+//    }
 }

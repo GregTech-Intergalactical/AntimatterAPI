@@ -1,7 +1,7 @@
 package muramasa.antimatter.client;
 
 import com.mojang.datafixers.util.Either;
-import muramasa.gtu.Ref;
+import muramasa.antimatter.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
@@ -45,7 +45,7 @@ public class ModelBuilder {
     }
 
     public ModelBuilder of(String path) {
-        return of(new ResourceLocation(Ref.MODID, path));
+        return of(new ResourceLocation(Ref.ID, path));
     }
 
     public ModelBuilder of(ResourceLocation loc) {

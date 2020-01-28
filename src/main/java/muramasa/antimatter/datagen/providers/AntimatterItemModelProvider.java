@@ -1,6 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import muramasa.gtu.Ref;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -15,23 +14,31 @@ import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
 public class AntimatterItemModelProvider extends ItemModelProvider {
 
-    public AntimatterItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, Ref.MODID, existingFileHelper);
+    protected String providerNamespace, providerName;
+
+    public AntimatterItemModelProvider(String providerNamespace, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
+        super(generator, providerNamespace, exFileHelper);
+        this.providerNamespace = providerNamespace;
+        this.providerName = providerName;
     }
 
     @Override
     public String getName() {
-        return Ref.NAME + " Item Models";
+        return providerName;
     }
 
     @Override
     protected void registerModels() {
-        AntimatterAPI.all(Item.class).forEach(i -> {
-            if (i instanceof IModelProvider) ((IModelProvider) i).onItemModelBuild(i, this);
-        });
-        AntimatterAPI.all(Block.class).forEach(b -> {
-            if (b instanceof IModelProvider) ((IModelProvider) b).onItemModelBuild(b, this);
-        });
+        processItemModels(providerNamespace);
+    }
+
+    public void processItemModels(String namespace) {
+        AntimatterAPI.all(Item.class)
+            .stream().filter(i -> i instanceof IModelProvider && i.getRegistryName().getNamespace().equals(namespace))
+            .forEach(i -> ((IModelProvider) i).onItemModelBuild(i, this));
+        AntimatterAPI.all(Block.class)
+            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(namespace))
+            .forEach(b -> ((IModelProvider) b).onItemModelBuild(b, this));
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {

@@ -2,6 +2,7 @@ package muramasa.antimatter.items;
 
 import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
@@ -9,8 +10,6 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tools.AntimatterToolType;
-import muramasa.gtu.Ref;
-import muramasa.gtu.data.Materials;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -28,17 +27,21 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class MaterialTool extends SwordItem implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
+    protected String namespace, id;
     protected AntimatterToolType type;
 
-    public MaterialTool(AntimatterToolType type) {
+    public MaterialTool(String namespace, AntimatterToolType type) {
         super(ItemTier.WOOD, 1, 1.0f, new Item.Properties().group(Ref.TAB_ITEMS).maxStackSize(1));
         this.type = type;
-        setRegistryName(getId());
+        this.namespace = namespace;
+        this.id = getType().getName();
+        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(MaterialTool.class, this);
     }
 
@@ -48,7 +51,11 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 
     @Override
     public String getId() {
-        return type.getName();
+        return getType().getName();
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     @Override
@@ -341,12 +348,12 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
     /** NBT Section **/
     @Nullable
     public Material getPrimary(ItemStack stack) {
-        return Materials.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MAT));
+        return Material.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MAT));
     }
 
     @Nullable
     public Material getSecondary(ItemStack stack) {
-        return Materials.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MAT));
+        return Material.get(getTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MAT));
     }
 
     public int getPrimaryQuality(ItemStack stack) {
@@ -416,6 +423,15 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 
     @Override
     public Texture[] getTextures() {
-        return getType().getTextures();
+        List<Texture> textures = new ArrayList<>();
+        textures.add(new Texture(getNamespace(), "item/tool/" + getId()));
+        //TODO better solution for this
+        if (getType() == AntimatterToolType.SCREWDRIVER_P || getType() == AntimatterToolType.BUZZSAW) {
+            textures.add(new Texture(getNamespace(), "item/tool/overlay/" + getId() + "_1"));
+            textures.add(new Texture(getNamespace(), "item/tool/overlay/" + getId() + "_2"));
+        } else {
+            textures.add(new Texture(getNamespace(), "item/tool/overlay/" + getId()));
+        }
+        return textures.toArray(new Texture[0]);
     }
 }

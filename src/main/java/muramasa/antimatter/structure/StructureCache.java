@@ -1,7 +1,7 @@
 package muramasa.antimatter.structure;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.gtu.GregTech;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
@@ -40,14 +40,14 @@ public class StructureCache {
             LOOKUP.put(world.getDimension().getType().getId(), entry);
         }
         entry.add(pos, structure);
-        GregTech.LOGGER.info("Added Structure to Store!");
+        Antimatter.LOGGER.info("Added Structure to Store!");
     }
 
     public static void remove(IWorld world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
         if (entry == null) return;
         entry.remove(pos);
-        GregTech.LOGGER.info("Removed Structure to Store!");
+        Antimatter.LOGGER.info("Removed Structure to Store!");
     }
 
     private static void invalidateController(IWorld world, BlockPos pos) {

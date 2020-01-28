@@ -1,22 +1,26 @@
 package muramasa.antimatter.client.itemgroup;
 
-import muramasa.gtu.Ref;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 public class AntimatterItemGroup extends ItemGroup {
 
-    private String name;
-    private ItemStack icon;
+    private String namespace, id;
+    private ItemStack icon = ItemStack.EMPTY;
 
-    public AntimatterItemGroup(String name, ItemStack icon) {
-        super(Ref.MODID + "." + name);
-        this.name = name;
+    public AntimatterItemGroup(String namespace, String id, ItemStack icon) {
+        super(namespace + "." + id);
+        this.namespace = namespace;
+        this.id = id;
         this.icon = icon;
     }
 
-    public String getName() {
-        return name;
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
