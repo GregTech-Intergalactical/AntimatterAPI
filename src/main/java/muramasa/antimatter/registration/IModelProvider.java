@@ -9,9 +9,7 @@ import net.minecraftforge.common.extensions.IForgeBlock;
 public interface IModelProvider {
 
     default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        if (item instanceof IForgeBlock) {
-            prov.blockItem(item);
-        }
+        if (item instanceof IForgeBlock) prov.blockItem(item);
         else if (item instanceof ITextureProvider) prov.tex(item, ((ITextureProvider) item).getTextures());
     }
 
