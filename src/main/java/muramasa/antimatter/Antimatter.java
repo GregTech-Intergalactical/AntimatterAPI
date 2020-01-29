@@ -37,15 +37,13 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.List;
 
-@Mod(Antimatter.MOD_ID)
+@Mod(Ref.ID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class Antimatter implements IAntimatterRegistrar {
 
-    public static final String MOD_ID = "antimatter";
-
     public static Antimatter INSTANCE;
     public static AntimatterNetwork NETWORK = new AntimatterNetwork();
-    public static Logger LOGGER = LogManager.getLogger(MOD_ID);
+    public static Logger LOGGER = LogManager.getLogger(Ref.ID);
     public static IProxyHandler PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
 
     public Antimatter() {
