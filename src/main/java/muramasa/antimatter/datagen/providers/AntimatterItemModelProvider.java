@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -15,12 +16,16 @@ import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
 public class AntimatterItemModelProvider extends ItemModelProvider {
 
-    protected String providerNamespace, providerName;
+    protected String providerDomain, providerName;
 
-    public AntimatterItemModelProvider(String providerNamespace, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
-        super(generator, providerNamespace, exFileHelper);
-        this.providerNamespace = providerNamespace;
+    public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
+        super(generator, providerDomain, exFileHelper);
+        this.providerDomain = providerDomain;
         this.providerName = providerName;
+    }
+
+    public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
+        this(providerDomain, providerName, gen, new ExistingFileHelperOverride(domains).addDomains(providerDomain));
     }
 
     @Override
@@ -30,7 +35,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        processItemModels(providerNamespace);
+        processItemModels(providerDomain);
     }
 
     public void processItemModels(String domain) {

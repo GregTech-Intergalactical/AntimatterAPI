@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -15,12 +16,16 @@ import javax.annotation.Nonnull;
 
 public class AntimatterBlockStateProvider extends BlockStateProvider {
 
-    protected String providerNamespace, providerName;
+    protected String providerDomain, providerName;
 
-    public AntimatterBlockStateProvider(String providerNamespace, String providerName, DataGenerator gen, ExistingFileHelper exFileHelper) {
-        super(gen, providerNamespace, exFileHelper);
-        this.providerNamespace = providerNamespace;
+    public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, ExistingFileHelper exFileHelper) {
+        super(gen, providerDomain, exFileHelper);
+        this.providerDomain = providerDomain;
         this.providerName = providerName;
+    }
+
+    public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
+        this(providerDomain, providerName, gen, new ExistingFileHelperOverride(domains).addDomains(providerDomain));
     }
 
     @Nonnull
@@ -31,7 +36,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        processBlocks(providerNamespace);
+        processBlocks(providerDomain);
     }
 
     public void processBlocks(String domain) {

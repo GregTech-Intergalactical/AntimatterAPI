@@ -21,6 +21,15 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
         excludedDomains = new HashSet<>(Arrays.asList(domains));
     }
 
+    public ExistingFileHelperOverride addDomains(String... domains) {
+        excludedDomains.addAll(Arrays.asList(domains));
+        return this;
+    }
+
+    public Set<String> getExcludedDomains() {
+        return excludedDomains;
+    }
+
     @Override
     public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
         return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || super.exists(loc, type, pathSuffix, pathPrefix);
