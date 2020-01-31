@@ -21,6 +21,10 @@ public abstract class BlockBasic extends Block implements IAntimatterObject, ITe
         setRegistryName(domain, id);
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
     @Override
     public String getId() {
         return id;

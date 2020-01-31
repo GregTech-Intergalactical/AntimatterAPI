@@ -1,8 +1,9 @@
 package muramasa.antimatter.ore;
 
+import muramasa.antimatter.blocks.BlockBasic;
 import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -13,13 +14,13 @@ import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
 
-public abstract class BlockMaterialStone extends Block implements IAntimatterObject, IItemBlockProvider, IColorHandler, IModelProvider {
+public abstract class BlockMaterialStone extends BlockBasic implements IAntimatterObject, IItemBlockProvider, IColorHandler, IModelProvider {
 
-    private Material material;
-    private StoneType stoneType;
+    protected Material material;
+    protected StoneType stoneType;
 
-    public BlockMaterialStone(Material material, StoneType stoneType, Block.Properties properties) {
-        super(properties);
+    public BlockMaterialStone(String domain, String id, Material material, StoneType stoneType, Block.Properties properties) {
+        super(domain, id, properties);
         this.material = material;
         this.stoneType = stoneType;
     }
@@ -35,7 +36,8 @@ public abstract class BlockMaterialStone extends Block implements IAntimatterObj
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (world == null || pos == null || i != 1 || state.isAir(world, pos)) return -1;
-        return ((BlockMaterialStone) world.getBlockState(pos).getBlock()).getMaterial().getRGB();
+        //return ((BlockMaterialStone) world.getBlockState(pos).getBlock()).getMaterial().getRGB();
+        return 0xffffff;
     }
 
     @Override

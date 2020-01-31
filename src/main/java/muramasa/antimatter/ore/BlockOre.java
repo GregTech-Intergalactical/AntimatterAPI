@@ -16,15 +16,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     private MaterialType oreType;
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType) {
-        super(material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
+        super(domain, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId(), material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
         this.oreType = oreType;
-        setRegistryName(domain, getId());
         AntimatterAPI.register(BlockOre.class, this);
-    }
-
-    @Override
-    public String getId() {
-        return getMaterial().getId() + "_" + getOreType().getId() + "_" + getStoneType().getId();
     }
 
     @Override
@@ -121,6 +115,6 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType(), 0)};
+        return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getDomain(), getOreType(), 0)};
     }
 }

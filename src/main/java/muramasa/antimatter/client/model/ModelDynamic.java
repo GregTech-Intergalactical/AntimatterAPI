@@ -79,7 +79,7 @@ public class ModelDynamic extends AntimatterModel {
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         if (bakedModel != null) return bakedModel;
         configs.forEach((i, t) -> baked.put((int) i, configBuilder.apply(new Tuple<>(i, t), new ModelBuilder()).bake(owner, bakery, getter, transform, overrides, loc)));
-        models.forEach((i, m) -> baked.put((int) i, m.func_225613_a_(bakery, getter, transform, loc)));
+        models.forEach((i, m) -> baked.put((int) i, m.bakeModel(bakery, getter, transform, loc)));
         builders.forEach((i, b) -> {
             ModelBuilder builder = b.apply(new ModelBuilder());
             allTextures.addAll(builder.getTextures());

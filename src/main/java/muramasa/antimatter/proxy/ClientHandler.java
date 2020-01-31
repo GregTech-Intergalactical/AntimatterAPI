@@ -1,14 +1,20 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.blocks.BlockMachine;
+import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -21,7 +27,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ClientHandler implements IProxyHandler {
@@ -31,9 +36,12 @@ public class ClientHandler implements IProxyHandler {
 
     private static DynamicPackFinder ANTIMATTER_RESOURCES = new DynamicPackFinder("antimatter_resources", true);
 
+    public ClientHandler() {
+
+    }
+
     public static void init() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
-        AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+
 
         //TODO craches during data
         //ModelLoaderRegistry.registerLoader(new ResourceLocation(Ref.ID, "all"), new AntimatterModelLoader());
@@ -65,11 +73,12 @@ public class ClientHandler implements IProxyHandler {
 //        });
     }
 
+    @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        //MinecraftForge.EVENT_BUS.register(BlockHighlightHandler.class);
-        //MinecraftForge.EVENT_BUS.register(RenderGameOverlayHandler.class);
-        //MinecraftForge.EVENT_BUS.register(TooltipHandler.class);
-        //ModelLoaderRegistry.registerLoader(new GTModelLoader());
+        AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+        AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+        AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+        AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
     }
 
     @SubscribeEvent

@@ -2,7 +2,6 @@ package muramasa.antimatter.machines;
 
 import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
-import net.minecraft.item.ItemStack;
 
 public class MachineStack implements IAntimatterObject {
 
@@ -25,10 +24,5 @@ public class MachineStack implements IAntimatterObject {
     @Override
     public String getId() {
         return type.getId() + "_" + tier.getId();
-    }
-
-    @Override
-    public ItemStack asItemStack() {
-        return new ItemStack(type.getBlock(tier), 1);
     }
 }
