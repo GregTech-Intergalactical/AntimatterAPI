@@ -7,30 +7,18 @@ import net.minecraft.block.material.Material;
 
 public class BlockStone extends BlockBasic {
 
-    protected String namespace, id;
+    protected String id;
     protected StoneType type;
 
-    public BlockStone(String namespace, StoneType type) {
-        super(Block.Properties.create(Material.ROCK).sound(type.getSoundType()), type.getTexture());
+    public BlockStone(String domain, StoneType type) {
+        super(domain, type.getId(), Block.Properties.create(Material.ROCK).sound(type.getSoundType()), type.getTexture());
         this.type = type;
-        this.namespace = namespace;
-        this.id = getType().getId();
-        setRegistryName(getNamespace(), getId());
-        type.setBaseState(this.getDefaultState());
+        type.setBaseState(this.getDefaultState()); //TODO huh?
         AntimatterAPI.register(BlockStone.class, this);
     }
 
     public StoneType getType() {
         return type;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public String getNamespace() {
-        return namespace;
     }
 
     public static BlockStone get(StoneType stoneType) {

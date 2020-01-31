@@ -12,6 +12,8 @@ import muramasa.antimatter.gui.screen.ScreenBasicMachine;
 import muramasa.antimatter.gui.screen.ScreenHatchMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.gui.screen.ScreenMultiMachine;
+import muramasa.antimatter.items.DebugScannerItem;
+import muramasa.antimatter.items.ItemBasic;
 import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.structure.StructureBuilder;
@@ -23,6 +25,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 
@@ -34,6 +37,8 @@ public class Data {
         StructureBuilder.addGlobalElement("A", StructureElement.AIR);
         StructureBuilder.addGlobalElement("X", StructureElement.X);
     }
+
+    public static ItemBasic DebugScanner = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
     public static Material NULL = new Material("null", 0xffffff, DULL);
 

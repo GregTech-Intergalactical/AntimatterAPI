@@ -10,15 +10,24 @@ import net.minecraft.block.material.Material;
 
 public abstract class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
+    protected String domain, id;
     protected Texture[] textures;
 
-    public BlockBasic(Block.Properties properties, Texture... textures) {
+    public BlockBasic(String domain, String id, Block.Properties properties, Texture... textures) {
         super(properties);
+        this.domain = domain;
+        this.id = id;
         this.textures = textures;
+        setRegistryName(domain, id);
     }
 
-    public BlockBasic() {
-        this(Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE));
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public BlockBasic(String namespace, String id, Texture... textures) {
+        this(namespace, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE), textures);
     }
 
     @Override

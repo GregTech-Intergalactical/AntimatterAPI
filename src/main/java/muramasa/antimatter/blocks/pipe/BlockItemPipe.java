@@ -9,8 +9,8 @@ public class BlockItemPipe extends BlockPipe {
     protected boolean restrictive;
     protected int slots, steps;
 
-    public BlockItemPipe(Material material, PipeSize size, boolean restrictive, int slots, int steps) {
-        super(PipeType.ITEM, material, size);
+    public BlockItemPipe(String domain, Material material, PipeSize size, boolean restrictive, int slots, int steps) {
+        super(domain, PipeType.ITEM, material, size);
         this.restrictive = restrictive;
         this.slots = slots;
         this.steps = steps;
@@ -47,12 +47,12 @@ public class BlockItemPipe extends BlockPipe {
         protected int[] slots, steps;
         protected boolean buildRestrictive = true, buildNonRestrictive = true;
 
-        public BlockItemPipeBuilder(Material material, PipeSize[] sizes) {
-            super(material, sizes);
+        public BlockItemPipeBuilder(String domain, Material material, PipeSize[] sizes) {
+            super(domain, material, sizes);
         }
 
-        public BlockItemPipeBuilder(Material material) {
-            this(material, PipeSize.VALUES);
+        public BlockItemPipeBuilder(String domain, Material material) {
+            this(domain, material, PipeSize.VALUES);
         }
 
         public BlockItemPipeBuilder slots(int baseSlots) {
@@ -84,8 +84,8 @@ public class BlockItemPipe extends BlockPipe {
         @Override
         public void build() {
             for (int i = 0; i < sizes.length; i++) {
-                if (buildRestrictive) new BlockItemPipe(material, sizes[i], true, slots[i], steps[i]);
-                if (buildNonRestrictive) new BlockItemPipe(material, sizes[i], false, slots[i], steps[i]);
+                if (buildRestrictive) new BlockItemPipe(domain, material, sizes[i], true, slots[i], steps[i]);
+                if (buildNonRestrictive) new BlockItemPipe(domain, material, sizes[i], false, slots[i], steps[i]);
             }
         }
     }

@@ -3,20 +3,23 @@ package muramasa.antimatter.client.itemgroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
+import java.util.function.Supplier;
+
 public class AntimatterItemGroup extends ItemGroup {
 
-    private String namespace, id;
-    private ItemStack icon = ItemStack.EMPTY;
+    protected String domain, id;
+    protected Supplier<ItemStack> iconSupplier;
 
-    public AntimatterItemGroup(String namespace, String id, ItemStack icon) {
-        super(namespace + "." + id);
-        this.namespace = namespace;
+
+    public AntimatterItemGroup(String domain, String id, Supplier<ItemStack> iconSupplier) {
+        super(domain + "." + id);
+        this.domain = domain;
         this.id = id;
-        this.icon = icon;
+        this.iconSupplier = iconSupplier;
     }
 
-    public String getNamespace() {
-        return namespace;
+    public String getDomain() {
+        return domain;
     }
 
     public String getId() {
@@ -24,16 +27,7 @@ public class AntimatterItemGroup extends ItemGroup {
     }
 
     @Override
-    public ItemStack getIcon() {
-        return icon;
-    }
-
-    @Override
     public ItemStack createIcon() {
-        return icon;
-    }
-
-    public void setIcon(ItemStack icon) {
-        this.icon = icon;
+        return iconSupplier.get();
     }
 }

@@ -12,27 +12,13 @@ import javax.annotation.Nullable;
 
 public class BlockCasing extends BlockDynamic {
 
-    protected String namespace, id;
-
-    public BlockCasing(String namespace, String id, Block.Properties properties) {
-        super(properties, new Texture(namespace, "block/casing/" + id));
-        this.namespace = namespace;
-        this.id = "casing_" + id;
-        setRegistryName(getNamespace(), getId());
+    public BlockCasing(String domain, String id, Block.Properties properties) {
+        super(domain, "casing_" + id, properties, new Texture(domain, "block/casing/" + id));
         AntimatterAPI.register(BlockCasing.class, this);
     }
 
-    public BlockCasing(String namespace, String id) {
-        this(namespace, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public String getNamespace() {
-        return namespace;
+    public BlockCasing(String domain, String id) {
+        this(domain, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
     }
 
     @Nullable

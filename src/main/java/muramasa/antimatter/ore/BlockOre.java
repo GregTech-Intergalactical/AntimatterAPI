@@ -15,10 +15,10 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     private MaterialType oreType;
 
-    public BlockOre(Material material, StoneType stoneType, MaterialType oreType) {
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType) {
         super(material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
         this.oreType = oreType;
-        setRegistryName(getId());
+        setRegistryName(domain, getId());
         AntimatterAPI.register(BlockOre.class, this);
     }
 

@@ -32,12 +32,12 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
         processItemModels(providerNamespace);
     }
 
-    public void processItemModels(String namespace) {
+    public void processItemModels(String domain) {
         AntimatterAPI.all(Item.class)
-            .stream().filter(i -> i instanceof IModelProvider && i.getRegistryName().getNamespace().equals(namespace))
+            .stream().filter(i -> i instanceof IModelProvider && i.getRegistryName().getNamespace().equals(domain))
             .forEach(i -> ((IModelProvider) i).onItemModelBuild(i, this));
         AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(namespace))
+            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(domain))
             .forEach(b -> ((IModelProvider) b).onItemModelBuild(b, this));
     }
 

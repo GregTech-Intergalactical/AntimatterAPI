@@ -17,34 +17,34 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BasicItem extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
+public class ItemBasic extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    protected String namespace, id, tooltip = "";
+    protected String domain, id, tooltip = "";
     protected boolean enabled = true;
     protected Set<ItemTag> tags = new HashSet<>();
 
-    public BasicItem(String namespace, String id, Item.Properties properties) {
+    public ItemBasic(String domain, String id, Properties properties) {
         super(properties);
-        this.namespace = namespace;
+        this.domain = domain;
         this.id = id;
-        setRegistryName(getNamespace(), getId());
-        AntimatterAPI.register(BasicItem.class, this);
+        setRegistryName(domain, id);
+        AntimatterAPI.register(ItemBasic.class, this);
     }
 
-    public BasicItem(String namespace, String id) {
-        this(namespace, id, new Item.Properties().group(Ref.TAB_ITEMS));
+    public ItemBasic(String domain, String id) {
+        this(domain, id, new Properties().group(Ref.TAB_ITEMS));
     }
 
-    public BasicItem(String namespace, String id, String tooltip, Item.Properties properties) {
-        this(namespace, id, properties);
+    public ItemBasic(String domain, String id, String tooltip, Properties properties) {
+        this(domain, id, properties);
         this.tooltip = tooltip;
     }
 
-    public BasicItem(String namespace, String id, String tooltip) {
-        this(namespace, id, tooltip, new Item.Properties());
+    public ItemBasic(String domain, String id, String tooltip) {
+        this(domain, id, tooltip, new Properties().group(Ref.TAB_ITEMS));
     }
 
-    public BasicItem tags(ItemTag... tags) {
+    public ItemBasic tags(ItemTag... tags) {
         this.tags.addAll(Arrays.asList(tags));
         return this;
     }
@@ -52,10 +52,6 @@ public class BasicItem extends Item implements IAntimatterObject, ITextureProvid
     @Override
     public String getId() {
         return id;
-    }
-
-    public String getNamespace() {
-        return namespace;
     }
 
     public String getTooltip() {
@@ -92,6 +88,6 @@ public class BasicItem extends Item implements IAntimatterObject, ITextureProvid
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(getNamespace(), "item/standard/" + getId())};
+        return new Texture[]{new Texture(domain, "item/standard/" + getId())};
     }
 }
