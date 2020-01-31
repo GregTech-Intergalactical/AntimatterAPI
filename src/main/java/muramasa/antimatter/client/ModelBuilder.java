@@ -131,14 +131,14 @@ public class ModelBuilder {
 //            List<BakedQuad> transformedQuads = ModelUtils.trans(originalQuads, rotations);
 //            return new QuadContainer(transformedQuads);
 
-            TransformationMatrix rotatedTrans = TransformationMatrix.func_227983_a_(); //Identity;
+            TransformationMatrix rotatedTrans = TransformationMatrix.identity();
             rotatedTrans = rotatedTrans.blockCenterToCorner();
             for (int i = 0; i < rotations.length; i++) {
                 rotatedTrans = rotatedTrans.compose(new TransformationMatrix(ModelUtils.FACING_TO_MATRIX[rotations[i].getIndex()]));
             }
-            return model.func_225613_a_(bakery, getter, new SimpleModelTransform(rotatedTrans), loc);
+            return model.bakeModel(bakery, getter, new SimpleModelTransform(rotatedTrans), loc);
 
         }
-        return model.func_225613_a_(bakery, getter, transform, loc);
+        return model.bakeModel(bakery, getter, transform, loc);
     }
 }

@@ -30,7 +30,7 @@ public class BlockStorage extends BlockBasic implements IItemBlockProvider, ICol
     protected MaterialType type;
     
     public BlockStorage(String domain, Material material, MaterialType type) {
-        super(domain, "storage_" + material.getId() + "_" + type.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(type));
+        super(domain, "storage_" + material.getId() + "_" + type.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(domain, type));
         this.material = material;
         this.type = type;
         AntimatterAPI.register(BlockStorage.class, this);

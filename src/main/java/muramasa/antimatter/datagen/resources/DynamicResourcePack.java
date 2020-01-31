@@ -70,7 +70,7 @@ public class DynamicResourcePack extends ResourcePack {
     }
 
     @Override
-    public Collection<ResourceLocation> func_225637_a_(ResourcePackType type, String p_225637_2_, String p_225637_3_, int p_225637_4_, Predicate<String> filter) {
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
         Set<ResourceLocation> locs = new HashSet<>();
         //String path = type.getDirectoryName() + "/";
 

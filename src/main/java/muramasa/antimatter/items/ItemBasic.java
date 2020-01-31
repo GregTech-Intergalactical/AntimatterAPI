@@ -82,11 +82,6 @@ public class ItemBasic extends Item implements IAntimatterObject, ITextureProvid
     }
 
     @Override
-    public ItemStack asItemStack() {
-        return get(1);
-    }
-
-    @Override
     public Texture[] getTextures() {
         return new Texture[]{new Texture(domain, "item/standard/" + getId())};
     }

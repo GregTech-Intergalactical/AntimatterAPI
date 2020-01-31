@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.blocks.AntimatterItemBlock;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -10,11 +11,9 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraft.block.Block;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -33,12 +32,17 @@ public class Antimatter implements IAntimatterRegistrar {
     public static Antimatter INSTANCE;
     public static AntimatterNetwork NETWORK = new AntimatterNetwork();
     public static Logger LOGGER = LogManager.getLogger(Ref.ID);
-    public static IProxyHandler PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
+    public static IProxyHandler PROXY;
 
     public Antimatter() {
         INSTANCE = this;
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> ClientHandler::init);
+        PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+
+//        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+//            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
+//        });
+
         Data.init();
     }
 
@@ -79,10 +83,8 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public static void onDataGather(GatherDataEvent e) {
-        DataGenerator gen = e.getGenerator();
         if (e.includeClient()) {
-            //gen.addProvider(new AntimatterBlockStateProvider(gen, e.getExistingFileHelper()));
-            //gen.addProvider(new AntimatterItemModelProvider(gen, e.getExistingFileHelper()));
+            e.getGenerator().addProvider(new AntimatterItemModelProvider(Ref.ID, Ref.NAME + " Item Models", e.getGenerator()));
         }
         if (e.includeServer()) {
 

@@ -63,7 +63,7 @@ public class ModelUtils {
 
     public static Matrix4f getMat(@Nullable Vector3f trans, Quaternion rot) {
         Matrix4f mat = new Matrix4f();
-        if (trans != null) mat.func_226597_a_(trans);
+        if (trans != null) mat.translate(trans);
         mat.multiply(rot);
         //mat.func_226591_a_(); //Identity?
         return mat;

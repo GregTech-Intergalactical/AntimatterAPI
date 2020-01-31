@@ -57,6 +57,10 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
         return material;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
     @Override
     public String getId() {
         return id;
@@ -137,6 +141,6 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     @Override
     public Texture[] getTextures() {
-        return getMaterial().getSet().getTextures(getType());
+        return getMaterial().getSet().getTextures(getDomain(), getType());
     }
 }

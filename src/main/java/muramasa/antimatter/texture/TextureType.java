@@ -16,4 +16,9 @@ public enum TextureType implements IAntimatterObject {
     public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
 }

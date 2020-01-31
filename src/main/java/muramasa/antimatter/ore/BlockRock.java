@@ -31,18 +31,12 @@ import javax.annotation.Nullable;
 
 public class BlockRock extends BlockMaterialStone implements IModelProvider {
 
-    public BlockRock(Material material, StoneType stoneType) {
-        super(material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
+    public BlockRock(String domain, Material material, StoneType stoneType) {
+        super(domain, "rock_" + material.getId() + "_" + stoneType.getId(), material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
         //setHardness(0.2f);
         //setResistance(0.2f);
-        setRegistryName(getId());
         AntimatterAPI.register(BlockRock.class, this);
         setDefaultState(getStateContainer().getBaseState().with(AntimatterProperties.ROCK_MODEL, 0));
-    }
-
-    @Override
-    public String getId() {
-        return "rock_" + getMaterial().getId() + "_" + getStoneType().getId();
     }
 
     @Override
