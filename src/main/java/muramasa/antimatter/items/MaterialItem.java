@@ -1,6 +1,7 @@
 package muramasa.antimatter.items;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -42,6 +43,10 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
         this.id = getType().getId() + "_" + getMaterial().getId();
         setRegistryName(domain, getId());
         AntimatterAPI.register(MaterialItem.class, this);
+    }
+
+    public MaterialItem(String domain, MaterialType type, Material material) {
+        this(domain, type, material, new Properties().group(Ref.TAB_MATERIALS));
     }
 
     public MaterialType getType() {

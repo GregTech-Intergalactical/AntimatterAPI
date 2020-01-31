@@ -27,7 +27,7 @@ public class Material implements IAntimatterObject {
     private int hash;
 
     /** Basic Members **/
-    private String id;
+    private String domain, id;
     private ITextComponent displayName;
     private int rgb;
     private TextureSet set;
@@ -59,7 +59,8 @@ public class Material implements IAntimatterObject {
     private ArrayList<MaterialStack> processInto = new ArrayList<>();
     private ArrayList<Material> byProducts = new ArrayList<>();
 
-    public Material(String id, int rgb, TextureSet set) {
+    public Material(String domain, String id, int rgb, TextureSet set) {
+        this.domain = domain;
         this.id = id;
         this.hash = id.hashCode();
         this.rgb = rgb;
@@ -68,9 +69,13 @@ public class Material implements IAntimatterObject {
         AntimatterAPI.register(Material.class, this);
     }
 
-    public Material(String id, int rgb, TextureSet set, Element element) {
-        this(id, rgb, set);
+    public Material(String domain, String id, int rgb, TextureSet set, Element element) {
+        this(domain, id, rgb, set);
         this.element = element;
+    }
+
+    public String getDomain() {
+        return domain;
     }
 
     @Override
