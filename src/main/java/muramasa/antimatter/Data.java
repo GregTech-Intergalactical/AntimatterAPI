@@ -40,7 +40,7 @@ public class Data {
 
     public static ItemBasic DebugScanner = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
-    public static Material NULL = new Material("null", 0xffffff, DULL);
+    public static Material NULL = new Material(Ref.ID, "null", 0xffffff, DULL);
 
     public static Machine MACHINE_INVALID = new Machine(Ref.ID, "invalid");
 
