@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -33,6 +34,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
     }
 
     public void processItemModels(String domain) {
+        if (AntimatterAPI.RESOURCE_METHOD != ResourceMethod.PROVIDER_GEN) return;
         AntimatterAPI.all(Item.class)
             .stream().filter(i -> i instanceof IModelProvider && i.getRegistryName().getNamespace().equals(domain))
             .forEach(i -> ((IModelProvider) i).onItemModelBuild(i, this));
