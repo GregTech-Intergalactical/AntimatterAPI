@@ -1,13 +1,12 @@
 package muramasa.antimatter.blocks;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IItemBlock;
+import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -42,18 +41,15 @@ import java.util.List;
 
 import static muramasa.antimatter.machines.MachineFlag.BASIC;
 
-public class BlockMachine extends Block implements IAntimatterObject, IItemBlock, IColorHandler {
+public class BlockMachine extends BlockBasic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
-    protected String id;
     protected Machine type;
     protected Tier tier;
 
-    public BlockMachine(Machine type, Tier tier) {
-        super(Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
-        this.id = type.getId() + "_" + tier.getId();
+    public BlockMachine(String domain, Machine type, Tier tier) {
+        super(domain, type.getId() + "_" + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
         this.type = type;
         this.tier = tier;
-        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(BlockMachine.class, this);
     }
 
@@ -63,15 +59,6 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
 
     public Tier getTier() {
         return tier;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public String getNamespace() {
-        return getType().getNamespace();
     }
 
     @Override
@@ -190,7 +177,7 @@ public class BlockMachine extends Block implements IAntimatterObject, IItemBlock
 
     @Override
     public ItemGroup getItemGroup() {
-        return Ref.TAB_MACHINES;
+        return getType().getGroup();
     }
 
     @Override

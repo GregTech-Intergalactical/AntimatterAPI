@@ -4,7 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IItemBlock;
+import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -21,21 +21,18 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockStorage extends BlockBasic implements IItemBlock, IColorHandler {
+public class BlockStorage extends BlockBasic implements IItemBlockProvider, IColorHandler {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
 
-    protected String namespace, id;
+    protected String id;
     protected Material material;
     protected MaterialType type;
     
-    public BlockStorage(String namespace, Material material, MaterialType type) {
-        super(Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(type));
+    public BlockStorage(String domain, Material material, MaterialType type) {
+        super(domain, "storage_" + material.getId() + "_" + type.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(type));
         this.material = material;
         this.type = type;
-        this.namespace = namespace;
-        this.id = "storage_" + getMaterial().getId() + "_" + getType().getId();
-        setRegistryName(getNamespace(), getId());
         AntimatterAPI.register(BlockStorage.class, this);
     }
 
@@ -45,20 +42,6 @@ public class BlockStorage extends BlockBasic implements IItemBlock, IColorHandle
 
     public MaterialType getType() {
         return type;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    @Override
-    public String getTranslationKey() {
-        return getId();
     }
 
     /** Frame Placing Stuffs - Start **/

@@ -33,16 +33,20 @@ import java.util.Set;
 
 public class MaterialTool extends SwordItem implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    protected String namespace, id;
+    protected String domain, id;
     protected AntimatterToolType type;
 
-    public MaterialTool(String namespace, AntimatterToolType type) {
-        super(ItemTier.WOOD, 1, 1.0f, new Item.Properties().group(Ref.TAB_ITEMS).maxStackSize(1));
+    public MaterialTool(String domain, AntimatterToolType type, Properties properties) {
+        super(ItemTier.WOOD, 1, 1.0f, properties);
         this.type = type;
-        this.namespace = namespace;
+        this.domain = domain;
         this.id = getType().getName();
-        setRegistryName(getNamespace(), getId());
+        setRegistryName(getDomain(), getId());
         AntimatterAPI.register(MaterialTool.class, this);
+    }
+
+    public MaterialTool(String domain, AntimatterToolType type) {
+        this(domain, type, new Properties().group(Ref.TAB_ITEMS).maxStackSize(1));
     }
 
     public AntimatterToolType getType() {
@@ -54,8 +58,8 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
         return getType().getName();
     }
 
-    public String getNamespace() {
-        return namespace;
+    public String getDomain() {
+        return domain;
     }
 
     @Override
@@ -424,13 +428,13 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
     @Override
     public Texture[] getTextures() {
         List<Texture> textures = new ArrayList<>();
-        textures.add(new Texture(getNamespace(), "item/tool/" + getId()));
+        textures.add(new Texture(getDomain(), "item/tool/" + getId()));
         //TODO better solution for this
         if (getType() == AntimatterToolType.SCREWDRIVER_P || getType() == AntimatterToolType.BUZZSAW) {
-            textures.add(new Texture(getNamespace(), "item/tool/overlay/" + getId() + "_1"));
-            textures.add(new Texture(getNamespace(), "item/tool/overlay/" + getId() + "_2"));
+            textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId() + "_1"));
+            textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId() + "_2"));
         } else {
-            textures.add(new Texture(getNamespace(), "item/tool/overlay/" + getId()));
+            textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId()));
         }
         return textures.toArray(new Texture[0]);
     }

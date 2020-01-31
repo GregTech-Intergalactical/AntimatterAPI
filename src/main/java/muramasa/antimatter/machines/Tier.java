@@ -35,18 +35,18 @@ public class Tier implements IAntimatterObject {
     public static Tier STEEL = new Tier(Ref.ID, "steel", 0, TextFormatting.WHITE);
 
     private int internalId;
-    private String namespace, id;
+    private String domain, id;
     private long voltage;
     private TextFormatting rarityColor;
     private Texture baseTexture;
 
-    public Tier(String namespace, String id, long voltage, TextFormatting rarityColor) {
+    public Tier(String domain, String id, long voltage, TextFormatting rarityColor) {
         internalId = lastInternalId++;
-        this.namespace = namespace;
+        this.domain = domain;
         this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
-        this.baseTexture = new Texture(namespace, "block/machine/base/" + id);
+        this.baseTexture = new Texture(domain, "block/machine/base/" + id);
         TIER_NAME_LOOKUP.put(id, this);
         TIER_ID_LOOKUP.put(internalId, this);
     }

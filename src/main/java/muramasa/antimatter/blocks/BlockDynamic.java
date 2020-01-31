@@ -14,19 +14,12 @@ import net.minecraft.world.World;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class BlockDynamic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider, IInfoProvider {
+public abstract class BlockDynamic extends BlockBasic implements IAntimatterObject, ITextureProvider, IModelProvider, IInfoProvider {
 
-    protected Texture[] defaultTextures;
     protected int[] DEFAULT_CONFIG = new int[]{-1};
 
-    public BlockDynamic(Block.Properties properties, Texture... defaultTextures) {
-        super(properties);
-        this.defaultTextures = defaultTextures;
-    }
-
-    @Override
-    public Texture[] getTextures() {
-        return defaultTextures;
+    public BlockDynamic(String domain, String id, Block.Properties properties, Texture... defaultTextures) {
+        super(domain, id, properties, defaultTextures);
     }
 
     /** Connection Logic **/

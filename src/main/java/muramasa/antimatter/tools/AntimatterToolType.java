@@ -95,7 +95,7 @@ public enum AntimatterToolType {
     }
 
     @Deprecated // Actually instantiate tool objects...
-    public MaterialTool instantiate(String namespace) {
+    public MaterialTool instantiate(String domain) {
 //        if (toolClass != null) {
 //            try {
 //                return (MaterialTool) toolClass.newInstance();
@@ -103,7 +103,10 @@ public enum AntimatterToolType {
 //                e.printStackTrace();
 //            }
 //        }
-        return new MaterialTool(namespace, this);
+
+        //return new MaterialTool(domain, this);
+        return null;
+        //TODO
     }
 
     public boolean isPowered() {

@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public interface IItemBlock {
+public interface IItemBlockProvider {
 
     default AntimatterItemBlock getItemBlock(Block block) {
         return new AntimatterItemBlock(block);

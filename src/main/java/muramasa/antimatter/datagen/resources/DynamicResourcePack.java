@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 
 public class DynamicResourcePack extends ResourcePack {
 
-    protected Set<String> namespaces = new HashSet<>();
+    protected Set<String> domains = new HashSet<>();
     protected Map<String, InputStream> registry = new HashMap<>();
     protected Map<String, JsonObject> lang = new HashMap<>();
     protected DynamicPackFinder packFinder;
@@ -37,18 +37,18 @@ public class DynamicResourcePack extends ResourcePack {
         return new ReaderInputStream(new StringReader(pack.toString()), Charset.defaultCharset());
     }
 
-    public void addState(String namespace, String id, IGeneratedBlockstate state) {
-        namespaces.add(namespace);
-        registry.put("assets/" + namespace + "/blockstates/" + id + ".json", new ReaderInputStream(new StringReader(state.toJson().toString()), Charset.defaultCharset()));
+    public void addState(String domain, String id, IGeneratedBlockstate state) {
+        domains.add(domain);
+        registry.put("assets/" + domain + "/blockstates/" + id + ".json", new ReaderInputStream(new StringReader(state.toJson().toString()), Charset.defaultCharset()));
     }
 
-    public void addModel(String namespace, String type, String id, ModelBuilder builder) {
-        namespaces.add(namespace);
-        registry.put("assets/" + namespace + "/models/" + type + "/" + id + ".json", new ReaderInputStream(new StringReader(builder.toJson().toString()), Charset.defaultCharset()));
+    public void addModel(String domain, String type, String id, ModelBuilder builder) {
+        domains.add(domain);
+        registry.put("assets/" + domain + "/models/" + type + "/" + id + ".json", new ReaderInputStream(new StringReader(builder.toJson().toString()), Charset.defaultCharset()));
     }
 
-    public void addLang(String namespace, String region, String key, String value) {
-        String mapKey = "assets/" + namespace + "/lang" + region + ".json";
+    public void addLang(String domain, String region, String key, String value) {
+        String mapKey = "assets/" + domain + "/lang" + region + ".json";
         lang.computeIfAbsent(mapKey, k -> new JsonObject());
         lang.get(mapKey).addProperty(key, value);
     }
@@ -79,7 +79,7 @@ public class DynamicResourcePack extends ResourcePack {
 
     @Override
     public Set<String> getResourceNamespaces(ResourcePackType type) {
-        return namespaces;
+        return domains;
     }
 
     @Override

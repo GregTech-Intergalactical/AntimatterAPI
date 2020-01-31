@@ -33,9 +33,9 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
         processBlocks(providerNamespace);
     }
 
-    public void processBlocks(String namespace) {
+    public void processBlocks(String domain) {
         AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(namespace))
+            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(domain))
             .forEach(b -> ((IModelProvider) b).onBlockModelBuild(b, this));
     }
 
@@ -71,7 +71,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
         return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/layered"))).texture("base", base).texture("overlay", overlay);
     }
 
-    public ResourceLocation loc(String namespace, String path) {
-        return new ResourceLocation(namespace, path);
+    public ResourceLocation loc(String domain, String path) {
+        return new ResourceLocation(domain, path);
     }
 }

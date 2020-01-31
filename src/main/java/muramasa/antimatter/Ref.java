@@ -24,10 +24,10 @@ public class Ref {
     public static final String DEPENDS = "";
 
     /** Creative Tabs **/
-    public static AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(ID, "items", new ItemStack(Items.NETHER_BRICK));
-    public static AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(ID, "blocks", new ItemStack(Items.NETHER_BRICK));
-    public static AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(ID, "materials", new ItemStack(Items.NETHER_BRICK));
-    public static AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(ID, "machines", new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(Ref.ID, "items", () -> new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(Ref.ID, "blocks", () -> new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(Ref.ID, "materials", () -> new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(Ref.ID, "machines", () -> new ItemStack(Items.NETHER_BRICK));
 
     /** Global Data **/
     public static final int M = 3628800;

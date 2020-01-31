@@ -9,7 +9,7 @@ import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IItemBlock;
+import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -24,28 +24,22 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BlockPipe extends BlockDynamic implements IItemBlock, IColorHandler, IInfoProvider {
+public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
     protected PipeType type;
     protected Material material;
     protected PipeSize size;
 
-    public BlockPipe(PipeType type, Material material, PipeSize size) {
-        super(Block.Properties.create(net.minecraft.block.material.Material.IRON));
+    public BlockPipe(String domain, PipeType type, Material material, PipeSize size) {
+        super(domain, type.getId() + "_" + material.getId() + "_" + size.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON));
         this.type = type;
         this.material = material;
         this.size = size;
-        setRegistryName(getId());
     }
 
     public void register(Class c) {
         AntimatterAPI.register(BlockPipe.class, this);
         AntimatterAPI.register(c, this);
-    }
-
-    @Override
-    public String getId() {
-        return type.getId() + "_" + material.getId() + "_" + size.getId();
     }
 
     public PipeType getType() {
@@ -201,10 +195,12 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlock, ICol
 
     public abstract static class BlockPipeBuilder {
 
+        protected String domain;
         protected Material material;
         protected PipeSize[] sizes;
 
-        public BlockPipeBuilder(Material material, PipeSize[] sizes) {
+        public BlockPipeBuilder(String domain, Material material, PipeSize[] sizes) {
+            this.domain = domain;
             this.material = material;
             this.sizes = sizes;
         }

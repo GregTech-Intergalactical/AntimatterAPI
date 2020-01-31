@@ -21,8 +21,8 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
     private ResourceLocation registryName;
     private ContainerType<T> containerType = null;
 
-    public MenuHandler(String namespace, String id) {
-        this.registryName = new ResourceLocation(namespace, id);
+    public MenuHandler(String domain, String id) {
+        this.registryName = new ResourceLocation(domain, id);
         AntimatterAPI.register(MenuHandler.class, this);
     }
 

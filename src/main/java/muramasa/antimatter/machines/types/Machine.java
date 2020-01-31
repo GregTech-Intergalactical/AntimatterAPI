@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockMachine;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
@@ -19,6 +20,7 @@ import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.texture.TextureType;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -43,7 +45,7 @@ public class Machine implements IAntimatterObject {
     protected int internalId; //TODO needed?
     protected Object2ObjectOpenHashMap<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
     protected TileEntityType tileType;
-    protected String namespace, id;
+    protected String domain, id;
     protected ArrayList<Tier> tiers = new ArrayList<>();
 
     /** Recipe Members **/
@@ -51,6 +53,7 @@ public class Machine implements IAntimatterObject {
 
     /** GUI Members **/
     protected GuiData guiData;
+    protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
     protected TextureData baseData;
@@ -61,24 +64,28 @@ public class Machine implements IAntimatterObject {
 
     //TODO get valid covers
 
-    public Machine(String namespace, String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
+    public Machine(String domain, String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
         internalId = lastInternalId++;
         addData(data);
-        this.namespace = namespace;
+        this.domain = domain;
         this.id = id;
-        tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
-        this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(namespace, id);
+        build(tile);
         register(this);
     }
 
-    public Machine(String namespace, String id, Object... data) {
-        this(namespace, id, TileEntityMachine::new, data);
+    public Machine(String domain, String id, Object... data) {
+        this(domain, id, TileEntityMachine::new, data);
     }
 
     protected void register(Machine machine) {
         AntimatterAPI.register(Machine.class, machine);
         AntimatterAPI.register(TileEntityType.class, machine.getId(), machine.getTileType());
         ID_LOOKUP.add(machine.getInternalId(), machine);
+    }
+
+    protected void build(Supplier<? extends TileEntityMachine> tile) {
+        tiers.forEach(t -> blocks.put(t, new BlockMachine(domain, this, t)));
+        this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(domain, id);
     }
 
     protected void addData(Object... data) {
@@ -92,6 +99,7 @@ public class Machine implements IAntimatterObject {
             if (data[i] instanceof Tier) tiers.add((Tier) data[i]);
             if (data[i] instanceof MachineFlag) flags.add((MachineFlag) data[i]);
             if (data[i] instanceof Texture) baseTexture = (Texture) data[i];
+            if (data[i] instanceof ItemGroup) group = (ItemGroup) data[i];
             //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
@@ -105,10 +113,6 @@ public class Machine implements IAntimatterObject {
     @Override
     public String getId() {
         return id;
-    }
-
-    public String getNamespace() {
-        return namespace;
     }
 
     public ITextComponent getDisplayName(Tier tier) {
@@ -138,20 +142,22 @@ public class Machine implements IAntimatterObject {
         return baseTexture != null ? baseTexture : tier.getBaseTexture();
     }
 
+    //TODO can these be hardcoded to the antimatter domain? mod/pack devs should be able to have their own antimatter directory in their resources
     public Texture[] getOverlayTextures(MachineState state) {
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
-            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
-            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
-            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
-            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
-            new Texture(namespace, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
         };
     }
 
+    //TODO can these be hardcoded to the antimatter namespace? mod/pack devs should be able to have their own antimatter directory in their resources
     public ModelResourceLocation getOverlayModel(TextureType side) {
-        return new ModelResourceLocation(namespace + ":machine/overlay/" + id + "/" + side.getId());
+        return new ModelResourceLocation(Ref.ID + ":machine/overlay/" + id + "/" + side.getId());
     }
 
     public RecipeMap getRecipeMap() {
@@ -216,6 +222,10 @@ public class Machine implements IAntimatterObject {
 
     public GuiData getGui() {
         return guiData;
+    }
+
+    public ItemGroup getGroup() {
+        return group;
     }
 
     public Structure getStructure(Tier tier) {
