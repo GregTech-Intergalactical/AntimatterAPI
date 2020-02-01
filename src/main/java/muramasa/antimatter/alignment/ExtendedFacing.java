@@ -1,6 +1,9 @@
 package muramasa.antimatter.alignment;
 
+import muramasa.antimatter.util.IntegerAxisTransform;
+import muramasa.antimatter.util.int3;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -116,12 +119,14 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
     private final Rotation rotation;
     private final Flip flip;
     private final String name;
+    private final IntegerAxisTransform integerAxisTransform;
 
     ExtendedFacing(String name) {
         this.name = name;
         direction=Direction.byIndex(ordinal()/(ROTATIONS_COUNT*FLIPS_COUNT));
         flip=Flip.byIndex(ordinal()%FLIPS_COUNT);
         rotation=Rotation.byIndex(ordinal()/(FLIPS_COUNT)-direction.getIndex()*ROTATIONS_COUNT);
+        integerAxisTransform =null;//todo
     }
 
     public static ExtendedFacing defaultValue(){
@@ -198,5 +203,45 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
     @Override
     public int getExtendedFacingIndex() {
         return ordinal();
+    }
+
+    /**
+     * Translates relative to front facing offset  to  world offset
+     * @param abcOffset A,B,C offset (facing relative  L-->R,U-->D,F-->B)
+     * @return X,Y,Z offset in world
+     */
+    public Vec3i getWorldOffset(Vec3i abcOffset) {
+        return integerAxisTransform.translate(abcOffset);
+    }
+
+    /**
+     * Translates world offset  to  relative front facing offset
+     * @param xyzOffset X,Y,Z offset in world
+     * @return A,B,C offset (facing relative  L-->R,U-->D,F-->B)
+     */
+    public Vec3i getOffsetABC(Vec3i xyzOffset){
+        return integerAxisTransform.inverseTranslate(xyzOffset);
+    }
+
+    /**
+     * Translates relative to front facing offset  to  world offset
+     * @param abcOffset A,B,C offset (facing relative  L-->R,U-->D,F-->B)
+     * @return X,Y,Z offset in world
+     */
+    public int3 getWorldOffset(int3 abcOffset) {
+        return integerAxisTransform.translate(abcOffset);
+    }
+
+    /**
+     * Translates world offset  to  relative front facing offset
+     * @param xyzOffset X,Y,Z offset in world
+     * @return A,B,C offset (facing relative  L-->R,U-->D,F-->B)
+     */
+    public int3 getOffsetABC(int3 xyzOffset){
+        return integerAxisTransform.inverseTranslate(xyzOffset);
+    }
+
+    public IntegerAxisTransform getIntegerAxisTransform() {
+        return integerAxisTransform;
     }
 }
