@@ -30,7 +30,7 @@ public class DebugScannerItem extends ItemBasic {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(new StringTextComponent(this.tooltip));
-        if (Data.DebugScanner.equals(this)) {
+        if (Data.DEBUG_SCANNER.equals(this)) {
             tooltip.add(new StringTextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
             tooltip.add(new StringTextComponent("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(new StringTextComponent("Pipes: " + /*GregTechAPI.all(BlockPipe.class).size()*/ "TODO"));

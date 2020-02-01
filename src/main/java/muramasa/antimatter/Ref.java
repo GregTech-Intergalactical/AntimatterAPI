@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
 
 import java.io.File;
@@ -24,10 +23,10 @@ public class Ref {
     public static final String DEPENDS = "";
 
     /** Creative Tabs **/
-    public static AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(Ref.ID, "items", () -> new ItemStack(Items.NETHER_BRICK));
-    public static AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(Ref.ID, "blocks", () -> new ItemStack(Items.NETHER_BRICK));
-    public static AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(Ref.ID, "materials", () -> new ItemStack(Items.NETHER_BRICK));
-    public static AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(Ref.ID, "machines", () -> new ItemStack(Items.NETHER_BRICK));
+    public static AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(Ref.ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(Ref.ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(Ref.ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(Ref.ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
 
     /** Global Data **/
     public static final int M = 3628800;
