@@ -21,6 +21,10 @@ public abstract class BlockBasic extends Block implements IAntimatterObject, ITe
         setRegistryName(domain, id);
     }
 
+    public BlockBasic(String namespace, String id, Texture... textures) {
+        this(namespace, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE), textures);
+    }
+
     public String getDomain() {
         return domain;
     }
@@ -28,10 +32,6 @@ public abstract class BlockBasic extends Block implements IAntimatterObject, ITe
     @Override
     public String getId() {
         return id;
-    }
-
-    public BlockBasic(String namespace, String id, Texture... textures) {
-        this(namespace, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE), textures);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class Data {
         StructureBuilder.addGlobalElement("X", StructureElement.X);
     }
 
-    public static ItemBasic DebugScanner = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
+    public static ItemBasic DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
     public static Material NULL = new Material(Ref.ID, "null", 0xffffff, DULL);
 
