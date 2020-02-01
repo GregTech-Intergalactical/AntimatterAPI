@@ -181,7 +181,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        prov.simpleBlock(this, prov.getBuilder(this).parent(prov.models().getExistingFile(prov.modLoc("block/pipe/" + getSize().getId() + "/line_inv"))).texture("0", getType().getSide()).texture("1", getType().getFace(getSize())));
+        prov.simpleBlock(this, prov.getBuilder(this).parent(prov.existing(Ref.ID, "block/pipe/" + getSize().getId() + "/line_inv")).texture("0", getType().getSide()).texture("1", getType().getFace(getSize())));
     }
 
     @Override
