@@ -38,8 +38,9 @@ public class AntimatterModelLoader implements IModelLoader<LoaderModel> {
 
     }
 
-    @Override
-    public LoaderModel read(JsonDeserializationContext context, JsonObject json) {
-        return new LoaderModel(json.has("base") ? context.deserialize(json.get("base"), BlockModel.class) : null);
-    }
+@Override
+public LoaderModel read(JsonDeserializationContext context, JsonObject json) {
+    BlockModel model = context.deserialize(json.get("base"), BlockModel.class);
+    return new LoaderModel(model);
+}
 }

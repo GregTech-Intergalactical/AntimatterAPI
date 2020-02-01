@@ -1,5 +1,6 @@
 package muramasa.antimatter.registration;
 
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import net.minecraft.block.Block;
@@ -15,5 +16,8 @@ public interface IModelProvider {
 
     default void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         if (block instanceof ITextureProvider) prov.texturedState(block, ((ITextureProvider) block).getTextures());
+        if (block.getRegistryName().getPath().equals("coil_nichrome")) {
+            ((AntimatterBlockModelBuilder) prov.getBuilder(block)).loader("antimatter", "all").property("base", "parent", "minecraft:block/bedrock");
+        }
     }
 }

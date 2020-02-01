@@ -1,29 +1,28 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockMachine;
-import muramasa.antimatter.blocks.BlockStorage;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
-import muramasa.antimatter.gui.MenuHandler;
-import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -41,10 +40,6 @@ public class ClientHandler implements IProxyHandler {
     }
 
     public static void init() {
-
-
-        //TODO craches during data
-        //ModelLoaderRegistry.registerLoader(new ResourceLocation(Ref.ID, "all"), new AntimatterModelLoader());
 
         //TODO crashes during runData?
         //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
@@ -75,10 +70,11 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
-        AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+        ModelLoaderRegistry.registerLoader(new ResourceLocation(Ref.ID, "all"), new AntimatterModelLoader());
+        //AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+        //AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
         AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
-        AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+        //AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
     }
 
     @SubscribeEvent
