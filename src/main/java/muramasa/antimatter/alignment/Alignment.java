@@ -56,8 +56,18 @@ public class Alignment implements IAlignment {
     }
 
     @Override
+    public ExtendedFacing getExtendedFacing() {
+        return extendedFacing;
+    }
+
+    @Override
     public void setExtendedFacing(@Nonnull ExtendedFacing extendedFacing) {
         this.extendedFacing=extendedFacing;
+    }
+
+    @Override
+    public IAlignmentLimits getAlignmentLimits() {
+        return alignmentLimits;
     }
 
     @Override

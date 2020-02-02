@@ -92,6 +92,13 @@ public class int3 {
         return this;
     }
 
+    public int3 add(BlockPos pos) {
+        this.x += pos.getX();
+        this.y += pos.getY();
+        this.z += pos.getZ();
+        return this;
+    }
+
     public int3 sub(int x, int y, int z) {
         this.x -= x;
         this.y -= y;

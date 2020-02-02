@@ -202,8 +202,8 @@ public enum ExtendedFacing {
         return VALUES[IAlignment.getAlignmentIndex(direction, rotation, flip)];
     }
 
-    public static ExtendedFacing of(@Nonnull IAlignment alignment) {
-        return VALUES[alignment.getAlignmentIndex()];
+    public static ExtendedFacing of(@Nonnull Direction direction){
+        return VALUES[IAlignment.getAlignmentIndex(direction, Rotation.NORMAL, Flip.NONE)];
     }
 
     public ExtendedFacing with(@Nonnull Direction direction){

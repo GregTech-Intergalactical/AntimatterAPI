@@ -7,7 +7,7 @@ import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
 
-public interface IAlignment extends IFacing, IAlignmentLimits {
+public interface IAlignment extends IAlignmentLimits {
 
     int DIRECTIONS_COUNT=Direction.values().length;
     int ROTATIONS_COUNT= Rotation.values().length;
@@ -18,17 +18,33 @@ public interface IAlignment extends IFacing, IAlignmentLimits {
         return (direction.getIndex()*ROTATIONS_COUNT+rotation.getIndex())*FLIPS_COUNT+flip.getIndex();
     }
 
-    Rotation getRotation();
+    Direction getDirection();
 
-    Flip getFlip();
+    void setDirection(@Nonnull Direction direction);
+
+    Rotation getRotation();
 
     void setRotation(@Nonnull Rotation rotation);
 
+    Flip getFlip();
+
     void setFlip(@Nonnull Flip flip);
+
+    ExtendedFacing getExtendedFacing();
 
     void setExtendedFacing(@Nonnull ExtendedFacing alignment);
 
+    IAlignmentLimits getAlignmentLimits();
+
     void setAlignmentLimits(@Nonnull IAlignmentLimits limits);
+
+    default boolean checkedSetDirection(@Nonnull Direction direction){
+        if (isNewDirectionValid(direction)){
+            setDirection(direction);
+            return true;
+        }
+        return false;
+    }
 
     default boolean checkedSetRotation(@Nonnull Rotation rotation){
         if (isNewRotationValid(rotation)){
@@ -54,7 +70,6 @@ public interface IAlignment extends IFacing, IAlignmentLimits {
         return false;
     }
 
-    @Override
     default boolean isNewDirectionValid(@Nonnull Direction direction) {
         return isNewExtendedFacingValid(direction,getRotation(),getFlip());
     }
@@ -67,8 +82,7 @@ public interface IAlignment extends IFacing, IAlignmentLimits {
         return isNewExtendedFacingValid(getDirection(),getRotation(),flip);
     }
 
-    @Override
-    default boolean isValid() {
+    default boolean isExtendedFacingValid() {
         return isNewExtendedFacingValid(getDirection(),getRotation(),getFlip());
     }
 
