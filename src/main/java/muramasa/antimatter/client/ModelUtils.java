@@ -8,16 +8,14 @@ import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.Material;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Function;
 
 public class ModelUtils {
@@ -52,6 +50,12 @@ public class ModelUtils {
 
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
+    }
+
+    public static IBakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads) {
+        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true);
+        quads.forEach(builder::addGeneralQuad);
+        return builder.build();
     }
 
     public static TextureAtlasSprite getErrorSprite() {
