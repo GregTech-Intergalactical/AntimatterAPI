@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.providers;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -61,8 +62,8 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
             .forEach(b -> ((IModelProvider) b).onBlockModelBuild(b, this));
     }
 
-    public BlockModelBuilder getBuilder(Block block) {
-        return models().getBuilder(block.getRegistryName().getPath());
+    public AntimatterBlockModelBuilder getBuilder(Block block) {
+        return (AntimatterBlockModelBuilder) models().getBuilder(block.getRegistryName().getPath());
     }
 
     public BlockModelBuilder cubeAll(Block block, ResourceLocation texture) {

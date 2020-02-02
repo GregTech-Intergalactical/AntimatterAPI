@@ -1,21 +1,24 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.blocks.BlockMachine;
+import muramasa.antimatter.blocks.BlockStorage;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
+import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.util.SoundType;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -70,11 +73,12 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        ModelLoaderRegistry.registerLoader(new ResourceLocation(Ref.ID, "all"), new AntimatterModelLoader());
-        //AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
-        //AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.DEFAULT_LOADER.getLoc(), AntimatterModelManager.DEFAULT_LOADER);
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.DYNAMIC_LOADER.getLoc(), AntimatterModelManager.DYNAMIC_LOADER);
+        AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+        AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
         AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
-        //AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+        AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
     }
 
     @SubscribeEvent
