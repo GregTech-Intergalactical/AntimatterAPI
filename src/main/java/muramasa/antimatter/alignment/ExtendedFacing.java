@@ -1,6 +1,6 @@
 package muramasa.antimatter.alignment;
 
-import muramasa.antimatter.util.IntegerAxisTransform;
+import muramasa.antimatter.util.IntegerAxisSwap;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.Vec3i;
@@ -119,14 +119,79 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
     private final Rotation rotation;
     private final Flip flip;
     private final String name;
-    private final IntegerAxisTransform integerAxisTransform;
+    private final IntegerAxisSwap integerAxisSwap;
 
     ExtendedFacing(String name) {
         this.name = name;
         direction=Direction.byIndex(ordinal()/(ROTATIONS_COUNT*FLIPS_COUNT));
         flip=Flip.byIndex(ordinal()%FLIPS_COUNT);
         rotation=Rotation.byIndex(ordinal()/(FLIPS_COUNT)-direction.getIndex()*ROTATIONS_COUNT);
-        integerAxisTransform =null;//todo
+        Direction a,b,c;
+        switch (direction){
+            case DOWN://todo validate texture direction! And adjust either.
+                a=Direction.WEST;
+                b=Direction.NORTH;
+                c=Direction.UP;
+                break;
+            case UP://todo validate texture direction! And adjust either.
+                a=Direction.EAST;
+                b=Direction.NORTH;
+                c=Direction.DOWN;
+                break;
+            case NORTH:
+                a=Direction.WEST;
+                b=Direction.UP;
+                c=Direction.SOUTH;
+                break;
+            case SOUTH:
+                a=Direction.EAST;
+                b=Direction.UP;
+                c=Direction.NORTH;
+                break;
+            case WEST:
+                a=Direction.SOUTH;
+                b=Direction.UP;
+                c=Direction.EAST;
+                break;
+            case EAST:
+                a=Direction.NORTH;
+                b=Direction.UP;
+                c=Direction.WEST;
+                break;
+            default:throw new RuntimeException("Is impossible...");
+        }
+        switch (rotation) {
+            case CLOCKWISE: {
+                Direction _a=a;
+                a =b;
+                b =_a.getOpposite();
+                break;
+            }
+            case UPSIDE_DOWN:
+                a=a.getOpposite();
+                b=b.getOpposite();
+                break;
+            case COUNTER_CLOCKWISE: {
+                Direction _a=a;
+                a =b.getOpposite();
+                b =_a;
+                break;
+            }
+            default:
+                throw new RuntimeException("More impossible...");
+        }
+        switch (flip){//This duplicates some axis swaps since flip boolean would do, but seems more convenient to use
+            case HORIZONTAL:
+                a=a.getOpposite();
+                break;
+            case BOTH:
+                a=a.getOpposite();
+            case VERTICAL:
+                b=b.getOpposite();
+                break;
+            default:throw new RuntimeException("Even more impossible...");
+        }
+        integerAxisSwap =new IntegerAxisSwap(a,b,c);
     }
 
     public static ExtendedFacing defaultValue(){
@@ -211,7 +276,7 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
      * @return X,Y,Z offset in world
      */
     public Vec3i getWorldOffset(Vec3i abcOffset) {
-        return integerAxisTransform.translate(abcOffset);
+        return integerAxisSwap.translate(abcOffset);
     }
 
     /**
@@ -220,7 +285,7 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
      * @return A,B,C offset (facing relative  L-->R,U-->D,F-->B)
      */
     public Vec3i getOffsetABC(Vec3i xyzOffset){
-        return integerAxisTransform.inverseTranslate(xyzOffset);
+        return integerAxisSwap.inverseTranslate(xyzOffset);
     }
 
     /**
@@ -229,7 +294,7 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
      * @return X,Y,Z offset in world
      */
     public int3 getWorldOffset(int3 abcOffset) {
-        return integerAxisTransform.translate(abcOffset);
+        return integerAxisSwap.translate(abcOffset);
     }
 
     /**
@@ -238,10 +303,10 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
      * @return A,B,C offset (facing relative  L-->R,U-->D,F-->B)
      */
     public int3 getOffsetABC(int3 xyzOffset){
-        return integerAxisTransform.inverseTranslate(xyzOffset);
+        return integerAxisSwap.inverseTranslate(xyzOffset);
     }
 
-    public IntegerAxisTransform getIntegerAxisTransform() {
-        return integerAxisTransform;
+    public IntegerAxisSwap getIntegerAxisSwap() {
+        return integerAxisSwap;
     }
 }

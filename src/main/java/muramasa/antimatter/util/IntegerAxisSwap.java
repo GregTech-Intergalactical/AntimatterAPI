@@ -7,12 +7,13 @@ import javax.annotation.Nonnull;
 
 import static java.lang.Math.abs;
 
-public class IntegerAxisTransform {
+public class IntegerAxisSwap {
+
     private final Vec3i forFirstAxis;
     private final Vec3i forSecondAxis;
     private final Vec3i forThirdAxis;
 
-    public IntegerAxisTransform(@Nonnull Direction forFirstAxis, @Nonnull Direction forSecondAxis, @Nonnull Direction forThirdAxis) {
+    public IntegerAxisSwap(@Nonnull Direction forFirstAxis, @Nonnull Direction forSecondAxis, @Nonnull Direction forThirdAxis) {
         this.forFirstAxis = forFirstAxis.getDirectionVec();
         this.forSecondAxis = forSecondAxis.getDirectionVec();
         this.forThirdAxis = forThirdAxis.getDirectionVec();
