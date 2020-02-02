@@ -1,11 +1,14 @@
 package muramasa.antimatter.blocks.pipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.pipe.PipeShape;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -181,7 +184,19 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        prov.simpleBlock(this, prov.getBuilder(this).parent(prov.existing(Ref.ID, "block/pipe/" + getSize().getId() + "/line_inv")).texture("0", getType().getSide()).texture("1", getType().getFace(getSize())));
+        JsonArray models = new JsonArray();
+        for (PipeShape shape : PipeShape.VALUES) {
+            JsonObject o = new JsonObject();
+            o.addProperty("parent", Ref.ID + ":block/pipe/" + getSize().getId() + "/" + shape.getId());
+            models.add(o);
+        }
+
+        prov.simpleBlock(this, prov.getBuilder(this)
+            //.loader(AntimatterModelLoader.INSTANCE)
+            .property("models", models)
+            //.property("models", "parent", Ref.ID + ":block/pipe/" + getSize().getId() + "/line_inv")
+            //.texture("0", getType().getSide()).texture("1", getType().getFace(getSize()))
+        );
     }
 
     @Override

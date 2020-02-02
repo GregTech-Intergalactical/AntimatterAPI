@@ -13,9 +13,9 @@ import java.util.function.Function;
 
 public class LoaderModel implements IModelGeometry<LoaderModel> {
 
-    protected BlockModel base;
+    protected IUnbakedModel base;
 
-    public LoaderModel(BlockModel base) {
+    public LoaderModel(IUnbakedModel base) {
         this.base = base;
     }
 

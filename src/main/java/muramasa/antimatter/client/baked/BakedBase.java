@@ -23,21 +23,12 @@ public class BakedBase implements IDynamicBakedModel {
     protected IBakedModel bakedModel;
     protected TextureAtlasSprite particle;
 
-    public BakedBase(@Nullable IBakedModel bakedModel, ResourceLocation particle) {
-        this.bakedModel = bakedModel;
-        this.particle = ModelUtils.getSprite(particle);
-    }
-
-    public BakedBase(@Nullable IBakedModel bakedModel) {
-        this(bakedModel, ModelUtils.ERROR);
-    }
-
-    public BakedBase(ResourceLocation texture) {
-        this(null, texture);
-    }
-
     public BakedBase() {
-        this(null, ModelUtils.ERROR);
+
+    }
+
+    public BakedBase(ResourceLocation particle) {
+        this.particle = ModelUtils.getSprite(particle);
     }
 
     public List<BakedQuad> getBakedQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
@@ -72,7 +63,7 @@ public class BakedBase implements IDynamicBakedModel {
 
     @Override
     public boolean func_230044_c_() {
-        return true; //TODO huh?
+        return false; //TODO huh?
     }
 
     @Override
