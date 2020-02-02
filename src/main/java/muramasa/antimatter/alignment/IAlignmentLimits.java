@@ -8,6 +8,7 @@ import net.minecraft.util.Direction;
 import javax.annotation.Nonnull;
 
 public interface IAlignmentLimits {
+
     IAlignmentLimits UNLIMITED= (direction, rotation, flip) -> true;
 
     boolean isNewExtendedFacingValid(@Nonnull Direction direction, @Nonnull Rotation rotation, @Nonnull Flip flip);

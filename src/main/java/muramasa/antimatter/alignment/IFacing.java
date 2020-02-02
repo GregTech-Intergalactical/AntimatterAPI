@@ -5,6 +5,7 @@ import net.minecraft.util.Direction;
 import javax.annotation.Nonnull;
 
 public interface IFacing {
+
     boolean isNewDirectionValid(@Nonnull Direction direction);
 
     void setDirection(@Nonnull Direction direction);

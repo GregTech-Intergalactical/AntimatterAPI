@@ -8,6 +8,7 @@ import net.minecraft.util.Direction;
 import javax.annotation.Nonnull;
 
 public interface IAlignment extends IFacing, IAlignmentLimits {
+
     int DIRECTIONS_COUNT=Direction.values().length;
     int ROTATIONS_COUNT= Rotation.values().length;
     int FLIPS_COUNT= Flip.values().length;
