@@ -63,7 +63,7 @@ public class BakedBase implements IDynamicBakedModel {
 
     @Override
     public boolean func_230044_c_() {
-        return false; //TODO huh?
+        return true; //TODO huh?
     }
 
     @Override
