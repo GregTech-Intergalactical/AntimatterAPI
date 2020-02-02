@@ -1,5 +1,6 @@
-package muramasa.antimatter.alignment;
+package muramasa.antimatter.alignment.enumerable;
 
+import muramasa.antimatter.alignment.IAlignment;
 import muramasa.antimatter.util.IntegerAxisSwap;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Direction;
@@ -13,8 +14,10 @@ import java.util.Random;
 import static java.lang.Math.abs;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
+import static muramasa.antimatter.alignment.IAlignment.FLIPS_COUNT;
+import static muramasa.antimatter.alignment.IAlignment.ROTATIONS_COUNT;
 
-public enum ExtendedFacing implements IExtendedFacingImmutable {
+public enum ExtendedFacing {
 
     DOWN_NORMAL_NONE("down normal none"),
     DOWN_NORMAL_HORIZONTAL("down normal horizontal"),
@@ -113,6 +116,7 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
     EAST_COUNTER_CLOCKWISE_VERTICAL("east counter clockwise vertical"),
     EAST_COUNTER_CLOCKWISE_BOTH("east counter clockwise both");
 
+    public static final ExtendedFacing DEFAULT=NORTH_NORMAL_NONE;
     private static final ExtendedFacing[] VALUES = values();
     private static final Map<String, ExtendedFacing> NAME_LOOKUP = stream(VALUES).collect(toMap(ExtendedFacing::getName2, (extendedFacing) -> extendedFacing));
     private final Direction direction;
@@ -194,16 +198,12 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
         integerAxisSwap =new IntegerAxisSwap(a,b,c);
     }
 
-    public static ExtendedFacing defaultValue(){
-        return NORTH_NORMAL_BOTH;
-    }
-
     public static ExtendedFacing of(@Nonnull Direction direction, @Nonnull Rotation rotation, @Nonnull Flip flip){
-        return VALUES[IExtendedFacingImmutable.getExtendedFacingIndex(direction, rotation, flip)];
+        return VALUES[IAlignment.getAlignmentIndex(direction, rotation, flip)];
     }
 
-    public static ExtendedFacing of(@Nonnull IExtendedFacingImmutable alignment) {
-        return VALUES[alignment.getExtendedFacingIndex()];
+    public static ExtendedFacing of(@Nonnull IAlignment alignment) {
+        return VALUES[alignment.getAlignmentIndex()];
     }
 
     public ExtendedFacing with(@Nonnull Direction direction){
@@ -250,22 +250,18 @@ public enum ExtendedFacing implements IExtendedFacingImmutable {
         return VALUES[rand.nextInt(VALUES.length)];
     }
 
-    @Override
     public Direction getDirection() {
         return direction;
     }
 
-    @Override
     public Rotation getRotation() {
         return rotation;
     }
 
-    @Override
     public Flip getFlip() {
         return flip;
     }
 
-    @Override
     public int getExtendedFacingIndex() {
         return ordinal();
     }

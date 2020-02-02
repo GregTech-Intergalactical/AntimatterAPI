@@ -1,4 +1,4 @@
-package muramasa.antimatter.alignment;
+package muramasa.antimatter.alignment.enumerable;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;

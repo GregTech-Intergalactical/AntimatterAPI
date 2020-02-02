@@ -4,12 +4,12 @@ import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
 
-public interface IFacing extends IFacingImmutable {
-    default boolean isNewDirectionValid(@Nonnull Direction direction){
-        return true;
-    }
+public interface IFacing {
+    boolean isNewDirectionValid(@Nonnull Direction direction);
 
     void setDirection(@Nonnull Direction direction);
+
+    Direction getDirection();
 
     default boolean checkedSetDirection(@Nonnull Direction direction){
         if (isNewDirectionValid(direction)){
