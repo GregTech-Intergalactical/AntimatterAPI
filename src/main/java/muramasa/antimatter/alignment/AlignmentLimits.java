@@ -141,9 +141,7 @@ public class AlignmentLimits implements IAlignmentLimits {
         return this;
     }
 
-    public interface Predicate extends Function<ExtendedFacing,Optional<Boolean>> {}
-
-    AlignmentLimits predicateApply(@Nonnull Predicate predicate){
+    AlignmentLimits predicateApply(@Nonnull Function<ExtendedFacing,Optional<Boolean>> predicate){
         for (ExtendedFacing value : ExtendedFacing.values()) {
             predicate.apply(value).ifPresent(bool->validStates[value.getExtendedFacingIndex()]=bool);
         }
