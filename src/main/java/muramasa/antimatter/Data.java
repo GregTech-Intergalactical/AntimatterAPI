@@ -35,7 +35,7 @@ public class Data {
 
     static {
         StructureBuilder.addGlobalElement("A", StructureElement.AIR);
-        StructureBuilder.addGlobalElement("X", StructureElement.X);
+        StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
     }
 
     public static ItemBasic DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
