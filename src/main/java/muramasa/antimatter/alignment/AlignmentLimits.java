@@ -148,16 +148,7 @@ public class AlignmentLimits implements IAlignmentLimits {
         return this;
     }
 
-    AlignmentLimits ensureDuplicatesAreDenied(){
-        for (ExtendedFacing value : ExtendedFacing.values()) {
-            if(!validStates[value.getExtendedFacingIndex()]){
-                validStates[value.getDuplicate().getExtendedFacingIndex()]=false;
-            }
-        }
-        return this;
-    }
-
-    AlignmentLimits ensureDuplicatesAreAllowed(){
+    AlignmentLimits ensureDuplicates(){
         for (ExtendedFacing value : ExtendedFacing.values()) {
             if(validStates[value.getExtendedFacingIndex()]){
                 validStates[value.getDuplicate().getExtendedFacingIndex()]=true;
