@@ -16,6 +16,6 @@ public interface IModelProvider {
 
     default void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         if (AntimatterModelManager.onBlockModelBuild(block, prov)) return;
-        if (block instanceof ITextureProvider) prov.texturedState(block, ((ITextureProvider) block).getTextures());
+        if (block instanceof ITextureProvider) prov.state(block, ((ITextureProvider) block).getTextures());
     }
 }
