@@ -73,8 +73,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.DEFAULT_LOADER.getLoc(), AntimatterModelManager.DEFAULT_LOADER);
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.DYNAMIC_LOADER.getLoc(), AntimatterModelManager.DYNAMIC_LOADER);
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER.getLoc(), AntimatterModelManager.LOADER);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
         AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));

@@ -70,19 +70,15 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
         return models().cubeAll(block.getRegistryName().toString(), texture);
     }
 
-    public void simpleState(Block block, ResourceLocation texture) {
-        simpleBlock(block, getSimpleModel(block, texture));
+    public void state(Block block, ModelFile model) {
+        simpleBlock(block, model);
     }
 
-    public void layeredState(Block block, ResourceLocation base, ResourceLocation overlay) {
-        simpleBlock(block, getLayeredModel(block, base, overlay));
-    }
-
-    public void texturedState(Block block, ResourceLocation[] textures) {
+    public void state(Block block, ResourceLocation... textures) {
         if (textures.length == 1) {
-            simpleState(block, textures[0]);
+            simpleBlock(block, getSimpleModel(block, textures[0]));
         } else if (textures.length == 2) {
-            layeredState(block, textures[0], textures[1]);
+            simpleBlock(block, getLayeredModel(block, textures[0], textures[1]));
         }
     }
 

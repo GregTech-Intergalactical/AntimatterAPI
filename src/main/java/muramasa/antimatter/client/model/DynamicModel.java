@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class DynamicModel extends AntimatterModel<DynamicModel> {
+public class DynamicModel extends AntimatterModel {
 
     protected IUnbakedModel modelDefault;
     protected Int2ObjectOpenHashMap<Tuple<String, IUnbakedModel>> configModels;
