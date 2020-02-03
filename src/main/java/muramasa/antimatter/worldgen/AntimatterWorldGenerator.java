@@ -114,18 +114,18 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 
             //Rebuild compiled maps
             REGISTRY.get("vein").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                LAYER.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreVein) w.build());
+                LAYER.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenOreVein) w.build());
             }));
             REGISTRY.get("small").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                SMALL.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
-                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
+                SMALL.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
+                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
             }));
             REGISTRY.get("stone").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                STONE.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
-                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
+                STONE.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
+                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
             }));
             REGISTRY.get("base").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
+                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
             }));
             Antimatter.LOGGER.info("AntimatterWorldGenerator: Finished data rebuild!");
         } catch (Exception e) {
@@ -167,11 +167,10 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
                 for (int x = westX; x < eastX; x++) {
                     for (int z = northZ; z < southZ; z++) {
                         if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                            WorldGenOreVein.generate(world, chunkX, chunkZ, x, z, pos, null);
+                            WorldGenOreVein.generate(world, chunkX, chunkZ, x, z);
                         }
                     }
                 }
-                //if (Ref.debugWorldGen) GregTech.LOGGER.info("Oregen took " + (oreGenTime - leftOverTime) + " Leftover gen took " + (leftOverTime - startTime) + " Worldgen took " + duration + " ns");
             }
         } catch (Exception e) {
             e.printStackTrace();
