@@ -10,6 +10,7 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.worldgen.DebugWorldGen;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -48,6 +49,7 @@ public class Antimatter implements IAntimatterRegistrar {
 
     private void setup(final FMLCommonSetupEvent e) {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        DebugWorldGen.init();
         //Ref.TAB_ITEMS.setIcon(Data.DebugScanner.get(1));
         //Ref.TAB_MATERIALS.setIcon(Materials.Aluminium.getIngot(1));
         //Ref.TAB_MACHINES.setIcon(Data.DebugScanner.get(1));
