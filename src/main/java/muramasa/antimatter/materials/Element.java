@@ -123,12 +123,12 @@ public enum Element implements IAntimatterObject {
     Ds(110, 171, 0, -1, null, "Darmstadtium", false),
     Rg(111, 169, 0, -1, null, "Roentgenium", false),
     Cn(112, 173, 0, -1, null, "Copernicium", false),
-    Uut(113, 171, 0, -1, null, "Ununtrium", false),
+    Nh(113, 171, 0, -1, null, "Nihonium", false),
     Fl(114, 175, 0, -1, null, "Flerovium", false),
-    Uup(115, 173, 0, -1, null, "Ununpentium", false),
+    Mc(115, 173, 0, -1, null, "Moscovium", false),
     Lv(116, 177, 0, -1, null, "Livermorium", false),
-    Fa(117, 177, 0, -1, null, "Farnsium", false), // Uus, Ununseptium
-    Uuo(118, 176, 0, -1, null, "Ununoctium", false),
+    Ts(117, 177, 0, -1, null, "Tennessine", false), 
+    Og(118, 176, 0, -1, null, "Oganesson", false),
 
     Ma(0, 0, 100, -1, null, "Magic", false),
     Nt(0, 100000, 0, -1, null, "Neutronium", false);
