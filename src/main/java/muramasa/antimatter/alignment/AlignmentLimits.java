@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Function;
 
 import static muramasa.antimatter.alignment.IAlignment.STATES_COUNT;
 import static muramasa.antimatter.alignment.IAlignment.getAlignmentIndex;
@@ -140,15 +141,52 @@ public class AlignmentLimits implements IAlignmentLimits {
         return this;
     }
 
-    AlignmentLimits predicateApply(Predicate predicate){
+    public interface Predicate extends Function<ExtendedFacing,Optional<Boolean>> {}
+
+    AlignmentLimits predicateApply(@Nonnull Predicate predicate){
         for (ExtendedFacing value : ExtendedFacing.values()) {
             predicate.apply(value).ifPresent(bool->validStates[value.getExtendedFacingIndex()]=bool);
         }
         return this;
     }
 
-    public interface Predicate{
-        Optional<Boolean> apply(ExtendedFacing extendedFacing);
+    AlignmentLimits ensureDuplicatesAreDenied(){
+        for (ExtendedFacing value : ExtendedFacing.values()) {
+            if(!validStates[value.getExtendedFacingIndex()]){
+                validStates[value.getDuplicate().getExtendedFacingIndex()]=false;
+            }
+        }
+        return this;
+    }
+
+    AlignmentLimits ensureDuplicatesAreAllowed(){
+        for (ExtendedFacing value : ExtendedFacing.values()) {
+            if(validStates[value.getExtendedFacingIndex()]){
+                validStates[value.getDuplicate().getExtendedFacingIndex()]=true;
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Prefers rotation over flip, so both flip will get translated to opposite rotation and no flip
+     * @param flip the preferred flip to be used Horizontal or vertical
+     * @return this
+     */
+    AlignmentLimits ensureNoDuplicates(@Nonnull Flip flip){
+        if(flip==Flip.BOTH||flip==Flip.NONE){
+            throw new IllegalArgumentException("Preffered Flip must be Horizontal or Vertical");
+        }
+        flip=flip.getOpposite();
+        for (ExtendedFacing value : ExtendedFacing.values()) {
+            if(validStates[value.getExtendedFacingIndex()]){
+                if(value.getFlip()==Flip.BOTH || value.getFlip()==flip){
+                    validStates[value.getExtendedFacingIndex()]=false;
+                    validStates[value.getDuplicate().getExtendedFacingIndex()]=true;
+                }
+            }
+        }
+        return this;
     }
 
     @Override

@@ -230,6 +230,14 @@ public enum ExtendedFacing {
         return of(direction,rotation,flip.getOpposite());
     }
 
+    /**
+     * Gets the same effective facing achieved by different rot/flip combo
+     * @return same effective facing, but different enum value
+     */
+    public ExtendedFacing getDuplicate(){
+        return of(direction,rotation.getOpposite(),flip.getOpposite());
+    }
+
     public int getIndex(){
         return ordinal();
     }
