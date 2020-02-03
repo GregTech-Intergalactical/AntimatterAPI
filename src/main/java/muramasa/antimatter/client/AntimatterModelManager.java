@@ -27,10 +27,12 @@ import java.util.function.Supplier;
 public class AntimatterModelManager {
 
     /** A simple cache for Model baking. This avoids 64 models per pipe etc **/
+    //TODO clear this at some stage
     private static final Map<String, IBakedModel> BAKED_MODEL_JSON_CACHE = new HashMap<>();
 
     private static final Map<ResourceLocation, BiConsumer<Item, AntimatterItemModelProvider>> ITEM_OVERRIDES = new HashMap<>();
     private static final Map<ResourceLocation, BiConsumer<Block, AntimatterBlockStateProvider>> BLOCK_OVERRIDES = new HashMap<>();
+    private static final Map<String, Supplier<IBakedModel>> BAKED_OVERRIDES = new HashMap<>();
 
     public static final AntimatterModelLoader DEFAULT_LOADER = new AntimatterModelLoader<LoaderModel>(new ResourceLocation(Ref.ID, "default")) {
         @Override
@@ -68,9 +70,10 @@ public class AntimatterModelManager {
         }
     };
 
-    public static IBakedModel getBaked(String json, Supplier<IBakedModel> bakedSupplier) {
+    public static IBakedModel getBaked(String json, Supplier<IBakedModel> baked) {
         IBakedModel existing = BAKED_MODEL_JSON_CACHE.get(json);
-        return existing != null ? existing : BAKED_MODEL_JSON_CACHE.put(json, bakedSupplier.get());
+        if (existing != null) return existing;
+        return baked.get();
     }
 
     public static void addOverride(Item item, BiConsumer<Item, AntimatterItemModelProvider> consumer) {

@@ -11,11 +11,14 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.Item;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.data.EmptyModelData;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 public class ModelUtils {
@@ -23,8 +26,6 @@ public class ModelUtils {
     public static final Texture ERROR = new Texture(Ref.ID, "other/error");
 
     private static TextureAtlasSprite ERROR_SPRITE = null;
-
-    private static Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER;
 
     public static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
         getMat(null, new Quaternion(new Vector3f(1, 0, 0), 4.7124f, true)),
@@ -44,18 +45,35 @@ public class ModelUtils {
     //            quads.add(builder.build());
     //        }
 
-    public static void buildDefaultModels() {
-
-    }
-
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
     }
 
-    public static IBakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads) {
-        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true);
+    public static IBakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
+        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true).setTexture(getter.apply(model.resolveTextureName("particle")));
         quads.forEach(builder::addGeneralQuad);
         return builder.build();
+    }
+
+    public static IBakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ResourceLocation loc) {
+        List<BakedQuad> generalQuads = model.bakeModel(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE);
+        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true).setTexture(getter.apply(model.resolveTextureName("particle")));
+        generalQuads.forEach(builder::addGeneralQuad);
+        return builder.build();
+    }
+
+    public static IBakedModel getSimpleBakedModel(IBakedModel baked) {
+        Map<Direction, List<BakedQuad>> faceQuads = new HashMap<>();
+        Arrays.stream(Ref.DIRECTIONS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
+        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.func_230044_c_(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
+    }
+
+    public static IBakedModel getBakedFromState(BlockState state) {
+        return Minecraft.getInstance().getModelManager().getModel(BlockModelShapes.getModelLocation(state));
+    }
+
+    public static IBakedModel getBakedFromItem(Item item) {
+        return Minecraft.getInstance().getItemRenderer().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(item.getRegistryName(), "inventory"));
     }
 
     public static TextureAtlasSprite getErrorSprite() {
@@ -79,47 +97,4 @@ public class ModelUtils {
         //mat.func_226591_a_(); //Identity?
         return mat;
     }
-
-    public static IBakedModel getBakedFromState(BlockState state) {
-        return Minecraft.getInstance().getModelManager().getModel(BlockModelShapes.getModelLocation(state));
-    }
-
-    /** Baked Model Helpers **/
-//    public static List<BakedQuad> trans(List<BakedQuad> quads, int rotation) {
-//        return trans(quads, FACING_TO_MATRIX[rotation], Ref.DIRECTIONS[rotation]);
-//    }
-//
-//    public static List<BakedQuad> trans(List<BakedQuad> quads, Direction... rotations) {
-//        int[] indices = new int[rotations.length];
-//        for (int i = 0; i < indices.length; i++) {
-//            indices[i] = rotations[i].getIndex();
-//        }
-//        return trans(quads, 0, indices);
-//    }
-
-//    public static List<BakedQuad> trans(List<BakedQuad> quads, int offset, int... rotations) {
-//        Matrix4f mat = new Matrix4f(FACING_TO_MATRIX[rotations[offset]]);
-//        for (int i = offset + 1; i < rotations.length; i++) {
-//            mat.mul(new Matrix4f(FACING_TO_MATRIX[rotations[i]]));
-//        }
-//        return trans(quads, mat, Ref.DIRECTIONS[rotations[rotations.length - 1]]);
-//    }
-//
-//    //Credit: From AE2
-//    public static List<BakedQuad> trans(List<BakedQuad> quads, Matrix4f matrix, Direction side) {
-//        List<BakedQuad> transformedQuads = new LinkedList<>();
-//        MatrixVertexTransformer transformer = new MatrixVertexTransformer(matrix);
-//        UnpackedBakedQuad.Builder builder;
-//        for (BakedQuad bakedQuad : quads) {
-//            builder = new UnpackedBakedQuad.Builder(bakedQuad.getFormat());
-//            transformer.setParent(builder);
-//            transformer.setVertexFormat(builder.getVertexFormat());
-//            bakedQuad.pipe(transformer);
-//            builder.setQuadOrientation(Utils.rotateFacing(bakedQuad.getFace(), side));
-//            builder.setTexture(bakedQuad.getSprite() != null ? bakedQuad.getSprite() : ModelUtils.BAKED_MISSING.getParticleTexture());
-//            BakedQuad q = builder.build();
-//            transformedQuads.add(q);
-//        }
-//        return transformedQuads;
-//    }
 }
