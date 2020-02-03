@@ -113,13 +113,13 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent e) {
-        ModelUtils.buildDefaultModels();
+        //ModelUtils.buildDefaultModels();
     }
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
         BAKERY = e.getModelLoader();
-        ModelUtils.buildDefaultModels();
+        //ModelUtils.buildDefaultModels();
     }
 
     @Override

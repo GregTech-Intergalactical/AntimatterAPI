@@ -49,7 +49,7 @@ public class StructureResult {
     }
 
     public void addState(String elementId, BlockPos pos, BlockState state) {
-        if (!elementId.equals(StructureElement.X.elementId)) {
+        if (!elementId.equals(StructureElement.IGNORE.elementId)) {
             ArrayList<BlockState> existing = states.get(elementId);
             if (existing == null) states.put(elementId, Lists.newArrayList(state));
             else existing.add(state);

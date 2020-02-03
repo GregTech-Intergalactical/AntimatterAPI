@@ -36,7 +36,7 @@ public class QuadContainer implements IDynamicBakedModel {
 
     @Override
     public boolean isGui3d() {
-        return false;
+        return true;
     }
 
     @Override

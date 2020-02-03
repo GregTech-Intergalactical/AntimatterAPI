@@ -21,10 +21,6 @@ public class LoaderModel implements IModelGeometry<LoaderModel> {
 
     @Override
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        //Tuple<Block, Function<ModelBuilder, AntimatterModel>> override = AntimatterModelLoader.get(owner.getModelName());
-        //ModelBuilder builder = base != null ? new ModelBuilder(base) : new ModelBuilder().simple();
-        //if (override != null) return override.getB().apply(builder).bake(owner, bakery, getter, transform, overrides, loc);
-        //return builder.bake(owner, bakery, getter, transform, overrides, loc);
         return base.bakeModel(bakery, getter, transform, loc);
     }
 
