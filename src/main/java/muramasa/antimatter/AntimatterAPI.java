@@ -33,6 +33,7 @@ public final class AntimatterAPI {
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
 
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new HashSet<>();
 
     //TODO: this will hopefully allow the dynamic change of resource strategy
     public static final ResourceMethod RESOURCE_METHOD = ResourceMethod.PROVIDER_GEN;
@@ -41,7 +42,7 @@ public final class AntimatterAPI {
 
     private static void registerInternal(Class c, String id, Object o, boolean checkDuplicates) {
         OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
-        if (checkDuplicates && OBJECTS.get(c).containsKey(id)) Antimatter.LOGGER.error("Object: " + id + " has already been registered! This is a error!");
+        if (checkDuplicates && OBJECTS.get(c).containsKey(id)) throw new IllegalStateException("Object: " + id + " for class " + c.getName() + " has already been registered by " + OBJECTS.get(c).get(id));
         OBJECTS.get(c).put(id, o);
     }
 
@@ -96,6 +97,8 @@ public final class AntimatterAPI {
 
     /** Registrar Section **/
     public static void onRegistration(RegistrationEvent event) {
+        if (REGISTRATION_EVENTS_HANDLED.contains(event)) throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
+        REGISTRATION_EVENTS_HANDLED.add(event);
         INTERNAL_REGISTRARS.forEach(r -> r.onRegistrationEvent(event));
         all(IAntimatterRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);

@@ -50,7 +50,12 @@ public class DebugScannerItem extends ItemBasic {
         return super.onItemUse(context);
     }
 
-//    @Override
+    @Override
+    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+        return ActionResultType.SUCCESS;
+    }
+
+    //    @Override
 //    public EnumActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 //        ItemStack stack = player.getHeldItem(hand);
 //        TileEntity tile = Utils.getTile(world, pos);

@@ -10,7 +10,7 @@ public class BlockItemPipe extends BlockPipe {
     protected int slots, steps;
 
     public BlockItemPipe(String domain, Material material, PipeSize size, boolean restrictive, int slots, int steps) {
-        super(domain, PipeType.ITEM, material, size);
+        super(domain, restrictive ? PipeType.ITEM_RESTRICTIVE : PipeType.ITEM, material, size);
         this.restrictive = restrictive;
         this.slots = slots;
         this.steps = steps;

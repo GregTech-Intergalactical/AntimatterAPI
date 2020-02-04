@@ -123,4 +123,9 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
     public boolean allowGeneration(Material material) {
         return active && material.has(this) && AntimatterAPI.getReplacement(this, material).isEmpty();
     }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
 }
