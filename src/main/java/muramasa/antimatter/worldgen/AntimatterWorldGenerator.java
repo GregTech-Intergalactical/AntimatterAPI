@@ -114,18 +114,18 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 
             //Rebuild compiled maps
             REGISTRY.get("vein").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                LAYER.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreVein) w.build());
+                LAYER.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenOreVein) w.build());
             }));
             REGISTRY.get("small").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                SMALL.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
-                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
+                SMALL.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
+                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
             }));
             REGISTRY.get("stone").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                STONE.computeIfAbsent(d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
-                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
+                STONE.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
+                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
             }));
             REGISTRY.get("base").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                BASE.computeIfAbsent(d, k -> new ArrayList<>()).add(w.build());
+                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
             }));
             Antimatter.LOGGER.info("AntimatterWorldGenerator: Finished data rebuild!");
         } catch (Exception e) {
@@ -154,24 +154,6 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
             List<WorldGenBase> worldGenObjects = BASE.get(world.getDimension().getType().getId());
             if (worldGenObjects != null && worldGenObjects.size() > 0) {
                 worldGenObjects.forEach(o -> o.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider));
-            }
-
-            if (LAYER.size() > 0) {
-                // Determine bounding box on how far out to check for ore veins affecting this chunk
-                int westX = chunkX - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-                int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
-                int northZ = chunkZ - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-                int southZ = chunkZ + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
-
-                // Search for oreVein seeds and add to the list;
-                for (int x = westX; x < eastX; x++) {
-                    for (int z = northZ; z < southZ; z++) {
-                        if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                            WorldGenOreVein.generate(world, chunkX, chunkZ, x, z, pos, null);
-                        }
-                    }
-                }
-                //if (Ref.debugWorldGen) GregTech.LOGGER.info("Oregen took " + (oreGenTime - leftOverTime) + " Leftover gen took " + (leftOverTime - startTime) + " Worldgen took " + duration + " ns");
             }
         } catch (Exception e) {
             e.printStackTrace();
