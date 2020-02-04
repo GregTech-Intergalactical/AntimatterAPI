@@ -42,7 +42,7 @@ public class Antimatter implements IAntimatterRegistrar {
         INSTANCE = this;
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-
+        AntimatterAPI.registerInternalRegistrar(INSTANCE);
 //        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
 //            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
 //        });
@@ -52,10 +52,7 @@ public class Antimatter implements IAntimatterRegistrar {
 
     private void setup(final FMLCommonSetupEvent e) {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-        // TODO: move all that to AntimatterWorldGenerator.init
-        WorldGenHelper.init();
-        AntimatterWorldGenerator.reload();
-        WorldGenOreVein.init();
+        AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN);
         //Ref.TAB_ITEMS.setIcon(Data.DebugScanner.get(1));
         //Ref.TAB_MATERIALS.setIcon(Materials.Aluminium.getIngot(1));
         //Ref.TAB_MACHINES.setIcon(Data.DebugScanner.get(1));
@@ -115,6 +112,13 @@ public class Antimatter implements IAntimatterRegistrar {
             case DATA_READY:
                 AntimatterAPI.registerCover(Data.COVER_NONE);
                 AntimatterAPI.registerCover(Data.COVER_OUTPUT);
+                break;
+            case WORLDGEN:
+                // TODO: move all that to AntimatterWorldGenerator.init
+                // Move to DATA_READY?
+                WorldGenHelper.init();
+                AntimatterWorldGenerator.reload();
+                WorldGenOreVein.init();
                 break;
         }
     }
