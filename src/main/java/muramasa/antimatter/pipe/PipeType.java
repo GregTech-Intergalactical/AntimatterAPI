@@ -20,6 +20,19 @@ public class PipeType implements IAntimatterObject {
         }
     );
 
+    public static final PipeType ITEM_RESTRICTIVE = new PipeType(
+        "item_pipe_restrictive", 0,
+        new Texture(Ref.ID, "block/pipe/pipe_side"),
+        new Texture[] {
+            new Texture(Ref.ID, "block/pipe/pipe_vtiny"),
+            new Texture(Ref.ID, "block/pipe/pipe_tiny"),
+            new Texture(Ref.ID, "block/pipe/pipe_small"),
+            new Texture(Ref.ID, "block/pipe/pipe_normal"),
+            new Texture(Ref.ID, "block/pipe/pipe_large"),
+            new Texture(Ref.ID, "block/pipe/pipe_huge")
+        }
+    );
+
     public static final PipeType FLUID = new PipeType(
         "fluid_pipe", 0,
         //new Texture("block/pipe/wire_side"),
@@ -35,7 +48,7 @@ public class PipeType implements IAntimatterObject {
     );
 
     public static final PipeType WIRE = new PipeType(
-        "cable", 1,
+        "wire", 1,
         new Texture(Ref.ID, "block/pipe/wire_side"),
         new Texture[] {
             new Texture(Ref.ID, "block/pipe/wire_side"),
