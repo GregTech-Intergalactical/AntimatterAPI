@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class DebugWorldGen {
-    /*static class DebugAtSurface extends Placement<FrequencyConfig> {
+    static class DebugAtSurface extends Placement<FrequencyConfig> {
         public DebugAtSurface() {
             super(FrequencyConfig::deserialize);
         }
@@ -38,39 +38,10 @@ public class DebugWorldGen {
                 return new BlockPos(i, k, j);
             });
         }
-    }*/
-    static class DefaultOreGen extends Feature<NoFeatureConfig>{
-
-        public DefaultOreGen() {
-            super(null);
-        }
-
-        @Override
-        public boolean place(IWorld worldIn, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-            int chunkX = pos.getX() >> 4;
-            int chunkZ = pos.getZ() >> 4;
-            // Determine bounding box on how far out to check for ore veins affecting this chunk
-            int westX = chunkX - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-            int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
-            int northZ = chunkZ - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-            int southZ = chunkZ + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
-
-            // Search for oreVein seeds and add to the list;
-            for (int x = westX; x < eastX; x++) {
-                for (int z = northZ; z < southZ; z++) {
-                    if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                        WorldGenOreVein.generate(worldIn, chunkX, chunkZ, x, z);
-                    }
-                }
-            }
-            return true;
-        }
     }
     public static void init() {
-        WorldGenHelper.init();
-        AntimatterWorldGenerator.reload();
         for(Biome biome : ForgeRegistries.BIOMES) {
-/*           biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION,
+           biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION,
                     Feature.SIMPLE_BLOCK.withConfiguration(new BlockWithContextConfig(
                             Blocks.DIAMOND_BLOCK.getDefaultState(),
                             new BlockState[]{Blocks.GRASS_BLOCK.getDefaultState()},
@@ -78,8 +49,6 @@ public class DebugWorldGen {
                             new BlockState[]{Blocks.AIR.getDefaultState()})
                     ).func_227228_a_(new DebugAtSurface().func_227446_a_(
                             new FrequencyConfig(2))));
-*/
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature(new DefaultOreGen(), IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 }

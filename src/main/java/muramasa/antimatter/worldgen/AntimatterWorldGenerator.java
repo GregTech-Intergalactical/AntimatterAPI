@@ -155,23 +155,6 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
             if (worldGenObjects != null && worldGenObjects.size() > 0) {
                 worldGenObjects.forEach(o -> o.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider));
             }
-
-            if (LAYER.size() > 0) {
-                // Determine bounding box on how far out to check for ore veins affecting this chunk
-                int westX = chunkX - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-                int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
-                int northZ = chunkZ - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-                int southZ = chunkZ + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
-
-                // Search for oreVein seeds and add to the list;
-                for (int x = westX; x < eastX; x++) {
-                    for (int z = northZ; z < southZ; z++) {
-                        if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                            WorldGenOreVein.generate(world, chunkX, chunkZ, x, z);
-                        }
-                    }
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
