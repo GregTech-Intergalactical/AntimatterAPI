@@ -11,6 +11,7 @@ import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 public class WorldGenHelper {
@@ -70,7 +71,7 @@ public class WorldGenHelper {
         TREE_BIOME_SET.add("ForestHills");
     }
 
-    public static void setState(World world, BlockPos pos, BlockState state) {
+    public static void setState(IWorld world, BlockPos pos, BlockState state) {
         world.setBlockState(pos, state, 2 | 16);
     }
 
@@ -86,17 +87,17 @@ public class WorldGenHelper {
 //        }
 //    }
 
-    private static void setOreState(World world, BlockPos pos, StoneType stone, Material material, MaterialType type) {
+    private static void setOreState(IWorld world, BlockPos pos, StoneType stone, Material material, MaterialType type) {
         world.setBlockState(pos, BlockOre.get(material, type, stone), 2 | 16);
     }
 
-    private static void setRockState(World world, BlockPos pos, BlockState state, Material material) {
+    private static void setRockState(IWorld world, BlockPos pos, BlockState state, Material material) {
 //        world.setBlockState(pos, state, 2 | 16);
 //        TileEntity tile = world.getTileEntity(pos);
 //        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
     }
 
-    public static boolean setOre(World world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
+    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
         if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
             StoneType stoneType = STONE_MAP.get(world.getBlockState(pos));
             if (stoneType == null) return false;
@@ -107,7 +108,7 @@ public class WorldGenHelper {
         return false;
     }
 
-    public static boolean setRock(World world, BlockPos pos, Material material) {
+    public static boolean setRock(IWorld world, BlockPos pos, Material material) {
 //        pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos).down();
 //        BlockState existing = world.getBlockState(pos);
 //        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ROCK_PREDICATE)) {
@@ -119,7 +120,7 @@ public class WorldGenHelper {
         return false;
     }
 
-    public static boolean canSetTree(World world, BlockPos pos) {
+    public static boolean canSetTree(IWorld world, BlockPos pos) {
         //Biome biome = world.getBiome(pos);
         //return biome.getRegistryName() != null && TREE_BIOME_SET.contains(biome.getRegistryName().toString()) && TREE_SET.contains(world.getBlockState(pos));
         //TODO
