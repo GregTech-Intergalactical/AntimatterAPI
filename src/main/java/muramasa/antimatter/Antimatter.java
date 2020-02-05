@@ -11,9 +11,6 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.DebugWorldGen;
-import muramasa.antimatter.worldgen.WorldGenHelper;
-import muramasa.antimatter.worldgen.WorldGenOreVein;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -43,36 +40,29 @@ public class Antimatter implements IAntimatterRegistrar {
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         AntimatterAPI.registerInternalRegistrar(INSTANCE);
-//        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-//            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::setup);
-//        });
-
-        Data.init();
     }
 
     private void setup(final FMLCommonSetupEvent e) {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-        AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN);
-        //Ref.TAB_ITEMS.setIcon(Data.DebugScanner.get(1));
-        //Ref.TAB_MATERIALS.setIcon(Materials.Aluminium.getIngot(1));
-        //Ref.TAB_MACHINES.setIcon(Data.DebugScanner.get(1));
-        //Ref.TAB_BLOCKS.setIcon(Data.DebugScanner.get(1));
+
+        AntimatterWorldGenerator.init();
+
+        //AntimatterCapabilities.register(); //TODO broken
+        //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
+        //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
     }
 
     @SubscribeEvent
     public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
         AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
         AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock(b) : new AntimatterItemBlock(b)));
-        //AntimatterAPI.onRegistration(RegistrationEvent.ITEM);
     }
 
     @SubscribeEvent
     public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_BUILD);
-        //GregTechAPI.all(Machine.class).forEach(m -> GregTechAPI.register(m.getTileClass()));
         AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
-        //AntimatterAPI.onRegistration(RegistrationEvent.BLOCK);
     }
 
     @SubscribeEvent
@@ -82,7 +72,6 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
-        //AntimatterAPI.onRegistration(RegistrationEvent.GUI);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
     }
 
@@ -98,7 +87,7 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public void serverAboutToStart(FMLServerAboutToStartEvent e) {
-        //if (Configs.WORLD.ORE_JSON_RELOADING) GregTechWorldGenerator.reload();
+        //if (Configs.WORLD.ORE_JSON_RELOADING) AntimatterWorldGenerator.reload();
     }
 
     @Override
@@ -109,16 +98,12 @@ public class Antimatter implements IAntimatterRegistrar {
     @Override
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
+            case DATA_INIT:
+                Data.init();
+                break;
             case DATA_READY:
                 AntimatterAPI.registerCover(Data.COVER_NONE);
                 AntimatterAPI.registerCover(Data.COVER_OUTPUT);
-                break;
-            case WORLDGEN:
-                // TODO: move all that to AntimatterWorldGenerator.init
-                // Move to DATA_READY?
-                WorldGenHelper.init();
-                AntimatterWorldGenerator.reload();
-                WorldGenOreVein.init();
                 break;
         }
     }
