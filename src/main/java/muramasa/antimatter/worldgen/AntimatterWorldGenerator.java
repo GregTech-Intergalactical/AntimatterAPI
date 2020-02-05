@@ -1,12 +1,7 @@
 package muramasa.antimatter.worldgen;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.internal.LinkedTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.Configs;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -14,10 +9,6 @@ import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraftforge.fml.common.Mod;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +22,8 @@ import java.util.Random;
 public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 
     private static HashMap<String, HashMap<String, WorldGenBase>> REGISTRY = new HashMap<>();
-    private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
-    private static ImmutableMap<String, Class<?>> TYPE = ImmutableMap.of("vein", WorldGenOreVein.class, "small", WorldGenOreSmall.class, "stone", WorldGenStone.class);
+    //private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
+    //private static ImmutableMap<String, Class<?>> TYPE = ImmutableMap.of("vein", WorldGenOreVein.class, "small", WorldGenOreSmall.class, "stone", WorldGenStone.class);
 
     private static Int2ObjectOpenHashMap<List<WorldGenBase>> BASE = new Int2ObjectOpenHashMap<>();
     private static Int2ObjectOpenHashMap<List<WorldGenOreVein>> LAYER = new Int2ObjectOpenHashMap<>();
@@ -48,8 +39,7 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
     }
 
     public AntimatterWorldGenerator() {
-        //TODO
-        //GameRegistry.registerWorldGenerator(this, Integer.MAX_VALUE);
+
     }
 
     public static void register(WorldGenBase worldGen) {
@@ -62,18 +52,20 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 
     public static void init() {
         try {
-            //Write default data
-            File defaultFile = new File(Ref.CONFIG, "WorldGenerationDefault.json");
-            if (!defaultFile.exists()) defaultFile.createNewFile();
-            BufferedWriter br = new BufferedWriter(new FileWriter(defaultFile));
-            Ref.GSON.toJson(REGISTRY, br);
-            br.close();
-
-            //Generate default data
-            String defaultData = new String(Files.readAllBytes(defaultFile.toPath()));
-            DEFAULT_DATA = Ref.GSON.fromJson(defaultData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
+//            //Write default data
+//            File defaultFile = new File(Ref.CONFIG, "WorldGenerationDefault.json");
+//            if (!defaultFile.exists()) defaultFile.createNewFile();
+//            BufferedWriter br = new BufferedWriter(new FileWriter(defaultFile));
+//            Ref.GSON.toJson(REGISTRY, br);
+//            br.close();
+//
+//            //Generate default data
+//            String defaultData = new String(Files.readAllBytes(defaultFile.toPath()));
+//            DEFAULT_DATA = Ref.GSON.fromJson(defaultData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
 
             WorldGenHelper.init();
+            AntimatterWorldGenerator.reload();
+            WorldGenOreVein.init();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
@@ -86,28 +78,28 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
             //Clear compiled maps
             LAYER.clear(); SMALL.clear(); STONE.clear();
 
-            //Remove custom data
-            REGISTRY.forEach((k, v) -> v.entrySet().removeIf(e -> e.getValue().isCustom()));
-
-            //Inject default data
-            REGISTRY.forEach((k, v) -> DEFAULT_DATA.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
-                e.getValue().forEach((i, j) -> v.get(i).onDataOverride((LinkedTreeMap) j));
-            }));
-
-            //Check for override data
-            File overrideFile = new File(Ref.CONFIG, "WorldGenerationOverride.json");
-            if (!overrideFile.exists()) overrideFile.createNewFile();
-            String jsonData = new String(Files.readAllBytes(overrideFile.toPath()));
-            HashMap<String, HashMap<String, Object>> dataMap = Ref.GSON.fromJson(jsonData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
-            if (dataMap != null) {
-                //Inject override data
-                REGISTRY.forEach((k, v) -> dataMap.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
-                    e.getValue().forEach((i, j) -> {
-                        if (v.containsKey(i)) v.get(i).onDataOverride((LinkedTreeMap) j);
-                        else v.put(i, ((WorldGenBase) Ref.GSON.fromJson(Ref.GSON.toJsonTree(j).getAsJsonObject(), TYPE.get(k))).asCustom());
-                    });
-                }));
-            }
+//            //Remove custom data
+//            REGISTRY.forEach((k, v) -> v.entrySet().removeIf(e -> e.getValue().isCustom()));
+//
+//            //Inject default data
+//            REGISTRY.forEach((k, v) -> DEFAULT_DATA.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
+//                e.getValue().forEach((i, j) -> v.get(i).onDataOverride((LinkedTreeMap) j));
+//            }));
+//
+//            //Check for override data
+//            File overrideFile = new File(Ref.CONFIG, "WorldGenerationOverride.json");
+//            if (!overrideFile.exists()) overrideFile.createNewFile();
+//            String jsonData = new String(Files.readAllBytes(overrideFile.toPath()));
+//            HashMap<String, HashMap<String, Object>> dataMap = Ref.GSON.fromJson(jsonData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
+//            if (dataMap != null) {
+//                //Inject override data
+//                REGISTRY.forEach((k, v) -> dataMap.entrySet().stream().filter(e -> e.getKey().equals(k)).forEach(e -> {
+//                    e.getValue().forEach((i, j) -> {
+//                        if (v.containsKey(i)) v.get(i).onDataOverride((LinkedTreeMap) j);
+//                        else v.put(i, ((WorldGenBase) Ref.GSON.fromJson(Ref.GSON.toJsonTree(j).getAsJsonObject(), TYPE.get(k))).asCustom());
+//                    });
+//                }));
+//            }
 
             WorldGenOreVein.TOTAL_WEIGHT = 0;
             WorldGenOreVein.VALID_VEINS.clear();

@@ -29,11 +29,12 @@ import java.util.stream.Collectors;
 public final class AntimatterAPI {
 
     private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
-    private static final List<IAntimatterRegistrar> INTERNAL_REGISTRARS = new LinkedList<>();
     private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
 
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
     private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new HashSet<>();
+
+    private static IAntimatterRegistrar INTERNAL_REGISTRAR = null;
 
     //TODO: this will hopefully allow the dynamic change of resource strategy
     public static final ResourceMethod RESOURCE_METHOD = ResourceMethod.PROVIDER_GEN;
@@ -66,7 +67,8 @@ public final class AntimatterAPI {
     }
 
     public static void registerInternalRegistrar(IAntimatterRegistrar registrar) {
-        INTERNAL_REGISTRARS.add(registrar);
+        if (INTERNAL_REGISTRAR != null) throw new IllegalStateException("The internal registrar for Antimatter has already been assigned!");
+        INTERNAL_REGISTRAR = registrar;
     }
 
     @Nullable
@@ -99,7 +101,7 @@ public final class AntimatterAPI {
     public static void onRegistration(RegistrationEvent event) {
         if (REGISTRATION_EVENTS_HANDLED.contains(event)) throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         REGISTRATION_EVENTS_HANDLED.add(event);
-        INTERNAL_REGISTRARS.forEach(r -> r.onRegistrationEvent(event));
+        INTERNAL_REGISTRAR.onRegistrationEvent(event);
         all(IAntimatterRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
     }
