@@ -2,53 +2,38 @@ package muramasa.antimatter.worldgen;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.util.XSTR;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.AbstractChunkProvider;
-import net.minecraft.world.gen.ChunkGenerator;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.worldgen.feature.FeaturePurge;
+import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
+import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
+import net.minecraft.block.BlockState;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Most of GTI WorldGen code is from the GTNewHorizons GT5 fork, refactored for 1.12 and somewhat optimised
  * Written in 1.7 by moronwmachinegun and mitchej123, adapted by Muramasa
  * **/
 @Mod.EventBusSubscriber
-public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
+public class AntimatterWorldGenerator {
 
-    private static HashMap<String, HashMap<String, WorldGenBase>> REGISTRY = new HashMap<>();
     //private static HashMap<String, HashMap<String, Object>> DEFAULT_DATA = new HashMap<>();
     //private static ImmutableMap<String, Class<?>> TYPE = ImmutableMap.of("vein", WorldGenOreVein.class, "small", WorldGenOreSmall.class, "stone", WorldGenStone.class);
 
-    private static Int2ObjectOpenHashMap<List<WorldGenBase>> BASE = new Int2ObjectOpenHashMap<>();
-    private static Int2ObjectOpenHashMap<List<WorldGenOreVein>> LAYER = new Int2ObjectOpenHashMap<>();
-    private static Int2ObjectOpenHashMap<List<WorldGenOreSmall>> SMALL = new Int2ObjectOpenHashMap<>();
-    private static Int2ObjectOpenHashMap<List<WorldGenStone>> STONE = new Int2ObjectOpenHashMap<>();
+    public static Int2ObjectOpenHashMap<List<WorldGenBase<?>>> BASE = new Int2ObjectOpenHashMap<>();
+    public static Int2ObjectOpenHashMap<List<WorldGenVeinLayer>> VEIN_LAYER = new Int2ObjectOpenHashMap<>();
+    //public static Int2ObjectOpenHashMap<List<WorldGenStoneLayer>> STONE_LAYER = new Int2ObjectOpenHashMap<>();
+    public static Int2ObjectOpenHashMap<List<WorldGenOreSmall>> ORE_SMALL = new Int2ObjectOpenHashMap<>();
+    public static Int2ObjectOpenHashMap<List<WorldGenStone>> STONE_BLOB = new Int2ObjectOpenHashMap<>();
 
-    static {
-        //veins, singles, stones
-        REGISTRY.put("vein", new HashMap<>());
-        REGISTRY.put("small", new HashMap<>());
-        REGISTRY.put("stone", new HashMap<>());
-        REGISTRY.put("base", new HashMap<>());
-    }
+    public static List<StoneLayer> STONE_LAYERS = new ArrayList<>();
+    public static Map<BlockState, BlockState> STATES_TO_PURGE = new HashMap<>();
 
-    public AntimatterWorldGenerator() {
-
-    }
-
-    public static void register(WorldGenBase worldGen) {
-        //TODO use a prefix to determine type and allow filtering world gen objects
-        if (worldGen instanceof WorldGenOreVein) REGISTRY.get("vein").put(worldGen.getId(), worldGen);
-        else if (worldGen instanceof WorldGenOreSmall) REGISTRY.get("small").put(worldGen.getId(), worldGen);
-        else if (worldGen instanceof WorldGenStone) REGISTRY.get("stone").put(worldGen.getId(), worldGen);
-        else REGISTRY.get("base").put(worldGen.getId(), worldGen);
-    }
+    public static final FeaturePurge FEATURE_PURGE = new FeaturePurge();
+    public static final FeatureVeinLayer FEATURE_VEIN_LAYER = new FeatureVeinLayer();
+    public static final FeatureStoneLayer FEATURE_STONE_LAYER = new FeatureStoneLayer();
 
     public static void init() {
         try {
@@ -63,9 +48,12 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 //            String defaultData = new String(Files.readAllBytes(defaultFile.toPath()));
 //            DEFAULT_DATA = Ref.GSON.fromJson(defaultData, new TypeToken<HashMap<String, HashMap>>(){}.getType());
 
-            WorldGenHelper.init();
+            AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
             AntimatterWorldGenerator.reload();
-            WorldGenOreVein.init();
+            WorldGenHelper.init();
+            //if (STATES_TO_PURGE.size() > 0) FEATURE_PURGE.init();
+            if (VEIN_LAYER.size() > 0) FEATURE_VEIN_LAYER.init();
+            if (STONE_LAYERS.size() > 0) FEATURE_STONE_LAYER.init();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
@@ -76,7 +64,7 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
         try {
             Antimatter.LOGGER.info("AntimatterWorldGenerator: Started data rebuild!");
             //Clear compiled maps
-            LAYER.clear(); SMALL.clear(); STONE.clear();
+            VEIN_LAYER.clear(); ORE_SMALL.clear(); STONE_BLOB.clear();
 
 //            //Remove custom data
 //            REGISTRY.forEach((k, v) -> v.entrySet().removeIf(e -> e.getValue().isCustom()));
@@ -101,24 +89,23 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
 //                }));
 //            }
 
-            WorldGenOreVein.TOTAL_WEIGHT = 0;
-            WorldGenOreVein.VALID_VEINS.clear();
+            WorldGenVeinLayer.TOTAL_WEIGHT = 0;
+            WorldGenVeinLayer.VALID_VEINS.clear();
 
             //Rebuild compiled maps
-            REGISTRY.get("vein").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                LAYER.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenOreVein) w.build());
+            AntimatterAPI.all(WorldGenBase.class).forEach(w -> w.getDimensions().forEach(d -> {
+                BASE.computeIfAbsent((int) d, k -> new ArrayList<>()).add(w.build());
             }));
-            REGISTRY.get("small").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                SMALL.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenOreSmall) w.build());
-                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
+            AntimatterAPI.all(WorldGenVeinLayer.class).forEach(w -> w.getDimensions().forEach(d -> {
+                VEIN_LAYER.computeIfAbsent((int) d, k -> new ArrayList<>()).add(w.build());
             }));
-            REGISTRY.get("stone").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                STONE.computeIfAbsent((int)d, k -> new ArrayList<>()).add((WorldGenStone) w.build());
-                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
+            AntimatterAPI.all(WorldGenOreSmall.class).forEach(w -> w.getDimensions().forEach(d -> {
+                ORE_SMALL.computeIfAbsent((int) d, k -> new ArrayList<>()).add(w.build());
             }));
-            REGISTRY.get("base").values().stream().filter(WorldGenBase::isEnabled).forEach(w -> w.getDimensions().forEach(d -> {
-                BASE.computeIfAbsent((int)d, k -> new ArrayList<>()).add(w.build());
+            AntimatterAPI.all(WorldGenStone.class).forEach(w -> w.getDimensions().forEach(d -> {
+                STONE_BLOB.computeIfAbsent((int) d, k -> new ArrayList<>()).add(w.build());
             }));
+
             Antimatter.LOGGER.info("AntimatterWorldGenerator: Finished data rebuild!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,29 +113,16 @@ public class AntimatterWorldGenerator /*implements IWorldGenerator*/ {
         }
     }
 
-    public static List<WorldGenOreVein> getVeins(int dimension) {
-        return LAYER.get(dimension);
-    }
-
-    public static List<WorldGenOreSmall> getSmalls(int dimension) {
-        return SMALL.get(dimension);
-    }
-
-    public static List<WorldGenStone> getStones(int dimension) {
-        return STONE.get(dimension);
-    }
-
-    /*@Override*/
-    public void generate(Random random, int chunkX, int chunkZ, World world, ChunkGenerator generator, AbstractChunkProvider provider) {
-        try {
-            XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
-            BlockPos.Mutable pos = new BlockPos.Mutable();
-            List<WorldGenBase> worldGenObjects = BASE.get(world.getDimension().getType().getId());
-            if (worldGenObjects != null && worldGenObjects.size() > 0) {
-                worldGenObjects.forEach(o -> o.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /*@Override*/
+//    public void generate(Random random, int chunkX, int chunkZ, World world, ChunkGenerator generator, AbstractChunkProvider provider) {
+//        try {
+//            XSTR rand = new XSTR(Math.abs(random.nextInt()) + 1);
+//            BlockPos.Mutable pos = new BlockPos.Mutable();
+//            BASE.getOrDefault(world.getDimension().getType().getId(), Collections.emptyList()).forEach(w -> {
+//                w.generate(world, rand, chunkX * 16, chunkZ * 16, pos, null, generator, provider);
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

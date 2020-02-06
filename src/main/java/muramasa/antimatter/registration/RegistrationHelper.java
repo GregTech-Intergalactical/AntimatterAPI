@@ -8,7 +8,6 @@ import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class RegistrationHelper {
     }
 
     public static void buildOreBlocks(String domain) {
-        Arrays.stream(StoneType.getAll()).forEach(s -> {
+        AntimatterAPI.all(StoneType.class).forEach(s -> {
             getMaterialsForDomain(domain, MaterialType.ORE.all()).forEach(m -> {
                 new BlockOre(m.getDomain(), m, s, MaterialType.ORE);
                 //new BlockRock(domain, m, s);

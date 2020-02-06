@@ -13,7 +13,6 @@ public class BlockStone extends BlockBasic {
     public BlockStone(String domain, StoneType type) {
         super(domain, type.getId(), Block.Properties.create(Material.ROCK).sound(type.getSoundType()), type.getTexture());
         this.type = type;
-        type.setBaseState(this.getDefaultState());
         AntimatterAPI.register(BlockStone.class, this);
     }
 

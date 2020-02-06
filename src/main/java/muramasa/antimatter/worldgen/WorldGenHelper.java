@@ -3,6 +3,7 @@ package muramasa.antimatter.worldgen;
 import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
@@ -12,7 +13,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 
 public class WorldGenHelper {
 
@@ -22,49 +22,27 @@ public class WorldGenHelper {
     public static ObjectOpenHashSet<BlockState> TREE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
 
-    //public static BlockState ROCK_DEFAULT;
+    public static BlockState STONE_STATE = Blocks.STONE.getDefaultState();
 
     public static Predicate<BlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
     public static Predicate<BlockState> ROCK_PREDICATE = state -> ROCK_MAP.containsKey(state);
     public static Predicate<BlockState> STONE_PREDICATE = state -> STONE_SET.contains(state);
 
     public static void init() {
-        //ROCK_DEFAULT = BlockRock.get(StoneType.STONE);
+        AntimatterAPI.all(StoneType.class).forEach(t -> STONE_MAP.put(t.getState(), t));
 
-        for (StoneType stoneType : StoneType.getAllActive()) {
-            BlockState state = stoneType.getBaseState();
-            STONE_MAP.put(state, stoneType);
-            if (state.getBlock() == Blocks.STONE) {
-                //ROCK_MAP.put(state, ROCK_DEFAULT);
-                STONE_SET.add(state);
-            }
-        }
-        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), StoneType.STONE);
-        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), StoneType.GRANITE);
-        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), StoneType.DIORITE);
-        //STONE_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), StoneType.ANDESITE);
-        //STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), StoneType.SAND);
-        //STONE_MAP.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), StoneType.SAND_RED);
-        //STONE_MAP.put(Blocks.SANDSTONE.getDefaultState(), StoneType.SANDSTONE);
-        //STONE_MAP.put(Blocks.NETHERRACK.getDefaultState(), StoneType.NETHERRACK);
-        //STONE_MAP.put(Blocks.END_STONE.getDefaultState(), StoneType.ENDSTONE);
+        STONE_SET.add(Blocks.STONE.getDefaultState());
+        STONE_SET.add(Blocks.GRANITE.getDefaultState());
+        STONE_SET.add(Blocks.ANDESITE.getDefaultState());
+        STONE_SET.add(Blocks.DIORITE.getDefaultState());
 
-        //STONE_MAP.put(BlockStone.get(StoneType.GRANITE_RED).getDefaultState(), StoneType.GRANITE_RED);
-        //STONE_MAP.put(BlockStone.get(StoneType.GRANITE_BLACK).getDefaultState(), StoneType.GRANITE_BLACK);
-        //STONE_MAP.put(BlockStone.get(StoneType.MARBLE).getDefaultState(), StoneType.MARBLE);
-        //STONE_MAP.put(BlockStone.get(StoneType.BASALT).getDefaultState(), StoneType.BASALT);
-
-        //ROCK_MAP.put(Blocks.GRASS.getDefaultState(), ROCK_DEFAULT);
-        //ROCK_MAP.put(Blocks.DIRT.getDefaultState(), ROCK_DEFAULT);
-        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE), BlockRock.get(StoneType.STONE));
-        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE), BlockRock.get(StoneType.STONE));
-        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE), BlockRock.get(StoneType.STONE));
-        //ROCK_MAP.put(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE), BlockRock.get(StoneType.STONE));
-
-        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.STONE));
-        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.GRANITE));
-        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.DIORITE));
-        //STONE_SET.add(Blocks.STONE.getDefaultState().withProperty(net.minecraft.block.BlockStone.VARIANT, net.minecraft.block.BlockStone.EnumType.ANDESITE));
+        STONE_SET.add(Blocks.COAL_ORE.getDefaultState());
+        STONE_SET.add(Blocks.IRON_ORE.getDefaultState());
+        STONE_SET.add(Blocks.GOLD_ORE.getDefaultState());
+        STONE_SET.add(Blocks.DIAMOND_ORE.getDefaultState());
+        STONE_SET.add(Blocks.EMERALD_ORE.getDefaultState());
+        STONE_SET.add(Blocks.LAPIS_ORE.getDefaultState());
+        STONE_SET.add(Blocks.REDSTONE_ORE.getDefaultState());
 
         TREE_SET.add(Blocks.GRASS.getDefaultState());
         TREE_BIOME_SET.add("Forest");
@@ -117,6 +95,14 @@ public class WorldGenHelper {
 //            setRockState(world, pos.up(), toSet, material);
 //            return true;
 //        }
+        return false;
+    }
+
+    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, StoneType type) {
+        if (existing.isReplaceableOreGen(world, pos, STONE_PREDICATE)) {
+            world.setBlockState(pos, type.getState(), 2 | 16);
+            return true;
+        }
         return false;
     }
 

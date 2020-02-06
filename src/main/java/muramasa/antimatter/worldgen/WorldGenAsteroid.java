@@ -34,7 +34,7 @@ public class WorldGenAsteroid extends WorldGenBase {
     private static BlockState GRANITE_RED_STATE = null;
 
     public WorldGenAsteroid(String id, int... dimensions) {
-        super(id, dimensions);
+        super(id, WorldGenAsteroid.class, dimensions);
     }
 
     @Override
@@ -47,14 +47,14 @@ public class WorldGenAsteroid extends WorldGenBase {
     @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
-            List<WorldGenOreVein> layers = AntimatterWorldGenerator.getVeins(world.getDimension().getType().getId());
+            List<WorldGenVeinLayer> layers = AntimatterWorldGenerator.VEIN_LAYER.get(world.getDimension().getType().getId());
             int layerCount = layers.size();
-            WorldGenOreVein layerToGen = null;
-            if (WorldGenOreVein.TOTAL_WEIGHT > 0 && layerCount > 0) {
+            WorldGenVeinLayer layerToGen = null;
+            if (WorldGenVeinLayer.TOTAL_WEIGHT > 0 && layerCount > 0) {
                 int randomWeight;
-                WorldGenOreVein layer;
+                WorldGenVeinLayer layer;
                 for (int i = 0; i < Configs.WORLD.ORE_VEIN_FIND_ATTEMPTS; i++) {
-                    randomWeight = rand.nextInt(WorldGenOreVein.TOTAL_WEIGHT);
+                    randomWeight = rand.nextInt(WorldGenVeinLayer.TOTAL_WEIGHT);
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);
                         randomWeight -= layer.getWeight();
