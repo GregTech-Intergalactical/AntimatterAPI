@@ -221,7 +221,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, BlockPos.Mutable pos) {
         int[] placeCount = new int[4];
         int tMinY = minY + rand.nextInt(maxY - minY - 5);
-
+        
         //If the selected tMinY is more than the max height if the current position, escape
 //        if (tMinY > world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, posX, posZ)) {
 //            return CHUNK_HEIGHT_TOO_LOW;
@@ -231,8 +231,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         int wXVein = seedX - rand.nextInt(size);        // West side
         int eXVein = seedX + 16 + rand.nextInt(size);
         // Limit Orevein to only blocks present in current chunk
-        int wX = Math.max(wXVein, posX + 2);  // Bias placement by 2 blocks to prevent worldgen cascade.
-        int eX = Math.min(eXVein, posX + 2 + 16);
+        int wX = Math.max(wXVein, posX);
+        int eX = Math.min(eXVein, posX + 16);
 
         // Get a block at the center of the chunk and the bottom of the orevein.
 
@@ -251,8 +251,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         int nZVein = seedZ - rand.nextInt(size);
         int sZVein = seedZ + 16 + rand.nextInt(size);
 
-        int nZ = Math.max(nZVein, posZ + 2);  // Bias placement by 2 blocks to prevent worldgen cascade.
-        int sZ = Math.min(sZVein, posZ + 2 + 16);
+        int nZ = Math.max(nZVein, posZ);
+        int sZ = Math.min(sZVein, posZ+ 16);
         if (nZ >= sZ) { //No overlap between orevein and this chunk exists in Z
             if (centerState.getBlock().isReplaceableOreGen(centerState, world, centerPos, WorldGenHelper.ORE_PREDICATE)) {
                 return NO_OVERLAP; // Didn't reach, but could have placed. Save orevein for future use.
@@ -425,26 +425,26 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
             //Small ores are placed in the whole chunk in which the vein appears.
             for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
-                int tX = rand.nextInt(16) + posX + 2;
-                int tZ = rand.nextInt(16) + posZ + 2;
+                int tX = rand.nextInt(16) + posX;
+                int tZ = rand.nextInt(16) + posZ;
                 int tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
                 pos.setPos(tX, tY, tZ);
                 WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], MaterialType.ORE_SMALL);
 
-                tX = rand.nextInt(16) + posX + 2;
-                tZ = rand.nextInt(16) + posZ + 2;
+                tX = rand.nextInt(16) + posX;
+                tZ = rand.nextInt(16) + posZ;
                 tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
                 pos.setPos(tX, tY, tZ);
                 WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], MaterialType.ORE_SMALL);
 
-                tX = rand.nextInt(16) + posX + 2;
-                tZ = rand.nextInt(16) + posZ + 2;
+                tX = rand.nextInt(16) + posX;
+                tZ = rand.nextInt(16) + posZ;
                 tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
                 pos.setPos(tX, tY, tZ);
                 WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], MaterialType.ORE_SMALL);
 
-                tX = rand.nextInt(16) + posX + 2;
-                tZ = rand.nextInt(16) + posZ + 2;
+                tX = rand.nextInt(16) + posX;
+                tZ = rand.nextInt(16) + posZ;
                 tY = rand.nextInt(190) + 10; // Y height can vary from 10 to 200 for small ores.
                 pos.setPos(tX, tY, tZ);
                 WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], MaterialType.ORE_SMALL);
