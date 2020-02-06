@@ -45,9 +45,9 @@ public class Ref {
 
     //TODO maybe use these later
     public static boolean debugWorldGen = false;
-    public static boolean debugOreVein = true;
-    public static boolean debugSmallOres = true;
-    public static boolean debugStones = true;
+    public static boolean debugOreVein = false;
+    public static boolean debugSmallOres = false;
+    public static boolean debugStones = false;
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_NO_CONSUME = "noconsume";

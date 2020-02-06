@@ -1,6 +1,7 @@
 package muramasa.antimatter.ore;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Configs;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
@@ -15,10 +16,14 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     private MaterialType oreType;
 
-    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType) {
-        super(domain, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId(), material, stoneType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType, Block.Properties properties) {
+        super(domain, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId(), material, stoneType, getOreProperties(properties));
         this.oreType = oreType;
         AntimatterAPI.register(BlockOre.class, this);
+    }
+
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType) {
+        this(domain, material, stoneType, oreType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
     }
 
     @Override
@@ -30,7 +35,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         return oreType;
     }
 
-//    @Override
+    //    @Override
 //    public net.minecraft.block.material.Material getMaterial(BlockState state) {
 //        ToolType tool = getHarvestTool(state);
 //        if (tool != null && tool.equals("shovel")) return net.minecraft.block.material.Material.SAND;
@@ -103,18 +108,30 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
 //    }
 
+
+
     public static ItemStack get(Material material, MaterialType oreType, StoneType stoneType, int count) {
         BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
         return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
     }
 
     public static BlockState get(Material material, MaterialType oreType, StoneType stoneType) {
-        BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
-        return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
+        try {
+            BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
+            return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Blocks.AIR.getDefaultState();
+        }
     }
 
     @Override
     public Texture[] getTextures() {
         return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getDomain(), getOreType(), 0)};
+    }
+
+    public static Block.Properties getOreProperties(Block.Properties properties) {
+        if (Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().lightValue(15);
+        return properties;
     }
 }

@@ -219,6 +219,7 @@ public class Material implements IAntimatterObject {
     }
 
     //TODO fix this...
+    //TODO rename to mats
     public Material add(Object... objects) {
         if (objects.length % 2 == 0) {
             for (int i = 0; i < objects.length; i += 2) {

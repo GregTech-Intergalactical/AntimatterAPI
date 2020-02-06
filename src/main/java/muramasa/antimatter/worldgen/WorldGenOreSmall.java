@@ -12,14 +12,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 
-public class WorldGenOreSmall extends WorldGenBase {
+public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
 
     @Expose private int minY, maxY, amount;
 
     private Material material;
 
     public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material primary, int... dimensions) {
-        super(id, dimensions);
+        super(id, WorldGenOreSmall.class, dimensions);
         this.minY = minY;
         this.maxY = maxY;
         this.amount = amount;
@@ -27,7 +27,7 @@ public class WorldGenOreSmall extends WorldGenBase {
     }
 
     @Override
-    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
+    public WorldGenOreSmall onDataOverride(LinkedTreeMap dataMap) {
         super.onDataOverride(dataMap);
         if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
         if (dataMap.containsKey("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
@@ -36,7 +36,7 @@ public class WorldGenOreSmall extends WorldGenBase {
     }
 
     @Override
-    public WorldGenBase build() {
+    public WorldGenOreSmall build() {
         super.build();
         if (material == null || !material.has(MaterialType.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + material.getId() + " material either doesn't exist or doesn't have the ORE_SMALL tag");
         return this;

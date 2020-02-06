@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.gen.ChunkGenerator;
 
-public class WorldGenStone extends WorldGenBase {
+public class WorldGenStone extends WorldGenBase<WorldGenStone> {
 
     private static final double SIZE_CONVERSION[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
 
@@ -27,7 +27,7 @@ public class WorldGenStone extends WorldGenBase {
     public LongOpenHashSet CHECKED_SEEDS;
 
     public WorldGenStone(String id, StoneType type, int amount, int size, int probability, int minY, int maxY, int... dimensions) {
-        super(id, dimensions);
+        super(id, WorldGenStone.class, dimensions);
         this.type = type.getId();
         this.amount = amount;
         this.size = size;
@@ -37,7 +37,7 @@ public class WorldGenStone extends WorldGenBase {
     }
 
     @Override
-    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
+    public WorldGenStone onDataOverride(LinkedTreeMap dataMap) {
         super.onDataOverride(dataMap);
         if (dataMap.containsKey("type")) type = Utils.parseString(dataMap.get("type"), type);
         if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
@@ -49,7 +49,7 @@ public class WorldGenStone extends WorldGenBase {
     }
 
     @Override
-    public WorldGenBase build() {
+    public WorldGenStone build() {
         super.build();
         this.block = AntimatterAPI.get(BlockStone.class, type);
         if (block == null) throw new IllegalArgumentException("WorldGenStone - " + getId() + ": was given a invalid stone type");

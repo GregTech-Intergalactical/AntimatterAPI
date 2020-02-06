@@ -17,7 +17,7 @@ public class WorldGenRock extends WorldGenBase {
     @Expose private int rockAmount;
 
     public WorldGenRock(String id, int rockAmount, int... dimensions) {
-        super(id, dimensions);
+        super(id, WorldGenRock.class, dimensions);
         this.rockAmount = rockAmount;
     }
 
