@@ -6,7 +6,6 @@ import muramasa.antimatter.worldgen.NoiseGenerator;
 import muramasa.antimatter.worldgen.StoneLayer;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
@@ -63,7 +62,7 @@ public class FeatureStoneLayer extends Feature<NoFeatureConfig> implements IAnti
                 layers[5] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 3, tZ) + 1) / 2) * stonesSize)));
                 layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 4, tZ) + 1) / 2) * stonesSize)));
 
-                if (layers[3].getType().getState() == Blocks.STONE.getDefaultState()) continue;
+                //if (layers[3].getType().getState() == Blocks.STONE.getDefaultState()) continue;
 
                 int maxHeight = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos.add(i, 0, j)).getY();
                 for (int tY = 1; tY < maxHeight; tY++) {
