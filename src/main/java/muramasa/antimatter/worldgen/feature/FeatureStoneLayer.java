@@ -25,7 +25,7 @@ import java.util.Random;
 public class FeatureStoneLayer extends Feature<NoFeatureConfig> implements IAntimatterFeature {
 
     public FeatureStoneLayer() {
-        super(null);
+        super(NoFeatureConfig::deserialize);
         AntimatterAPI.register(IAntimatterFeature.class, this);
     }
 

@@ -30,7 +30,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
     static int TOTAL_WEIGHT;
 
-    static Long2ObjectOpenHashMap<WorldGenVeinLayer> VALID_VEINS = new Long2ObjectOpenHashMap<>();
+    public static Long2ObjectOpenHashMap<WorldGenVeinLayer> VALID_VEINS = new Long2ObjectOpenHashMap<>();
     private static final WorldGenVeinLayer NO_ORES_IN_VEIN = new WorldGenVeinLayer("NoOresInVein", 0, 255, 0, 255, 16, null, null, null, null) {
         @Override
         int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, BlockPos.Mutable pos) {
@@ -139,7 +139,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         // ((this.world.provider.getDimension() & 0xffL)<<56)    Puts the dimension in the top bits of the hash, to make sure to get unique hashes per dimension
         // ((long)oreSeedX & 0x000000000fffffffL) << 28)    Puts the chunk X in the bits 29-55. Cuts off the top few bits of the chunk so we have bits for dimension.
         // ((long)oreSeedZ & 0x000000000fffffffL))    Puts the chunk Z in the bits 0-27. Cuts off the top few bits of the chunk so we have bits for dimension.
-        long oreVeinSeed = world.getSeed() << 16 ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | ((long) oreSeedX & 0x000000000fffffffL) << 28 | (long) oreSeedZ & 0x000000000fffffffL); // Use an RNG that is identical every time it is called for this oreseed.
+        long oreVeinSeed = getOreVeinSeed(world, oreSeedX, oreSeedZ);
         XSTR oreVeinRNG = new XSTR(oreVeinSeed);
         int oreVeinPercentageRoll = oreVeinRNG.nextInt(100); // Roll the dice, see if we get an orevein here at all
         if (Ref.debugOreVein)
@@ -216,6 +216,10 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                     break;
             }
         }
+    }
+
+    public static long getOreVeinSeed(IWorld world, long oreSeedX, long oreSeedZ) {
+        return world.getSeed() << 16 ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | (oreSeedX & 0x000000000fffffffL) << 28 | oreSeedZ & 0x000000000fffffffL);
     }
 
     int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, BlockPos.Mutable pos) {
