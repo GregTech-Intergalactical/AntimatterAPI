@@ -30,10 +30,10 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
     static int TOTAL_WEIGHT;
 
-    static Long2ObjectOpenHashMap<WorldGenVeinLayer> VALID_VEINS = new Long2ObjectOpenHashMap<>();
+    public static Long2ObjectOpenHashMap<WorldGenVeinLayer> VALID_VEINS = new Long2ObjectOpenHashMap<>();
     private static final WorldGenVeinLayer NO_ORES_IN_VEIN = new WorldGenVeinLayer("NoOresInVein", 0, 255, 0, 255, 16, null, null, null, null) {
         @Override
-        int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, BlockPos.Mutable pos) {
+        int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
             return NO_ORES_VEIN;
         }
     };
@@ -132,14 +132,13 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         List<WorldGenVeinLayer> veins = AntimatterWorldGenerator.VEIN_LAYER.get(world.getDimension().getType().getId());
         if (veins == null || veins.size() == 0)
             return;
-        BlockPos.Mutable pos = new BlockPos.Mutable();
 
         // Explanation of oreveinseed implementation.
         // (long)this.world.getSeed()<<16)    Deep Dark does two oregen passes, one with getSeed set to +1 the original world seed.  This pushes that +1 off the low bits of oreSeedZ, so that the hashes are far apart for the two passes.
         // ((this.world.provider.getDimension() & 0xffL)<<56)    Puts the dimension in the top bits of the hash, to make sure to get unique hashes per dimension
         // ((long)oreSeedX & 0x000000000fffffffL) << 28)    Puts the chunk X in the bits 29-55. Cuts off the top few bits of the chunk so we have bits for dimension.
         // ((long)oreSeedZ & 0x000000000fffffffL))    Puts the chunk Z in the bits 0-27. Cuts off the top few bits of the chunk so we have bits for dimension.
-        long oreVeinSeed = world.getSeed() << 16 ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | ((long) oreSeedX & 0x000000000fffffffL) << 28 | (long) oreSeedZ & 0x000000000fffffffL); // Use an RNG that is identical every time it is called for this oreseed.
+        long oreVeinSeed = getOreVeinSeed(world, oreSeedX, oreSeedZ);
         XSTR oreVeinRNG = new XSTR(oreVeinSeed);
         int oreVeinPercentageRoll = oreVeinRNG.nextInt(100); // Roll the dice, see if we get an orevein here at all
         if (Ref.debugOreVein)
@@ -160,7 +159,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                         if (tRandomWeight <= 0) {
                             // Adjust the seed so that this vein has a series of unique random numbers.  Otherwise multiple attempts at this same oreseed will get the same offset and X/Z values. If an orevein failed, any orevein with the
                             // same minimum heights would fail as well.  This prevents that, giving each orevein a unique height each pass through here.
-                            int placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos);
+                            int placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
                             switch (placementResult) {
                                 case WorldGenVeinLayer.ORE_PLACED:
                                     if (Ref.debugOreVein)
@@ -204,7 +203,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                 Antimatter.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
             WorldGenVeinLayer vein = VALID_VEINS.get(oreVeinSeed);
             oreVeinRNG.setSeed(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/);  // Reset RNG to only be based on oreseed X/Z and type of vein
-            int placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16, pos);
+            int placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
             switch (placementResult) {
                 case WorldGenVeinLayer.NO_ORE_IN_BOTTOM_LAYER:
                     if (Ref.debugOreVein)
@@ -218,8 +217,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
     }
 
-    int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, BlockPos.Mutable pos) {
-        int[] placeCount = new int[4];
+    public static long getOreVeinSeed(IWorld world, long oreSeedX, long oreSeedZ) {
+        return world.getSeed() << 16 ^ ((world.getDimension().getType().getId() & 0xffL) << 56 | (oreSeedX & 0x000000000fffffffL) << 28 | oreSeedZ & 0x000000000fffffffL);
+    }
+
+    int generateChunkified(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
         int tMinY = minY + rand.nextInt(maxY - minY - 5);
         
         //If the selected tMinY is more than the max height if the current position, escape
@@ -263,6 +265,53 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
         if (Ref.debugOreVein)
             Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getDimension() + " posX="+posX/16+ " posZ="+posZ/16+ " oreseedX="+ seedX/16 + " oreseedZ="+ seedZ/16 + " cY="+tMinY);
+        //if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
+        if (!generateByFunction(world, rand, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
+            return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
+
+        //Place small ores for the vein
+        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
+            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+            generateSmallOres(world, rand, posX, posZ, nSmallOres);
+        }
+        // Something (at least the bottom layer must have 1 block) must have been placed, return true
+        return ORE_PLACED;
+    }
+
+    //Small ores are placed in the whole chunk in which the vein appears.
+    private void generateSmallOres(IWorld world, XSTR rand, int posX, int posZ, int nSmallOres) {
+        BlockPos.Mutable pos = new BlockPos.Mutable();
+        for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
+            int tX = rand.nextInt(16) + posX;
+            int tZ = rand.nextInt(16) + posZ;
+            int tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
+            pos.setPos(tX, tY, tZ);
+            WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], MaterialType.ORE_SMALL);
+
+            tX = rand.nextInt(16) + posX;
+            tZ = rand.nextInt(16) + posZ;
+            tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
+            pos.setPos(tX, tY, tZ);
+            WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], MaterialType.ORE_SMALL);
+
+            tX = rand.nextInt(16) + posX;
+            tZ = rand.nextInt(16) + posZ;
+            tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
+            pos.setPos(tX, tY, tZ);
+            WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], MaterialType.ORE_SMALL);
+
+            tX = rand.nextInt(16) + posX;
+            tZ = rand.nextInt(16) + posZ;
+            tY = rand.nextInt(190) + 10; // Y height can vary from 10 to 200 for small ores.
+            pos.setPos(tX, tY, tZ);
+            WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], MaterialType.ORE_SMALL);
+        }
+    }
+
+    private boolean generateSquare(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, int wX, int eX, int nZ, int sZ) {
+        BlockPos.Mutable pos = new BlockPos.Mutable();
+        int[] placeCount = new int[4];
+
         // Adjust the density down the more chunks we are away from the oreseed.  The 5 chunks surrounding the seed should always be max density due to truncation of Math.sqrt().
         int localDensity = Math.max(1, this.density / (int) Math.sqrt(2 + Math.pow(posX / 16 - seedX / 16, 2) + Math.pow(posZ / 16 - seedZ / 16, 2)));
 
@@ -288,7 +337,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         if (placeCount[1] + placeCount[3] == 0) {
             if (Ref.debugOreVein)
                 Antimatter.LOGGER.info(" No ore in bottom layer");
-            return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
+            return false;
         }
         // Layers 0 & 1 Secondary and Sporadic
         for (level = tMinY; level < tMinY + 2; level++) {
@@ -420,39 +469,55 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                 }
             }
         }
-        //Place small ores for the vein
-        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
-            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
-            //Small ores are placed in the whole chunk in which the vein appears.
-            for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
-                int tX = rand.nextInt(16) + posX;
-                int tZ = rand.nextInt(16) + posZ;
-                int tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
-                pos.setPos(tX, tY, tZ);
-                WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], MaterialType.ORE_SMALL);
+        if (Ref.debugOreVein)
+            Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein + " locDen=" + localDensity
+                    + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
+        return true;
+    }
+    private boolean generateByFunction(IWorld world, XSTR rand,
+                                       int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, // vein
+                                       int wX, int eX, int nZ, int sZ) { // vein & current chunk intersection
+        BlockPos.Mutable pos = new BlockPos.Mutable();
+        int[] placeCount = new int[4];
+        final int centerX = (wXVein +  eXVein)/2;
+        final int centerY = tMinY + 4;
+        final int centerZ = (nZVein + sZVein)/2;
+        final double a = 4.0 / ((wXVein - eXVein) *(wXVein - eXVein)); // Elliptic shape defined as
+        final double b = 0.04; // 1 / (5*5)
+        final double c = 4.0 / ((nZVein - sZVein) *(nZVein - sZVein)); // aX^2 + bY^2 +cZ^2 = 1
 
-                tX = rand.nextInt(16) + posX;
-                tZ = rand.nextInt(16) + posZ;
-                tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
-                pos.setPos(tX, tY, tZ);
-                WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], MaterialType.ORE_SMALL);
-
-                tX = rand.nextInt(16) + posX;
-                tZ = rand.nextInt(16) + posZ;
-                tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
-                pos.setPos(tX, tY, tZ);
-                WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], MaterialType.ORE_SMALL);
-
-                tX = rand.nextInt(16) + posX;
-                tZ = rand.nextInt(16) + posZ;
-                tY = rand.nextInt(190) + 10; // Y height can vary from 10 to 200 for small ores.
-                pos.setPos(tX, tY, tZ);
-                WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], MaterialType.ORE_SMALL);
+        for (int y = tMinY - 1; y < (tMinY + 8); ++y){
+            for (int x = wX; x < eX; ++x) {
+                for (int z = nZ; z < sZ; ++z){
+                    double p = 1.0 - a * (centerX - x)*(centerX - x) - b*(centerY - y)*(centerY - y) - c*(centerZ-z)*(centerZ-z);
+                    if (p <= 0)
+                        continue;
+                    if (rand.nextInt(100) > 100*p)
+                        continue; // rolled outside the probability function
+                    if (rand.nextInt(12) > density) // should be tested, but seems to be fine
+                        continue;
+                    pos.setPos(x, y, z);
+                    if (rand.nextInt(100) < 10) { // let each 10th be sproradic
+                        if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], MaterialType.ORE))
+                            placeCount[3]++;
+                    } else {
+                        int oreIndex = (p > 0.5) ? 0 : (p > 0.2 ? 1 : 2);
+                        if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[oreIndex], MaterialType.ORE))
+                            placeCount[oreIndex]++;
+                    }
+                }
+            }
+            if (y == tMinY + 1) { // early bail out test
+                if ((placeCount[0] + placeCount[1] + placeCount[2] + placeCount[3]) == 0){
+                    if (Ref.debugOreVein)
+                        Antimatter.LOGGER.info(" No ore in bottom layer");
+                    return false;
+                }
             }
         }
         if (Ref.debugOreVein)
-            Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein + " locDen=" + localDensity + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
-        // Something (at least the bottom layer must have 1 block) must have been placed, return true
-        return ORE_PLACED;
+            Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein
+                    + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
+        return true;
     }
 }
