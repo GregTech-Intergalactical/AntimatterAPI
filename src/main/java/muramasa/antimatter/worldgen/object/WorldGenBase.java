@@ -1,11 +1,10 @@
-package muramasa.antimatter.worldgen;
+package muramasa.antimatter.worldgen.object;
 
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.XSTR;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,7 +17,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObject {
+public class WorldGenBase<T extends WorldGenBase<?>> {
 
     private String id;
     @Expose private boolean enabled = true;
@@ -29,14 +28,12 @@ public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObjec
 
     }
 
-    public WorldGenBase(String id, Class<? extends WorldGenBase<?>> clazz, int... dimensions) {
+    public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, int... dimensions) {
         this.id = id;
         this.dimensions = Arrays.stream(dimensions).boxed().collect(Collectors.toCollection(Sets::newLinkedHashSet));
-        AntimatterAPI.register(clazz, this);
-        //AntimatterAPI.register(WorldGenBase.class, this);
+        AntimatterWorldGenerator.register(c, this);
     }
 
-    @Override
     public String getId() {
         return id;
     }
@@ -45,7 +42,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObjec
         return enabled;
     }
 
-    public Set<Integer> getDimensions() {
+    public Set<Integer> getDims() {
         return dimensions;
     }
 
@@ -68,7 +65,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObjec
         return this;
     }
 
-    public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
+    public boolean generate(World world, XSTR rand, int posX, int posZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         return true;
     }
 

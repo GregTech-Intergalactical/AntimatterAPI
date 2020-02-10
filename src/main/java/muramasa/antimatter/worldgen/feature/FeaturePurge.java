@@ -21,8 +21,9 @@ import java.util.Random;
 
 public class FeaturePurge extends Feature<NoFeatureConfig> implements IAntimatterFeature {
 
+    //TODO is this needed? StoneLayers should eradicate all unwanted blocks, maybe unless StoneLayers are disabled?
     public FeaturePurge() {
-        super(null);
+        super(NoFeatureConfig::deserialize);
         AntimatterAPI.register(IAntimatterFeature.class, this);
     }
 
@@ -36,6 +37,11 @@ public class FeaturePurge extends Feature<NoFeatureConfig> implements IAntimatte
         for (Biome biome : ForgeRegistries.BIOMES) {
             biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
+    }
+
+    @Override
+    public boolean enabled() {
+        return false;
     }
 
     @Override

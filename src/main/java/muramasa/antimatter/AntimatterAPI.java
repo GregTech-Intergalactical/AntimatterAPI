@@ -41,28 +41,28 @@ public final class AntimatterAPI {
 
     public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
 
-    private static void registerInternal(Class c, String id, Object o, boolean checkDuplicates) {
+    private static void registerInternal(Class<?> c, String id, Object o, boolean checkDuplicates) {
         OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
         if (checkDuplicates && OBJECTS.get(c).containsKey(id)) throw new IllegalStateException("Object: " + id + " for class " + c.getName() + " has already been registered by " + OBJECTS.get(c).get(id));
         OBJECTS.get(c).put(id, o);
     }
 
-    private static boolean hasBeenRegistered(Class c, String id) {
+    private static boolean hasBeenRegistered(Class<?> c, String id) {
         return OBJECTS.containsKey(c) && OBJECTS.get(c).containsKey(id);
     }
 
-    public static void register(Class c, String id, Object o) {
+    public static void register(Class<?> c, String id, Object o) {
         registerInternal(c, id, o, true);
         if (o instanceof Item && !hasBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
         if (o instanceof Block && !hasBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
         if (o instanceof Material) MATERIAL_HASH_LOOKUP.put(((Material) o).getHash(), (Material) o);
     }
 
-    public static void register(Class c, IAntimatterObject o) {
+    public static void register(Class<?> c, IAntimatterObject o) {
         register(c, o.getId(), o);
     }
 
-    public static void overrideRegistryObject(Class c, String id, Object o) {
+    public static void overrideRegistryObject(Class<?> c, String id, Object o) {
         registerInternal(c, id, o, false);
     }
 
@@ -145,7 +145,7 @@ public final class AntimatterAPI {
     }
 
     /** JEI Registry Section **/
-    public static void registerJEICategory(RecipeMap map, GuiData gui) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
             //TODO
             //GregTechJEIPlugin.registerCategory(map, gui);

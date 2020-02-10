@@ -11,6 +11,8 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
+import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -78,7 +80,7 @@ public class Antimatter implements IAntimatterRegistrar {
     @SubscribeEvent
     public static void onDataGather(GatherDataEvent e) {
         if (e.includeClient()) {
-            e.getGenerator().addProvider(new AntimatterItemModelProvider(Ref.ID, Ref.NAME + " Item Models", e.getGenerator()));
+            e.getGenerator().addProvider(new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), e.getGenerator()));
         }
         if (e.includeServer()) {
 
@@ -104,6 +106,10 @@ public class Antimatter implements IAntimatterRegistrar {
             case DATA_READY:
                 AntimatterAPI.registerCover(Data.COVER_NONE);
                 AntimatterAPI.registerCover(Data.COVER_OUTPUT);
+                break;
+            case WORLDGEN_INIT:
+                new FeatureStoneLayer();
+                new FeatureVeinLayer();
                 break;
         }
     }

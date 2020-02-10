@@ -1,4 +1,4 @@
-package muramasa.antimatter.worldgen;
+package muramasa.antimatter.worldgen.old;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
@@ -6,6 +6,10 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.util.XSTR;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.object.WorldGenBase;
+import muramasa.antimatter.worldgen.WorldGenHelper;
+import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -47,14 +51,14 @@ public class WorldGenAsteroid extends WorldGenBase {
     @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
-            List<WorldGenVeinLayer> layers = AntimatterWorldGenerator.VEIN_LAYER.get(world.getDimension().getType().getId());
+            List<WorldGenVeinLayer> layers = AntimatterWorldGenerator.all(WorldGenVeinLayer.class, world.getDimension().getType().getId());
             int layerCount = layers.size();
             WorldGenVeinLayer layerToGen = null;
-            if (WorldGenVeinLayer.TOTAL_WEIGHT > 0 && layerCount > 0) {
+            if (WorldGenVeinLayer.getTotalWeight() > 0 && layerCount > 0) {
                 int randomWeight;
                 WorldGenVeinLayer layer;
                 for (int i = 0; i < Configs.WORLD.ORE_VEIN_FIND_ATTEMPTS; i++) {
-                    randomWeight = rand.nextInt(WorldGenVeinLayer.TOTAL_WEIGHT);
+                    randomWeight = rand.nextInt(WorldGenVeinLayer.getTotalWeight());
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);
                         randomWeight -= layer.getWeight();
