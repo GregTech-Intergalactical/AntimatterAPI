@@ -40,7 +40,7 @@ public class Ref {
 
     /** Debug Options **/
     public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;
-    public static boolean SHOW_STACK_ORE_DICT = true;
+    public static boolean SHOW_ITEM_TAGS = true;
     public static boolean DATA_EXCEPTIONS = false; //TODO re-enable
 
     //TODO maybe use these later

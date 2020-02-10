@@ -5,12 +5,17 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class MaterialType implements IMaterialTag, IAntimatterObject {
@@ -47,10 +52,10 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
     public static MaterialType ROTOR = new MaterialType("rotor", 2, true, Ref.U * 4 + Ref.U4);
 
     //Dummy Types
-    public static MaterialType ORE = new MaterialType("ore", 1, true, -1, false);
-    public static MaterialType ORE_SMALL = new MaterialType("ore_small", 1, false, -1, false);
-    public static MaterialType BLOCK = new MaterialType("block", 1, false, -1, false);
-    public static MaterialType FRAME = new MaterialType("frame", 1, true, -1, false);
+    public static MaterialType ORE = new MaterialType("ore", 1, true, -1, false, true);
+    public static MaterialType ORE_SMALL = new MaterialType("ore_small", 1, false, -1, false, true);
+    public static MaterialType BLOCK = new MaterialType("block", 1, false, -1, false, true);
+    public static MaterialType FRAME = new MaterialType("frame", 1, true, -1, false, true);
     public static MaterialType TOOLS = new MaterialType("tools", 1, false, -1, false);
     public static MaterialType LIQUID = new MaterialType("liquid", 1, true, -1, false);
     public static MaterialType GAS = new MaterialType("gas", 1, true, -1, false);
@@ -59,8 +64,9 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
     private String id;
     private ITextComponent namePre, namePost;
     private int unitValue, layers;
-    private boolean active, visible, hasLocName;
+    private boolean active, visible, hasLocName, hasBlock;
     private Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
+    private Map<MaterialType, Tag> tagMap = new HashMap<>();
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
         this.id = id;
@@ -68,12 +74,19 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
         this.unitValue = unitValue;
         this.layers = layers;
         active = true;
+        this.tagMap.put(this, Utils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
         register(MaterialType.class, this);
     }
 
     public MaterialType(String id, int layers, boolean visible, int unitValue, boolean active) {
         this(id, layers, visible, unitValue);
         this.active = active;
+    }
+
+    public MaterialType(String id, int layers, boolean visible, int unitValue, boolean active, boolean hasBlock) {
+        this(id, layers, visible, unitValue, active);
+        this.hasBlock = hasBlock;
+        this.tagMap.put(this, Utils.getForgeBlockTag(Utils.getConventionalMaterialType(this)));
     }
 
     @Override
@@ -87,6 +100,10 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
 
     public int getLayers() {
         return layers;
+    }
+
+    public <T> Tag<T> getTag() {
+        return tagMap.get(this);
     }
 
     //TODO
