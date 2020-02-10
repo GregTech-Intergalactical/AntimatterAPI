@@ -32,6 +32,10 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
 
     @Override
     protected void registerTags() {
+        processTags(providerDomain);
+    }
+
+    public void processTags(String domain) {
         Tag<Block> blockTag = BLOCK.getTag();
         Tag<Block> frameTag = FRAME.getTag();
         this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
@@ -39,7 +43,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         this.copy(frameTag, blockToItemTag(frameTag));
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
         this.copy(Tags.Blocks.SUPPORTS_BEACON, Tags.Items.SUPPORTS_BEACON);
-        IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(providerDomain)).forEach(m -> {
+        IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
             AntimatterAPI.all(StoneType.class).forEach(s -> {
                 if (m.has(ORE)) {
                     String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
@@ -51,18 +55,18 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
                 }
             });
         });
-        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(providerDomain)).forEach(s -> {
+        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> {
             String id = "blocks/".concat(s.getId());
-            this.copy(getBlockTag(providerDomain, id), getItemTag(providerDomain, id));
+            this.copy(getBlockTag(domain, id), getItemTag(domain, id));
         });
         AntimatterAPI.all(BlockStorage.class)
-                .stream().filter(block -> block.getMaterial().getDomain().equals(providerDomain)).forEach(storage -> {
+                .stream().filter(block -> block.getMaterial().getDomain().equals(domain)).forEach(storage -> {
                     MaterialType type = storage.getType();
                     String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
                     this.copy(getForgeBlockTag(name), getForgeItemTag(name));
                 });
         AntimatterAPI.all(MaterialItem.class).stream()
-                .filter(i -> i.getMaterial().getDomain().equals(providerDomain)).forEach(item -> {
+                .filter(i -> i.getMaterial().getDomain().equals(domain)).forEach(item -> {
                     MaterialType type = item.getType();
                     this.getBuilder(type.getTag()).add(item);
                     String name = String.join("", getConventionalMaterialType(type), "/", item.getMaterial().getId());
