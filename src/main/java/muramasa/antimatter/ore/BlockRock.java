@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -97,7 +98,7 @@ public class BlockRock extends BlockMaterialStone implements IModelProvider {
 
     @Override
     public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        return getMaterial().getDust(1);
+        return MaterialType.DUST.get(getMaterial(), 1);
     }
 
     /** TileEntity Drops Start **/
