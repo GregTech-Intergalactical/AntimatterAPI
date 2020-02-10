@@ -265,7 +265,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
         if (Ref.debugOreVein)
             Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getDimension() + " posX="+posX/16+ " posZ="+posZ/16+ " oreseedX="+ seedX/16 + " oreseedZ="+ seedZ/16 + " cY="+tMinY);
-        if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
+        //if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
+        if (!generateByFunction(world, rand, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
 
         //Place small ores for the vein
@@ -469,7 +470,54 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             }
         }
         if (Ref.debugOreVein)
-            Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein + " locDen=" + localDensity + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
+            Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein + " locDen=" + localDensity
+                    + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
+        return true;
+    }
+    private boolean generateByFunction(IWorld world, XSTR rand,
+                                       int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, // vein
+                                       int wX, int eX, int nZ, int sZ) { // vein & current chunk intersection
+        BlockPos.Mutable pos = new BlockPos.Mutable();
+        int[] placeCount = new int[4];
+        final int centerX = (wXVein +  eXVein)/2;
+        final int centerY = tMinY + 4;
+        final int centerZ = (nZVein + sZVein)/2;
+        final double a = 4.0 / ((wXVein - eXVein) *(wXVein - eXVein)); // Elliptic shape defined as
+        final double b = 0.04; // 1 / (5*5)
+        final double c = 4.0 / ((nZVein - sZVein) *(nZVein - sZVein)); // aX^2 + bY^2 +cZ^2 = 1
+
+        for (int y = tMinY - 1; y < (tMinY + 8); ++y){
+            for (int x = wX; x < eX; ++x) {
+                for (int z = nZ; z < sZ; ++z){
+                    double p = 1.0 - a * (centerX - x)*(centerX - x) - b*(centerY - y)*(centerY - y) - c*(centerZ-z)*(centerZ-z);
+                    if (p <= 0)
+                        continue;
+                    if (rand.nextInt(100) > 100*p)
+                        continue; // rolled outside the probability function
+                    if (rand.nextInt(12) > density) // should be tested, but seems to be fine
+                        continue;
+                    pos.setPos(x, y, z);
+                    if (rand.nextInt(100) < 10) { // let each 10th be sproradic
+                        if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], MaterialType.ORE))
+                            placeCount[3]++;
+                    } else {
+                        int oreIndex = (p > 0.5) ? 0 : (p > 0.2 ? 1 : 2);
+                        if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[oreIndex], MaterialType.ORE))
+                            placeCount[oreIndex]++;
+                    }
+                }
+            }
+            if (y == tMinY + 1) { // early bail out test
+                if ((placeCount[0] + placeCount[1] + placeCount[2] + placeCount[3]) == 0){
+                    if (Ref.debugOreVein)
+                        Antimatter.LOGGER.info(" No ore in bottom layer");
+                    return false;
+                }
+            }
+        }
+        if (Ref.debugOreVein)
+            Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein
+                    + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
         return true;
     }
 }
