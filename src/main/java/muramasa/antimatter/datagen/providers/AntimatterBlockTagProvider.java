@@ -39,8 +39,12 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void registerTags() {
+        processTags(providerDomain);
+    }
+
+    public void processTags(String domain) {
         AntimatterAPI.all(StoneType.class).forEach(s -> {
-            IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(providerDomain)).forEach(m -> {
+            IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
                 if (m.has(ORE)) {
                     Block block = BlockOre.get(m, ORE, s).getBlock();
                     String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
@@ -54,12 +58,12 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
                 }
             });
         });
-        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(providerDomain)).forEach(s -> {
+        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);
-            this.getBuilder(getBlockTag(providerDomain, "blocks/".concat(s.getId()))).add(s);
+            this.getBuilder(getBlockTag(domain, "blocks/".concat(s.getId()))).add(s);
         });
         AntimatterAPI.all(BlockStorage.class)
-                .stream().filter(block -> block.getMaterial().getDomain().equals(providerDomain)).forEach(storage -> {
+                .stream().filter(block -> block.getMaterial().getDomain().equals(domain)).forEach(storage -> {
                     MaterialType type = storage.getType();
                     this.getBuilder(type.getTag()).add(storage);
                     String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
