@@ -3,15 +3,23 @@ package muramasa.antimatter.util;
 import com.google.common.base.CaseFormat;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.FluidStack;
@@ -496,8 +504,7 @@ public class Utils {
     public static String underscoreToUpperCamel(String string) {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string);
     }
-    
-    //Subscript 0 doesn't get displayed properly for some reason
+
     public static String digitsToSubscript(String string) {
         if (string.length() == 0) return "";
         char[] chars = string.toCharArray();
@@ -526,6 +533,45 @@ public class Utils {
             }
         }
         return original;
+    }
+
+    public static String getConventionalStoneType(StoneType type) {
+        String string = type.getId();
+        int index = string.indexOf("_");
+        if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));
+        return string;
+    }
+
+    public static String getConventionalMaterialType(MaterialType type) {
+        String id = type.getId();
+        if (id.contains("crushed")) id = id.replace("crushed", "crushed_ores");
+        int index = id.indexOf("_");
+        if (index != -1) return String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
+        return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
+    }
+
+    public static Tag<Block> itemToBlockTag(Tag<Item> tag) {
+        return new BlockTags.Wrapper(tag.getId());
+    }
+
+    public static Tag<Item> blockToItemTag(Tag<Block> tag) {
+        return new ItemTags.Wrapper(tag.getId());
+    }
+
+    public static Tag<Block> getBlockTag(String domain, String name) {
+        return new BlockTags.Wrapper(new ResourceLocation(domain, name));
+    }
+
+    public static Tag<Block> getForgeBlockTag(String name) {
+        return getBlockTag("forge", name);
+    }
+
+    public static Tag<Item> getItemTag(String domain, String name) {
+        return new ItemTags.Wrapper(new ResourceLocation(domain, name));
+    }
+
+    public static Tag<Item> getForgeItemTag(String name) {
+        return getItemTag("forge", name);
     }
 
     public static Recipe getEmptyRecipe() {
