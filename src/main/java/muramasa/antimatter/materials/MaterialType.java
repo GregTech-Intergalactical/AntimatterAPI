@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.Configs;
+import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
@@ -106,9 +107,21 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
         return tagMap.get(this);
     }
 
-    //TODO
+    public Item get(Material material) {
+        if (!allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
+        ItemStack replacement = AntimatterAPI.getReplacement(this, material);
+        if (!replacement.isEmpty()) return replacement.getItem();
+        MaterialItem item = AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
+        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
+        return item;
+    }
+
     public ItemStack get(Material material, int count) {
-        return ItemStack.EMPTY;
+        Item item = get(material);
+        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
+        ItemStack stack = new ItemStack(item, count);
+        if (stack.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + id + ") M(" + material.getId() + ")");
+        return stack;
     }
 
     @Override
@@ -130,11 +143,6 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
             if (!namePost.getFormattedText().isEmpty()) namePost = new StringTextComponent(" ").appendSibling(namePost);
         //}
         return new TranslationTextComponent("").appendSibling(namePre).appendSibling(material.getDisplayName()).appendSibling(namePost);
-    }
-
-    @Deprecated //TODO remove
-    public String oreName(Material material) {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, getId().concat("_").concat(material.getId()));
     }
 
     public boolean allowGeneration(Material material) {

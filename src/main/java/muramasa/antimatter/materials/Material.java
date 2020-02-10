@@ -469,120 +469,6 @@ public class Material implements IAntimatterObject {
         return this;
     }
 
-    /** Helpful Stack Getters **/
-    //TODO replace with MaterialType instance method
-    public ItemStack getCrushed(int amount) {
-        return MaterialItem.get(CRUSHED, this, amount);
-    }
-
-    public ItemStack getCrushedCentrifuged(int amount) {
-        return MaterialItem.get(CRUSHED_CENTRIFUGED, this, amount);
-    }
-
-    public ItemStack getCrushedPurified(int amount) {
-        return MaterialItem.get(CRUSHED_PURIFIED, this, amount);
-    }
-
-    public ItemStack getDust(int amount) {
-        return MaterialItem.get(DUST, this, amount);
-    }
-
-    public ItemStack getDustPure(int amount) {
-        return MaterialItem.get(DUST_PURE, this, amount);
-    }
-
-    public ItemStack getDustImpure(int amount) {
-        return MaterialItem.get(DUST_IMPURE, this, amount);
-    }
-
-    public ItemStack getDustSmall(int amount) {
-        return MaterialItem.get(DUST_SMALL, this, amount);
-    }
-
-    public ItemStack getDustTiny(int amount) {
-        return MaterialItem.get(DUST_TINY, this, amount);
-    }
-
-    public ItemStack getNugget(int amount) {
-        return MaterialItem.get(NUGGET, this, amount);
-    }
-
-    public ItemStack getIngot(int amount) {
-        return MaterialItem.get(INGOT, this, amount);
-    }
-
-    public ItemStack getIngotHot(int amount) {
-        return MaterialItem.get(INGOT_HOT, this, amount);
-    }
-
-    public ItemStack getPlate(int amount) {
-        return MaterialItem.get(PLATE, this, amount);
-    }
-
-    public ItemStack getPlateDense(int amount) {
-        return MaterialItem.get(PLATE_DENSE, this, amount);
-    }
-
-    public ItemStack getGem(int amount) {
-        return MaterialItem.get(GEM, this, amount);
-    }
-
-    public ItemStack getGemBrittle(int amount) {
-        return MaterialItem.get(GEM_BRITTLE, this, amount);
-    }
-
-    public ItemStack getGemPolished(int amount) {
-        return MaterialItem.get(GEM_POLISHED, this, amount);
-    }
-
-    public ItemStack getFoil(int amount) {
-        return MaterialItem.get(FOIL, this, amount);
-    }
-
-    public ItemStack getRod(int amount) {
-        return MaterialItem.get(ROD, this, amount);
-    }
-    
-    public ItemStack getRodLong(int amount) {
-        return MaterialItem.get(ROD_LONG, this, amount);
-    }   
-
-    public ItemStack getBolt(int amount) {
-        return MaterialItem.get(BOLT, this, amount);
-    }
-
-    public ItemStack getScrew(int amount) {
-        return MaterialItem.get(SCREW, this, amount);
-    }
-
-    public ItemStack getRing(int amount) {
-        return MaterialItem.get(RING, this, amount);
-    }
-
-    public ItemStack getSpring(int amount) {
-        return MaterialItem.get(SPRING, this, amount);
-    }
-
-    public ItemStack getWireFine(int amount) {
-        return MaterialItem.get(WIRE_FINE, this, amount);
-    }
-
-    public ItemStack getRotor(int amount) {
-        return MaterialItem.get(ROTOR, this, amount);
-    }
-
-    public ItemStack getGear(int amount) {
-        return MaterialItem.get(GEAR, this, amount);
-    }
-
-    public ItemStack getGearSmall(int amount) {
-        return MaterialItem.get(GEAR_SMALL, this, amount);
-    }
-
-    public ItemStack getLens(int amount) {
-        return MaterialItem.get(LENS, this, amount);
-    }
-
     public ItemStack getCell(int amount) {
     	//return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
         return ItemStack.EMPTY;
@@ -596,10 +482,6 @@ public class Material implements IAntimatterObject {
     public ItemStack getCellPlasma(int amount) {
         //return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
         return ItemStack.EMPTY;
-    }
-
-    public ItemStack getRock(int amount) {
-        return Utils.ca(amount, MaterialItem.get(ROCK, this, amount));
     }
 
     public ItemStack getOre(int amount, StoneType type) {
