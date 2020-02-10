@@ -1,28 +1,35 @@
 package muramasa.antimatter.worldgen;
 
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 
 import java.util.Arrays;
 
 public class StoneLayer {
 
-    private StoneType type;
-    private BlockState[] ores;
+    private BlockState stoneState;
+    private StoneLayerOre[] ores = new StoneLayerOre[0];
 
-    public StoneLayer(StoneType type, Material... materials) {
-        this.type = type;
-        ores = Arrays.stream(materials).map(m -> BlockOre.get(m, MaterialType.ORE, type)).toArray(BlockState[]::new);
+    public StoneLayer(Block block) {
+        this(block.getDefaultState());
     }
 
-    public StoneType getType() {
-        return type;
+    public StoneLayer(BlockState state) {
+        this.stoneState = state;
     }
 
-    public BlockState[] getOres() {
+    public StoneLayer(StoneType stoneType, StoneLayerOre... ores) {
+        this.stoneState = stoneType.getState();
+        this.ores = ores;
+        Arrays.stream(ores).forEach(o -> o.setState(stoneType));
+    }
+
+    public BlockState getStoneState() {
+        return stoneState;
+    }
+
+    public StoneLayerOre[] getOres() {
         return ores;
     }
 }

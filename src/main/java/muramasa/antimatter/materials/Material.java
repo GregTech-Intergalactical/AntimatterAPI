@@ -260,7 +260,7 @@ public class Material implements IAntimatterObject {
     }
 
     public long getDensity() {
-        return Ref.M;
+        return Ref.U;
     }
 
     public long getProtons() {
@@ -271,7 +271,7 @@ public class Material implements IAntimatterObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getProtons();
         }
-        return (getDensity() * rAmount) / (tAmount * Ref.M);
+        return (getDensity() * rAmount) / (tAmount * Ref.U);
     }
 
     public long getNeutrons() {
@@ -282,7 +282,7 @@ public class Material implements IAntimatterObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getNeutrons();
         }
-        return (getDensity() * rAmount) / (tAmount * Ref.M);
+        return (getDensity() * rAmount) / (tAmount * Ref.U);
     }
 
     public long getMass() {
@@ -293,7 +293,7 @@ public class Material implements IAntimatterObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getMass();
         }
-        return (getDensity() * rAmount) / (tAmount * Ref.M);
+        return (getDensity() * rAmount) / (tAmount * Ref.U);
     }
 
     /** Element Getters **/
