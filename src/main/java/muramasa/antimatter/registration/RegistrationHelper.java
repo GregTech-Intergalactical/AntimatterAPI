@@ -29,11 +29,17 @@ public class RegistrationHelper {
     }
 
     public static Set<MaterialType> getValidTypesForMaterial(Material material) {
-        return AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowGeneration(material)).collect(Collectors.toSet());
+        return getAllMaterialTypes().stream().filter(t -> t.allowGeneration(material)).collect(Collectors.toSet());
+    }
+
+    public static Collection<MaterialType> getAllMaterialTypes() {
+        return AntimatterAPI.all(MaterialType.class);
     }
 
     public static void buildMaterialItems(String domain) {
-        getMaterialsForDomain(domain).forEach(m -> getValidTypesForMaterial(m).forEach(t -> new MaterialItem(m.getDomain(), t, m)));
+        AntimatterAPI.all(MaterialType.class).forEach(t -> getMaterialsForDomain(domain).forEach(m -> {
+            if (t.allowGeneration(m)) new MaterialItem(m.getDomain(), t, m);
+        }));
     }
 
     public static void buildOreBlocks(String domain) {

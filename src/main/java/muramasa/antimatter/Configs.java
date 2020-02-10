@@ -3,6 +3,8 @@ package muramasa.antimatter;
 //@Config(modid = Ref.MODID, name = "GregTech/" + Ref.NAME, category = "")
 public class Configs {
 
+    //TODO this needs to be ported over to the new config system
+
     public static Jei JEI = new Jei();
     public static Gameplay GAMEPLAY = new Gameplay();
     public static Data DATA = new Data();
@@ -64,6 +66,8 @@ public class Configs {
         //@RequiresWorldRestart
         //@Comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
         public boolean DISABLE_VANILLA_STONE_GEN = true;
+
+        public boolean ENABLE_ORE_VEINS = false;
 
         //@RequiresWorldRestart
         public int ORE_VEIN_MAX_SIZE = 32;

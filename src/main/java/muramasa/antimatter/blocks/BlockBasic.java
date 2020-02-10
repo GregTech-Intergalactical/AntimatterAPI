@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 
-public abstract class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
+public class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     protected String domain, id;
     protected Texture[] textures;

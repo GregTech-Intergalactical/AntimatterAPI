@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
@@ -65,10 +64,6 @@ public class WorldGenHelper {
 //        }
 //    }
 
-    private static void setOreState(IWorld world, BlockPos pos, StoneType stone, Material material, MaterialType type) {
-        world.setBlockState(pos, BlockOre.get(material, type, stone), 2 | 16);
-    }
-
     private static void setRockState(IWorld world, BlockPos pos, BlockState state, Material material) {
 //        world.setBlockState(pos, state, 2 | 16);
 //        TileEntity tile = world.getTileEntity(pos);
@@ -76,11 +71,15 @@ public class WorldGenHelper {
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
-        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ORE_PREDICATE)) {
-            StoneType stoneType = STONE_MAP.get(world.getBlockState(pos));
-            if (stoneType == null) return false;
-            setOreState(world, pos, stoneType, material, type);
-            if (type == MaterialType.ORE && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
+        StoneType stoneType = STONE_MAP.get(world.getBlockState(pos));
+        if (stoneType == null) return false;
+        return setOre(world, pos, existing, BlockOre.get(material, type, stoneType));
+    }
+
+    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
+        if (existing.isReplaceableOreGen(world, pos, ORE_PREDICATE)) {
+            setState(world, pos, replacement);
+            //if (type == MaterialType.ORE && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
             return true;
         }
         return false;
@@ -98,9 +97,13 @@ public class WorldGenHelper {
         return false;
     }
 
-    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, StoneType type) {
+    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, StoneType stoneType) {
+        return setStone(world, pos, existing, stoneType.getState());
+    }
+
+    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (existing.isReplaceableOreGen(world, pos, STONE_PREDICATE)) {
-            world.setBlockState(pos, type.getState(), 2 | 16);
+            world.setBlockState(pos, replacement, 2 | 16);
             return true;
         }
         return false;

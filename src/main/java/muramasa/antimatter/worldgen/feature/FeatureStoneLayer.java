@@ -1,10 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.NoiseGenerator;
-import muramasa.antimatter.worldgen.StoneLayer;
-import muramasa.antimatter.worldgen.WorldGenHelper;
+import muramasa.antimatter.worldgen.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -67,10 +64,27 @@ public class FeatureStoneLayer extends Feature<NoFeatureConfig> implements IAnti
                 int maxHeight = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos.add(i, 0, j)).getY();
                 for (int tY = 1; tY < maxHeight; tY++) {
                     existing = world.getBlockState(pos.add(i, tY, j));
-                    if (existing == layers[3].getType().getState()) continue; //No need to replace the same stone
 
-                    if (WorldGenHelper.setStone(world, pos.add(i, tY, j), existing, layers[3].getType())) {
+                    boolean shouldPlaceStone = true;
+                    if (layers[1] == layers[5]) {
+                        for (StoneLayerOre ore : layers[3].getOres()) {
+                            if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, layers[0] == layers[6] ? ore.getState() : ore.getStateSmall())) {
+                                shouldPlaceStone = false;
+                                break;
+                            }
+                        }
+                    } else {
+//                        for (StoneLayerOre ore : x) {
+//                            if (WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, ore.material, MaterialType.ORE)) {
+//                                shouldPlaceStone = false;
+//                                break;
+//                            }
+//                        }
+                    }
 
+                    //If we haven't placed an ore, and not trying to set the same state as existing
+                    if (shouldPlaceStone && existing != layers[3].getStoneState()) {
+                        WorldGenHelper.setStone(world, pos.add(i, tY, j), existing, layers[3].getStoneState());
                     }
 
                     // And scan for next Block on the Stone Layer Type.
