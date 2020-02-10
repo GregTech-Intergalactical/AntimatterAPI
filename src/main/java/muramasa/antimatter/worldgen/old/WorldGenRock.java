@@ -1,10 +1,12 @@
-package muramasa.antimatter.worldgen;
+package muramasa.antimatter.worldgen.old;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.internal.LinkedTreeMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.XSTR;
+import muramasa.antimatter.worldgen.object.WorldGenBase;
+import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

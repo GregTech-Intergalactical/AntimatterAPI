@@ -1,7 +1,8 @@
 package muramasa.antimatter.worldgen.feature;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.worldgen.WorldGenVeinLayer;
+import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -18,17 +19,22 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 public class FeatureVeinLayer extends Feature<NoFeatureConfig> implements IAntimatterFeature {
 
     public FeatureVeinLayer() {
         super(NoFeatureConfig::deserialize);
+        AntimatterAPI.register(IAntimatterFeature.class, this);
     }
 
     @Override
     public String getId() {
         return "feature_vein_layer";
+    }
+
+    @Override
+    public boolean enabled() {
+        return Configs.WORLD.ENABLE_ORE_VEINS && getRegistry().size() > 0;
     }
 
     @Override

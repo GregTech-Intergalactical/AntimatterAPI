@@ -68,6 +68,9 @@ public class Configs {
         public boolean DISABLE_VANILLA_STONE_GEN = true;
 
         public boolean ENABLE_ORE_VEINS = false;
+        public boolean ENABLE_STONE_LAYERS = true;
+
+        public boolean ENABLE_STONE_LAYER_ORES = true;
 
         //@RequiresWorldRestart
         public int ORE_VEIN_MAX_SIZE = 32;
