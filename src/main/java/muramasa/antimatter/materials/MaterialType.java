@@ -108,14 +108,19 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
     }
 
     public Item get(Material material) {
-        return get(material, 1).getItem();
+        ItemStack replacement = AntimatterAPI.getReplacement(this, material);
+        if (!allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
+        if (!replacement.isEmpty()) return replacement.getItem();
+        MaterialItem item = AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
+        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
+        return item;
     }
 
     public ItemStack get(Material material, int count) {
         ItemStack replacement = AntimatterAPI.getReplacement(this, material);
+        if (!allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
         if (!replacement.isEmpty()) return Utils.ca(count, replacement);
         if (count == 0) Utils.onInvalidData("GET ERROR - COUNT 0: T(" + id + ") M(" + material.getId() + ")");
-        if (!allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
         MaterialItem item = AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
         ItemStack stack = new ItemStack(item, count);
