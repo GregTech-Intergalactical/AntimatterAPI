@@ -1,7 +1,10 @@
 package muramasa.antimatter.worldgen.feature;
 
+import muramasa.antimatter.Configs;
+import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
+import muramasa.antimatter.worldgen.object.WorldGenOreSmall;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -9,29 +12,28 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.List;
 import java.util.Random;
 
-public class FeaturePurge extends AntimatterFeature<NoFeatureConfig> {
+public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
-    //TODO is this needed? StoneLayers should eradicate all unwanted blocks, maybe unless StoneLayers are disabled?
-    public FeaturePurge() {
-        super(NoFeatureConfig::deserialize, null);
+    public FeatureOreSmall() {
+        super(NoFeatureConfig::deserialize, WorldGenOreSmall.class);
     }
 
     @Override
     public String getId() {
-        return "feature_purge";
+        return "feature_ore_small";
     }
 
     @Override
     public boolean enabled() {
-        return false;
+        return Configs.WORLD.ENABLE_SMALL_ORES && getRegistry().size() > 0;
     }
 
     @Override
@@ -43,17 +45,16 @@ public class FeaturePurge extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        BlockState mapEntry;
-        BlockPos.Mutable mutPos = new BlockPos.Mutable();
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                int maxHeight = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos.getX() + i, pos.getZ() + j);
-                for (int tY = 0; tY < maxHeight; tY++) {
-                    mutPos.setPos(pos.getX() + i, tY, pos.getZ() + j);
-                    mapEntry = AntimatterWorldGenerator.STATES_TO_PURGE.get(world.getBlockState(mutPos));
-                    if (mapEntry == null) continue;
-                    WorldGenHelper.setState(world, mutPos, mapEntry);
-                }
+        List<WorldGenOreSmall> ores = AntimatterWorldGenerator.all(WorldGenOreSmall.class, world.getDimension().getType().getId());
+        BlockPos.Mutable mut = new BlockPos.Mutable();
+        int amount;
+        BlockState existing;
+        for (WorldGenOreSmall ore : ores) {
+            amount = Math.max(1, ore.getAmount() / 2 + rand.nextInt(1 + ore.getAmount()) / 2);
+            for (int i = 0; i < amount; i++) {
+                mut.setPos(pos.getX() + rand.nextInt(16), ore.getMinY() + rand.nextInt(Math.max(1, ore.getMaxY() - ore.getMinY())), pos.getZ() + rand.nextInt(16));
+                existing = world.getBlockState(mut);
+                WorldGenHelper.setOre(world, mut, existing, ore.getMaterial(), MaterialType.ORE_SMALL);
             }
         }
         return true;

@@ -11,6 +11,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.feature.FeatureOreSmall;
 import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
 import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
 import net.minecraft.block.Block;
@@ -23,7 +24,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,11 +87,6 @@ public class Antimatter implements IAntimatterRegistrar {
         }
     }
 
-    @SubscribeEvent
-    public void serverAboutToStart(FMLServerAboutToStartEvent e) {
-        //if (Configs.WORLD.ORE_JSON_RELOADING) AntimatterWorldGenerator.reload();
-    }
-
     @Override
     public String getId() {
         return Ref.ID;
@@ -110,6 +105,7 @@ public class Antimatter implements IAntimatterRegistrar {
             case WORLDGEN_INIT:
                 new FeatureStoneLayer();
                 new FeatureVeinLayer();
+                new FeatureOreSmall();
                 break;
         }
     }

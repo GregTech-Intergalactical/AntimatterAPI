@@ -1,16 +1,14 @@
 package muramasa.antimatter.worldgen.old;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.XSTR;
-import muramasa.antimatter.worldgen.object.WorldGenBase;
 import muramasa.antimatter.worldgen.WorldGenHelper;
+import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,8 +19,8 @@ public class WorldGenStone extends WorldGenBase<WorldGenStone> {
 
     private static final double SIZE_CONVERSION[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
 
-    @Expose public String type;
-    @Expose public int minY, maxY, amount, size, probability;
+    public String type;
+    public int minY, maxY, amount, size, probability;
 
     public BlockStone block;
     public BlockState stone;
@@ -39,14 +37,14 @@ public class WorldGenStone extends WorldGenBase<WorldGenStone> {
     }
 
     @Override
-    public WorldGenStone onDataOverride(LinkedTreeMap dataMap) {
-        super.onDataOverride(dataMap);
-        if (dataMap.containsKey("type")) type = Utils.parseString(dataMap.get("type"), type);
-        if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
-        if (dataMap.containsKey("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
-        if (dataMap.containsKey("amount")) amount = Utils.parseInt(dataMap.get("amount"), amount);
-        if (dataMap.containsKey("size")) size = Utils.parseInt(dataMap.get("size"), size);
-        if (dataMap.containsKey("probability")) probability = Utils.parseInt(dataMap.get("probability"), probability);
+    public WorldGenStone onDataOverride(JsonObject json) {
+        super.onDataOverride(json);
+        //if (json.has("type")) type = Utils.parseString(dataMap.get("type"), type);
+        //if (json.has("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
+        //if (json.has("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
+        //if (json.has("amount")) amount = Utils.parseInt(dataMap.get("amount"), amount);
+        //if (json.has("size")) size = Utils.parseInt(dataMap.get("size"), size);
+        //if (json.has("probability")) probability = Utils.parseInt(dataMap.get("probability"), probability);
         return this;
     }
 
@@ -60,7 +58,6 @@ public class WorldGenStone extends WorldGenBase<WorldGenStone> {
         return this;
     }
 
-    @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         // I think the real size of the balls is mSize/8, but the original code was difficult to understand.
         // Overall there will be less GT stones since they aren't spheres any more. /16 since this code uses it as a radius.

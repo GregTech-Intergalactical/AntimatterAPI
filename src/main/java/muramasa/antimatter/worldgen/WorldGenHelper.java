@@ -52,18 +52,6 @@ public class WorldGenHelper {
         world.setBlockState(pos, state, 2 | 16);
     }
 
-//    public static boolean setStoneState(World world, BlockPos pos, IBlockState existing, IBlockState stone) {
-//        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, WorldGenHelper.STONE_PREDICATE)) {
-//            world.setBlockState(pos, stone);
-//        } else if (existing.getBlock() instanceof BlockOre) {
-//            world.setBlockState(pos, WorldGenHelper.ORE_STATE, 2 | 16);
-//            TileEntity tile = Utils.getTile(world, pos);
-//            if (tile instanceof TileEntityOre) {
-//                ((TileEntityOre) tile).init(((TileEntityOre) tile).getMaterial(), block.getMaterialType(), ((TileEntityOre) tile).getMaterialType());
-//            }
-//        }
-//    }
-
     private static void setRockState(IWorld world, BlockPos pos, BlockState state, Material material) {
 //        world.setBlockState(pos, state, 2 | 16);
 //        TileEntity tile = world.getTileEntity(pos);
@@ -71,15 +59,13 @@ public class WorldGenHelper {
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
-        StoneType stoneType = STONE_MAP.get(world.getBlockState(pos));
-        if (stoneType == null) return false;
-        return setOre(world, pos, existing, BlockOre.get(material, type, stoneType));
+        StoneType stoneType = STONE_MAP.get(existing);
+        return stoneType != null && setOre(world, pos, existing, BlockOre.get(material, type, stoneType));
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (existing.isReplaceableOreGen(world, pos, ORE_PREDICATE)) {
             setState(world, pos, replacement);
-            //if (type == MaterialType.ORE && Ref.RNG.nextInt(64) == 0) setRock(world, pos, material);
             return true;
         }
         return false;

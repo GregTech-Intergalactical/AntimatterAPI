@@ -1,12 +1,10 @@
 package muramasa.antimatter.worldgen.old;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.JsonObject;
 import muramasa.antimatter.Data;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.XSTR;
-import muramasa.antimatter.worldgen.object.WorldGenBase;
 import muramasa.antimatter.worldgen.WorldGenHelper;
+import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,7 +14,7 @@ import net.minecraft.world.gen.Heightmap;
 
 public class WorldGenRock extends WorldGenBase {
 
-    @Expose private int rockAmount;
+    private int rockAmount;
 
     public WorldGenRock(String id, int rockAmount, int... dimensions) {
         super(id, WorldGenRock.class, dimensions);
@@ -24,9 +22,9 @@ public class WorldGenRock extends WorldGenBase {
     }
 
     @Override
-    public WorldGenBase onDataOverride(LinkedTreeMap dataMap) {
-        super.onDataOverride(dataMap);
-        if (dataMap.containsKey("rockAmount")) rockAmount = Utils.parseInt(dataMap.get("rockAmount"), rockAmount);
+    public WorldGenBase onDataOverride(JsonObject json) {
+        super.onDataOverride(json);
+        //if (dataMap.containsKey("rockAmount")) rockAmount = Utils.parseInt(dataMap.get("rockAmount"), rockAmount);
         return this;
     }
 
@@ -37,7 +35,6 @@ public class WorldGenRock extends WorldGenBase {
         return this;
     }
 
-    @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         int j = Math.max(1, rockAmount + rand.nextInt(rockAmount));
         for (int i = 0; i < j; i++) {

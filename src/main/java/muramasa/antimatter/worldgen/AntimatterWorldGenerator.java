@@ -1,8 +1,9 @@
 package muramasa.antimatter.worldgen;
 
+import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
+import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
 
@@ -16,7 +17,10 @@ public class AntimatterWorldGenerator {
     public static void init() {
         try {
             AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
-            AntimatterAPI.all(IAntimatterFeature.class).stream().filter(IAntimatterFeature::enabled).forEach(IAntimatterFeature::init);
+            AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(feat -> {
+                feat.onDataOverride(new JsonObject());
+                feat.init();
+            });
             WorldGenHelper.init();
         } catch (Exception e) {
             e.printStackTrace();
@@ -25,14 +29,12 @@ public class AntimatterWorldGenerator {
     }
 
     public static void register(Class<?> c, WorldGenBase<?> base) {
-        IAntimatterFeature feature = AntimatterAPI.get(IAntimatterFeature.class, c.getName());
-        if (feature != null) {
-            base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent((int) d, k -> new LinkedList<>()).add(base.build()));
-        }
+        AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
+        if (feature != null) base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent((int) d, k -> new LinkedList<>()).add(base));
     }
 
     public static <T> List<T> all(Class<T> c, int dim) {
-        IAntimatterFeature feat = AntimatterAPI.get(IAntimatterFeature.class, c.getName());
-        return feat != null ? feat.getRegistry().getOrDefault(dim, new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
+        AntimatterFeature<?> feat = AntimatterAPI.get(AntimatterFeature.class, c.getName());
+        return feat != null ? feat.getRegistry().computeIfAbsent(dim, k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 }
