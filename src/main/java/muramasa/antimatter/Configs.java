@@ -69,6 +69,7 @@ public class Configs {
 
         public boolean ENABLE_ORE_VEINS = false;
         public boolean ENABLE_STONE_LAYERS = true;
+        public boolean ENABLE_SMALL_ORES = true;
 
         public boolean ENABLE_STONE_LAYER_ORES = true;
 

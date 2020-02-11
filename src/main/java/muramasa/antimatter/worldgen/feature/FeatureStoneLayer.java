@@ -15,7 +15,6 @@ import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -23,11 +22,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureStoneLayer extends Feature<NoFeatureConfig> implements IAntimatterFeature {
+public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureStoneLayer() {
-        super(NoFeatureConfig::deserialize);
-        register(WorldGenStoneLayer.class, this);
+        super(NoFeatureConfig::deserialize, WorldGenStoneLayer.class);
     }
 
     @Override
@@ -36,20 +34,19 @@ public class FeatureStoneLayer extends Feature<NoFeatureConfig> implements IAnti
     }
 
     @Override
-    public void init() {
-        for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
-        }
-    }
-
-    @Override
     public boolean enabled() {
         return Configs.WORLD.ENABLE_STONE_LAYERS && getRegistry().size() > 0;
     }
 
     @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public void init() {
+        for (Biome biome : ForgeRegistries.BIOMES) {
+            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+        }
+    }
 
+    @Override
+    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getDimension().getType().getId());
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];
         NoiseGenerator noise = new NoiseGenerator(world);

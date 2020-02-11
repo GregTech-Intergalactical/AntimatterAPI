@@ -1,6 +1,5 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
@@ -11,7 +10,6 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,11 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureVeinLayer extends Feature<NoFeatureConfig> implements IAntimatterFeature {
+public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureVeinLayer() {
-        super(NoFeatureConfig::deserialize);
-        AntimatterAPI.register(IAntimatterFeature.class, this);
+        super(NoFeatureConfig::deserialize, WorldGenVeinLayer.class);
     }
 
     @Override
@@ -40,7 +37,7 @@ public class FeatureVeinLayer extends Feature<NoFeatureConfig> implements IAntim
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
     static List<Tuple<Integer, Integer>> veinCenters(int chunkX, int chunkZ){

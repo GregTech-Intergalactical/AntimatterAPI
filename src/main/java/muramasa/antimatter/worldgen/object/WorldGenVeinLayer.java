@@ -1,14 +1,12 @@
 package muramasa.antimatter.worldgen.object;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.XSTR;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.VeinLayerResult;
@@ -39,8 +37,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     };
 
     private Material[] materials;
-    @Expose private String primary, secondary, between, sporadic;
-    @Expose private int minY, maxY, weight, density, size;
+    private String primary, secondary, between, sporadic;
+    private int minY, maxY, weight, density, size;
     private int primaryHash;
 
     public WorldGenVeinLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, int... dimensions) {
@@ -60,17 +58,17 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     }
 
     @Override
-    public WorldGenVeinLayer onDataOverride(LinkedTreeMap dataMap) {
-        super.onDataOverride(dataMap);
-        if (dataMap.containsKey("primary")) primary = Utils.parseString(dataMap.get("primary"), primary);
-        if (dataMap.containsKey("secondary")) secondary = Utils.parseString(dataMap.get("secondary"), secondary);
-        if (dataMap.containsKey("between")) between = Utils.parseString(dataMap.get("between"), between);
-        if (dataMap.containsKey("sporadic")) sporadic = Utils.parseString(dataMap.get("sporadic"), sporadic);
-        if (dataMap.containsKey("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
-        if (dataMap.containsKey("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
-        if (dataMap.containsKey("weight")) weight = Utils.parseInt(dataMap.get("weight"), weight);
-        if (dataMap.containsKey("density")) density = Utils.parseInt(dataMap.get("density"), density);
-        if (dataMap.containsKey("size")) size = Utils.parseInt(dataMap.get("size"), size);
+    public WorldGenVeinLayer onDataOverride(JsonObject json) {
+        super.onDataOverride(json);
+        //if (json.has("primary")) primary = Utils.parseString(dataMap.get("primary"), primary);
+        //if (json.has("secondary")) secondary = Utils.parseString(dataMap.get("secondary"), secondary);
+        //if (json.has("between")) between = Utils.parseString(dataMap.get("between"), between);
+        //if (json.has("sporadic")) sporadic = Utils.parseString(dataMap.get("sporadic"), sporadic);
+        //if (json.has("minY")) minY = Utils.parseInt(dataMap.get("minY"), minY);
+        //if (json.has("maxY")) maxY = Utils.parseInt(dataMap.get("maxY"), maxY);
+        //if (json.has("weight")) weight = Utils.parseInt(dataMap.get("weight"), weight);
+        //if (json.has("density")) density = Utils.parseInt(dataMap.get("density"), density);
+        //if (json.has("size")) size = Utils.parseInt(dataMap.get("size"), size);
         return this;
     }
 

@@ -48,7 +48,6 @@ public class WorldGenAsteroid extends WorldGenBase {
         return this;
     }
 
-    @Override
     public boolean generate(World world, XSTR rand, int passedX, int passedZ, BlockPos.Mutable pos, BlockState state, ChunkGenerator generator, AbstractChunkProvider provider) {
         if (mEndAsteroidProbability <= 1 || rand.nextInt(mEndAsteroidProbability) == 0) {
             List<WorldGenVeinLayer> layers = AntimatterWorldGenerator.all(WorldGenVeinLayer.class, world.getDimension().getType().getId());
