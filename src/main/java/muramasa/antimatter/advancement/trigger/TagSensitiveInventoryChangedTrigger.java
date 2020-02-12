@@ -11,7 +11,9 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.criterion.*;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
@@ -54,6 +56,13 @@ public class TagSensitiveInventoryChangedTrigger implements ICriterionTrigger<Ta
         listeners.add(listener);
     }
 
+    public void trigger(ServerPlayerEntity player) {
+        TagSensitiveInventoryChangedTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
+        if (listeners != null) {
+            listeners.trigger(player.inventory);
+        }
+    }
+
     public void trigger(ServerPlayerEntity player, ItemStack stack) {
         TagSensitiveInventoryChangedTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
         if (listeners != null) {
@@ -86,6 +95,19 @@ public class TagSensitiveInventoryChangedTrigger implements ICriterionTrigger<Ta
         public Instance(Tag<Item> tag) {
             super(TagSensitiveInventoryChangedTrigger.ID);
             this.tag = tag;
+        }
+
+        public boolean test(PlayerInventory inv) {
+            if (tag.getAllElements().contains(inv.getItemStack().getItem())) return true;
+            if (inv.hasTag(tag)) return true;
+            /*
+            for (ItemStack stack : inv.mainInventory) {
+                if (tag.getAllElements().contains(stack.getItem())) {
+                    return true;
+                }
+            }
+             */
+            return false;
         }
 
         public boolean test(ItemStack stack) {
@@ -121,6 +143,17 @@ public class TagSensitiveInventoryChangedTrigger implements ICriterionTrigger<Ta
             this.listeners.remove(listener);
         }
 
+        public void trigger(PlayerInventory inv) {
+            List<Listener<Instance>> list = null;
+            for (ICriterionTrigger.Listener<TagSensitiveInventoryChangedTrigger.Instance> listener : this.listeners) {
+                if (listener.getCriterionInstance().test(inv)) {
+                    if (list == null) list = Lists.newArrayList();
+                    list.add(listener);
+                }
+            }
+            grant(list);
+        }
+
         public void trigger(ItemStack stack) {
             List<Listener<Instance>> list = null;
             for (ICriterionTrigger.Listener<TagSensitiveInventoryChangedTrigger.Instance> listener : this.listeners) {
@@ -129,6 +162,10 @@ public class TagSensitiveInventoryChangedTrigger implements ICriterionTrigger<Ta
                     list.add(listener);
                 }
             }
+            grant(list);
+        }
+
+        private void grant(List<Listener<Instance>> list) {
             if (list != null) {
                 for (ICriterionTrigger.Listener<TagSensitiveInventoryChangedTrigger.Instance> listener : list) {
                     listener.grantCriterion(this.playerAdvancements);
