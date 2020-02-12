@@ -54,6 +54,8 @@ public class ItemBasic extends Item implements IAntimatterObject, ITextureProvid
         return id;
     }
 
+    public String getDomain() { return domain; }
+
     public String getTooltip() {
         return tooltip;
     }
