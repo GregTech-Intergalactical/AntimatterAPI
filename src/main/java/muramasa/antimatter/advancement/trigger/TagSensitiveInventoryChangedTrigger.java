@@ -85,7 +85,7 @@ public class TagSensitiveInventoryChangedTrigger implements ICriterionTrigger<Ta
     @Override
     public TagSensitiveInventoryChangedTrigger.Instance deserializeInstance(JsonObject json, JsonDeserializationContext context) {
         String[] splits = JSONUtils.getString(json, "tag").split(":");
-        return new TagSensitiveInventoryChangedTrigger.Instance(Utils.getItemTag(splits[0], splits[1]));
+        return new TagSensitiveInventoryChangedTrigger.Instance(Utils.getItemTag(new ResourceLocation(splits[0], splits[1])));
     }
 
     public static class Instance extends CriterionInstance {

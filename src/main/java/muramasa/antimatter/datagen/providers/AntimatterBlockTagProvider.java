@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -60,7 +61,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
         });
         AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);
-            this.getBuilder(getBlockTag(domain, "blocks/".concat(s.getId()))).add(s);
+            this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s);
         });
         AntimatterAPI.all(BlockStorage.class)
                 .stream().filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {

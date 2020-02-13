@@ -565,20 +565,20 @@ public class Utils {
         return new ItemTags.Wrapper(tag.getId());
     }
 
-    public static Tag<Block> getBlockTag(String domain, String name) {
-        return new BlockTags.Wrapper(new ResourceLocation(domain, name));
+    public static Tag<Block> getBlockTag(ResourceLocation loc) {
+        return new BlockTags.Wrapper(loc);
     }
 
     public static Tag<Block> getForgeBlockTag(String name) {
-        return getBlockTag("forge", name);
+        return getBlockTag(new ResourceLocation("forge", name));
     }
 
-    public static Tag<Item> getItemTag(String domain, String name) {
-        return new ItemTags.Wrapper(new ResourceLocation(domain, name));
+    public static Tag<Item> getItemTag(ResourceLocation loc) {
+        return new ItemTags.Wrapper(loc);
     }
 
     public static Tag<Item> getForgeItemTag(String name) {
-        return getItemTag("forge", name);
+        return getItemTag(new ResourceLocation("forge", name));
     }
 
     public static String[] getLocalizedMaterialType(MaterialType type) {

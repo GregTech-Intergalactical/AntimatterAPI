@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
 import static muramasa.antimatter.materials.MaterialType.*;
@@ -57,7 +58,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         });
         AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> {
             String id = "blocks/".concat(s.getId());
-            this.copy(getBlockTag(domain, id), getItemTag(domain, id));
+            this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
         });
         AntimatterAPI.all(BlockStorage.class)
                 .stream().filter(block -> block.getMaterial().getDomain().equals(domain)).forEach(storage -> {
