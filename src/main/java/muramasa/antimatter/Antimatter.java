@@ -13,6 +13,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.feature.FeatureIndicatorRocks;
 import muramasa.antimatter.worldgen.feature.FeatureOreSmall;
 import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
 import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
@@ -110,6 +111,7 @@ public class Antimatter implements IAntimatterRegistrar {
                 new FeatureStoneLayer();
                 new FeatureVeinLayer();
                 new FeatureOreSmall();
+                new FeatureIndicatorRocks();
                 break;
         }
     }
