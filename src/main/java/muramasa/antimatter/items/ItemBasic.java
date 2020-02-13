@@ -54,6 +54,8 @@ public class ItemBasic extends Item implements IAntimatterObject, ITextureProvid
         return id;
     }
 
+    public String getDomain() { return domain; }
+
     public String getTooltip() {
         return tooltip;
     }
@@ -62,10 +64,12 @@ public class ItemBasic extends Item implements IAntimatterObject, ITextureProvid
         return enabled || Configs.DATA.ENABLE_ALL_MATERIAL_ITEMS;
     }
 
+    /*
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         return new TranslationTextComponent("item." + getId());
     }
+     */
 
     public boolean isEqual(ItemStack stack) {
         return stack.getItem() == this;
