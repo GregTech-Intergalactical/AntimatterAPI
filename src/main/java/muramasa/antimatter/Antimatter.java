@@ -1,5 +1,7 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
+import muramasa.antimatter.advancement.trigger.TagSensitiveInventoryChangedTrigger;
 import muramasa.antimatter.blocks.AntimatterItemBlock;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.gui.MenuHandler;
@@ -48,6 +50,8 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
 
         AntimatterWorldGenerator.init();
+
+        AntimatterTriggers.init();
 
         //AntimatterCapabilities.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());

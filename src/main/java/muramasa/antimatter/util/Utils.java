@@ -3,9 +3,11 @@ package muramasa.antimatter.util;
 import com.google.common.base.CaseFormat;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,6 +28,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -497,10 +500,10 @@ public class Utils {
         return distances.get(Collections.min(distances.keySet()));
     }
     
-    public static String underscoreToLowerCamel(String string) {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, string);
+    public static String lowerUnderscoreToUpperSpaced(String string) {
+        return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string)), ' ');
     }
-    
+
     public static String underscoreToUpperCamel(String string) {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string);
     }
@@ -544,9 +547,13 @@ public class Utils {
 
     public static String getConventionalMaterialType(MaterialType type) {
         String id = type.getId();
-        if (id.contains("crushed")) id = id.replace("crushed", "crushed_ores");
         int index = id.indexOf("_");
-        if (index != -1) return String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
+        if (index != -1) {
+            id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
+            if (id.contains("crushed")) id = id.replace("crushed", "crushed_ore");
+            return id;
+        }
+        else if (id.contains("crushed")) return id.replace("crushed", "crushed_ores");
         return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
     }
 
@@ -558,20 +565,43 @@ public class Utils {
         return new ItemTags.Wrapper(tag.getId());
     }
 
-    public static Tag<Block> getBlockTag(String domain, String name) {
-        return new BlockTags.Wrapper(new ResourceLocation(domain, name));
+    public static Tag<Block> getBlockTag(ResourceLocation loc) {
+        return new BlockTags.Wrapper(loc);
     }
 
     public static Tag<Block> getForgeBlockTag(String name) {
-        return getBlockTag("forge", name);
+        return getBlockTag(new ResourceLocation("forge", name));
     }
 
-    public static Tag<Item> getItemTag(String domain, String name) {
-        return new ItemTags.Wrapper(new ResourceLocation(domain, name));
+    public static Tag<Item> getItemTag(ResourceLocation loc) {
+        return new ItemTags.Wrapper(loc);
     }
 
     public static Tag<Item> getForgeItemTag(String name) {
-        return getItemTag("forge", name);
+        return getItemTag(new ResourceLocation("forge", name));
+    }
+
+    public static String[] getLocalizedMaterialType(MaterialType type) {
+        String id = type.getId();
+        int index = id.indexOf("_");
+        if (index != -1) {
+            String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
+            return lowerUnderscoreToUpperSpaced(joined).split(" ");
+        }
+        return new String[]{ lowerUnderscoreToUpperSpaced(id).replace('_', ' ') };
+    }
+
+    public static String getLocalizedType(IAntimatterObject type) {
+        String id = type.getId();
+        int index = id.indexOf("_");
+        if (index != -1) {
+            if (type instanceof MaterialType) {
+                String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
+                return lowerUnderscoreToUpperSpaced(joined).replace('_', ' ');
+            }
+            return lowerUnderscoreToUpperSpaced(id).replace('_', ' ');
+        }
+        return StringUtils.capitalize(id);
     }
 
     public static Recipe getEmptyRecipe() {

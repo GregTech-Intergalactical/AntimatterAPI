@@ -23,17 +23,17 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
 
     //Item Types
     public static MaterialType DUST = new MaterialType("dust", 2, true, Ref.U);
-    public static MaterialType DUST_SMALL = new MaterialType("dust_small", 2, false, Ref.U4);
-    public static MaterialType DUST_TINY = new MaterialType("dust_tiny", 2, false, Ref.U9);
-    public static MaterialType DUST_IMPURE = new MaterialType("dust_impure", 2, false, Ref.U);
-    public static MaterialType DUST_PURE = new MaterialType("dust_pure", 2, false, Ref.U);
-    public static MaterialType ROCK = new MaterialType("rock", 2, false, Ref.U9);
-    public static MaterialType CRUSHED = new MaterialType("crushed", 2, false, Ref.U);
-    public static MaterialType CRUSHED_CENTRIFUGED = new MaterialType("crushed_centrifuged", 2, false, Ref.U);
-    public static MaterialType CRUSHED_PURIFIED = new MaterialType("crushed_purified", 2, false, Ref.U);
+    public static MaterialType DUST_SMALL = new MaterialType("dust_small", 2, true, Ref.U4);
+    public static MaterialType DUST_TINY = new MaterialType("dust_tiny", 2, true, Ref.U9);
+    public static MaterialType DUST_IMPURE = new MaterialType("dust_impure", 2, true, Ref.U);
+    public static MaterialType DUST_PURE = new MaterialType("dust_pure", 2, true, Ref.U);
+    public static MaterialType ROCK = new MaterialType("rock", 2, true, Ref.U9);
+    public static MaterialType CRUSHED = new MaterialType("crushed", 2, true, Ref.U);
+    public static MaterialType CRUSHED_CENTRIFUGED = new MaterialType("crushed_centrifuged", 2, true, Ref.U);
+    public static MaterialType CRUSHED_PURIFIED = new MaterialType("crushed_purified", 2, true, Ref.U);
     public static MaterialType INGOT = new MaterialType("ingot", 2, true, Ref.U);
     public static MaterialType INGOT_HOT = new MaterialType("ingot_hot", 2, true, Ref.U);
-    public static MaterialType NUGGET = new MaterialType("nugget", 2, false, Ref.U9);
+    public static MaterialType NUGGET = new MaterialType("nugget", 2, true, Ref.U9);
     public static MaterialType GEM = new MaterialType("gem", 2, true, Ref.U);
     public static MaterialType GEM_BRITTLE = new MaterialType("gem_brittle", 2, true, Ref.U);
     public static MaterialType GEM_POLISHED = new MaterialType("gem_polished", 2, true, Ref.U);
@@ -131,18 +131,6 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
 
     public boolean isVisible() {
         return visible || Configs.JEI.SHOW_ALL_MATERIAL_ITEMS;
-    }
-
-    public ITextComponent getDisplayName(Material material) {
-        //if (namePre == null) { //TODO cache
-            namePre = new TranslationTextComponent("material_type.pre." + getId());
-            //if (!namePre.getFormattedText().isEmpty()) namePre.appendText(" ");
-        //}
-        //if (namePost == null) {
-            namePost = new TranslationTextComponent("material_type.post." + getId());
-            if (!namePost.getFormattedText().isEmpty()) namePost = new StringTextComponent(" ").appendSibling(namePost);
-        //}
-        return new TranslationTextComponent("").appendSibling(namePre).appendSibling(material.getDisplayName()).appendSibling(namePost);
     }
 
     public boolean allowGeneration(Material material) {

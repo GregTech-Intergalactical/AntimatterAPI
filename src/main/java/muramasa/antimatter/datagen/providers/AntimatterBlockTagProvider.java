@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -60,15 +61,15 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
         });
         AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);
-            this.getBuilder(getBlockTag(domain, "blocks/".concat(s.getId()))).add(s);
+            this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s);
         });
         AntimatterAPI.all(BlockStorage.class)
-                .stream().filter(block -> block.getMaterial().getDomain().equals(domain)).forEach(storage -> {
-                    MaterialType type = storage.getType();
-                    this.getBuilder(type.getTag()).add(storage);
-                    String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
-                    if (storage.getType() == MaterialType.BLOCK) this.getBuilder(Tags.Blocks.SUPPORTS_BEACON).add(storage);
-                    this.getBuilder(getForgeBlockTag(name)).add(storage);
+                .stream().filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
+                    MaterialType type = block.getType();
+                    this.getBuilder(type.getTag()).add(block);
+                    String name = String.join("", getConventionalMaterialType(type), "/", block.getMaterial().getId());
+                    if (block.getType() == MaterialType.BLOCK) this.getBuilder(Tags.Blocks.SUPPORTS_BEACON).add(block);
+                    this.getBuilder(getForgeBlockTag(name)).add(block);
                 });
     }
 

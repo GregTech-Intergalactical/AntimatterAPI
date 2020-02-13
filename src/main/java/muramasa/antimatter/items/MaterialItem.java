@@ -24,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -72,14 +73,11 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
-        return ((MaterialItem) stack.getItem()).getType().getDisplayName(((MaterialItem) stack.getItem()).getMaterial());
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        if (getMaterial().getChemicalFormula() != null) tooltip.add(new StringTextComponent(TextFormatting.DARK_AQUA + getMaterial().getChemicalFormula()));
-        if (type == MaterialType.ROCK) tooltip.add(new StringTextComponent("Indicates occurrence of " + TextFormatting.YELLOW).appendSibling(material.getDisplayName()));
+        if (getMaterial().getChemicalFormula() != null) tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).applyTextStyle(TextFormatting.DARK_AQUA));
+        if (type == MaterialType.ROCK) {
+            tooltip.add(new TranslationTextComponent("gtu.tooltip.occurrence").applyTextStyle(TextFormatting.YELLOW).appendSibling(material.getDisplayName()));
+        }
     }
 
     @Override
