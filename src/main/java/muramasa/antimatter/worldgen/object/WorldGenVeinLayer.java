@@ -69,6 +69,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         //if (json.has("weight")) weight = Utils.parseInt(dataMap.get("weight"), weight);
         //if (json.has("density")) density = Utils.parseInt(dataMap.get("density"), density);
         //if (json.has("size")) size = Utils.parseInt(dataMap.get("size"), size);
+        build();
         return this;
     }
 
