@@ -14,7 +14,7 @@ public class Ref {
     /** Global Objects **/
     public static File CONFIG = null;
     public static XSTR RNG = new XSTR();
-    public static Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
+    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /** Mod Data **/
     public static final String ID = "antimatter";
