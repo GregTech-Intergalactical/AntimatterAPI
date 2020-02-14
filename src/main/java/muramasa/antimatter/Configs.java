@@ -67,7 +67,7 @@ public class Configs {
         //@Comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
         public boolean DISABLE_VANILLA_STONE_GEN = true;
 
-        public boolean ENABLE_ORE_VEINS = true;
+        public boolean ENABLE_ORE_VEINS = false;
         public boolean ENABLE_STONE_LAYERS = true;
         public boolean ENABLE_SMALL_ORES = true;
 

@@ -1,10 +1,10 @@
 package muramasa.antimatter.materials;
 
-import com.google.common.base.CaseFormat;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.Configs;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.items.MaterialItem;
+import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
@@ -14,6 +14,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
     //Dummy Types
     public static MaterialType ORE = new MaterialType("ore", 1, true, -1, false, true);
     public static MaterialType ORE_SMALL = new MaterialType("ore_small", 1, false, -1, false, true);
+    public static MaterialType ORE_STONE = new MaterialType("ore_stone", 1, true, -1, false, true);
     public static MaterialType BLOCK = new MaterialType("block", 1, false, -1, false, true);
     public static MaterialType FRAME = new MaterialType("frame", 1, true, -1, false, true);
     public static MaterialType TOOLS = new MaterialType("tools", 1, false, -1, false);
@@ -122,6 +124,11 @@ public class MaterialType implements IMaterialTag, IAntimatterObject {
         ItemStack stack = new ItemStack(item, count);
         if (stack.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + id + ") M(" + material.getId() + ")");
         return stack;
+    }
+
+    @Nullable
+    public static BlockOreStone getOreStone(Material material) {
+        return AntimatterAPI.get(BlockOreStone.class, "stone_" + material.getId());
     }
 
     @Override

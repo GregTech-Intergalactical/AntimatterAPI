@@ -16,6 +16,7 @@ public class AntimatterWorldGenerator {
 
     public static void init() {
         try {
+            //Path config = FMLPaths.CONFIGDIR.get().resolve("GregTech/WorldGenDefault.json");
             AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
             AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(feat -> {
                 feat.onDataOverride(new JsonObject());
