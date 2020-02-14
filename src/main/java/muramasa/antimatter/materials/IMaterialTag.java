@@ -9,6 +9,7 @@ import java.util.Set;
 
 public interface IMaterialTag {
 
+    //TODO use a static id -> material set map, instead of each IMaterialTag class having it's own collection
     Set<Material> all();
 
     default void register(Class c, IAntimatterObject o) {

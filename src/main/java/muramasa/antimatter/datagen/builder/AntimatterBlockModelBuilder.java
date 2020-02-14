@@ -13,10 +13,14 @@ import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class AntimatterBlockModelBuilder extends BlockModelBuilder {
+
+    protected static String SIMPLE = Ref.ID + ":block/preset/simple";
+    protected static String LAYERED = Ref.ID + ":block/preset/layered";
 
     protected ResourceLocation loader = null;
     protected List<Consumer<JsonObject>> properties = new ArrayList<>();
@@ -50,14 +54,14 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return this;
     }
 
-    public AntimatterBlockModelBuilder model(String model) {
+    public AntimatterBlockModelBuilder model(String parent, String... models) {
         loader();
-        return property("model", "parent", model.replace("mc", "minecraft"));
+        return property("model", getModelObject(parent, models));
     }
 
-    public AntimatterBlockModelBuilder model(Texture... textures) {
+    public AntimatterBlockModelBuilder model(String parent, Texture... textures) {
         loader();
-        return property("model", getModelObject(textures));
+        return property("model", getModelObject(parent, textures));
     }
 
     public AntimatterBlockModelBuilder config(int id, Texture... textures) {
@@ -66,21 +70,26 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
            if (!o.has("config")) o.add("config", new JsonArray());
             JsonObject configObject = new JsonObject();
             configObject.addProperty("id", id);
-            configObject.add("model", getModelObject(textures));
+            configObject.add("model", getModelObject(SIMPLE, textures));
            o.getAsJsonArray("config").add(configObject);
         });
         return this;
     }
 
-    public JsonObject getModelObject(Texture... textures) {
+    public JsonObject getModelObject(String parent, Texture... textures) {
+        return getModelObject(parent, Arrays.stream(textures).map(ResourceLocation::toString).toArray(String[]::new));
+    }
+
+    public JsonObject getModelObject(String parent, String... textures) {
         JsonObject model = new JsonObject();
-        model.addProperty("parent", Ref.ID + ":block/preset/simple");
+        if (!parent.contains(":")) parent = parent.replace("simple", SIMPLE).replace("layered", LAYERED);
+        model.addProperty("parent", parent);
         JsonObject texture = new JsonObject();
         if (textures.length == 1) {
-            texture.addProperty("all", textures[0].toString());
+            texture.addProperty("all", textures[0]);
         } else if (textures.length == Ref.DIRECTIONS.length) {
             for (int i = 0; i < Ref.DIRECTIONS.length; i++) {
-                texture.addProperty(Ref.DIRECTIONS[i].toString(), textures[i].toString());
+                texture.addProperty(Ref.DIRECTIONS[i].toString(), textures[i]);
             }
         }
         model.add("textures", texture);
@@ -97,7 +106,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
 
     public AntimatterBlockModelBuilder basicConfig(ITextureProvider textureProvider, Texture[] tex) {
         if (tex.length < 13) return this;
-         model(textureProvider.getTextures());
+         model(SIMPLE, textureProvider.getTextures());
 
         //Single (1)
          config(1, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);

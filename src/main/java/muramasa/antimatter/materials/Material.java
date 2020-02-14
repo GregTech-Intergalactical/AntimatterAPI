@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -205,11 +204,12 @@ public class Material implements IAntimatterObject {
         return true;
     }
 
-    public void add(IMaterialTag... tags) {
+    public Material add(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (t == ORE || t == ORE_SMALL) add(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            if (t == ORE || t == ORE_SMALL || t == ORE_STONE) add(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
+        return this;
     }
 
     public void remove(IMaterialTag... tags) {

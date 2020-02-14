@@ -6,6 +6,8 @@ import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.ore.BlockRock;
 import muramasa.antimatter.ore.StoneType;
 
 import java.util.Collection;
@@ -46,11 +48,16 @@ public class RegistrationHelper {
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             getMaterialsForDomain(domain, MaterialType.ORE.all()).forEach(m -> {
                 new BlockOre(m.getDomain(), m, s, MaterialType.ORE);
-                //new BlockRock(domain, m, s);
             });
             getMaterialsForDomain(domain, MaterialType.ORE_SMALL.all()).forEach(m -> {
                 new BlockOre(m.getDomain(), m, s, MaterialType.ORE_SMALL);
             });
+            getMaterialsForDomain(domain, MaterialType.ROCK.all()).forEach(m -> {
+                new BlockRock(domain, m, s);
+            });
+        });
+        getMaterialsForDomain(domain, MaterialType.ORE_STONE.all()).forEach(m -> {
+            new BlockOreStone(m.getDomain(), m);
         });
     }
 

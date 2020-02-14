@@ -90,6 +90,10 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
         return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/layered"))).texture("base", base).texture("overlay", overlay);
     }
 
+    public ModelFile.ExistingModelFile existing(String path) {
+        return existing(Ref.ID, path);
+    }
+
     public ModelFile.ExistingModelFile existing(String domain, String path) {
         return models().getExistingFile(loc(domain, path));
     }

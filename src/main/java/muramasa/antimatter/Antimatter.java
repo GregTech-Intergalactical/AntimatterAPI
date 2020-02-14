@@ -44,7 +44,6 @@ public class Antimatter implements IAntimatterRegistrar {
         INSTANCE = this;
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        AntimatterAPI.registerInternalRegistrar(INSTANCE);
     }
 
     private void setup(final FMLCommonSetupEvent e) {
