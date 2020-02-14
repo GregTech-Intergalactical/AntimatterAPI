@@ -1,6 +1,7 @@
 package muramasa.antimatter.items;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
@@ -9,19 +10,22 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tools.AntimatterItemTier;
 import muramasa.antimatter.tools.AntimatterToolType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -31,22 +35,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class MaterialTool extends SwordItem implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+import static muramasa.antimatter.tools.AntimatterToolType.SWORD;
 
-    protected String domain, id;
+public class MaterialTool extends TieredItem implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+
+    protected String domain;
+    protected AntimatterItemTier tier;
     protected AntimatterToolType type;
+    protected Material primary;
+    protected Material secondary;
 
-    public MaterialTool(String domain, AntimatterToolType type, Properties properties) {
-        super(ItemTier.WOOD, 1, 1.0f, properties);
-        this.type = type;
+    public MaterialTool(String domain, AntimatterToolType type, Material primary, Material secondary, Properties properties, AntimatterItemTier tier) {
+        super(tier, properties);
         this.domain = domain;
-        this.id = getType().getName();
-        setRegistryName(getDomain(), getId());
+        this.tier = tier;
+        this.type = type;
+        this.primary = primary;
+        this.secondary = secondary;
+        setRegistryName(domain, getId());
         AntimatterAPI.register(MaterialTool.class, this);
     }
 
-    public MaterialTool(String domain, AntimatterToolType type) {
-        this(domain, type, new Properties().group(Ref.TAB_ITEMS).maxStackSize(1));
+    public String getDomain() {
+        return domain;
     }
 
     public AntimatterToolType getType() {
@@ -55,20 +66,21 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 
     @Override
     public String getId() {
-        return getType().getName();
-    }
-
-    public String getDomain() {
-        return domain;
+        return primary.getId() + "_" + getType().getId();
     }
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (isInGroup(group)) {
-            items.add(type.isPowered() ? get(null, null, 1600000) : get(null, null));
+            ItemStack stack = new ItemStack(this);
+            if (primary.getEnchantments() != null || !primary.getEnchantments().isEmpty()) {
+                primary.getEnchantments().entrySet().forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            }
+            items.add(stack);
         }
     }
 
+    /*
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         //Material mat = getPrimary(stack);
@@ -76,11 +88,13 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
         //TODO fixme
         //return (mat != null ? new TranslationTextComponent("") : mat.getDisplayName()).appendText(" ").appendSibling(type.getDisplayName());
     }
+     */
 
     //TODO: Localization
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-//        Material primary = getPrimary(stack), secondary = getSecondary(stack);
+        if (!type.getTooltip().isEmpty()) tooltip.add(new StringTextComponent(type.getTooltip()));
+        //        Material primary = getPrimary(stack), secondary = getSecondary(stack);
 //        if (primary == null || secondary == null) { //Under general circumstances, this will only be seen in JEI and creative tab
 //            if (Ref.GENERAL_DEBUG) tooltip.add(TextFormatting.WHITE + "Null Material");
 //            return;
@@ -97,6 +111,19 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 //        else {
 //            tooltip.add(TextFormatting.UNDERLINE + "Press Ctrl Key for Tool Stats");
 //        }
+    }
+
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType) {
+        Multimap<String, AttributeModifier> modifiers = super.getAttributeModifiers(slotType);
+        if (type.equals(SWORD)) {
+            if (slotType == EquipmentSlotType.MAINHAND) {
+                modifiers.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", tier.getAttackDamage() + type.getBaseAttackDamage(), AttributeModifier.Operation.ADDITION));
+                modifiers.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4F, AttributeModifier.Operation.ADDITION));
+            }
+            return modifiers;
+        }
+        return modifiers;
     }
 
     @Override
@@ -148,7 +175,7 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
         stack = stack.copy();
-        damage(stack, getType().getDamageCrafting(), null, true);
+        damage(stack, getType().getCraftingDurability(), null, true);
     	return stack;
     }
 
@@ -232,6 +259,7 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 //        return type.getToolClass();
 //    }
 
+    /*
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
         return 1 - ((float) getDurability(stack) / (float) getMaxDurability(stack));
@@ -247,6 +275,7 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
     public int getRGBDurabilityForDisplay(ItemStack stack) {
         return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
     }
+     */
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
@@ -342,13 +371,6 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 //        return newDamage;
     }
 
-    public int getRGB(ItemStack stack, int i) {
-        //TODO broken
-        //Material mat = i == 0 ? getPrimary(stack) : getSecondary(stack);
-        //return mat != null ? mat.getRGB() : 0xffffff;
-        return -1;
-    }
-
     /** NBT Section **/
     @Nullable
     public Material getPrimary(ItemStack stack) {
@@ -374,16 +396,6 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
         //TODO broken
         //return getTag(stack).getInt(Ref.KEY_TOOL_DATA_DURABILITY);
         return 1;
-    }
-
-    public int getMaxDurability(ItemStack stack) {
-        Material mat = getPrimary(stack);
-        return mat != null ? 100 * (int)(mat.getToolDurability() * type.getDurabilityMulti()) : 1;
-    }
-
-    public float getMiningSpeed(ItemStack stack) {
-        Material mat = getPrimary(stack);
-        return mat != null ? type.getMiningSpeedMulti() * mat.getToolSpeed() : 1.0f;
     }
 
     public float getAttackDamage(ItemStack stack) {
@@ -422,20 +434,25 @@ public class MaterialTool extends SwordItem implements IAntimatterObject, IColor
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return getRGB(stack, i);
+        return i == 0 ? primary.getRGB() : secondary.getRGB();
     }
 
     @Override
     public Texture[] getTextures() {
         List<Texture> textures = new ArrayList<>();
-        textures.add(new Texture(getDomain(), "item/tool/" + getId()));
-        //TODO better solution for this
-        if (getType() == AntimatterToolType.SCREWDRIVER_P || getType() == AntimatterToolType.BUZZSAW) {
+        int layers = type.getOverlayLayers();
+        textures.add(new Texture(domain, "item/tool/".concat(type.getId())));
+        if (layers > 1) {
+            for (int i = 0; i <= layers; i++) {
+                textures.add(new Texture(domain, String.join("", "item/tool/overlay/" + type.getId() + "_" + i)));
+            }
+        }
+        else textures.add(new Texture(domain, "item/tool/overlay/".concat(type.getId())));
+        /*
+        if (getType() == AntimatterAntimatterToolType.SCREWDRIVER_P || getType() == AntimatterAntimatterToolType.BUZZSAW) {
             textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId() + "_1"));
             textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId() + "_2"));
-        } else {
-            textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId()));
-        }
-        return textures.toArray(new Texture[0]);
+         */
+        return textures.toArray(new Texture[textures.size()]);
     }
 }
