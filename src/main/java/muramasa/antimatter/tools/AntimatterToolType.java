@@ -1,31 +1,35 @@
 package muramasa.antimatter.tools;
 
-import com.google.common.collect.Sets;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.items.MaterialTool;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.SoundType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.util.Locale;
+import java.util.HashSet;
 import java.util.Set;
 
-//TODO refactor to class? yeah...
-//TODO maybe extend forge ToolType?
-public enum AntimatterToolType {
+public class AntimatterToolType implements IAntimatterObject {
 
-    SWORD("", "craftingToolSword", Sets.newHashSet("sword"), null, false, 0, 4.0f, -2.4f, 1.0f, 1.0f, 200, 100, 100),
-    PICKAXE("", "craftingToolPickaxe", Sets.newHashSet("pickaxe"), null, false, 0, 1.5f, -2.8f, 1.0f, 1.0f, 50, 200, 100),
-    SHOVEL("", "craftingToolShovel", Sets.newHashSet("shovel"), null, false, 0, 1.5f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
-    AXE("", "craftingToolAxe", Sets.newHashSet("axe"), null, false, 0, 3.0f, -3.0f, 2.0f, 1.0f, 50, 200, 100),
-    HOE("", "craftingToolHoe", Sets.newHashSet("hoe"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
-    SAW("", "craftingToolSaw", Sets.newHashSet("saw"), null, false, 0, 1.75f, -3.0f, 1.0f, 1.0f, 50, 200, 200),
-    HAMMER("", "craftingToolForgeHammer", Sets.newHashSet("hammer"), SoundType.HAMMER, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 200, 400),
-    WRENCH("", "craftingToolWrench", Sets.newHashSet("wrench"), SoundType.WRENCH, false, 0, 3.0f, -2.4f, 1.0f, 1.0f, 50, 200, 800),
+    public static final AntimatterToolType SWORD = AntimatterToolType.add("sword", false, 2, 1, 10, 4.0F, 1.0F);
+    public static final AntimatterToolType PICKAXE = AntimatterToolType.add("pickaxe", false, 2, 1, 10, 1.5F, -2.8F);
+    public static final AntimatterToolType SHOVEL = AntimatterToolType.add("shovel", false, 2, 1, 10, 1.5F, -3.0F);
+    public static final AntimatterToolType AXE = AntimatterToolType.add("axe", false, 1, 1, 10, 3.0F, -3.0F);
+    public static final AntimatterToolType HOE = AntimatterToolType.add("hoe", false, 2, 2, 10, 1.75F, -3.0F);
+    public static final AntimatterToolType HAMMER = AntimatterToolType.add("hammer", false, 1, 2, 5, 3.0F, -3.0F).setUseSound(SoundType.HAMMER);
+    public static final AntimatterToolType WRENCH = AntimatterToolType.add("wrench", false, 5, 2, 5, 0.0F, -3.0F).setUseSound(SoundType.WRENCH);
+    public static final AntimatterToolType SAW = AntimatterToolType.add("saw", false, 5, 2, 2, 1.75F, -3.0F);
+    public static final AntimatterToolType FILE = AntimatterToolType.add("file", false, 5, 5, 2, 1.5F, -2.4F);
+    public static final AntimatterToolType CROWBAR = AntimatterToolType.add("crowbar", false, 5, 3, 5, 2.0F, -3.0F).setUseSound(SoundType.BREAK);
+
+    /*
     FILE("", "craftingToolFile", Sets.newHashSet("file"), null, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
     SCREWDRIVER("Adjusts Covers and Machines", "craftingToolScrewdriver", Sets.newHashSet("screwdriver"), SoundType.WRENCH, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 200, 200, 400),
     CROWBAR("Removes Covers", "craftingToolCrowbar", Sets.newHashSet("crowbar"), SoundType.BREAK, false, 0, 2.0f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
@@ -44,73 +48,128 @@ public enum AntimatterToolType {
     SCREWDRIVER_P("", "craftingToolScrewdriver", Sets.newHashSet("screwdriver"), SoundType.WRENCH, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
     BUZZSAW("", "craftingToolBuzzsaw", Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
     TURBINE("", "craftingToolTurbine", Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
+     */
 
-    public static AntimatterToolType[] VALUES;
+    private final String id;
+    private String tooltip = "";
+    private Set<Tag<Item>> tags = new HashSet();
+    @Nullable private SoundType useSound;
+    private boolean powered, repairable;
+    private int baseQuality, miningDurability, attackDurability, craftingDurability, overlayLayers;
+    private float baseAttackDamage, baseAttackSpeed;
+    private ItemGroup itemGroup;
+    private final net.minecraftforge.common.ToolType TOOL_TYPE;
+    private final Set<net.minecraftforge.common.ToolType> ADDITIONAL_TOOL_TYPES = new HashSet();
 
-    static {
-        VALUES = values();
-    }
-
-    private String tooltip, oreDict;
-    private Set<String> toolClasses;
-    private SoundType useSound;
-    private boolean powered;
-    private int baseQuality, damageMining, damageEntity, damageCrafting;
-    private float baseAttackDamage, baseAttackSpeed, miningSpeedMulti, duraMulti;
-
-    AntimatterToolType(String tooltip, String oreDict, Set<String> toolClasses, SoundType useSound, boolean powered, int baseQuality, float baseAttackDamage, float baseAttackSpeed, float miningSpeedMulti, float duraMulti, int damageMining, int damageEntity, int damageCrafting) {
-        this.tooltip = tooltip;
-        this.oreDict = oreDict;
-        this.toolClasses = toolClasses;
-        this.useSound = useSound;
+    private AntimatterToolType(String id, boolean powered, int miningDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
+        this.id = id;
+        // tags.add(Utils.getItemTag(new ResourceLocation("antimatter", id)));
+        this.useSound = null;
         this.powered = powered;
-        this.baseQuality = baseQuality;
+        this.repairable = true;
+        this.baseQuality = 0;
+        this.miningDurability = miningDurability;
+        this.attackDurability = attackDurability;
+        this.craftingDurability = craftingDurability;
         this.baseAttackDamage = baseAttackDamage;
         this.baseAttackSpeed = baseAttackSpeed;
-        this.miningSpeedMulti = miningSpeedMulti;
-        this.duraMulti = duraMulti;
-        this.damageMining = damageMining;
-        this.damageEntity = damageEntity;
-        this.damageCrafting = damageCrafting;
+        this.overlayLayers = 1;
+        this.itemGroup = Ref.TAB_TOOLS;
+        this.TOOL_TYPE = net.minecraftforge.common.ToolType.get(id);
+        AntimatterAPI.register(AntimatterToolType.class, this);
     }
 
-    public String getName() {
-        return name().toLowerCase(Locale.ENGLISH);
+    public static AntimatterToolType add(String id, boolean powered, int miningDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
+        return new AntimatterToolType(id, powered, miningDurability, attackDurability, craftingDurability, baseAttackDamage, baseAttackSpeed);
     }
 
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent(getName());
+    /** MaterialTool Instantiation **/
+
+    public MaterialTool instantiate(String domain, Material primary, Material secondary) {
+        Item.Properties properties = new Item.Properties().group(itemGroup);
+        if (!repairable) properties.setNoRepair();
+        return new MaterialTool(domain, this, primary, secondary, properties, new AntimatterItemTier(primary));
+    }
+
+    /** SETTERS **/
+
+    public AntimatterToolType setToolTip(String tooltip) {
+        this.tooltip = tooltip;
+        return this;
+    }
+
+    public AntimatterToolType setTags(ResourceLocation... locs) {
+        for (ResourceLocation loc : locs) {
+            this.tags.add(Utils.getItemTag(loc));
+        }
+        return this;
+    }
+
+    public AntimatterToolType setUseSound(SoundType type) {
+        this.useSound = type;
+        return this;
+    }
+
+    public AntimatterToolType setRepairability(boolean repairable) {
+        this.repairable = repairable;
+        return this;
+    }
+
+    public AntimatterToolType setBaseQuality(int quality) {
+        this.baseQuality = quality;
+        return this;
+    }
+
+    public AntimatterToolType setOverlayLayers(int layers) {
+        this.overlayLayers = layers;
+        return this;
+    }
+
+    public AntimatterToolType setItemGroup(ItemGroup itemGroup) {
+        this.itemGroup = itemGroup;
+        return this;
+    }
+
+    public AntimatterToolType addAdditionalTypes(String... types) {
+        for (String type : types) {
+            ADDITIONAL_TOOL_TYPES.add(net.minecraftforge.common.ToolType.get(type));
+        }
+        return this;
+    }
+
+    /** GETTERS **/
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public net.minecraftforge.common.ToolType getAntimatterToolType() {
+        return TOOL_TYPE;
+    }
+
+    public Set<net.minecraftforge.common.ToolType> getAdditionalAntimatterToolTypes() {
+        return ADDITIONAL_TOOL_TYPES;
     }
 
     public String getTooltip() {
         return tooltip;
     }
 
-    public String getOreDict() {
-        return oreDict;
+    public Set<Tag<Item>> getTags() {
+        return tags;
     }
 
     public SoundType getUseSound() {
         return useSound;
     }
 
-    @Deprecated // Actually instantiate tool objects...
-    public MaterialTool instantiate(String domain) {
-//        if (toolClass != null) {
-//            try {
-//                return (MaterialTool) toolClass.newInstance();
-//            } catch (InstantiationException | IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        //return new MaterialTool(domain, this);
-        return null;
-        //TODO
-    }
-
     public boolean isPowered() {
         return powered;
+    }
+
+    public boolean getRepairability() {
+        return repairable;
     }
 
     public int getBaseQuality() {
@@ -125,76 +184,23 @@ public enum AntimatterToolType {
         return baseAttackSpeed;
     }
 
-    public float getMiningSpeedMulti() {
-        return miningSpeedMulti;
+    public int getMiningDurability() {
+        return miningDurability;
     }
 
-    public float getDurabilityMulti() {
-        return duraMulti;
+    public int getAttackDurability() {
+        return attackDurability;
     }
 
-    public int getDamageMining() {
-        return damageMining;
+    public int getCraftingDurability() {
+        return craftingDurability;
     }
 
-    public int getDamageEntity() {
-        return damageEntity;
+    public int getOverlayLayers() {
+        return overlayLayers;
     }
 
-    public int getDamageCrafting() {
-        return damageCrafting;
-    }
-
-    public Set<String> getToolClass() {
-        return toolClasses;
-    }
-
-    public void playUseSound(World world, BlockPos pos) {
-        if (useSound != null) useSound.play(world, pos);
-    }
-
-    public ItemStack get() {
-        return ItemStack.EMPTY;
-        //return get(null, null);
-    }
-
-    public ItemStack get(Material primary) {
-        return ItemStack.EMPTY;
-        //return get(primary, primary.getHandleMaterial());
-    }
-
-    public ItemStack get(Material primary, Material secondary) {
-        //TODO
-        //return AntimatterAPI.get(MaterialTool.class, getName()).get(primary, secondary);
-        return ItemStack.EMPTY;
-    }
-
-    @Nullable
-    public static AntimatterToolType get(ItemStack stack) {
-        return stack.getItem() instanceof MaterialTool ? ((MaterialTool) stack.getItem()).getType() : null;
-    }
-
-    public static boolean hasBowAnimation(ItemStack stack) {
-        AntimatterToolType type = get(stack);
-        return type == DRILL;
-    }
-
-    public static boolean isWrench(ItemStack stack) {
-        AntimatterToolType type = get(stack);
-        return type == WRENCH || type == WRENCH_P;
-    }
-
-    public static boolean isCrowbar(ItemStack stack) {
-        AntimatterToolType type = get(stack);
-        return type == CROWBAR;
-    }
-
-    public static boolean isScrewdriver(ItemStack stack) {
-        AntimatterToolType type = get(stack);
-        return type == SCREWDRIVER || type == SCREWDRIVER_P;
-    }
-
-    public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return isWrench(stack) || isCrowbar(stack) || isScrewdriver(stack);
+    public ItemGroup getItemGroup() {
+        return itemGroup;
     }
 }
