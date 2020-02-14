@@ -9,6 +9,7 @@ import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.tools.AntimatterToolType;
 
 import java.util.Collection;
 import java.util.Set;
@@ -20,6 +21,7 @@ public class RegistrationHelper {
         buildMaterialItems(domain);
         buildOreBlocks(domain);
         buildStorageBlocks(domain);
+        buildMaterialTools(domain);
     }
 
     public static Set<Material> getMaterialsForDomain(String domain, Collection<Material> materials) {
@@ -38,6 +40,10 @@ public class RegistrationHelper {
 
     public static void buildMaterialBlocks(String domain) {
         //TODO
+    }
+
+    public static void buildMaterialTools(String domain) {
+        getMaterialsForDomain(domain).stream().filter(m -> m.getToolDamage() > 1).forEach(m -> AntimatterToolType.SWORD.instantiate(domain, m, m));
     }
 
     public static void buildOreBlocks(String domain) {
@@ -61,4 +67,5 @@ public class RegistrationHelper {
         getMaterialsForDomain(domain, MaterialType.BLOCK.all()).forEach(m -> new BlockStorage(m.getDomain(), m, MaterialType.BLOCK));
         getMaterialsForDomain(domain, MaterialType.FRAME.all()).forEach(m -> new BlockStorage(m.getDomain(), m, MaterialType.FRAME));
     }
+
 }

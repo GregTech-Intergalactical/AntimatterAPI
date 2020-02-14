@@ -24,6 +24,7 @@ public class Ref {
 
     /** Creative Tabs **/
     public static AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(Ref.ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static AntimatterItemGroup TAB_TOOLS = new AntimatterItemGroup(Ref.ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER));
     public static AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(Ref.ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
     public static AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(Ref.ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
     public static AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(Ref.ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
