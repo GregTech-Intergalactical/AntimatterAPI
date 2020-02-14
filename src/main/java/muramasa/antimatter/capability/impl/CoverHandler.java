@@ -68,10 +68,11 @@ public class CoverHandler implements ICoverHandler {
         Cover cover = get(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
-        switch (type) {
-            case CROWBAR: return AntimatterAPI.removeCover(player, this, side);
-            default: return false;
-        }
+        // switch (type) {
+            //case CROWBAR: return AntimatterAPI.removeCover(player, this, side);
+            //default: return false;
+        //}
+        return true;
     }
 
     @Override
