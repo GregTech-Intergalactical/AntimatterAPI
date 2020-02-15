@@ -112,8 +112,13 @@ minecraft {
 
 repositories {
     maven { // JEI
+	    name = "Progwml6 maven"
         url "http://dvs1.progwml6.com/files/maven"
     }
+	maven { // JEI fallback
+    name = "ModMaven"
+    url = "https://modmaven.k-4u.nl"
+  }
 }
 
 dependencies {
@@ -122,11 +127,11 @@ dependencies {
     if (local_dev_dependancies.toBoolean()) {
         compile project(":tesseractapi")
 
-        //compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-        //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+        compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+        runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
     } else {
-        //compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-        //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+        compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+        runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
     }
 }
 
