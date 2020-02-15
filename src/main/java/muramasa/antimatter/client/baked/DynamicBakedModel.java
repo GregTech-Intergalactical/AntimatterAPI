@@ -2,7 +2,7 @@ package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.blocks.IDynamicBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -37,9 +37,9 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     @Nonnull
     @Override
     public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
-        if (!hasConfig || !(state.getBlock() instanceof BlockDynamic)) return data;
+        if (!hasConfig || !(state.getBlock() instanceof IDynamicBlock)) return data;
         mutablePos.setPos(pos);
-        configData.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));
+        configData.setData(AntimatterProperties.DYNAMIC_CONFIG, ((IDynamicBlock) state.getBlock()).getConfig(state, world, mutablePos, pos));
         return configData;
     }
 

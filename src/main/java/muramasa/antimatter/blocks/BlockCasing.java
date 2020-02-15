@@ -10,7 +10,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public class BlockCasing extends BlockDynamic {
+public class BlockCasing extends BlockBasic implements IDynamicBlock {
 
     public BlockCasing(String domain, String id, Block.Properties properties) {
         super(domain, "casing_" + id, properties, new Texture(domain, "block/casing/" + id));

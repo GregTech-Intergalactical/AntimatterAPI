@@ -16,9 +16,9 @@ import net.minecraft.world.IBlockReader;
 
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
+public class BlockSurfaceRock extends BlockBasic implements IDynamicBlock, IWaterLoggable {
 
-    protected static final VoxelShape[] SHAPES = new VoxelShape[]{
+    protected static final VoxelShape[] SHAPES = new VoxelShape[] {
             Block.makeCuboidShape(5.0D, 0.0D, 5.0D, 11.0D, 2.0D, 11.0D),
             Block.makeCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 3.0D, 10.0D),
             Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 10.0D, 1.0D, 10.0D),

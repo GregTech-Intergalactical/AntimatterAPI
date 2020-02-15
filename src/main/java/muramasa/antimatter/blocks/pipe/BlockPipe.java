@@ -2,14 +2,14 @@ package muramasa.antimatter.blocks.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.blocks.BlockBasic;
+import muramasa.antimatter.blocks.IDynamicBlock;
 import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
-import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IItemBlockProvider;
+import muramasa.antimatter.registration.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
+public abstract class BlockPipe extends BlockBasic implements IDynamicBlock, IItemBlockProvider, IColorHandler, IInfoProvider {
 
     protected PipeType type;
     protected Material material;
@@ -200,7 +200,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        super.getInfo(info, world, state, pos);
+        IDynamicBlock.super.getInfo(info, world, state, pos);
         info.add("Pipe Type: " + getType().getId());
         info.add("Pipe Material: " + getMaterial().getId());
         info.add("Pipe Size: " + getSize().getId());
