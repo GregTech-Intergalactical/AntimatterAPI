@@ -58,7 +58,7 @@ public class WorldGenHelper {
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
-        StoneType stone = STONE_MAP.get(existing);d
+        StoneType stone = STONE_MAP.get(existing);
         if (stone != null) {
             BlockState block = type == MaterialType.ORE ? MaterialType.ORE.get().get(material, stone).asState() : MaterialType.ORE_SMALL.get().get(material, stone).asState();
             return setOre(world, pos, existing, block);
