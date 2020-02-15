@@ -2,12 +2,12 @@ package muramasa.antimatter.registration;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockStorage;
+import muramasa.antimatter.blocks.BlockSurfaceRock;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
-import muramasa.antimatter.ore.BlockRock;
 import muramasa.antimatter.ore.StoneType;
 
 import java.util.Collection;
@@ -30,18 +30,14 @@ public class RegistrationHelper {
         return getMaterialsForDomain(domain, AntimatterAPI.all(Material.class));
     }
 
-    public static Set<MaterialType> getValidTypesForMaterial(Material material) {
-        return getAllMaterialTypes().stream().filter(t -> t.allowGeneration(material)).collect(Collectors.toSet());
-    }
-
-    public static Collection<MaterialType> getAllMaterialTypes() {
-        return AntimatterAPI.all(MaterialType.class);
-    }
-
     public static void buildMaterialItems(String domain) {
         AntimatterAPI.all(MaterialType.class).forEach(t -> getMaterialsForDomain(domain).forEach(m -> {
-            if (t.allowGeneration(m)) new MaterialItem(m.getDomain(), t, m);
+            if (t.allowItemGen(m)) new MaterialItem(m.getDomain(), t, m);
         }));
+    }
+
+    public static void buildMaterialBlocks(String domain) {
+        //TODO
     }
 
     public static void buildOreBlocks(String domain) {
@@ -53,7 +49,7 @@ public class RegistrationHelper {
                 new BlockOre(m.getDomain(), m, s, MaterialType.ORE_SMALL);
             });
             getMaterialsForDomain(domain, MaterialType.ROCK.all()).forEach(m -> {
-                new BlockRock(domain, m, s);
+                new BlockSurfaceRock(domain, m, s);
             });
         });
         getMaterialsForDomain(domain, MaterialType.ORE_STONE.all()).forEach(m -> {

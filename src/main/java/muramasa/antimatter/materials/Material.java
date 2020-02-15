@@ -3,11 +3,7 @@ package muramasa.antimatter.materials;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -482,21 +478,6 @@ public class Material implements IAntimatterObject {
     public ItemStack getCellPlasma(int amount) {
         //return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
         return ItemStack.EMPTY;
-    }
-
-    public ItemStack getOre(int amount, StoneType type) {
-        if (!has(ORE)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + ORE.getId() + ") M(" + id + ")");
-        return BlockOre.get(this, ORE, type, amount);
-    }
-
-    public ItemStack getBlock(int amount) {
-        if (!has(BLOCK)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + BLOCK.getId() + ") M(" + id + ")");
-        return BlockStorage.get(this, BLOCK, amount);
-    }
-
-    public ItemStack getFrame(int amount) {
-        if (!has(FRAME)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: P(" + FRAME.getId() + ") M(" + id + ")");
-        return BlockStorage.get(this, FRAME, amount);
     }
 
     public FluidStack getLiquid(int amount) {

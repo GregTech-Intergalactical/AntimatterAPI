@@ -10,7 +10,6 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.SoundType;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
@@ -34,9 +33,9 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     protected String domain, id;
     protected Material material;
-    protected MaterialType type;
+    protected MaterialType<?> type;
 
-    public MaterialItem(String domain, MaterialType type, Material material, Properties properties) {
+    public MaterialItem(String domain, MaterialType<?> type, Material material, Properties properties) {
         super(properties);
         this.material = material;
         this.type = type;
@@ -46,11 +45,11 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
         AntimatterAPI.register(MaterialItem.class, this);
     }
 
-    public MaterialItem(String domain, MaterialType type, Material material) {
+    public MaterialItem(String domain, MaterialType<?> type, Material material) {
         this(domain, type, material, new Properties().group(Ref.TAB_MATERIALS));
     }
 
-    public MaterialType getType() {
+    public MaterialType<?> getType() {
         return type;
     }
 
@@ -89,7 +88,7 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
             int level = state.get(CauldronBlock.LEVEL);
             if (level > 0) {
                 MaterialItem item = (MaterialItem) stack.getItem();
-                context.getPlayer().setHeldItem(context.getHand(), get(MaterialType.DUST_IMPURE, item.getMaterial(), stack.getCount()));
+                context.getPlayer().setHeldItem(context.getHand(), MaterialType.DUST_IMPURE.get(item.getMaterial(), stack.getCount()));
                 context.getWorld().setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
                 SoundType.BUCKET_EMPTY.play(context.getWorld(), context.getPos());
                 return ActionResultType.SUCCESS;
@@ -98,7 +97,7 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
         return ActionResultType.FAIL;
     }
 
-    public static boolean hasType(ItemStack stack, MaterialType type) {
+    public static boolean hasType(ItemStack stack, MaterialType<?> type) {
         return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getType() == type;
     }
 
@@ -106,7 +105,7 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
         return stack.getItem() instanceof MaterialItem && ((MaterialItem) stack.getItem()).getMaterial() == material;
     }
 
-    public static MaterialType getType(ItemStack stack) {
+    public static MaterialType<?> getType(ItemStack stack) {
         if (!(stack.getItem() instanceof MaterialItem)) return null;
         return ((MaterialItem) stack.getItem()).getType();
     }
@@ -118,18 +117,6 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
         return hasType(stack, MaterialType.PLATE);
-    }
-
-    public static ItemStack get(MaterialType type, Material material, int count) {
-        ItemStack replacement = AntimatterAPI.getReplacement(type, material);
-        if (!replacement.isEmpty()) return Utils.ca(count, replacement);
-        if (!type.allowGeneration(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + type.getId() + ") M(" + material.getId() + ")");
-        MaterialItem item = AntimatterAPI.get(MaterialItem.class, type.getId() + "_" + material.getId());
-        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + type.getId() + ") M(" + material.getId() + ")");
-        if (count == 0) Utils.onInvalidData("GET ERROR - COUNT 0: T(" + type.getId() + ") M(" + material.getId() + ")");
-        ItemStack stack = new ItemStack(item, count);
-        if (stack.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + type.getId() + ") M(" + material.getId() + ")");
-        return stack;
     }
 
     @Override

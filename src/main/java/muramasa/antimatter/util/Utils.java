@@ -3,7 +3,6 @@ package muramasa.antimatter.util;
 import com.google.common.base.CaseFormat;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
@@ -545,7 +544,7 @@ public class Utils {
         return string;
     }
 
-    public static String getConventionalMaterialType(MaterialType type) {
+    public static String getConventionalMaterialType(MaterialType<?> type) {
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1) {
@@ -581,7 +580,7 @@ public class Utils {
         return getItemTag(new ResourceLocation("forge", name));
     }
 
-    public static String[] getLocalizedMaterialType(MaterialType type) {
+    public static String[] getLocalizedMaterialType(MaterialType<?> type) {
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1) {

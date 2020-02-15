@@ -1,26 +1,21 @@
 package muramasa.antimatter.ore;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockBasic;
+import muramasa.antimatter.blocks.BlockMaterialType;
 import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.materials.MaterialType;
+import net.minecraft.block.Block;
 
-public class BlockOreStone extends BlockBasic {
+public class BlockOreStone extends BlockMaterialType {
 
-    private Material material;
-
-    public BlockOreStone(String domain, Material material, Texture... textures) {
-        super(domain, "stone_" + material.getId(), textures);
-        this.material = material;
+    public BlockOreStone(String domain, Material material) {
+        super(domain, material, MaterialType.ORE_STONE, Block.Properties.create(net.minecraft.block.material.Material.ROCK));
+        instancedTextures("stone");
         AntimatterAPI.register(BlockOreStone.class, this);
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
     @Override
-    public Texture[] getTextures() {
-        return textures == null || textures.length == 0 ? new Texture[]{new Texture(domain, "block/stone/" + material.getId())} : textures;
+    public boolean registerColorHandlers() {
+        return false;
     }
 }

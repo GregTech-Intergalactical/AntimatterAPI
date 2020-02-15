@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.blocks.BlockSurfaceRock;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
@@ -47,7 +46,6 @@ public class Data {
 
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();
-    public static BlockSurfaceRock SURFACE_ROCK = new BlockSurfaceRock();
 
     public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler(Ref.ID, "container_basic") {
         @Nullable

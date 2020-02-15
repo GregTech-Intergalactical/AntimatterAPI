@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class CoverMaterial extends CoverTintable {
 
-    public abstract MaterialType getType();
+    public abstract MaterialType<?> getType();
 
     public abstract Material getMaterial();
 

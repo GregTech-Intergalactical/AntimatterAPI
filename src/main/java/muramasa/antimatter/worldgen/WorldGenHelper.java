@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -58,9 +57,13 @@ public class WorldGenHelper {
 //        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
     }
 
-    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType type) {
-        StoneType stoneType = STONE_MAP.get(existing);
-        return stoneType != null && setOre(world, pos, existing, BlockOre.get(material, type, stoneType));
+    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
+        StoneType stone = STONE_MAP.get(existing);d
+        if (stone != null) {
+            BlockState block = type == MaterialType.ORE ? MaterialType.ORE.get().get(material, stone).asState() : MaterialType.ORE_SMALL.get().get(material, stone).asState();
+            return setOre(world, pos, existing, block);
+        }
+        return false;
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {

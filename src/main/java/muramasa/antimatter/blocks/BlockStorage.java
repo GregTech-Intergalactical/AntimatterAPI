@@ -13,7 +13,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.common.ToolType;
@@ -21,27 +20,13 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockStorage extends BlockBasic implements IItemBlockProvider, IColorHandler {
+public class BlockStorage extends BlockMaterialType implements IItemBlockProvider, IColorHandler {
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-
-    protected String id;
-    protected Material material;
-    protected MaterialType type;
     
-    public BlockStorage(String domain, Material material, MaterialType type) {
-        super(domain, "storage_" + material.getId() + "_" + type.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL), material.getSet().getTextures(domain, type));
-        this.material = material;
-        this.type = type;
+    public BlockStorage(String domain, Material material, MaterialType<?> type) {
+        super(domain, material, type, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
         AntimatterAPI.register(BlockStorage.class, this);
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public MaterialType getType() {
-        return type;
     }
 
     /** Frame Placing Stuffs - Start **/
@@ -148,38 +133,4 @@ public class BlockStorage extends BlockBasic implements IItemBlockProvider, ICol
 //    public boolean isFullBlock(BlockState state) {
 //        return type == MaterialType.BLOCK;
 //    }
-
-    @Override
-    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        return i == 0 ? material.getRGB() : -1;
-    }
-
-    @Override
-    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? material.getRGB() : -1;
-    }
-
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void getTextures(Set<ResourceLocation> textures) {
-//        textures.add(material.getSet().getTexture(type, 0));
-//    }
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelRegistration() {
-//
-//    }
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-//        ModelResourceLocation loc = new ModelResourceLocation(Ref.MODID + ":" + getId());
-//        //TODO registry.put(loc, ClientHandler.TYPE_SET_MAP.get(getOreType().getId() + "_" + material.getSet().getId()));
-//    }
-
-    public static ItemStack get(Material material, MaterialType type, int count) {
-        BlockStorage block = AntimatterAPI.get(BlockStorage.class, "storage_" + material.getId() + "_" + type.getId());
-        return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
-    }
 }

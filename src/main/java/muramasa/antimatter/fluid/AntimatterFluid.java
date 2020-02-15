@@ -12,10 +12,10 @@ import static muramasa.antimatter.materials.MaterialType.*;
 public class AntimatterFluid extends EmptyFluid {
 
     private Material material;
-    private MaterialType type;
+    private MaterialType<?> type;
     private String localizedName;
 
-    public AntimatterFluid(Material material, MaterialType type) {
+    public AntimatterFluid(Material material, MaterialType<?> type) {
         this.material = material;
         this.type = type;
 //        FluidRegistry.registerFluid(this);
