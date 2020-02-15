@@ -12,7 +12,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 
-public class AntimatterItemTier implements IItemTier, IAntimatterObject {
+public class AntimatterItemTier implements IItemTier {
 
     private Material material;
     private ImmutableMap<Enchantment, Integer> nativeEnchantments;
@@ -20,13 +20,8 @@ public class AntimatterItemTier implements IItemTier, IAntimatterObject {
     // Take both Material and AntimatterToolType and do some min-max?
     public AntimatterItemTier(Material material) {
         this.material = material;
-        this.nativeEnchantments = material.getEnchantments() == null ? ImmutableMap.of() : material.getEnchantments();
+        this.nativeEnchantments = material.getEnchantments();
         // AntimatterAPI.register(AntimatterItemTier.class, this);
-    }
-
-    @Override
-    public String getId() {
-        return material.getId();
     }
 
     @Override

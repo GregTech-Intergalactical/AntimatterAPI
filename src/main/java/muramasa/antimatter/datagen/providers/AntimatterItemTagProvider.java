@@ -8,6 +8,7 @@ import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.tools.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -74,6 +75,9 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
                     this.getBuilder(getForgeItemTag(name)).add(item).replace(replace);
                     if (type == INGOT || type == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
                 });
+        AntimatterAPI.all(IAntimatterTool.class).stream().filter(t -> t.getDomain().equals(domain)).forEach(tool -> {
+            this.getBuilder(tool.getType().getTag()).add(tool.asItem());
+        });
     }
 
     @Override
