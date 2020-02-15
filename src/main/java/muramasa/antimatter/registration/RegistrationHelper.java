@@ -43,7 +43,9 @@ public class RegistrationHelper {
     }
 
     public static void buildMaterialTools(String domain) {
-        getMaterialsForDomain(domain).stream().filter(m -> m.getToolDamage() > 1).forEach(m -> AntimatterToolType.SWORD.instantiate(domain, m, m));
+        getMaterialsForDomain(domain).stream().filter(m -> m.has(MaterialType.TOOLS)).forEach(m -> {
+            AntimatterAPI.all(AntimatterToolType.class).forEach(t -> t.instantiate(domain, m, m));
+        });
     }
 
     public static void buildOreBlocks(String domain) {
