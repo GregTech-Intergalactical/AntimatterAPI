@@ -61,6 +61,15 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
         return builder;
     }
 
+    public ItemModelBuilder texHandheld(IItemProvider item, ResourceLocation... textures) {
+        ItemModelBuilder builder = getBuilder(item);
+        builder.parent(new UncheckedModelFile("item/handheld"));
+        for (int i = 0; i < textures.length; i++) {
+            builder.texture("layer" + i, textures[i]);
+        }
+        return builder;
+    }
+
     public ItemModelBuilder blockItem(Block block) {
         return blockItem(block.asItem());
     }

@@ -1,18 +1,10 @@
-package muramasa.antimatter.items;
+package muramasa.antimatter.tools;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IModelProvider;
-import muramasa.antimatter.registration.ITextureProvider;
-import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tools.AntimatterItemTier;
-import muramasa.antimatter.tools.AntimatterToolType;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
@@ -29,68 +21,66 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static muramasa.antimatter.tools.AntimatterToolType.SWORD;
-
-public class MaterialTool extends TieredItem implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public class MaterialTool extends TieredItem implements IAntimatterTool {
 
     protected String domain;
-    protected AntimatterItemTier tier;
+    protected IItemTier tier;
     protected AntimatterToolType type;
     protected Material primary;
     protected Material secondary;
+    protected Set<ToolType> toolTypes;
 
-    public MaterialTool(String domain, AntimatterToolType type, Material primary, Material secondary, Properties properties, AntimatterItemTier tier) {
+    public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, Material secondary) {
         super(tier, properties);
         this.domain = domain;
-        this.tier = tier;
         this.type = type;
+        this.tier = tier;
         this.primary = primary;
         this.secondary = secondary;
+        this.toolTypes = type.getToolTypes();
         setRegistryName(domain, getId());
-        AntimatterAPI.register(MaterialTool.class, this);
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public AntimatterToolType getType() {
-        return type;
+        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     @Override
-    public String getId() {
-        return primary.getId() + "_" + getType().getId();
+    public String getDomain() { return domain; }
+
+    @Override
+    public AntimatterToolType getType() { return type; }
+
+    @Override
+    public Material getPrimaryMaterial() { return primary; }
+
+    @Override
+    public Material getSecondaryMaterial() { return secondary; }
+
+    @Override
+    public Item asItem() { return this; }
+
+    @Override
+    public Set<ToolType> getToolTypes(ItemStack stack) {
+        return toolTypes;
     }
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
-            if (primary.getEnchantments() != null || !primary.getEnchantments().isEmpty()) {
-                primary.getEnchantments().entrySet().forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            if (tier instanceof AntimatterItemTier && (!primary.getEnchantments().entrySet().isEmpty())) {
+                ((AntimatterItemTier) tier).getNativeEnchantments().entrySet().forEach(e -> {
+                    if (stack.canApplyAtEnchantingTable(e.getKey())) stack.addEnchantment(e.getKey(), e.getValue());
+                });
             }
             items.add(stack);
         }
     }
 
-    /*
-    @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
-        //Material mat = getPrimary(stack);
-        return new StringTextComponent("im broken TODO");
-        //TODO fixme
-        //return (mat != null ? new TranslationTextComponent("") : mat.getDisplayName()).appendText(" ").appendSibling(type.getDisplayName());
-    }
-     */
-
-    //TODO: Localization
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         if (!type.getTooltip().isEmpty()) tooltip.add(new StringTextComponent(type.getTooltip()));
@@ -114,14 +104,41 @@ public class MaterialTool extends TieredItem implements IAntimatterObject, IColo
     }
 
     @Override
+    public int getHarvestLevel(ItemStack stack, net.minecraftforge.common.ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+        return tier.getHarvestLevel();
+    }
+
+    @Override
+    public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        stack.damageItem(type.getAttackDurability(), attacker, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        return true;
+    }
+
+    @Override
+    public float getDestroySpeed(ItemStack stack, BlockState state) {
+        if (getToolTypes(stack).stream().anyMatch(e -> state.isToolEffective(e))) return tier.getEfficiency();
+        return type.getEffectiveBlocks().contains(state.getBlock()) ? tier.getEfficiency() : 1.0F;
+    }
+
+    @Override
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
+        if (!worldIn.isRemote && state.getBlockHardness(worldIn, pos) != 0.0F) {
+            stack.damageItem(type.getMiningDurability(), entityLiving, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        }
+        return true;
+    }
+
+    @Override
+    public boolean canPlayerBreakBlockWhileHolding(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+        return type.getBlockBreakability();
+    }
+
+    @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType) {
         Multimap<String, AttributeModifier> modifiers = super.getAttributeModifiers(slotType);
-        if (type.equals(SWORD)) {
-            if (slotType == EquipmentSlotType.MAINHAND) {
-                modifiers.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", tier.getAttackDamage() + type.getBaseAttackDamage(), AttributeModifier.Operation.ADDITION));
-                modifiers.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.4F, AttributeModifier.Operation.ADDITION));
-            }
-            return modifiers;
+        if (slotType == EquipmentSlotType.MAINHAND) {
+            modifiers.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", tier.getAttackDamage() + type.getBaseAttackDamage(), AttributeModifier.Operation.ADDITION));
+            modifiers.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
         return modifiers;
     }
@@ -180,66 +197,14 @@ public class MaterialTool extends TieredItem implements IAntimatterObject, IColo
     }
 
     @Override
-    public float getDestroySpeed(ItemStack stack, BlockState state) {
-//        for (String clazz : getToolClasses(stack)) {
-//            if (state.getBlock().isToolEffective(clazz, state)) {
-//                if (!canMine(stack)) return 1.0F;
-//                return getMiningSpeed(stack);
-//            }
-//        }
-        return 1.0F;
-//        return this.EFFECTIVE_ON.contains(state.getBlock()) ? getPrimary().getToolSpeed() : 1.0F;
-    }
-
-//    @Override
-//    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-//        damage(stack, type.getDamageEntity(), attacker, true);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, EntityLivingBase entityLiving) {
-//        if (!world.isRemote && (double)state.getBlockHardness(world, pos) != 0.0D) {
-//            damage(stack, type.getDamageMining(), entityLiving, true);
-//        }
-//        return true;
-//    }
-
-    @Override
     public boolean isEnchantable(ItemStack stack) {
         return true;
     }
 
-    //TODO: Correspond Item Enchantability to Material mining level
     @Override
     public int getItemEnchantability() {
-        return 10;
+        return tier.getEnchantability();
     }
-
-//    @Override
-//    public String getToolMaterialName() {
-//        return "gt_material";
-//    }
-
-//    @Override
-//    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-//        Material primary = getPrimary(toRepair);
-//        if (primary != null) {
-//            ItemStack mat = primary.has(MaterialType.GEM) ? primary.getGem(1) : primary.getIngot(1);
-//            if (!mat.isEmpty() && OreDictionary.itemMatches(mat, repair, false)) return true;
-//        }
-//        return super.getIsRepairable(toRepair, repair);
-//    }
-//
-//    @Override
-//    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
-//        Multimap<String, AttributeModifier> multimap = HashMultimap.create();
-//        if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
-//            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", (double) getAttackDamage(stack), 0));
-//            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", (double) getAttackSpeed(stack), 0));
-//        }
-//        return multimap;
-//    }
 
 //    @Override
 //    public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
@@ -277,11 +242,6 @@ public class MaterialTool extends TieredItem implements IAntimatterObject, IColo
     }
      */
 
-    @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return false;
-    }
-
 //    @Override
 //    public boolean onBlockStartBreak(ItemStack stack, BlockPos originPos, PlayerEntity player) {
 //        //TODO move this to onBlockDestroyed?
@@ -304,7 +264,7 @@ public class MaterialTool extends TieredItem implements IAntimatterObject, IColo
     }
 
     public boolean canMine(ItemStack stack) {
-        boolean can = getDurability(stack) > 0;
+        boolean can = stack.getDamage() > 0;
         if (type.isPowered() && getEnergy(stack) <= 0) can = false;
         return can;
     }
@@ -392,12 +352,6 @@ public class MaterialTool extends TieredItem implements IAntimatterObject, IColo
         return mat != null ? type.getBaseQuality() + mat.getToolQuality() : 1;
     }
 
-    public int getDurability(ItemStack stack) {
-        //TODO broken
-        //return getTag(stack).getInt(Ref.KEY_TOOL_DATA_DURABILITY);
-        return 1;
-    }
-
     public float getAttackDamage(ItemStack stack) {
         return type.getBaseAttackDamage() + getPrimaryQuality(stack);
     }
@@ -430,29 +384,5 @@ public class MaterialTool extends TieredItem implements IAntimatterObject, IColo
             compound.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, 0);
             stack.getTag().put(Ref.TAG_TOOL_DATA, compound);
         }
-    }
-
-    @Override
-    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? primary.getRGB() : secondary.getRGB();
-    }
-
-    @Override
-    public Texture[] getTextures() {
-        List<Texture> textures = new ArrayList<>();
-        int layers = type.getOverlayLayers();
-        textures.add(new Texture(domain, "item/tool/".concat(type.getId())));
-        if (layers > 1) {
-            for (int i = 0; i <= layers; i++) {
-                textures.add(new Texture(domain, String.join("", "item/tool/overlay/" + type.getId() + "_" + i)));
-            }
-        }
-        else textures.add(new Texture(domain, "item/tool/overlay/".concat(type.getId())));
-        /*
-        if (getType() == AntimatterAntimatterToolType.SCREWDRIVER_P || getType() == AntimatterAntimatterToolType.BUZZSAW) {
-            textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId() + "_1"));
-            textures.add(new Texture(getDomain(), "item/tool/overlay/" + getId() + "_2"));
-         */
-        return textures.toArray(new Texture[textures.size()]);
     }
 }
