@@ -3,11 +3,11 @@ package muramasa.antimatter.worldgen.feature;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.blocks.BlockSurfaceRock;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -18,7 +18,9 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
@@ -95,7 +97,7 @@ public class FeatureIndicatorRocks extends AntimatterFeature<NoFeatureConfig>{
                 m = ((BlockStone) bs.getBlock()).getType().getMaterial();
         }
         // TODO: use material specific block
-        worldIn.setBlockState(p, Data.SURFACE_ROCK.getDefaultState().with(
+        worldIn.setBlockState(p, BlockSurfaceRock.get(m, StoneType.get("stone")).with(
                 AntimatterProperties.ROCK_MODEL, rand.nextInt(SURFACE_ROCK_MODEL_COUNT)).with(
                 WATERLOGGED, Boolean.valueOf(inWater)), 2);
     }

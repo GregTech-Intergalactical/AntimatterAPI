@@ -83,10 +83,10 @@ public class ClientHandler implements IProxyHandler {
     @SubscribeEvent
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
         AntimatterAPI.all(Item.class).forEach(i -> {
-            if (i instanceof IColorHandler) e.getItemColors().register((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
+            if (i instanceof IColorHandler && ((IColorHandler) i).registerColorHandlers()) e.getItemColors().register((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
         });
         AntimatterAPI.all(Block.class).forEach(b -> {
-            if (b instanceof IColorHandler) e.getItemColors().register((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), b.asItem());
+            if (b instanceof IColorHandler && ((IColorHandler) b).registerColorHandlers()) e.getItemColors().register((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), b.asItem());
         });
     }
 

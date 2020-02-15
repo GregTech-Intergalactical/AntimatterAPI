@@ -8,7 +8,6 @@ import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -43,11 +42,11 @@ public class AntimatterLanguageProvider extends LanguageProvider {
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
                 if (m.has(ORE)) {
-                    add(BlockOre.get(m, ORE, s).getBlock(),
+                    add(ORE.get().get(m, s).asBlock(),
                             String.join("", getLocalizedType(m), " ", getLocalizedType(s), " ", getLocalizedType(ORE)));
                 }
                 if (m.has(ORE_SMALL)) {
-                    add(BlockOre.get(m, ORE_SMALL, s).getBlock(),
+                    add(ORE_SMALL.get().get(m, s).asBlock(),
                             String.join("", getLocalizedType(m), " ", getLocalizedType(s), " ", getLocalizedType(ORE_SMALL)));
                 }
             });
@@ -55,12 +54,12 @@ public class AntimatterLanguageProvider extends LanguageProvider {
         AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> add(s, getLocalizedType(s)));
         AntimatterAPI.all(BlockStorage.class).stream()
                 .filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
-                    MaterialType type = block.getType();
+                    MaterialType<?> type = block.getType();
                     add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(type)));
         });
         AntimatterAPI.all(MaterialItem.class).stream()
                 .filter(i -> i.getMaterial().getDomain().equals(domain)).forEach(item -> {
-                    MaterialType type = item.getType();
+                    MaterialType<?> type = item.getType();
                     if (type == ROCK) {
                         add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
                     }

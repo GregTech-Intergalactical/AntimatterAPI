@@ -131,11 +131,11 @@ public final class AntimatterAPI {
 //    }
 
     /** Item Registry Section **/
-    public static void addReplacement(MaterialType type, Material material, ItemStack stack) {
+    public static void addReplacement(MaterialType<?> type, Material material, ItemStack stack) {
         registerInternal(ItemStack.class, type.getId() + material.getId(), stack, true);
     }
 
-    public static ItemStack getReplacement(MaterialType type, Material material) {
+    public static ItemStack getReplacement(MaterialType<?> type, Material material) {
         ItemStack stack = get(ItemStack.class, type.getId() + material.getId());
         return stack != null ? stack.copy() : ItemStack.EMPTY;
     }

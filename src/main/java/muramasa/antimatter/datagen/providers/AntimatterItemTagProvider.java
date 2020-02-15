@@ -1,14 +1,12 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
@@ -62,13 +60,13 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         });
         AntimatterAPI.all(BlockStorage.class)
                 .stream().filter(block -> block.getMaterial().getDomain().equals(domain)).forEach(storage -> {
-                    MaterialType type = storage.getType();
+                    MaterialType<?> type = storage.getType();
                     String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
                     this.copy(getForgeBlockTag(name), getForgeItemTag(name));
                 });
         AntimatterAPI.all(MaterialItem.class).stream()
                 .filter(i -> i.getMaterial().getDomain().equals(domain)).forEach(item -> {
-                    MaterialType type = item.getType();
+                    MaterialType<?> type = item.getType();
                     this.getBuilder(type.getTag()).add(item);
                     String name = String.join("", getConventionalMaterialType(type), "/", item.getMaterial().getId());
                     this.getBuilder(getForgeItemTag(name)).add(item).replace(replace);

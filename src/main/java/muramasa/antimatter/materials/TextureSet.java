@@ -42,12 +42,12 @@ public class TextureSet implements IAntimatterObject {
         return internalId;
     }
 
-    public Texture getTexture(String domain, MaterialType type, int layer) {
+    public Texture getTexture(String domain, MaterialType<?> type, int layer) {
         //TODO return different numbered overlay based on current layer
         return new Texture(domain, "material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/));
     }
 
-    public Texture[] getTextures(String domain, MaterialType type) {
+    public Texture[] getTextures(String domain, MaterialType<?> type) {
         Texture[] textures = new Texture[type.getLayers()];
         for (int i = 0; i < type.getLayers(); i++) {
             textures[i] = getTexture(domain, type, i);

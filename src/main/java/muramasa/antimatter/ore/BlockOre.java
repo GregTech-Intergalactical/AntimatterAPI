@@ -8,21 +8,18 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
-    private MaterialType oreType;
+    private MaterialType<?> oreType;
 
-    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType, Block.Properties properties) {
-        super(domain, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId(), material, stoneType, getOreProperties(properties));
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
+        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId(), material, stoneType, getOreProperties(properties));
         this.oreType = oreType;
         AntimatterAPI.register(BlockOre.class, this);
     }
 
-    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType oreType) {
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType) {
         this(domain, material, stoneType, oreType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
     }
 
@@ -31,7 +28,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         return getId();
     }
 
-    public MaterialType getOreType() {
+    public MaterialType<?> getOreType() {
         return oreType;
     }
 
@@ -107,23 +104,6 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //    public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos) {
 //        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
 //    }
-
-
-
-    public static ItemStack get(Material material, MaterialType oreType, StoneType stoneType, int count) {
-        BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
-        return block != null ? new ItemStack(block.asItem(), count) : ItemStack.EMPTY;
-    }
-
-    public static BlockState get(Material material, MaterialType oreType, StoneType stoneType) {
-        try {
-            BlockOre block = AntimatterAPI.get(BlockOre.class, material.getId() + "_" + oreType.getId() + "_" + stoneType.getId());
-            return block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Blocks.AIR.getDefaultState();
-        }
-    }
 
     @Override
     public Texture[] getTextures() {

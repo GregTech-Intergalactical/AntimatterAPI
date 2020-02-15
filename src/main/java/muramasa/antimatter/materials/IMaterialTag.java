@@ -12,7 +12,7 @@ public interface IMaterialTag {
     //TODO use a static id -> material set map, instead of each IMaterialTag class having it's own collection
     Set<Material> all();
 
-    default void register(Class c, IAntimatterObject o) {
+    default void register(Class<?> c, IAntimatterObject o) {
         AntimatterAPI.register(c, o);
         AntimatterAPI.register(IMaterialTag.class, o);
     }

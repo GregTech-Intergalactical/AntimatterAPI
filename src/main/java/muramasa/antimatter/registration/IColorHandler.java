@@ -10,6 +10,10 @@ import javax.annotation.Nullable;
 
 public interface IColorHandler {
 
+    default boolean registerColorHandlers() {
+        return true;
+    }
+
     default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
         return -1;
     }
