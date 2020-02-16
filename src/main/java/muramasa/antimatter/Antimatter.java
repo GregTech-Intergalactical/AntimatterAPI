@@ -52,7 +52,7 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterWorldGenerator.init();
 
         AntimatterTriggers.init();
-
+        AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
         //AntimatterCapabilities.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
