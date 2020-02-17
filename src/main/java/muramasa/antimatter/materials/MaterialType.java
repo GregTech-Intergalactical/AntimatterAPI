@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStorage;
+import muramasa.antimatter.blocks.BlockSurfaceRock;
 import muramasa.antimatter.items.MaterialItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -30,7 +31,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public static MaterialType<?> DUST_TINY = new MaterialType<>("dust_tiny", 2, true, Ref.U9);
     public static MaterialType<?> DUST_IMPURE = new MaterialType<>("dust_impure", 2, true, Ref.U);
     public static MaterialType<?> DUST_PURE = new MaterialType<>("dust_pure", 2, true, Ref.U);
-    public static MaterialType<?> ROCK = new MaterialType<>("rock", 2, true, Ref.U9);
+    public static MaterialType<IRockGetter> ROCK = new MaterialType<>("rock", 2, false, Ref.U9);
     public static MaterialType<?> CRUSHED = new MaterialType<>("crushed", 2, true, Ref.U);
     public static MaterialType<?> CRUSHED_CENTRIFUGED = new MaterialType<>("crushed_centrifuged", 2, true, Ref.U);
     public static MaterialType<?> CRUSHED_PURIFIED = new MaterialType<>("crushed_purified", 2, true, Ref.U);
@@ -69,6 +70,11 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public static MaterialType<?> PLASMA = new MaterialType<>("plasma", 1, true, -1).nonGen();
 
     static {
+        ROCK.get((m, s) -> {
+            if (!MaterialType.ROCK.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
+            return new Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
+        });
         ORE.get((m, s) -> {
             if (!MaterialType.ORE.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE.getId() + "_" + m.getId() + "_" + s.getId());
@@ -186,6 +192,10 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     @Override
     public String toString() {
         return getId();
+    }
+
+    public interface IRockGetter {
+        Container get(Material m, StoneType s);
     }
 
     public interface IOreGetter {

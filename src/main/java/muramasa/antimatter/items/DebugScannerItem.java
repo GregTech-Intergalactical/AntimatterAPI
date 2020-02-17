@@ -3,6 +3,7 @@ package muramasa.antimatter.items;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.blocks.BlockCoil;
+import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.machines.MachineFlag;
@@ -10,6 +11,7 @@ import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -19,6 +21,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DebugScannerItem extends ItemBasic {
@@ -47,12 +50,20 @@ public class DebugScannerItem extends ItemBasic {
 
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
+        if (context.getWorld().isRemote) return super.onItemUse(context);
+        BlockState state = context.getWorld().getBlockState(context.getPos());
+        if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
+            ((BlockDynamic) state.getBlock()).getInfo(new ArrayList<>(), context.getWorld(), state, context.getPos()).forEach(s -> {
+                context.getPlayer().sendMessage(new StringTextComponent(s));
+            });
+            return ActionResultType.SUCCESS;
+        }
         return super.onItemUse(context);
     }
 
     @Override
     public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-        return ActionResultType.SUCCESS;
+        return super.onItemUseFirst(stack, context);
     }
 
     //    @Override

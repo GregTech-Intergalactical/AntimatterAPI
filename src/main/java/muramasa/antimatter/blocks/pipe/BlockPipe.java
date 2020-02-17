@@ -2,14 +2,15 @@ package muramasa.antimatter.blocks.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.blocks.BlockBasic;
-import muramasa.antimatter.blocks.IDynamicBlock;
+import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.IInfoProvider;
+import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
-import muramasa.antimatter.registration.*;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -24,7 +25,7 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BlockPipe extends BlockBasic implements IDynamicBlock, IItemBlockProvider, IColorHandler, IInfoProvider {
+public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
     protected PipeType type;
     protected Material material;
@@ -150,7 +151,7 @@ public abstract class BlockPipe extends BlockBasic implements IDynamicBlock, IIt
     }
 
     @Override
-    public int[] getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
+    public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int ct = 0;
         int cull = 0;
         BlockState adjState;
@@ -161,7 +162,7 @@ public abstract class BlockPipe extends BlockBasic implements IDynamicBlock, IIt
                 if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
             }
         }
-        return new int[]{getPipeID(ct, getSize(), getType(), cull > 0 ? 0 : 1)};
+        return config.set(new int[]{getPipeID(ct, getSize(), getType(), cull > 0 ? 0 : 1)});
     }
 
     @Override
@@ -200,7 +201,7 @@ public abstract class BlockPipe extends BlockBasic implements IDynamicBlock, IIt
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        IDynamicBlock.super.getInfo(info, world, state, pos);
+        super.getInfo(info, world, state, pos);
         info.add("Pipe Type: " + getType().getId());
         info.add("Pipe Material: " + getMaterial().getId());
         info.add("Pipe Size: " + getSize().getId());

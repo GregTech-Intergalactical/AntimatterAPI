@@ -1,11 +1,10 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.blocks.BlockStone;
-import muramasa.antimatter.blocks.BlockSurfaceRock;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
@@ -31,11 +30,12 @@ import java.util.stream.Stream;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
 
-public class FeatureIndicatorRocks extends AntimatterFeature<NoFeatureConfig>{
-    static final int SURFACE_ROCK_MODEL_COUNT = 7; // randomly select one of the models
+public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
+
     static final int SURFACE_ROCKS_PER_CHUNK = 10; // maybe move to config?
-    public FeatureIndicatorRocks() {
-        super(NoFeatureConfig::deserialize, FeatureIndicatorRocks.class);
+
+    public FeatureSurfaceRocks() {
+        super(NoFeatureConfig::deserialize, FeatureSurfaceRocks.class);
     }
 
     @Override
@@ -46,18 +46,17 @@ public class FeatureIndicatorRocks extends AntimatterFeature<NoFeatureConfig>{
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION,
-                    new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+            biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
     @Override
     public String getId() {
-        return "feature_indicator_rocks";
+        return "feature_surface_rocks";
     }
 
     static Stream<BlockPos> getPositions(IWorld worldIn, Random random, BlockPos pos) {
-        return IntStream.range(0, FeatureIndicatorRocks.SURFACE_ROCKS_PER_CHUNK).mapToObj(n -> {
+        return IntStream.range(0, FeatureSurfaceRocks.SURFACE_ROCKS_PER_CHUNK).mapToObj(n -> {
             int x = random.nextInt(16) + pos.getX();
             int z = random.nextInt(16) + pos.getZ();
 
@@ -96,9 +95,6 @@ public class FeatureIndicatorRocks extends AntimatterFeature<NoFeatureConfig>{
             else if (bs.getBlock() instanceof BlockStone)
                 m = ((BlockStone) bs.getBlock()).getType().getMaterial();
         }
-        // TODO: use material specific block
-        worldIn.setBlockState(p, BlockSurfaceRock.get(m, StoneType.get("stone")).with(
-                AntimatterProperties.ROCK_MODEL, rand.nextInt(SURFACE_ROCK_MODEL_COUNT)).with(
-                WATERLOGGED, Boolean.valueOf(inWater)), 2);
+        worldIn.setBlockState(p, MaterialType.ROCK.get().get(m, StoneType.get("stone")).asState().with(WATERLOGGED, inWater), 2);
     }
 }

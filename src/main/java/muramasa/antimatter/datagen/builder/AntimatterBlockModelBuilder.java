@@ -64,16 +64,22 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property("model", getModelObject(parent, textures));
     }
 
-    public AntimatterBlockModelBuilder config(int id, Texture... textures) {
+    public AntimatterBlockModelBuilder config(int id, String parent, String... textures) {
         loader();
         properties.add(o -> {
            if (!o.has("config")) o.add("config", new JsonArray());
             JsonObject configObject = new JsonObject();
             configObject.addProperty("id", id);
-            configObject.add("model", getModelObject(SIMPLE, textures));
+            configObject.add("model", getModelObject(parent, textures));
            o.getAsJsonArray("config").add(configObject);
         });
         return this;
+    }
+
+    public AntimatterBlockModelBuilder config(int id, String parent, Texture... textures) {
+        String[] strings = new String[textures.length];
+        Arrays.setAll(strings, i -> textures[i].toString());
+        return config(id, parent, strings);
     }
 
     public JsonObject getModelObject(String parent, Texture... textures) {
@@ -109,85 +115,85 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
          model(SIMPLE, textureProvider.getTextures());
 
         //Single (1)
-         config(1, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
-         config(2, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
-         config(4, tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]);
-         config(8, tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]);
-         config(16, tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]);
-         config(32, tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]);
+         config(1, SIMPLE, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
+         config(2, SIMPLE, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
+         config(4, SIMPLE, tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]);
+         config(8, SIMPLE, tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]);
+         config(16, SIMPLE, tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]);
+         config(32, SIMPLE, tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]);
 
         //Lines (2)
-         config(3, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
-         config(12, tex[1], tex[1], tex[12], tex[12], tex[0], tex[0]);
-         config(48, tex[0], tex[0], tex[0], tex[0], tex[12], tex[12]);
+         config(3, SIMPLE, tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]);
+         config(12, SIMPLE, tex[1], tex[1], tex[12], tex[12], tex[0], tex[0]);
+         config(48, SIMPLE, tex[0], tex[0], tex[0], tex[0], tex[12], tex[12]);
 
         //Elbows (2)
-         config(6, tex[1], tex[12], tex[0], tex[1], tex[10], tex[11]);
-         config(5, tex[12], tex[1], tex[12], tex[1], tex[9], tex[8]);
-         config(9, tex[12], tex[1], tex[1], tex[12], tex[8], tex[9]);
-         config(10, tex[1], tex[12], tex[1], tex[12], tex[11], tex[10]);
-         config(17, tex[12], tex[0], tex[8], tex[9], tex[12], tex[1]);
-         config(18, tex[0], tex[12], tex[11], tex[10], tex[12], tex[1]);
-         config(33, tex[12], tex[0], tex[9], tex[8], tex[1], tex[12]);
-         config(34, tex[0], tex[12], tex[10], tex[11], tex[1], tex[10]);
-         config(20, tex[10], tex[10], tex[0], tex[0], tex[0], tex[0]);
-         config(24, tex[9], tex[9], tex[0], tex[0], tex[0], tex[0]);
-         config(36, tex[11], tex[11], tex[0], tex[0], tex[0], tex[0]);
-         config(40, tex[8], tex[8], tex[0], tex[0], tex[0], tex[0]);
+         config(6, SIMPLE, tex[1], tex[12], tex[0], tex[1], tex[10], tex[11]);
+         config(5, SIMPLE, tex[12], tex[1], tex[12], tex[1], tex[9], tex[8]);
+         config(9, SIMPLE, tex[12], tex[1], tex[1], tex[12], tex[8], tex[9]);
+         config(10, SIMPLE, tex[1], tex[12], tex[1], tex[12], tex[11], tex[10]);
+         config(17, SIMPLE, tex[12], tex[0], tex[8], tex[9], tex[12], tex[1]);
+         config(18, SIMPLE, tex[0], tex[12], tex[11], tex[10], tex[12], tex[1]);
+         config(33, SIMPLE, tex[12], tex[0], tex[9], tex[8], tex[1], tex[12]);
+         config(34, SIMPLE, tex[0], tex[12], tex[10], tex[11], tex[1], tex[10]);
+         config(20, SIMPLE, tex[10], tex[10], tex[0], tex[0], tex[0], tex[0]);
+         config(24, SIMPLE, tex[9], tex[9], tex[0], tex[0], tex[0], tex[0]);
+         config(36, SIMPLE, tex[11], tex[11], tex[0], tex[0], tex[0], tex[0]);
+         config(40, SIMPLE, tex[8], tex[8], tex[0], tex[0], tex[0], tex[0]);
 
         //Side (3)
-         config(7, tex[12], tex[12], tex[12], tex[1], tex[4], tex[2]);
-         config(11, tex[12], tex[12], tex[1], tex[12], tex[2], tex[4]);
-         config(13, tex[12], tex[1], tex[12], tex[12], tex[3], tex[3]);
-         config(14, tex[1], tex[12], tex[12], tex[12], tex[5], tex[5]);
-         config(19, tex[12], tex[12], tex[2], tex[4], tex[12], tex[1]);
-         config(28, tex[4], tex[4], tex[12], tex[12], tex[12], tex[0]);
-         config(35, tex[12], tex[12], tex[4], tex[2], tex[1], tex[12]);
-         config(44, tex[2], tex[2], tex[12], tex[12], tex[0], tex[12]);
-         config(49, tex[12], tex[0], tex[3], tex[3], tex[12], tex[12]);
-         config(50, tex[0], tex[12], tex[5], tex[5], tex[12], tex[12]);
-         config(52, tex[3], tex[5], tex[12], tex[0], tex[12], tex[12]);
-         config(56, tex[5], tex[3], tex[0], tex[12], tex[12], tex[12]);
+         config(7, SIMPLE, tex[12], tex[12], tex[12], tex[1], tex[4], tex[2]);
+         config(11, SIMPLE, tex[12], tex[12], tex[1], tex[12], tex[2], tex[4]);
+         config(13, SIMPLE, tex[12], tex[1], tex[12], tex[12], tex[3], tex[3]);
+         config(14, SIMPLE, tex[1], tex[12], tex[12], tex[12], tex[5], tex[5]);
+         config(19, SIMPLE, tex[12], tex[12], tex[2], tex[4], tex[12], tex[1]);
+         config(28, SIMPLE, tex[4], tex[4], tex[12], tex[12], tex[12], tex[0]);
+         config(35, SIMPLE, tex[12], tex[12], tex[4], tex[2], tex[1], tex[12]);
+         config(44, SIMPLE, tex[2], tex[2], tex[12], tex[12], tex[0], tex[12]);
+         config(49, SIMPLE, tex[12], tex[0], tex[3], tex[3], tex[12], tex[12]);
+         config(50, SIMPLE, tex[0], tex[12], tex[5], tex[5], tex[12], tex[12]);
+         config(52, SIMPLE, tex[3], tex[5], tex[12], tex[0], tex[12], tex[12]);
+         config(56, SIMPLE, tex[5], tex[3], tex[0], tex[12], tex[12], tex[12]);
 
         //Corner (3)
-         config(21, tex[10], tex[10], tex[0], tex[9], tex[0], tex[8]);
-         config(22, tex[10], tex[10], tex[0], tex[10], tex[0], tex[11]);
-         config(25, tex[9], tex[9], tex[8], tex[0], tex[0], tex[9]);
-         config(26, tex[9], tex[9], tex[11], tex[0], tex[0], tex[10]);
-         config(37, tex[11], tex[11], tex[0], tex[8], tex[9], tex[0]);
-         config(38, tex[11], tex[11], tex[0], tex[11], tex[10], tex[0]);
-         config(41, tex[8], tex[8], tex[9], tex[0], tex[8], tex[0]);
-         config(42, tex[8], tex[8], tex[10], tex[0], tex[11], tex[0]);
+         config(21, SIMPLE, tex[10], tex[10], tex[0], tex[9], tex[0], tex[8]);
+         config(22, SIMPLE, tex[10], tex[10], tex[0], tex[10], tex[0], tex[11]);
+         config(25, SIMPLE, tex[9], tex[9], tex[8], tex[0], tex[0], tex[9]);
+         config(26, SIMPLE, tex[9], tex[9], tex[11], tex[0], tex[0], tex[10]);
+         config(37, SIMPLE, tex[11], tex[11], tex[0], tex[8], tex[9], tex[0]);
+         config(38, SIMPLE, tex[11], tex[11], tex[0], tex[11], tex[10], tex[0]);
+         config(41, SIMPLE, tex[8], tex[8], tex[9], tex[0], tex[8], tex[0]);
+         config(42, SIMPLE, tex[8], tex[8], tex[10], tex[0], tex[11], tex[0]);
 
         //Arrow (4)
-         config(23, tex[12], tex[12], tex[12], tex[4], tex[12], tex[2]);
-         config(27, tex[12], tex[12], tex[2], tex[12], tex[12], tex[4]);
-         config(29, tex[12], tex[4], tex[12], tex[12], tex[12], tex[3]);
-         config(30, tex[4], tex[12], tex[12], tex[12], tex[12], tex[5]);
-         config(39, tex[12], tex[12], tex[12], tex[2], tex[4], tex[12]);
-         config(43, tex[12], tex[12], tex[4], tex[12], tex[2], tex[12]);
-         config(45, tex[12], tex[2], tex[12], tex[12], tex[3], tex[12]);
-         config(46, tex[2], tex[12], tex[12], tex[12], tex[5], tex[12]);
-         config(53, tex[12], tex[5], tex[12], tex[3], tex[12], tex[12]);
-         config(54, tex[3], tex[12], tex[12], tex[5], tex[12], tex[12]);
-         config(57, tex[12], tex[3], tex[3], tex[12], tex[12], tex[12]);
-         config(58, tex[5], tex[12], tex[5], tex[12], tex[12], tex[12]);
+         config(23, SIMPLE, tex[12], tex[12], tex[12], tex[4], tex[12], tex[2]);
+         config(27, SIMPLE, tex[12], tex[12], tex[2], tex[12], tex[12], tex[4]);
+         config(29, SIMPLE, tex[12], tex[4], tex[12], tex[12], tex[12], tex[3]);
+         config(30, SIMPLE, tex[4], tex[12], tex[12], tex[12], tex[12], tex[5]);
+         config(39, SIMPLE, tex[12], tex[12], tex[12], tex[2], tex[4], tex[12]);
+         config(43, SIMPLE, tex[12], tex[12], tex[4], tex[12], tex[2], tex[12]);
+         config(45, SIMPLE, tex[12], tex[2], tex[12], tex[12], tex[3], tex[12]);
+         config(46, SIMPLE, tex[2], tex[12], tex[12], tex[12], tex[5], tex[12]);
+         config(53, SIMPLE, tex[12], tex[5], tex[12], tex[3], tex[12], tex[12]);
+         config(54, SIMPLE, tex[3], tex[12], tex[12], tex[5], tex[12], tex[12]);
+         config(57, SIMPLE, tex[12], tex[3], tex[3], tex[12], tex[12], tex[12]);
+         config(58, SIMPLE, tex[5], tex[12], tex[5], tex[12], tex[12], tex[12]);
 
         //Cross (4)
-         config(15, tex[12], tex[12], tex[12], tex[12], tex[6], tex[6]);
-         config(51, tex[12], tex[12], tex[6], tex[6], tex[12], tex[12]);
-         config(60, tex[6], tex[6], tex[12], tex[12], tex[12], tex[12]);
+         config(15, SIMPLE, tex[12], tex[12], tex[12], tex[12], tex[6], tex[6]);
+         config(51, SIMPLE, tex[12], tex[12], tex[6], tex[6], tex[12], tex[12]);
+         config(60, SIMPLE, tex[6], tex[6], tex[12], tex[12], tex[12], tex[12]);
 
         //Five (5)
-         config(31, tex[12], tex[12], tex[12], tex[12], tex[12], tex[6]);
-         config(47, tex[12], tex[12], tex[12], tex[12], tex[6], tex[12]);
-         config(55, tex[12], tex[12], tex[12], tex[6], tex[12], tex[12]);
-         config(59, tex[12], tex[12], tex[6], tex[12], tex[12], tex[12]);
-         config(61, tex[12], tex[6], tex[12], tex[12], tex[12], tex[12]);
-         config(62, tex[6], tex[12], tex[12], tex[12], tex[12], tex[12]);
+         config(31, SIMPLE, tex[12], tex[12], tex[12], tex[12], tex[12], tex[6]);
+         config(47, SIMPLE, tex[12], tex[12], tex[12], tex[12], tex[6], tex[12]);
+         config(55, SIMPLE, tex[12], tex[12], tex[12], tex[6], tex[12], tex[12]);
+         config(59, SIMPLE, tex[12], tex[12], tex[6], tex[12], tex[12], tex[12]);
+         config(61, SIMPLE, tex[12], tex[6], tex[12], tex[12], tex[12], tex[12]);
+         config(62, SIMPLE, tex[6], tex[12], tex[12], tex[12], tex[12], tex[12]);
 
         //All (6)
-         config(63, tex[12], tex[12], tex[12], tex[12], tex[12], tex[12]);
+         config(63, SIMPLE, tex[12], tex[12], tex[12], tex[12], tex[12], tex[12]);
 
         return this;
     }
