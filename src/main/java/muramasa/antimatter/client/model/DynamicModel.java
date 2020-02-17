@@ -19,25 +19,25 @@ import java.util.function.Function;
 public class DynamicModel extends AntimatterModel {
 
     protected IUnbakedModel modelDefault;
-    protected Int2ObjectOpenHashMap<Tuple<String, IUnbakedModel>> configModels;
+    protected Int2ObjectOpenHashMap<Tuple<String, IUnbakedModel>> modelConfigs;
 
-    public DynamicModel(IUnbakedModel modelDefault, Int2ObjectOpenHashMap<Tuple<String, IUnbakedModel>> configModels) {
+    public DynamicModel(IUnbakedModel modelDefault, Int2ObjectOpenHashMap<Tuple<String, IUnbakedModel>> modelConfigs) {
         this.modelDefault = modelDefault;
-        this.configModels = configModels;
+        this.modelConfigs = modelConfigs;
     }
 
     @Override
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         IBakedModel bakedDefault = modelDefault.bakeModel(bakery, getter, transform, loc);
-        Int2ObjectOpenHashMap<IBakedModel> bakedModels = new Int2ObjectOpenHashMap<>();
-        configModels.forEach((k, v) -> bakedModels.put((int)k, AntimatterModelManager.getBaked(v.getA(), () -> v.getB().bakeModel(bakery, getter, transform, loc))));
-        return new DynamicBakedModel(bakedDefault, bakedModels).particle(bakedDefault.getParticleTexture(EmptyModelData.INSTANCE));
+        Int2ObjectOpenHashMap<IBakedModel> bakedConfigs = new Int2ObjectOpenHashMap<>();
+        modelConfigs.forEach((k, v) -> bakedConfigs.put((int)k, AntimatterModelManager.getBaked(v.getA(), () -> v.getB().bakeModel(bakery, getter, transform, loc))));
+        return new DynamicBakedModel(bakedDefault, bakedConfigs).particle(bakedDefault.getParticleTexture(EmptyModelData.INSTANCE));
     }
 
     @Override
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
         Set<Material> textures = new HashSet<>();
-        configModels.values().forEach(t -> textures.addAll(t.getB().getTextures(getter, errors)));
+        modelConfigs.values().forEach(t -> textures.addAll(t.getB().getTextures(getter, errors)));
         textures.addAll(modelDefault.getTextures(getter, errors));
         return textures;
     }

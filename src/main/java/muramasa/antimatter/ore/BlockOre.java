@@ -8,6 +8,9 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
@@ -30,6 +33,11 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     public MaterialType<?> getOreType() {
         return oreType;
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        if (stoneType.getId().equals("stone")) items.add(new ItemStack(this));
     }
 
     //    @Override

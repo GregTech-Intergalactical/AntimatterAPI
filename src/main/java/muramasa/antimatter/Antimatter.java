@@ -1,7 +1,6 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
-import muramasa.antimatter.advancement.trigger.TagSensitiveInventoryChangedTrigger;
 import muramasa.antimatter.blocks.AntimatterItemBlock;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.gui.MenuHandler;
@@ -13,7 +12,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.feature.FeatureIndicatorRocks;
+import muramasa.antimatter.worldgen.feature.FeatureSurfaceRocks;
 import muramasa.antimatter.worldgen.feature.FeatureOreSmall;
 import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
 import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
@@ -110,7 +109,7 @@ public class Antimatter implements IAntimatterRegistrar {
                 new FeatureStoneLayer();
                 new FeatureVeinLayer();
                 new FeatureOreSmall();
-                new FeatureIndicatorRocks();
+                new FeatureSurfaceRocks();
                 break;
         }
     }
