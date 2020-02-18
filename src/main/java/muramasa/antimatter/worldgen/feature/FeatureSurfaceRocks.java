@@ -1,38 +1,32 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.AntimatterAPI;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
-import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
+import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
 
 public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
 
-    static final int SURFACE_ROCKS_PER_CHUNK = 10; // maybe move to config?
+    public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS_TO_PLACE = new Object2ObjectOpenHashMap<>();
 
     public FeatureSurfaceRocks() {
         super(NoFeatureConfig::deserialize, FeatureSurfaceRocks.class);
@@ -40,7 +34,7 @@ public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean enabled() {
-        return Configs.WORLD.ENABLE_ORE_VEINS;
+        return Configs.WORLD.ENABLE_SURFACE_ROCKS;
     }
 
     @Override
@@ -55,46 +49,19 @@ public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
         return "feature_surface_rocks";
     }
 
-    static Stream<BlockPos> getPositions(IWorld worldIn, Random random, BlockPos pos) {
-        return IntStream.range(0, FeatureSurfaceRocks.SURFACE_ROCKS_PER_CHUNK).mapToObj(n -> {
-            int x = random.nextInt(16) + pos.getX();
-            int z = random.nextInt(16) + pos.getZ();
-
-            int y = Math.min(worldIn.getHeight(Heightmap.Type.OCEAN_FLOOR, x, z),
-                    worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z));
-            return new BlockPos(x, y, z);
-        });
-    }
-
     @Override
-    public boolean place(IWorld worldIn, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        Object[] vv = FeatureVeinLayer.veinCenters(pos.getX() >> 4, pos.getZ() >> 4).stream().map(
-                p -> WorldGenVeinLayer.VALID_VEINS.get(WorldGenVeinLayer.getOreVeinSeed(worldIn, p.getA(), p.getB()))).filter(Objects::nonNull).toArray();
-        if (vv.length == 0)
-            return false;
-        getPositions(worldIn, rand, pos).forEach(p -> place(worldIn, rand, vv, p));
-        return true;
-    }
-
-    private void place(IWorld worldIn, Random rand, Object[] vv, BlockPos p) {
-        if (worldIn.getBlockState(p) != Blocks.AIR.getDefaultState() && worldIn.getBlockState(p) != Blocks.WATER.getDefaultState())
-            return;
-        boolean inWater = worldIn.getBlockState(p) == Blocks.WATER.getDefaultState();
-        // No idea what else may be filtered out here
-        if (worldIn.getBlockState(p.down()).hasTileEntity())
-            return;
-        Material m = AntimatterAPI.getMaterial("flint");
-        // 10% chances to get filnt
-        if (rand.nextInt(10) > 1)
-            m = ((WorldGenVeinLayer) vv[rand.nextInt(vv.length)]).getMaterial(0);
-        // in half or more of the cases should place container rock
-        if (rand.nextInt(10) > 4) {
-            BlockState bs = worldIn.getBlockState(new BlockPos(p.getX(), rand.nextInt(p.getY()), p.getZ()));
-            if (bs.getBlock() instanceof BlockOre)
-                m = ((BlockOre) bs.getBlock()).getStoneType().getMaterial();
-            else if (bs.getBlock() instanceof BlockStone)
-                m = ((BlockStone) bs.getBlock()).getType().getMaterial();
+    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+        List<Tuple<BlockPos, Material>> rocks = ROCKS_TO_PLACE.remove(world.getChunk(pos).getPos());
+        if (rocks != null) {
+            StoneType stoneType;
+            for (Tuple<BlockPos, Material> r : rocks) {
+                stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().down()));
+                if (stoneType == null) stoneType = StoneType.get("stone");
+                BlockState rockState = MaterialType.ROCK.get().get(r.getB(), stoneType).asState();
+                if (world.getBlockState(r.getA()) == WorldGenHelper.WATER_STATE) rockState = WorldGenHelper.waterLogState(rockState);
+                WorldGenHelper.setState(world, r.getA(), rockState);
+            }
         }
-        worldIn.setBlockState(p, MaterialType.ROCK.get().get(m, StoneType.get("stone")).asState().with(WATERLOGGED, inWater), 2);
+        return true;
     }
 }

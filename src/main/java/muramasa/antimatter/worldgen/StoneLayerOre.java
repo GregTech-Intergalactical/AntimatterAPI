@@ -12,7 +12,7 @@ import java.util.Random;
 public class StoneLayerOre {
 
     private Material material;
-    private BlockState state, stateSmall;
+    private BlockState oreState, oreSmallState;
     private int chance, minY, maxY;
 
     public StoneLayerOre(Material material, int chance, int minY, int maxY) {
@@ -22,9 +22,9 @@ public class StoneLayerOre {
         this.maxY = maxY;
     }
 
-    public StoneLayerOre setState(StoneType stoneType) {
-        this.state = MaterialType.ORE.get().get(material, stoneType).asState();
-        this.stateSmall = MaterialType.ORE_SMALL.get().get(material, stoneType).asState();
+    public StoneLayerOre setStatesByStoneType(StoneType stoneType) {
+        this.oreState = MaterialType.ORE.get().get(material, stoneType).asState();
+        this.oreSmallState = MaterialType.ORE_SMALL.get().get(material, stoneType).asState();
         return this;
     }
 
@@ -32,12 +32,12 @@ public class StoneLayerOre {
         return material;
     }
 
-    public BlockState getState() {
-        return state;
+    public BlockState getOreState() {
+        return oreState;
     }
 
-    public BlockState getStateSmall() {
-        return stateSmall;
+    public BlockState getOreSmallState() {
+        return oreSmallState;
     }
 
     public int getChance() {

@@ -7,10 +7,18 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.worldgen.feature.FeatureSurfaceRocks;
+import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.gen.Heightmap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorldGenHelper {
 
@@ -21,6 +29,7 @@ public class WorldGenHelper {
     public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
 
     public static BlockState STONE_STATE = Blocks.STONE.getDefaultState();
+    public static BlockState WATER_STATE = Blocks.WATER.getDefaultState();
 
     public static Predicate<BlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
     public static Predicate<BlockState> ROCK_PREDICATE = state -> ROCK_MAP.containsKey(state);
@@ -28,6 +37,8 @@ public class WorldGenHelper {
 
     public static void init() {
         AntimatterAPI.all(StoneType.class).forEach(t -> STONE_MAP.put(t.getState(), t));
+
+        //ROCK_MAP.put(Blocks.GRASS.getDefaultState())
 
         STONE_SET.add(Blocks.STONE.getDefaultState());
         STONE_SET.add(Blocks.GRANITE.getDefaultState());
@@ -47,55 +58,51 @@ public class WorldGenHelper {
         TREE_BIOME_SET.add("ForestHills");
     }
 
-    public static void setState(IWorld world, BlockPos pos, BlockState state) {
-        world.setBlockState(pos, state, 2 | 16);
-    }
-
-    private static void setRockState(IWorld world, BlockPos pos, BlockState state, Material material) {
-//        world.setBlockState(pos, state, 2 | 16);
-//        TileEntity tile = world.getTileEntity(pos);
-//        if (tile instanceof TileEntityMaterial) ((TileEntityMaterial) tile).init(material);
+    /** Efficiently sets a BlockState, without causing block updates or notifying the client **/
+    public static boolean setState(IWorld world, BlockPos pos, BlockState state) {
+        return world.setBlockState(pos, state, 2 | 16);
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
         StoneType stone = STONE_MAP.get(existing);
-        if (stone != null) {
-            BlockState block = type == MaterialType.ORE ? MaterialType.ORE.get().get(material, stone).asState() : MaterialType.ORE_SMALL.get().get(material, stone).asState();
-            return setOre(world, pos, existing, block);
-        }
-        return false;
+        if (stone == null) return false;
+        BlockState oreState = type == MaterialType.ORE ? MaterialType.ORE.get().get(material, stone).asState() : MaterialType.ORE_SMALL.get().get(material, stone).asState();
+        return setOre(world, pos, existing, oreState);
     }
 
+    /** More efficient version of setOre, used by FeatureStoneLayer with pre computed BlockStates **/
+    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, StoneLayerOre ore, boolean normalOre) {
+        StoneType stone = STONE_MAP.get(existing);
+        if (stone == null) return false;
+        return setOre(world, pos, existing, normalOre ? ore.getOreState() : ore.getOreSmallState());
+    }
+
+    /** Raw version of setOre, will only place the passed state if the existing state is a registered stone **/
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
-        if (existing.isReplaceableOreGen(world, pos, ORE_PREDICATE)) {
-            setState(world, pos, replacement);
-            return true;
-        }
-        return false;
+        if (!existing.isReplaceableOreGen(world, pos, ORE_PREDICATE)) return false;
+        return setState(world, pos, replacement);
     }
 
-    public static boolean setRock(IWorld world, BlockPos pos, Material material) {
-//        pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos).down();
-//        BlockState existing = world.getBlockState(pos);
-//        if (existing.getBlock().isReplaceableOreGen(existing, world, pos, ROCK_PREDICATE)) {
-//            BlockState toSet = ROCK_MAP.get(existing);
-//            if (toSet == null) toSet = ROCK_DEFAULT;
-//            setRockState(world, pos.up(), toSet, material);
-//            return true;
-//        }
-        return false;
+    /** Adds a rock to the global map for placing in a later generation stage **/
+    public static void addRock(IWorld world, BlockPos pos, Material material, int chance) {
+        if (world.getRandom().nextInt(chance) != 0) return;
+        List<Tuple<BlockPos, Material>> entry = FeatureSurfaceRocks.ROCKS_TO_PLACE.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>());
+        int y = Math.min(world.getHeight(Heightmap.Type.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
+        entry.add(new Tuple<>(new BlockPos(pos.getX(), y, pos.getZ()), material));
     }
 
-    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, StoneType stoneType) {
-        return setStone(world, pos, existing, stoneType.getState());
+    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, WorldGenStoneLayer stoneLayer) {
+        //if (rockChance > 0 && stoneLayer.getStoneType() != null) addRock(world, pos, existing, stoneLayer.getStoneType().getMaterial(), rockChance);
+        return setStone(world, pos, existing, stoneLayer.getStoneState());
     }
 
     public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
-        if (existing.isReplaceableOreGen(world, pos, STONE_PREDICATE)) {
-            world.setBlockState(pos, replacement, 2 | 16);
-            return true;
-        }
-        return false;
+        if (!existing.isReplaceableOreGen(world, pos, STONE_PREDICATE)) return false;
+        return setState(world, pos, replacement);
+    }
+
+    public static BlockState waterLogState(BlockState state) {
+        return state.has(BlockStateProperties.WATERLOGGED) ? state.with(BlockStateProperties.WATERLOGGED, true) : state;
     }
 
     public static boolean canSetTree(IWorld world, BlockPos pos) {

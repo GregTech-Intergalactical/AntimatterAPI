@@ -1,6 +1,8 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.Configs;
+import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.NoiseGenerator;
 import muramasa.antimatter.worldgen.StoneLayerOre;
@@ -68,15 +70,20 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                 //if (layers[3].getType().getState() == Blocks.STONE.getDefaultState()) continue;
 
                 int maxHeight = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos.add(i, 0, j)).getY();
+                boolean isAir, shouldPlaceStone = true, shouldPlaceRock = false;
+                StoneType lastStone = null;
+                Material lastOre = null;
                 for (int tY = 1; tY < maxHeight; tY++) {
                     existing = world.getBlockState(pos.add(i, tY, j));
-                    boolean shouldPlace = !existing.isAir(world, pos.add(i, tY, j));
+                    isAir = existing.isAir(world, pos.add(i, tY, j));
 
-                    if (shouldPlace) {
+                    if (!isAir && Configs.WORLD.ENABLE_STONE_LAYER_ORES) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
-                                if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, layers[0] == layers[6] ? ore.getState() : ore.getStateSmall())) {
-                                    shouldPlace = false;
+                                if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, ore, layers[0] == layers[6])) {
+                                    shouldPlaceStone = false;
+                                    lastOre = ore.getMaterial();
+                                    shouldPlaceRock = true;
                                     break;
                                 }
                             }
@@ -84,15 +91,24 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 //                        for (StoneLayerOre ore : x) {
 //                            if (WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, ore.material, MaterialType.ORE)) {
 //                                shouldPlaceStone = false;
+//                                lastOre = ore.getMaterial();
 //                                break;
 //                            }
 //                        }
                         }
-                    }
 
-                    //If we haven't placed an ore, and not trying to set the same state as existing
-                    if (shouldPlace && existing != layers[3].getStoneState()) {
-                        WorldGenHelper.setStone(world, pos.add(i, tY, j), existing, layers[3].getStoneState());
+                        //If we haven't placed an ore, and not trying to set the same state as existing
+                        if (shouldPlaceStone && existing != layers[3].getStoneState()) {
+                            if (WorldGenHelper.setStone(world, pos.add(i, tY, j), existing, layers[3])) {
+                                lastStone = layers[3].getStoneType();
+                                shouldPlaceRock = true;
+                            }
+                        }
+                    } else if (shouldPlaceRock) {
+                        if (!(lastOre == null && lastStone == null)) {
+                            WorldGenHelper.addRock(world, pos.add(i, tY, j), lastOre != null ? lastOre : lastStone.getMaterial(), Configs.WORLD.STONE_LAYER_ROCK_CHANCE);
+                        }
+                        shouldPlaceRock = false;
                     }
 
                     // And scan for next Block on the Stone Layer Type.

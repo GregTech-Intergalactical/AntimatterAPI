@@ -67,11 +67,16 @@ public class Configs {
         //@Comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
         public boolean DISABLE_VANILLA_STONE_GEN = true;
 
-        public boolean ENABLE_ORE_VEINS = false;
-        public boolean ENABLE_STONE_LAYERS = true;
         public boolean ENABLE_SMALL_ORES = true;
+        public boolean ENABLE_SURFACE_ROCKS = true;
 
+        public boolean ENABLE_ORE_VEINS = false;
+        public int ORE_VEIN_ROCK_CHANCE = 128;
+
+        public boolean ENABLE_STONE_LAYERS = true;
         public boolean ENABLE_STONE_LAYER_ORES = true;
+        public int STONE_LAYER_ROCK_CHANCE = 128;
+
 
         //@RequiresWorldRestart
         public int ORE_VEIN_MAX_SIZE = 32;
