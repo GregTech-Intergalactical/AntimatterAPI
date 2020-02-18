@@ -40,7 +40,18 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
             biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
-    static List<Tuple<Integer, Integer>> veinCenters(int chunkX, int chunkZ){
+
+    @Override
+    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+        int chunkX = pos.getX() >> 4;
+        int chunkZ = pos.getZ() >> 4;
+        for (Tuple<Integer, Integer> seed : getVeinSeeds(chunkX, chunkZ)) {
+            WorldGenVeinLayer.generate(world, chunkX, chunkZ, seed.getA(), seed.getB());
+        }
+        return true;
+    }
+
+    public static List<Tuple<Integer, Integer>> getVeinSeeds(int chunkX, int chunkZ) {
         // Determine bounding box on how far out to check for ore veins affecting this chunk
         int westX = chunkX - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
         int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
@@ -51,18 +62,10 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
         for (int x = westX; x < eastX; x++) {
             for (int z = northZ; z < southZ; z++) {
                 if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                    res.add(new Tuple<Integer, Integer>(x,z));
+                    res.add(new Tuple<>(x,z));
                 }
             }
         }
         return res;
-    }
-
-    @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        int chunkX = pos.getX() >> 4;
-        int chunkZ = pos.getZ() >> 4;
-        veinCenters(chunkX, chunkZ).forEach(p -> WorldGenVeinLayer.generate(world, chunkX, chunkZ, p.getA(), p.getB()));
-        return true;
     }
 }

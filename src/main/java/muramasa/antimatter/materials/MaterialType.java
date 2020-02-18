@@ -18,10 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
@@ -71,32 +68,32 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
     static {
         ROCK.get((m, s) -> {
-            if (!MaterialType.ROCK.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            if (!MaterialType.ROCK.allowBlockGen(m)) return getEmptyAndLog(ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
             return new Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
         ORE.get((m, s) -> {
-            if (!MaterialType.ORE.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            if (!MaterialType.ORE.allowBlockGen(m)) return getEmptyAndLog(ORE, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE.getId() + "_" + m.getId() + "_" + s.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_SMALL.get((m, s) -> {
-            if (!MaterialType.ORE_SMALL.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            if (!MaterialType.ORE_SMALL.allowBlockGen(m)) return getEmptyAndLog(ORE, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE_SMALL.getId() + "_" + m.getId() + "_" + s.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_STONE.get(m -> {
-            if (!MaterialType.ORE_STONE.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            if (!MaterialType.ORE_STONE.allowBlockGen(m)) return getEmptyAndLog(ORE, m);
             BlockOreStone block = AntimatterAPI.get(BlockOreStone.class, MaterialType.ORE_STONE.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         BLOCK.get(m -> {
-            if (!MaterialType.BLOCK.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            if (!MaterialType.BLOCK.allowBlockGen(m)) return getEmptyAndLog(ORE, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, MaterialType.BLOCK.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         FRAME.get(m -> {
-            if (!MaterialType.FRAME.allowBlockGen(m)) return new Container(Blocks.AIR.getDefaultState());
+            if (!MaterialType.FRAME.allowBlockGen(m)) return getEmptyAndLog(ORE, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, MaterialType.FRAME.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
@@ -192,6 +189,11 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     @Override
     public String toString() {
         return getId();
+    }
+
+    public static Container getEmptyAndLog(MaterialType<?> type, IAntimatterObject... objects) {
+        Utils.onInvalidData("Tried to create " + type.getId() + " for objects: " + Arrays.toString(Arrays.stream(objects).map(IAntimatterObject::getId).toArray(String[]::new)));
+        return new Container(Blocks.AIR.getDefaultState());
     }
 
     public interface IRockGetter {

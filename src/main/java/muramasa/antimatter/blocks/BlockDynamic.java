@@ -74,6 +74,8 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
         info.add("Config: " + Arrays.toString(config.getConfig()));
         info.add("Model Index: " + config.getModelIndex());
+        r.setSeed(getPositionRandom(null, pos));
+        info.add("Rand Index: " + r.nextInt(shapes.size()));
         return info;
     }
 }

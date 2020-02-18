@@ -6,10 +6,12 @@ import muramasa.antimatter.worldgen.StoneLayerOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
+    private StoneType stoneType;
     private BlockState stoneState;
     private StoneLayerOre[] ores = new StoneLayerOre[0];
 
@@ -24,14 +26,20 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     public WorldGenStoneLayer(StoneType stoneType, int... dims) {
         this(stoneType.getState(), dims);
+        this.stoneType = stoneType;
     }
 
     public WorldGenStoneLayer addOres(StoneLayerOre... ores) {
         if (stoneState.getBlock() instanceof BlockStone) {
-            Arrays.stream(ores).forEach(o -> o.setState(((BlockStone) stoneState.getBlock()).getType()));
+            Arrays.stream(ores).forEach(o -> o.setStatesByStoneType(((BlockStone) stoneState.getBlock()).getType()));
         }
         this.ores = ores;
         return this;
+    }
+
+    @Nullable
+    public StoneType getStoneType() {
+        return stoneType;
     }
 
     public BlockState getStoneState() {
