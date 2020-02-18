@@ -106,6 +106,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
         if (player.isCrouching()) return ActionResultType.FAIL;
         harvestBlock(world, player, pos, state, Utils.getTile(world, pos), player.getHeldItem(hand));
         if (super.removedByPlayer(state, world, pos, player, true, null)) {
+            player.addItemStackToInventory(MaterialType.ROCK.get(material, 1));
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.FAIL;

@@ -53,11 +53,16 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];
         NoiseGenerator noise = new NoiseGenerator(world);
         int stonesSize = stones.size(), stonesMax = stonesSize - 1;
-
         BlockState existing;
+        int maxHeight;
+        boolean isAir;
+        StoneType lastStone;
+        Material lastOre;
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 int tX = pos.getX() + i, tZ = pos.getZ() + j;
+                lastOre = null;
+                lastStone = null;
 
                 layers[0] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, -2, tZ) + 1) / 2) * stonesSize)));
                 layers[1] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, -1, tZ) + 1) / 2) * stonesSize)));
@@ -69,21 +74,15 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
                 //if (layers[3].getType().getState() == Blocks.STONE.getDefaultState()) continue;
 
-                int maxHeight = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos.add(i, 0, j)).getY();
-                boolean isAir, shouldPlaceStone = true, shouldPlaceRock = false;
-                StoneType lastStone = null;
-                Material lastOre = null;
+                maxHeight = world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos.add(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
                 for (int tY = 1; tY < maxHeight; tY++) {
                     existing = world.getBlockState(pos.add(i, tY, j));
                     isAir = existing.isAir(world, pos.add(i, tY, j));
-
                     if (!isAir && Configs.WORLD.ENABLE_STONE_LAYER_ORES) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
                                 if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, ore, layers[0] == layers[6])) {
-                                    shouldPlaceStone = false;
                                     lastOre = ore.getMaterial();
-                                    shouldPlaceRock = true;
                                     break;
                                 }
                             }
@@ -98,17 +97,14 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                         }
 
                         //If we haven't placed an ore, and not trying to set the same state as existing
-                        if (shouldPlaceStone && existing != layers[3].getStoneState()) {
+                        if (lastOre == null && existing != layers[3].getStoneState()) {
                             if (WorldGenHelper.setStone(world, pos.add(i, tY, j), existing, layers[3])) {
                                 lastStone = layers[3].getStoneType();
-                                shouldPlaceRock = true;
                             }
                         }
-                    } else if (shouldPlaceRock) {
-                        if (!(lastOre == null && lastStone == null)) {
-                            WorldGenHelper.addRock(world, pos.add(i, tY, j), lastOre != null ? lastOre : lastStone.getMaterial(), Configs.WORLD.STONE_LAYER_ROCK_CHANCE);
-                        }
-                        shouldPlaceRock = false;
+                    }
+                    if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && (lastOre != null || lastStone != null) && !world.getBlockState(pos.add(i, tY - 1, j)).isAir(world, pos.add(i, tY - 1, j))) {
+                        WorldGenHelper.addRockRaw(world, pos.add(i, tY, j), lastOre != null ? lastOre : lastStone.getMaterial(), Configs.WORLD.STONE_LAYER_ROCK_CHANCE);
                     }
 
                     // And scan for next Block on the Stone Layer Type.
