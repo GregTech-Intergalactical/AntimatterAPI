@@ -23,7 +23,7 @@ import java.util.List;
 public class WorldGenHelper {
 
     public static Object2ObjectOpenHashMap<BlockState, StoneType> STONE_MAP = new Object2ObjectOpenHashMap<>();
-    public static Object2ObjectOpenHashMap<BlockState, BlockState> ROCK_MAP = new Object2ObjectOpenHashMap<>();
+    public static ObjectOpenHashSet<BlockState> ROCK_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<BlockState> STONE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<BlockState> TREE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
@@ -32,13 +32,13 @@ public class WorldGenHelper {
     public static BlockState WATER_STATE = Blocks.WATER.getDefaultState();
 
     public static Predicate<BlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
-    public static Predicate<BlockState> ROCK_PREDICATE = state -> ROCK_MAP.containsKey(state);
+    public static Predicate<BlockState> ROCK_PREDICATE = state -> ROCK_SET.contains(state);
     public static Predicate<BlockState> STONE_PREDICATE = state -> STONE_SET.contains(state);
 
     public static void init() {
         AntimatterAPI.all(StoneType.class).forEach(t -> STONE_MAP.put(t.getState(), t));
 
-        //ROCK_MAP.put(Blocks.GRASS.getDefaultState())
+        ROCK_SET.add(Blocks.WATER.getDefaultState());
 
         STONE_SET.add(Blocks.STONE.getDefaultState());
         STONE_SET.add(Blocks.GRANITE.getDefaultState());
@@ -84,11 +84,16 @@ public class WorldGenHelper {
     }
 
     /** Adds a rock to the global map for placing in a later generation stage **/
-    public static void addRock(IWorld world, BlockPos pos, Material material, int chance) {
-        if (world.getRandom().nextInt(chance) != 0) return;
-        List<Tuple<BlockPos, Material>> entry = FeatureSurfaceRocks.ROCKS_TO_PLACE.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>());
+    public static boolean addRock(IWorld world, BlockPos pos, Material material, int chance) {
         int y = Math.min(world.getHeight(Heightmap.Type.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
-        entry.add(new Tuple<>(new BlockPos(pos.getX(), y, pos.getZ()), material));
+        return addRockRaw(world, new BlockPos(pos.getX(), y, pos.getZ()), material, chance);
+    }
+
+    public static boolean addRockRaw(IWorld world, BlockPos pos, Material material, int chance) {
+        if (world.getRandom().nextInt(chance) != 0) return false;
+        List<Tuple<BlockPos, Material>> entry = FeatureSurfaceRocks.ROCKS_TO_PLACE.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>());
+        entry.add(new Tuple<>(pos, material));
+        return true;
     }
 
     public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, WorldGenStoneLayer stoneLayer) {
