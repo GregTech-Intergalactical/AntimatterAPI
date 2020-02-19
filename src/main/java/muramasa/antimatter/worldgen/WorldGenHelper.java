@@ -60,7 +60,7 @@ public class WorldGenHelper {
 
     /** Efficiently sets a BlockState, without causing block updates or notifying the client **/
     public static boolean setState(IWorld world, BlockPos pos, BlockState state) {
-        return world.setBlockState(pos, state, 2 | 16);
+        return world.setBlockState(pos, state, 0);
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
@@ -97,10 +97,10 @@ public class WorldGenHelper {
     }
 
     public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, WorldGenStoneLayer stoneLayer) {
-        //if (rockChance > 0 && stoneLayer.getStoneType() != null) addRock(world, pos, existing, stoneLayer.getStoneType().getMaterial(), rockChance);
         return setStone(world, pos, existing, stoneLayer.getStoneState());
     }
 
+    /** **/
     public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (!existing.isReplaceableOreGen(world, pos, STONE_PREDICATE)) return false;
         return setState(world, pos, replacement);
@@ -108,12 +108,5 @@ public class WorldGenHelper {
 
     public static BlockState waterLogState(BlockState state) {
         return state.has(BlockStateProperties.WATERLOGGED) ? state.with(BlockStateProperties.WATERLOGGED, true) : state;
-    }
-
-    public static boolean canSetTree(IWorld world, BlockPos pos) {
-        //Biome biome = world.getBiome(pos);
-        //return biome.getRegistryName() != null && TREE_BIOME_SET.contains(biome.getRegistryName().toString()) && TREE_SET.contains(world.getBlockState(pos));
-        //TODO
-        return false;
     }
 }
