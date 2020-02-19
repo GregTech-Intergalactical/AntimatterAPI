@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:block/cross",
+	"textures": {
+		"cross": "antimatter:tree/rubber_sapling"
+	}
+}

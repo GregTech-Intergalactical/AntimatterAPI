@@ -1,0 +1,15 @@
+{
+	"variants": {
+		"axis=y,facing=north,resin_state=filled":    { "model": "antimatter:block/rubber_log_filled" },
+		"axis=y,facing=east,resin_state=filled":    { "model": "antimatter:block/rubber_log_filled", "y": 90 },
+		"axis=y,facing=south,resin_state=filled":    { "model": "antimatter:block/rubber_log_filled", "y": 180 },
+		"axis=y,facing=west,resin_state=filled":    { "model": "antimatter:block/rubber_log_filled", "y": 270 },
+		"axis=y,facing=north,resin_state=empty":    { "model": "antimatter:block/rubber_log_empty" },
+		"axis=y,facing=east,resin_state=empty":    { "model": "antimatter:block/rubber_log_empty", "y": 90 },
+		"axis=y,facing=south,resin_state=empty":    { "model": "antimatter:block/rubber_log_empty", "y": 180 },
+		"axis=y,facing=west,resin_state=empty":    { "model": "antimatter:block/rubber_log_empty", "y": 270 },
+		"axis=y,resin_state=none":    { "model": "antimatter:block/rubber_log" },
+		"axis=z":     { "model": "antimatter:block/rubber_log", "x": 90 },
+		"axis=x":     { "model": "antimatter:block/rubber_log", "x": 90, "y": 90 }
+	}
+}
