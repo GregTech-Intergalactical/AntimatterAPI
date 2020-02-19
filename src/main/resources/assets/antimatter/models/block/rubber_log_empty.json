@@ -1,0 +1,12 @@
+{
+	"parent": "antimatter:block/preset/simple",
+	"textures": {
+		"down": "antimatter:tree/rubber_log_end",
+		"up": "antimatter:tree/rubber_log_end",
+		"north": "antimatter:tree/rubber_log_empty",
+		"south": "antimatter:tree/rubber_log",
+		"west": "antimatter:tree/rubber_log",
+		"east": "antimatter:tree/rubber_log",
+		"particle": "antimatter:tree/rubber_log"
+	}
+}
