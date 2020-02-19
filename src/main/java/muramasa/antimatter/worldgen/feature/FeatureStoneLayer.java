@@ -103,8 +103,11 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                             }
                         }
                     }
-                    if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && (lastOre != null || lastStone != null) && !world.getBlockState(pos.add(i, tY - 1, j)).isAir(world, pos.add(i, tY - 1, j))) {
-                        WorldGenHelper.addRockRaw(world, pos.add(i, tY, j), lastOre != null ? lastOre : lastStone.getMaterial(), Configs.WORLD.STONE_LAYER_ROCK_CHANCE);
+                    if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && (lastOre != null || lastStone != null)) {
+                        BlockState below = world.getBlockState(pos.add(i, tY - 1, j));
+                        if (!below.isAir(world, pos.add(i, tY - 1, j)) && below != WorldGenHelper.WATER_STATE) {
+                            WorldGenHelper.addRockRaw(world, pos.add(i, tY, j), lastOre != null ? lastOre : lastStone.getMaterial(), Configs.WORLD.STONE_LAYER_ROCK_CHANCE);
+                        }
                     }
 
                     // And scan for next Block on the Stone Layer Type.
