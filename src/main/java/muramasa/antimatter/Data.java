@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import com.google.common.collect.ImmutableList;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
@@ -22,25 +21,11 @@ import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.tileentities.TileEntityRecipeMachine;
 import muramasa.antimatter.tileentities.multi.TileEntityHatch;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
-import muramasa.antimatter.tree.BlockRubberLeaves;
-import muramasa.antimatter.tree.BlockRubberLog;
-import muramasa.antimatter.tree.BlockRubberSapling;
-import muramasa.antimatter.tree.RubberTree;
-import net.minecraft.block.Block;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
-import net.minecraft.world.gen.feature.TreeFeatureConfig;
-import net.minecraft.world.gen.foliageplacer.BlobFoliagePlacer;
-import net.minecraft.world.gen.foliageplacer.PineFoliagePlacer;
-import net.minecraft.world.gen.foliageplacer.SpruceFoliagePlacer;
-import net.minecraft.world.gen.treedecorator.BeehiveTreeDecorator;
 
 import javax.annotation.Nullable;
 
@@ -61,19 +46,6 @@ public class Data {
 
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();
-
-    // Rubber Tree
-    final public static BlockRubberLeaves RUBBER_LEAVES = new BlockRubberLeaves();
-    final public static BlockRubberLog RUBBER_LOG = new BlockRubberLog();
-    final public static BlockRubberSapling RUBBER_SAPLING = new BlockRubberSapling();
-    final public static TreeFeatureConfig RUBBER_TREE_CONFIG_BLOB = (new TreeFeatureConfig.Builder(RubberTree.trunkBlocks, new SimpleBlockStateProvider(RUBBER_LEAVES.getDefaultState()),
-            new BlobFoliagePlacer(2, 0))).baseHeight(6).heightRandA(1). // total height
-            trunkHeight(2).trunkHeightRandom(1) // bare trunk height
-            .trunkTopOffset(2) // depresses trunk top within leaves
-            .ignoreVines().decorators(ImmutableList.of(new BeehiveTreeDecorator(0.02F))).setSapling(RUBBER_SAPLING).build();
-    final public static TreeFeatureConfig RUBBER_TREE_CONFIG_SPRUCE = (new TreeFeatureConfig.Builder(RubberTree.trunkBlocks, new SimpleBlockStateProvider(RUBBER_LEAVES.getDefaultState()),
-            new SpruceFoliagePlacer(2, 0))).baseHeight(7).heightRandA(1).trunkHeight(2).trunkHeightRandom(1).trunkTopOffset(1)
-            .ignoreVines().setSapling(RUBBER_SAPLING).build();
 
     public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler(Ref.ID, "container_basic") {
         @Nullable
