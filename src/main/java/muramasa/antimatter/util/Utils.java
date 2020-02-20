@@ -21,12 +21,17 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.*;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -601,6 +606,58 @@ public class Utils {
             return lowerUnderscoreToUpperSpaced(id).replace('_', ' ');
         }
         return StringUtils.capitalize(id);
+    }
+
+    /**
+     * Removes specific features, in specific generation stages, in specific biomes
+     * @param biomes set containing biomes wish to remove features from
+     * @param stage generation stage where the feature is added to
+     * @param featureToRemove feature instance wishing to be removed
+     * @param states BlockStates wish to be removed
+     */
+    public static void removeDecoratedFeaturesFromBiomes(Set<Biome> biomes, GenerationStage.Decoration stage, Feature<?> featureToRemove, BlockState... states) {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+            if (!biomes.contains(biome)) continue;
+            for (BlockState state : states) {
+                biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
+            }
+        }
+    }
+
+    /**
+     * Removes specific features, in specific generation stages, in all biomes registered
+     * @param stage generation stage where the feature is added to
+     * @param featureToRemove feature instance wishing to be removed
+     * @param states BlockStates wish to be removed
+     */
+    public static void removeDecoratedFeatureFromAllBiomes(GenerationStage.Decoration stage, Feature<?> featureToRemove, BlockState... states) {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+            for (BlockState state : states) {
+                biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
+            }
+        }
+    }
+
+    /**
+     * Check with BlockState in a feature if it is disabled
+     */
+    public static boolean isDecoratedFeatureDisabled(ConfiguredFeature<?, ?> configuredFeature, Feature<?> featureToRemove, BlockState state) {
+        if (configuredFeature.config instanceof DecoratedFeatureConfig) {
+            DecoratedFeatureConfig config = (DecoratedFeatureConfig) configuredFeature.config;
+            Feature<?> feature = config.feature.feature;
+            if (feature == featureToRemove) {
+                IFeatureConfig featureConfig = config.feature.config;
+                if (featureConfig instanceof OreFeatureConfig) {
+                    BlockState configState = ((OreFeatureConfig) featureConfig).state;
+                    if (configState != null && state == configState) return true;
+                }
+                if (featureConfig instanceof BlockStateFeatureConfig) {
+                    BlockState configState = ((BlockStateFeatureConfig) featureConfig).field_227270_a_;
+                    if (configState != null && state == configState) return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static Recipe getEmptyRecipe() {
