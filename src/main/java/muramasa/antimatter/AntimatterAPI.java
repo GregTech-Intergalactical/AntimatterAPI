@@ -5,7 +5,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.integration.jei.GregTechJEIPlugin;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
@@ -144,7 +144,7 @@ public final class AntimatterAPI {
     /** JEI Registry Section **/
     public static void registerJEICategory(RecipeMap map, GuiData gui) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
-            GregTechJEIPlugin.registerCategory(map, gui);
+            AntimatterJEIPlugin.registerCategory(map, gui);
         }
     }
 

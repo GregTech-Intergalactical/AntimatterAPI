@@ -2,38 +2,37 @@ package muramasa.antimatter.integration.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
-import muramasa.antimatter.machines.MachineFlag;
 import muramasa.antimatter.machines.Tier;
-import muramasa.antimatter.machines.types.Machine;
 import muramasa.antimatter.recipe.RecipeMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 
-import javax.annotation.Nullable;
-import java.util.*;
-
-import static muramasa.antimatter.machines.MachineFlag.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @JeiPlugin
-public class GregTechJEIPlugin implements IModPlugin {
-    public GregTechJEIPlugin(){
-        Antimatter.LOGGER.debug("GregTechJEIPlugin created");
-    }
-    @Override
-    public ResourceLocation getPluginUid() { return new ResourceLocation(Ref.ID, "jei"); }
+public class AntimatterJEIPlugin implements IModPlugin {
 
     private static IJeiRuntime runtime;
     private static HashMap<String, Tuple<RecipeMap, GuiData>> REGISTRY = new HashMap<>();
+
+    public AntimatterJEIPlugin() {
+        Antimatter.LOGGER.debug("AntimatterJEIPlugin created");
+    }
+
+    @Override
+    public ResourceLocation getPluginUid() {
+        return new ResourceLocation(Ref.ID, "jei");
+    }
 
     public static void registerCategory(RecipeMap map, GuiData gui) {
         REGISTRY.put(map.getId(), new Tuple<>(map, gui));
