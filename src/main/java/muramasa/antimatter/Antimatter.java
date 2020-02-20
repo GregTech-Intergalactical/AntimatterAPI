@@ -11,19 +11,15 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.feature.FeatureSurfaceRocks;
 import muramasa.antimatter.worldgen.feature.FeatureOreSmall;
 import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
+import muramasa.antimatter.worldgen.feature.FeatureSurfaceRocks;
 import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.Feature;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -59,8 +55,6 @@ public class Antimatter implements IAntimatterRegistrar {
         //AntimatterCapabilities.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
-        if (Configs.WORLD.DISABLE_VANILLA_STONE_GEN) removeStoneFeatures();
-        if (Configs.WORLD.DISABLE_VANILLA_ORE_GEN) removeOreFeatures();
     }
 
     @SubscribeEvent
@@ -118,15 +112,5 @@ public class Antimatter implements IAntimatterRegistrar {
                 new FeatureSurfaceRocks();
                 break;
         }
-    }
-
-    private void removeStoneFeatures() {
-        Utils.removeDecoratedFeatureFromAllBiomes(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE,
-                Blocks.ANDESITE.getDefaultState(), Blocks.GRANITE.getDefaultState(), Blocks.DIORITE.getDefaultState());
-    }
-
-    private void removeOreFeatures() {
-        Utils.removeDecoratedFeatureFromAllBiomes(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.COAL_ORE.getDefaultState(), Blocks.IRON_ORE.getDefaultState(),
-                Blocks.GOLD_ORE.getDefaultState(), Blocks.REDSTONE_ORE.getDefaultState(), Blocks.DIAMOND_ORE.getDefaultState());
     }
 }
