@@ -1,7 +1,6 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.blocks.BlockMachine;
 import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelManager;
@@ -79,8 +78,6 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
         AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
         AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
-        RenderTypeLookup.setRenderLayer(Data.RUBBER_SAPLING, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(Data.RUBBER_LEAVES, RenderType.cutout());
     }
 
     @SubscribeEvent

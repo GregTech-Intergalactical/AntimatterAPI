@@ -1,7 +1,0 @@
-{
-	"parent": "antimatter:block/preset/simple",
-	"textures": {
-		"all": "antimatter:tree/rubber_leaves",
-		"particle": "antimatter:tree/rubber_leaves"
-	}
-}
