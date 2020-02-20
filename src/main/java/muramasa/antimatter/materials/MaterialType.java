@@ -73,27 +73,29 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
             return new Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
         ORE.get((m, s) -> {
-            if (!MaterialType.ORE.allowBlockGen(m)) return getEmptyAndLog(ORE, m, s);
+            if (!MaterialType.ORE.allowBlockGen(m)) {
+                return getEmptyAndLog(ORE, m, s);
+            }
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE.getId() + "_" + m.getId() + "_" + s.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_SMALL.get((m, s) -> {
-            if (!MaterialType.ORE_SMALL.allowBlockGen(m)) return getEmptyAndLog(ORE, m, s);
+            if (!MaterialType.ORE_SMALL.allowBlockGen(m)) return getEmptyAndLog(ORE_SMALL, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE_SMALL.getId() + "_" + m.getId() + "_" + s.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_STONE.get(m -> {
-            if (!MaterialType.ORE_STONE.allowBlockGen(m)) return getEmptyAndLog(ORE, m);
+            if (!MaterialType.ORE_STONE.allowBlockGen(m)) return getEmptyAndLog(ORE_STONE, m);
             BlockOreStone block = AntimatterAPI.get(BlockOreStone.class, MaterialType.ORE_STONE.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         BLOCK.get(m -> {
-            if (!MaterialType.BLOCK.allowBlockGen(m)) return getEmptyAndLog(ORE, m);
+            if (!MaterialType.BLOCK.allowBlockGen(m)) return getEmptyAndLog(BLOCK, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, MaterialType.BLOCK.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         FRAME.get(m -> {
-            if (!MaterialType.FRAME.allowBlockGen(m)) return getEmptyAndLog(ORE, m);
+            if (!MaterialType.FRAME.allowBlockGen(m)) return getEmptyAndLog(FRAME, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, MaterialType.FRAME.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();

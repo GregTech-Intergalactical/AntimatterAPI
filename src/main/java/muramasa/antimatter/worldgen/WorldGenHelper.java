@@ -3,6 +3,7 @@ package muramasa.antimatter.worldgen;
 import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
@@ -60,6 +61,10 @@ public class WorldGenHelper {
 
     /** Efficiently sets a BlockState, without causing block updates or notifying the client **/
     public static boolean setState(IWorld world, BlockPos pos, BlockState state) {
+        if (state == null) {
+            Antimatter.LOGGER.error("WorldGenHelper: tried to place null state at " + pos.toString());
+            return false;
+        }
         return world.setBlockState(pos, state, 0);
     }
 

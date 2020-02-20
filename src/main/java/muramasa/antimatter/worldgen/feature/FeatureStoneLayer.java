@@ -87,13 +87,12 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                                 }
                             }
                         } else {
-//                        for (StoneLayerOre ore : x) {
-//                            if (WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, ore.material, MaterialType.ORE)) {
-//                                shouldPlaceStone = false;
-//                                lastOre = ore.getMaterial();
-//                                break;
-//                            }
-//                        }
+                            for (StoneLayerOre ore : WorldGenStoneLayer.getCollision(layers[3].getStoneType(), layers[5].getStoneState(), layers[1].getStoneState())) {
+                                if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.setOre(world, pos.add(i, tY, j), existing, ore, true)) {
+                                    lastOre = ore.getMaterial();
+                                    break;
+                                }
+                            }
                         }
 
                         //If we haven't placed an ore, and not trying to set the same state as existing
