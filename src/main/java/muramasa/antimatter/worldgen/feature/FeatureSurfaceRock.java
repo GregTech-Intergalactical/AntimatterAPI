@@ -26,7 +26,7 @@ import java.util.Random;
 
 public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
 
-    public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS_TO_PLACE = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS = new Object2ObjectOpenHashMap<>();
 
     public FeatureSurfaceRocks() {
         super(NoFeatureConfig::deserialize, FeatureSurfaceRocks.class);
@@ -51,16 +51,15 @@ public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        List<Tuple<BlockPos, Material>> rocks = ROCKS_TO_PLACE.remove(world.getChunk(pos).getPos());
-        if (rocks != null) {
-            StoneType stoneType;
-            for (Tuple<BlockPos, Material> r : rocks) {
-                stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().down()));
-                if (stoneType == null) stoneType = StoneType.get("stone");
-                BlockState rockState = MaterialType.ROCK.get().get(r.getB(), stoneType).asState();
-                if (world.getBlockState(r.getA()) == WorldGenHelper.WATER_STATE) rockState = WorldGenHelper.waterLogState(rockState);
-                WorldGenHelper.setState(world, r.getA(), rockState);
-            }
+        List<Tuple<BlockPos, Material>> rocks = ROCKS.remove(world.getChunk(pos).getPos());
+        if (rocks == null) return false;
+        StoneType stoneType;
+        for (Tuple<BlockPos, Material> r : rocks) {
+            stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().down()));
+            if (stoneType == null) stoneType = StoneType.get("stone");
+            BlockState rockState = MaterialType.ROCK.get().get(r.getB(), stoneType).asState();
+            if (world.getBlockState(r.getA()) == WorldGenHelper.WATER_STATE) rockState = WorldGenHelper.waterLogState(rockState);
+            WorldGenHelper.setState(world, r.getA(), rockState);
         }
         return true;
     }
