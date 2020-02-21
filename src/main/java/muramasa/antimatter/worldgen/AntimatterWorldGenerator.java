@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
 
-    public static Map<BlockState, BlockState> STATES_TO_PURGE = new HashMap<>();
-
     public static void init() {
         try {
             //Path config = FMLPaths.CONFIGDIR.get().resolve("GregTech/WorldGenDefault.json");
