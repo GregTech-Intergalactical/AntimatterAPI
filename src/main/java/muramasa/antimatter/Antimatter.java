@@ -12,10 +12,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.feature.FeatureOreSmall;
-import muramasa.antimatter.worldgen.feature.FeatureStoneLayer;
-import muramasa.antimatter.worldgen.feature.FeatureSurfaceRocks;
-import muramasa.antimatter.worldgen.feature.FeatureVeinLayer;
+import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -109,7 +106,8 @@ public class Antimatter implements IAntimatterRegistrar {
                 new FeatureStoneLayer();
                 new FeatureVeinLayer();
                 new FeatureOreSmall();
-                new FeatureSurfaceRocks();
+                new FeatureOre();
+                new FeatureSurfaceRock();
                 break;
         }
     }

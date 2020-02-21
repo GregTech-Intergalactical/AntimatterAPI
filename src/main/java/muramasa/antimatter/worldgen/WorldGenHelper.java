@@ -8,7 +8,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.worldgen.feature.FeatureSurfaceRocks;
+import muramasa.antimatter.worldgen.feature.FeatureOre;
+import muramasa.antimatter.worldgen.feature.FeatureSurfaceRock;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -17,9 +18,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.Heightmap;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WorldGenHelper {
 
@@ -75,17 +76,15 @@ public class WorldGenHelper {
         return setOre(world, pos, existing, oreState);
     }
 
-    /** More efficient version of setOre, used by FeatureStoneLayer with pre computed BlockStates **/
-    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, StoneLayerOre ore, boolean normalOre) {
-        StoneType stone = STONE_MAP.get(existing);
-        if (stone == null) return false;
-        return setOre(world, pos, existing, normalOre ? ore.getOreState() : ore.getOreSmallState());
-    }
-
     /** Raw version of setOre, will only place the passed state if the existing state is a registered stone **/
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (!existing.isReplaceableOreGen(world, pos, ORE_PREDICATE)) return false;
         return setState(world, pos, replacement);
+    }
+
+    public static boolean addOre(IWorld world, BlockPos pos, Material material, boolean normalOre) {
+        FeatureOre.ORES.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>()).add(new ImmutableTriple<>(pos, material, normalOre));
+        return true;
     }
 
     /** Adds a rock to the global map for placing in a later generation stage **/
@@ -96,8 +95,7 @@ public class WorldGenHelper {
 
     public static boolean addRockRaw(IWorld world, BlockPos pos, Material material, int chance) {
         if (world.getRandom().nextInt(chance) != 0) return false;
-        List<Tuple<BlockPos, Material>> entry = FeatureSurfaceRocks.ROCKS_TO_PLACE.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>());
-        entry.add(new Tuple<>(pos, material));
+        FeatureSurfaceRock.ROCKS.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>()).add(new Tuple<>(pos, material));
         return true;
     }
 

@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Random;
 
 
-public class FeatureSurfaceRocks extends AntimatterFeature<NoFeatureConfig> {
+public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
 
     public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS = new Object2ObjectOpenHashMap<>();
 
-    public FeatureSurfaceRocks() {
-        super(NoFeatureConfig::deserialize, FeatureSurfaceRocks.class);
+    public FeatureSurfaceRock() {
+        super(NoFeatureConfig::deserialize, FeatureSurfaceRock.class);
     }
 
     @Override
