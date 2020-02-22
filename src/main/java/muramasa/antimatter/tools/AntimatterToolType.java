@@ -1,24 +1,30 @@
 package muramasa.antimatter.tools;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.materials.MaterialTag;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.util.SoundType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.item.*;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.ToolType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import static net.minecraft.block.material.Material.*;
 
 public class AntimatterToolType implements IAntimatterObject {
 
@@ -32,161 +38,246 @@ public class AntimatterToolType implements IAntimatterObject {
     public static AntimatterToolType SAW;
     public static AntimatterToolType FILE;
     public static AntimatterToolType CROWBAR;
+    public static AntimatterToolType DRILL;
+    public static AntimatterToolType SCREWDRIVER;
+    public static AntimatterToolType MORTAR;
+    public static AntimatterToolType WIRE_CUTTER;
+    public static AntimatterToolType KNIFE;
+    public static AntimatterToolType PLUNGER;
+    public static AntimatterToolType CHAINSAW;
+    public static AntimatterToolType ELECTRIC_WRENCH;
+    public static AntimatterToolType ELECTRIC_SCREWDRIVER;
+    public static AntimatterToolType JACKHAMMER;
+    public static AntimatterToolType BUZZSAW;
 
     public static void init() {
-        SWORD = AntimatterToolType.add("sword", false, 2, 1, 10, 4.0F, -2.4F).setBreakable(false).setToolClass(MaterialSword.class);
-        PICKAXE = AntimatterToolType.add("pickaxe", false, 2, 1, 10, 1.5F, -2.8F);
-        SHOVEL = AntimatterToolType.add("shovel", false, 2, 1, 10, 1.5F, -3.0F);
-        AXE = AntimatterToolType.add("axe", false, 1, 1, 10, 3.0F, -3.0F).setToolClass(MaterialAxe.class);
-        HOE = AntimatterToolType.add("hoe", false, 2, 2, 10, 1.75F, -3.0F);
-        HAMMER = AntimatterToolType.add("hammer", false, 1, 2, 5, 3.0F, -3.0F).addToolTypes("pickaxe").setUseSound(SoundType.HAMMER);
-        WRENCH = AntimatterToolType.add("wrench", false, 5, 2, 5, 0.0F, -2.8F).setUseSound(SoundType.WRENCH);
-        SAW = AntimatterToolType.add("saw", false, 5, 2, 2, 1.75F, -3.0F).setBreakable(false);
-        FILE = AntimatterToolType.add("file", false, 5, 5, 2, 1.5F, -2.4F);
-        CROWBAR = AntimatterToolType.add("crowbar", false, 5, 3, 5, 2.0F, -3.0F).setUseSound(SoundType.BREAK);
+        SWORD = AntimatterToolType.add(Ref.ID, "sword", 2, 1, 10, 4.0F, -2.4F).setToolClass(MaterialSword.class);
+        PICKAXE = AntimatterToolType.add(Ref.ID, "pickaxe", 1, 2, 10, 1.5F, -2.8F).addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON);
+        SHOVEL = AntimatterToolType.add(Ref.ID, "shovel", 1, 2, 10, 1.5F, -3.0F).addEffectiveMaterials(CLAY, SAND, SNOW, SNOW_BLOCK, EARTH);
+        AXE = AntimatterToolType.add(Ref.ID, "axe", 1, 1, 10, 3.0F, -3.0F).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO);
+        HOE = AntimatterToolType.add(Ref.ID, "hoe", 1, 2, 10, -1.0F, -3.0F);
+        HAMMER = AntimatterToolType.add(Ref.ID, "hammer", 1, 2, 2, 3.0F, -3.0F).addToolTypes("pickaxe").addEffectiveMaterials(IRON, ROCK).setUseSound(SoundEvents.BLOCK_ANVIL_PLACE);
+        WRENCH = AntimatterToolType.add(Ref.ID, "wrench", 2, 2, 2, 1.5F, -2.8F).setUseSound(Ref.WRENCH).setOverlayLayers(0);
+        SAW = AntimatterToolType.add(Ref.ID, "saw", 2, 2, 2, 1.75F, -3.0F);
+        FILE = AntimatterToolType.add(Ref.ID, "file", 2, 2, 2, 1.0F, -2.4F);
+        CROWBAR = AntimatterToolType.add(Ref.ID, "crowbar", 2, 10, 5, 2.0F, -3.0F).setUseSound(SoundEvents.ENTITY_ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS);
+        DRILL = AntimatterToolType.add(Ref.ID, "drill", 1, 2, 10, 0.0F, -1.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addToolTypes("pickaxe").addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON).setMultiBlockBreakability(1, 1, 1);
+        SCREWDRIVER = AntimatterToolType.add(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F).setUseSound(Ref.WRENCH);
+        MORTAR = AntimatterToolType.add(Ref.ID, "mortar", 5, 5, 2, -3.0F, -1.0F).setUseSound(SoundEvents.BLOCK_GRINDSTONE_USE).setBlockBreakability(false);
+        WIRE_CUTTER = AntimatterToolType.add(Ref.ID, "wire_cutter", 5, 3, 2, 0.5F, -1.5F).setUseSound(SoundEvents.ENTITY_SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CARPET);
+        KNIFE = AntimatterToolType.add(Ref.ID, "knife", 2, 2, 5, 1.8F, -1.8F).setToolClass(MaterialSword.class);
+        PLUNGER = AntimatterToolType.add(Ref.ID, "plunger", 5, 5, 10, -1.0F, -3.0F).setUseSound(SoundEvents.ITEM_BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS);
+        CHAINSAW = AntimatterToolType.add(Ref.ID, "chainsaw", 1, 1, 5, 2.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.BOW).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw").setMultiBlockBreakability(1, 1, 1);
+        ELECTRIC_WRENCH = AntimatterToolType.add(Ref.ID, "electric_wrench", 2, 2, 2, 1.5F, -2.8F).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH);
+        ELECTRIC_SCREWDRIVER = AntimatterToolType.add(Ref.ID, "electric_screwdriver", 2, 2, 2, 0.0F, -1.0F).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
+        JACKHAMMER = AntimatterToolType.add(Ref.ID, "jackhammer", 1, 2, 10, 1.0F, -3.2F).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC).setMultiBlockBreakability(1, 0, 2);
+        BUZZSAW = AntimatterToolType.add(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
     }
 
-
-    /*
-    FILE("", "craftingToolFile", Sets.newHashSet("file"), null, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
-    SCREWDRIVER("Adjusts Covers and Machines", "craftingToolScrewdriver", Sets.newHashSet("screwdriver"), SoundType.WRENCH, false, 0, 1.5f, -2.4f, 1.0f, 1.0f, 200, 200, 400),
-    CROWBAR("Removes Covers", "craftingToolCrowbar", Sets.newHashSet("crowbar"), SoundType.BREAK, false, 0, 2.0f, -3.0f, 1.0f, 1.0f, 50, 200, 100),
-    MORTAR("Grinds Ingots into Dust", "craftingToolMortar", Sets.newHashSet("mortar"), null, false, 0, 2.0f, -2.4f, 1.0f, 1.0f, 50, 200, 400),
-    WIRE_CUTTER("", "craftingToolWireCutter", Sets.newHashSet("wire_cutter"), null, false, 0, 1.25f, -2.4f, 1.0f, 1.0f, 100, 200, 400),
-    SCOOP("Harvests Bees from Hives", "craftingToolScoop", Sets.newHashSet("scoop"), null, false, 0, 1.0f, -3.0f, 1.0f, 1.0f, 200, 200, 200), //TODO: Forestry
-    BRANCH_CUTTER("", "craftingToolBranchCutter", Sets.newHashSet("branch_cutter"), null, false, 0, 2.5f, -3.0f, 0.25f, 0.25f, 100, 200, 800), //TODO: Merge functionality with axe?
-    UNIVERSAL_SPADE("", "craftingToolUniversalSpade", Sets.newHashSet("shovel"), null, false, 0, 3.0f, -3.0f, 0.75f, 1.0f, 50, 100, 400), //TODO: Universal tool? Rename?
-    KNIFE("", "craftingToolKnife", Sets.newHashSet("knife", "sword"), null, false, 0, 2.0f, -2.4f, 0.5f, 1.0f, 100, 200, 100),
-    SCYTHE("", "craftingToolScythe", Sets.newHashSet("scythe"), null, false, 0, 3.0f, -3.0f, 1.0f, 4.0f, 100, 200, 800), //TODO: Sort of a dupe with BRANCH_CUTTER
-    PLUNGER("", "craftingToolPlunger", Sets.newHashSet("plunger"), null, false, 0, 1.25f, -3.0f, 1.0f, 0.25f, 100, 200, 800),
-    DRILL("", "craftingToolDrill", Sets.newHashSet("drill", "pickaxe"), SoundType.DRILL, true, 1, 3.0f, -2.8f, 9.0f, 4.0f, 800, 3200, 12800),
-    CHAINSAW("", "craftingToolChainsaw", Sets.newHashSet("axe", "saw", "sword"), null, true, 1, 4.0f, -2.4f, 6.0f, 4.0f, 800, 3200, 12800),
-    WRENCH_P("", "craftingToolWrench", Sets.newHashSet("wrench"), SoundType.WRENCH, true, 1, 2.0f, -2.4f, 4.0f, 4.0f, 800, 3200, 12800),
-    JACKHAMMER("", "craftingToolJackhammer", Sets.newHashSet("jackhammer", "pickaxe"), null, true, 1, 3.0f, -3.0f, 0.25f, 2.0f, 400, 800, 3200),
-    SCREWDRIVER_P("", "craftingToolScrewdriver", Sets.newHashSet("screwdriver"), SoundType.WRENCH, true, 0, 1.0f, -2.4f, 1.0f, 1.0f, 100, 200, 200),
-    BUZZSAW("", "craftingToolBuzzsaw", Sets.newHashSet("saw", "buzzsaw"), null, true, 0, 1.0f, -3.0f, 1.0f, 1.0f, 100, 300, 100),
-    TURBINE("", "craftingToolTurbine", Sets.newHashSet("turbine"), null, false, 0, 3.0f, -3.0f, 4.0f, 4.0f, 100, 200, 800);
-     */
-
-    private final String id;
-    private String tooltip = "";
-    @Nullable private SoundType useSound;
-    private boolean powered, repairable, blockBreakability;
-    private int baseQuality, miningDurability, attackDurability, craftingDurability, overlayLayers;
+    private final String domain, id;
+    private final ToolType TOOL_TYPE;
+    private final Set<ToolType> TOOL_TYPES = new HashSet<>();
+    private final Set<Block> EFFECTIVE_BLOCKS = new HashSet<>();
+    private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new HashSet<>();
+    private List<ITextComponent> tooltip = new ArrayList<>();
+    @Nullable private SoundEvent useSound;
+    private boolean powered, repairable, blockBreakability, multiBlockBreakability, autogenerate;
+    private long baseMaxEnergy;
+    private int[] energyTiers;
+    private int baseQuality, useDurability, attackDurability, craftingDurability, overlayLayers, multiBlockColumn, multiBlockRow, multiBlockDepth;
     private float baseAttackDamage, baseAttackSpeed;
     private ItemGroup itemGroup;
-    private Tag<Item> tag;
+    private Tag<Item> tag; // Set?
+    private UseAction useAction;
+    @Nullable private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
     private Class<? extends IAntimatterTool> toolClass;
-    private final ToolType TOOL_TYPE;
-    private final Set<ToolType> TOOL_TYPES = new HashSet();
-    private final Set<Block> EFFECTIVE_BLOCKS = new HashSet();
 
-    private AntimatterToolType(String id, boolean powered, int miningDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
+    private AntimatterToolType(String domain, String id, int useDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
+        this.domain = domain;
         this.id = id;
-        // tags.add(Utils.getItemTag(new ResourceLocation("antimatter", id)));
         this.useSound = null;
-        this.powered = powered;
         this.repairable = true;
         this.blockBreakability = true;
+        this.multiBlockBreakability = false;
+        this.autogenerate = true;
+        this.multiBlockColumn = 0;
+        this.multiBlockRow = 0;
+        this.multiBlockDepth = 1;
         this.baseQuality = 0;
-        this.miningDurability = miningDurability;
+        this.useDurability = useDurability;
         this.attackDurability = attackDurability;
         this.craftingDurability = craftingDurability;
         this.baseAttackDamage = baseAttackDamage;
         this.baseAttackSpeed = baseAttackSpeed;
         this.overlayLayers = 1;
         this.itemGroup = Ref.TAB_TOOLS;
-        this.tag = Utils.getItemTag(new ResourceLocation("antimatter", id));
+        this.tag = Utils.getItemTag(new ResourceLocation(Ref.ID, id));
+        this.useAction = UseAction.NONE;
         this.toolClass = MaterialTool.class;
         this.TOOL_TYPE = net.minecraftforge.common.ToolType.get(id);
         this.TOOL_TYPES.add(TOOL_TYPE);
         AntimatterAPI.register(AntimatterToolType.class, this);
     }
 
-    public static AntimatterToolType add(String id, boolean powered, int miningDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
-        return new AntimatterToolType(id, powered, miningDurability, attackDurability, craftingDurability, baseAttackDamage, baseAttackSpeed);
+    /**
+     * Instantiates a AntimatterToolType with its basic values
+     * @param id                 unique identifier
+     * @param useDurability      durability that is lost during an 'use' or 'blockDestroyed' operation
+     * @param attackDurability   durability that is lost on 'hitEntity'
+     * @param craftingDurability durability that is lost on 'getContainerItem' (when item is crafted as well as this tool is in the crafting matrix)
+     * @param baseAttackDamage   base attack damage that would be applied to the item's attributes
+     * @param baseAttackSpeed    base attack speed that would be applied to the item's attributes
+     * @return a brand new AntimatterToolType for enjoyment
+     */
+    public static AntimatterToolType add(String domain, String id, int useDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
+        if (domain.isEmpty()) Utils.onInvalidData("AntimatterToolType registered with no domain name!");
+        if (id.isEmpty()) Utils.onInvalidData("AntimatterToolType registered with an empty ID!");
+        return new AntimatterToolType(domain, id, useDurability, attackDurability, craftingDurability, baseAttackDamage, baseAttackSpeed);
     }
 
     /** IAntimatterTool Instantiation **/
 
+    /**
+     * Instantiates a MaterialTool with Reflection (only use this when you have done setToolClass when creating your AntimatterToolType)
+     * @param domain  namespace
+     * @param objects an Object array that should be ordered same way as your custom ToolClass constructor
+     *                (e.g. for MaterialItem: String domain, AntimatterToolType type, IItemTier tier, Item.Properties properties, Material primary, Material secondary)
+     * @return a brand new custom implementation of IAntimatterTool for enjoyment
+     */
     public IAntimatterTool instantiateExplicitly(String domain, Object... objects) {
-        if (toolClass.equals(MaterialTool.class)) Utils.onInvalidData("Please use AntimatterToolType#instantiate to return correct instances!");
+        if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
+        if (objects.length == 0) {
+            Utils.onInvalidData("An AntimatterToolType was instantiated with an empty arguments list!");
+        }
+        if (toolClass.equals(MaterialTool.class)) {
+            Utils.onInvalidData("Please use the correct instantiation method in AntimatterToolType to return the correct instance!");
+        }
         try {
-            return ConstructorUtils.invokeConstructor(toolClass, objects);
+            return ConstructorUtils.invokeConstructor(toolClass, domain, objects);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public IAntimatterTool instantiate(String domain, Material primary, @Nullable Material secondary, IItemTier tier) {
-        Item.Properties properties = new Item.Properties().group(itemGroup);
-        if (!repairable) properties.setNoRepair();
-        if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addToolType(t, tier.getHarvestLevel()));
+    /**
+     * Instantiates a MaterialTool
+     * @param domain    namespace
+     * @param primary   must not be null
+     * @param secondary can be null
+     * @param tier      must not be null, can use Vanilla's (or own's) implementation of IItemTier as well as AntimatterItemTier
+     * @return a brand new implementation of IAntimatterTool for enjoyment
+     */
+    public IAntimatterTool instantiate(String domain, @Nonnull Material primary, @Nullable Material secondary, @Nonnull IItemTier tier) {
+        Item.Properties properties = prepareInstantiation(domain, tier);
         if (!toolClass.equals(MaterialTool.class)) {
-            // return new MaterialSword(domain, this, tier, properties, primary, secondary);
             try {
+                // We only use this for MaterialSword.class in vanilla Antimatter right now
                 return ConstructorUtils.invokeConstructor(toolClass, domain, this, tier, properties, primary, secondary);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                Antimatter.LOGGER.fatal("Use instantiateExplicitly() in AntimatterToolType!");
                 e.printStackTrace();
             }
         }
         return new MaterialTool(domain, this, tier, properties, primary, secondary);
     }
 
+    /**
+     * Instantiates a MaterialElectricTool with AntimatterToolTier
+     * @param domain    namespace
+     * @param primary   must not be null
+     * @param secondary can be null
+     * @return
+     */
+    public List<IAntimatterTool> instantiatePoweredVariants(String domain, Material primary, @Nullable Material secondary) {
+        AntimatterItemTier tier = new AntimatterItemTier(this, primary, secondary);
+        List<IAntimatterTool> poweredTools = new ArrayList<>();
+        Item.Properties properties = prepareInstantiation(domain, tier);
+        for (int energyTier : energyTiers) {
+            System.out.println(Ref.VN[energyTier].toLowerCase(Locale.ENGLISH));
+            poweredTools.add(new MaterialElectricTool(domain, this, tier, properties, primary, secondary, energyTier));
+        }
+        return poweredTools;
+    }
+
+    private Item.Properties prepareInstantiation(String domain, @Nonnull IItemTier tier) {
+        if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
+        Item.Properties properties = new Item.Properties().group(itemGroup);
+        if (!repairable) properties.setNoRepair();
+        if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addToolType(t, tier.getHarvestLevel()));
+        return properties;
+    }
+
+    /**
+     * Instantiates a MaterialTool with AntimatterToolTier
+     * @param domain    namespace
+     * @param primary   must not be null
+     * @param secondary can be null
+     * @return a brand new MaterialTool for enjoyment
+     */
     public IAntimatterTool instantiate(String domain, Material primary, @Nullable Material secondary) {
-        AntimatterItemTier tier = new AntimatterItemTier(primary);
+        AntimatterItemTier tier = new AntimatterItemTier(this, primary, secondary);
         return instantiate(domain, primary, secondary, tier);
     }
 
     /** SETTERS **/
 
-    public AntimatterToolType setToolTip(String tooltip) {
-        this.tooltip = tooltip;
+    public AntimatterToolType setToolTip(ITextComponent... tooltip) {
+        this.tooltip.addAll(Arrays.asList(tooltip));
         return this;
     }
 
-    public AntimatterToolType setUseSound(SoundType type) {
-        this.useSound = type;
+    public AntimatterToolType setMultiBlockBreakability(int column, int row, int depth) {
+        if (column == 0 && row == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to break empty rows and columns!");
+        this.multiBlockBreakability = true;
+        this.multiBlockColumn = column;
+        this.multiBlockRow = row;
+        this.multiBlockDepth = depth;
         return this;
     }
 
-    public AntimatterToolType setBreakable(boolean breakable) {
-        this.blockBreakability = breakable;
+    public AntimatterToolType setPowered(long baseMaxEnergy, int... energyTiers) {
+        this.powered = true;
+        this.baseMaxEnergy = baseMaxEnergy;
+        this.energyTiers = energyTiers;
+        this.toolClass = MaterialElectricTool.class;
         return this;
     }
 
-    public AntimatterToolType setRepairability(boolean repairable) {
-        this.repairable = repairable;
-        return this;
-    }
-
-    public AntimatterToolType setBaseQuality(int quality) {
-        this.baseQuality = quality;
-        return this;
-    }
-
-    public AntimatterToolType setOverlayLayers(int layers) {
-        this.overlayLayers = layers;
-        return this;
-    }
-
-    public AntimatterToolType setItemGroup(ItemGroup itemGroup) {
-        this.itemGroup = itemGroup;
+    public AntimatterToolType setAutogenerate(boolean autogenerate) {
+        this.autogenerate = autogenerate;
         return this;
     }
 
     public AntimatterToolType addToolTypes(String... types) {
+        if (types.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
         for (String type : types) {
-            TOOL_TYPES.add(net.minecraftforge.common.ToolType.get(type));
+            this.TOOL_TYPES.add(net.minecraftforge.common.ToolType.get(type));
         }
         return this;
     }
 
     public AntimatterToolType addEffectiveBlocks(Block... blocks) {
-        for (Block block : blocks) {
-            EFFECTIVE_BLOCKS.add(block);
-        }
+        if (blocks.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective blocks even when it was explicitly called!");
+        this.EFFECTIVE_BLOCKS.addAll(Arrays.asList(blocks));
+        return this;
+    }
+
+    public AntimatterToolType addEffectiveMaterials(net.minecraft.block.material.Material... materials) {
+        if (materials.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
+        this.EFFECTIVE_MATERIALS.addAll(Arrays.asList(materials));
+        return this;
+    }
+
+    public AntimatterToolType setPrimaryRequirement(IMaterialTag tag) {
+        if (tag == null) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no primary material requirement even when it was explicitly called!");
+        this.primaryMaterialRequirement = tag;
+        return this;
+    }
+
+    public AntimatterToolType setSecondaryRequirement(IMaterialTag tag) {
+        if (tag == null) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no secondary material requirement even when it was explicitly called!");
+        this.secondaryMaterialRequirement = tag;
         return this;
     }
 
@@ -195,7 +286,103 @@ public class AntimatterToolType implements IAntimatterObject {
         return this;
     }
 
+    public boolean getBlockBreakability() {
+        return blockBreakability;
+    }
+
+    public AntimatterToolType setBlockBreakability(boolean breakable) {
+        this.blockBreakability = breakable;
+        return this;
+    }
+
+    public AntimatterToolType setBaseQuality(int quality) {
+        if (quality < 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have negative Base Quality!");
+        this.baseQuality = quality;
+        return this;
+    }
+
+
+    public AntimatterToolType setUseSound(SoundEvent sound) {
+        this.useSound = sound;
+        return this;
+    }
+
+    public boolean getRepairability() {
+        return repairable;
+    }
+
+    public AntimatterToolType setRepairability(boolean repairable) {
+        this.repairable = repairable;
+        return this;
+    }
+
+    public AntimatterToolType setOverlayLayers(int layers) {
+        if (layers < 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have less than 1 overlayer layers!");
+        this.overlayLayers = layers;
+        return this;
+    }
+
+    public AntimatterToolType setItemGroup(@Nonnull ItemGroup itemGroup) {
+        this.itemGroup = itemGroup;
+        return this;
+    }
+
+    public AntimatterToolType setUseAction(@Nonnull UseAction useAction) {
+        this.useAction = useAction;
+        return this;
+    }
+
     /** GETTERS **/
+
+    /**
+     * @param primary   material
+     * @param secondary material, it is nullable
+     * @return Item variant of an AntimatterToolType
+     */
+    public Item get(Material primary, @Nullable Material secondary) {
+        if (overlayLayers == 0 && secondary != null) {
+            Utils.onInvalidData("GET ERROR - SECONDARY MATERIAL SHOULD BE NULL: T(" + id + ") M(" + secondary.getId() + ")");
+        }
+        if (primary.equals(secondary)) {
+            Utils.onInvalidData("GET ERROR - PRIMARY AND SECONDARY MATERIALS SHOULD BE DIFFERENT: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+        }
+        if (secondary == null && (secondaryMaterialRequirement != null && !secondary.has(secondaryMaterialRequirement))) {
+            Utils.onInvalidData("GET ERROR - SECONDARY MATERIAL REQUIREMENT MISMATCH: T(" + id + ") M(" + secondary.getId() + ")");
+        }
+        IAntimatterTool item = AntimatterAPI.get(IAntimatterTool.class, primary.getId() + "_" + (secondary == null ? "" : secondary.getId() + "_") + id);
+        if (item == null) {
+            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+        }
+        return item.asItem();
+    }
+
+    /**
+     * @param primary   material
+     * @param secondary material, it is nullable
+     * @return ItemStack variant of an AntimatterToolType, it will come with an enchantment if the primary and/or secondary has native enchants
+     */
+    public ItemStack get(Material primary, @Nullable Material secondary, int count) {
+        Item item = get(primary, secondary);
+        if (item == null) {
+            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+        }
+        ItemStack stack = new ItemStack(item, count);
+        if (stack.isEmpty()) {
+            Utils.onInvalidData("GET ERROR - TOOL STACK EMPTY: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+        }
+        // TODO: DISABLE UNBREAKING TO BE APPLIED ONTO TOOLS
+        if (!primary.getEnchantments().isEmpty()) {
+            primary.getEnchantments().entrySet().forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+        }
+        if (secondary != null && secondary.getEnchantments() != null && !secondary.getEnchantments().isEmpty()) {
+            secondary.getEnchantments().entrySet().forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+        }
+        return stack;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
 
     @Override
     public String getId() {
@@ -210,11 +397,11 @@ public class AntimatterToolType implements IAntimatterObject {
         return TOOL_TYPES;
     }
 
-    public String getTooltip() {
+    public List<ITextComponent> getTooltip() {
         return tooltip;
     }
 
-    public SoundType getUseSound() {
+    public SoundEvent getUseSound() {
         return useSound;
     }
 
@@ -222,9 +409,37 @@ public class AntimatterToolType implements IAntimatterObject {
         return powered;
     }
 
-    public boolean getBlockBreakability() { return blockBreakability; }
+    public long getBaseMaxEnergy() {
+        return baseMaxEnergy;
+    }
 
-    public boolean getRepairability() { return repairable; }
+    public int[] getEnergyTiers() {
+        return energyTiers;
+    }
+
+    public Class<? extends IAntimatterTool> getToolClass() {
+        return toolClass;
+    }
+
+    public boolean getMultiBlockBreakability() {
+        return multiBlockBreakability;
+    }
+
+    public boolean isAutogenerated() {
+        return autogenerate;
+    }
+
+    public int getMultiBlockBreakColumn() {
+        return multiBlockColumn;
+    }
+
+    public int getMultiBlockBreakRow() {
+        return multiBlockRow;
+    }
+
+    public int getMultiBlockBreakDepth() {
+        return multiBlockDepth;
+    }
 
     public int getBaseQuality() {
         return baseQuality;
@@ -238,8 +453,8 @@ public class AntimatterToolType implements IAntimatterObject {
         return baseAttackSpeed;
     }
 
-    public int getMiningDurability() {
-        return miningDurability;
+    public int getUseDurability() {
+        return useDurability;
     }
 
     public int getAttackDurability() {
@@ -262,5 +477,25 @@ public class AntimatterToolType implements IAntimatterObject {
         return tag;
     }
 
-    public Set<Block> getEffectiveBlocks() { return EFFECTIVE_BLOCKS; }
+    public UseAction getUseAction() {
+        return useAction;
+    }
+
+    @Nullable
+    public IMaterialTag getPrimaryMaterialRequirement() {
+        return primaryMaterialRequirement;
+    }
+
+    @Nullable
+    public IMaterialTag getSecondaryMaterialRequirement() {
+        return secondaryMaterialRequirement;
+    }
+
+    public Set<Block> getEffectiveBlocks() {
+        return EFFECTIVE_BLOCKS;
+    }
+
+    public Set<net.minecraft.block.material.Material> getEffectiveMaterials() {
+        return EFFECTIVE_MATERIALS;
+    }
 }

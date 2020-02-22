@@ -1,15 +1,21 @@
 package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,14 +27,21 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.*;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -36,12 +49,9 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class Utils {
 
-    private static final ConcurrentMap<String, Boolean> MOD_LOADED_CACHE = new ConcurrentHashMap<>();
     private static DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
     private static DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
 
@@ -246,6 +256,62 @@ public class Utils {
 //        return FluidRegistry.getRegisteredFluidIDs().get(fluid);
 //    }
 
+    /** https://stackoverflow.com/a/1308407 **/
+    public static long getNumberOfDigits(long n, boolean in10s) {
+        if (n < 10000L) {
+            if (n < 100L) {
+                if (n < 10L) return 1;
+                else return in10s ? 10 : 2;
+            }
+            else {
+                if (n < 1000L) return in10s ? 100 : 3;
+                else return in10s ? 1000 : 4;
+            }
+        }
+        else {
+            if (n < 1000000000000L) {
+                if (n < 100000000L) {
+                    if (n < 1000000L) {
+                        if (n < 100000L) return in10s ? 10000 : 5;
+                        else return in10s ? 100000 : 6;
+                    }
+                    else {
+                        if (n < 10000000L) return in10s ? 1000000 : 7;
+                        else return in10s ? 10000000 : 8;
+                    }
+                }
+                else {
+                    if (n < 10000000000L) {
+                        if (n < 1000000000L) return in10s ? 100000000 : 9;
+                        else return in10s ? 1000000000 : 10;
+                    } else {
+                        if (n < 100000000000L) return in10s ? 10000000000L : 11;
+                        else return in10s ? 100000000000L : 12;
+                    }
+                }
+            }
+            else {
+                if (n < 10000000000000000L) {
+                    if (n < 100000000000000L) {
+                        if (n < 10000000000000L) return in10s ? 1000000000000L : 13;
+                        else return in10s ? 10000000000000L : 14;
+                    }
+                    else {
+                        if (n < 1000000000000000L) return in10s ? 100000000000000L : 15;
+                        else return in10s ? 1000000000000000L : 16;
+                    }
+                }
+                else {
+                    if (n < 1000000000000000000L) {
+                        if (n < 100000000000000000L) return in10s ? 10000000000000000L : 17;
+                        else return in10s ? 100000000000000000L : 18;
+                    }
+                    else return in10s ? 1000000000000000000L : 19;
+                }
+            }
+        }
+    }
+
     public static String formatNumber(long number) {
         return DECIMAL_FORMAT.format(number);
     }
@@ -441,51 +507,155 @@ public class Utils {
         return set;
     }
 
-    //Credit: from Tinkers' Construct
-//    public static void breakBlock(ItemStack stack, World world, BlockState state, BlockPos pos, PlayerEntity player) {
-//        Block block = state.getBlock();
-//        if (player.abilities.isCreativeMode) {
-//            block.onBlockHarvested(world, pos, state, player);
-//            if (block.removedByPlayer(state, world, pos, player, false)) {
-//                block.onBlockDestroyedByPlayer(world, pos, state);
-//            }
-//            if (!world.isRemote) {
-//                ((EntityPlayerMP)player).connection.sendPacket(new SPacketBlockChange(world, pos));
-//            }
-//            return;
-//        }
-//        stack.onBlockDestroyed(world, state, pos, player);
-//
-//        if (!world.isRemote) { // server sided handling
-//            int xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP) player).interactionManager.getGameType(), (EntityPlayerMP) player, pos);
-//            if (xp == -1) return;//event cancelled
-//
-//
-//            // serverside we reproduce ItemInWorldManager.tryHarvestBlock
-//
-//            // ItemInWorldManager.removeBlock
-//            block.onBlockHarvested(world, pos, state, player);
-//
-//            if (block.removedByPlayer(state, world, pos, player, true)){
-//                block.onBlockDestroyedByPlayer(world, pos, state);
-//                block.harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
-//                block.dropXpOnBlockBreak(world, pos, xp);
-//            }
-//
-//            EntityPlayerMP mpPlayer = (EntityPlayerMP) player;
-//            mpPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
-//        } else { // client sided handling
-//            // PlayerControllerMP.onPlayerDestroyBlock
-//            world.playBroadcastSound(2001, pos, Block.getStateId(state));
-//            if (block.removedByPlayer(state, world, pos, player, true)) {
-//                block.onBlockDestroyedByPlayer(world, pos, state);
-//            }
-//            stack.onBlockDestroyed(world, state, pos, player);
-//
-//            GregTech.PROXY.sendDiggingPacket(pos);
-//        }
-//    }
-    
+    /**
+     * Custom Block Breaking implementation, normally used when breaking extra blocks during/after onBlockDestroyed
+     * @param world World instance
+     * @param player Player instance, preferably not a ClientPlayerEntity as BlockBreakEvent won't be fired
+     * @param stack Player's heldItemStack
+     * @param pos BlockPos of the block that is about to be destroyed
+     * @param damage Damage that should be taken for the ItemStack
+     * @return true if block is successfully broken, false if not
+     */
+    public static boolean breakBlock(World world, @Nullable PlayerEntity player, ItemStack stack, BlockPos pos, int damage) {
+        BlockState state = world.getBlockState(pos);
+        int exp = 0;
+        if (!world.isRemote) {
+            ServerPlayerEntity serverPlayer = ((ServerPlayerEntity) player);
+            exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.interactionManager.getGameType(), serverPlayer, pos);
+        }
+        if (exp == -1) return false;
+        stack.damageItem(state.getBlockHardness(world, pos) != 0.0F ? damage : 0, player,
+                (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        boolean destroyed = world.func_225521_a_(pos, !player.isCreative(), player);
+        if (exp > 0) state.getBlock().dropXpOnBlockBreak(world, pos, exp);
+        return destroyed;
+    }
+
+    /**
+     * AntimatterToolType sensitive variant of BlockState::isToolEffective
+     * @param type AntimatterToolType object
+     * @param state BLockState that is being checked against
+     * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
+     */
+    @Deprecated
+    public static boolean isToolEffective(AntimatterToolType type, BlockState state) {
+        return type.getToolTypes().stream().anyMatch(state::isToolEffective) || type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial());
+    }
+
+    /**
+     * Performs tree logging. If Configs.GAMEPLAY.TREE_DETECTION is true, it will do a more complex search for branches, if set to false, it will do a normal vertical loop only
+     * @param stack Player's heldItem
+     * @param start onBlockDestroy's BlockPos
+     * @param player ServerPlayerEntity instance
+     * @param world World instance
+     * @return if tree logging was successful
+     */
+    public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull PlayerEntity player, @Nonnull World world) {
+        if (!Configs.GAMEPLAY.TREE_DETECTION) {
+            BlockPos.Mutable tempPos = new BlockPos.Mutable(start);
+            for (int y = start.getY() + 1; y < start.getY() + Configs.GAMEPLAY.AXE_TIMBER_MAX; y++) {
+                if (stack.getDamage() < 2) return false;
+                tempPos.move(Direction.UP);
+                BlockState state = world.getBlockState(tempPos);
+                if (state.isAir(world, tempPos) || !ForgeHooks.canHarvestBlock(state, player, world, tempPos)) return false;
+                else if (state.getBlock().isIn(BlockTags.LOGS)) {
+                    breakBlock(world, player, stack, tempPos, tool.getType().getUseDurability());
+                }
+            }
+        }
+        else {
+            LinkedList<BlockPos> blocks = new LinkedList<>();
+            Set<BlockPos> visited = new HashSet<>();
+            int amount = Configs.GAMEPLAY.AXE_TIMBER_MAX;
+            blocks.add(start);
+            BlockPos pos;
+            Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+            while (amount > 0) {
+                if (blocks.isEmpty() || stack.getDamage() < 2) return false;
+                pos = blocks.remove();
+                if (!visited.add(pos)) continue;
+                if (!world.getBlockState(pos).getBlock().isIn(BlockTags.LOGS)) continue;
+                for (Direction dir : dirs) {
+                    BlockPos dirPos = pos.offset(dir);
+                    if (!visited.contains(dirPos)) blocks.add(dirPos);
+                }
+                for (int x = 0; x < 3; x++)  {
+                    for (int z = 0; z < 3; z++) {
+                        BlockPos acaciaPos = pos.add(-1 + x, 1, -1 + z);
+                        if (!visited.contains(acaciaPos)) blocks.add(acaciaPos);
+                    }
+                }
+                amount--;
+                if (pos.equals(start)) continue;
+                boolean breakBlock = breakBlock(world, player, stack, pos, tool.getType().getUseDurability());
+                if (!breakBlock) break;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Gets harvestables out of a ImmutableSet of block positions, this is IAntimatterTool sensitive, and will not work for normal ItemStacks, for that, check out BlockState#isToolEffective
+     * @param world World instance of the PlayerEntity
+     * @param player PlayerEntity that is breaking the blocks
+     * @param column vertical amount of blocks
+     * @param row horizontal amount of blocks
+     * @param depth depth amount of blocks
+     * @return set of harvestable BlockPos in the specified range with specified player
+     */
+    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull IAntimatterTool tool, int column, int row, int depth) {
+        ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
+        return totalBlocks.stream().filter(b -> isToolEffective(tool.getType(), world.getBlockState(b))).collect(ImmutableSet.toImmutableSet());
+    }
+
+    /**
+     * Gets blocks to be broken in a column (radius), row (radius) and depth. This is axis-sensitive
+     * @param world = World instance of the PlayerEntity
+     * @param player = PlayerEntity that is breaking the blocks
+     * @param column = vertical amount of blocks
+     * @param row = horizontal amount of blocks
+     * @param depth = depth amount of blocks
+     * @return set of BlockPos in the specified range
+     */
+    public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, int column, int row, int depth) {
+        Vec3d lookPos = player.getEyePosition(1), rotation = player.getLook(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        BlockRayTraceResult result = world.rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
+        Direction playerDirection = player.getHorizontalFacing();
+        Direction.Axis playerAxis = playerDirection.getAxis(), faceAxis = result.getFace().getAxis();
+        Direction.AxisDirection faceAxisDir = result.getFace().getAxisDirection();
+        ImmutableSet.Builder<BlockPos> blockPositions = ImmutableSet.builder();
+        if (faceAxis.isVertical()) {
+            boolean isX = playerAxis == Direction.Axis.X;
+            boolean isDown = faceAxisDir == Direction.AxisDirection.NEGATIVE;
+            for (int y = 0; y < depth; y++) {
+                for (int x = isX ? -column : -row; x <= (isX ? column : row); x++) {
+                    for (int z = isX ? -row : -column; z <= (isX ? row : column); z++) {
+                        if (x == 0 && y == 0 && z == 0) continue;
+                        else blockPositions.add(result.getPos().add(x, isDown ? y : -y, z));
+                    }
+                }
+            }
+        }
+        else { // FaceAxis - Horizontal
+            boolean isX = faceAxis == Direction.Axis.X;
+            boolean isNegative = faceAxisDir == Direction.AxisDirection.NEGATIVE;
+            for (int x = 0; x < depth; x++) {
+                for (int y = -column; y <= column; y++) {
+                    for (int z = -row; z <= row; z++) {
+                        if (x == 0 && y == 0 && z == 0) continue;
+                        else blockPositions.add(result.getPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
+                    }
+                }
+            }
+        }
+        return blockPositions.build();
+    }
+
+    /**
+     * Scrappy but efficient way of determining an DyeColor from mere RGB values
+     * @param rgb int colour
+     * @return DyeColor that is the closest to the RGB input
+     */
     public static DyeColor determineColour(int rgb) {
         Color colour = new Color(rgb);
         Map<Double, DyeColor> distances = new HashMap<>();
@@ -507,6 +677,11 @@ public class Utils {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string);
     }
 
+    /**
+     * Used primarily in chemical formula tooltips
+     * @param string input
+     * @return string with its digits swapped to its subscript variant
+     */
     public static String digitsToSubscript(String string) {
         if (string.length() == 0) return "";
         char[] chars = string.toCharArray();
@@ -556,26 +731,52 @@ public class Utils {
         return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
     }
 
+    /**
+     * Redirects an ItemTag to a BlockTag
+     * @param tag a ItemTag, preferably already created
+     * @return BlockTag variant of the ItemTag
+     */
     public static Tag<Block> itemToBlockTag(Tag<Item> tag) {
         return new BlockTags.Wrapper(tag.getId());
     }
 
+    /**
+     * Redirects an BlockTag to a ItemTag
+     * @param tag a BlockTag, preferably already created
+     * @return ItemTag variant of the BlockTag
+     */
     public static Tag<Item> blockToItemTag(Tag<Block> tag) {
         return new ItemTags.Wrapper(tag.getId());
     }
 
+    /**
+     * @param loc ResourceLocation of a BlockTag, can be new or old
+     * @return BlockTag
+     */
     public static Tag<Block> getBlockTag(ResourceLocation loc) {
         return new BlockTags.Wrapper(loc);
     }
 
+    /**
+     * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
+     * @return BlockTag
+     */
     public static Tag<Block> getForgeBlockTag(String name) {
         return getBlockTag(new ResourceLocation("forge", name));
     }
 
+    /**
+     * @param loc ResourceLocation of a ItemTag, can be new or old
+     * @return ItemTag
+     */
     public static Tag<Item> getItemTag(ResourceLocation loc) {
         return new ItemTags.Wrapper(loc);
     }
 
+    /**
+     * @param name name of a ItemTag, can be new or old, has the namespace "forge" attached
+     * @return ItemTag
+     */
     public static Tag<Item> getForgeItemTag(String name) {
         return getItemTag(new ResourceLocation("forge", name));
     }
@@ -603,15 +804,24 @@ public class Utils {
         return StringUtils.capitalize(id);
     }
 
+    /**
+     * @return an empty instance of Recipe
+     */
     public static Recipe getEmptyRecipe() {
         return new Recipe(new ItemStack[0], new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
     }
 
+    /**
+     * @param msg to be printed with IllegalStateException, normally used when dev/user enters invalid input of data
+     */
     public static void onInvalidData(String msg) {
         if (Ref.DATA_EXCEPTIONS) throw new IllegalStateException(msg);
         Antimatter.LOGGER.error(msg);
     }
 
+    /**
+     * @param msg redirects to the main logger with a border
+     */
     public static void printError(String msg) {
         Antimatter.LOGGER.error("====================================================");
         Antimatter.LOGGER.error(msg);

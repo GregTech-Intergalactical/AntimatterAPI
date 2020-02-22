@@ -1,0 +1,10 @@
+{
+  "wrench": {
+	"subtitle": "antimatter.subtitle.wrench",
+    "sounds": [ "antimatter:wrench" ]
+  },
+  "drill": {
+    "subtitle": "antimatter.subtitle.wrench",
+    "sounds": [ "antimatter:drill" ]
+  }
+}

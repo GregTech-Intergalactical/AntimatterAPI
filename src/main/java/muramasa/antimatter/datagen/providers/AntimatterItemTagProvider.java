@@ -8,7 +8,6 @@ import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.tools.IAntimatterTool;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
