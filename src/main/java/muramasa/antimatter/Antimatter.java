@@ -78,6 +78,11 @@ public class Antimatter implements IAntimatterRegistrar {
     }
 
     @SubscribeEvent
+    public static void onSoundEventRegistry(final RegistryEvent.Register<SoundEvent> e) {
+        e.getRegistry().registerAll(Ref.DRILL, Ref.WRENCH);
+    }
+
+    @SubscribeEvent
     public static void onDataGather(GatherDataEvent e) {
         if (e.includeClient()) {
             e.getGenerator().addProvider(new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), e.getGenerator()));
