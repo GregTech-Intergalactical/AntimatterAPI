@@ -31,7 +31,7 @@ import java.util.*;
 
 import static muramasa.antimatter.tools.AntimatterToolType.*;
 
-public class MaterialTool extends TieredItem implements IAntimatterTool {
+public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     protected String domain;
     protected String concatId;
@@ -53,7 +53,7 @@ public class MaterialTool extends TieredItem implements IAntimatterTool {
             Blocks.GRASS_PATH, Blocks.FARMLAND.getDefaultState(), Blocks.DIRT, Blocks.FARMLAND.getDefaultState(), Blocks.COARSE_DIRT, Blocks.DIRT.getDefaultState());
 
     public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
-        super(tier, properties);
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
         this.domain = domain;
         this.type = type;
         this.tier = tier;
@@ -79,7 +79,7 @@ public class MaterialTool extends TieredItem implements IAntimatterTool {
     }
 
     protected MaterialTool(String domain, String concatId, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
-        super(tier, properties);
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
         this.domain = domain;
         this.concatId = concatId;
         this.type = type;
@@ -197,6 +197,7 @@ public class MaterialTool extends TieredItem implements IAntimatterTool {
         return type.getBlockBreakability();
     }
 
+    /*
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType) {
         Multimap<String, AttributeModifier> modifiers = super.getAttributeModifiers(slotType);
@@ -206,6 +207,7 @@ public class MaterialTool extends TieredItem implements IAntimatterTool {
         }
         return modifiers;
     }
+     */
 
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {

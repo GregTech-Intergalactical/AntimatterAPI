@@ -65,6 +65,11 @@ public class MaterialElectricTool extends MaterialTool {
     }
 
     @Override
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        return false;
+    }
+
+    @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) return 0;
         return damage(stack, amount);
@@ -100,7 +105,7 @@ public class MaterialElectricTool extends MaterialTool {
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
         // return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
-        return 0x00BFFF;
+        return getEnergy(stack) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
     }
 
     @Override
@@ -112,13 +117,6 @@ public class MaterialElectricTool extends MaterialTool {
         }
         return super.getDurabilityForDisplay(stack);
     }
-
-    /*
-    @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        return 1 - ((float) getEnergy(stack) / (float) getEnergy(stack));
-    }
-    */
 
     @Override
     public boolean showDurabilityBar(ItemStack itemStack) {
@@ -144,6 +142,10 @@ public class MaterialElectricTool extends MaterialTool {
         compound.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
         compound.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, maxEnergy);
         stack.getTag().put(Ref.TAG_TOOL_DATA, compound);
+    }
+
+    public int getEnergyTier() {
+        return energyTier;
     }
 
 }

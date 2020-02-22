@@ -126,6 +126,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         return stack;
     }
 
+    /*
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType) {
         Multimap<String, AttributeModifier> modifiers = super.getAttributeModifiers(slotType);
@@ -135,5 +136,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         }
         return modifiers;
     }
+     */
 
 }
