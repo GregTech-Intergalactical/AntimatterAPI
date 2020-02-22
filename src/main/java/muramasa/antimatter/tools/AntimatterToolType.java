@@ -61,16 +61,16 @@ public class AntimatterToolType implements IAntimatterObject {
         SAW = AntimatterToolType.add(Ref.ID, "saw", 2, 2, 2, 1.75F, -3.0F);
         FILE = AntimatterToolType.add(Ref.ID, "file", 2, 2, 2, 1.0F, -2.4F);
         CROWBAR = AntimatterToolType.add(Ref.ID, "crowbar", 2, 10, 5, 2.0F, -3.0F).setUseSound(SoundEvents.ENTITY_ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS);
-        DRILL = AntimatterToolType.add(Ref.ID, "drill", 1, 2, 10, 0.0F, -1.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addToolTypes("pickaxe").addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON).setMultiBlockBreakability(1, 1, 1);
+        DRILL = AntimatterToolType.add(Ref.ID, "drill", 2, 2, 10, 0.0F, -1.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addToolTypes("pickaxe").addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON).setMultiBlockBreakability(1, 1, 1);
         SCREWDRIVER = AntimatterToolType.add(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F).setUseSound(Ref.WRENCH);
         MORTAR = AntimatterToolType.add(Ref.ID, "mortar", 5, 5, 2, -3.0F, -1.0F).setUseSound(SoundEvents.BLOCK_GRINDSTONE_USE).setBlockBreakability(false);
         WIRE_CUTTER = AntimatterToolType.add(Ref.ID, "wire_cutter", 5, 3, 2, 0.5F, -1.5F).setUseSound(SoundEvents.ENTITY_SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CARPET);
         KNIFE = AntimatterToolType.add(Ref.ID, "knife", 2, 2, 5, 1.8F, -1.8F).setToolClass(MaterialSword.class);
         PLUNGER = AntimatterToolType.add(Ref.ID, "plunger", 5, 5, 10, -1.0F, -3.0F).setUseSound(SoundEvents.ITEM_BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS);
-        CHAINSAW = AntimatterToolType.add(Ref.ID, "chainsaw", 1, 1, 5, 2.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.BOW).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw").setMultiBlockBreakability(1, 1, 1);
+        CHAINSAW = AntimatterToolType.add(Ref.ID, "chainsaw", 2, 1, 5, 2.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.BOW).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw").setMultiBlockBreakability(1, 1, 1);
         ELECTRIC_WRENCH = AntimatterToolType.add(Ref.ID, "electric_wrench", 2, 2, 2, 1.5F, -2.8F).setInheritTag(WRENCH).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH);
         ELECTRIC_SCREWDRIVER = AntimatterToolType.add(Ref.ID, "electric_screwdriver", 2, 2, 2, 0.0F, -1.0F).setInheritTag(SCREWDRIVER).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
-        JACKHAMMER = AntimatterToolType.add(Ref.ID, "jackhammer", 1, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC).setMultiBlockBreakability(1, 0, 2);
+        JACKHAMMER = AntimatterToolType.add(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC).setMultiBlockBreakability(1, 0, 2);
         BUZZSAW = AntimatterToolType.add(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
     }
 

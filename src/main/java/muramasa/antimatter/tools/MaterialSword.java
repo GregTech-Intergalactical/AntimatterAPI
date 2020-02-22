@@ -1,8 +1,6 @@
 package muramasa.antimatter.tools;
 
-import com.google.common.collect.Multimap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import net.minecraft.block.BlockState;
@@ -10,8 +8,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
