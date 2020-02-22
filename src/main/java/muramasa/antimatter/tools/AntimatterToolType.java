@@ -68,8 +68,8 @@ public class AntimatterToolType implements IAntimatterObject {
         KNIFE = AntimatterToolType.add(Ref.ID, "knife", 2, 2, 5, 1.8F, -1.8F).setToolClass(MaterialSword.class);
         PLUNGER = AntimatterToolType.add(Ref.ID, "plunger", 5, 5, 10, -1.0F, -3.0F).setUseSound(SoundEvents.ITEM_BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS);
         CHAINSAW = AntimatterToolType.add(Ref.ID, "chainsaw", 1, 1, 5, 2.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.BOW).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw").setMultiBlockBreakability(1, 1, 1);
-        ELECTRIC_WRENCH = AntimatterToolType.add(Ref.ID, "electric_wrench", 2, 2, 2, 1.5F, -2.8F).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH);
-        ELECTRIC_SCREWDRIVER = AntimatterToolType.add(Ref.ID, "electric_screwdriver", 2, 2, 2, 0.0F, -1.0F).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
+        ELECTRIC_WRENCH = AntimatterToolType.add(Ref.ID, "electric_wrench", 2, 2, 2, 1.5F, -2.8F).setInheritTag(WRENCH).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH);
+        ELECTRIC_SCREWDRIVER = AntimatterToolType.add(Ref.ID, "electric_screwdriver", 2, 2, 2, 0.0F, -1.0F).setInheritTag(SCREWDRIVER).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
         JACKHAMMER = AntimatterToolType.add(Ref.ID, "jackhammer", 1, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC).setMultiBlockBreakability(1, 0, 2);
         BUZZSAW = AntimatterToolType.add(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
     }
@@ -224,6 +224,11 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public AntimatterToolType setToolTip(ITextComponent... tooltip) {
         this.tooltip.addAll(Arrays.asList(tooltip));
+        return this;
+    }
+
+    public AntimatterToolType setInheritTag(AntimatterToolType toolType) {
+        this.tag = toolType.getTag();
         return this;
     }
 
