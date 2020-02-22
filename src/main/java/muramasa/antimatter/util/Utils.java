@@ -524,9 +524,9 @@ public class Utils {
             exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.interactionManager.getGameType(), serverPlayer, pos);
         }
         if (exp == -1) return false;
-        stack.damageItem(state.getBlockHardness(world, pos) != 0.0F ? damage : 0, player,
-                (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
-        boolean destroyed = world.func_225521_a_(pos, !player.isCreative(), player);
+        stack.damageItem(state.getBlockHardness(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        boolean destroyed = world.removeBlock(pos, false);// world.func_225521_a_(pos, !player.isCreative(), player);
+        if (destroyed && state.canHarvestBlock(world, pos, player)) state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
         if (exp > 0) state.getBlock().dropXpOnBlockBreak(world, pos, exp);
         return destroyed;
     }
