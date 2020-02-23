@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockStone;
 import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.items.ItemBasic;
@@ -78,6 +79,11 @@ public class AntimatterLanguageProvider extends LanguageProvider {
                         else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[0]));
                     }
                 });
+        add(Ref.TAB_BLOCKS.getTranslationKey(), "Antimatter Blocks");
+        add(Ref.TAB_ITEMS.getTranslationKey(), "Antimatter Items");
+        add(Ref.TAB_MACHINES.getTranslationKey(), "Antimatter Machines");
+        add(Ref.TAB_MATERIALS.getTranslationKey(), "Antimatter Material Items");
+        add(Ref.TAB_TOOLS.getTranslationKey(), "Antimatter Tools");
     }
 
     @Override

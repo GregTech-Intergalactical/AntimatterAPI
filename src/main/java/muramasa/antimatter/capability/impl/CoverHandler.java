@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
@@ -8,12 +7,13 @@ import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.machines.MachineEvent;
 import muramasa.antimatter.tileentities.TileEntityMachine;
 import muramasa.antimatter.tools.AntimatterToolType;
-import muramasa.antimatter.util.SoundType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 
 import java.util.ArrayList;
 
@@ -49,7 +49,7 @@ public class CoverHandler implements ICoverHandler {
         if (!isValid(side, covers[side.getIndex()], cover)) return false;
         covers[side.getIndex()] = cover;
         //TODO add cover.onPlace and cover.onRemove to customize sounds
-        SoundType.PLACE_METAL.play(getTile().getWorld(), getTile().getPos());
+        tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
         Utils.markTileForRenderUpdate(getTile());
         return true;
     }
@@ -68,10 +68,11 @@ public class CoverHandler implements ICoverHandler {
         Cover cover = get(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
-        switch (type) {
-            case CROWBAR: return AntimatterAPI.removeCover(player, this, side);
-            default: return false;
-        }
+        // switch (type) {
+            //case CROWBAR: return AntimatterAPI.removeCover(player, this, side);
+            //default: return false;
+        //}
+        return true;
     }
 
     @Override

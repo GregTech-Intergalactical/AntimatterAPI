@@ -16,6 +16,8 @@ public class RecipeHelper {
 
     public static boolean ALWAYS_USE_ORE_DICT = true;
 
+
+    /*
     static {
         REPLACEMENTS.put('d', AntimatterToolType.SCREWDRIVER.getOreDict());
         REPLACEMENTS.put('f', AntimatterToolType.FILE.getOreDict());
@@ -26,6 +28,8 @@ public class RecipeHelper {
         REPLACEMENTS.put('w', AntimatterToolType.WRENCH.getOreDict());
         REPLACEMENTS.put('x', AntimatterToolType.WIRE_CUTTER.getOreDict());
     }
+
+     */
 
     /**
      * The below are the valid chars to use in the recipes
@@ -95,7 +99,7 @@ public class RecipeHelper {
         int start = shaped ? 3 : 0;
         for (int i = start; i < dataList.size(); i++) {
             if (dataList.get(i) instanceof AntimatterToolType) {
-                dataList.set(i, ((AntimatterToolType) dataList.get(i)).getOreDict());
+                dataList.set(i, ((AntimatterToolType) dataList.get(i)).getId());
             } else if (dataList.get(i) instanceof ItemStack) {
                 Item item = ((ItemStack) dataList.get(i)).getItem();
                 if (ALWAYS_USE_ORE_DICT && item instanceof MaterialItem) {
