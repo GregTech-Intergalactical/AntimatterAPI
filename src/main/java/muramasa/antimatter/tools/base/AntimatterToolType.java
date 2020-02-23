@@ -1,12 +1,11 @@
 package muramasa.antimatter.tools.base;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tools.MaterialElectricTool;
+import muramasa.antimatter.tools.MaterialAOETool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.item.*;
@@ -100,7 +99,7 @@ public class AntimatterToolType implements IAntimatterObject {
         if (objects.length == 0) {
             Utils.onInvalidData("An AntimatterToolType was instantiated with an empty arguments list!");
         }
-        if (toolClass.equals(MaterialTool.class)) {
+        if (toolClass.equals(MaterialTool.class) || toolClass.equals(MaterialSword.class) || toolClass.equals(MaterialAOETool.class) ) {
             Utils.onInvalidData("Please use the correct instantiation method in AntimatterToolType to return the correct instance!");
         }
         try {
@@ -112,29 +111,7 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     /**
-     * Instantiates a MaterialTool
-     * @param domain    namespace
-     * @param primary   must not be null
-     * @param secondary can be null
-     * @param tier      must not be null, can use Vanilla's (or own's) implementation of IItemTier as well as AntimatterItemTier
-     * @return a brand new implementation of IAntimatterTool for enjoyment
-     */
-    public IAntimatterTool instantiate(String domain, @Nonnull Material primary, @Nullable Material secondary, @Nonnull IItemTier tier) {
-        Item.Properties properties = prepareInstantiation(domain, tier);
-        if (!toolClass.equals(MaterialTool.class)) {
-            try {
-                // We only use this for MaterialSword.class in vanilla Antimatter right now
-                return ConstructorUtils.invokeConstructor(toolClass, domain, this, tier, properties, primary, secondary);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                Antimatter.LOGGER.fatal("Use instantiateExplicitly() in AntimatterToolType!");
-                e.printStackTrace();
-            }
-        }
-        return new MaterialTool(domain, this, tier, properties, primary, secondary);
-    }
-
-    /**
-     * Instantiates a MaterialElectricTool with AntimatterToolTier
+     * Instantiates a MaterialTool::isPowered with AntimatterToolTier
      * @param domain    namespace
      * @param primary   must not be null
      * @param secondary can be null
@@ -146,7 +123,8 @@ public class AntimatterToolType implements IAntimatterObject {
         Item.Properties properties = prepareInstantiation(domain, tier);
         for (int energyTier : energyTiers) {
             System.out.println(Ref.VN[energyTier].toLowerCase(Locale.ENGLISH));
-            poweredTools.add(new MaterialElectricTool(domain, this, tier, properties, primary, secondary, energyTier));
+            poweredTools.add(multiBlockBreakability ? new MaterialAOETool(domain, this, tier, properties, primary, secondary, energyTier) :
+                    new MaterialTool(domain, this, tier, properties, primary, secondary, energyTier));
         }
         return poweredTools;
     }
@@ -158,9 +136,9 @@ public class AntimatterToolType implements IAntimatterObject {
      * @param secondary can be null
      * @return a brand new MaterialTool for enjoyment
      */
-    public IAntimatterTool instantiate(String domain, Material primary, @Nullable Material secondary) {
+    public MaterialTool instantiate(String domain, Material primary, @Nullable Material secondary) {
         AntimatterItemTier tier = new AntimatterItemTier(this, primary, secondary);
-        return instantiate(domain, primary, secondary, tier);
+        return new MaterialTool(domain, this, tier, prepareInstantiation(domain, tier), primary, secondary);
     }
 
     private Item.Properties prepareInstantiation(String domain, @Nonnull IItemTier tier) {
@@ -194,6 +172,7 @@ public class AntimatterToolType implements IAntimatterObject {
         this.multiBlockColumn = column;
         this.multiBlockRow = row;
         this.multiBlockDepth = depth;
+        this.toolClass = MaterialAOETool.class;
         return this;
     }
 
@@ -201,7 +180,6 @@ public class AntimatterToolType implements IAntimatterObject {
         this.powered = true;
         this.baseMaxEnergy = baseMaxEnergy;
         this.energyTiers = energyTiers;
-        this.toolClass = MaterialElectricTool.class;
         return this;
     }
 

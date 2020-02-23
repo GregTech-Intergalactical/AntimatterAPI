@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+//TODO: power-sensitive version of MaterialSword
 public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     protected String domain;
