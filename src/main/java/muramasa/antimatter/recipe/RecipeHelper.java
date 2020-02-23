@@ -2,7 +2,7 @@ package muramasa.antimatter.recipe;
 
 import com.google.common.collect.Lists;
 import muramasa.antimatter.items.MaterialItem;
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;

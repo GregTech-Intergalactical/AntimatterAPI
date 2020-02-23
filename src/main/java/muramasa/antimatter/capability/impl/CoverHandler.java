@@ -6,7 +6,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.machines.MachineEvent;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
