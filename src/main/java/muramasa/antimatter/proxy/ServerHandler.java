@@ -1,6 +1,5 @@
 package muramasa.antimatter.proxy;
 
-import muramasa.antimatter.util.SoundType;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -25,12 +24,6 @@ public class ServerHandler implements IProxyHandler {
         throw new IllegalStateException("cannot call on server!");
     }
 
-    @Override
-    public void playSound(SoundType type) {
-        //NOOP
-    }
-
-    @Override
     public void sendDiggingPacket(BlockPos pos) {
         //NOOP
     }

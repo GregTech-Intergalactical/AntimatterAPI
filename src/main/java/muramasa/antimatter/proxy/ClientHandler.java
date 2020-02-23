@@ -10,7 +10,6 @@ import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.util.SoundType;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -134,12 +133,6 @@ public class ClientHandler implements IProxyHandler {
     @Override
     public ModelBakery getModelBakery() {
         return BAKERY;
-    }
-
-    @Override
-    public void playSound(SoundType type) {
-        MC.player.playSound(type.getEvent(), type.getVolume(), type.getPitch());
-        //TODO GregTechNetwork.NETWORK.sendToAllAround(new SoundMessage(type.getInternalId()), new NetworkRegistry.TargetPoint(MC.world.provider.getDimension(), MC.player.posX, MC.player.posY, MC.player.posZ, Ref.TOOL_SOUND_RANGE));
     }
 
     @Override
