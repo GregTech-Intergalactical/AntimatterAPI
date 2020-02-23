@@ -53,14 +53,12 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
             this.getBuilder(Tags.Blocks.STONE).add(s);
             this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s);
         });
-        AntimatterAPI.all(BlockStorage.class)
-                .stream().filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
-                    MaterialType<?> type = block.getType();
-                    this.getBuilder(type.getTag()).add(block);
-                    String name = String.join("", getConventionalMaterialType(type), "/", block.getMaterial().getId());
-                    if (block.getType() == MaterialType.BLOCK) this.getBuilder(Tags.Blocks.SUPPORTS_BEACON).add(block);
-                    this.getBuilder(getForgeBlockTag(name)).add(block);
-                });
+        AntimatterAPI.all(BlockStorage.class).stream().filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
+            MaterialType<?> type = block.getType();
+            this.getBuilder(type.getTag()).add(block);
+            String name = String.join("", getConventionalMaterialType(type), "/", block.getMaterial().getId());
+            this.getBuilder(getForgeBlockTag(name)).add(block);
+        });
     }
 
     @Override
