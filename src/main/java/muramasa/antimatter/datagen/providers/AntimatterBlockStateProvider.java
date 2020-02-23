@@ -35,8 +35,8 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
         };
     }
 
-    public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
-        this(providerDomain, providerName, gen, new ExistingFileHelperOverride(domains).addDomains(providerDomain));
+    public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, String... excludedDomains) {
+        this(providerDomain, providerName, gen, new ExistingFileHelperOverride(excludedDomains).addDomains(providerDomain));
     }
 
     @Nonnull

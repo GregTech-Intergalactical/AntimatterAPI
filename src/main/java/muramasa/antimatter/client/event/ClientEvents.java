@@ -68,7 +68,7 @@ public class ClientEvents {
             BlockPos nextPos = posIterator.next();
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
             VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, ISelectionContext.forEntity(entity));
-            Matrix4f matrix4f = matrix.getLast().getPositionMatrix();
+            Matrix4f matrix4f = matrix.getLast().getMatrix();
             matrix.push();
             shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
                 builderLines.pos(matrix4f, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
