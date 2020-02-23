@@ -45,7 +45,7 @@ public class MachineCoverHandler extends RotatableCoverHandler {
 
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
-        if (type == AntimatterToolType.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
+        if (type == Data.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
     }
 

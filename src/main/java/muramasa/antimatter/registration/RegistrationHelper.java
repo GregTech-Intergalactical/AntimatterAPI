@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.tools.AntimatterToolType.MORTAR;
+import static muramasa.antimatter.Data.MORTAR;
 public class RegistrationHelper {
 
     public static void buildDefaultMaterialDerivedObjects(String domain) {
