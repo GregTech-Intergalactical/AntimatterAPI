@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;

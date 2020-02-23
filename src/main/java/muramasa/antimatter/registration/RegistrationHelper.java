@@ -9,7 +9,7 @@ import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 
 import java.util.Collection;
 import java.util.Set;

@@ -2,12 +2,13 @@ package muramasa.antimatter.tools;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.tools.base.AntimatterItemTier;
+import muramasa.antimatter.tools.base.AntimatterToolType;
+import muramasa.antimatter.tools.base.MaterialTool;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
