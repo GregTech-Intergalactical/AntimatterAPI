@@ -43,9 +43,11 @@ public class Material implements IAntimatterObject {
     private int fuelPower, liquidTemperature, gasTemperature;
     
     /** Tool Members **/
-    private float toolSpeed;
+    private float toolDamage, toolSpeed;
     private int toolDurability, toolQuality;
-    private Material handleMaterial;
+    private boolean isHandle;
+    private int handleDurability;
+    private float handleSpeed;
     private ImmutableMap<Enchantment, Integer> toolEnchantment;
 
     /** Processing Members **/
@@ -60,7 +62,7 @@ public class Material implements IAntimatterObject {
         this.hash = id.hashCode();
         this.rgb = rgb;
         this.set = set;
-        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = handleMaterial = this;
+        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
         AntimatterAPI.register(Material.class, this);
     }
 
@@ -174,13 +176,10 @@ public class Material implements IAntimatterObject {
         return this;
     }
 
-    //TODO handle material now must be set manually to wood, since Antimatter may not have Wood
-    public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
-        if (has(INGOT)) {
-            add(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
-        } else if (has(GEM)) {
-            add(TOOLS, ROD);
-        }
+    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
+        if (has(INGOT)) add(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
+        else add(TOOLS, ROD);
+        this.toolDamage = toolDamage;
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
@@ -188,9 +187,30 @@ public class Material implements IAntimatterObject {
         return this;
     }
     
-    public Material addTools(float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
     	this.toolEnchantment = toolEnchantment;
-    	return addTools(toolSpeed, toolDurability, toolQuality);
+    	return addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
+    }
+
+    public Material addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality, toolEnchantment);
+    }
+
+    public Material addTools(Material derivedMaterial) {
+        return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
+    }
+
+    public Material addHandleStat(int durability, float speed) {
+        if (!has(ROD)) add(ROD);
+        this.isHandle = true;
+        this.handleDurability = durability;
+        this.handleSpeed = speed;
+        return this;
+    }
+
+    public Material addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        this.toolEnchantment = toolEnchantment;
+        return addHandleStat(durability, speed);
     }
 
     public boolean has(IMaterialTag... tags) {
@@ -321,9 +341,9 @@ public class Material implements IAntimatterObject {
     }
 
     /** Tool Getters **/
-    public float getToolSpeed() {
-        return toolSpeed;
-    }
+    public float getToolDamage() { return toolDamage; }
+
+    public float getToolSpeed() { return toolSpeed; }
 
     public int getToolDurability() {
         return toolDurability;
@@ -337,9 +357,11 @@ public class Material implements IAntimatterObject {
     	return toolEnchantment;
     }
 
-    public Material getHandleMaterial() {
-        return handleMaterial;
-    }
+    public boolean isHandle() { return isHandle; }
+
+    public int getHandleDurability() { return handleDurability; }
+
+    public float getHandleSpeed() { return handleSpeed; }
 
     /** Fluid/Gas/Plasma Getters **/
     public Fluid getLiquid() {

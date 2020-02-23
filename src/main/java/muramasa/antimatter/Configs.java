@@ -33,9 +33,14 @@ public class Configs {
         public boolean AXE_TIMBER = true;
 
         //@RequiresMcRestart
-        //@Config.RangeInt(min = 1, max = 100)
-        //@Comment("Max height of a column of logs a GT Axe will fell - Default: 20")
-        public int AXE_TIMBER_MAX = 20;
+        //@Comment("Max height of a column of logs a GT Axe will fell - Default: 100")
+        public int AXE_TIMBER_MAX = 100;
+
+        // Enable this for smart tree detection, instead of just going up in a column
+        public boolean TREE_DETECTION = true;
+
+        // Enable this to hear various crafting sounds when you craft any of Antimatter's material tools that has a custom SoundType
+        public boolean PLAY_CRAFTING_SOUNDS = true;
     }
 
     public static class Data {

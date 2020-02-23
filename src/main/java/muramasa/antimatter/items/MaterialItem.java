@@ -82,15 +82,18 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         if (context.getPlayer() == null) return ActionResultType.PASS;
-        ItemStack stack = context.getPlayer().getHeldItem(context.getHand());
-        BlockState state = context.getWorld().getBlockState(context.getPos());
+        World world = context.getWorld();
+        PlayerEntity player = context.getPlayer();
+        BlockPos pos = context.getPos();
+        ItemStack stack = player.getHeldItem(context.getHand());
+        BlockState state = world.getBlockState(pos);
         if (type == MaterialType.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
             int level = state.get(CauldronBlock.LEVEL);
             if (level > 0) {
                 MaterialItem item = (MaterialItem) stack.getItem();
-                context.getPlayer().setHeldItem(context.getHand(), MaterialType.DUST_IMPURE.get(item.getMaterial(), stack.getCount()));
-                context.getWorld().setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
-                SoundType.BUCKET_EMPTY.play(context.getWorld(), context.getPos());
+                player.setHeldItem(context.getHand(), get(MaterialType.DUST_IMPURE, item.getMaterial(), stack.getCount()));
+                world.setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
+                world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 return ActionResultType.SUCCESS;
             }
         }

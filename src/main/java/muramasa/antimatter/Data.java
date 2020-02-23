@@ -21,6 +21,7 @@ import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.tileentities.TileEntityRecipeMachine;
 import muramasa.antimatter.tileentities.multi.TileEntityHatch;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tools.AntimatterToolType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.tileentity.TileEntity;
@@ -89,6 +90,6 @@ public class Data {
     };
 
     public static void init() {
-
+        AntimatterToolType.init();
     }
 }
