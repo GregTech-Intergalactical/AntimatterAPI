@@ -285,14 +285,14 @@ public class AntimatterToolType implements IAntimatterObject {
         if (primary.equals(secondary)) {
             Utils.onInvalidData("GET ERROR - PRIMARY AND SECONDARY MATERIALS SHOULD BE DIFFERENT: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
         }
-        if (secondary == null && (secondaryMaterialRequirement != null && !secondary.has(secondaryMaterialRequirement))) {
+        if (secondary != null && (secondaryMaterialRequirement != null && !secondary.has(secondaryMaterialRequirement))) {
             Utils.onInvalidData("GET ERROR - SECONDARY MATERIAL REQUIREMENT MISMATCH: T(" + id + ") M(" + secondary.getId() + ")");
         }
         IAntimatterTool item = AntimatterAPI.get(IAntimatterTool.class, primary.getId() + "_" + (secondary == null ? "" : secondary.getId() + "_") + id);
         if (item == null) {
-            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
         }
-        return item.asItem();
+        return item != null ? item.asItem() : Items.AIR;
     }
 
     /**
@@ -303,18 +303,18 @@ public class AntimatterToolType implements IAntimatterObject {
     public ItemStack get(Material primary, @Nullable Material secondary, int count) {
         Item item = get(primary, secondary);
         if (item == null) {
-            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
         }
         ItemStack stack = new ItemStack(item, count);
         if (stack.isEmpty()) {
-            Utils.onInvalidData("GET ERROR - TOOL STACK EMPTY: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
+            Utils.onInvalidData("GET ERROR - TOOL STACK EMPTY: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
         }
         // TODO: DISABLE UNBREAKING TO BE APPLIED ONTO TOOLS
         if (!primary.getEnchantments().isEmpty()) {
-            primary.getEnchantments().entrySet().forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            primary.getEnchantments().forEach(stack::addEnchantment);
         }
         if (secondary != null && secondary.getEnchantments() != null && !secondary.getEnchantments().isEmpty()) {
-            secondary.getEnchantments().entrySet().forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            secondary.getEnchantments().forEach(stack::addEnchantment);
         }
         return stack;
     }
