@@ -1,4 +1,4 @@
-package muramasa.antimatter.tools;
+package muramasa.antimatter.tools.base;
 
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;

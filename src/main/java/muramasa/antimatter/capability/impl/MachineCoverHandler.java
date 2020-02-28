@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
@@ -45,7 +45,7 @@ public class MachineCoverHandler extends RotatableCoverHandler {
 
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
-        if (type == AntimatterToolType.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
+        if (type == Data.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
     }
 

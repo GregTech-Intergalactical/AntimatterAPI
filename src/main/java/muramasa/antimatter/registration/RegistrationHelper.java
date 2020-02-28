@@ -9,13 +9,13 @@ import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.tools.AntimatterToolType.MORTAR;
+import static muramasa.antimatter.Data.MORTAR;
 public class RegistrationHelper {
 
     public static void buildDefaultMaterialDerivedObjects(String domain) {

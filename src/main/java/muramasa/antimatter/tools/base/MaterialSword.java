@@ -1,4 +1,4 @@
-package muramasa.antimatter.tools;
+package muramasa.antimatter.tools.base;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+//TODO: power-sensitive version of MaterialSword
 public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     protected String domain;
