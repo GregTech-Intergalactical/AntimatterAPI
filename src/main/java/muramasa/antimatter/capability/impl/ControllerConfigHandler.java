@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.tools.AntimatterToolType;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
@@ -14,7 +15,7 @@ public class ControllerConfigHandler extends MachineConfigHandler {
 
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
-        if (type == AntimatterToolType.HAMMER) {
+        if (type == Data.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
             if (!machine.isStructureValid()) {
                 machine.checkStructure();
