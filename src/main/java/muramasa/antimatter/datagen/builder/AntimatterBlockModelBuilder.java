@@ -91,6 +91,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         if (!parent.contains(":")) parent = parent.replace("simple", SIMPLE).replace("layered", LAYERED);
         model.addProperty("parent", parent);
         JsonObject texture = new JsonObject();
+        textures = Arrays.stream(textures).map(t -> t.replaceAll("mc:", "minecraft:")).toArray(String[]::new);
         if (textures.length == 1) {
             texture.addProperty("all", textures[0]);
         } else if (textures.length == Ref.DIRECTIONS.length) {

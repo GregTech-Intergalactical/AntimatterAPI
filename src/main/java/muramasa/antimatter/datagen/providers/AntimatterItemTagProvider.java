@@ -42,7 +42,6 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
-        this.copy(Tags.Blocks.SUPPORTS_BEACON, Tags.Items.SUPPORTS_BEACON);
         IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
             AntimatterAPI.all(StoneType.class).forEach(s -> {
                 if (m.has(ORE)) {
