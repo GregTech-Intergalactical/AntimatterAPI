@@ -124,7 +124,12 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
         return type == MaterialType.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
     }
 
-//    @Override
+    @Override
+    public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) {
+        return type == MaterialType.BLOCK;
+    }
+
+    //    @Override
 //    public boolean isOpaqueCube(BlockState state) {
 //        return type == MaterialType.BLOCK;
 //    }
