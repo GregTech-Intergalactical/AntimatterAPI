@@ -1,12 +1,15 @@
 package muramasa.antimatter.tools.base;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -17,21 +20,25 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.function.Consumer;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.AXE;
+import static muramasa.antimatter.Data.CHAINSAW;
 
 public class MaterialTool extends ToolItem implements IAntimatterTool {
 
@@ -44,13 +51,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     protected int energyTier;
     protected long maxEnergy;
-
-    //TODO: make stripping map a thing in AntimatterToolType?
-    private static final ImmutableMap<Block, Block> AXE_BLOCK_STRIPPING_MAP = new ImmutableMap.Builder<Block, Block>()
-            .put(Blocks.OAK_WOOD, Blocks.STRIPPED_OAK_WOOD).put(Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG).put(Blocks.DARK_OAK_WOOD, Blocks.STRIPPED_DARK_OAK_WOOD)
-            .put(Blocks.DARK_OAK_LOG, Blocks.STRIPPED_DARK_OAK_LOG).put(Blocks.ACACIA_WOOD, Blocks.STRIPPED_ACACIA_WOOD).put(Blocks.ACACIA_LOG, Blocks.STRIPPED_ACACIA_LOG)
-            .put(Blocks.BIRCH_WOOD, Blocks.STRIPPED_BIRCH_WOOD).put(Blocks.BIRCH_LOG, Blocks.STRIPPED_BIRCH_LOG).put(Blocks.JUNGLE_WOOD, Blocks.STRIPPED_JUNGLE_WOOD)
-            .put(Blocks.JUNGLE_LOG, Blocks.STRIPPED_JUNGLE_LOG).put(Blocks.SPRUCE_WOOD, Blocks.STRIPPED_SPRUCE_WOOD).put(Blocks.SPRUCE_LOG, Blocks.STRIPPED_SPRUCE_LOG).build();
 
     //TODO: make hoe_lookup a thing in AntimatterToolType?
     private static final ImmutableMap<Block, BlockState> HOE_LOOKUP = ImmutableMap.of(Blocks.GRASS_BLOCK, Blocks.FARMLAND.getDefaultState(),
@@ -136,6 +136,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     public int getEnergyTier() {
         return energyTier;
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
+        //NOOP
     }
 
     @Override
@@ -229,74 +234,46 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
-        World world = context.getWorld();
-        BlockPos pos = context.getPos();
-        BlockState state = world.getBlockState(pos);
-        PlayerEntity player = context.getPlayer();
-        ItemStack stack = context.getItem();
-        if (type.isPowered() && world.getBlockState(pos) == Blocks.REDSTONE_BLOCK.getDefaultState()) {
-            CompoundNBT nbt = getTag(stack);
-            if (getMaxEnergy(stack) - getEnergy(stack) <= 50000) nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, getMaxEnergy(stack));
-            else nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, nbt.getLong(Ref.KEY_TOOL_DATA_ENERGY) + 50000);
+        ActionResultType result = ActionResultType.PASS;
+        for (IBehaviour<MaterialTool> b : type.getBehaviours()) {
+            result = b.onItemUse(this, context);
         }
-        if (type == AXE || type.getToolTypes().contains("axe")) {
-            Block block = AXE_BLOCK_STRIPPING_MAP.get(state.getBlock());
-            if (block != null) {
-                world.playSound(player, pos, SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                world.setBlockState(pos, block.getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS)), 11);
-                if (player != null) stack.damageItem(type.getUseDurability(), player, (onBroken) -> onBroken.sendBreakAnimation(context.getHand()));
-                return ActionResultType.SUCCESS;
-            } else return ActionResultType.PASS;
-        }
-        else if (type == SHOVEL || type.getToolTypes().contains("shovel")) {
-            if (context.getFace() == Direction.DOWN) return ActionResultType.PASS;
-            else {
-                BlockState changedState = null;
-                if (state.getBlock() == Blocks.GRASS_BLOCK && world.isAirBlock(pos.up())) {
-                    world.playSound(player, pos, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    changedState = Blocks.GRASS_PATH.getDefaultState();
-                }
-                else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
-                    world.playEvent(player, 1009, pos, 0);
-                    changedState = state.with(CampfireBlock.LIT, false);
-                }
-                if (changedState != null) {
-                    world.setBlockState(pos, changedState, 11);
-                    if (player != null) stack.damageItem(type.getUseDurability(), player, (onBroken) -> onBroken.sendBreakAnimation(context.getHand()));
-                    return ActionResultType.SUCCESS;
-                }
-                else return ActionResultType.PASS;
-            }
-        }
-        else if (type == HOE || type.getToolTypes().contains("hoe")) {
-            int hook = ForgeEventFactory.onHoeUse(context);
-            if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
-            if (context.getFace() != Direction.DOWN && world.isAirBlock(pos.up())) {
-                BlockState blockstate = HOE_LOOKUP.get(world.getBlockState(pos).getBlock());
-                if (blockstate != null) {
-                    world.playSound(player, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    world.setBlockState(pos, blockstate, 11);
-                    if (player != null) stack.damageItem(type.getUseDurability(), player, (onBroken) -> onBroken.sendBreakAnimation(context.getHand()));
-                    return ActionResultType.SUCCESS;
-                }
-            }
-        }
-        else if (type == WRENCH || type.getToolTypes().contains("wrench")) {
-            if (state.getBlock().getValidRotations(state, world, pos) != null) {
-                if (!player.isCrouching()) state.rotate(world, pos, Rotation.CLOCKWISE_90);
-                else state.rotate(world, pos, Rotation.COUNTERCLOCKWISE_90);
-            }
-        }
-        else if (type == PLUNGER || type.getToolTypes().contains("plunger")) {
-            if (state.has(BlockStateProperties.WATERLOGGED)) {
-                if (state.get(BlockStateProperties.WATERLOGGED)) {
-                    world.setBlockState(pos, state.with(BlockStateProperties.WATERLOGGED, false), 11);
-                    world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    stack.damageItem(type.getUseDurability(), player, (onBroken) -> onBroken.sendBreakAnimation(context.getHand()));
-                    return ActionResultType.SUCCESS;
-                }
-            }
-        }
+        return result;
+
+//        else if (type == SHOVEL || type.getToolTypes().contains("shovel")) {
+//            if (context.getFace() == Direction.DOWN) return ActionResultType.PASS;
+//            else {
+//                BlockState changedState = null;
+//                if (state.getBlock() == Blocks.GRASS_BLOCK && world.isAirBlock(pos.up())) {
+//                    world.playSound(player, pos, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
+//                    changedState = Blocks.GRASS_PATH.getDefaultState();
+//                }
+//                else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
+//                    world.playEvent(player, 1009, pos, 0);
+//                    changedState = state.with(CampfireBlock.LIT, false);
+//                }
+//                if (changedState != null) {
+//                    world.setBlockState(pos, changedState, 11);
+//                    if (player != null) stack.damageItem(type.getUseDurability(), player, (onBroken) -> onBroken.sendBreakAnimation(context.getHand()));
+//                    return ActionResultType.SUCCESS;
+//                }
+//                else return ActionResultType.PASS;
+//            }
+//        }
+//        else if (type == HOE || type.getToolTypes().contains("hoe")) {
+//            int hook = ForgeEventFactory.onHoeUse(context);
+//            if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
+//            if (context.getFace() != Direction.DOWN && world.isAirBlock(pos.up())) {
+//                BlockState blockstate = HOE_LOOKUP.get(world.getBlockState(pos).getBlock());
+//                if (blockstate != null) {
+//                    world.playSound(player, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+//                    world.setBlockState(pos, blockstate, 11);
+//                    if (player != null) damage(stack, type.getAttackDurability(), player, context.getHand());
+//                    return ActionResultType.SUCCESS;
+//                }
+//            }
+//        }
+
         //TODO functionality moved to BlockMachine.onBlockActivated
         //TODO determine if other mods need smart interaction on
         //TODO blocks that *don't* extend BlockMachine
@@ -324,7 +301,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 //            }
 //        }
 //        return result;
-        return ActionResultType.PASS;
     }
 
     @Override
@@ -367,6 +343,10 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         }
         if (amount > 0) stack.setDamage(stack.getDamage() - amount);
         return stack;
+    }
+
+    public static void damage(ItemStack stack, int damage, PlayerEntity player, Hand hand) {
+        stack.damageItem(damage, player, (p) -> p.sendBreakAnimation(hand));
     }
 
     protected int damage(ItemStack stack, int amount) {

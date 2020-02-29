@@ -6,6 +6,8 @@
 1.13 - GUI Opening: https://github.com/sinkillerj/ProjectE/blob/mc1.13.x/src/main/java/moze_intel/projecte/gameObjs/blocks/AlchemicalChest.java#L74
 1.13 - Sounds: https://github.com/sinkillerj/ProjectE/blob/mc1.13.x/src/main/java/moze_intel/projecte/utils/SoundHandler.java
 1.14 - Config: https://github.com/gigaherz/ToolBelt/blob/master/src/main/java/gigaherz/toolbelt/ToolBelt.java#L71
-1.15 - Quad Transformation: https://github.com/MinecraftForge/MinecraftForge/commit/90035ab084d02e8b72a985845591f3767d1e721c#diff-a5c349c8ea649869f023200709a19a8cL105
+1.15 - Quad Transformation: https://github.com/raoulvdberge/refinedstorage/blob/mc1.15/src/main/java/com/raoulvdberge/refinedstorage/render/model/TRSRBakedModel.java
 1.15 - Voxel Shape Rotation: https://github.com/mekanism/Mekanism/blob/1.15x/src/main/java/mekanism/common/util/VoxelShapeUtils.java
+1.14 - LootTableGen: https://github.com/TeamPneumatic/pnc-repressurized/blob/1.14/src/main/java/me/desht/pneumaticcraft/datagen/ModLootTablesProvider.java
+1.15 - Check if stack is wrench: https://github.com/MinecraftForge/MinecraftForge/issues/6531#issuecomment-591196533
 

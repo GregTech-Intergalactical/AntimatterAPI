@@ -4,7 +4,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -56,7 +55,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
     }
 
     public void processBlocks(String domain) {
-        if (AntimatterAPI.RESOURCE_METHOD != ResourceMethod.PROVIDER_GEN) return;
         AntimatterAPI.all(Block.class)
             .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(domain))
             .forEach(b -> ((IModelProvider) b).onBlockModelBuild(b, this));
