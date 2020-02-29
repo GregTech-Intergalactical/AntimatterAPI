@@ -24,6 +24,10 @@ import muramasa.antimatter.tileentities.multi.TileEntityHatch;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.tools.base.MaterialSword;
+import muramasa.antimatter.tools.behaviour.BehaviourBlockRotate;
+import muramasa.antimatter.tools.behaviour.BehaviourLogStripping;
+import muramasa.antimatter.tools.behaviour.BehaviourPoweredDebug;
+import muramasa.antimatter.tools.behaviour.BehaviourWaterlogToggle;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.UseAction;
@@ -116,5 +120,11 @@ public class Data {
         }
     };
 
-    public static void init() { }
+    public static void init() {
+        AXE.addBehaviour(new BehaviourLogStripping());
+        WRENCH.addBehaviour(new BehaviourBlockRotate());
+        PLUNGER.addBehaviour(new BehaviourWaterlogToggle());
+
+        AntimatterAPI.all(AntimatterToolType.class).forEach(t -> t.addBehaviour(new BehaviourPoweredDebug()));
+    }
 }

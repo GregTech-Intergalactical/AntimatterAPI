@@ -6,6 +6,7 @@ import muramasa.antimatter.materials.IMaterialTag;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tools.MaterialAOETool;
+import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.item.*;
@@ -41,6 +42,7 @@ public class AntimatterToolType implements IAntimatterObject {
     private UseAction useAction;
     @Nullable private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
     private Class<? extends IAntimatterTool> toolClass;
+    private Set<IBehaviour<MaterialTool>> behaviours = new HashSet<>();
 
     /**
      * Instantiates a AntimatterToolType with its basic values
@@ -271,6 +273,10 @@ public class AntimatterToolType implements IAntimatterObject {
         return this;
     }
 
+    public void addBehaviour(IBehaviour<MaterialTool>... behaviours) {
+        this.behaviours.addAll(Arrays.asList(behaviours));
+    }
+
     /** GETTERS **/
 
     /**
@@ -278,7 +284,7 @@ public class AntimatterToolType implements IAntimatterObject {
      * @param secondary material, it is nullable
      * @return Item variant of an AntimatterToolType
      */
-    public Item get(Material primary, @Nullable Material secondary) {
+    public Item get(Material primary, Material secondary) {
         if (overlayLayers == 0 && secondary != null) {
             Utils.onInvalidData("GET ERROR - SECONDARY MATERIAL SHOULD BE NULL: T(" + id + ") M(" + secondary.getId() + ")");
         }
@@ -300,7 +306,7 @@ public class AntimatterToolType implements IAntimatterObject {
      * @param secondary material, it is nullable
      * @return ItemStack variant of an AntimatterToolType, it will come with an enchantment if the primary and/or secondary has native enchants
      */
-    public ItemStack get(Material primary, @Nullable Material secondary, int count) {
+    public ItemStack get(Material primary, Material secondary, int count) {
         Item item = get(primary, secondary);
         if (item == null) {
             Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
@@ -436,5 +442,9 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public Set<net.minecraft.block.material.Material> getEffectiveMaterials() {
         return EFFECTIVE_MATERIALS;
+    }
+
+    public Set<IBehaviour<MaterialTool>> getBehaviours() {
+        return behaviours;
     }
 }

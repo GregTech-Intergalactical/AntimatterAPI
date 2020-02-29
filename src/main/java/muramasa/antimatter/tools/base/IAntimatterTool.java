@@ -53,7 +53,6 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     @Override default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        prov.texHandheld(item, getTextures());
+        prov.tex(item, "minecraft:item/handheld", getTextures());
     }
-
 }
