@@ -5,9 +5,12 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.MatrixApplyingVertexBuilder;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.tools.base.IAntimatterTool;
+import muramasa.antimatter.tools.base.MaterialTool;
+import muramasa.antimatter.tools.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -53,19 +56,21 @@ public class ClientEvents {
         if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool)) return;
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getType();
-        if (!type.getMultiBlockBreakability()) return;
+        IBehaviour<MaterialTool> behaviour = type.getBehaviour("aoe_break");
+        if (!(behaviour instanceof BehaviourAOEBreak)) return;
+        BehaviourAOEBreak aoeBreakBehaviour = (BehaviourAOEBreak) behaviour;
+
         BlockPos currentPos = event.getTarget().getPos();
         BlockState state = world.getBlockState(currentPos);
-        if (state == null || !Utils.isToolEffective(type, state)) return;
+        if (state.isAir(world, currentPos) || !Utils.isToolEffective(type, state)) return;
+
         Vec3d viewPosition = event.getInfo().getProjectedView();
         Entity entity = event.getInfo().getRenderViewEntity();
         IVertexBuilder builderLines = event.getBuffers().getBuffer(RenderType.LINES);
         MatrixStack matrix = event.getMatrix();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
-        ImmutableSet<BlockPos> positions =  Utils.getHarvestableBlocksToBreak(world, player, item, type.getMultiBlockBreakColumn(), type.getMultiBlockBreakRow(), type.getMultiBlockBreakDepth());
-        Iterator<BlockPos> posIterator = positions.iterator();
-        while (posIterator.hasNext()) {
-            BlockPos nextPos = posIterator.next();
+        ImmutableSet<BlockPos> positions =  Utils.getHarvestableBlocksToBreak(world, player, item, aoeBreakBehaviour.getColumn(), aoeBreakBehaviour.getRow(), aoeBreakBehaviour.getDepth());
+        for (BlockPos nextPos : positions) {
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
             VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, ISelectionContext.forEntity(entity));
             Matrix4f matrix4f = matrix.getLast().getMatrix();
@@ -77,14 +82,13 @@ public class ClientEvents {
             matrix.pop();
         }
         if (MC.playerController.getIsHittingBlock()) {
-            posIterator = positions.iterator();
-            while (posIterator.hasNext()) {
-                BlockPos nextPos = posIterator.next();
+            for (BlockPos nextPos : positions) {
                 double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
                 int partialDamage = (int) (ObfuscationReflectionHelper.findField(PlayerController.class, "field_78770_f").getFloat(MC.playerController) * 10) - 1; // field_78770_f = curBlockDamageMP
                 matrix.push();
                 matrix.translate(modX, modY, modZ);
-                if (partialDamage == -1) return; // Not sure why this happens, but it certainly is an edge-case, if we made it so it returns 0 every time it hit -1, the animation will have a delay
+                if (partialDamage == -1)
+                    return; // Not sure why this happens, but it certainly is an edge-case, if we made it so it returns 0 every time it hit -1, the animation will have a delay
                 IVertexBuilder builderBreak = new MatrixApplyingVertexBuilder(event.getBuffers().getBuffer(ModelBakery.DESTROY_RENDER_TYPES.get(partialDamage)), matrix.getLast());
                 MC.getBlockRendererDispatcher().renderBlockDamage(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak);
                 // MC.getBlockRendererDispatcher().renderModel(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak, ModelDataManager.getModelData(world, nextPos));

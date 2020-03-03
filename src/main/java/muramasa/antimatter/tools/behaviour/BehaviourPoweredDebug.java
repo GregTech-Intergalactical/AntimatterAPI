@@ -12,6 +12,11 @@ import net.minecraft.util.ActionResultType;
 public class BehaviourPoweredDebug implements IBehaviour<MaterialTool> {
 
     @Override
+    public String getId() {
+        return "powered_debug";
+    }
+
+    @Override
     public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
         if (instance.getType().isPowered() && c.getWorld().getBlockState(c.getPos()) == Blocks.REDSTONE_BLOCK.getDefaultState() && c.getPlayer() != null) {
             ItemStack stack = c.getPlayer().getHeldItem(c.getHand());
