@@ -2,10 +2,9 @@ package muramasa.antimatter.tools.base;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,7 +19,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
@@ -34,11 +32,9 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import static muramasa.antimatter.Data.AXE;
-import static muramasa.antimatter.Data.CHAINSAW;
 
 public class MaterialTool extends ToolItem implements IAntimatterTool {
 
@@ -193,24 +189,17 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity livingEntity) {
-        Block block = state.getBlock();
-        if (livingEntity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) livingEntity;
-            if (type.getUseSound() != null) player.playSound(type.getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
-            boolean isToolEffective = Utils.isToolEffective(type, state);
+    public boolean onBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entity;
+            if (getType().getUseSound() != null) player.playSound(getType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
+            boolean isToolEffective = Utils.isToolEffective(getType(), state);
             if (state.getBlockHardness(world, pos) != 0.0F) {
-                stack.damageItem(isToolEffective ? type.getUseDurability() : type.getUseDurability() + 1,
-                        livingEntity, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+                stack.damageItem(isToolEffective ? getType().getUseDurability() : getType().getUseDurability() + 1, entity, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
             }
-            if (isToolEffective && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
-                if (type == CHAINSAW || tier.getHarvestLevel() > 1 && (type == AXE || type.getToolTypes().contains("axe"))) {
-                    if (!Configs.GAMEPLAY.AXE_TIMBER) return true;
-                    if (block.isIn(BlockTags.LOGS)) {
-                        Utils.treeLogging(this, stack, pos, player, world);
-                    }
-                }
-            }
+        }
+        for (Map.Entry<String, IBehaviour<MaterialTool>> e : type.getBehaviours().entrySet()) {
+            e.getValue().onBlockDestroyed(this, stack, world, state, pos, entity);
         }
         return true;
     }
@@ -235,8 +224,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         ActionResultType result = ActionResultType.PASS;
-        for (IBehaviour<MaterialTool> b : type.getBehaviours()) {
-            result = b.onItemUse(this, context);
+        for (Map.Entry<String, IBehaviour<MaterialTool>> e : type.getBehaviours().entrySet()) {
+            ActionResultType r = e.getValue().onItemUse(this, context);
+            if (result != ActionResultType.SUCCESS) result = r;
         }
         return result;
 

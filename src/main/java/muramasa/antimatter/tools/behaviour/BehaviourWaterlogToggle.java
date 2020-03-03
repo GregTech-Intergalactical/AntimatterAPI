@@ -12,6 +12,11 @@ import net.minecraft.util.SoundEvents;
 public class BehaviourWaterlogToggle implements IBehaviour<MaterialTool> {
 
     @Override
+    public String getId() {
+        return "waterlog_toggle";
+    }
+
+    @Override
     public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         if (state.has(BlockStateProperties.WATERLOGGED)) {

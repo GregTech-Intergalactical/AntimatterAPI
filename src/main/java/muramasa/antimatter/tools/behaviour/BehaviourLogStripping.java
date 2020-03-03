@@ -26,7 +26,12 @@ public class BehaviourLogStripping implements IBehaviour<MaterialTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(MaterialTool tool, ItemUseContext c) {
+    public String getId() {
+        return "log_stripping";
+    }
+
+    @Override
+    public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         BlockState stripped = AXE_BLOCK_STRIPPING_MAP.get(state);
         if (stripped != null) {
@@ -35,7 +40,7 @@ public class BehaviourLogStripping implements IBehaviour<MaterialTool> {
             }
             c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
             c.getWorld().setBlockState(c.getPos(), stripped);
-            if (c.getPlayer() != null) c.getPlayer().getHeldItem(c.getHand()).damageItem(tool.getType().getUseDurability(), c.getPlayer(), (onBroken) -> onBroken.sendBreakAnimation(c.getHand()));
+            if (c.getPlayer() != null) c.getPlayer().getHeldItem(c.getHand()).damageItem(instance.getType().getUseDurability(), c.getPlayer(), (onBroken) -> onBroken.sendBreakAnimation(c.getHand()));
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;

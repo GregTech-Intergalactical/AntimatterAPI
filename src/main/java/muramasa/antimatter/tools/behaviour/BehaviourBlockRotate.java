@@ -10,6 +10,11 @@ import net.minecraft.util.Rotation;
 public class BehaviourBlockRotate implements IBehaviour<MaterialTool> {
 
     @Override
+    public String getId() {
+        return "block_rotate";
+    }
+
+    @Override
     public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         if (state.getBlock().getValidRotations(state, c.getWorld(), c.getPos()) != null && c.getPlayer() != null) {
