@@ -32,17 +32,13 @@ public class ClientHandler implements IProxyHandler {
 
     private static Minecraft MC = Minecraft.getInstance();
 
-    private static DynamicPackFinder ANTIMATTER_RESOURCES = new DynamicPackFinder("antimatter_resources", true);
+    public static DynamicPackFinder ANTIMATTER_RESOURCES = new DynamicPackFinder("antimatter_resources", true);
 
     public ClientHandler() {
 
     }
 
     public static void init() {
-
-        //TODO crashes during runData?
-        //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
-
 //        GregTechAPI.onEvent(RegistrationEvent.DATA_READY, () -> {
 //            GregTechAPI.all(MaterialItem.class).forEach(i -> {
 //                //"assets/gtu/models/item/" + i.getId() + ".json"
@@ -69,6 +65,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
+        Minecraft.getInstance().getResourcePackList().addPackFinder(ANTIMATTER_RESOURCES);
         ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER.getLoc(), AntimatterModelManager.LOADER);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));

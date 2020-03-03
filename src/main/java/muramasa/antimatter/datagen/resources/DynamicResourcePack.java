@@ -32,7 +32,7 @@ public class DynamicResourcePack extends ResourcePack {
     protected InputStream buildPackMeta() {
         JsonObject pack = new JsonObject(), data = new JsonObject();
         data.addProperty("description", packFinder.packId);
-        data.addProperty("pack_format", 4);
+        data.addProperty("pack_format", 5);
         pack.add("pack", data);
         return new ReaderInputStream(new StringReader(pack.toString()), Charset.defaultCharset());
     }
@@ -42,15 +42,14 @@ public class DynamicResourcePack extends ResourcePack {
         registry.put("assets/" + domain + "/blockstates/" + id + ".json", new ReaderInputStream(new StringReader(state.toJson().toString()), Charset.defaultCharset()));
     }
 
-    public void addModel(String domain, String type, String id, ModelBuilder builder) {
+    public void addModel(String domain, String type, String id, ModelBuilder<?> builder) {
         domains.add(domain);
         registry.put("assets/" + domain + "/models/" + type + "/" + id + ".json", new ReaderInputStream(new StringReader(builder.toJson().toString()), Charset.defaultCharset()));
     }
 
     public void addLang(String domain, String region, String key, String value) {
         String mapKey = "assets/" + domain + "/lang" + region + ".json";
-        lang.computeIfAbsent(mapKey, k -> new JsonObject());
-        lang.get(mapKey).addProperty(key, value);
+        lang.computeIfAbsent(mapKey, k -> new JsonObject()).addProperty(key, value);
     }
 
     @Override

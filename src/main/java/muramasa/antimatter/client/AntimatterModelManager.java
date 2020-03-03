@@ -4,16 +4,18 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.proxy.ClientHandler;
+import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.item.Item;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import org.apache.logging.log4j.util.TriConsumer;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class AntimatterModelManager {
@@ -24,7 +26,7 @@ public class AntimatterModelManager {
     //TODO clear this at some stage
     private static final Map<String, IBakedModel> BAKED_MODEL_JSON_CACHE = new HashMap<>();
 
-    private static final Map<ResourceLocation, BiConsumer<Item, AntimatterItemModelProvider>> ITEM_OVERRIDES = new HashMap<>();
+    private static final Map<ResourceLocation, IItemModelOverride> ITEM_OVERRIDES = new HashMap<>();
     private static final Map<ResourceLocation, TriConsumer<Block, AntimatterBlockStateProvider, AntimatterBlockModelBuilder>> BLOCK_OVERRIDES = new HashMap<>();
 
     public static IBakedModel getBaked(String json, Supplier<IBakedModel> bakedSupplier) {
@@ -33,31 +35,26 @@ public class AntimatterModelManager {
         return bakedSupplier.get();
     }
 
-    public static void put(Item item, BiConsumer<Item, AntimatterItemModelProvider> consumer) {
-        ITEM_OVERRIDES.put(item.getRegistryName(), consumer);
+    public static void put(Item item, IItemModelOverride override) {
+        ITEM_OVERRIDES.put(item.getRegistryName(), override);
     }
 
     public static void put(Block block, TriConsumer<Block, AntimatterBlockStateProvider, AntimatterBlockModelBuilder> consumer) {
         BLOCK_OVERRIDES.put(block.getRegistryName(), consumer);
     }
 
-    @Nullable
-    public static boolean onItemModelBuild(Item item, AntimatterItemModelProvider prov) {
-        BiConsumer<Item, AntimatterItemModelProvider> consumer = ITEM_OVERRIDES.get(item.getRegistryName());
-        if (consumer != null) {
-            consumer.accept(item, prov);
-            return true;
-        }
-        return false;
+    public static void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        IItemModelOverride override = ITEM_OVERRIDES.get(item.asItem().getRegistryName());
+        ItemModelBuilder builder = override.apply(item.asItem(), prov);
+        if (builder == null && item instanceof IModelProvider) builder = ((IModelProvider) item).onItemModelBuild(item, prov);
+        if (builder != null) ClientHandler.ANTIMATTER_RESOURCES.getPack().addModel(item.asItem().getRegistryName().getNamespace(), "item", item.asItem().getRegistryName().getPath(), builder);
     }
 
-    @Nullable
-    public static boolean onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        TriConsumer<Block, AntimatterBlockStateProvider, AntimatterBlockModelBuilder> consumer = BLOCK_OVERRIDES.get(block.getRegistryName());
-        if (consumer != null) {
-            consumer.accept(block, prov, prov.getBuilder(block));
-            return true;
-        }
-        return false;
+    public static void onBlockModelBuild(IModelProvider b, AntimatterBlockStateProvider prov) {
+
+    }
+
+    public interface IItemModelOverride {
+        ItemModelBuilder apply(IItemProvider item, AntimatterItemModelProvider prov);
     }
 }

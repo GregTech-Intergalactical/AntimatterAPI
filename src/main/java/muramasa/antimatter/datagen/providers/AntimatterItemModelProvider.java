@@ -1,8 +1,8 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
-import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -39,11 +39,11 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
 
     public void processItemModels(String domain) {
         AntimatterAPI.all(Item.class)
-            .stream().filter(i -> i instanceof IModelProvider && i.getRegistryName().getNamespace().equals(domain))
-            .forEach(i -> ((IModelProvider) i).onItemModelBuild(i, this));
+            .stream().filter(i -> i.getRegistryName().getNamespace().equals(domain))
+            .forEach(i -> AntimatterModelManager.onItemModelBuild(i, this));
         AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(domain))
-            .forEach(b -> ((IModelProvider) b).onItemModelBuild(b, this));
+            .stream().filter(b -> b.getRegistryName().getNamespace().equals(domain))
+            .forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {
