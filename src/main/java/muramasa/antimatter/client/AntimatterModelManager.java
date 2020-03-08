@@ -44,8 +44,9 @@ public class AntimatterModelManager {
     }
 
     public static void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        ItemModelBuilder builder = null;
         IItemModelOverride override = ITEM_OVERRIDES.get(item.asItem().getRegistryName());
-        ItemModelBuilder builder = override.apply(item.asItem(), prov);
+        if (override != null) builder = override.apply(item.asItem(), prov);
         if (builder == null && item instanceof IModelProvider) builder = ((IModelProvider) item).onItemModelBuild(item, prov);
         if (builder != null) ClientHandler.ANTIMATTER_RESOURCES.getPack().addModel(item.asItem().getRegistryName().getNamespace(), "item", item.asItem().getRegistryName().getPath(), builder);
     }
