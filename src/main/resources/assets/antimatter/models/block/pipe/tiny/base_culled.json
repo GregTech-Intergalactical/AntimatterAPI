@@ -1,19 +1,19 @@
 {
 	"parent": "block/block",
 	"textures": {
-		"particle": "#0"
+		"particle": "#all"
 	},
 	"elements": [
 		{
 			"from": [6, 6, 6],
 			"to": [10, 10, 10],
 			"faces": {
-				"north": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0},
-				"east": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0},
-				"south": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0},
-				"west": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0},
-				"up": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0},
-				"down": {"uv": [5, 5, 11, 11], "texture": "#0", "tintindex": 0}
+				"north": {"uv": [5, 5, 11, 11], "texture": "#all", "tintindex": 0},
+				"east": {"uv": [5, 5, 11, 11], "texture": "#all", "tintindex": 0},
+				"south": {"uv": [5, 5, 11, 11], "texture": "#all", "tintindex": 0},
+				"west": {"uv": [5, 5, 11, 11], "texture": "#all", "tintindex": 0},
+				"up": {"uv": [5, 5, 11, 11], "texture": "#all", "tintindex": 0},
+				"down": {"uv": [5, 5, 11, 11], "texture": "#all", "tintindex": 0}
 			}
 		}
 	]
