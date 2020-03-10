@@ -127,7 +127,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
         //builder.model("simple", stoneType.getTexture());
         builder.model(Ref.ID + ":block/rock/surface_rock_0", stoneType.getTexture());
-        IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> builder.config(i, Ref.ID + ":block/rock/surface_rock_" + i, stoneType.getTexture()));
+        IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> builder.config(i, Ref.ID + ":block/rock/surface_rock_" + i, c -> c.tex(stoneType.getTexture())));
         prov.state(block, builder);
     }
 
