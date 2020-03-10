@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
 public class AntimatterItemModelProvider extends ItemModelProvider {
@@ -69,5 +70,9 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
 
     public ItemModelBuilder blockItem(IItemProvider item) {
         return withExistingParent(item.asItem().getRegistryName().getPath(), modLoc("block/" + item.asItem().getRegistryName().getPath()));
+    }
+
+    public ModelFile.ExistingModelFile existing(String domain, String path) {
+        return getExistingFile(new ResourceLocation(domain, path));
     }
 }
