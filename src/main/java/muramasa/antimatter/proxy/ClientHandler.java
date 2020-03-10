@@ -15,10 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -33,19 +31,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientHandler implements IProxyHandler {
 
     private static Minecraft MC = Minecraft.getInstance();
-    private static ModelBakery BAKERY;
 
-    private static DynamicPackFinder ANTIMATTER_RESOURCES = new DynamicPackFinder("antimatter_resources", true);
+    public static DynamicPackFinder ANTIMATTER_RESOURCES = new DynamicPackFinder("antimatter_resources", true);
 
     public ClientHandler() {
 
     }
 
     public static void init() {
-
-        //TODO crashes during runData?
-        //Minecraft.getInstance().getResourcePackList().addPackFinder(GTI_RESOURCES);
-
 //        GregTechAPI.onEvent(RegistrationEvent.DATA_READY, () -> {
 //            GregTechAPI.all(MaterialItem.class).forEach(i -> {
 //                //"assets/gtu/models/item/" + i.getId() + ".json"
@@ -72,6 +65,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
+        Minecraft.getInstance().getResourcePackList().addPackFinder(ANTIMATTER_RESOURCES);
         ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER.getLoc(), AntimatterModelManager.LOADER);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
@@ -116,7 +110,6 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent e) {
-        BAKERY = e.getModelLoader();
         //ModelUtils.buildDefaultModels();
     }
 
@@ -128,15 +121,5 @@ public class ClientHandler implements IProxyHandler {
     @Override
     public PlayerEntity getClientPlayer() {
         return Minecraft.getInstance().player;
-    }
-
-    @Override
-    public ModelBakery getModelBakery() {
-        return BAKERY;
-    }
-
-    @Override
-    public void sendDiggingPacket(BlockPos pos) {
-        //TODO MC.getConnection().sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, pos, MC.objectMouseOver.sideHit));
     }
 }

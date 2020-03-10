@@ -1,9 +1,8 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
-import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -12,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
 public class AntimatterItemModelProvider extends ItemModelProvider {
@@ -39,13 +39,12 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
     }
 
     public void processItemModels(String domain) {
-        if (AntimatterAPI.RESOURCE_METHOD != ResourceMethod.PROVIDER_GEN) return;
         AntimatterAPI.all(Item.class)
-            .stream().filter(i -> i instanceof IModelProvider && i.getRegistryName().getNamespace().equals(domain))
-            .forEach(i -> ((IModelProvider) i).onItemModelBuild(i, this));
+            .stream().filter(i -> i.getRegistryName().getNamespace().equals(domain))
+            .forEach(i -> AntimatterModelManager.onItemModelBuild(i, this));
         AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(domain))
-            .forEach(b -> ((IModelProvider) b).onItemModelBuild(b, this));
+            .stream().filter(b -> b.getRegistryName().getNamespace().equals(domain))
+            .forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {
@@ -53,17 +52,12 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
     }
 
     public ItemModelBuilder tex(IItemProvider item, ResourceLocation... textures) {
-        ItemModelBuilder builder = getBuilder(item);
-        builder.parent(new UncheckedModelFile("item/generated"));
-        for (int i = 0; i < textures.length; i++) {
-            builder.texture("layer" + i, textures[i]);
-        }
-        return builder;
+        return tex(item, "minecraft:item/generated", textures);
     }
 
-    public ItemModelBuilder texHandheld(IItemProvider item, ResourceLocation... textures) {
+    public ItemModelBuilder tex(IItemProvider item, String parent, ResourceLocation... textures) {
         ItemModelBuilder builder = getBuilder(item);
-        builder.parent(new UncheckedModelFile("item/handheld"));
+        builder.parent(new UncheckedModelFile(new ResourceLocation(parent)));
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);
         }
@@ -76,5 +70,9 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
 
     public ItemModelBuilder blockItem(IItemProvider item) {
         return withExistingParent(item.asItem().getRegistryName().getPath(), modLoc("block/" + item.asItem().getRegistryName().getPath()));
+    }
+
+    public ModelFile.ExistingModelFile existing(String domain, String path) {
+        return getExistingFile(new ResourceLocation(domain, path));
     }
 }
