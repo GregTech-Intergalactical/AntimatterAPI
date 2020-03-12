@@ -115,7 +115,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getDomain(), getOreType(), 0)};
+        return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType(), 0)};
     }
 
     public static Block.Properties getOreProperties(Block.Properties properties) {

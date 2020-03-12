@@ -132,6 +132,6 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     @Override
     public Texture[] getTextures() {
-        return getMaterial().getSet().getTextures(getDomain(), getType());
+        return getMaterial().getSet().getTextures(getType());
     }
 }
