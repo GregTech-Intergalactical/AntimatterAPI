@@ -23,7 +23,7 @@ public class ComponentElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
-        TileEntity tile = Utils.getTile(machine.getWorld(), pos.asBP());
+        TileEntity tile = Utils.getTile(machine.getWorld(), pos.toImmutable());
         if (tile instanceof IComponent) {
             if (((IComponent) tile).getComponentHandler().isPresent()) {
                 IComponentHandler component = ((IComponent) tile).getComponentHandler().get();
@@ -37,11 +37,11 @@ public class ComponentElement extends StructureElement {
                 return false;
             }
         }
-        BlockState state = machine.getWorld().getBlockState(pos.asBP());
+        BlockState state = machine.getWorld().getBlockState(pos.toImmutable());
         if (state.getBlock() instanceof IAntimatterObject) {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i].getId().equals(((IAntimatterObject) state.getBlock()).getId())) {
-                    result.addState(((IAntimatterObject) state.getBlock()).getId(), pos.asBP(), state);
+                    result.addState(((IAntimatterObject) state.getBlock()).getId(), pos.toImmutable(), state);
                     return true;
                 }
             }

@@ -52,9 +52,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return LOOKUP;
     }
 
-    //TODO validate there are no duplicates
     public Collection<Recipe> getRecipes(boolean filterHidden) {
-        return LOOKUP.values().stream().filter(r -> !(r.isHidden() && filterHidden)).collect(Collectors.toList());
+        if (filterHidden) {
+            return LOOKUP.values().stream().filter(r -> !(r.isHidden())).distinct().collect(Collectors.toList());
+        } else {
+            return LOOKUP.values().stream().distinct().collect(Collectors.toList());
+        }
     }
 
     void add(Recipe recipe) {
@@ -80,7 +83,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public static void dumpHashCollisions() {
         HashMap<Integer, Map.Entry> previousHashes = new HashMap<>();
         System.out.println("DUMP START");
-        for (RecipeMap map : AntimatterAPI.all(RecipeMap.class)) {
+        AntimatterAPI.all(RecipeMap.class).forEach(map -> {
             previousHashes.clear();
             map.getRawMap().entrySet().forEach(e -> {
                 Map.Entry entry = (Map.Entry) e;
@@ -96,7 +99,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 }
                 previousHashes.put(entry.getKey().hashCode(), entry);
             });
-        }
+        });
         System.out.println("DUMP END");
     }
 }

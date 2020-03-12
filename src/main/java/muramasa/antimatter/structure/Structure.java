@@ -55,12 +55,12 @@ public class Structure {
     public StructureResult evaluate(TileEntityMachine tile) {
         StructureResult result = new StructureResult(this);
         Tuple<int3, StructureElement> element;
-        int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.x / 2).back(offset.x).up(offset.y);
+        int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
         int3 working = new int3();
         int elementSize = elements.size();
         for (int i = 0; i < elementSize; i++) {
             element = elements.get(i);
-            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
+            working.setPos(corner).offset(element.getA(), RIGHT, UP, FORWARD);
             if (!element.getB().evaluate(tile, working, result)) {
                 return result;
             }
