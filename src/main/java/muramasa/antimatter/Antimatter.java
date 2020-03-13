@@ -8,6 +8,7 @@ import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
+import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
@@ -16,8 +17,10 @@ import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -81,6 +84,11 @@ public class Antimatter implements IAntimatterRegistrar {
     @SubscribeEvent
     public static void onSoundEventRegistry(final RegistryEvent.Register<SoundEvent> e) {
         e.getRegistry().registerAll(Ref.DRILL, Ref.WRENCH);
+    }
+
+    @SubscribeEvent
+    public static void onRecipeSerializerRegistry(final RegistryEvent.Register<IRecipeSerializer<?>> e) {
+        CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
     }
 
     @SubscribeEvent
