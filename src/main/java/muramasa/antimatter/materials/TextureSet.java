@@ -1,12 +1,15 @@
 package muramasa.antimatter.materials;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 
 public class TextureSet implements IAntimatterObject {
 
     private static int LAST_INTERNAL_ID;
+
+    public static TextureSet NONE = new TextureSet(Ref.ID, "none");
 
     private String domain, id;
     private int internalId;

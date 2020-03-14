@@ -35,7 +35,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 
-import static muramasa.antimatter.materials.TextureSet.DULL;
+import static muramasa.antimatter.materials.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
 
 public class Data {
@@ -47,7 +47,7 @@ public class Data {
 
     public static ItemBasic DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
-    public static Material NULL = new Material(Ref.ID, "null", 0xffffff, DULL);
+    public static Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE);
 
     public static final AntimatterToolType SWORD = new AntimatterToolType(Ref.ID, "sword", 2, 1, 10, 4.0F, -2.4F).setToolClass(MaterialSword.class);
     public static final AntimatterToolType PICKAXE = new AntimatterToolType(Ref.ID, "pickaxe", 1, 2, 10, 1.5F, -2.8F).addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON);

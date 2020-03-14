@@ -94,8 +94,8 @@ public class Material implements IAntimatterObject {
     }
 
     public Material asDust(int meltingPoint, IMaterialTag... tags) {
-        add(DUST, DUST_SMALL, DUST_TINY);
-        add(tags);
+        flags(DUST, DUST_SMALL, DUST_TINY);
+        flags(tags);
         this.meltingPoint = meltingPoint;
         if (meltingPoint > 295) {
 //            asFluid();//TODO disabled due to Sodium having a fluid
@@ -109,11 +109,11 @@ public class Material implements IAntimatterObject {
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
         asDust(meltingPoint, tags);
-        add(INGOT, NUGGET, BLOCK, LIQUID); //TODO: Shall we generate blocks for every solid?
+        flags(INGOT, NUGGET, BLOCK, LIQUID); //TODO: Shall we generate blocks for every solid?
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
-            add(INGOT_HOT);
+            flags(INGOT_HOT);
         }
         return this;
     }
@@ -124,23 +124,23 @@ public class Material implements IAntimatterObject {
 
     public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
         asSolid(meltingPoint, blastFurnaceTemp, tags);
-        add(METAL);
+        flags(METAL);
         return this;
     }
 
     public Material asGemBasic(boolean transparent, IMaterialTag... tags) {
         asDust(tags);
-        add(GEM, BLOCK);
+        flags(GEM, BLOCK);
         if (transparent) {
             this.transparent = true;
-            add(PLATE, LENS, GEM_BRITTLE, GEM_POLISHED);
+            flags(PLATE, LENS, GEM_BRITTLE, GEM_POLISHED);
         }
         return this;
     }
 
     public Material asGem(boolean transparent, IMaterialTag... tags) {
         asGemBasic(transparent, tags);
-        if (!transparent) add(GEM_BRITTLE, GEM_POLISHED); 
+        if (!transparent) flags(GEM_BRITTLE, GEM_POLISHED);
         return this;
     }
 
@@ -149,9 +149,9 @@ public class Material implements IAntimatterObject {
     }
 
     public Material asFluid(int fuelPower) {
-        add(LIQUID);
+        flags(LIQUID);
         this.fuelPower = fuelPower;
-        this.liquidTemperature = meltingPoint > 295 ? meltingPoint : 295;
+        this.liquidTemperature = Math.max(meltingPoint, 295);
         return this;
     }
 
@@ -160,8 +160,8 @@ public class Material implements IAntimatterObject {
     }
 
     public Material asGas(int fuelPower) {
-        add(GAS);
-        this.gasTemperature = meltingPoint > 295 ? meltingPoint : 295;
+        flags(GAS);
+        this.gasTemperature = Math.max(meltingPoint, 295);
         this.fuelPower = fuelPower;
         return this;
     }
@@ -172,7 +172,7 @@ public class Material implements IAntimatterObject {
 
     public Material asPlasma(int fuelPower) {
         asGas(fuelPower);
-        add(PLASMA);
+        flags(PLASMA);
         return this;
     }
 
@@ -182,8 +182,8 @@ public class Material implements IAntimatterObject {
     }
 
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
-        if (has(INGOT)) add(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
-        else add(TOOLS, ROD);
+        if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
+        else flags(TOOLS, ROD);
         this.toolDamage = toolDamage;
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
@@ -211,7 +211,7 @@ public class Material implements IAntimatterObject {
     }
 
     public Material addHandleStat(int durability, float speed) {
-        if (!has(ROD)) add(ROD);
+        if (!has(ROD)) flags(ROD);
         this.isHandle = true;
         this.handleDurability = durability;
         this.handleSpeed = speed;
@@ -230,10 +230,10 @@ public class Material implements IAntimatterObject {
         return true;
     }
 
-    public Material add(IMaterialTag... tags) {
+    public Material flags(IMaterialTag... tags) {
         for (IMaterialTag t : tags) {
-            if (t == ORE) add(ORE_SMALL);
-            if (t == ORE || t == ORE_SMALL || t == ORE_STONE) add(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            if (t == ORE) flags(ORE_SMALL);
+            if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
         return this;
@@ -245,7 +245,7 @@ public class Material implements IAntimatterObject {
         }
     }
 
-    public Material addComposition(ImmutableMap<Material, Integer> stacks) {
+    public Material mats(ImmutableMap<Material, Integer> stacks) {
         stacks.entrySet().forEach(e -> processInto.add(new MaterialStack(e.getKey(), e.getValue())));
         return this;
     }
