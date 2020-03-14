@@ -251,7 +251,7 @@ public class Material implements IAntimatterObject {
     }
     
     public void setChemicalFormula() {
-    	if (element != null) chemicalFormula = element.getDisplayName();
+    	if (element != null) chemicalFormula = element.getElement();
     	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 
