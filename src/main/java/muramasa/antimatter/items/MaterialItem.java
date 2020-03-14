@@ -12,6 +12,7 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -76,7 +77,13 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        if (getMaterial().getChemicalFormula() != null) tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).applyTextStyle(TextFormatting.DARK_AQUA));
+        if (!getMaterial().getChemicalFormula().isEmpty()) {
+            if (Screen.hasShiftDown()) {
+                tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).applyTextStyle(TextFormatting.DARK_AQUA));
+            } else {
+                tooltip.add(new StringTextComponent("Hold Shift to show formula").applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC));
+            }
+        }
         if (type == MaterialType.ROCK) {
             tooltip.add(new TranslationTextComponent("gti.tooltip.occurrence").appendSibling(material.getDisplayName().applyTextStyle(TextFormatting.YELLOW)));
         }
