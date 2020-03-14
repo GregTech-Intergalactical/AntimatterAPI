@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -47,10 +49,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     protected int energyTier;
     protected long maxEnergy;
-
-    //TODO: make hoe_lookup a thing in AntimatterToolType?
-    private static final ImmutableMap<Block, BlockState> HOE_LOOKUP = ImmutableMap.of(Blocks.GRASS_BLOCK, Blocks.FARMLAND.getDefaultState(),
-            Blocks.GRASS_PATH, Blocks.FARMLAND.getDefaultState(), Blocks.DIRT, Blocks.FARMLAND.getDefaultState(), Blocks.COARSE_DIRT, Blocks.DIRT.getDefaultState());
 
     public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
         super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
@@ -198,10 +196,14 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
                 stack.damageItem(isToolEffective ? getType().getUseDurability() : getType().getUseDurability() + 1, entity, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
             }
         }
+        boolean returnValue = true;
         for (Map.Entry<String, IBehaviour<MaterialTool>> e : type.getBehaviours().entrySet()) {
-            e.getValue().onBlockDestroyed(this, stack, world, state, pos, entity);
+            IBehaviour b = e.getValue();
+            if (!(b instanceof IBlockDestroyed)) continue;
+            IBlockDestroyed<MaterialTool> d = (IBlockDestroyed) b;
+            returnValue = d.onBlockDestroyed(this, stack, world, state, pos ,entity);
         }
-        return true;
+        return returnValue;
     }
 
     @Override
@@ -225,44 +227,13 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public ActionResultType onItemUse(ItemUseContext context) {
         ActionResultType result = ActionResultType.PASS;
         for (Map.Entry<String, IBehaviour<MaterialTool>> e : type.getBehaviours().entrySet()) {
-            ActionResultType r = e.getValue().onItemUse(this, context);
+            IBehaviour b = e.getValue();
+            if (!(b instanceof IItemUse)) continue;
+            IItemUse<MaterialTool> u = (IItemUse) b;
+            ActionResultType r = u.onItemUse(this, context);
             if (result != ActionResultType.SUCCESS) result = r;
         }
         return result;
-
-//        else if (type == SHOVEL || type.getToolTypes().contains("shovel")) {
-//            if (context.getFace() == Direction.DOWN) return ActionResultType.PASS;
-//            else {
-//                BlockState changedState = null;
-//                if (state.getBlock() == Blocks.GRASS_BLOCK && world.isAirBlock(pos.up())) {
-//                    world.playSound(player, pos, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-//                    changedState = Blocks.GRASS_PATH.getDefaultState();
-//                }
-//                else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
-//                    world.playEvent(player, 1009, pos, 0);
-//                    changedState = state.with(CampfireBlock.LIT, false);
-//                }
-//                if (changedState != null) {
-//                    world.setBlockState(pos, changedState, 11);
-//                    if (player != null) stack.damageItem(type.getUseDurability(), player, (onBroken) -> onBroken.sendBreakAnimation(context.getHand()));
-//                    return ActionResultType.SUCCESS;
-//                }
-//                else return ActionResultType.PASS;
-//            }
-//        }
-//        else if (type == HOE || type.getToolTypes().contains("hoe")) {
-//            int hook = ForgeEventFactory.onHoeUse(context);
-//            if (hook != 0) return hook > 0 ? ActionResultType.SUCCESS : ActionResultType.FAIL;
-//            if (context.getFace() != Direction.DOWN && world.isAirBlock(pos.up())) {
-//                BlockState blockstate = HOE_LOOKUP.get(world.getBlockState(pos).getBlock());
-//                if (blockstate != null) {
-//                    world.playSound(player, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-//                    world.setBlockState(pos, blockstate, 11);
-//                    if (player != null) damage(stack, type.getAttackDurability(), player, context.getHand());
-//                    return ActionResultType.SUCCESS;
-//                }
-//            }
-//        }
 
         //TODO functionality moved to BlockMachine.onBlockActivated
         //TODO determine if other mods need smart interaction on
@@ -333,10 +304,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         }
         if (amount > 0) stack.setDamage(stack.getDamage() - amount);
         return stack;
-    }
-
-    public static void damage(ItemStack stack, int damage, PlayerEntity player, Hand hand) {
-        stack.damageItem(damage, player, (p) -> p.sendBreakAnimation(hand));
     }
 
     protected int damage(ItemStack stack, int amount) {
