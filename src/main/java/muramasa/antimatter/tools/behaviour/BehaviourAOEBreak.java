@@ -1,6 +1,7 @@
 package muramasa.antimatter.tools.behaviour;
 
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tools.base.MaterialTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -10,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BehaviourAOEBreak implements IBehaviour<MaterialTool> {
+public class BehaviourAOEBreak implements IBlockDestroyed<MaterialTool> {
 
     protected int column, row, depth;
 
