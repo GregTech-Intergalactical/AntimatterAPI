@@ -29,7 +29,7 @@ public class Material implements IAntimatterObject {
 
     /** Element Members **/
     private Element element;
-    private String chemicalFormula;
+    private String chemicalFormula = "";
 
     /** Solid Members **/
     private int meltingPoint, blastFurnaceTemp;
