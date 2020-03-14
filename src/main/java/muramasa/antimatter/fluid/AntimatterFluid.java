@@ -23,7 +23,7 @@ public class AntimatterFluid extends EmptyFluid {
 
     @Override
     protected FluidAttributes createAttributes() {
-        FluidAttributes.Builder builder = FluidAttributes.builder(material.getSet().getTexture(material.getDomain(), type, 0), material.getSet().getTexture(material.getDomain(), type, 0)).color(material.getRGB());
+        FluidAttributes.Builder builder = FluidAttributes.builder(material.getSet().getTexture(type, 0), material.getSet().getTexture(type, 0)).color(material.getRGB());
         if (type == LIQUID) {
             return builder.viscosity(1000).temperature(material.getLiquidTemperature()).build(this);
         } else if (type == GAS) {
