@@ -245,14 +245,8 @@ public class Material implements IAntimatterObject {
         }
     }
 
-    //TODO fix this...
-    //TODO rename to mats
-    public Material add(Object... objects) {
-        if (objects.length % 2 == 0) {
-            for (int i = 0; i < objects.length; i += 2) {
-                processInto.add(new MaterialStack(((Material) objects[i]), (int) objects[i + 1]));
-            }
-        }
+    public Material addComposition(ImmutableMap<Material, Integer> stacks) {
+        stacks.entrySet().forEach(e -> processInto.add(new MaterialStack(e.getKey(), e.getValue())));
         return this;
     }
     
