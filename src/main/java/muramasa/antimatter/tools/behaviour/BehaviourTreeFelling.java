@@ -2,6 +2,7 @@ package muramasa.antimatter.tools.behaviour;
 
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.tools.base.MaterialTool;
 import muramasa.antimatter.util.Utils;
@@ -16,7 +17,7 @@ import net.minecraft.world.World;
 import static muramasa.antimatter.Data.AXE;
 import static muramasa.antimatter.Data.CHAINSAW;
 
-public class BehaviourTreeFelling implements IBehaviour<MaterialTool> {
+public class BehaviourTreeFelling implements IBlockDestroyed<MaterialTool> {
 
     @Override
     public String getId() {

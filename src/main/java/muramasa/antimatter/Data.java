@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
@@ -24,11 +25,18 @@ import muramasa.antimatter.tileentities.multi.TileEntityHatch;
 import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tools.base.AntimatterToolType;
 import muramasa.antimatter.tools.base.MaterialSword;
+import muramasa.antimatter.tools.base.MaterialTool;
 import muramasa.antimatter.tools.behaviour.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.UseAction;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -127,7 +135,30 @@ public class Data {
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         WRENCH.addBehaviour(new BehaviourBlockRotate());
         PLUNGER.addBehaviour(new BehaviourWaterlogToggle());
+        IItemUse<MaterialTool> shovelBehaviour = (instance, c) -> {
+            if (c.getFace() == Direction.DOWN) return ActionResultType.PASS;
+            BlockState state = c.getWorld().getBlockState(c.getPos());
+            BlockState changedState = null;
+            if (state.getBlock() == Blocks.GRASS_BLOCK && c.getWorld().isAirBlock(c.getPos().up())) {
+                c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                changedState = Blocks.GRASS_PATH.getDefaultState();
+            }
+            else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
+                c.getWorld().playEvent(c.getPlayer(), 1009, c.getPos(), 0);
+                changedState = state.with(CampfireBlock.LIT, false);
+            }
+            if (changedState != null) {
+                c.getWorld().setBlockState(c.getPos(), changedState, 11);
+                c.getItem().damageItem(instance.getType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+                return ActionResultType.SUCCESS;
+            }
+            else return ActionResultType.PASS;
+        };
 
-        AntimatterAPI.all(AntimatterToolType.class).forEach(t -> t.addBehaviour(new BehaviourPoweredDebug()));
+        AntimatterAPI.all(AntimatterToolType.class).stream().filter(t -> t.getToolTypes().contains("shovel")).forEach(t -> t.addBehaviour(shovelBehaviour));
+
+        AntimatterAPI.all(AntimatterToolType.class).stream().filter(t -> t.getToolTypes().contains("hoe")).forEach(t -> t.addBehaviour(new BehaviourBlockTilling()));
+        AntimatterAPI.all(AntimatterToolType.class).stream().filter(t -> t.isPowered()).forEach(t -> t.addBehaviour(new BehaviourPoweredDebug()));
+
     }
 }

@@ -2,6 +2,7 @@ package muramasa.antimatter.tools.behaviour;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tools.base.MaterialTool;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -9,7 +10,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 
-public class BehaviourPoweredDebug implements IBehaviour<MaterialTool> {
+public class BehaviourPoweredDebug implements IItemUse<MaterialTool> {
 
     @Override
     public String getId() {
