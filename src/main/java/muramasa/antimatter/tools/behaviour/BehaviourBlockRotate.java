@@ -1,13 +1,14 @@
 package muramasa.antimatter.tools.behaviour;
 
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tools.base.MaterialTool;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Rotation;
 
-public class BehaviourBlockRotate implements IBehaviour<MaterialTool> {
+public class BehaviourBlockRotate implements IItemUse<MaterialTool> {
 
     @Override
     public String getId() {

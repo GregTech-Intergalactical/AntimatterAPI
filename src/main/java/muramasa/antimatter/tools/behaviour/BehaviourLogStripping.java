@@ -3,6 +3,7 @@ package muramasa.antimatter.tools.behaviour;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IBehaviour;
+import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tools.base.MaterialTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -13,9 +14,9 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 
-public class BehaviourLogStripping implements IBehaviour<MaterialTool> {
+public class BehaviourLogStripping implements IItemUse<MaterialTool> {
 
-    public static final Object2ObjectOpenHashMap<BlockState, BlockState> AXE_BLOCK_STRIPPING_MAP = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectOpenHashMap<BlockState, BlockState> STRIPPING_MAP = new Object2ObjectOpenHashMap<>();
 
     static {
         new ImmutableMap.Builder<Block, Block>().put(Blocks.OAK_WOOD, Blocks.STRIPPED_OAK_WOOD).put(Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG).put(Blocks.DARK_OAK_WOOD, Blocks.STRIPPED_DARK_OAK_WOOD)
@@ -33,7 +34,7 @@ public class BehaviourLogStripping implements IBehaviour<MaterialTool> {
     @Override
     public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
-        BlockState stripped = AXE_BLOCK_STRIPPING_MAP.get(state);
+        BlockState stripped = STRIPPING_MAP.get(state);
         if (stripped != null) {
             if (state.has(RotatedPillarBlock.AXIS) && stripped.has(RotatedPillarBlock.AXIS)) {
                 stripped = stripped.with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
@@ -51,6 +52,6 @@ public class BehaviourLogStripping implements IBehaviour<MaterialTool> {
     }
 
     public static void addStrippedState(BlockState from, BlockState to) {
-        AXE_BLOCK_STRIPPING_MAP.put(from, to);
+        STRIPPING_MAP.put(from, to);
     }
 }
