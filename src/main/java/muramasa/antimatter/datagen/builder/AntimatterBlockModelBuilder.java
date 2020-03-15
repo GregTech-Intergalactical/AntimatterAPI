@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
@@ -120,6 +121,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         JsonObject texture = new JsonObject();
         textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
         model.add("textures", texture);
+        model.add("uvlock", new JsonPrimitive(true));
         return model;
     }
 

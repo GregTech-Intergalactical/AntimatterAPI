@@ -72,10 +72,10 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        info.add("Config: " + Arrays.toString(config.getConfig()));
+        info.add("Config: " + Arrays.toString(getConfig(state, world, new BlockPos.Mutable(pos), pos).getConfig()));
         info.add("Model Index: " + config.getModelIndex());
         r.setSeed(getPositionRandom(null, pos));
-        info.add("Rand Index: " + r.nextInt(shapes.size()));
+        info.add("Rand Index: " + (shapes.size() > 1 ? r.nextInt(shapes.size()) : -1));
         return info;
     }
 }

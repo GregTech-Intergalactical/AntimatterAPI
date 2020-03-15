@@ -5,7 +5,9 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.IInfoProvider;
 import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.PipeType;
@@ -14,16 +16,20 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static net.minecraft.util.Direction.*;
 
 public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
@@ -146,7 +152,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
         return VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
     }
 
-    public static int getPipeID(int config, PipeSize size, PipeType type, int cull) {
+    public int getPipeID(int config, int cull) {
         return ((size.ordinal() + 1) * 100) + ((type.getModelId() + 1) * 1000) + (cull == 0 ? 0 : 10000) + config;
     }
 
@@ -159,10 +165,10 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
             adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
             if (canConnect(world, adjState, mut)) {
                 ct += 1 << s;
-                if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
+                //if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
             }
         }
-        return config.set(new int[]{getPipeID(ct, getSize(), getType(), cull > 0 ? 0 : 1)});
+        return config.set(new int[]{getPipeID(ct, /*cull > 0 ? 0 : 1*/0)});
     }
 
     @Override
@@ -181,22 +187,107 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
     }
 
     @Override
+    public ItemModelBuilder onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        return prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getType().getSide()[0]).texture("overlay", getType().getFace(getSize()));
+    }
+
+    @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-//        JsonArray models = new JsonArray();
-//        for (PipeShape shape : PipeShape.VALUES) {
-//            JsonObject o = new JsonObject();
-//            o.addProperty("parent", Ref.ID + ":block/pipe/" + getSize().getId() + "/" + shape.getId());
-//            models.add(o);
-//        }
-//
-//        prov.simpleBlock(this, prov.getBuilder(this)
-//            //.loader(AntimatterModelLoader.INSTANCE)
-//            .property("models", models)
-//            //.property("models", "parent", Ref.ID + ":block/pipe/" + getSize().getId() + "/line_inv")
-//            //.texture("0", getType().getSide()).texture("1", getType().getFace(getSize()))
-//        );
-        //AntimatterBlockModelBuilder b = prov.getBuilder(block);
-        //b.model
+        prov.state(block, getPipeConfig(prov.getBuilder(block)));
+    }
+
+    public String getModelLoc(String shape, int cull) {
+        return "antimatter:block/pipe/" + getSize().getId() + "/" + shape + (cull == 0 ? "" : (shape.equals("base") ? "" : "_culled"));
+    }
+
+    public AntimatterBlockModelBuilder getPipeConfig(AntimatterBlockModelBuilder builder) {
+        builder.model(getModelLoc("base", 0), getType().getSide());
+
+        //Default Shape (0 Connections)
+        builder.config(getPipeID(0, 0), getModelLoc("base", 0), c -> c.tex(getType().getSide()));
+
+        //Single Shapes (1 Connections)
+        builder.config(getPipeID(1, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(DOWN));
+        builder.config(getPipeID(2, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(UP));
+        builder.config(getPipeID(4, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(8, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
+        builder.config(getPipeID(16, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(WEST));
+        builder.config(getPipeID(32, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(EAST));
+
+        //Line Shapes (2 Connections)
+        builder.config(getPipeID(3, 0), getModelLoc("line", 0), c -> c.tex(getType().getSide()).rot(UP));
+        builder.config(getPipeID(12, 0), getModelLoc("line", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(48, 0), getModelLoc("line", 0), c -> c.tex(getType().getSide()).rot(WEST));
+
+        //Elbow Shapes (2 Connections)
+        builder.config(getPipeID(5, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(WEST, UP, EAST));
+        builder.config(getPipeID(6, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN, EAST));
+        builder.config(getPipeID(9, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(EAST, UP, EAST));
+        builder.config(getPipeID(10, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, EAST));
+        builder.config(getPipeID(17, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN, WEST));
+        builder.config(getPipeID(18, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, EAST));
+        builder.config(getPipeID(20, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(WEST));
+        builder.config(getPipeID(24, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
+        builder.config(getPipeID(33, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(NORTH, UP, EAST));
+        builder.config(getPipeID(34, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN, EAST));
+        builder.config(getPipeID(36, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(40, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(EAST));
+
+        //Side Shapes (3 Connections)
+        builder.config(getPipeID(7, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(SOUTH, UP));
+        builder.config(getPipeID(11, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(NORTH, UP));
+        builder.config(getPipeID(13, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(DOWN, DOWN));
+        builder.config(getPipeID(14, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(19, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST, UP));
+        builder.config(getPipeID(28, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN, EAST));
+        builder.config(getPipeID(35, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(WEST, UP));
+        builder.config(getPipeID(44, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, WEST));
+        builder.config(getPipeID(49, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, DOWN));
+        builder.config(getPipeID(50, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST));
+        builder.config(getPipeID(52, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN, WEST));
+        builder.config(getPipeID(56, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, WEST));
+
+        //Corner Shapes (3 Connections)
+        builder.config(getPipeID(21, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN));
+        builder.config(getPipeID(22, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(WEST));
+        builder.config(getPipeID(25, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN));
+        builder.config(getPipeID(26, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
+        builder.config(getPipeID(41, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN));
+        builder.config(getPipeID(42, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(EAST));
+        builder.config(getPipeID(37, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN));
+        builder.config(getPipeID(38, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()));
+
+        //Arrow Shapes (4 Connections)
+        builder.config(getPipeID(23, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN, EAST));
+        builder.config(getPipeID(27, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, EAST));
+        builder.config(getPipeID(29, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN));
+        builder.config(getPipeID(30, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(WEST));
+        builder.config(getPipeID(39, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, WEST));
+        builder.config(getPipeID(43, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, WEST));
+        builder.config(getPipeID(45, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN));
+        builder.config(getPipeID(46, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(EAST));
+        builder.config(getPipeID(53, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(DOWN));
+        builder.config(getPipeID(54, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(57, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN));
+        builder.config(getPipeID(58, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
+
+        //Cross Shapes (4 Connections)
+        builder.config(getPipeID(15, 0), getModelLoc("cross", 0), c -> c.tex(getType().getSide()).rot(WEST, UP));
+        builder.config(getPipeID(51, 0), getModelLoc("cross", 0), c -> c.tex(getType().getSide()).rot(UP));
+        builder.config(getPipeID(60, 0), getModelLoc("cross", 0), c -> c.tex(getType().getSide()));
+
+        //Five Shapes (5 Connections)
+        builder.config(getPipeID(31, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(EAST, UP));
+        builder.config(getPipeID(47, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(WEST, UP));
+        builder.config(getPipeID(55, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(SOUTH, UP));
+        builder.config(getPipeID(59, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(NORTH, UP));
+        builder.config(getPipeID(61, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(DOWN, DOWN));
+        builder.config(getPipeID(62, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()));
+
+        //All Shapes (6 Connections)
+        builder.config(getPipeID(63, 0), getModelLoc("all", 0), c -> c.tex(getType().getSide()));
+
+        return builder;
     }
 
     @Override

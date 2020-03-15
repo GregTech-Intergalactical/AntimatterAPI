@@ -36,10 +36,6 @@ public enum PipeSize implements IAntimatterObject {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
-    public String getLoc(String shape, int cull) {
-        return "block/pipe/" + getId() + "/" + shape + (cull == 0 ? "" : (shape.equals("base") ? "" : "_culled"));
-    }
-
     public ITextComponent getDisplayName() {
         return new TranslationTextComponent("pipe." + getId());
     }
