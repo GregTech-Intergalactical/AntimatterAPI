@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -50,7 +51,14 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
         if (config == null || config.isInvalid()) return bakedDefault.getQuads(state, side, rand, data);
-        return config.getQuads(quads, bakedConfigs, state, side, rand, data);
+
+        if (config.getConfig()[0] == 1400) {
+            return ModelUtils.trans(bakedConfigs.get(1428).getQuads(state, side, rand, data), new Direction[] {
+                Direction.WEST
+            });
+        } else {
+            return config.getQuads(quads, bakedConfigs, state, side, rand, data);
+        }
     }
 
     @Override
