@@ -5,8 +5,7 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -16,8 +15,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
+import net.minecraftforge.common.model.TransformationHelper;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -27,23 +28,14 @@ public class ModelUtils {
 
     private static TextureAtlasSprite ERROR_SPRITE = null;
 
-    public static Matrix4f[] FACING_TO_MATRIX = new Matrix4f[] {
-        getMat(null, new Quaternion(new Vector3f(1, 0, 0), 4.7124f, true)),
-        getMat(null, new Quaternion(new Vector3f(1, 0, 0), 1.5708f, true)),
-        getMat(null, new Quaternion(new Vector3f(0, 1, 0), 0f, true)),
-        getMat(null, new Quaternion(new Vector3f(0, 1, 0), 3.1416f, true)),
-        getMat(null, new Quaternion(new Vector3f(0, 1, 0), 1.5708f, true)),
-        getMat(null, new Quaternion(new Vector3f(0, 1, 0), 4.7124f, true)),
+    public static TransformationMatrix[] FACING_TO_MATRIX = new TransformationMatrix[] {
+        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(4.7124f, 0, 0), false), null, null),
+        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(1.5708f, 0, 0), false), null, null),
+        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 0f, 0), false), null, null),
+        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 3.1416f, 0), false), null, null),
+        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 1.5708f, 0), false), null, null),
+        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 4.7124f, 0), false), null, null)
     };
-
-    //        for (BakedQuad quad : original.getQuads(state, side, rand)) {
-    //            BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
-    //            TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
-    //
-    //            quad.pipe(transformer);
-    //
-    //            quads.add(builder.build());
-    //        }
 
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
@@ -90,11 +82,29 @@ public class ModelUtils {
         return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
-    public static Matrix4f getMat(@Nullable Vector3f trans, Quaternion rot) {
-        Matrix4f mat = new Matrix4f();
-        if (trans != null) mat.translate(trans);
-        mat.mul(rot);
-        //mat.func_226591_a_(); //Identity?
-        return mat;
+    public static TransformationMatrix getTransForDir(Direction dir) {
+        if (dir.getAxis() == Direction.Axis.Y) {
+            float r = dir == Direction.DOWN ? 4.7124f : 1.5708f;
+            return new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(r, 0, 0), false), null, null);
+        } else {
+            double r = Math.PI * (360 - dir.getOpposite().getHorizontalIndex() * 90) / 180d;
+            return new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, (float) r, 0), false), null, null);
+        }
+    }
+
+    public static List<BakedQuad> trans(List<BakedQuad> quads, Direction[] rotations) {
+        if (rotations.length == 0) return quads;
+        TransformationMatrix trans = FACING_TO_MATRIX[rotations[0].getIndex()];
+        for (int i = 1; i < rotations.length; i++) {
+            trans = trans.compose(FACING_TO_MATRIX[rotations[0].getIndex()]);
+        }
+        List<BakedQuad> newQuads = new ArrayList<>();
+        for (BakedQuad quad : quads) {
+            BakedQuadBuilder builder = new BakedQuadBuilder(quad.func_187508_a());
+            TRSRTransformer transformer = new TRSRTransformer(builder, trans.blockCenterToCorner());
+            quad.pipe(transformer);
+            newQuads.add(builder.build());
+        }
+        return newQuads;
     }
 }
