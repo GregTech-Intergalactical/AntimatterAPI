@@ -128,44 +128,44 @@ public class Recipe {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         if (itemsInput != null) {
-            builder.append("\nInput Items: {");
+            builder.append("\nInput Items: { ");
             for (int i = 0; i < itemsInput.length; i++) {
-                builder.append(itemsInput[i].getDisplayName() + " x" + itemsInput[i].getCount());
+                builder.append(itemsInput[i].getDisplayName().getFormattedText() + " x" + itemsInput[i].getCount());
                 if (i != itemsInput.length - 1) builder.append(", ");
             }
-            builder.append("}\n");
+            builder.append(" }\n");
         }
         if (itemsOutput != null) {
-            builder.append("Output Items: {");
+            builder.append("Output Items: { ");
             for (int i = 0; i < itemsOutput.length; i++) {
-                builder.append(itemsOutput[i].getDisplayName() + " x" + itemsOutput[i].getCount());
+                builder.append(itemsOutput[i].getDisplayName().getFormattedText() + " x" + itemsOutput[i].getCount());
                 if (i != itemsOutput.length - 1) builder.append(", ");
             }
-            builder.append("}\n");
+            builder.append(" }\n");
         }
         if (fluidsInput != null) {
-            builder.append("Input Fluids: {");
+            builder.append("Input Fluids: { ");
             for (int i = 0; i < fluidsInput.length; i++) {
-                builder.append(fluidsInput[i].getFluid().getRegistryName() + " x" + fluidsInput[i].getAmount());
+                builder.append(fluidsInput[i].getFluid().getRegistryName() + ": " + fluidsInput[i].getAmount()  + "mb");
                 if (i != fluidsInput.length - 1) builder.append(", ");
             }
-            builder.append("}\n");
+            builder.append(" }\n");
         }
         if (fluidsOutput != null) {
-            builder.append("Output Fluids: {");
+            builder.append("Output Fluids: { ");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(fluidsOutput[i].getFluid().getRegistryName() + " x" + fluidsOutput[i].getAmount());
+                builder.append(fluidsOutput[i].getFluid().getRegistryName() + ": " + fluidsOutput[i].getAmount() + "mb");
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
-            builder.append("}\n");
+            builder.append(" }\n");
         }
         if (chances != null) {
-            builder.append("Chances: {");
+            builder.append("Chances: { ");
             for (int i = 0; i < chances.length; i++) {
                 builder.append(chances[i] + "%");
                 if (i != chances.length - 1) builder.append(", ");
             }
-            builder.append("}\n");
+            builder.append(" }\n");
         }
         return builder.toString();
     }

@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
@@ -191,7 +192,7 @@ public class Utils {
     public static boolean areFluidsValid(FluidStack... fluids) {
         if (fluids == null || fluids.length == 0) return false;
         for (int i = 0; i < fluids.length; i++) {
-            if (fluids[i] == null) return false;
+            if (fluids[i].getRawFluid() == Fluids.EMPTY) return false;
         }
         return true;
     }
