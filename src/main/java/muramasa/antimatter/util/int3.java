@@ -7,17 +7,12 @@ import net.minecraft.util.math.BlockPos;
  * Created By Muramasa -  https://github.com/Muramasa-
  * Allows easily stepping in directions given a Direction
  */
-public class int3 {
+public class int3 extends BlockPos.Mutable {
 
-    //TODO change this class to wrap a MutableBlockPos
-
-    public int x, y, z;
     public Direction side = Direction.NORTH; //Used for moving in a direction
 
     public int3() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+
     }
 
     public int3(int x, int y, int z) {
@@ -26,45 +21,11 @@ public class int3 {
         this.z = z;
     }
 
-    public int3(int3 pos) {
-        this.x = pos.x;
-        this.y = pos.y;
-        this.z = pos.z;
-    }
-
-    public int3(int3 pos, Direction side) {
-        this.x = pos.x;
-        this.y = pos.y;
-        this.z = pos.z;
-        this.side = side;
-    }
-
-    public int3(BlockPos pos) {
-        this.x = pos.getX();
-        this.y = pos.getY();
-        this.z = pos.getZ();
-    }
-
     public int3(BlockPos pos, Direction side) {
         this.x = pos.getX();
         this.y = pos.getY();
         this.z = pos.getZ();
         this.side = side;
-    }
-
-    public int3 set(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        return this;
-    }
-
-    public int3 set(int3 pos) {
-        this.x = pos.x;
-        this.y = pos.y;
-        this.z = pos.z;
-        this.side = pos.side;
-        return this;
     }
 
     public int3 set(BlockPos pos) {
@@ -76,34 +37,6 @@ public class int3 {
 
     public void set(Direction side) {
         this.side = side;
-    }
-
-    public int3 add(int x, int y, int z) {
-        this.x += x;
-        this.y += y;
-        this.z += z;
-        return this;
-    }
-
-    public int3 add(int3 pos) {
-        this.x += pos.x;
-        this.y += pos.y;
-        this.z += pos.z;
-        return this;
-    }
-
-    public int3 sub(int x, int y, int z) {
-        this.x -= x;
-        this.y -= y;
-        this.z -= z;
-        return this;
-    }
-
-    public int3 sub(int3 pos) {
-        this.x -= pos.x;
-        this.y -= pos.y;
-        this.z -= pos.z;
-        return this;
     }
 
     public int3 right(int n) {
@@ -130,9 +63,20 @@ public class int3 {
         return offset(n, Direction.DOWN);
     }
 
+    @Override
+    public BlockPos offset(Direction side) {
+        return offset(1, side);
+    }
+
+    @Override
+    public BlockPos offset(Direction side, int n) {
+        return offset(n, side);
+    }
+
     public int3 offset(int n, Direction side) {
         if (n == 0 || side == null) return this;
-        return set(x + side.getXOffset() * n, y + side.getYOffset() * n, z + side.getZOffset() * n);
+        setPos(x + side.getXOffset() * n, y + side.getYOffset() * n, z + side.getZOffset() * n);
+        return this;
     }
 
     public int3 offset(int2 n, Dir... directions) {
@@ -159,10 +103,6 @@ public class int3 {
             offset(n.z, facings[2]);
         }
         return this;
-    }
-
-    public BlockPos asBP() {
-        return new BlockPos(x, y, z);
     }
 
     @Override

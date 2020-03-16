@@ -4,7 +4,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.proxy.ClientHandler;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -48,7 +48,7 @@ public class AntimatterModelManager {
         IItemModelOverride override = ITEM_OVERRIDES.get(item.asItem().getRegistryName());
         if (override != null) builder = override.apply(item.asItem(), prov);
         if (builder == null && item instanceof IModelProvider) builder = ((IModelProvider) item).onItemModelBuild(item, prov);
-        if (builder != null) ClientHandler.ANTIMATTER_RESOURCES.getPack().addModel(item.asItem().getRegistryName().getNamespace(), "item", item.asItem().getRegistryName().getPath(), builder);
+        if (builder != null) DynamicResourcePack.addItem(item.asItem().getRegistryName(), builder);
     }
 
     public static void onBlockModelBuild(IModelProvider b, AntimatterBlockStateProvider prov) {

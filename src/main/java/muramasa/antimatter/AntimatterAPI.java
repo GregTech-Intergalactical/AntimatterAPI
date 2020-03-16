@@ -103,8 +103,7 @@ public final class AntimatterAPI {
     }
 
     public static void onEvent(RegistrationEvent event, Runnable runnable) {
-        if (!CALLBACKS.containsKey(event.name())) CALLBACKS.put(event.name(), new ArrayList<>());
-        CALLBACKS.get(event.name()).add(runnable);
+        CALLBACKS.computeIfAbsent(event.name(), k -> new ArrayList<>()).add(runnable);
     }
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
