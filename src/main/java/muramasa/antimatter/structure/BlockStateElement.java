@@ -19,9 +19,9 @@ public class BlockStateElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
-        BlockState state = machine.getWorld().getBlockState(pos.asBP());
-        if (predicate.evaluate(machine.getWorld(), pos.asBP(), state)) {
-            result.addState(elementId, pos.asBP(), state);
+        BlockState state = machine.getWorld().getBlockState(pos);
+        if (predicate.evaluate(machine.getWorld(), pos, state)) {
+            result.addState(elementId, pos, state);
             return true;
         }
         result.withError("No valid state found @" + pos);

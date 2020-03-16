@@ -59,9 +59,9 @@ public class StructureBuilder {
         ArrayList<Tuple<int3, StructureElement>> elements = new ArrayList<>();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
-        for (int y = 0; y < size.y; y++) {
-            for (int x = 0; x < size.x; x++) {
-                for (int z = 0; z < size.z; z++) {
+        for (int y = 0; y < size.getY(); y++) {
+            for (int x = 0; x < size.getX(); x++) {
+                for (int z = 0; z < size.getZ(); z++) {
                     e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     //TODO log this and return null;
