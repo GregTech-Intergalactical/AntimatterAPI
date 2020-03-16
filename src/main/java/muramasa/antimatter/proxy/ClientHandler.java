@@ -32,8 +32,6 @@ public class ClientHandler implements IProxyHandler {
 
     private static Minecraft MC = Minecraft.getInstance();
 
-    public static DynamicPackFinder ANTIMATTER_RESOURCES = new DynamicPackFinder("antimatter_resources", true);
-
     public ClientHandler() {
 
     }
@@ -65,7 +63,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        Minecraft.getInstance().getResourcePackList().addPackFinder(ANTIMATTER_RESOURCES);
+        if (Minecraft.getInstance() != null) Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", true));
         ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER.getLoc(), AntimatterModelManager.LOADER);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));

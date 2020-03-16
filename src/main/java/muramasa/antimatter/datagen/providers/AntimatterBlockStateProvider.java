@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class AntimatterBlockStateProvider extends BlockStateProvider {
 
@@ -52,6 +53,10 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
     @Override
     public BlockModelProvider models() {
         return blockModelProvider;
+    }
+
+    public Map<Block, IGeneratedBlockstate> getRegisteredBlocks() {
+        return registeredBlocks;
     }
 
     public void processBlocks(String domain) {
