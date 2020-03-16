@@ -3,6 +3,7 @@ package muramasa.antimatter.recipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
+import muramasa.antimatter.machines.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -52,17 +53,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return LOOKUP;
     }
 
-    //TODO validate there are no duplicates
     public Collection<Recipe> getRecipes(boolean filterHidden) {
-        return LOOKUP.values().stream().filter(r -> !(r.isHidden() && filterHidden)).collect(Collectors.toList());
+        if (filterHidden) return LOOKUP.values().stream().filter(r -> !r.isHidden()).collect(Collectors.toList());
+        return LOOKUP.values().stream().collect(Collectors.toList());
     }
 
     void add(Recipe recipe) {
         if (LOOKUP.containsKey(new RecipeInputFlat(recipe.getInputItems(), recipe.getInputFluids()))) {
-            Utils.printError("Duplicate recipe detected, skipping!: " + recipe);
-            return;
+            Utils.onInvalidData("Duplicate recipe detected!: " + recipe);
         }
-        LOOKUP.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags()), recipe);
+        else LOOKUP.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags()), recipe);
     }
 
     @Nullable
@@ -70,13 +70,22 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return find(itemHandler != null ? itemHandler.getInputs() : null, fluidHandler != null ? fluidHandler.getInputs() : null);
     }
 
-    //TODO take into account machine tier
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
         return LOOKUP.get(new RecipeInput(items, fluids));
     }
 
+    public Recipe find(long tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
+        Recipe r = find(items, fluids);
+        return r.getPower() <= tier ? r : null;
+    }
+
+    public Recipe find(Tier tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
+        return find(tier.getVoltage(), items, fluids);
+    }
+
+    /** Test **/
     public static void dumpHashCollisions() {
         HashMap<Integer, Map.Entry> previousHashes = new HashMap<>();
         System.out.println("DUMP START");
