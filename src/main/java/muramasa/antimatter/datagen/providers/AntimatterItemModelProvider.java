@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.providers;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
+import muramasa.antimatter.datagen.IAntimatterProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -14,7 +15,7 @@ import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 
-public class AntimatterItemModelProvider extends ItemModelProvider {
+public class AntimatterItemModelProvider extends ItemModelProvider implements IAntimatterProvider {
 
     protected String providerDomain, providerName;
 
@@ -34,8 +35,13 @@ public class AntimatterItemModelProvider extends ItemModelProvider {
     }
 
     @Override
-    protected void registerModels() {
+    public void run() {
         processItemModels(providerDomain);
+    }
+
+    @Override
+    protected void registerModels() {
+        run();
     }
 
     public void processItemModels(String domain) {

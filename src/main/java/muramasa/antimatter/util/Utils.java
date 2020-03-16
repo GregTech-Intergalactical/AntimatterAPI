@@ -470,19 +470,19 @@ public class Utils {
 
         if (side == null) {
             center = origin;
-            xRadius = area.x;
-            yRadius = area.y;
-            zRadius = area.z;
+            xRadius = area.getX();
+            yRadius = area.getY();
+            zRadius = area.getZ();
         } else {
-            center = origin.offset(side.getOpposite(), area.z);
+            center = origin.offset(side.getOpposite(), area.getZ());
             if (side.getAxis() == Direction.Axis.Y) {
-                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.y : area.x;
-                yRadius = area.z;
-                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.y : area.x;
+                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.getY() : area.getX();
+                yRadius = area.getZ();
+                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.getY() : area.getX();
             } else {
-                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.z : area.x;
-                yRadius = area.y;
-                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.z : area.x;
+                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.getZ() : area.getX();
+                yRadius = area.getY();
+                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.getZ() : area.getX();
             }
         }
 

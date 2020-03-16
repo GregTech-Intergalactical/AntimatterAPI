@@ -53,8 +53,8 @@ public TransformationMatrix getRotation(Direction dir) {
 
 public IModelTransform getModelTransform(IModelTransform base, Direction[] rotations) {
     if (rotations == null || rotations.length == 0) return base;
-    TransformationMatrix mat = base.getRotation().blockCornerToCenter();
-    for (int i = 0; i < rotations.length; i++) {
+    TransformationMatrix mat = TransformationMatrix.identity().blockCenterToCorner();
+    for (int i = 0; i < 2; i++) {
         mat = mat.compose(getRotation(rotations[i]));
     }
     return new SimpleModelTransform(mat);
