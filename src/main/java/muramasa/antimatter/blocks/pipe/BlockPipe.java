@@ -24,7 +24,6 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
@@ -188,8 +187,8 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
     }
 
     @Override
-    public ItemModelBuilder onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        return prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getType().getSide()).texture("overlay", getType().getFace(getSize()));
+    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getType().getSide()).texture("overlay", getType().getFace(getSize()));
     }
 
     @Override

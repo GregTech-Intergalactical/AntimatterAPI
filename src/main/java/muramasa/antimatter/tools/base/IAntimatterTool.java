@@ -12,7 +12,6 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IItemProvider;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -53,7 +52,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return textures.toArray(new Texture[textures.size()]);
     }
 
-    @Override default ItemModelBuilder onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        return prov.tex(item, "minecraft:item/handheld", getTextures());
+    @Override default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        prov.tex(item, "minecraft:item/handheld", getTextures());
     }
 }
