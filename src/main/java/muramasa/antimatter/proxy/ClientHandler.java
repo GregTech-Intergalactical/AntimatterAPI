@@ -3,7 +3,7 @@ package muramasa.antimatter.proxy;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.blocks.BlockMachine;
 import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
@@ -62,7 +62,8 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER.getLoc(), AntimatterModelManager.LOADER);
+        ModelLoaderRegistry.registerLoader(AntimatterModelLoader.MAIN.getLoc(), AntimatterModelLoader.MAIN);
+        ModelLoaderRegistry.registerLoader(AntimatterModelLoader.DYNAMIC.getLoc(), AntimatterModelLoader.DYNAMIC);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
         AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));

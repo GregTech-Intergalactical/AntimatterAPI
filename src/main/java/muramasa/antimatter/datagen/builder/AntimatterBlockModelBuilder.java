@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader;
-import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.ResourceLocation;
@@ -47,38 +46,34 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property(property, propertyObject);
     }
 
-    public AntimatterBlockModelBuilder loader() {
-        return loader(AntimatterModelManager.LOADER);
-    }
-
     public AntimatterBlockModelBuilder loader(AntimatterModelLoader loader) {
         this.loader = loader.getLoc();
         return this;
     }
 
     public AntimatterBlockModelBuilder model(String parent, String... textures) {
-        loader();
+        loader(AntimatterModelLoader.MAIN);
         return property("model", getModelObject(parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Texture... textures) {
-        loader();
+        loader(AntimatterModelLoader.MAIN);
         return property("model", getModelObject(parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Function<ImmutableMap.Builder<String, Texture>, ImmutableMap.Builder<String, Texture>> func) {
-        loader();
+        loader(AntimatterModelLoader.MAIN);
         return property("model", getModelObject(parent, buildTextures(func.apply(new ImmutableMap.Builder<>()).build())));
     }
 
     public AntimatterBlockModelBuilder model(String parent, ImmutableMap<String, Texture> map) {
-        loader();
+        loader(AntimatterModelLoader.MAIN);
         return property("model", getModelObject(parent, buildTextures(map)));
     }
 
     public AntimatterBlockModelBuilder config(int id, String model, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunction) {
         DynamicConfigBuilder builder = configFunction.apply(new DynamicConfigBuilder(this).model(id, model));
-        loader();
+        loader(AntimatterModelLoader.DYNAMIC);
         properties.add(o -> {
             if (!o.has("config")) o.add("config", new JsonArray());
             JsonObject configObject = new JsonObject();

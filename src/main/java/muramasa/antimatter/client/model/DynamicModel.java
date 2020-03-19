@@ -22,17 +22,17 @@ import java.util.function.Function;
 
 public class DynamicModel extends AntimatterModel {
 
-    protected IUnbakedModel modelDefault;
+    protected AntimatterModel modelBase;
     protected Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs;
 
-    public DynamicModel(IUnbakedModel modelDefault, Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs) {
-        this.modelDefault = modelDefault;
+    public DynamicModel(AntimatterModel modelBase, Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs) {
+        this.modelBase = modelBase;
         this.modelConfigs = modelConfigs;
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        IBakedModel bakedDefault = modelDefault.bakeModel(bakery, getter, transform, loc);
+    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+        IBakedModel bakedDefault = modelBase.bakeModel(owner, bakery, getter, transform, overrides, loc);
         Int2ObjectOpenHashMap<IBakedModel> bakedConfigs = new Int2ObjectOpenHashMap<>();
         modelConfigs.forEach((k, v) -> bakedConfigs.put((int)k, AntimatterModelManager.getBaked(v.getLeft(), () -> v.getMiddle().bakeModel(bakery, getter, getModelTransform(transform, v.getRight()), loc))));
         return new DynamicBakedModel(bakedDefault, bakedConfigs).particle(bakedDefault.getParticleTexture(EmptyModelData.INSTANCE));
@@ -48,7 +48,7 @@ public class DynamicModel extends AntimatterModel {
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
         Set<Material> textures = new HashSet<>();
         modelConfigs.values().forEach(t -> textures.addAll(t.getMiddle().getTextures(getter, errors)));
-        textures.addAll(modelDefault.getTextures(getter, errors));
+        textures.addAll(modelBase.getTextures(owner, getter, errors));
         return textures;
     }
 }
