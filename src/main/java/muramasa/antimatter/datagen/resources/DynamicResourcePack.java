@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class DynamicResourcePack implements IResourcePack {
 
     protected static ObjectOpenHashSet<String> DOMAINS = new ObjectOpenHashSet<>();
-    protected static Object2ObjectOpenHashMap<ResourceLocation, InputStream> REGISTRY = new Object2ObjectOpenHashMap<>();
+    protected static Object2ObjectOpenHashMap<ResourceLocation, String> REGISTRY = new Object2ObjectOpenHashMap<>();
     protected static Object2ObjectOpenHashMap<ResourceLocation, JsonObject> LANG = new Object2ObjectOpenHashMap<>();
 
     protected String name;
@@ -36,34 +36,30 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static void addState(ResourceLocation loc, IGeneratedBlockstate state) {
         DOMAINS.add(loc.getNamespace());
-        REGISTRY.put(getStateLoc(loc), getStream(state.toJson().toString()));
+        REGISTRY.put(getStateLoc(loc), state.toJson().toString());
     }
 
     public static void addBlock(ResourceLocation loc, ModelBuilder<?> builder) {
         DOMAINS.add(loc.getNamespace());
-        REGISTRY.put(getBlockLoc(loc), getStream(builder.toJson().toString()));
+        REGISTRY.put(getBlockLoc(loc), builder.toJson().toString());
     }
 
     public static void addItem(ResourceLocation loc, ModelBuilder<?> builder) {
         DOMAINS.add(loc.getNamespace());
-        REGISTRY.put(getItemLoc(loc), getStream(builder.toJson().toString()));
+        REGISTRY.put(getItemLoc(loc), builder.toJson().toString());
     }
 
     public static void addLang(ResourceLocation loc, String key, String value) {
         LANG.computeIfAbsent(getLangLoc(loc), k -> new JsonObject()).addProperty(key, value);
     }
 
-    public static InputStream getStream(String str) {
-        return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
-    }
-
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
         if (type == ResourcePackType.SERVER_DATA) throw new UnsupportedOperationException("Dynamic Resource Pack only supports client resources");
-        InputStream stream = REGISTRY.get(location);
-        if (stream == null) throw new FileNotFoundException("Can't find " + location + " " + getName());
+        String str = REGISTRY.get(location);
+        if (str == null) throw new FileNotFoundException("Can't find " + location + " " + getName());
         else {
-            return stream;
+            return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
         }
     }
 

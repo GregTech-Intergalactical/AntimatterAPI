@@ -5,7 +5,6 @@ import muramasa.antimatter.blocks.BlockMachine;
 import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelUtils;
-import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
@@ -63,7 +62,6 @@ public class ClientHandler implements IProxyHandler {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        if (Minecraft.getInstance() != null) Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", true));
         ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER.getLoc(), AntimatterModelManager.LOADER);
         AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
