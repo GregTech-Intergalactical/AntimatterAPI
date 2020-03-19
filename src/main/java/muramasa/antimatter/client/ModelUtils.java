@@ -5,6 +5,7 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
@@ -14,12 +15,14 @@ import net.minecraft.item.Item;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.QuadTransformer;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
-import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.common.model.TransformationHelper;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ModelUtils {
@@ -27,15 +30,6 @@ public class ModelUtils {
     public static final Texture ERROR = new Texture(Ref.ID, "other/error");
 
     private static TextureAtlasSprite ERROR_SPRITE = null;
-
-    public static TransformationMatrix[] FACING_TO_MATRIX = new TransformationMatrix[] {
-        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(4.7124f, 0, 0), false), null, null),
-        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(1.5708f, 0, 0), false), null, null),
-        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 0f, 0), false), null, null),
-        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 3.1416f, 0), false), null, null),
-        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 1.5708f, 0), false), null, null),
-        new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, 4.7124f, 0), false), null, null)
-    };
 
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
@@ -82,29 +76,13 @@ public class ModelUtils {
         return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
-    public static TransformationMatrix getTransForDir(Direction dir) {
-        if (dir.getAxis() == Direction.Axis.Y) {
-            float r = dir == Direction.DOWN ? 4.7124f : 1.5708f;
-            return new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(r, 0, 0), false), null, null);
-        } else {
-            double r = Math.PI * (360 - dir.getOpposite().getHorizontalIndex() * 90) / 180d;
-            return new TransformationMatrix(new Vector3f(0, 0, 0), TransformationHelper.quatFromXYZ(new Vector3f(0, (float) r, 0), false), null, null);
-        }
+    public static List<BakedQuad> trans(List<BakedQuad> quads, Vector3f rotationL, Vector3f rotationR) {
+        Quaternion rotL = rotationL == null ? null : TransformationHelper.quatFromXYZ(rotationL, true);
+        Quaternion rotR = rotationR == null ? null : TransformationHelper.quatFromXYZ(rotationR, true);
+        return trans(quads, new TransformationMatrix(new Vector3f(0, 0, 0), rotL, null, rotR));
     }
 
-    public static List<BakedQuad> trans(List<BakedQuad> quads, Direction[] rotations) {
-        if (rotations.length == 0) return quads;
-        TransformationMatrix trans = FACING_TO_MATRIX[rotations[0].getIndex()];
-        for (int i = 1; i < rotations.length; i++) {
-            trans = trans.compose(FACING_TO_MATRIX[rotations[0].getIndex()]);
-        }
-        List<BakedQuad> newQuads = new ArrayList<>();
-        for (BakedQuad quad : quads) {
-            BakedQuadBuilder builder = new BakedQuadBuilder(quad.func_187508_a());
-            TRSRTransformer transformer = new TRSRTransformer(builder, trans.blockCenterToCorner());
-            quad.pipe(transformer);
-            newQuads.add(builder.build());
-        }
-        return newQuads;
+    public static List<BakedQuad> trans(List<BakedQuad> quads, TransformationMatrix transform) {
+        return new QuadTransformer(transform.blockCenterToCorner()).processMany(quads);
     }
 }
