@@ -23,13 +23,14 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static net.minecraft.util.Direction.*;
+import static com.google.common.collect.ImmutableMap.of;
 
 public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
@@ -188,12 +189,16 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
 
     @Override
     public ItemModelBuilder onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        return prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getType().getSide()[0]).texture("overlay", getType().getFace(getSize()));
+        return prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getType().getSide()).texture("overlay", getType().getFace(getSize()));
     }
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        prov.state(block, getPipeConfig(prov.getBuilder(block)));
+        prov.getVariantBuilder(block).forAllStates(s -> ConfiguredModel.builder()
+            .modelFile(getPipeConfig(prov.getBuilder(block)))
+            .uvLock(true)
+            .build()
+        );
     }
 
     public String getModelLoc(String shape, int cull) {
@@ -201,91 +206,91 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
     }
 
     public AntimatterBlockModelBuilder getPipeConfig(AntimatterBlockModelBuilder builder) {
-        builder.model(getModelLoc("base", 0), getType().getSide());
+        builder.model(getModelLoc("base", 0), of("all", getType().getSide(), "overlay", getType().getFace(getSize())));
 
         //Default Shape (0 Connections)
-        builder.config(getPipeID(0, 0), getModelLoc("base", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(0, 0), getModelLoc("base", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
 
         //Single Shapes (1 Connections)
-        builder.config(getPipeID(1, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(DOWN));
-        builder.config(getPipeID(2, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(UP));
-        builder.config(getPipeID(4, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()));
-        builder.config(getPipeID(8, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
-        builder.config(getPipeID(16, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(WEST));
-        builder.config(getPipeID(32, 0), getModelLoc("single", 0), c -> c.tex(getType().getSide()).rot(EAST));
+        builder.config(getPipeID(1, 0), getModelLoc("single", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(-90, 0, 0));
+        builder.config(getPipeID(2, 0), getModelLoc("single", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 0));
+        builder.config(getPipeID(4, 0), getModelLoc("single", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
+        builder.config(getPipeID(8, 0), getModelLoc("single", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 180, 0));
+        builder.config(getPipeID(16, 0), getModelLoc("single", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 0));
+        builder.config(getPipeID(32, 0), getModelLoc("single", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 0));
 
         //Line Shapes (2 Connections)
-        builder.config(getPipeID(3, 0), getModelLoc("line", 0), c -> c.tex(getType().getSide()).rot(UP));
-        builder.config(getPipeID(12, 0), getModelLoc("line", 0), c -> c.tex(getType().getSide()));
-        builder.config(getPipeID(48, 0), getModelLoc("line", 0), c -> c.tex(getType().getSide()).rot(WEST));
+        builder.config(getPipeID(3, 0), getModelLoc("line", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 0));
+        builder.config(getPipeID(12, 0), getModelLoc("line", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
+        builder.config(getPipeID(48, 0), getModelLoc("line", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 0));
 
         //Elbow Shapes (2 Connections)
-        builder.config(getPipeID(5, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(WEST, UP, EAST));
-        builder.config(getPipeID(6, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN, EAST));
-        builder.config(getPipeID(9, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(EAST, UP, EAST));
-        builder.config(getPipeID(10, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, EAST));
-        builder.config(getPipeID(17, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN, WEST));
-        builder.config(getPipeID(18, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, EAST));
-        builder.config(getPipeID(20, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(WEST));
-        builder.config(getPipeID(24, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
-        builder.config(getPipeID(33, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(NORTH, UP, EAST));
-        builder.config(getPipeID(34, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN, EAST));
-        builder.config(getPipeID(36, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()));
-        builder.config(getPipeID(40, 0), getModelLoc("elbow", 0), c -> c.tex(getType().getSide()).rot(EAST));
+        builder.config(getPipeID(5, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, -90));
+        builder.config(getPipeID(6, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 90));
+        builder.config(getPipeID(9, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 180, -90));
+        builder.config(getPipeID(10, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 180, 90));
+        builder.config(getPipeID(17, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 180, 0));
+        builder.config(getPipeID(18, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(-90, 180, 0));
+        builder.config(getPipeID(20, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 0));
+        builder.config(getPipeID(24, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -180, 0));
+        builder.config(getPipeID(33, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(-90, 0, 0));
+        builder.config(getPipeID(34, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 0));
+        builder.config(getPipeID(36, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
+        builder.config(getPipeID(40, 0), getModelLoc("elbow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 0));
 
         //Side Shapes (3 Connections)
-        builder.config(getPipeID(7, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(SOUTH, UP));
-        builder.config(getPipeID(11, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(NORTH, UP));
-        builder.config(getPipeID(13, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(DOWN, DOWN));
-        builder.config(getPipeID(14, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()));
-        builder.config(getPipeID(19, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST, UP));
-        builder.config(getPipeID(28, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN, EAST));
-        builder.config(getPipeID(35, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(WEST, UP));
-        builder.config(getPipeID(44, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, WEST));
-        builder.config(getPipeID(49, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, DOWN));
-        builder.config(getPipeID(50, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(EAST));
-        builder.config(getPipeID(52, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN, WEST));
-        builder.config(getPipeID(56, 0), getModelLoc("side", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, WEST));
+        builder.config(getPipeID(7, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(-90, 0, 0));
+        builder.config(getPipeID(11, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 0));
+        builder.config(getPipeID(13, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 180));
+        builder.config(getPipeID(14, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
+        builder.config(getPipeID(19, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 90));
+        builder.config(getPipeID(28, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 90));
+        builder.config(getPipeID(35, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, -90));
+        builder.config(getPipeID(44, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, -90));
+        builder.config(getPipeID(49, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 180));
+        builder.config(getPipeID(50, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 0));
+        builder.config(getPipeID(52, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, -90));
+        builder.config(getPipeID(56, 0), getModelLoc("side", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 90));
 
         //Corner Shapes (3 Connections)
-        builder.config(getPipeID(21, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN));
-        builder.config(getPipeID(22, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(WEST));
-        builder.config(getPipeID(25, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN));
-        builder.config(getPipeID(26, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
-        builder.config(getPipeID(41, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN));
-        builder.config(getPipeID(42, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(EAST));
-        builder.config(getPipeID(37, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()).rot(NORTH, DOWN));
-        builder.config(getPipeID(38, 0), getModelLoc("corner", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(21, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 180));
+        builder.config(getPipeID(22, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 0));
+        builder.config(getPipeID(25, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -270, 180));
+        builder.config(getPipeID(26, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 180, 0));
+        builder.config(getPipeID(41, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -180, 180));
+        builder.config(getPipeID(42, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 0));
+        builder.config(getPipeID(37, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 180));
+        builder.config(getPipeID(38, 0), getModelLoc("corner", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
 
         //Arrow Shapes (4 Connections)
-        builder.config(getPipeID(23, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN, EAST));
-        builder.config(getPipeID(27, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, EAST));
-        builder.config(getPipeID(29, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(WEST, DOWN));
-        builder.config(getPipeID(30, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(WEST));
-        builder.config(getPipeID(39, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN, WEST));
-        builder.config(getPipeID(43, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN, WEST));
-        builder.config(getPipeID(45, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(EAST, DOWN));
-        builder.config(getPipeID(46, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(EAST));
-        builder.config(getPipeID(53, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(DOWN));
-        builder.config(getPipeID(54, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()));
-        builder.config(getPipeID(57, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH, DOWN));
-        builder.config(getPipeID(58, 0), getModelLoc("arrow", 0), c -> c.tex(getType().getSide()).rot(SOUTH));
+        builder.config(getPipeID(23, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 90));
+        builder.config(getPipeID(27, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -270, 90));
+        builder.config(getPipeID(29, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 180));
+        builder.config(getPipeID(30, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 90, 0));
+        builder.config(getPipeID(39, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 90));
+        builder.config(getPipeID(43, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -180, 90));
+        builder.config(getPipeID(45, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 180));
+        builder.config(getPipeID(46, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, -90, 0));
+        builder.config(getPipeID(53, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(180, 180, 0));
+        builder.config(getPipeID(54, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
+        builder.config(getPipeID(57, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(180, 0, 0));
+        builder.config(getPipeID(58, 0), getModelLoc("arrow", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 180, 0));
 
         //Cross Shapes (4 Connections)
-        builder.config(getPipeID(15, 0), getModelLoc("cross", 0), c -> c.tex(getType().getSide()).rot(WEST, UP));
-        builder.config(getPipeID(51, 0), getModelLoc("cross", 0), c -> c.tex(getType().getSide()).rot(UP));
-        builder.config(getPipeID(60, 0), getModelLoc("cross", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(15, 0), getModelLoc("cross", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 90));
+        builder.config(getPipeID(51, 0), getModelLoc("cross", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 0));
+        builder.config(getPipeID(60, 0), getModelLoc("cross", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
 
         //Five Shapes (5 Connections)
-        builder.config(getPipeID(31, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(EAST, UP));
-        builder.config(getPipeID(47, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(WEST, UP));
-        builder.config(getPipeID(55, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(SOUTH, UP));
-        builder.config(getPipeID(59, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(NORTH, UP));
-        builder.config(getPipeID(61, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()).rot(DOWN, DOWN));
-        builder.config(getPipeID(62, 0), getModelLoc("five", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(31, 0), getModelLoc("five", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, 90));
+        builder.config(getPipeID(47, 0), getModelLoc("five", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(0, 0, -90));
+        builder.config(getPipeID(55, 0), getModelLoc("five", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(-90, 0, 0));
+        builder.config(getPipeID(59, 0), getModelLoc("five", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(90, 0, 0));
+        builder.config(getPipeID(61, 0), getModelLoc("five", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))).rot(180, 0, 0));
+        builder.config(getPipeID(62, 0), getModelLoc("five", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
 
         //All Shapes (6 Connections)
-        builder.config(getPipeID(63, 0), getModelLoc("all", 0), c -> c.tex(getType().getSide()));
+        builder.config(getPipeID(63, 0), getModelLoc("all", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
 
         return builder;
     }

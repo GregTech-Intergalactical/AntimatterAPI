@@ -95,8 +95,8 @@ public class PipeType implements IAntimatterObject {
         return modelId;
     }
 
-    public Texture[] getSide() {
-        return new Texture[]{side};
+    public Texture getSide() {
+        return side;
     }
 
     public Texture getFace(PipeSize size) {
