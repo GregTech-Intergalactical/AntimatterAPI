@@ -35,13 +35,13 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     }
 
     @Override
-    public void run() {
+    protected void registerModels() {
         processItemModels(providerDomain);
     }
 
     @Override
-    protected void registerModels() {
-        run();
+    public void run() {
+        registerModels();
     }
 
     public void processItemModels(String domain) {

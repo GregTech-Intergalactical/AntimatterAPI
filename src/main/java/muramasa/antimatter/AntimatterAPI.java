@@ -3,7 +3,6 @@ package muramasa.antimatter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
@@ -35,9 +34,6 @@ public final class AntimatterAPI {
     private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new HashSet<>();
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
-
-    //TODO: this will hopefully allow the dynamic change of resource strategy
-    public static final ResourceMethod RESOURCE_METHOD = ResourceMethod.PROVIDER_GEN;
 
     public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
 

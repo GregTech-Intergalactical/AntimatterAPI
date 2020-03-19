@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.providers;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
+import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
@@ -13,7 +14,7 @@ import net.minecraftforge.client.model.generators.*;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class AntimatterBlockStateProvider extends BlockStateProvider {
+public class AntimatterBlockStateProvider extends BlockStateProvider implements IAntimatterProvider {
 
     protected String providerDomain, providerName;
     protected AntimatterBlockModelProvider blockModelProvider;
@@ -48,6 +49,11 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         processBlocks(providerDomain);
+    }
+
+    @Override
+    public void run() {
+        registerStatesAndModels();
     }
 
     @Override
