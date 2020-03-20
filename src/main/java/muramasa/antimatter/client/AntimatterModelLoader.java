@@ -82,7 +82,9 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel> {
                     IUnbakedModel model = context.deserialize(e.getAsJsonObject().get("model"), BlockModel.class);
                     configs.put(e.getAsJsonObject().get("id").getAsInt(), Triple.of(e.toString(), model, buildRotations(e.getAsJsonObject())));
                 }
-                return new DynamicModel(baseModel, configs);
+                String staticMapId = "";
+                if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive()) staticMapId = json.get("staticMap").getAsString();
+                return new DynamicModel(baseModel, configs, staticMapId);
             } catch (Exception e) {
                 return onModelLoadingException(e);
             }

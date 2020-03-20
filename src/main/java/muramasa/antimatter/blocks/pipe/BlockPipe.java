@@ -206,6 +206,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
 
     public AntimatterBlockModelBuilder getPipeConfig(AntimatterBlockModelBuilder builder) {
         builder.model(getModelLoc("base", 0), of("all", getType().getSide(), "overlay", getType().getFace(getSize())));
+        builder.staticMap("pipe");
 
         //Default Shape (0 Connections)
         builder.config(getPipeID(0, 0), getModelLoc("base", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));

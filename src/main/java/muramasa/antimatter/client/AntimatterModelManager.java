@@ -1,5 +1,6 @@
 package muramasa.antimatter.client;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.datagen.DummyDataGenerator;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -29,11 +30,20 @@ public class AntimatterModelManager {
     /** A simple cache for Model baking. This avoids 64 models per pipe etc **/
     //TODO clear this at some stage
     private static final Object2ObjectOpenHashMap<String, IBakedModel> BAKED_MODEL_JSON_CACHE = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<String, Supplier<Int2ObjectOpenHashMap<IBakedModel>>> STATIC_CONFIG_MAPS = new Object2ObjectOpenHashMap<>();
 
     private static final Object2ObjectOpenHashMap<ResourceLocation, IItemProviderOverride> ITEM_OVERRIDES = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
 
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
+
+    public static void registerStaticConfigMap(String staticMapId, Supplier<Int2ObjectOpenHashMap<IBakedModel>> configMapSupplier) {
+        STATIC_CONFIG_MAPS.put(staticMapId, configMapSupplier);
+    }
+
+    public static Int2ObjectOpenHashMap<IBakedModel> getStaticConfigMap(String staticMapId) {
+        return STATIC_CONFIG_MAPS.getOrDefault(staticMapId, Int2ObjectOpenHashMap::new).get();
+    }
 
     public static void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
         PROVIDERS.computeIfAbsent(domain, k -> new ArrayList<>()).add(providerFunc);
