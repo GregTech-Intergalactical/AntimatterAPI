@@ -87,6 +87,11 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return this;
     }
 
+    public AntimatterBlockModelBuilder staticMap(String mapId) {
+        loader(AntimatterModelLoader.DYNAMIC);
+        return property("staticMap", mapId);
+    }
+
     public JsonArray getRotationObject(int[] rotations) {
         JsonArray rotationArray = new JsonArray();
         Arrays.stream(rotations).forEach(rotationArray::add);

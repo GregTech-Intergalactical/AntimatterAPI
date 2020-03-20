@@ -24,16 +24,18 @@ public class DynamicModel extends AntimatterModel {
 
     protected AntimatterModel modelBase;
     protected Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs;
+    protected String staticMapId;
 
-    public DynamicModel(AntimatterModel modelBase, Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs) {
+    public DynamicModel(AntimatterModel modelBase, Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs, String staticMapId) {
         this.modelBase = modelBase;
         this.modelConfigs = modelConfigs;
+        this.staticMapId = staticMapId;
     }
 
     @Override
     public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         IBakedModel bakedDefault = modelBase.bakeModel(owner, bakery, getter, transform, overrides, loc);
-        Int2ObjectOpenHashMap<IBakedModel> bakedConfigs = new Int2ObjectOpenHashMap<>();
+        Int2ObjectOpenHashMap<IBakedModel> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
         modelConfigs.forEach((k, v) -> bakedConfigs.put((int)k, AntimatterModelManager.getBaked(v.getLeft(), () -> v.getMiddle().bakeModel(bakery, getter, getModelTransform(transform, v.getRight()), loc))));
         return new DynamicBakedModel(bakedDefault, bakedConfigs).particle(bakedDefault.getParticleTexture(EmptyModelData.INSTANCE));
     }
