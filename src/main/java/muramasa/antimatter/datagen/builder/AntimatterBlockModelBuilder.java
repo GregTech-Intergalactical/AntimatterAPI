@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.ResourceLocation;
@@ -52,28 +53,28 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
     }
 
     public AntimatterBlockModelBuilder model(String parent, String... textures) {
-        loader(AntimatterModelLoader.MAIN);
+        loader(AntimatterModelManager.LOADER_MAIN);
         return property("model", getModelObject(parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Texture... textures) {
-        loader(AntimatterModelLoader.MAIN);
+        loader(AntimatterModelManager.LOADER_MAIN);
         return property("model", getModelObject(parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Function<ImmutableMap.Builder<String, Texture>, ImmutableMap.Builder<String, Texture>> func) {
-        loader(AntimatterModelLoader.MAIN);
+        loader(AntimatterModelManager.LOADER_MAIN);
         return property("model", getModelObject(parent, buildTextures(func.apply(new ImmutableMap.Builder<>()).build())));
     }
 
     public AntimatterBlockModelBuilder model(String parent, ImmutableMap<String, Texture> map) {
-        loader(AntimatterModelLoader.MAIN);
+        loader(AntimatterModelManager.LOADER_MAIN);
         return property("model", getModelObject(parent, buildTextures(map)));
     }
 
     public AntimatterBlockModelBuilder config(int id, String model, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunction) {
         DynamicConfigBuilder builder = configFunction.apply(new DynamicConfigBuilder(this).model(id, model));
-        loader(AntimatterModelLoader.DYNAMIC);
+        loader(AntimatterModelManager.LOADER_DYNAMIC);
         properties.add(o -> {
             if (!o.has("config")) o.add("config", new JsonArray());
             JsonObject configObject = new JsonObject();
@@ -88,7 +89,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
     }
 
     public AntimatterBlockModelBuilder staticMap(String mapId) {
-        loader(AntimatterModelLoader.DYNAMIC);
+        loader(AntimatterModelManager.LOADER_DYNAMIC);
         return property("staticMap", mapId);
     }
 

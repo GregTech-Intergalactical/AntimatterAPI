@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.model.TransformationHelper;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,22 +22,38 @@ import java.util.function.Function;
 
 public class DynamicModel extends AntimatterModel {
 
-    protected AntimatterModel modelBase;
-    protected Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs;
+    protected AntimatterModel modelDefault;
+    protected Int2ObjectOpenHashMap<Tuple<IUnbakedModel, int[]>> modelConfigs;
     protected String staticMapId;
 
-    public DynamicModel(AntimatterModel modelBase, Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> modelConfigs, String staticMapId) {
-        this.modelBase = modelBase;
+    public DynamicModel(AntimatterModel modelDefault, Int2ObjectOpenHashMap<Tuple<IUnbakedModel, int[]>> modelConfigs, String staticMapId) {
+        this.modelDefault = modelDefault;
         this.modelConfigs = modelConfigs;
         this.staticMapId = staticMapId;
     }
 
+    public DynamicModel(DynamicModel copy) {
+        this.modelDefault = copy.modelDefault;
+        this.modelConfigs = copy.modelConfigs;
+        this.staticMapId = copy.staticMapId;
+    }
+
+    @Override
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+        IBakedModel baked = super.bake(owner, bakery, getter, transform, overrides, loc);
+        if (baked instanceof DynamicBakedModel) ((DynamicBakedModel) baked).particle(((DynamicBakedModel) baked).getBakedDefault().getParticleTexture(EmptyModelData.INSTANCE));
+        return baked;
+    }
+
     @Override
     public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        IBakedModel bakedDefault = modelBase.bakeModel(owner, bakery, getter, transform, overrides, loc);
+        return new DynamicBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+    }
+
+    public Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel>> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         Int2ObjectOpenHashMap<IBakedModel> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
-        modelConfigs.forEach((k, v) -> bakedConfigs.put((int)k, AntimatterModelManager.getBaked(v.getLeft(), () -> v.getMiddle().bakeModel(bakery, getter, getModelTransform(transform, v.getRight()), loc))));
-        return new DynamicBakedModel(bakedDefault, bakedConfigs).particle(bakedDefault.getParticleTexture(EmptyModelData.INSTANCE));
+        modelConfigs.forEach((k, v) -> bakedConfigs.put((int)k, v.getA().bakeModel(bakery, getter, getModelTransform(transform, v.getB()), loc)));
+        return new Tuple<>(modelDefault.bakeModel(owner, bakery, getter, transform, overrides, loc), bakedConfigs);
     }
 
     //TODO should rotations be handled by AntimatterModel?
@@ -49,8 +65,8 @@ public class DynamicModel extends AntimatterModel {
     @Override
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
         Set<Material> textures = new HashSet<>();
-        modelConfigs.values().forEach(t -> textures.addAll(t.getMiddle().getTextures(getter, errors)));
-        textures.addAll(modelBase.getTextures(owner, getter, errors));
+        modelConfigs.values().forEach(t -> textures.addAll(t.getA().getTextures(getter, errors)));
+        textures.addAll(modelDefault.getTextures(owner, getter, errors));
         return textures;
     }
 }
