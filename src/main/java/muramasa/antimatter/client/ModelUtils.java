@@ -1,7 +1,6 @@
 package muramasa.antimatter.client;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
@@ -26,10 +25,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ModelUtils {
-
-    public static final Texture ERROR = new Texture(Ref.ID, "other/error");
-
-    private static TextureAtlasSprite ERROR_SPRITE = null;
 
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
@@ -60,10 +55,6 @@ public class ModelUtils {
 
     public static IBakedModel getBakedFromItem(Item item) {
         return Minecraft.getInstance().getItemRenderer().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(item.getRegistryName(), "inventory"));
-    }
-
-    public static TextureAtlasSprite getErrorSprite() {
-        return ERROR_SPRITE != null ? ERROR_SPRITE : (ERROR_SPRITE = ERROR.getSprite());
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
