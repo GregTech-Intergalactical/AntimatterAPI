@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenOreSmall;

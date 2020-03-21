@@ -1,8 +1,8 @@
 package muramasa.antimatter.ore;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockStone;
-import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;

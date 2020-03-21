@@ -2,7 +2,7 @@ package muramasa.antimatter.common.event;
 
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.tools.base.IAntimatterTool;
+import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;

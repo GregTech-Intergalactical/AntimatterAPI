@@ -1,10 +1,10 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockStone;
-import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.materials.IMaterialTag;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.material.IMaterialTag;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
@@ -12,8 +12,8 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
-import static muramasa.antimatter.materials.MaterialType.ORE;
-import static muramasa.antimatter.materials.MaterialType.ORE_SMALL;
+import static muramasa.antimatter.material.MaterialType.ORE;
+import static muramasa.antimatter.material.MaterialType.ORE_SMALL;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterBlockTagProvider extends BlockTagsProvider {

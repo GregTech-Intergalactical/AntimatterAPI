@@ -2,10 +2,10 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.machines.MachineEvent;
+import muramasa.antimatter.machine.MachineEvent;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tools.base.AntimatterToolType;
+import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;

@@ -1,9 +1,9 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machines.ContentEvent;
-import muramasa.antimatter.machines.MachineFlag;
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.machine.ContentEvent;
+import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

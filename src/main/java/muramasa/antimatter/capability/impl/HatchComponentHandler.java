@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.tileentities.multi.TileEntityHatch;
-import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityHatch;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 
 public class HatchComponentHandler extends ComponentHandler {
 

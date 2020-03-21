@@ -1,7 +1,7 @@
 package muramasa.antimatter.texture;
 
-import muramasa.antimatter.machines.Tier;
-import muramasa.antimatter.machines.types.Machine;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 
 public interface ITextureHandler {
 

@@ -1,7 +1,7 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;

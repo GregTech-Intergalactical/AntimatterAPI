@@ -1,15 +1,15 @@
 package muramasa.antimatter.registration;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.blocks.BlockSurfaceRock;
-import muramasa.antimatter.items.MaterialItem;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.BlockSurfaceRock;
+import muramasa.antimatter.material.MaterialItem;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.tools.base.AntimatterToolType;
+import muramasa.antimatter.tool.AntimatterToolType;
 
 import java.util.Collection;
 import java.util.Set;

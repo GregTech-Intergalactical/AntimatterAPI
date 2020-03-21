@@ -1,7 +1,7 @@
 package muramasa.antimatter.example;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.items.ItemBasic;
+import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;

@@ -3,8 +3,8 @@ package muramasa.antimatter.gui;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
-import muramasa.antimatter.machines.Tier;
-import muramasa.antimatter.machines.types.Machine;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 

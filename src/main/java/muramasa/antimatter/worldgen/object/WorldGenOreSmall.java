@@ -1,8 +1,8 @@
 package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 
 public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
 

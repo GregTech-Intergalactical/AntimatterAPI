@@ -1,13 +1,13 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockMachine;
-import muramasa.antimatter.blocks.BlockStorage;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.gui.MenuHandler;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
