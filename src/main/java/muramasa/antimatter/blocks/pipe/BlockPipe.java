@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.blocks.BlockDynamic;
 import muramasa.antimatter.blocks.IInfoProvider;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -292,7 +293,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
         //All Shapes (6 Connections)
         builder.config(getPipeID(63, 0), getModelLoc("all", 0), c -> c.tex(of("all", getType().getSide(), "overlay", getType().getFace(getSize()))));
 
-        return builder;
+        return builder.loader(AntimatterModelManager.LOADER_PIPE);
     }
 
     @Override

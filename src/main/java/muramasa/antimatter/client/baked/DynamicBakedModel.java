@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -27,11 +28,15 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     private BlockPos.Mutable mutablePos = new BlockPos.Mutable();
     private IModelData configData = new ModelDataMap.Builder().withInitial(AntimatterProperties.DYNAMIC_CONFIG, new ModelConfig()).build();
 
-    public DynamicBakedModel(IBakedModel bakedDefault, Int2ObjectOpenHashMap<IBakedModel> bakedConfigs) {
-        super(bakedDefault);
-        this.bakedDefault = bakedDefault;
-        this.bakedConfigs = bakedConfigs;
+    public DynamicBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel>> bakedTuple) {
+        super(bakedTuple.getA());
+        this.bakedDefault = bakedTuple.getA();
+        this.bakedConfigs = bakedTuple.getB();
         this.hasConfig = bakedConfigs.size() > 0;
+    }
+
+    public IBakedModel getBakedDefault() {
+        return bakedDefault;
     }
 
     @Nonnull
@@ -46,7 +51,6 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         if (!hasConfig) return bakedDefault.getQuads(state, side, rand, data);
-        //if (onlyNullSide && side != null) return Collections.emptyList();
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
         if (config == null || config.isInvalid()) return bakedDefault.getQuads(state, side, rand, data);

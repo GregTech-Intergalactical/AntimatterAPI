@@ -6,29 +6,33 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.Ref;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.client.model.DynamicModel;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.IModelLoader;
-import org.apache.commons.lang3.tuple.Triple;
 
-public class AntimatterModelLoader implements IModelLoader<AntimatterModel> {
-
-    public static AntimatterModelLoader MAIN = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "main"));
-    public static DynamicModelLoader DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
+public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAntimatterObject {
 
     protected ResourceLocation loc;
 
     public AntimatterModelLoader(ResourceLocation loc) {
         this.loc = loc;
+        AntimatterAPI.register(AntimatterModelLoader.class, this);
     }
 
     public ResourceLocation getLoc() {
         return loc;
+    }
+
+    @Override
+    public String getId() {
+        return getLoc().toString();
     }
 
     @Override
@@ -76,11 +80,11 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel> {
             try {
                 AntimatterModel baseModel = super.read(context, json);
                 if (!json.has("config") || !json.get("config").isJsonArray()) return baseModel;
-                Int2ObjectOpenHashMap<Triple<String, IUnbakedModel, int[]>> configs = new Int2ObjectOpenHashMap<>();
+                Int2ObjectOpenHashMap<Tuple<IUnbakedModel, int[]>> configs = new Int2ObjectOpenHashMap<>();
                 for (JsonElement e : json.getAsJsonArray("config")) {
                     if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("model")) continue;
                     IUnbakedModel model = context.deserialize(e.getAsJsonObject().get("model"), BlockModel.class);
-                    configs.put(e.getAsJsonObject().get("id").getAsInt(), Triple.of(e.toString(), model, buildRotations(e.getAsJsonObject())));
+                    configs.put(e.getAsJsonObject().get("id").getAsInt(), new Tuple<>(model, buildRotations(e.getAsJsonObject())));
                 }
                 String staticMapId = "";
                 if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive()) staticMapId = json.get("staticMap").getAsString();
