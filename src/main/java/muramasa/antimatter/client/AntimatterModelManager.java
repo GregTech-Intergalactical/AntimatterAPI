@@ -56,7 +56,7 @@ public class AntimatterModelManager {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void setup() {
-
+        AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
     }
 
     public static void registerStaticConfigMap(String staticMapId, Supplier<Int2ObjectOpenHashMap<IBakedModel>> configMapSupplier) {

@@ -1,5 +1,6 @@
 package muramasa.antimatter.client;
 
+//TODO remove
 public enum QuadLayer {
 
     BASE(0),

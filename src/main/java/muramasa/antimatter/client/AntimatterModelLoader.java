@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.IModelLoader;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
 
 public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAntimatterObject {
 
@@ -44,7 +44,7 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
     public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
         try {
             IUnbakedModel baseModel = (json.has("model") && json.get("model").isJsonObject()) ? context.deserialize(json.get("model"), BlockModel.class) : ModelUtils.getMissingModel();
-            return new AntimatterModel(baseModel);
+            return new AntimatterModel(baseModel, buildRotations(json));
         } catch (Exception e) {
             return onModelLoadingException(e);
         }
@@ -80,11 +80,11 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
             try {
                 AntimatterModel baseModel = super.read(context, json);
                 if (!json.has("config") || !json.get("config").isJsonArray()) return baseModel;
-                Int2ObjectOpenHashMap<Tuple<IUnbakedModel, int[]>> configs = new Int2ObjectOpenHashMap<>();
+                Int2ObjectOpenHashMap<IModelGeometry<?>> configs = new Int2ObjectOpenHashMap<>();
                 for (JsonElement e : json.getAsJsonArray("config")) {
                     if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("model")) continue;
-                    IUnbakedModel model = context.deserialize(e.getAsJsonObject().get("model"), BlockModel.class);
-                    configs.put(e.getAsJsonObject().get("id").getAsInt(), new Tuple<>(model, buildRotations(e.getAsJsonObject())));
+                    AntimatterModel model = new AntimatterModel(context.deserialize(e.getAsJsonObject().get("model"), BlockModel.class), buildRotations(e.getAsJsonObject()));
+                    configs.put(e.getAsJsonObject().get("id").getAsInt(), model);
                 }
                 String staticMapId = "";
                 if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive()) staticMapId = json.get("staticMap").getAsString();
