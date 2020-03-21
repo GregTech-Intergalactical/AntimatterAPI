@@ -72,6 +72,11 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property("model", getModelObject(parent, buildTextures(map)));
     }
 
+    public AntimatterBlockModelBuilder rot(int... rotations) {
+        loader(AntimatterModelManager.LOADER_MAIN);
+        return property("rotation", getRotationObject(rotations));
+    }
+
     public AntimatterBlockModelBuilder config(int id, String model, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunction) {
         DynamicConfigBuilder builder = configFunction.apply(new DynamicConfigBuilder(this).model(id, model));
         loader(AntimatterModelManager.LOADER_DYNAMIC);
