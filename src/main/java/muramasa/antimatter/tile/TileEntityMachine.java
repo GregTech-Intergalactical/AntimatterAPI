@@ -3,15 +3,12 @@ package muramasa.antimatter.tile;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.capability.impl.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.*;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.texture.IBakedTile;
-import muramasa.antimatter.texture.TextureData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -33,7 +30,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMachine extends TileEntityTickable implements IBakedTile, INamedContainerProvider {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider {
 
     /** NBT Data **/
     protected CompoundNBT itemData, fluidData;
@@ -168,16 +165,6 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
     }
 
-    @Override
-    public TextureData getTextureData() {
-        return getMachineType().getTextureData(getTier(), getMachineState());
-    }
-
-    @Override
-    public void setTextureOverride(int textureOverride) {
-        //NOOP
-    }
-
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
@@ -190,7 +177,7 @@ public class TileEntityMachine extends TileEntityTickable implements IBakedTile,
     @Nonnull
     @Override
     public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType()).withInitial(AntimatterProperties.MACHINE_FACING, facing).withInitial(AntimatterProperties.MACHINE_TEXTURE, getTextureData());
+        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType()).withInitial(AntimatterProperties.MACHINE_FACING, facing);
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getAll()));
         return builder.build();
     }

@@ -12,14 +12,14 @@ public class HatchComponentHandler extends ComponentHandler {
     @Override
     public void onStructureFormed(TileEntityMultiMachine controllerTile) {
         super.onStructureFormed(controllerTile);
-        ((TileEntityHatch) getTile()).setTextureOverride((controllerTile.getMachineTypeId() * 1000) + controllerTile.getTierId());
+        //((TileEntityHatch) getTile()).setTextureOverride((controllerTile.getMachineTypeId() * 1000) + controllerTile.getTierId());
         getTile().markForRenderUpdate();
     }
 
     @Override
     public void onStructureInvalidated(TileEntityMultiMachine controllerTile) {
         super.onStructureInvalidated(controllerTile);
-        ((TileEntityHatch) getTile()).setTextureOverride(-1);
+        //((TileEntityHatch) getTile()).setTextureOverride(-1);
         getTile().markForRenderUpdate();
     }
 }
