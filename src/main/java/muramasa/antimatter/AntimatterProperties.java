@@ -2,7 +2,7 @@ package muramasa.antimatter;
 
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.machines.types.Machine;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.TextureData;
 import net.minecraft.util.Direction;

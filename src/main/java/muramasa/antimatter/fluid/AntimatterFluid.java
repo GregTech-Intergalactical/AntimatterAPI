@@ -1,13 +1,13 @@
 package muramasa.antimatter.fluid;
 
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialTag;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTag;
+import muramasa.antimatter.material.MaterialType;
 import net.minecraft.fluid.EmptyFluid;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidAttributes;
 
-import static muramasa.antimatter.materials.MaterialType.*;
+import static muramasa.antimatter.material.MaterialType.*;
 
 public class AntimatterFluid extends EmptyFluid {
 

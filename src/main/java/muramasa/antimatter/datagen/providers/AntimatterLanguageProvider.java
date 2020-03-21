@@ -2,18 +2,18 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.blocks.BlockStone;
-import muramasa.antimatter.blocks.BlockStorage;
-import muramasa.antimatter.items.ItemBasic;
-import muramasa.antimatter.items.MaterialItem;
-import muramasa.antimatter.materials.IMaterialTag;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.item.ItemBasic;
+import muramasa.antimatter.material.MaterialItem;
+import muramasa.antimatter.material.IMaterialTag;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
 
-import static muramasa.antimatter.materials.MaterialType.*;
+import static muramasa.antimatter.material.MaterialType.*;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterLanguageProvider extends LanguageProvider {

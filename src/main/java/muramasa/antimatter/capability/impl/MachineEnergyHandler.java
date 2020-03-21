@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 
 public class MachineEnergyHandler extends EnergyHandler {
 

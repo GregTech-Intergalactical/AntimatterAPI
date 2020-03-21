@@ -1,6 +1,6 @@
 package muramasa.antimatter.structure;
 
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int3;
 
 public class StructureElement {

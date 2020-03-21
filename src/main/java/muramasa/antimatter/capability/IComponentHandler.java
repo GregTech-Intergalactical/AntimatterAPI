@@ -3,7 +3,7 @@ package muramasa.antimatter.capability;
 import muramasa.antimatter.capability.impl.MachineEnergyHandler;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
-import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.Optional;

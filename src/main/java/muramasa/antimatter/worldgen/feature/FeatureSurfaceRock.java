@@ -2,8 +2,8 @@ package muramasa.antimatter.worldgen.feature;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.block.BlockState;

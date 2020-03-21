@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.machines.types.Machine;
-import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
+import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 
 public class ControllerComponentHandler extends ComponentHandler {
 

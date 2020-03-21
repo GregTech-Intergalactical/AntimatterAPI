@@ -1,7 +1,7 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.blocks.BlockBasic;
-import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.block.BlockBasic;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
