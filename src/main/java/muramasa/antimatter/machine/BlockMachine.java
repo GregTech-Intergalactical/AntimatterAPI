@@ -191,7 +191,7 @@ public class BlockMachine extends BlockBasic implements IAntimatterObject, IItem
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockMachine) && world == null || pos == null) return -1;
         TileEntity tile = Utils.getTile(world, pos);
-        return tile instanceof TileEntityMachine && i == 0 ? ((TileEntityMachine) tile).getTextureData().getTint() : -1;
+        return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint()*/-1 : -1;
     }
 
 //    @Override

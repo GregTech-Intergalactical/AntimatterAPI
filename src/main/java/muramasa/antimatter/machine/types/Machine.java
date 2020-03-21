@@ -17,7 +17,6 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
-import muramasa.antimatter.texture.TextureType;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemGroup;
@@ -146,18 +145,18 @@ public class Machine implements IAntimatterObject {
     public Texture[] getOverlayTextures(MachineState state) {
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BOTTOM),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.TOP),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.FRONT),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.BACK),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + TextureType.SIDE),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "top"),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "front"),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "back"),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "side"),
         };
     }
 
     //TODO can these be hardcoded to the antimatter namespace? mod/pack devs should be able to have their own antimatter directory in their resources
-    public ModelResourceLocation getOverlayModel(TextureType side) {
-        return new ModelResourceLocation(Ref.ID + ":machine/overlay/" + id + "/" + side.getId());
+    public ModelResourceLocation getOverlayModel(String side) {
+        return new ModelResourceLocation(Ref.ID + ":machine/overlay/" + id + "/" + side);
     }
 
     public RecipeMap getRecipeMap() {
