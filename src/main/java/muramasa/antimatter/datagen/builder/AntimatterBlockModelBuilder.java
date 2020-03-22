@@ -78,25 +78,21 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property("rotation", getRotationObject(rotations));
     }
 
-    public AntimatterBlockModelBuilder config(int id, String model, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunction) {
-        DynamicConfigBuilder builder = configFunction.apply(new DynamicConfigBuilder(this).model(id, model));
+    public AntimatterBlockModelBuilder config(int id, String parent, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunc) {
+        DynamicConfigBuilder builder = configFunc.apply(new DynamicConfigBuilder(this).model(id, parent));
         loader(AntimatterModelManager.LOADER_DYNAMIC);
         properties.add(o -> {
-            if (!o.has("config")) o.add("config", new JsonArray());
-            JsonObject configObject = new JsonObject();
-            configObject.addProperty("id", builder.id);
-            if (builder.rotations != null && builder.rotations.length > 0) {
-                configObject.add("rotation", getRotationObject(builder.rotations));
-            }
-            configObject.add("model", getModelObject(builder.parent, builder.textures));
-            o.getAsJsonArray("config").add(configObject);
+            JsonObject config = o.has("config") && o.get("config").isJsonObject() ? o.get("config").getAsJsonObject() : new JsonObject();
+            boolean existing = config.has(builder.id + "") && config.get(builder.id + "").isJsonObject();
+            JsonArray models = existing ? config.get(builder.id + "").getAsJsonArray() : new JsonArray();
+            JsonObject modelObject = new JsonObject();
+            if (builder.rotations != null && builder.rotations.length > 0) modelObject.add("rotation", getRotationObject(builder.rotations));
+            modelObject.add("model", getModelObject(builder.parent, builder.textures));
+            models.add(modelObject);
+            if (!existing) config.add(builder.id + "", models);
+            if (!o.has("config")) o.add("config", config);
         });
         return this;
-    }
-
-    public AntimatterBlockModelBuilder staticMap(String mapId) {
-        loader(AntimatterModelManager.LOADER_DYNAMIC);
-        return property("staticMap", mapId);
     }
 
     public JsonArray getRotationObject(int[] rotations) {
@@ -113,6 +109,11 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
         model.add("textures", texture);
         return model;
+    }
+
+    public AntimatterBlockModelBuilder staticConfigId(String mapId) {
+        loader(AntimatterModelManager.LOADER_DYNAMIC);
+        return property("staticConfigId", mapId);
     }
 
     public static ImmutableMap<String, String> buildTextures(ImmutableMap<String, Texture> map) {
