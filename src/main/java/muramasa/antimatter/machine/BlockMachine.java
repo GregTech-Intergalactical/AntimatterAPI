@@ -211,6 +211,11 @@ public class BlockMachine extends BlockBasic implements IAntimatterObject, IItem
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        prov.state(block, tier.getBaseTexture());
+        prov.state(block, prov.getBuilder(block).config(0, (b, l) -> {
+            return l.add(
+                b.of(type.getOverlayModel("front")),
+                b.of(type.getOverlayModel("top"))
+            );
+        }));
     }
 }
