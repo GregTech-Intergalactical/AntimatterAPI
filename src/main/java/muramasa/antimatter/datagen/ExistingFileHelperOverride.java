@@ -10,6 +10,14 @@ import java.util.*;
 /** Workaround until I figure out how to reference external resources from another mod for data gen **/
 public class ExistingFileHelperOverride extends ExistingFileHelper {
 
+    public static Set<String> GLOBAL_EXCLUDED_DOMAINS = new HashSet<>();
+
+    static {
+        GLOBAL_EXCLUDED_DOMAINS.add(Ref.ID);
+        GLOBAL_EXCLUDED_DOMAINS.add("gti");
+        GLOBAL_EXCLUDED_DOMAINS.add("minecraft");
+    }
+
     Set<String> excludedDomains = new HashSet<>();
 
     public ExistingFileHelperOverride() {
@@ -32,6 +40,6 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
 
     @Override
     public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
-        return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || super.exists(loc, type, pathSuffix, pathPrefix);
+        return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || GLOBAL_EXCLUDED_DOMAINS.contains(loc.getNamespace()) || super.exists(loc, type, pathSuffix, pathPrefix);
     }
 }
