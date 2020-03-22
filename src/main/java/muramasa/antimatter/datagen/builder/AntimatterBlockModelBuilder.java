@@ -1,9 +1,11 @@
 package muramasa.antimatter.datagen.builder;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
@@ -55,22 +57,22 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
 
     public AntimatterBlockModelBuilder model(String parent, String... textures) {
         loader(AntimatterModelManager.LOADER_MAIN);
-        return property("model", getModelObject(parent, buildTextures(textures)));
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Texture... textures) {
         loader(AntimatterModelManager.LOADER_MAIN);
-        return property("model", getModelObject(parent, buildTextures(textures)));
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Function<ImmutableMap.Builder<String, Texture>, ImmutableMap.Builder<String, Texture>> func) {
         loader(AntimatterModelManager.LOADER_MAIN);
-        return property("model", getModelObject(parent, buildTextures(func.apply(new ImmutableMap.Builder<>()).build())));
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(func.apply(new ImmutableMap.Builder<>()).build())));
     }
 
     public AntimatterBlockModelBuilder model(String parent, ImmutableMap<String, Texture> map) {
         loader(AntimatterModelManager.LOADER_MAIN);
-        return property("model", getModelObject(parent, buildTextures(map)));
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(map)));
     }
 
     public AntimatterBlockModelBuilder rot(int... rotations) {
@@ -78,21 +80,26 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property("rotation", getRotationObject(rotations));
     }
 
-    public AntimatterBlockModelBuilder config(int id, String parent, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunc) {
-        DynamicConfigBuilder builder = configFunc.apply(new DynamicConfigBuilder(this).model(id, parent));
+    public AntimatterBlockModelBuilder config(int id, String parent, Function<DynamicConfigBuilder, DynamicConfigBuilder> builderFunc) {
+        return config(id, (b, l) -> l.add(builderFunc.apply(b.of(parent))));
+    }
+
+    public AntimatterBlockModelBuilder config(int id, IConfigFunction configFunc) {
         loader(AntimatterModelManager.LOADER_DYNAMIC);
+        ImmutableList<DynamicConfigBuilder> builders = configFunc.apply(new DynamicConfigBuilder(), new ImmutableList.Builder<>()).build();
         properties.add(o -> {
-            JsonObject config = o.has("config") && o.get("config").isJsonObject() ? o.get("config").getAsJsonObject() : new JsonObject();
-            boolean existing = config.has(builder.id + "") && config.get(builder.id + "").isJsonObject();
-            JsonArray models = existing ? config.get(builder.id + "").getAsJsonArray() : new JsonArray();
+            if (!o.has("config")) o.add("config", new JsonArray());
             JsonObject modelObject = new JsonObject();
-            if (builder.rotations != null && builder.rotations.length > 0) modelObject.add("rotation", getRotationObject(builder.rotations));
-            modelObject.add("model", getModelObject(builder.parent, builder.textures));
-            models.add(modelObject);
-            if (!existing) config.add(builder.id + "", models);
-            if (!o.has("config")) o.add("config", config);
+            modelObject.add("id", new JsonPrimitive(id));
+            modelObject.add("models", getModelObjects(builders));
+            o.get("config").getAsJsonArray().add(modelObject);
         });
         return this;
+    }
+
+    public interface IConfigFunction {
+
+        ImmutableList.Builder<DynamicConfigBuilder> apply(DynamicConfigBuilder b, ImmutableList.Builder<DynamicConfigBuilder> l);
     }
 
     public JsonArray getRotationObject(int[] rotations) {
@@ -101,14 +108,23 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return rotationArray;
     }
 
-    public JsonObject getModelObject(String parent, ImmutableMap<String, String> textures) {
-        JsonObject model = new JsonObject();
+    public JsonArray getModelObjects(ImmutableList<DynamicConfigBuilder> builders) {
+        JsonArray models = new JsonArray();
+        builders.forEach(b -> {
+            JsonObject m = addModelObject(new JsonObject(), b.parent, b.textures);
+            if (b.hasRots()) m.add("rotation", getRotationObject(b.rotations));
+            models.add(m);
+        });
+        return models;
+    }
+
+    public JsonObject addModelObject(JsonObject o, String parent, ImmutableMap<String, String> textures) {
         if (!parent.contains(":")) parent = StringUtils.replace(StringUtils.replace(parent, "simple", SIMPLE), "layered", LAYERED);
-        model.addProperty("parent", parent);
+        o.addProperty("parent", parent);
         JsonObject texture = new JsonObject();
         textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
-        model.add("textures", texture);
-        return model;
+        o.add("textures", texture);
+        return o;
     }
 
     public AntimatterBlockModelBuilder staticConfigId(String mapId) {
@@ -151,7 +167,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
          model(SIMPLE, textureProvider.getTextures());
 
         //Single (1)
-         config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+         config(1, SIMPLE, (c) -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
          config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
          config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
          config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));

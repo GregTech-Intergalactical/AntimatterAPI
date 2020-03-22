@@ -20,6 +20,7 @@ import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -142,6 +143,10 @@ public class Machine implements IAntimatterObject {
             new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
             new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
         };
+    }
+
+    public ResourceLocation getOverlayModel(String side) {
+        return new ResourceLocation(domain, "machine/overlay/" + id + "/" + side);
     }
 
     public RecipeMap getRecipeMap() {
