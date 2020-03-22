@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class PipeBakedModel extends DynamicBakedModel {
 
-    public static final Int2ObjectOpenHashMap<IBakedModel> CONFIGS = new Int2ObjectOpenHashMap<>();
+    public static final Int2ObjectOpenHashMap<IBakedModel[]> CONFIGS = new Int2ObjectOpenHashMap<>();
 
-    public PipeBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel>> bakedTuple) {
+    public PipeBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
         super(bakedTuple);
         onlyGeneralQuads();
     }

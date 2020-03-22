@@ -15,9 +15,14 @@ import java.util.Random;
 public class ModelConfigRandom extends ModelConfig {
 
     @Override
-    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<IBakedModel> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         setModelIndex(config[rand.nextInt(config.length)]);
-        quads.addAll(bakedConfigs.get(getModelIndex()).getQuads(state, side, rand, data));
+        IBakedModel[] baked = bakedConfigs.get(getModelIndex());
+        if (baked != null) {
+            for (int i = 0; i < baked.length; i++) {
+                quads.addAll(baked[i].getQuads(state, side, rand, data));
+            }
+        }
         return quads;
     }
 }

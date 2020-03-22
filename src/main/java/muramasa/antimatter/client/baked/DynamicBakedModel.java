@@ -23,12 +23,12 @@ import java.util.Random;
 public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     private IBakedModel bakedDefault;
-    private Int2ObjectOpenHashMap<IBakedModel> bakedConfigs;
+    private Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs;
     private boolean hasConfig;
     private BlockPos.Mutable mutablePos = new BlockPos.Mutable();
     private IModelData configData = new ModelDataMap.Builder().withInitial(AntimatterProperties.DYNAMIC_CONFIG, new ModelConfig()).build();
 
-    public DynamicBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel>> bakedTuple) {
+    public DynamicBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
         super(bakedTuple.getA());
         this.bakedDefault = bakedTuple.getA();
         this.bakedConfigs = bakedTuple.getB();

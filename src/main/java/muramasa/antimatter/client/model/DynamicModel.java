@@ -12,6 +12,7 @@ import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,10 +21,10 @@ import java.util.function.Function;
 public class DynamicModel extends AntimatterModel {
 
     protected AntimatterModel modelDefault;
-    protected Int2ObjectOpenHashMap<IModelGeometry<?>> modelConfigs;
+    protected Int2ObjectOpenHashMap<IModelGeometry<?>[]> modelConfigs;
     protected String staticMapId;
 
-    public DynamicModel(AntimatterModel modelDefault, Int2ObjectOpenHashMap<IModelGeometry<?>> modelConfigs, String staticMapId) {
+    public DynamicModel(AntimatterModel modelDefault, Int2ObjectOpenHashMap<IModelGeometry<?>[]> modelConfigs, String staticMapId) {
         this.modelDefault = modelDefault;
         this.modelConfigs = modelConfigs;
         this.staticMapId = staticMapId;
@@ -47,16 +48,22 @@ public class DynamicModel extends AntimatterModel {
         return new DynamicBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
     }
 
-    public Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel>> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        Int2ObjectOpenHashMap<IBakedModel> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
-        modelConfigs.forEach((k, v) -> bakedConfigs.put((int)k, v.bake(owner, bakery, getter, transform, overrides, loc)));
+    public Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+        Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
+        modelConfigs.forEach((k, v) -> {
+            IBakedModel[] baked = new IBakedModel[v.length];
+            for (int i = 0; i < baked.length; i++) {
+                baked[i] = v[i].bake(owner, bakery, getter, transform, overrides, loc);
+            }
+            bakedConfigs.put((int)k, baked);
+        });
         return new Tuple<>(modelDefault.bakeModel(owner, bakery, getter, transform, overrides, loc), bakedConfigs);
     }
 
     @Override
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
         Set<Material> textures = new HashSet<>();
-        modelConfigs.values().forEach(m -> textures.addAll(m.getTextures(owner, getter, errors)));
+        modelConfigs.values().forEach(v -> Arrays.stream(v).forEach(m -> textures.addAll(m.getTextures(owner, getter, errors))));
         textures.addAll(modelDefault.getTextures(owner, getter, errors));
         return textures;
     }
