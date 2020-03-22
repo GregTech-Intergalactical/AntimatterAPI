@@ -12,6 +12,7 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
 
     public JsonObject getModelObject(String parent, ImmutableMap<String, String> textures) {
         JsonObject model = new JsonObject();
-        if (!parent.contains(":")) parent = parent.replace("simple", SIMPLE).replace("layered", LAYERED);
+        if (!parent.contains(":")) parent = StringUtils.replace(StringUtils.replace(parent, "simple", SIMPLE), "layered", LAYERED);
         model.addProperty("parent", parent);
         JsonObject texture = new JsonObject();
         textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
