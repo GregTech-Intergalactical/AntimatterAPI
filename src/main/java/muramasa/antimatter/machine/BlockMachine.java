@@ -1,11 +1,15 @@
 package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -25,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -32,6 +37,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -194,21 +200,17 @@ public class BlockMachine extends BlockBasic implements IAntimatterObject, IItem
         return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint()*/-1 : -1;
     }
 
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelRegistration() {
-////        for (Tier tier : type.getTiers()) {
-////            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), tier.getInternalId(), new ModelResourceLocation(Ref.MODID + ":" + type.getId(), "tier=" + tier.getId()));
-////        }
-//        //Redirect block model to custom baked model handling
-//        //ModelLoader.setCustomStateMapper(this, new StateMapperRedirect(new ResourceLocation(Ref.MODID, "block_machine")));
-//    }
-//
-//
-//
-//    @Override
-//    @OnlyIn(Dist.CLIENT)
-//    public void onModelBuild(ModelBakeEvent e, Map<ResourceLocation, IBakedModel> registry) {
-//        registry.put(new ModelResourceLocation(Ref.MODID + ":" + getId()), BakedMachine.ITEMS.get(getId()));
-//    }
+    @Override
+    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier));
+        Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
+        for (int i = 0; i < 6; i++) {
+            b.texture("overlay" + Ref.DIRECTIONS[i].getName(), overlays[i]);
+        }
+    }
+
+    @Override
+    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
+        prov.state(block, tier.getBaseTexture());
+    }
 }

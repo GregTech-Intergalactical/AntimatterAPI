@@ -5,9 +5,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
@@ -18,7 +18,6 @@ import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
@@ -129,34 +128,20 @@ public class Machine implements IAntimatterObject {
         return textures;
     }
 
-    public TextureData getTextureData(Tier tier, MachineState state) {
-        //if (baseHandler != null) {
-            //return new TextureData().base(baseHandler.getBase(this, tier)).overlay(getOverlayTextures(state));
-        //} else {
-            return new TextureData().base(getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier), getBaseTexture(tier)).overlay(getOverlayTextures(state));
-        //}
-    }
-
     public Texture getBaseTexture(Tier tier) {
         return baseTexture != null ? baseTexture : tier.getBaseTexture();
     }
 
-    //TODO can these be hardcoded to the antimatter domain? mod/pack devs should be able to have their own antimatter directory in their resources
     public Texture[] getOverlayTextures(MachineState state) {
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "top"),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "front"),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "back"),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "side"),
-            new Texture(Ref.ID, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
+            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
+            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
+            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
+            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
         };
-    }
-
-    //TODO can these be hardcoded to the antimatter namespace? mod/pack devs should be able to have their own antimatter directory in their resources
-    public ModelResourceLocation getOverlayModel(String side) {
-        return new ModelResourceLocation(Ref.ID + ":machine/overlay/" + id + "/" + side);
     }
 
     public RecipeMap getRecipeMap() {
