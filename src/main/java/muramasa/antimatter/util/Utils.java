@@ -721,10 +721,10 @@ public class Utils {
         int index = id.indexOf("_");
         if (index != -1) {
             id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
-            if (id.contains("crushed")) id = id.replace("crushed", "crushed_ore");
+            if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
             return id;
         }
-        else if (id.contains("crushed")) return id.replace("crushed", "crushed_ores");
+        else if (id.contains("crushed")) return StringUtils.replace(id, "crushed", "crushed_ores");
         return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
     }
 
@@ -794,9 +794,9 @@ public class Utils {
         if (index != -1) {
             if (type instanceof MaterialType) {
                 String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
-                return lowerUnderscoreToUpperSpaced(joined).replace('_', ' ');
+                return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(joined), '_', ' ');
             }
-            return lowerUnderscoreToUpperSpaced(id).replace('_', ' ');
+            return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id),'_', ' ');
         }
         return StringUtils.capitalize(id);
     }
