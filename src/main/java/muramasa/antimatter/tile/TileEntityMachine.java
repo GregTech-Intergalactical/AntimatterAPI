@@ -3,6 +3,7 @@ package muramasa.antimatter.tile;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.impl.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiEvent;
@@ -171,7 +172,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
             return LazyOptional.of(() -> itemHandler).cast();
         }
-        return super.getCapability(cap);
+        if (cap == AntimatterCapabilities.CONFIGURABLE && configHandler.isPresent())
+            return LazyOptional.of(() -> configHandler.get()).cast();
+        if (cap == AntimatterCapabilities.ENERGY && energyHandler.isPresent())
+            return LazyOptional.of(() -> energyHandler.get()).cast();
+        return super.getCapability(cap, side);
     }
 
     @Nonnull
