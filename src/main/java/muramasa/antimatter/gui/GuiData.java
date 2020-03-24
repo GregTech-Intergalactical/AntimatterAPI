@@ -1,7 +1,6 @@
 package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
@@ -20,8 +19,8 @@ public class GuiData {
 
     private static final String ANY = "any";
 
-    protected String id;
-    protected MenuHandler menuHandler;
+    protected ResourceLocation loc;
+    protected MenuHandler<?> menuHandler;
 
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
@@ -33,38 +32,38 @@ public class GuiData {
     protected LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
 
-    public GuiData(String id) {
-        this.id = id;
+    public GuiData(String domain, String id) {
+        this.loc = new ResourceLocation(domain, id);
     }
 
-    public GuiData(String id, MenuHandler menuHandler) {
-        this(id);
+    public GuiData(String domain, String id, MenuHandler<?> menuHandler) {
+        this(domain, id);
         this.menuHandler = menuHandler;
     }
 
     public GuiData(Machine type) {
-        this(type.getId());
+        this(type.getDomain(), type.getId());
     }
 
-    public GuiData(Machine type, MenuHandler menuHandler) {
+    public GuiData(Machine type, MenuHandler<?> menuHandler) {
         this(type);
         this.menuHandler = menuHandler;
     }
 
-    public MenuHandler getMenuHandler() {
+    public MenuHandler<?> getMenuHandler() {
         return menuHandler;
     }
 
     public ResourceLocation getTexture(Tier tier) {
         if (hasSlots(tier)) {
-            return new ResourceLocation(Ref.ID, "textures/gui/machine/" + getId() + "_" + tier.getId() + ".png");
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/machine/" + loc.getPath() + "_" + tier.getId() + ".png");
         } else {
-            return new ResourceLocation(Ref.ID, "textures/gui/machine/" + getId() + ".png");
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/machine/" + loc.getPath() + ".png");
         }
     }
 
-    public String getId() {
-        return id;
+    public ResourceLocation getLoc() {
+        return loc;
     }
 
     public int4 getArea() {

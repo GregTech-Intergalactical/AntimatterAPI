@@ -4,7 +4,6 @@ import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.network.AntimatterNetwork;
@@ -51,7 +50,7 @@ public class Antimatter implements IAntimatterRegistrar {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK && Minecraft.getInstance() != null) {
-                Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", false));
+                //Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", false));
             }
         });
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));

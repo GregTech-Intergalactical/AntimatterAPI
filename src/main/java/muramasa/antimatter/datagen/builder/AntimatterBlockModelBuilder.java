@@ -98,7 +98,6 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
     }
 
     public interface IConfigFunction {
-
         ImmutableList.Builder<DynamicConfigBuilder> apply(DynamicConfigBuilder b, ImmutableList.Builder<DynamicConfigBuilder> l);
     }
 
@@ -167,7 +166,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
          model(SIMPLE, textureProvider.getTextures());
 
         //Single (1)
-         config(1, SIMPLE, (c) -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+         config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
          config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
          config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
          config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));

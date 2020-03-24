@@ -2,7 +2,8 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockBasic;
+import muramasa.antimatter.block.BlockDynamic;
+import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -44,9 +45,10 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
-public class BlockMachine extends BlockBasic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
+public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
     protected Machine type;
     protected Tier tier;
@@ -201,6 +203,11 @@ public class BlockMachine extends BlockBasic implements IAntimatterObject, IItem
     }
 
     @Override
+    public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
+        return config.set(new int[]{0});
+    }
+
+    @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier));
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
@@ -211,10 +218,15 @@ public class BlockMachine extends BlockBasic implements IAntimatterObject, IItem
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
+        Texture[] overlays = type.getOverlayTextures(MachineState.IDLE);
         prov.state(block, prov.getBuilder(block).config(0, (b, l) -> {
             return l.add(
-                b.of(type.getOverlayModel("front")),
-                b.of(type.getOverlayModel("top"))
+                b.of(type.getOverlayModel(Ref.DIRECTIONS[0])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[0])),
+                b.of(type.getOverlayModel(Ref.DIRECTIONS[1])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[1])),
+                b.of(type.getOverlayModel(Ref.DIRECTIONS[2])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[2])),
+                b.of(type.getOverlayModel(Ref.DIRECTIONS[3])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[3])),
+                b.of(type.getOverlayModel(Ref.DIRECTIONS[4])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[4])),
+                b.of(type.getOverlayModel(Ref.DIRECTIONS[5])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[5]))
             );
         }));
     }
