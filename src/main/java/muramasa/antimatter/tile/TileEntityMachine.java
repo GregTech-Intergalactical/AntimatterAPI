@@ -23,6 +23,8 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.electric.api.IElectricNode;
+import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +33,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IElectricNode {
 
     /** NBT Data **/
     protected CompoundNBT itemData, fluidData;
@@ -284,5 +286,50 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             info.add(builder.toString());
         });
         return info;
+    }
+
+    @Override
+    public long getEnergyStored() {
+        return 0;
+    }
+
+    @Override
+    public long getEnergyCapacity() {
+        return 0;
+    }
+
+    @Override
+    public long getOutputAmperage() {
+        return 0;
+    }
+
+    @Override
+    public long getOutputVoltage() {
+        return 0;
+    }
+
+    @Override
+    public long getInputAmperage() {
+        return 0;
+    }
+
+    @Override
+    public long getInputVoltage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canReceive() {
+        return false;
+    }
+
+    @Override
+    public boolean canExtract() {
+        return false;
+    }
+
+    @Override
+    public boolean connects(Dir direction) {
+        return false;
     }
 }
