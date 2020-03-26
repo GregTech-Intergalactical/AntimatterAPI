@@ -1,6 +1,5 @@
 package muramasa.antimatter.tool;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
@@ -36,7 +35,6 @@ import java.util.function.Consumer;
 
 public class MaterialTool extends ToolItem implements IAntimatterTool {
 
-    protected String domain;
     protected IItemTier tier;
     protected AntimatterToolType type;
     protected Material primary;
@@ -46,9 +44,8 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     protected int energyTier;
     protected long maxEnergy;
 
-    public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
+    public MaterialTool(AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
         super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
-        this.domain = domain;
         this.type = type;
         this.tier = tier;
         this.primary = primary;
@@ -68,14 +65,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
                     (stack, world, entity) -> entity != null && entity.isHandActive() && entity.getActiveItemStack() == stack ? 1.0F : 0.0F);
         }
          */
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     // Powered variant
-    public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary, int energyTier) {
+    public MaterialTool(AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary, int energyTier) {
         super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
-        this.domain = domain;
         this.type = type;
         this.tier = tier;
         this.primary = primary;
@@ -83,8 +77,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         this.toolTypes = type.getToolTypes();
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier; // Utils.getNumberOfDigits(type.getBaseMaxEnergy(), true);
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     @Override
@@ -99,9 +91,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         }
         return id;
     }
-
-    @Override
-    public String getDomain() { return domain; }
 
     @Override
     public AntimatterToolType getType() { return type; }

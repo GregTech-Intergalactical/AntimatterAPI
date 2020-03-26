@@ -1,6 +1,8 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.material.Material;
+import net.minecraft.block.Block;
+import net.minecraftforge.registries.DeferredRegister;
 
 public class BlockFluidPipe extends BlockPipe {
 
@@ -8,8 +10,8 @@ public class BlockFluidPipe extends BlockPipe {
     protected int capacity;
     protected boolean gasProof;
 
-    public BlockFluidPipe(String domain, Material material, PipeSize size, int capacity, int heatResistance, boolean gasProof) {
-        super(domain, PipeType.FLUID, material, size);
+    public BlockFluidPipe(Material material, PipeSize size, int capacity, int heatResistance, boolean gasProof) {
+        super(PipeType.FLUID, material, size);
         this.heatResistance = heatResistance;
         this.gasProof = gasProof;
         this.capacity = capacity;
@@ -39,14 +41,14 @@ public class BlockFluidPipe extends BlockPipe {
         protected boolean gasProof;
         protected int[] caps;
 
-        public BlockFluidPipeBuilder(String domain, Material material, int heatResistance, boolean gasProof, PipeSize... sizes) {
-            super(domain, material, sizes);
+        public BlockFluidPipeBuilder(Material material, int heatResistance, boolean gasProof, PipeSize... sizes) {
+            super(material, sizes);
             this.heatResistance = heatResistance;
             this.gasProof = gasProof;
         }
 
-        public BlockFluidPipeBuilder(String domain, Material material, int heatResistance, boolean gasProof) {
-            this(domain, material, heatResistance, gasProof, PipeSize.VALUES);
+        public BlockFluidPipeBuilder(Material material, int heatResistance, boolean gasProof) {
+            this(material, heatResistance, gasProof, PipeSize.VALUES);
         }
 
         public BlockFluidPipeBuilder caps(int baseCap) {
@@ -60,9 +62,13 @@ public class BlockFluidPipe extends BlockPipe {
         }
 
         @Override
-        public void build() {
+        public void build(DeferredRegister<Block> register) {
             for (int i = 0; i < sizes.length; i++) {
-                new BlockFluidPipe(domain, material, sizes[i], caps[i], heatResistance, gasProof);
+                PipeSize size = sizes[i];
+                int cap = caps[i];
+                register.register(PipeType.FLUID.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
+                    return new BlockFluidPipe(material, size, cap, heatResistance, gasProof);
+                });
             }
         }
     }

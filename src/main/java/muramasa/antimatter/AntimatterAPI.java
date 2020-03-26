@@ -9,6 +9,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,6 +52,7 @@ public final class AntimatterAPI {
         registerInternal(c, id, o, true);
         if (o instanceof Item && !hasBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
         if (o instanceof Block && !hasBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
+        if (o instanceof IRegistryEntryProvider && !hasBeenRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o, true);
         if (o instanceof Material) MATERIAL_HASH_LOOKUP.put(((Material) o).getHash(), (Material) o);
     }
 

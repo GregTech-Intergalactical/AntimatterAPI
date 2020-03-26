@@ -1,14 +1,16 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.material.Material;
+import net.minecraft.block.Block;
+import net.minecraftforge.registries.DeferredRegister;
 
 public class BlockItemPipe extends BlockPipe {
 
     protected boolean restrictive;
     protected int slots, steps;
 
-    public BlockItemPipe(String domain, Material material, PipeSize size, boolean restrictive, int slots, int steps) {
-        super(domain, restrictive ? PipeType.ITEM_RESTRICTIVE : PipeType.ITEM, material, size);
+    public BlockItemPipe(Material material, PipeSize size, boolean restrictive, int slots, int steps) {
+        super(restrictive ? PipeType.ITEM_RESTRICTIVE : PipeType.ITEM, material, size);
         this.restrictive = restrictive;
         this.slots = slots;
         this.steps = steps;
@@ -45,12 +47,12 @@ public class BlockItemPipe extends BlockPipe {
         protected int[] slots, steps;
         protected boolean buildRestrictive = true, buildNonRestrictive = true;
 
-        public BlockItemPipeBuilder(String domain, Material material, PipeSize[] sizes) {
-            super(domain, material, sizes);
+        public BlockItemPipeBuilder(Material material, PipeSize[] sizes) {
+            super(material, sizes);
         }
 
-        public BlockItemPipeBuilder(String domain, Material material) {
-            this(domain, material, PipeSize.VALUES);
+        public BlockItemPipeBuilder(Material material) {
+            this(material, PipeSize.VALUES);
         }
 
         public BlockItemPipeBuilder slots(int baseSlots) {
@@ -80,10 +82,20 @@ public class BlockItemPipe extends BlockPipe {
         }
 
         @Override
-        public void build() {
+        public void build(DeferredRegister<Block> register) {
             for (int i = 0; i < sizes.length; i++) {
-                if (buildRestrictive) new BlockItemPipe(domain, material, sizes[i], true, slots[i], steps[i]);
-                if (buildNonRestrictive) new BlockItemPipe(domain, material, sizes[i], false, slots[i], steps[i]);
+                PipeSize size = sizes[i];
+                int slot = slots[i], step = steps[i];
+                if (buildRestrictive) {
+                    register.register(PipeType.ITEM_RESTRICTIVE.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
+                        return new BlockItemPipe(material, size, true, slot, step);
+                    });
+                }
+                if (buildNonRestrictive) {
+                    register.register(PipeType.ITEM.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
+                        return new BlockItemPipe(material, size, false, slot, step);
+                    });
+                }
             }
         }
     }

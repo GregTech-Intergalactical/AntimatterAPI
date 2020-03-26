@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.ModLoadingContext;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,8 +25,9 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
 
     private static final AxisAlignedBB FRAME_COLLISION = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);//new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
     
-    public BlockStorage(String domain, Material material, MaterialType<?> type) {
-        super(domain, material, type, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
+    public BlockStorage(Material material, MaterialType<?> type) {
+        super(material, type, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
+        setRegistryName(ModLoadingContext.get().getActiveNamespace(), type.getId() + "_" + material.getId());
         AntimatterAPI.register(BlockStorage.class, this);
     }
 

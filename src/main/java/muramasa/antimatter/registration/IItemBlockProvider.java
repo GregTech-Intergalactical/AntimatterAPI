@@ -10,8 +10,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public interface IItemBlockProvider {
 
-    default AntimatterItemBlock getItemBlock(Block block) {
-        return new AntimatterItemBlock(block);
+    default AntimatterItemBlock getItemBlock() {
+        return new AntimatterItemBlock((Block) this);
     }
 
     default ItemGroup getItemGroup() {

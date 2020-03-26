@@ -11,6 +11,7 @@ import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
@@ -161,9 +162,9 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return root;
     }
 
-    public AntimatterBlockModelBuilder basicConfig(ITextureProvider textureProvider, Texture[] tex) {
-        if (tex.length < 13) return this;
-         model(SIMPLE, textureProvider.getTextures());
+    public AntimatterBlockModelBuilder basicConfig(Block block, Texture[] tex) {
+        if (!(block instanceof ITextureProvider) || tex.length < 13) return this;
+         model(SIMPLE, ((ITextureProvider) block).getTextures());
 
         //Single (1)
          config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
