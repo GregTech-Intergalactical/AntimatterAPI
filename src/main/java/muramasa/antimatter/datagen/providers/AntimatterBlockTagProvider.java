@@ -49,7 +49,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
                 }
             });
         });
-        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> {
+        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getRegistryName().getNamespace().equals(domain)).forEach(s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);
             this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s);
         });

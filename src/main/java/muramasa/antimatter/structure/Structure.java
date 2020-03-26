@@ -1,6 +1,5 @@
 package muramasa.antimatter.structure;
 
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
@@ -29,13 +28,13 @@ public class Structure {
         return this;
     }
 
-    public Structure exact(int i, IAntimatterObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o.getId(), (c, s) -> (c.containsKey(o.getId()) && c.get(o.getId()).size() == i) || (s.containsKey(o.getId()) && s.get(o.getId()).size() == i)));
+    public Structure exact(int i, Object... objects) {
+        Arrays.stream(StructureBuilder.getAntiObjects(objects)).forEach(o -> addReq(o.getId(), (c, s) -> (c.containsKey(o.getId()) && c.get(o.getId()).size() == i) || (s.containsKey(o.getId()) && s.get(o.getId()).size() == i)));
         return this;
     }
 
-    public Structure min(int i, IAntimatterObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o.getId(), (c, s) -> (c.containsKey(o.getId()) && c.get(o.getId()).size() >= i) || (s.containsKey(o.getId()) && s.get(o.getId()).size() >= i)));
+    public Structure min(int i, Object... objects) {
+        Arrays.stream(StructureBuilder.getAntiObjects(objects)).forEach(o -> addReq(o.getId(), (c, s) -> (c.containsKey(o.getId()) && c.get(o.getId()).size() >= i) || (s.containsKey(o.getId()) && s.get(o.getId()).size() >= i)));
         return this;
     }
 

@@ -3,22 +3,34 @@ package muramasa.antimatter.material;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.BlockSurfaceRock;
+import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.material.MaterialTag.METAL;
 import static muramasa.antimatter.material.MaterialType.*;
 
-public class Material implements IAntimatterObject {
+public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     private int hash;
 
@@ -70,6 +82,24 @@ public class Material implements IAntimatterObject {
     public Material(String domain, String id, int rgb, TextureSet set, Element element) {
         this(domain, id, rgb, set);
         this.element = element;
+    }
+
+    @Override
+    public Collection<IForgeRegistryEntry<?>> buildRegistryEntries(String domain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(domain)) return Collections.emptyList();
+        if (registry == ForgeRegistries.ITEMS) {
+            return AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowItemGen(this)).map(t -> new MaterialItem(t, this)).collect(Collectors.toList());
+        } else if (registry == ForgeRegistries.BLOCKS) {
+            List<IForgeRegistryEntry<?>> entries = new ArrayList<>();
+            if (has(BLOCK)) entries.add(new BlockStorage(this, BLOCK));
+            else if (has(FRAME)) entries.add(new BlockStorage(this, FRAME));
+            else if (has(ROCK)) AntimatterAPI.all(StoneType.class).forEach(s -> entries.add(new BlockSurfaceRock(this, s)));
+            else if (has(ORE)) AntimatterAPI.all(StoneType.class).forEach(s -> entries.add(new BlockOre(this, s, ORE)));
+            else if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class).forEach(s -> entries.add(new BlockOre(this, s, ORE_SMALL)));
+            else if (has(ORE_STONE)) entries.add(new BlockOreStone(this));
+            return entries;
+        }
+        return Collections.emptyList();
     }
 
     public String getDomain() {

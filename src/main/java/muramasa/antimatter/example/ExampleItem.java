@@ -10,13 +10,13 @@ import net.minecraft.item.Item;
 
 public class ExampleItem extends ItemBasic implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    public ExampleItem(String domain, String id, Item.Properties properties) {
-        super(domain, id, properties);
+    public ExampleItem(Item.Properties properties) {
+        super(properties);
         AntimatterAPI.register(ExampleItem.class, this);
     }
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(domain, "item/" + getId())};
+        return new Texture[]{new Texture(getRegistryName().getNamespace(), "item/" + getId())};
     }
 }

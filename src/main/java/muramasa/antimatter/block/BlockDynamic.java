@@ -3,7 +3,6 @@ package muramasa.antimatter.block;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.ModelConfig;
-import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -24,12 +23,12 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     protected Int2ObjectLinkedOpenHashMap<VoxelShape> shapes = new Int2ObjectLinkedOpenHashMap<>();
     protected Random r = new Random();
 
-    public BlockDynamic(String domain, String id, Properties properties, Texture... textures) {
-        super(domain, id, properties, textures);
+    public BlockDynamic(Properties properties) {
+        super(properties);
     }
 
-    public BlockDynamic(String namespace, String id, Texture... textures) {
-        super(namespace, id, textures);
+    public BlockDynamic() {
+        super();
     }
 
     /** Connection Logic **/
