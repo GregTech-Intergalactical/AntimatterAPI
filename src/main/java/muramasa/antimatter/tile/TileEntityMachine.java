@@ -72,19 +72,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onFirstTick() {
-        energyHandler.ifPresent(EnergyHandler::create);
-    }
-
-    @Override
     public void onServerUpdate() {
         coverHandler.ifPresent(CoverHandler::update);
-        energyHandler.ifPresent(EnergyHandler::update);
     }
 
     @Override
     public void remove() {
-        energyHandler.ifPresent(EnergyHandler::remove);
+        energyHandler.ifPresent(h -> h.remove());
         super.remove();
     }
 

@@ -1,5 +1,6 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.block.BlockCoil;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IColorHandler;
@@ -13,6 +14,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import tesseract.electric.ElectricHandler;
 import tesseract.electric.api.IElectricCable;
@@ -153,14 +155,12 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
                 PipeSize size = sizes[i];
                 int amp = amps[i];
                 if (buildInsulated) {
-                    register.register(PipeType.CABLE.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
-                        return new BlockCable(material, size, true, loss, lossInsulated, amp, tier);
-                    });
+                    register.register(PipeType.CABLE.getId() + "_" + material.getId() + "_" + size.getId(), () ->
+                        new BlockCable(material, size, true, loss, lossInsulated, amp, tier));
                 }
                 if (buildUninsulated) {
-                    register.register(PipeType.WIRE.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
-                        return new BlockCable(material, size, false, loss, lossInsulated, amp, tier);
-                    });
+                    register.register(PipeType.WIRE.getId() + "_" + material.getId() + "_" + size.getId(), () ->
+                        new BlockCable(material, size, false, loss, lossInsulated, amp, tier));
                 }
             }
         }
