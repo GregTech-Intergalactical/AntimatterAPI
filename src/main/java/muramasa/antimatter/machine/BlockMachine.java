@@ -2,8 +2,10 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockDynamic;
-import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.block.BlockBasic;
+import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.capability.IConfigHandler;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -12,6 +14,8 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -40,6 +44,8 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -102,6 +108,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return true;
     }
 
+    @Nullable
+    private AntimatterToolType getToolType(PlayerEntity player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool))
+            return null;
+        return ((IAntimatterTool) stack.getItem()).getType();
+    }
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
@@ -110,6 +123,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                 return ActionResultType.SUCCESS;
             }
+            LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCapabilities.CONFIGURABLE);
+            interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), getToolType(player)));
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }

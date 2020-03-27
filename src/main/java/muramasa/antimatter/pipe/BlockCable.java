@@ -1,18 +1,35 @@
 package muramasa.antimatter.pipe;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import tesseract.electric.ElectricSystem;
+import tesseract.electric.api.IElectricCable;
+import tesseract.electric.api.IElectricNode;
+import tesseract.graph.*;
+import tesseract.util.Dir;
+import tesseract.util.Pos;
 
 import javax.annotation.Nullable;
 
-public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorHandler {
+public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorHandler, IElectricCable {
 
     protected boolean insulated;
     protected int loss, lossInsulated;
@@ -29,14 +46,17 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         register(BlockCable.class);
     }
 
+    @Override
     public long getVoltage() {
         return tier.getVoltage();
     }
 
+    @Override
     public int getLoss() {
         return insulated ? lossInsulated : loss;
     }
 
+    @Override
     public int getAmps() {
         return amps;
     }
@@ -45,7 +65,48 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         return tier;
     }
 
-//    @Nullable
+    @Override
+    public boolean connects(Dir direction) {
+        return true;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        ElectricSystem.addCable(world, pos, this);
+    }
+
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult p_225533_6_) {
+        player.sendMessage(new StringTextComponent(""));
+
+        Graph<IElectricCable, IElectricNode> graph = ElectricSystem.instance(world);
+        player.sendMessage(new StringTextComponent("Graph contains " + graph.countGroups() + " groups:"));
+        for (Int2ObjectMap.Entry<Group<IElectricCable, IElectricNode>> group : graph.getGroups().int2ObjectEntrySet()) {
+            player.sendMessage(new StringTextComponent("===Group " + group.getIntKey() + " contains " + group.getValue().countBlocks() + " blocks "));
+
+            for (IGrid<IElectricCable> grid : group.getValue().getGrids().values()) {
+                player.sendMessage(new StringTextComponent("======Grid contains " + grid.countConnectors() + " connectors"));
+            }
+        }
+
+        player.sendMessage(new StringTextComponent("==================="));
+
+        return super.onBlockActivated(state, world, pos, player, handIn, p_225533_6_);
+    }
+
+    @Override
+    public void onExplosionDestroy(World world, BlockPos pos, Explosion explosionIn) {
+        ElectricSystem.remove(world, pos);
+        world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 1000, true).sendMessage(new StringTextComponent("Removed"));
+    }
+
+    @Override
+    public void onPlayerDestroy(IWorld world, BlockPos pos, BlockState state) {
+        ElectricSystem.remove(world.getWorld(), pos);
+        world.getWorld().getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 1000, true).sendMessage(new StringTextComponent("Removed"));
+    }
+
+    //    @Nullable
 //    @Override
 //    public String getHarvestTool(BlockState state) {
 //        return "wire_cutter";
