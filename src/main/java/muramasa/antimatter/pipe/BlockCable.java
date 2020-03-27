@@ -11,11 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import tesseract.electric.ElectricHandler;
-import tesseract.electric.api.IElectricCable;
-import tesseract.util.Dir;
+import net.minecraftforge.registries.DeferredRegister;
 
 import javax.annotation.Nullable;
 
@@ -26,10 +22,8 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
     protected int amps;
     protected Tier tier;
 
-    private ElectricHandler electricHandler;
-
-    public BlockCable(String domain, Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
-        super(domain, insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
+    public BlockCable(Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
+        super(insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
         this.insulated = insulated;
         this.loss = loss;
         this.lossInsulated = lossInsulated;
@@ -119,15 +113,15 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         protected int[] amps;
         protected boolean buildUninsulated = true, buildInsulated = true;
 
-        public BlockCableBuilder(String domain, Material material, int loss, int lossInsulated, Tier tier, PipeSize[] sizes) {
-            super(domain, material, sizes);
+        public BlockCableBuilder(Material material, int loss, int lossInsulated, Tier tier, PipeSize[] sizes) {
+            super(material, sizes);
             this.loss = loss;
             this.lossInsulated = lossInsulated;
             this.tier = tier;
         }
 
-        public BlockCableBuilder(String domain, Material material, int loss, int lossInsulated, Tier tier) {
-            this(domain, material, loss, lossInsulated, tier, PipeSize.VALUES);
+        public BlockCableBuilder(Material material, int loss, int lossInsulated, Tier tier) {
+            this(material, loss, lossInsulated, tier, PipeSize.VALUES);
         }
 
         public BlockCableBuilder amps(int baseAmps) {
@@ -147,10 +141,20 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         }
 
         @Override
-        public void build() {
+        public void build(DeferredRegister<Block> register) {
             for (int i = 0; i < sizes.length; i++) {
-                if (buildInsulated) new BlockCable(domain, material, sizes[i], true, loss, lossInsulated, amps[i], tier);
-                if (buildUninsulated) new BlockCable(domain, material, sizes[i], false, loss, lossInsulated, amps[i], tier);
+                PipeSize size = sizes[i];
+                int amp = amps[i];
+                if (buildInsulated) {
+                    register.register(PipeType.CABLE.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
+                        return new BlockCable(material, size, true, loss, lossInsulated, amp, tier);
+                    });
+                }
+                if (buildUninsulated) {
+                    register.register(PipeType.WIRE.getId() + "_" + material.getId() + "_" + size.getId(), () -> {
+                        return new BlockCable(material, size, false, loss, lossInsulated, amp, tier);
+                    });
+                }
             }
         }
     }

@@ -120,8 +120,10 @@ public class AntimatterToolType implements IAntimatterObject {
         List<IAntimatterTool> poweredTools = new ArrayList<>();
         Item.Properties properties = prepareInstantiation(domain, tier);
         for (int energyTier : energyTiers) {
-            System.out.println(Ref.VN[energyTier].toLowerCase(Locale.ENGLISH));
-            poweredTools.add(new MaterialTool(domain, this, tier, properties, primary, secondary, energyTier));
+            //System.out.println(Ref.VN[energyTier].toLowerCase(Locale.ENGLISH));
+            MaterialTool tool = new MaterialTool(this, tier, properties, primary, secondary, energyTier);
+            //TODO tool.register(IAntimatterTool.class, domain, tool.getId());
+            poweredTools.add(tool);
         }
         return poweredTools;
     }
@@ -135,7 +137,9 @@ public class AntimatterToolType implements IAntimatterObject {
      */
     public MaterialTool instantiate(String domain, Material primary, @Nullable Material secondary) {
         AntimatterItemTier tier = new AntimatterItemTier(this, primary, secondary);
-        return new MaterialTool(domain, this, tier, prepareInstantiation(domain, tier), primary, secondary);
+        MaterialTool tool = new MaterialTool(this, tier, prepareInstantiation(domain, tier), primary, secondary);
+        //TODO tool.register(IAntimatterTool.class, domain, tool.getId());
+        return tool;
     }
 
     private Item.Properties prepareInstantiation(String domain, @Nonnull IItemTier tier) {

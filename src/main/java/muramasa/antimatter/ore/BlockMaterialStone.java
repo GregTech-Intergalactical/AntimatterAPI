@@ -19,8 +19,8 @@ public abstract class BlockMaterialStone extends BlockBasic implements IAntimatt
     protected Material material;
     protected StoneType stoneType;
 
-    public BlockMaterialStone(String domain, String id, Material material, StoneType stoneType, Block.Properties properties) {
-        super(domain, id, properties);
+    public BlockMaterialStone(Material material, StoneType stoneType, Block.Properties properties) {
+        super(properties);
         this.material = material;
         this.stoneType = stoneType;
     }

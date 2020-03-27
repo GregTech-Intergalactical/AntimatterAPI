@@ -14,14 +14,13 @@ public class BlockCoil extends BlockBasic {
 
     protected int heatCapacity;
 
-    public BlockCoil(String domain, String id, int heatCapacity, Block.Properties properties) {
-        super(domain, "coil_" + id, properties, new Texture(domain, "block/coil/" + id));
+    public BlockCoil(int heatCapacity, Block.Properties properties) {
+        super(properties);
         this.heatCapacity = heatCapacity;
-        AntimatterAPI.register(BlockCoil.class, this);
     }
 
-    public BlockCoil(String domain, String id, int heatCapacity) {
-        this(domain, id, heatCapacity, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+    public BlockCoil(int heatCapacity) {
+        this(heatCapacity, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
     }
 
     public int getHeatCapacity() {
@@ -32,5 +31,10 @@ public class BlockCoil extends BlockBasic {
     @Override
     public ToolType getHarvestTool(BlockState state) {
         return AntimatterAPI.WRENCH_TOOL_TYPE;
+    }
+
+    @Override
+    public Texture[] getTextures() {
+        return new Texture[]{new Texture(getRegistryName().getNamespace(), "block/coil/" + getRegistryName().getPath())};
     }
 }

@@ -34,7 +34,7 @@ public class AntimatterLanguageProvider extends LanguageProvider {
 
     protected void processTranslations(String domain, String locale) {
         if (!locale.startsWith("en")) return;
-        AntimatterAPI.all(ItemBasic.class).stream().filter(i -> i.getDomain().equals(domain)).forEach(item -> {
+        AntimatterAPI.all(ItemBasic.class).stream().filter(i -> i.getRegistryName().getNamespace().equals(domain)).forEach(item -> {
             add(item, lowerUnderscoreToUpperSpaced(item.getId()));
         });
         AntimatterAPI.all(Material.class).stream().filter(m -> m.getDomain().equals(domain)).forEach(mat -> {
@@ -52,7 +52,7 @@ public class AntimatterLanguageProvider extends LanguageProvider {
                 }
             });
         });
-        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getDomain().equals(domain)).forEach(s -> add(s, getLocalizedType(s)));
+        AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getRegistryName().getNamespace().equals(domain)).forEach(s -> add(s, getLocalizedType(s)));
         AntimatterAPI.all(BlockStorage.class).stream()
                 .filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
                     MaterialType<?> type = block.getType();

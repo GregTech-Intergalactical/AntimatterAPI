@@ -26,8 +26,8 @@ import java.util.List;
 
 public class DebugScannerItem extends ItemBasic {
 
-    public DebugScannerItem(String domain, String id, String tooltip) {
-        super(domain, id, tooltip);
+    public DebugScannerItem(String tooltip) {
+        super(tooltip);
     }
 
     @Override
