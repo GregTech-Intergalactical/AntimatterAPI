@@ -277,7 +277,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     @Override
     public long getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
-        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getMaxInsert() : Ref.V[0] : Ref.V[0];
+        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getInputVoltage() : Ref.V[0] : Ref.V[0];
     }
 
     @Override
