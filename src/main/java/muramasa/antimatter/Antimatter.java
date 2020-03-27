@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
+import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
