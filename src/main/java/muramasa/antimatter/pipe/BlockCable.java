@@ -11,7 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.DeferredRegister;
+import tesseract.electric.ElectricHandler;
+import tesseract.electric.api.IElectricCable;
+import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
 
@@ -21,6 +26,8 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
     protected int loss, lossInsulated;
     protected int amps;
     protected Tier tier;
+
+    private ElectricHandler electricHandler;
 
     public BlockCable(Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
         super(insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
