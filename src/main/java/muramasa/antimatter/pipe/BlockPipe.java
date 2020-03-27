@@ -24,6 +24,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.registries.DeferredRegister;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -36,16 +37,16 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
     protected Material material;
     protected PipeSize size;
 
-    public BlockPipe(String domain, PipeType type, Material material, PipeSize size) {
-        super(domain, type.getId() + "_" + material.getId() + "_" + size.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON));
+    public BlockPipe(PipeType type, Material material, PipeSize size) {
+        super(Block.Properties.create(net.minecraft.block.material.Material.IRON));
         this.type = type;
         this.material = material;
         this.size = size;
     }
 
     public void register(Class<?> c) {
-        AntimatterAPI.register(BlockPipe.class, this);
-        AntimatterAPI.register(c, this);
+        //AntimatterAPI.register(BlockPipe.class, this);
+        //AntimatterAPI.register(c, this);
     }
 
     public PipeType getType() {
@@ -305,16 +306,14 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
 
     public abstract static class BlockPipeBuilder {
 
-        protected String domain;
         protected Material material;
         protected PipeSize[] sizes;
 
-        public BlockPipeBuilder(String domain, Material material, PipeSize[] sizes) {
-            this.domain = domain;
+        public BlockPipeBuilder(Material material, PipeSize[] sizes) {
             this.material = material;
             this.sizes = sizes;
         }
 
-        public abstract void build();
+        public abstract void build(DeferredRegister<Block> register);
     }
 }

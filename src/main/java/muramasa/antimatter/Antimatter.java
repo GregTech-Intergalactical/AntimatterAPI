@@ -1,8 +1,6 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
-import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
@@ -13,7 +11,6 @@ import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
-import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
@@ -38,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(Ref.ID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-public class Antimatter implements IAntimatterRegistrar {
+public class Antimatter extends AntimatterMod implements IAntimatterRegistrar {
 
     public static Antimatter INSTANCE;
     public static AntimatterNetwork NETWORK = new AntimatterNetwork();
@@ -54,11 +51,15 @@ public class Antimatter implements IAntimatterRegistrar {
                 //Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", false));
             }
         });
+
+        //AntimatterAPI.addRegistrar(INSTANCE);
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+
+        Data.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent e) {
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterAPI.onRegistration(RegistrationEvent.READY);
 
         AntimatterWorldGenerator.init();
         AntimatterTriggers.init();
@@ -70,17 +71,17 @@ public class Antimatter implements IAntimatterRegistrar {
         if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK) AntimatterModelManager.runProvidersDynamically();
     }
 
-    @SubscribeEvent
+    //@SubscribeEvent
     public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
-        AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
-        AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock(b) : new AntimatterItemBlock(b)));
+        //AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
+        //AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock(b) : new AntimatterItemBlock(b)));
     }
 
     @SubscribeEvent
     public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_BUILD);
-        AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
+        //AntimatterAPI.onRegistration(RegistrationEvent.DATA_BUILD);
+        //AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
     }
 
     @SubscribeEvent
@@ -124,10 +125,10 @@ public class Antimatter implements IAntimatterRegistrar {
             case DATA_INIT:
                 Data.init();
                 break;
-            case DATA_READY:
-                AntimatterAPI.registerCover(Data.COVER_NONE);
-                AntimatterAPI.registerCover(Data.COVER_OUTPUT);
-                break;
+//            case DATA_READY:
+//                AntimatterAPI.registerCover(Data.COVER_NONE);
+//                AntimatterAPI.registerCover(Data.COVER_OUTPUT);
+//                break;
             case WORLDGEN_INIT:
                 new FeatureStoneLayer();
                 new FeatureVeinLayer();

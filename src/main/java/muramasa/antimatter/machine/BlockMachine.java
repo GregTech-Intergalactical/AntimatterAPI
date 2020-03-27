@@ -46,8 +46,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -61,10 +60,11 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     protected Machine type;
     protected Tier tier;
 
-    public BlockMachine(String domain, Machine type, Tier tier) {
-        super(domain, type.getId() + "_" + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+    public BlockMachine(Machine type, Tier tier) {
+        super(Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
         this.type = type;
         this.tier = tier;
+        setRegistryName(ModLoadingContext.get().getActiveNamespace(), type.getId() + "_" + tier.getId());
         AntimatterAPI.register(BlockMachine.class, this);
     }
 

@@ -1,6 +1,5 @@
 package muramasa.antimatter.tool;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import net.minecraft.block.BlockState;
@@ -21,26 +20,17 @@ import javax.annotation.Nullable;
 //TODO: power-sensitive version of MaterialSword
 public class MaterialSword extends SwordItem implements IAntimatterTool {
 
-    protected String domain;
     protected IItemTier tier;
     protected AntimatterToolType type;
     protected Material primary;
     protected Material secondary;
 
-    public MaterialSword(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, Material secondary) {
+    public MaterialSword(AntimatterToolType type, IItemTier tier, Properties properties, Material primary, Material secondary) {
         super(tier, (int) type.getBaseAttackDamage(), type.getBaseAttackSpeed(), properties);
-        this.domain = domain;
         this.type = type;
         this.tier = tier;
         this.primary = primary;
         this.secondary = secondary;
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(IAntimatterTool.class, this);
-    }
-
-    @Override
-    public String getDomain() {
-        return domain;
     }
 
     @Override
