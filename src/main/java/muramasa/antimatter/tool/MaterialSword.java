@@ -20,17 +20,24 @@ import javax.annotation.Nullable;
 //TODO: power-sensitive version of MaterialSword
 public class MaterialSword extends SwordItem implements IAntimatterTool {
 
+    protected String domain;
     protected IItemTier tier;
     protected AntimatterToolType type;
     protected Material primary;
     protected Material secondary;
 
-    public MaterialSword(AntimatterToolType type, IItemTier tier, Properties properties, Material primary, Material secondary) {
+    public MaterialSword(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, Material secondary) {
         super(tier, (int) type.getBaseAttackDamage(), type.getBaseAttackSpeed(), properties);
+        this.domain = domain;
         this.type = type;
         this.tier = tier;
         this.primary = primary;
         this.secondary = secondary;
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
     }
 
     @Override

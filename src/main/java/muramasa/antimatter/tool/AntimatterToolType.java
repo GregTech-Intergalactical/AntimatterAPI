@@ -80,7 +80,7 @@ public class AntimatterToolType implements IAntimatterObject {
         this.toolClass = MaterialTool.class;
         this.TOOL_TYPE = net.minecraftforge.common.ToolType.get(id);
         this.TOOL_TYPES.add(TOOL_TYPE);
-        AntimatterAPI.register(AntimatterToolType.class, this);
+        AntimatterAPI.register(AntimatterToolType.class, id, this);
     }
 
     /** IAntimatterTool Instantiation **/
@@ -121,7 +121,7 @@ public class AntimatterToolType implements IAntimatterObject {
         Item.Properties properties = prepareInstantiation(domain, tier);
         for (int energyTier : energyTiers) {
             //System.out.println(Ref.VN[energyTier].toLowerCase(Locale.ENGLISH));
-            MaterialTool tool = new MaterialTool(this, tier, properties, primary, secondary, energyTier);
+            MaterialTool tool = new MaterialTool(domain, this, tier, properties, primary, secondary, energyTier);
             //TODO tool.register(IAntimatterTool.class, domain, tool.getId());
             poweredTools.add(tool);
         }
@@ -137,7 +137,7 @@ public class AntimatterToolType implements IAntimatterObject {
      */
     public MaterialTool instantiate(String domain, Material primary, @Nullable Material secondary) {
         AntimatterItemTier tier = new AntimatterItemTier(this, primary, secondary);
-        MaterialTool tool = new MaterialTool(this, tier, prepareInstantiation(domain, tier), primary, secondary);
+        MaterialTool tool = new MaterialTool(domain, this, tier, prepareInstantiation(domain, tier), primary, secondary);
         //TODO tool.register(IAntimatterTool.class, domain, tool.getId());
         return tool;
     }

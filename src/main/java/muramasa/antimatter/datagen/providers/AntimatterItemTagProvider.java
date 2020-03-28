@@ -3,11 +3,10 @@ package muramasa.antimatter.datagen.providers;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.IMaterialTag;
+import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
@@ -43,7 +42,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         this.copy(frameTag, blockToItemTag(frameTag));
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
         IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
-            AntimatterAPI.all(StoneType.class).forEach(s -> {
+            AntimatterAPI.all(StoneType.class, s -> {
                 if (m.has(ORE)) {
                     String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
                     this.copy(getForgeBlockTag(name), getForgeItemTag(name));
@@ -72,9 +71,9 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
                     this.getBuilder(getForgeItemTag(name)).add(item).replace(replace);
                     if (type == INGOT || type == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
                 });
-        AntimatterAPI.all(IAntimatterTool.class).stream().filter(t -> t.getDomain().equals(domain)).forEach(tool -> {
-            this.getBuilder(tool.getType().getTag()).add(tool.asItem());
-        });
+//        AntimatterAPI.all(IAntimatterTool.class).stream().filter(t -> t.getDomain().equals(domain)).forEach(tool -> {
+//            this.getBuilder(tool.getType().getTag()).add(tool.asItem());
+//        });
     }
 
     @Override

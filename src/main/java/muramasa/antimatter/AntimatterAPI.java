@@ -1,16 +1,15 @@
 package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
-import muramasa.antimatter.registration.IRegistryEntryProvider;
-import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.registration.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -21,16 +20,17 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class AntimatterAPI {
 
     private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
-    private static final HashMap<String, List<Runnable>> CALLBACKS = new HashMap<>();
-
+    private static final Object2ObjectMap<String, List<Runnable>> CALLBACKS = new Object2ObjectOpenHashMap<>();
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
     private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new HashSet<>();
 
@@ -44,24 +44,17 @@ public final class AntimatterAPI {
         OBJECTS.get(c).put(id, o);
     }
 
-    private static boolean hasBeenRegistered(Class<?> c, String id) {
-        return OBJECTS.containsKey(c) && OBJECTS.get(c).containsKey(id);
-    }
-
     public static void register(Class<?> c, String id, Object o) {
         registerInternal(c, id, o, true);
-        if (o instanceof Item && !hasBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
-        if (o instanceof Block && !hasBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
-        if (o instanceof IRegistryEntryProvider && !hasBeenRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o, true);
+        if (o instanceof Item && !hasObjectBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
+        if (o instanceof Block && !hasObjectBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
+        if (o instanceof IRegistryEntryProvider && !hasObjectBeenRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o, true);
         if (o instanceof Material) MATERIAL_HASH_LOOKUP.put(((Material) o).getHash(), (Material) o);
     }
 
-    public static void register(Class<?> c, IAntimatterObject o) {
-        register(c, o.getId(), o);
-    }
-
-    public static void overrideRegistryObject(Class<?> c, String id, Object o) {
-        registerInternal(c, id, o, false);
+    private static boolean hasObjectBeenRegistered(Class<?> c, String id) {
+        LinkedHashMap<String, Object> map = OBJECTS.get(c);
+        return map != null && map.containsKey(id);
     }
 
     @Nullable
@@ -80,6 +73,14 @@ public final class AntimatterAPI {
         return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
+    public static <T> void all(Class<T> c, Consumer<T> consumer) {
+        all(c).forEach(consumer);
+    }
+
+    public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
+        all(c).stream().filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
+    }
+
     public static Material getMaterial(String id) {
         Material material = get(Material.class, id);
         return material != null ? material : Data.NULL;
@@ -94,9 +95,8 @@ public final class AntimatterAPI {
     public static void onRegistration(RegistrationEvent event) {
         if (REGISTRATION_EVENTS_HANDLED.contains(event)) throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         REGISTRATION_EVENTS_HANDLED.add(event);
-        if (INTERNAL_REGISTRAR == null) INTERNAL_REGISTRAR = Antimatter.INSTANCE;
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
-        all(IAntimatterRegistrar.class).forEach(r -> r.onRegistrationEvent(event));
+        all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
     }
 
@@ -105,7 +105,9 @@ public final class AntimatterAPI {
     }
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
-        if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar, true);
+        if (INTERNAL_REGISTRAR == null && registrar == Antimatter.INSTANCE) INTERNAL_REGISTRAR = registrar;
+        else if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar, true);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistrationHelper::onRegistryEvent);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {

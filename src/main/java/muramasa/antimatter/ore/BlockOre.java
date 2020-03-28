@@ -10,20 +10,18 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.ModLoadingContext;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
     private MaterialType<?> oreType;
 
-    public BlockOre(Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
-        super(material, stoneType, getOreProperties(properties));
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
+        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId().replaceAll("stone_", ""), material, stoneType, getOreProperties(properties));
         this.oreType = oreType;
-        setRegistryName(ModLoadingContext.get().getActiveNamespace(), oreType.getId() + "_" + material.getId() + "_" + stoneType.getId());
     }
 
-    public BlockOre(Material material, StoneType stoneType, MaterialType<?> oreType) {
-        this(material, stoneType, oreType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
+    public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType) {
+        this(domain, material, stoneType, oreType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
     }
 
     @Override

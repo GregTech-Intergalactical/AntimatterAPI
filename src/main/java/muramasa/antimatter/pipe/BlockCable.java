@@ -32,7 +32,6 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         this.lossInsulated = lossInsulated;
         this.tier = tier;
         this.amps = amps;
-        register(BlockCable.class);
     }
 
     @Override
@@ -116,15 +115,15 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         protected int[] amps;
         protected boolean buildUninsulated = true, buildInsulated = true;
 
-        public BlockCableBuilder(Material material, int loss, int lossInsulated, Tier tier, PipeSize[] sizes) {
-            super(material, sizes);
+        public BlockCableBuilder(String domain, Material material, int loss, int lossInsulated, Tier tier, PipeSize[] sizes) {
+            super(domain, material, sizes);
             this.loss = loss;
             this.lossInsulated = lossInsulated;
             this.tier = tier;
         }
 
-        public BlockCableBuilder(Material material, int loss, int lossInsulated, Tier tier) {
-            this(material, loss, lossInsulated, tier, PipeSize.VALUES);
+        public BlockCableBuilder(String domain, Material material, int loss, int lossInsulated, Tier tier) {
+            this(domain, material, loss, lossInsulated, tier, PipeSize.VALUES);
         }
 
         public BlockCableBuilder amps(int baseAmps) {
@@ -144,7 +143,7 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         }
 
         @Override
-        public void build(DeferredRegister<Block> register) {
+        public void build() {
             for (int i = 0; i < sizes.length; i++) {
                 PipeSize size = sizes[i];
                 int amp = amps[i];
