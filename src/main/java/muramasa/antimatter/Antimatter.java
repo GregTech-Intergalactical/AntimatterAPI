@@ -14,10 +14,8 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
@@ -35,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(Ref.ID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-public class Antimatter extends AntimatterMod implements IAntimatterRegistrar {
+public class Antimatter implements IAntimatterRegistrar {
 
     public static Antimatter INSTANCE;
     public static AntimatterNetwork NETWORK = new AntimatterNetwork();
@@ -52,10 +50,8 @@ public class Antimatter extends AntimatterMod implements IAntimatterRegistrar {
             }
         });
 
-        //AntimatterAPI.addRegistrar(INSTANCE);
+        AntimatterAPI.addRegistrar(INSTANCE);
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-
-        Data.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent e) {
@@ -69,30 +65,17 @@ public class Antimatter extends AntimatterMod implements IAntimatterRegistrar {
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
 
-        if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK) AntimatterModelManager.runProvidersDynamically();
-    }
-
-    //@SubscribeEvent
-    public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
-        //AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
-        //AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock(b) : new AntimatterItemBlock(b)));
-    }
-
-    @SubscribeEvent
-    public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-        //AntimatterAPI.onRegistration(RegistrationEvent.DATA_BUILD);
-        //AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
+        //if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK) AntimatterModelManager.runProvidersDynamically();
     }
 
     @SubscribeEvent
     public static void onTileRegistry(RegistryEvent.Register<TileEntityType<?>> e) {
-        AntimatterAPI.all(TileEntityType.class).forEach(t -> e.getRegistry().register(t));
+        AntimatterAPI.all(TileEntityType.class, t -> e.getRegistry().register(t));
     }
 
     @SubscribeEvent
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
-        AntimatterAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
+        AntimatterAPI.all(MenuHandler.class, h -> e.getRegistry().register(h.getContainerType()));
     }
 
     @SubscribeEvent

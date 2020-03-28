@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 
 public class MaterialTool extends ToolItem implements IAntimatterTool {
 
+    protected String domain;
     protected IItemTier tier;
     protected AntimatterToolType type;
     protected Material primary;
@@ -44,8 +45,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     protected int energyTier;
     protected long maxEnergy;
 
-    public MaterialTool(AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
+    public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary) {
         super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
+        this.domain = domain;
         this.type = type;
         this.tier = tier;
         this.primary = primary;
@@ -68,8 +70,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     // Powered variant
-    public MaterialTool(AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary, int energyTier) {
+    public MaterialTool(String domain, AntimatterToolType type, IItemTier tier, Properties properties, Material primary, @Nullable Material secondary, int energyTier) {
         super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), tier, type.getEffectiveBlocks(), properties);
+        this.domain = domain;
         this.type = type;
         this.tier = tier;
         this.primary = primary;
@@ -77,6 +80,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         this.toolTypes = type.getToolTypes();
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier; // Utils.getNumberOfDigits(type.getBaseMaxEnergy(), true);
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
     }
 
     @Override

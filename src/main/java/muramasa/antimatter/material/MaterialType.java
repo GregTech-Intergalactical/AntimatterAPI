@@ -104,7 +104,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible;
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
-    protected Map<MaterialType<?>, Tag> tagMap = new HashMap<>();
+    protected Map<MaterialType<?>, Tag<?>> tagMap = new HashMap<>();
     protected T getter;
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
@@ -113,7 +113,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         this.unitValue = unitValue;
         this.layers = layers;
         this.tagMap.put(this, Utils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
-        register(MaterialType.class, this);
+        register(MaterialType.class, getId());
     }
 
     public MaterialType<T> nonGen() {
@@ -141,7 +141,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public <T> Tag<T> getTag() {
-        return tagMap.get(this);
+        return (Tag<T>) tagMap.get(this);
     }
 
     public MaterialType<T> get(T getter) {

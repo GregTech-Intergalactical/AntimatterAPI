@@ -35,7 +35,6 @@ public class PipeType implements IAntimatterObject {
 
     public static final PipeType FLUID = new PipeType(
         "fluid_pipe", 0,
-        //new Texture("block/pipe/wire_side"),
         new Texture(Ref.ID, "block/pipe/pipe_side"),
         new Texture[] {
             new Texture(Ref.ID, "block/pipe/pipe_vtiny"),
@@ -83,7 +82,7 @@ public class PipeType implements IAntimatterObject {
         this.modelId = modelId;
         this.side = side;
         this.faces = faces;
-        AntimatterAPI.register(PipeType.class, this);
+        AntimatterAPI.register(PipeType.class, getId(), this);
     }
 
     @Override

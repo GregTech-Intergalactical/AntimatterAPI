@@ -29,26 +29,26 @@ public class ClientHandler implements IProxyHandler {
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
         AntimatterModelManager.setup();
-        AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
-        AntimatterAPI.all(MenuHandler.class).forEach(h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
-        AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-        AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+        AntimatterAPI.all(AntimatterModelLoader.class, l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
+        AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), h::getScreen));
+        AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+        AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
         AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
     }
 
     @SubscribeEvent
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
-        AntimatterAPI.all(Item.class).forEach(i -> {
+        AntimatterAPI.all(Item.class, i -> {
             if (i instanceof IColorHandler && ((IColorHandler) i).registerColorHandlers()) e.getItemColors().register((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
         });
-        AntimatterAPI.all(Block.class).forEach(b -> {
+        AntimatterAPI.all(Block.class, b -> {
             if (b instanceof IColorHandler && ((IColorHandler) b).registerColorHandlers()) e.getItemColors().register((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), b.asItem());
         });
     }
 
     @SubscribeEvent
     public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
-        AntimatterAPI.all(Block.class).forEach(b -> {
+        AntimatterAPI.all(Block.class, b -> {
             if (b instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) b)::getBlockColor, b);
         });
     }

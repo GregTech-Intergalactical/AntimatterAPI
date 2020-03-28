@@ -18,12 +18,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,7 +72,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
-        AntimatterAPI.register(Material.class, this);
+        AntimatterAPI.register(Material.class, id, this);
     }
 
     public Material(String domain, String id, int rgb, TextureSet set, Element element) {
@@ -85,21 +81,18 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     @Override
-    public Collection<IForgeRegistryEntry<?>> buildRegistryEntries(String domain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain)) return Collections.emptyList();
+    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(domain)) return;
         if (registry == ForgeRegistries.ITEMS) {
-            return AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowItemGen(this)).map(t -> new MaterialItem(t, this)).collect(Collectors.toList());
+            AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> new MaterialItem(domain, t, this));
         } else if (registry == ForgeRegistries.BLOCKS) {
-            List<IForgeRegistryEntry<?>> entries = new ArrayList<>();
-            if (has(BLOCK)) entries.add(new BlockStorage(this, BLOCK));
-            else if (has(FRAME)) entries.add(new BlockStorage(this, FRAME));
-            else if (has(ROCK)) AntimatterAPI.all(StoneType.class).forEach(s -> entries.add(new BlockSurfaceRock(this, s)));
-            else if (has(ORE)) AntimatterAPI.all(StoneType.class).forEach(s -> entries.add(new BlockOre(this, s, ORE)));
-            else if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class).forEach(s -> entries.add(new BlockOre(this, s, ORE_SMALL)));
-            else if (has(ORE_STONE)) entries.add(new BlockOreStone(this));
-            return entries;
+            if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
+            if (has(FRAME)) new BlockStorage(domain, this, FRAME);
+            if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(domain, this, s));
+            if (has(ORE)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE));
+            if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE_SMALL));
+            if (has(ORE_STONE)) new BlockOreStone(domain, this);
         }
-        return Collections.emptyList();
     }
 
     public String getDomain() {

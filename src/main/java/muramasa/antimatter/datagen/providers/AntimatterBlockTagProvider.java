@@ -34,21 +34,19 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
     }
 
     public void processTags(String domain) {
-        AntimatterAPI.all(StoneType.class).forEach(s -> {
-            IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
-                if (m.has(ORE)) {
-                    Block block = ORE.get().get(m, s).asBlock();
-                    String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
-                    this.getBuilder(getForgeBlockTag(name)).add(block).replace(replace);
-                    this.getBuilder(Tags.Blocks.ORES).add(block);
-                }
-                if (m.has(ORE_SMALL)) {
-                    Block block = ORE_SMALL.get().get(m, s).asBlock();
-                    String name = String.join("", getConventionalStoneType(s), "_", "small_ores/", m.getId());
-                    this.getBuilder(getForgeBlockTag(name)).add(block).replace(replace);
-                }
-            });
-        });
+        AntimatterAPI.all(StoneType.class, s -> IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
+            if (m.has(ORE)) {
+                Block block = ORE.get().get(m, s).asBlock();
+                String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
+                this.getBuilder(getForgeBlockTag(name)).add(block).replace(replace);
+                this.getBuilder(Tags.Blocks.ORES).add(block);
+            }
+            if (m.has(ORE_SMALL)) {
+                Block block = ORE_SMALL.get().get(m, s).asBlock();
+                String name = String.join("", getConventionalStoneType(s), "_", "small_ores/", m.getId());
+                this.getBuilder(getForgeBlockTag(name)).add(block).replace(replace);
+            }
+        }));
         AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getRegistryName().getNamespace().equals(domain)).forEach(s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);
             this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s);

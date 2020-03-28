@@ -1,7 +1,7 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
@@ -13,7 +13,6 @@ import net.minecraft.block.CauldronBlock;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -27,26 +26,23 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ModLoadingContext;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MaterialItem extends Item implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
     protected Material material;
     protected MaterialType<?> type;
 
-    public MaterialItem(MaterialType<?> type, Material material, Properties properties) {
-        super(properties);
+    public MaterialItem(String domain, MaterialType<?> type, Material material, Properties properties) {
+        super(domain, type.getId() + "_" + material.getId(), properties);
         this.material = material;
         this.type = type;
-        setRegistryName(ModLoadingContext.get().getActiveNamespace(), type.getId() + "_" + material.getId());
-        AntimatterAPI.register(MaterialItem.class, this);
     }
 
-    public MaterialItem(MaterialType<?> type, Material material) {
-        this(type, material, new Properties().group(Ref.TAB_MATERIALS));
+    public MaterialItem(String domain, MaterialType<?> type, Material material) {
+        this(domain, type, material, new Properties().group(Ref.TAB_MATERIALS));
     }
 
     public MaterialType<?> getType() {

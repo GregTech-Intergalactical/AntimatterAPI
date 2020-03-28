@@ -18,8 +18,8 @@ public class BlockMaterialType extends BlockBasic implements IColorHandler {
     protected MaterialType<?> type;
     protected String textureFolder = "";
 
-    public BlockMaterialType(Material material, MaterialType<?> type, Block.Properties properties) {
-        super(properties);
+    public BlockMaterialType(String domain, Material material, MaterialType<?> type, Block.Properties properties) {
+        super(domain, type.getId() + "_" + material.getId(), properties);
         this.material = material;
         this.type = type;
     }

@@ -15,32 +15,41 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ItemBasic extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
+public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    protected String tooltip = "";
+    protected String domain, id, tooltip = "";
     protected boolean enabled = true;
     protected Set<ItemTag> tags = new HashSet<>();
 
-    public ItemBasic(String tooltip, Properties properties) {
+    public ItemBasic(String domain, String id, Properties properties) {
         super(properties);
+        this.domain = domain;
+        this.id = id;
+        AntimatterAPI.register(getClass(), id, this);
+    }
+
+    public ItemBasic(String domain, String id) {
+        this(domain, id, new Properties().group(Ref.TAB_ITEMS));
+    }
+
+    public T tip(String tooltip) {
         this.tooltip = tooltip;
+        return (T) this;
     }
 
-    public ItemBasic(Properties properties) {
-        this("", properties);
-    }
-
-    public ItemBasic(String tooltip) {
-        this(tooltip, new Properties().group(Ref.TAB_ITEMS));
-    }
-
-    public ItemBasic() {
-        this("");
-    }
-
-    public ItemBasic tags(ItemTag... tags) {
+    public T tags(ItemTag... tags) {
         this.tags.addAll(Arrays.asList(tags));
-        return this;
+        return (T) this;
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     public String getTooltip() {

@@ -19,6 +19,8 @@ import java.util.List;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
+    String getDomain();
+
     AntimatterToolType getType();
 
     IItemTier getTier();
