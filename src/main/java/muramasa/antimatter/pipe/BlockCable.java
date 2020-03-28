@@ -1,22 +1,16 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.block.BlockCoil;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
-import tesseract.electric.ElectricHandler;
+import tesseract.electric.Electric;
 import tesseract.electric.api.IElectricCable;
 import tesseract.util.Dir;
 
@@ -29,7 +23,7 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
     protected int amps;
     protected Tier tier;
 
-    private ElectricHandler electricHandler;
+    private Electric electric;
 
     public BlockCable(Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
         super(insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
@@ -65,20 +59,20 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         return true;
     }
 
-    @Override
+    /*@Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        electricHandler = new ElectricHandler(world.getDimension().getType().getId(), pos.toLong(), this);
+        electricSystem = ElectricSystem.ofCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
     public void onExplosionDestroy(World world, BlockPos pos, Explosion explosionIn) {
-        electricHandler.remove();
+        electricSystem.remove();
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        electricHandler.remove();
-    }
+        electricSystem.remove();
+    }*/
 
     //    @Nullable
 //    @Override
