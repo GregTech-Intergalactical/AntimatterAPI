@@ -11,11 +11,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
 
@@ -29,20 +27,19 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
         this.domain = domain;
-        this.id = "stone_" + id;
+        this.id = id;
         this.material = material;
         this.texture = texture;
         this.soundType = soundType;
         this.generateBlock = generateBlock;
-        AntimatterAPI.register(StoneType.class, this);
+        AntimatterAPI.register(StoneType.class, "stone_" + id, this);
     }
 
     @Override
-    public Collection<IForgeRegistryEntry<?>> buildRegistryEntries(String domain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain) || !doesGenerateBlock() || registry != ForgeRegistries.BLOCKS) return Collections.emptyList();
+    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(domain) || !doesGenerateBlock() || registry != ForgeRegistries.BLOCKS) return;
         BlockStone stone = new BlockStone(this);
         setState(stone);
-        return Collections.singleton(stone);
     }
 
     public String getDomain() {
@@ -108,5 +105,4 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     public static StoneType get(String id) {
         return AntimatterAPI.get(StoneType.class, id);
     }
-    
 }

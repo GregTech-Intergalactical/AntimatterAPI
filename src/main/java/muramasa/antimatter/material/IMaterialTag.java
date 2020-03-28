@@ -7,14 +7,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface IMaterialTag {
+public interface IMaterialTag extends IAntimatterObject {
 
     //TODO use a static id -> material set map, instead of each IMaterialTag class having it's own collection
     Set<Material> all();
 
-    default void register(Class<?> c, IAntimatterObject o) {
-        AntimatterAPI.register(c, o);
-        AntimatterAPI.register(IMaterialTag.class, o);
+    default void register(Class<?> c, String id) {
+        AntimatterAPI.register(c, id, this);
+        AntimatterAPI.register(IMaterialTag.class, id, this);
     }
 
     default void add(Material... m) {
@@ -33,14 +33,5 @@ public interface IMaterialTag {
         Set<Material> materials = new HashSet<>();
         Arrays.stream(tags).forEach(t -> materials.addAll(t.all()));
         return materials;
-    }
-
-    static Set<IMaterialTag> getTags(String... ids) {
-        Set<IMaterialTag> tags = new HashSet<>();
-        for (String id : ids) {
-            IMaterialTag t = AntimatterAPI.get(IMaterialTag.class, id);
-            if (t != null) tags.add(t);
-        }
-        return tags;
     }
 }

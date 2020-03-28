@@ -14,13 +14,13 @@ public class BlockCoil extends BlockBasic {
 
     protected int heatCapacity;
 
-    public BlockCoil(int heatCapacity, Block.Properties properties) {
-        super(properties);
+    public BlockCoil(String domain, String id, int heatCapacity, Block.Properties properties) {
+        super(domain, id, properties);
         this.heatCapacity = heatCapacity;
     }
 
-    public BlockCoil(int heatCapacity) {
-        this(heatCapacity, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+    public BlockCoil(String domain, String id, int heatCapacity) {
+        this(domain, id, heatCapacity, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
     }
 
     public int getHeatCapacity() {
@@ -35,6 +35,6 @@ public class BlockCoil extends BlockBasic {
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(getRegistryName().getNamespace(), "block/coil/" + getRegistryName().getPath())};
+        return new Texture[]{new Texture(getRegistryName().getNamespace(), "block/coil/" + getRegistryName().getPath().replaceAll("coil_", ""))};
     }
 }

@@ -12,12 +12,12 @@ import javax.annotation.Nullable;
 
 public class BlockCasing extends BlockDynamic  {
 
-    public BlockCasing(Block.Properties properties) {
-        super(properties);
+    public BlockCasing(String domain, String id, Block.Properties properties) {
+        super(domain, id, properties);
     }
 
-    public BlockCasing() {
-        this(Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+    public BlockCasing(String domain, String id) {
+        this(domain, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
     }
 
     @Nullable
@@ -28,6 +28,6 @@ public class BlockCasing extends BlockDynamic  {
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(getRegistryName().getNamespace(), "block/casing/" + getRegistryName().getPath())};
+        return new Texture[]{new Texture(getRegistryName().getNamespace(), "block/casing/" + getRegistryName().getPath().replaceAll("casing_", ""))};
     }
 }

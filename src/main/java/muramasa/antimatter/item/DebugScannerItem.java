@@ -24,10 +24,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DebugScannerItem extends ItemBasic {
+public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
 
-    public DebugScannerItem(String tooltip) {
-        super(tooltip);
+    public DebugScannerItem(String domain, String id) {
+        super(domain, id);
     }
 
     @Override

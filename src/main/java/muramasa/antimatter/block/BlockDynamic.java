@@ -23,12 +23,12 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     protected Int2ObjectLinkedOpenHashMap<VoxelShape> shapes = new Int2ObjectLinkedOpenHashMap<>();
     protected Random r = new Random();
 
-    public BlockDynamic(Properties properties) {
-        super(properties);
+    public BlockDynamic(String domain, String id, Properties properties) {
+        super(domain, id, properties);
     }
 
-    public BlockDynamic() {
-        super();
+    public BlockDynamic(String domain, String id) {
+        super(domain, id);
     }
 
     /** Connection Logic **/
