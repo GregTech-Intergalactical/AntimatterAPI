@@ -6,6 +6,8 @@ import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
+import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
@@ -69,6 +71,11 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.all(BlockMachine.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
         AntimatterAPI.all(BlockOre.class).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
         AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
+            // RenderTypeLookup.setRenderLayer(f.getFluidBlock(), RenderType.getTranslucent());
+            // RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
+            // RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
+        });
     }
 
     @SubscribeEvent

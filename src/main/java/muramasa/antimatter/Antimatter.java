@@ -3,6 +3,7 @@ package muramasa.antimatter;
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.blocks.AntimatterItemBlock;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -15,6 +16,7 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -62,6 +64,7 @@ public class Antimatter implements IAntimatterRegistrar {
     public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
         AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
         AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock(b) : new AntimatterItemBlock(b)));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getContainerItem()));
     }
 
     @SubscribeEvent
@@ -69,6 +72,13 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_BUILD);
         AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFluidBlock()));
+    }
+
+    @SubscribeEvent
+    public static void onFluidRegistry(final RegistryEvent.Register<Fluid> e) {
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFluid()));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFlowingFluid()));
     }
 
     @SubscribeEvent
