@@ -47,7 +47,7 @@ public class BlockStone extends BlockBasic implements IElectricCable {
 
     @Override
     public void onExplosionDestroy(World world, BlockPos pos, Explosion explosionIn) {
-        electric.remove();
+        if (electric != null) electric.remove();
     }
 
     @Override

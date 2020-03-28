@@ -72,12 +72,12 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
     @Override
     public boolean canInput() {
-        return input > 0;
+        return input > 0L;
     }
 
     @Override
     public boolean canOutput() {
-        return output > 0;
+        return output > 0L;
     }
 
     /** Forge IEnergyStorage Implementations **/

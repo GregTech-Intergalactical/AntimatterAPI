@@ -22,6 +22,8 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -63,12 +65,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onLoad() {
-        //type = ((BlockMachine) getBlockState()).getMachineType();
-        if (getMachineType().hasFlag(ITEM) && getMachineType().getGui().hasAnyItem(getTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
-        if (getMachineType().hasFlag(FLUID) && getMachineType().getGui().hasAnyFluid(getTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
-        if (getMachineType().hasFlag(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
-        if (getMachineType().hasFlag(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (getMachineType().hasFlag(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
+        if (!isServerSide()) return;
+        if (!itemHandler.isPresent() && getMachineType().hasFlag(ITEM) && getMachineType().getGui().hasAnyItem(getTier()))
+            itemHandler = Optional.of(new MachineItemHandler(this, itemData));
+        if (!fluidHandler.isPresent() && getMachineType().hasFlag(FLUID) && getMachineType().getGui().hasAnyFluid(getTier()))
+            fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+        if (!coverHandler.isPresent() && getMachineType().hasFlag(COVERABLE))
+            coverHandler = Optional.of(new MachineCoverHandler(this));
+        if (!energyHandler.isPresent() && getMachineType().hasFlag(ENERGY))
+            energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (!configHandler.isPresent() && getMachineType().hasFlag(CONFIGURABLE))
+            configHandler = Optional.of(new MachineConfigHandler(this));
     }
 
     @Override
@@ -78,7 +85,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void remove() {
-        energyHandler.ifPresent(h -> h.remove());
+        energyHandler.ifPresent(MachineEnergyHandler::remove);
         super.remove();
     }
 

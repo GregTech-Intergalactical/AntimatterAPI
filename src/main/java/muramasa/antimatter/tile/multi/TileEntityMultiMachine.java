@@ -18,6 +18,8 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +36,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public void onLoad() {
-        super.onLoad();
+        if (!isServerSide()) return;
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
 
@@ -42,6 +44,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         itemHandler = Optional.empty();
         fluidHandler = Optional.empty();
         energyHandler = Optional.empty();
+        super.onLoad();
     }
 
     public boolean checkStructure() {
