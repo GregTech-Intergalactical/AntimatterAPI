@@ -28,7 +28,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.builder = builder;
         this.builder.setMap(this);
         LOOKUP = new HashMap<>();
-        AntimatterAPI.register(RecipeMap.class, this);
+        AntimatterAPI.register(RecipeMap.class, id, this);
     }
 
     @Override

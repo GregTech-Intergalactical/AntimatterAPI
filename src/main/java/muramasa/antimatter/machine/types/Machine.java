@@ -27,7 +27,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -72,7 +71,7 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
         this.domain = domain;
         this.id = id;
         this.tileClassSupplier = tile;
-        AntimatterAPI.register(Machine.class, this);
+        AntimatterAPI.register(Machine.class, id, this);
     }
 
     public Machine(String domain, String id, Object... data) {
@@ -80,15 +79,12 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     @Override
-    public Collection<IForgeRegistryEntry<?>> buildRegistryEntries(String domain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return Collections.emptyList();
+    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return;
         tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
         this.tileType = TileEntityType.Builder.create(tileClassSupplier, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
         ID_LOOKUP.add(getInternalId(), this);
-        Collection<IForgeRegistryEntry<?>> entries = new ArrayList<>();
-        blocks.forEach((k, v) -> entries.add(v));
-        return entries;
     }
 
     protected void addData(Object... data) {

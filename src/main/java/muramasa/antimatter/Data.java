@@ -31,7 +31,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.Item;
 import net.minecraft.item.UseAction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -40,10 +39,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -52,18 +47,12 @@ import static net.minecraft.block.material.Material.*;
 
 public class Data {
 
-    public static DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Ref.ID);
-
     static {
         StructureBuilder.addGlobalElement("A", StructureElement.AIR);
         StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
     }
 
-    public static void register(IEventBus bus) {
-        ITEMS.register(bus);
-    }
-
-    public static final RegistryObject<Item> DEBUG_SCANNER = ITEMS.register("debug_scanner", () -> new DebugScannerItem(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item"));
+    public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
     public static Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE);
 

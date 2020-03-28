@@ -1,12 +1,11 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.registration.IAntimatterObject;
-
 import java.util.HashSet;
 import java.util.Set;
 
-public class MaterialTag implements IAntimatterObject, IMaterialTag {
+public class MaterialTag implements IMaterialTag {
 
+    //TODO move to GTI
     public static MaterialTag ELEC = new MaterialTag("elec"); //Add Electrolyzer Recipes - SHOULD NOT SHARE MATS WITH CENT
     public static MaterialTag CENT = new MaterialTag("cent"); //Add Centrifuging Recipes - SHOULD NOT SHARE MATS WITH ELEC
     public static MaterialTag CRACK = new MaterialTag("crack"); //Add Cracking Recipes
@@ -38,9 +37,9 @@ public class MaterialTag implements IAntimatterObject, IMaterialTag {
 
     public MaterialTag(String id) {
         this.id = id;
-        register(MaterialTag.class, this);
+        register(MaterialTag.class, id);
     }
-
+    
     @Override
     public String getId() {
         return id;

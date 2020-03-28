@@ -58,7 +58,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
-        icon = guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER.get()));
+        icon = guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER));
         this.gui = gui;
         this.guiTier = guiTier;
     }

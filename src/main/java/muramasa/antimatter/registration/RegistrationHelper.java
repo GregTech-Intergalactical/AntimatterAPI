@@ -1,21 +1,20 @@
 package muramasa.antimatter.registration;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class RegistrationHelper {
@@ -24,37 +23,27 @@ public class RegistrationHelper {
 
     @SubscribeEvent
     public static void onRegistryEvent(RegistryEvent.Register<?> e) {
-//        if (e.getRegistry() == ForgeRegistries.BLOCKS && ModLoadingContext.get().getActiveNamespace().equals(Ref.ID)) {
-//
-//        }
-
         String domain = ModLoadingContext.get().getActiveNamespace();
-        List<IForgeRegistryEntry<?>> entries = AntimatterAPI.all(IRegistryEntryProvider.class)
-            .stream().filter(p -> p.getDomain().equals(domain))
-            .map(p -> p.buildRegistryEntries(domain, e.getRegistry()))
-            .flatMap(Collection::stream).collect(Collectors.toList());
+        if (e.getRegistry() == ForgeRegistries.BLOCKS && domain.equals(Ref.ID)) AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
 
+        AntimatterAPI.all(IRegistryEntryProvider.class, p -> p.onRegistryBuild(domain, e.getRegistry()));
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
-            entries.forEach(o -> {
-                if (o instanceof Block) {
-                    if (o instanceof IItemBlockProvider) {
-                        ITEM_BLOCKS.add(((IItemBlockProvider) o).getItemBlock());
-                    } else {
-                        ITEM_BLOCKS.add(new AntimatterItemBlock((Block) o));
-                    }
-                }
+            AntimatterAPI.all(Block.class, domain, b -> {
+                if (b instanceof IAntimatterObject) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
+                ITEM_BLOCKS.add(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
+                ((IForgeRegistry) e.getRegistry()).register(b);
             });
         } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
             ITEM_BLOCKS.forEach(i -> {
-                if (i.getRegistryName().getNamespace().equals(domain)) {
+                if (i.getRegistryName() != null && i.getRegistryName().getNamespace().equals(domain)) {
                     ((IForgeRegistry) e.getRegistry()).register(i);
                 }
             });
+            AntimatterAPI.all(Item.class, domain, i -> {
+                if (i instanceof IAntimatterObject) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
+                ((IForgeRegistry) e.getRegistry()).register(i);
+            });
         }
-
-        entries.forEach(o -> {
-            ((IForgeRegistry) e.getRegistry()).register(o);
-        });
     }
 
 //    public static void buildMaterialTools(String domain) {

@@ -1,6 +1,5 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.client.ModelConfigRandom;
@@ -28,7 +27,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ModLoadingContext;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -47,13 +45,11 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
     protected Material material;
     protected StoneType stoneType;
 
-    public BlockSurfaceRock(Material material, StoneType stoneType) {
-        super(Block.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.STONE).doesNotBlockMovement().notSolid());
+    public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
+        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Block.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.STONE).doesNotBlockMovement().notSolid());
         this.material = material;
         this.stoneType = stoneType;
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
-        setRegistryName(ModLoadingContext.get().getActiveNamespace(), "surface_rock_" + material.getId() + "_" + stoneType.getId());
-        AntimatterAPI.register(BlockSurfaceRock.class, this);
 
         //BlockDynamic
         config = new ModelConfigRandom().set(CONFIG_ARRAY);

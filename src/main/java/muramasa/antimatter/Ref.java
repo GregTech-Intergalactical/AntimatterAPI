@@ -25,11 +25,11 @@ public class Ref {
     public static final String DEPENDS = "";
 
     /** Creative Tabs **/
-    public static final AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER.get()));
-    public static final AntimatterItemGroup TAB_TOOLS = new AntimatterItemGroup(ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER.get()));
-    public static final AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER.get()));
-    public static final AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER.get()));
-    public static final AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER.get()));
+    public static final AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final AntimatterItemGroup TAB_TOOLS = new AntimatterItemGroup(ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
 
     /** Sound Events **/
     public static final SoundEvent DRILL = new SoundEvent(new ResourceLocation(ID, "drill")).setRegistryName(ID, "drill");

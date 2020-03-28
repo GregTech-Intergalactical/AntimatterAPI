@@ -1,16 +1,12 @@
 package muramasa.antimatter.registration;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import muramasa.antimatter.Ref;
 
 public interface IAntimatterObject {
 
     default String getDomain() {
-        if (this instanceof IForgeRegistryEntry) return ((IForgeRegistryEntry<?>) this).getRegistryName().getNamespace();
-        return "null";
+        return Ref.ID;
     }
 
-    default String getId() {
-        if (this instanceof IForgeRegistryEntry) return ((IForgeRegistryEntry) this).getRegistryName().getPath();
-        return "null";
-    }
+    String getId();
 }
