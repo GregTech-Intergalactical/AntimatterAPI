@@ -9,6 +9,8 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -21,9 +23,10 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     @Override
     public void onLoad() {
-        super.onLoad();
+        if (!isServerSide()) return;
         componentHandler = Optional.of(new HatchComponentHandler(this));
         if (getMachineType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000 * getTierId(), fluidData));
+        super.onLoad();
     }
 
     @Override
