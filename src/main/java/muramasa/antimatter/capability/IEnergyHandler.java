@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability;
 
-import tesseract.electric.api.IElectricNode;
+import tesseract.api.electric.IElectricNode;
 
 public interface IEnergyHandler extends IElectricNode {
 }

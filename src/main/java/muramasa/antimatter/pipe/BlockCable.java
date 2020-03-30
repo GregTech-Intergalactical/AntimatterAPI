@@ -7,8 +7,6 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
@@ -16,10 +14,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import tesseract.electric.Electric;
-import tesseract.electric.api.IElectricCable;
+import tesseract.TesseractAPI;
+import tesseract.api.GraphWrapper;
+import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
@@ -31,7 +29,7 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
     protected int loss, lossInsulated;
     protected int amps;
     protected Tier tier;
-    protected Electric electric;
+    protected GraphWrapper electric;
 
     public BlockCable(String domain, Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
         super(domain, insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
@@ -69,7 +67,7 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (world.isRemote()) return; // Avoid client-side
-        electric = Electric.ofCable(world.getDimension().getType().getId(), pos.toLong(), this);
+        electric = TesseractAPI.asElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
