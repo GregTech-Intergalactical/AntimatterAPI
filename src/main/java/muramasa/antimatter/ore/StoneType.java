@@ -103,6 +103,6 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     }
     
     public static StoneType get(String id) {
-        return AntimatterAPI.get(StoneType.class, id);
+        return AntimatterAPI.get(StoneType.class, "stone_" + id);
     }
 }
