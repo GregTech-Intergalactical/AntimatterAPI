@@ -13,8 +13,7 @@ import javax.annotation.Nullable;
 public class BlockCasing extends BlockDynamic  {
 
     public BlockCasing(String domain, String id, Block.Properties properties) {
-        super(domain, "casing_" + id, properties, new Texture(domain, "block/casing/" + id));
-        AntimatterAPI.register(BlockCasing.class, this);
+        super(domain, id, properties);
     }
 
     public BlockCasing(String domain, String id) {
@@ -25,5 +24,10 @@ public class BlockCasing extends BlockDynamic  {
     @Override
     public ToolType getHarvestTool(BlockState state) {
         return AntimatterAPI.WRENCH_TOOL_TYPE;
+    }
+
+    @Override
+    public Texture[] getTextures() {
+        return new Texture[]{new Texture(getRegistryName().getNamespace(), "block/casing/" + getRegistryName().getPath().replaceAll("casing_", ""))};
     }
 }

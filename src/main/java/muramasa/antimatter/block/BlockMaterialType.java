@@ -19,7 +19,7 @@ public class BlockMaterialType extends BlockBasic implements IColorHandler {
     protected String textureFolder = "";
 
     public BlockMaterialType(String domain, Material material, MaterialType<?> type, Block.Properties properties) {
-        super(domain, type.getId() + "_" + material.getId(), properties, material.getSet().getTextures(type));
+        super(domain, type.getId() + "_" + material.getId(), properties);
         this.material = material;
         this.type = type;
     }
@@ -49,6 +49,6 @@ public class BlockMaterialType extends BlockBasic implements IColorHandler {
 
     @Override
     public Texture[] getTextures() {
-        return !textureFolder.isEmpty() ? new Texture[]{new Texture(domain, "block/" + textureFolder + "/" + material.getId())} : super.getTextures();
+        return !textureFolder.isEmpty() ? new Texture[]{new Texture(getRegistryName().getNamespace(), "block/" + textureFolder + "/" + material.getId())} : material.getSet().getTextures(type);
     }
 }

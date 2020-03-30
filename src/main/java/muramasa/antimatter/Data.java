@@ -14,7 +14,6 @@ import muramasa.antimatter.gui.screen.ScreenHatchMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.gui.screen.ScreenMultiMachine;
 import muramasa.antimatter.item.DebugScannerItem;
-import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
@@ -53,7 +52,7 @@ public class Data {
         StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
     }
 
-    public static ItemBasic DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
+    public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
     public static Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE);
 

@@ -14,6 +14,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.RecipeBuilder;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
@@ -24,17 +25,16 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
-public class Machine implements IAntimatterObject {
+public class Machine implements IAntimatterObject, IRegistryEntryProvider {
 
     private static ArrayList<Machine> ID_LOOKUP = new ArrayList<>();
 
@@ -43,13 +43,14 @@ public class Machine implements IAntimatterObject {
 
     /** Basic Members **/
     protected int internalId; //TODO needed?
-    protected Object2ObjectOpenHashMap<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
-    protected TileEntityType tileType;
+    protected Map<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
+    protected TileEntityType<?> tileType;
+    protected Supplier<? extends TileEntityMachine> tileClassSupplier;
     protected String domain, id;
     protected ArrayList<Tier> tiers = new ArrayList<>();
 
     /** Recipe Members **/
-    protected RecipeMap recipeMap;
+    protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
     protected GuiData guiData;
@@ -69,23 +70,21 @@ public class Machine implements IAntimatterObject {
         addData(data);
         this.domain = domain;
         this.id = id;
-        build(tile);
-        register(this);
+        this.tileClassSupplier = tile;
+        AntimatterAPI.register(Machine.class, id, this);
     }
 
     public Machine(String domain, String id, Object... data) {
         this(domain, id, TileEntityMachine::new, data);
     }
 
-    protected void register(Machine machine) {
-        AntimatterAPI.register(Machine.class, machine);
-        AntimatterAPI.register(TileEntityType.class, machine.getId(), machine.getTileType());
-        ID_LOOKUP.add(machine.getInternalId(), machine);
-    }
-
-    protected void build(Supplier<? extends TileEntityMachine> tile) {
-        tiers.forEach(t -> blocks.put(t, new BlockMachine(domain, this, t)));
-        this.tileType = TileEntityType.Builder.create(tile, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(domain, id);
+    @Override
+    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return;
+        tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
+        this.tileType = TileEntityType.Builder.create(tileClassSupplier, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(domain, id);
+        AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
+        ID_LOOKUP.add(getInternalId(), this);
     }
 
     protected void addData(Object... data) {
@@ -93,7 +92,7 @@ public class Machine implements IAntimatterObject {
         ArrayList<MachineFlag> flags = new ArrayList<>();
         for (int i = 0; i < data.length; i++) {
             if (data[i] instanceof RecipeMap) {
-                recipeMap = (RecipeMap) data[i];
+                recipeMap = (RecipeMap<?>) data[i];
                 flags.add(RECIPE);
             }
             if (data[i] instanceof Tier) tiers.add((Tier) data[i]);

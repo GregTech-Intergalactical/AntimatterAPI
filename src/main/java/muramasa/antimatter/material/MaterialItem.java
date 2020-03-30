@@ -1,7 +1,7 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
@@ -13,7 +13,6 @@ import net.minecraft.block.CauldronBlock;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -31,20 +30,15 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MaterialItem extends Item implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    protected String domain, id;
     protected Material material;
     protected MaterialType<?> type;
 
     public MaterialItem(String domain, MaterialType<?> type, Material material, Properties properties) {
-        super(properties);
+        super(domain, type.getId() + "_" + material.getId(), properties);
         this.material = material;
         this.type = type;
-        this.domain = domain;
-        this.id = getType().getId() + "_" + getMaterial().getId();
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(MaterialItem.class, this);
     }
 
     public MaterialItem(String domain, MaterialType<?> type, Material material) {
@@ -57,15 +51,6 @@ public class MaterialItem extends Item implements IAntimatterObject, IColorHandl
 
     public Material getMaterial() {
         return material;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override

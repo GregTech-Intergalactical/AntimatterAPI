@@ -1,6 +1,5 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -26,7 +25,6 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     
     public BlockStorage(String domain, Material material, MaterialType<?> type) {
         super(domain, material, type, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
-        AntimatterAPI.register(BlockStorage.class, this);
     }
 
     /** Frame Placing Stuffs - Start **/

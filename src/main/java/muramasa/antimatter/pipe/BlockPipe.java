@@ -41,11 +41,7 @@ public abstract class BlockPipe extends BlockDynamic implements IItemBlockProvid
         this.type = type;
         this.material = material;
         this.size = size;
-    }
-
-    public void register(Class<?> c) {
-        AntimatterAPI.register(BlockPipe.class, this);
-        AntimatterAPI.register(c, this);
+        AntimatterAPI.register(BlockPipe.class, getId(), this);
     }
 
     public PipeType getType() {

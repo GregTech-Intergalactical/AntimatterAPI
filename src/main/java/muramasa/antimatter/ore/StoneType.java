@@ -4,36 +4,46 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class StoneType implements IAntimatterObject {
+public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
 
-    private String id;
+    private String domain, id;
     //private int harvestLevel;
     private boolean gravity = false, generateBlock = false;
     private Material material;
     private Texture texture;
     private SoundType soundType;
     private BlockState state;
-    private BlockStone blockStone;
     
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
+        this.domain = domain;
         this.id = id;
         this.material = material;
         this.texture = texture;
         this.soundType = soundType;
         this.generateBlock = generateBlock;
-        if (generateBlock) {
-            blockStone = new BlockStone(domain, this);
-            state = blockStone.getDefaultState();
-        }
-        AntimatterAPI.register(StoneType.class, this);
+        AntimatterAPI.register(StoneType.class, "stone_" + id, this);
+    }
+
+    @Override
+    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(domain) || !doesGenerateBlock() || registry != ForgeRegistries.BLOCKS) return;
+        BlockStone stone = new BlockStone(this);
+        setState(stone);
+    }
+
+    public String getDomain() {
+        return domain;
     }
 
     @Override
@@ -55,6 +65,10 @@ public class StoneType implements IAntimatterObject {
     
     public SoundType getSoundType() {
     	return soundType;
+    }
+
+    public boolean doesGenerateBlock() {
+        return generateBlock;
     }
 
     public StoneType setState(Block block) {
@@ -89,7 +103,6 @@ public class StoneType implements IAntimatterObject {
     }
     
     public static StoneType get(String id) {
-        return AntimatterAPI.get(StoneType.class, id);
+        return AntimatterAPI.get(StoneType.class, "stone_" + id);
     }
-    
 }

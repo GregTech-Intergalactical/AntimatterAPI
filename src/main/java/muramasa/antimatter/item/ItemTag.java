@@ -12,7 +12,7 @@ public class ItemTag implements IAntimatterObject {
 
     public ItemTag(String id) {
         this.id = id;
-        AntimatterAPI.register(ItemTag.class, this);
+        AntimatterAPI.register(ItemTag.class, getId(), this);
     }
 
     @Override

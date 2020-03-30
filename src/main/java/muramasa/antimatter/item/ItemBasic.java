@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ItemBasic extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
+public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     protected String domain, id, tooltip = "";
     protected boolean enabled = true;
@@ -25,34 +25,32 @@ public class ItemBasic extends Item implements IAntimatterObject, ITextureProvid
         super(properties);
         this.domain = domain;
         this.id = id;
-        setRegistryName(domain, id);
-        AntimatterAPI.register(ItemBasic.class, this);
+        AntimatterAPI.register(getClass(), id, this);
     }
 
     public ItemBasic(String domain, String id) {
         this(domain, id, new Properties().group(Ref.TAB_ITEMS));
     }
 
-    public ItemBasic(String domain, String id, String tooltip, Properties properties) {
-        this(domain, id, properties);
+    public T tip(String tooltip) {
         this.tooltip = tooltip;
+        return (T) this;
     }
 
-    public ItemBasic(String domain, String id, String tooltip) {
-        this(domain, id, tooltip, new Properties().group(Ref.TAB_ITEMS));
-    }
-
-    public ItemBasic tags(ItemTag... tags) {
+    public T tags(ItemTag... tags) {
         this.tags.addAll(Arrays.asList(tags));
-        return this;
+        return (T) this;
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
     }
 
     @Override
     public String getId() {
         return id;
     }
-
-    public String getDomain() { return domain; }
 
     public String getTooltip() {
         return tooltip;
@@ -85,6 +83,6 @@ public class ItemBasic extends Item implements IAntimatterObject, ITextureProvid
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(domain, "item/basic/" + getId())};
+        return new Texture[]{new Texture(getRegistryName().getNamespace(), "item/basic/" + getId())};
     }
 }

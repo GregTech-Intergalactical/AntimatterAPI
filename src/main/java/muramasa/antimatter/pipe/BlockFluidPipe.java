@@ -13,7 +13,6 @@ public class BlockFluidPipe extends BlockPipe {
         this.heatResistance = heatResistance;
         this.gasProof = gasProof;
         this.capacity = capacity;
-        register(BlockFluidPipe.class);
     }
 
 //
