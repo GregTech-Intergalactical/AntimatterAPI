@@ -77,8 +77,10 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public static void onFluidRegistry(final RegistryEvent.Register<Fluid> e) {
-        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFluid()));
-        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFlowingFluid()));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
+            e.getRegistry().register(f.getFluid());
+            e.getRegistry().register(f.getFlowingFluid());
+        });
     }
 
     @SubscribeEvent
