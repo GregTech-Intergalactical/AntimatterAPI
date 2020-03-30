@@ -2,7 +2,11 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.block.BlockDynamic;
+import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.capability.IConfigHandler;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.IConfigHandler;
@@ -45,7 +49,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 

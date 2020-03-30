@@ -10,6 +10,8 @@ import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.*;
 import muramasa.antimatter.machine.types.Machine;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -17,12 +19,15 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.Explosion;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.electric.api.IElectricNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,17 +68,28 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onLoad() {
-        //type = ((BlockMachine) getBlockState()).getMachineType();
-        if (getMachineType().hasFlag(ITEM) && getMachineType().getGui().hasAnyItem(getTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
-        if (getMachineType().hasFlag(FLUID) && getMachineType().getGui().hasAnyFluid(getTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
-        if (getMachineType().hasFlag(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
-        if (getMachineType().hasFlag(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (getMachineType().hasFlag(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
+        if (!isServerSide()) return;
+        if (!itemHandler.isPresent() && getMachineType().hasFlag(ITEM) && getMachineType().getGui().hasAnyItem(getTier()))
+            itemHandler = Optional.of(new MachineItemHandler(this, itemData));
+        if (!fluidHandler.isPresent() && getMachineType().hasFlag(FLUID) && getMachineType().getGui().hasAnyFluid(getTier()))
+            fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+        if (!coverHandler.isPresent() && getMachineType().hasFlag(COVERABLE))
+            coverHandler = Optional.of(new MachineCoverHandler(this));
+        if (!energyHandler.isPresent() && getMachineType().hasFlag(ENERGY))
+            energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (!configHandler.isPresent() && getMachineType().hasFlag(CONFIGURABLE))
+            configHandler = Optional.of(new MachineConfigHandler(this));
     }
 
     @Override
     public void onServerUpdate() {
         coverHandler.ifPresent(CoverHandler::update);
+    }
+
+    @Override
+    public void remove() {
+        energyHandler.ifPresent(MachineEnergyHandler::remove);
+        super.remove();
     }
 
     /** Events **/
@@ -137,7 +153,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public long getMaxInputVoltage() {
-        return energyHandler.map(EnergyHandler::getMaxInsert).orElse(0L);
+        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0L);
     }
 
     /** Setters **/
@@ -161,6 +177,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
         machineState = newState;
     }
+
+    /*public void onOverVoltage() {
+        BlockPos pos = BlockPos.fromLong(position); // Gets the position of consumer to expload
+        world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), 4.0F, Explosion.Mode.BREAK);
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    }
+
+    public void onOverAmperage() {
+        world.setBlockState(BlockPos.fromLong(position), Blocks.FIRE.getDefaultState());
+    }*/
 
     public Cover[] getValidCovers() {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
