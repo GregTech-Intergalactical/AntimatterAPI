@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
+import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
@@ -58,10 +59,9 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
 
         AntimatterWorldGenerator.init();
-
         AntimatterTriggers.init();
         AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
-        //AntimatterCapabilities.register(); //TODO broken
+        AntimatterCapabilities.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
 
