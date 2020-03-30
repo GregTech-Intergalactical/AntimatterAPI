@@ -1,9 +1,8 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
@@ -17,9 +16,8 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     private MaterialType<?> oreType;
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
-        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId(), material, stoneType, getOreProperties(properties));
+        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId().replaceAll("stone_", ""), material, stoneType, getOreProperties(properties));
         this.oreType = oreType;
-        AntimatterAPI.register(BlockOre.class, this);
     }
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType) {

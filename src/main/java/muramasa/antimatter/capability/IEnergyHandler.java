@@ -1,20 +1,6 @@
 package muramasa.antimatter.capability;
 
-public interface IEnergyHandler {
+import tesseract.electric.api.IElectricNode;
 
-    long insert(long toInsert, boolean simulate);
-
-    long extract(long toExtract, boolean simulate);
-
-    long getPower();
-
-    long getCapacity();
-
-    long getMaxInsert();
-
-    long getMaxExtract();
-
-    boolean canInput();
-
-    boolean canOutput();
+public interface IEnergyHandler extends IElectricNode {
 }

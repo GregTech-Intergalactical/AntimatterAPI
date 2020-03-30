@@ -3,7 +3,7 @@ package muramasa.antimatter.recipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
-import muramasa.antimatter.machines.Tier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.builder = builder;
         this.builder.setMap(this);
         LOOKUP = new HashMap<>();
-        AntimatterAPI.register(RecipeMap.class, this);
+        AntimatterAPI.register(RecipeMap.class, id, this);
     }
 
     @Override

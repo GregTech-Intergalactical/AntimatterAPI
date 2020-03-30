@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.Configs;
-import muramasa.antimatter.materials.Material;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.NoiseGenerator;
 import muramasa.antimatter.worldgen.StoneLayerOre;

@@ -1,5 +1,6 @@
 package muramasa.antimatter.datagen.builder;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -10,10 +11,11 @@ import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.util.Direction;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,80 +51,107 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property(property, propertyObject);
     }
 
-    public AntimatterBlockModelBuilder loader() {
-        return loader(AntimatterModelManager.LOADER);
-    }
-
     public AntimatterBlockModelBuilder loader(AntimatterModelLoader loader) {
         this.loader = loader.getLoc();
         return this;
     }
 
-    public AntimatterBlockModelBuilder model(String parent, String... models) {
-        loader();
-        return property("model", getModelObject(parent, models));
+    public AntimatterBlockModelBuilder model(String parent, String... textures) {
+        loader(AntimatterModelManager.LOADER_MAIN);
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(textures)));
     }
 
     public AntimatterBlockModelBuilder model(String parent, Texture... textures) {
-        loader();
-        return property("model", getModelObject(parent, textures));
+        loader(AntimatterModelManager.LOADER_MAIN);
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(textures)));
     }
 
-    public AntimatterBlockModelBuilder model(String parent, ImmutableMap<String, Texture> textures) {
-        loader();
-        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
-        textures.forEach((k, v) -> builder.put(k, v.toString()));
-        return property("model", getModelObject(parent, builder.build()));
+    public AntimatterBlockModelBuilder model(String parent, Function<ImmutableMap.Builder<String, Texture>, ImmutableMap.Builder<String, Texture>> func) {
+        loader(AntimatterModelManager.LOADER_MAIN);
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(func.apply(new ImmutableMap.Builder<>()).build())));
     }
 
-    public AntimatterBlockModelBuilder config(int id, String model, Function<DynamicConfigBuilder, DynamicConfigBuilder> configFunction) {
-        DynamicConfigBuilder builder = configFunction.apply(new DynamicConfigBuilder(this).model(id, model));
-        loader();
+    public AntimatterBlockModelBuilder model(String parent, ImmutableMap<String, Texture> map) {
+        loader(AntimatterModelManager.LOADER_MAIN);
+        return property("model", addModelObject(new JsonObject(), parent, buildTextures(map)));
+    }
+
+    public AntimatterBlockModelBuilder rot(int... rotations) {
+        loader(AntimatterModelManager.LOADER_MAIN);
+        return property("rotation", getRotationObject(rotations));
+    }
+
+    public AntimatterBlockModelBuilder config(int id, String parent, Function<DynamicConfigBuilder, DynamicConfigBuilder> builderFunc) {
+        return config(id, (b, l) -> l.add(builderFunc.apply(b.of(parent))));
+    }
+
+    public AntimatterBlockModelBuilder config(int id, IConfigFunction configFunc) {
+        loader(AntimatterModelManager.LOADER_DYNAMIC);
+        ImmutableList<DynamicConfigBuilder> builders = configFunc.apply(new DynamicConfigBuilder(), new ImmutableList.Builder<>()).build();
         properties.add(o -> {
             if (!o.has("config")) o.add("config", new JsonArray());
-            JsonObject configObject = new JsonObject();
-            configObject.addProperty("id", builder.id);
-            if (builder.rotations != null && builder.rotations.length > 0) {
-                configObject.add("rotation", getRotationObject(builder.rotations));
-            }
-            configObject.add("model", getModelObject(builder.parent, builder.textures));
-            o.getAsJsonArray("config").add(configObject);
+            JsonObject modelObject = new JsonObject();
+            modelObject.add("id", new JsonPrimitive(id));
+            modelObject.add("models", getModelObjects(builders));
+            o.get("config").getAsJsonArray().add(modelObject);
         });
         return this;
     }
 
-    public JsonArray getRotationObject(Direction[] rotations) {
+    public interface IConfigFunction {
+        ImmutableList.Builder<DynamicConfigBuilder> apply(DynamicConfigBuilder b, ImmutableList.Builder<DynamicConfigBuilder> l);
+    }
+
+    public JsonArray getRotationObject(int[] rotations) {
         JsonArray rotationArray = new JsonArray();
-        Arrays.stream(rotations).forEach(r -> rotationArray.add(r.toString()));
+        Arrays.stream(rotations).forEach(rotationArray::add);
         return rotationArray;
     }
 
-    public JsonObject getModelObject(String parent, Texture... textures) {
-        return getModelObject(parent, Arrays.stream(textures).map(ResourceLocation::toString).toArray(String[]::new));
+    public JsonArray getModelObjects(ImmutableList<DynamicConfigBuilder> builders) {
+        JsonArray models = new JsonArray();
+        builders.forEach(b -> {
+            JsonObject m = addModelObject(new JsonObject(), b.parent, b.textures);
+            if (b.hasRots()) m.add("rotation", getRotationObject(b.rotations));
+            models.add(m);
+        });
+        return models;
     }
 
-    public JsonObject getModelObject(String parent, String... textures) {
+    public JsonObject addModelObject(JsonObject o, String parent, ImmutableMap<String, String> textures) {
+        if (!parent.contains(":")) parent = StringUtils.replace(StringUtils.replace(parent, "simple", SIMPLE), "layered", LAYERED);
+        o.addProperty("parent", parent);
+        JsonObject texture = new JsonObject();
+        textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
+        o.add("textures", texture);
+        return o;
+    }
+
+    public AntimatterBlockModelBuilder staticConfigId(String mapId) {
+        loader(AntimatterModelManager.LOADER_DYNAMIC);
+        return property("staticConfigId", mapId);
+    }
+
+    public static ImmutableMap<String, String> buildTextures(ImmutableMap<String, Texture> map) {
+        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
+        map.forEach((k, v) -> builder.put(k, v.toString()));
+        return builder.build();
+    }
+
+    public static ImmutableMap<String, String> buildTextures(Texture... textures) {
+        return buildTextures(Arrays.stream(textures).map(ResourceLocation::toString).toArray(String[]::new));
+    }
+
+    public static ImmutableMap<String, String> buildTextures(String... textures) {
         ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
         if (textures.length == 1) {
             builder.put("all", textures[0]);
-        } else if (textures.length == Ref.DIRECTIONS.length) {
-            for (int i = 0; i < Ref.DIRECTIONS.length; i++) {
+        } else if (textures.length == 6) {
+            for (int i = 0; i < 6; i++) {
                 builder.put(Ref.DIRECTIONS[i].toString(), textures[i]);
             }
         }
-        return getModelObject(parent, builder.build());
-    }
-
-
-    public JsonObject getModelObject(String parent, ImmutableMap<String, String> textures) {
-        JsonObject model = new JsonObject();
-        if (!parent.contains(":")) parent = parent.replace("simple", SIMPLE).replace("layered", LAYERED);
-        model.addProperty("parent", parent);
-        JsonObject texture = new JsonObject();
-        textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
-        model.add("textures", texture);
-        model.add("uvlock", new JsonPrimitive(true));
-        return model;
+        return builder.build();
     }
 
     @Override
@@ -133,9 +162,9 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return root;
     }
 
-    public AntimatterBlockModelBuilder basicConfig(ITextureProvider textureProvider, Texture[] tex) {
-        if (tex.length < 13) return this;
-         model(SIMPLE, textureProvider.getTextures());
+    public AntimatterBlockModelBuilder basicConfig(Block block, Texture[] tex) {
+        if (!(block instanceof ITextureProvider) || tex.length < 13) return this;
+         model(SIMPLE, ((ITextureProvider) block).getTextures());
 
         //Single (1)
          config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));

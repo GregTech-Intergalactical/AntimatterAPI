@@ -3,10 +3,9 @@ package muramasa.antimatter.structure;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.fml.RegistryObject;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class StructureBuilder {
 
@@ -35,13 +34,13 @@ public class StructureBuilder {
         return this;
     }
 
-    public StructureBuilder at(String key, IAntimatterObject... objects) {
-        elementLookup.put(key, new ComponentElement(objects));
+    public StructureBuilder at(String key, Object... objects) {
+        elementLookup.put(key, new ComponentElement(getAntiObjects(objects)));
         return this;
     }
 
-    public StructureBuilder at(String key, String name, IAntimatterObject... objects) {
-        elementLookup.put(key, new ComponentElement(name, objects));
+    public StructureBuilder at(String key, String name, Object... objects) {
+        elementLookup.put(key, new ComponentElement(name, getAntiObjects(objects)));
         return this;
     }
 
@@ -52,6 +51,13 @@ public class StructureBuilder {
 
     public StructureBuilder at(String key, String name, Collection<? extends IAntimatterObject> objects) {
         elementLookup.put(key, new ComponentElement(name, objects.toArray(new IAntimatterObject[0])));
+        return this;
+    }
+
+    public StructureBuilder at(String key, RegistryObject<?>... objects) {
+        Arrays.stream(objects).forEach(o -> {
+            if (o.get() instanceof IAntimatterObject) at(key, (Object) o);
+        });
         return this;
     }
 
@@ -72,5 +78,14 @@ public class StructureBuilder {
             }
         }
         return new Structure(size, elements);
+    }
+
+    public static IAntimatterObject[] getAntiObjects(Object... objects) {
+        List<IAntimatterObject> antiObjects = new ArrayList<>();
+        Arrays.stream(objects).forEach(o -> {
+            if (o instanceof RegistryObject && ((RegistryObject<?>) o).get() instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) ((RegistryObject<?>) o).get());
+            if (o instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) o);
+        });
+        return antiObjects.toArray(new IAntimatterObject[0]);
     }
 }

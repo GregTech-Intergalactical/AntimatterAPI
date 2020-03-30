@@ -1,9 +1,11 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
-import muramasa.antimatter.blocks.AntimatterItemBlock;
+import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -11,17 +13,17 @@ import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
-import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,38 +48,42 @@ public class Antimatter implements IAntimatterRegistrar {
         INSTANCE = this;
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK && Minecraft.getInstance() != null) {
+                //Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", false));
+            }
+        });
+
+        AntimatterAPI.addRegistrar(INSTANCE);
+        AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
     }
 
     private void setup(final FMLCommonSetupEvent e) {
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterAPI.onRegistration(RegistrationEvent.READY);
 
         AntimatterWorldGenerator.init();
-
         AntimatterTriggers.init();
         AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
-        //AntimatterCapabilities.register(); //TODO broken
+        AntimatterCapabilities.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
+      
+        //if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK) AntimatterModelManager.runProvidersDynamically();
     }
-
+  
     @SubscribeEvent
     public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
-        AntimatterAPI.all(Item.class).forEach(i -> e.getRegistry().register(i));
-        AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock(b) : new AntimatterItemBlock(b)));
-        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getContainerItem()));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getContainerItem()));  // TODO: Convert to revamped system when PR'd
     }
 
     @SubscribeEvent
     public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_BUILD);
-        AntimatterAPI.all(Block.class).forEach(b -> e.getRegistry().register(b));
-        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFluidBlock()));
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFluidBlock()));  // TODO: Convert to revamped system when PR'd
     }
 
     @SubscribeEvent
     public static void onFluidRegistry(final RegistryEvent.Register<Fluid> e) {
-        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {  // TODO: Convert to revamped system when PR'd
             e.getRegistry().register(f.getFluid());
             e.getRegistry().register(f.getFlowingFluid());
         });
@@ -85,12 +91,12 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public static void onTileRegistry(RegistryEvent.Register<TileEntityType<?>> e) {
-        AntimatterAPI.all(TileEntityType.class).forEach(t -> e.getRegistry().register(t));
+        AntimatterAPI.all(TileEntityType.class, t -> e.getRegistry().register(t));
     }
 
     @SubscribeEvent
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
-        AntimatterAPI.all(MenuHandler.class).forEach(h -> e.getRegistry().register(h.getContainerType()));
+        AntimatterAPI.all(MenuHandler.class, h -> e.getRegistry().register(h.getContainerType()));
     }
 
     @SubscribeEvent
@@ -106,7 +112,7 @@ public class Antimatter implements IAntimatterRegistrar {
     @SubscribeEvent
     public static void onDataGather(GatherDataEvent e) {
         if (e.includeClient()) {
-            e.getGenerator().addProvider(new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), e.getGenerator()));
+            AntimatterModelManager.onProviderInit(Ref.ID, e.getGenerator());
         }
         if (e.includeServer()) {
 
@@ -124,10 +130,10 @@ public class Antimatter implements IAntimatterRegistrar {
             case DATA_INIT:
                 Data.init();
                 break;
-            case DATA_READY:
-                AntimatterAPI.registerCover(Data.COVER_NONE);
-                AntimatterAPI.registerCover(Data.COVER_OUTPUT);
-                break;
+//            case DATA_READY:
+//                AntimatterAPI.registerCover(Data.COVER_NONE);
+//                AntimatterAPI.registerCover(Data.COVER_OUTPUT);
+//                break;
             case WORLDGEN_INIT:
                 new FeatureStoneLayer();
                 new FeatureVeinLayer();

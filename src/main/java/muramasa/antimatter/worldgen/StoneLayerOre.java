@@ -1,8 +1,8 @@
 package muramasa.antimatter.worldgen;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

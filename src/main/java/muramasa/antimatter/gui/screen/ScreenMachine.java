@@ -1,8 +1,8 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.machines.MachineFlag;
-import muramasa.antimatter.tileentities.TileEntityRecipeMachine;
+import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.tile.TileEntityRecipeMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;

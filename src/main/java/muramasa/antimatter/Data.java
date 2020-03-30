@@ -13,20 +13,19 @@ import muramasa.antimatter.gui.screen.ScreenBasicMachine;
 import muramasa.antimatter.gui.screen.ScreenHatchMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.gui.screen.ScreenMultiMachine;
-import muramasa.antimatter.items.DebugScannerItem;
-import muramasa.antimatter.items.ItemBasic;
-import muramasa.antimatter.machines.types.Machine;
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialTag;
+import muramasa.antimatter.item.DebugScannerItem;
+import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
-import muramasa.antimatter.tileentities.TileEntityRecipeMachine;
-import muramasa.antimatter.tileentities.multi.TileEntityHatch;
-import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
-import muramasa.antimatter.tools.base.AntimatterToolType;
-import muramasa.antimatter.tools.base.MaterialSword;
-import muramasa.antimatter.tools.base.MaterialTool;
-import muramasa.antimatter.tools.behaviour.*;
+import muramasa.antimatter.tile.TileEntityRecipeMachine;
+import muramasa.antimatter.tile.multi.TileEntityHatch;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.MaterialSword;
+import muramasa.antimatter.tool.MaterialTool;
+import muramasa.antimatter.tool.behaviour.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
@@ -43,7 +42,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 
-import static muramasa.antimatter.materials.TextureSet.NONE;
+import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
 
 public class Data {
@@ -53,7 +52,7 @@ public class Data {
         StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
     }
 
-    public static ItemBasic DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner", TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
+    public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
     public static Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE);
 
