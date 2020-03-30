@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.object;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.antimatter.blocks.BlockStone;
+import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.StoneLayerOre;
 import net.minecraft.block.Block;

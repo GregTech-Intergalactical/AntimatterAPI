@@ -4,7 +4,7 @@ import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.slot.SlotInput;
 import muramasa.antimatter.gui.slot.SlotOutput;
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.IWorldPosCallable;

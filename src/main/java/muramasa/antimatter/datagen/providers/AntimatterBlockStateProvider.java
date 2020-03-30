@@ -2,9 +2,10 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
+import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
-import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +14,7 @@ import net.minecraftforge.client.model.generators.*;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class AntimatterBlockStateProvider extends BlockStateProvider {
+public class AntimatterBlockStateProvider extends BlockStateProvider implements IAntimatterProvider {
 
     protected String providerDomain, providerName;
     protected AntimatterBlockModelProvider blockModelProvider;
@@ -51,6 +52,11 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
     }
 
     @Override
+    public void run() {
+        registerStatesAndModels();
+    }
+
+    @Override
     public BlockModelProvider models() {
         return blockModelProvider;
     }
@@ -61,8 +67,8 @@ public class AntimatterBlockStateProvider extends BlockStateProvider {
 
     public void processBlocks(String domain) {
         AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b instanceof IModelProvider && b.getRegistryName().getNamespace().equals(domain))
-            .forEach(b -> ((IModelProvider) b).onBlockModelBuild(b, this));
+            .stream().filter(b -> b.getRegistryName().getNamespace().equals(domain))
+            .forEach(b -> AntimatterModelManager.onBlockModelBuild(b, this));
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {

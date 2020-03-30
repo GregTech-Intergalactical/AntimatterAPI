@@ -1,10 +1,12 @@
 package muramasa.antimatter.registration;
 
+import muramasa.antimatter.Ref;
+
 public interface IAntimatterObject {
 
-    String getId();
+    default String getDomain() {
+        return Ref.ID;
+    }
 
-//    default ItemStack asItemStack() {
-//        return ItemStack.EMPTY;
-//    }
+    String getId();
 }

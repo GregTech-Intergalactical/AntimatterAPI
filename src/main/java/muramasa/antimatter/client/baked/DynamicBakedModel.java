@@ -2,13 +2,13 @@ package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.client.ModelConfig;
-import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -23,16 +23,20 @@ import java.util.Random;
 public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     private IBakedModel bakedDefault;
-    private Int2ObjectOpenHashMap<IBakedModel> bakedConfigs;
+    private Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs;
     private boolean hasConfig;
     private BlockPos.Mutable mutablePos = new BlockPos.Mutable();
     private IModelData configData = new ModelDataMap.Builder().withInitial(AntimatterProperties.DYNAMIC_CONFIG, new ModelConfig()).build();
 
-    public DynamicBakedModel(IBakedModel bakedDefault, Int2ObjectOpenHashMap<IBakedModel> bakedConfigs) {
-        super(bakedDefault);
-        this.bakedDefault = bakedDefault;
-        this.bakedConfigs = bakedConfigs;
+    public DynamicBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
+        super(bakedTuple.getA());
+        this.bakedDefault = bakedTuple.getA();
+        this.bakedConfigs = bakedTuple.getB();
         this.hasConfig = bakedConfigs.size() > 0;
+    }
+
+    public IBakedModel getBakedDefault() {
+        return bakedDefault;
     }
 
     @Nonnull
@@ -47,18 +51,10 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         if (!hasConfig) return bakedDefault.getQuads(state, side, rand, data);
-        //if (onlyNullSide && side != null) return Collections.emptyList();
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
         if (config == null || config.isInvalid()) return bakedDefault.getQuads(state, side, rand, data);
-
-        if (config.getConfig()[0] == 1400) {
-            return ModelUtils.trans(bakedConfigs.get(1428).getQuads(state, side, rand, data), new Direction[] {
-                Direction.WEST
-            });
-        } else {
-            return config.getQuads(quads, bakedConfigs, state, side, rand, data);
-        }
+        return config.getQuads(quads, bakedConfigs, state, side, rand, data);
     }
 
     @Override

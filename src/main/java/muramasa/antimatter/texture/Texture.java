@@ -15,7 +15,7 @@ public class Texture extends ResourceLocation {
         return ModelUtils.getBlockMaterial(this);
     }
 
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite asSprite() {
         return ModelUtils.getSprite(this);
     }
 }

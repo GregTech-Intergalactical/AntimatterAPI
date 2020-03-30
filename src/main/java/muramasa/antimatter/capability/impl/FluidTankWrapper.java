@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;

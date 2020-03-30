@@ -1,6 +1,8 @@
 package muramasa.antimatter.datagen;
 
-public interface IAntimatterProvider {
+import net.minecraft.data.IDataProvider;
+
+public interface IAntimatterProvider extends IDataProvider {
 
     void run();
 }

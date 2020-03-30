@@ -3,7 +3,7 @@ package muramasa.antimatter.worldgen.old;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.blocks.BlockStone;
+import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.util.XSTR;

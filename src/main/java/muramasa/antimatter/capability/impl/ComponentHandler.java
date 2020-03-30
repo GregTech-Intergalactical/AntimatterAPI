@@ -2,9 +2,9 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.tileentities.TileEntityBase;
-import muramasa.antimatter.tileentities.TileEntityMachine;
-import muramasa.antimatter.tileentities.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

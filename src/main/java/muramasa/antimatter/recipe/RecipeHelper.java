@@ -1,8 +1,8 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.Lists;
-import muramasa.antimatter.items.MaterialItem;
-import muramasa.antimatter.tools.base.AntimatterToolType;
+import muramasa.antimatter.material.MaterialItem;
+import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;

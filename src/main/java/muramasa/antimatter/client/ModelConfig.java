@@ -1,7 +1,7 @@
 package muramasa.antimatter.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.antimatter.blocks.BlockDynamic;
+import muramasa.antimatter.block.BlockDynamic;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -43,16 +43,22 @@ public class ModelConfig {
         return modelIndex;
     }
 
-    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<IBakedModel> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        IBakedModel baked;
+    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+        IBakedModel[] baked;
         for (int i = 0; i < config.length; i++) {
             baked = bakedConfigs.get(config[i]);
             if (baked != null) {
-                quads.addAll(baked.getQuads(state, side, rand, data));
+                addBaked(quads, baked, state, side, rand, data);
                 if (i == 0) setModelIndex(config[i]);
             }
         }
         return quads;
+    }
+
+    public void addBaked(List<BakedQuad> quads, IBakedModel[] baked, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+        for (int j = 0; j < baked.length; j++) {
+            quads.addAll(baked[j].getQuads(state, side, rand, data));
+        }
     }
 
     public boolean isInvalid() {

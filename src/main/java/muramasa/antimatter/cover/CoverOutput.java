@@ -1,7 +1,7 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.machines.MachineEvent;
-import muramasa.antimatter.tileentities.TileEntityMachine;
+import muramasa.antimatter.machine.MachineEvent;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
