@@ -6,8 +6,6 @@ import muramasa.antimatter.blocks.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
-import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.materials.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
