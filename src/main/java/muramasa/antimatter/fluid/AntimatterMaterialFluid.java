@@ -1,12 +1,16 @@
 package muramasa.antimatter.fluid;
 
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.materials.Material;
 import muramasa.antimatter.materials.MaterialType;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidAttributes;
 
+/**
+ * AntimatterMaterialFluid is an extension of AntimatterFluid that includes both {@link Material} and {@link MaterialType} parameters
+ *
+ * This allows for straightforward fluid generation derived from base Material values, these are of course overridable with the different constructors still.
+ */
 public class AntimatterMaterialFluid extends AntimatterFluid {
 
     protected Material material;
