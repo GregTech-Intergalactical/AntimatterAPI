@@ -1,3 +1,4 @@
+
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.machine.Tier;
@@ -6,18 +7,31 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import tesseract.electric.Electric;
+import tesseract.electric.api.IElectricCable;
+import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
 
-public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorHandler {
+public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorHandler, IElectricCable {
 
+    // TODO: Finish cables
     protected boolean insulated;
     protected int loss, lossInsulated;
     protected int amps;
     protected Tier tier;
+    protected Electric electric;
 
     public BlockCable(String domain, Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
         super(domain, insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
@@ -28,14 +42,17 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         this.amps = amps;
     }
 
+    @Override
     public long getVoltage() {
         return tier.getVoltage();
     }
 
+    @Override
     public int getLoss() {
         return insulated ? lossInsulated : loss;
     }
 
+    @Override
     public int getAmps() {
         return amps;
     }
@@ -44,7 +61,39 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         return tier;
     }
 
-//    @Nullable
+    @Override
+    public boolean connects(Dir direction) {
+        return true;
+    }
+
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (world.isRemote()) return; // Avoid client-side
+        electric = Electric.ofCable(world.getDimension().getType().getId(), pos.toLong(), this);
+    }
+
+    @Override
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+        if (electric != null) electric.remove();
+        return true;
+    }
+
+    @Override
+    public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
+        if (electric != null) electric.remove();
+    }
+
+    @Override
+    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        return true;
+    }
+
+    @Override
+    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
+        return true;
+    }
+
+    //    @Nullable
 //    @Override
 //    public String getHarvestTool(BlockState state) {
 //        return "wire_cutter";
@@ -66,7 +115,6 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
 //        tooltip.add("Max Amperage: " + TextFormatting.YELLOW + getAmps(size));
 //        tooltip.add("Loss/Meter/Ampere: " + TextFormatting.RED + getLoss(ins) + TextFormatting.GRAY + " EU-Volt");
 //    }
-//
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {

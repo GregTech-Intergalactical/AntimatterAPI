@@ -18,6 +18,8 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +36,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     @Override
     public void onLoad() {
-        super.onLoad();
+        if (!isServerSide()) return;
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
 
@@ -42,6 +44,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         itemHandler = Optional.empty();
         fluidHandler = Optional.empty();
         energyHandler = Optional.empty();
+        super.onLoad();
     }
 
     public boolean checkStructure() {
@@ -277,7 +280,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     @Override
     public long getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
-        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getMaxInsert() : Ref.V[0] : Ref.V[0];
+        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getInputVoltage() : Ref.V[0] : Ref.V[0];
     }
 
     @Override
