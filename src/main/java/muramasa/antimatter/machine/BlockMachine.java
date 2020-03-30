@@ -8,6 +8,9 @@ import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.IConfigHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.capability.IConfigHandler;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -47,7 +50,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
