@@ -10,6 +10,8 @@ import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.*;
 import muramasa.antimatter.machine.types.Machine;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -17,14 +19,15 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.Explosion;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.electric.api.IElectricNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -173,6 +176,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             System.out.println("RENDER UPDATE");
         }
         machineState = newState;
+    }
+
+    public void onOverVoltage(long position) {
+        BlockPos pos = BlockPos.fromLong(position); // Gets the position of consumer to expload
+        world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), 4.0F, Explosion.Mode.BREAK);
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+    }
+
+    public void onOverAmperage(long position) {
+        world.setBlockState(BlockPos.fromLong(position), Blocks.FIRE.getDefaultState());
     }
 
     public Cover[] getValidCovers() {
