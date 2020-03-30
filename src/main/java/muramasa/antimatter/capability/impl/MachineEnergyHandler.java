@@ -1,20 +1,19 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.world.Explosion;
-import tesseract.electric.Electric;
-import tesseract.electric.api.IElectricCable;
-import tesseract.electric.api.IElectricEvent;
-import tesseract.electric.api.IElectricNode;
+import tesseract.TesseractAPI;
+import tesseract.api.GraphWrapper;
+import tesseract.api.electric.IElectricCable;
+import tesseract.api.electric.IElectricEvent;
+import tesseract.api.electric.IElectricNode;
 
 public class MachineEnergyHandler extends EnergyHandler {
 
-    protected Electric electric;
+    protected GraphWrapper electric;
 
     public MachineEnergyHandler(TileEntityMachine tile) {
         super(0, 2, tile.getTier().getVoltage() * 64, tile.getTier().getVoltage(), tile.getTier().getVoltage());
-        electric = Electric.ofProducer(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this, new IElectricEvent() {
+        electric = TesseractAPI.asElectricProducer(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this, new IElectricEvent() {
             @Override
             public void onOverVoltage(IElectricNode node) {
 
