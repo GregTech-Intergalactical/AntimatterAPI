@@ -178,15 +178,15 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         machineState = newState;
     }
 
-    public void onOverVoltage(long position) {
+    /*public void onOverVoltage() {
         BlockPos pos = BlockPos.fromLong(position); // Gets the position of consumer to expload
         world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), 4.0F, Explosion.Mode.BREAK);
         world.setBlockState(pos, Blocks.AIR.getDefaultState());
     }
 
-    public void onOverAmperage(long position) {
+    public void onOverAmperage() {
         world.setBlockState(BlockPos.fromLong(position), Blocks.FIRE.getDefaultState());
-    }
+    }*/
 
     public Cover[] getValidCovers() {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
