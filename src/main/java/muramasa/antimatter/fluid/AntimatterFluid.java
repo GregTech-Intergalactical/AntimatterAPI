@@ -2,7 +2,6 @@ package muramasa.antimatter.fluid;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
@@ -15,7 +14,18 @@ import net.minecraftforge.fluids.FluidAttributes;
 
 import static net.minecraftforge.fluids.ForgeFlowingFluid.*;
 
-public class AntimatterFluid implements IAntimatterObject, IModelProvider {
+/**
+ * AntimatterFluid is an object that includes all essential information of what a normal fluid would compose of in Minecraft
+ * Source + Flowing fluid instances, with a FlowingFluidBlock that handles the in-world block form of them.
+ * Item instance is also provided, usually BucketItem or its derivatives. But is generified to an Item instance: {@link net.minecraftforge.fluids.ForgeFlowingFluid#getFilledBucket}
+ *
+ * TODO: BlockState jsons?...
+ * TODO: See through fluids:
+ * @see muramasa.antimatter.proxy.ClientHandler#setup
+ * TODO: Make BucketItem default models: (will need something similar when we get cells)
+ * @see net.minecraftforge.client.model.DynamicBucketModel
+ */
+public class AntimatterFluid implements IAntimatterObject {
 
     protected static final ResourceLocation OVERLAY = new ResourceLocation("block/water_overlay");
 
