@@ -4,6 +4,7 @@ import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.network.AntimatterNetwork;
@@ -15,6 +16,8 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
+import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -64,8 +67,26 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterCapabilities.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
-
+      
         //if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK) AntimatterModelManager.runProvidersDynamically();
+    }
+  
+    @SubscribeEvent
+    public static void onItemRegistry(final RegistryEvent.Register<Item> e) {
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getContainerItem()));  // TODO: Convert to revamped system when PR'd
+    }
+
+    @SubscribeEvent
+    public static void onBlockRegistry(final RegistryEvent.Register<Block> e) {
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> e.getRegistry().register(f.getFluidBlock()));  // TODO: Convert to revamped system when PR'd
+    }
+
+    @SubscribeEvent
+    public static void onFluidRegistry(final RegistryEvent.Register<Fluid> e) {
+        AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {  // TODO: Convert to revamped system when PR'd
+            e.getRegistry().register(f.getFluid());
+            e.getRegistry().register(f.getFlowingFluid());
+        });
     }
 
     @SubscribeEvent
