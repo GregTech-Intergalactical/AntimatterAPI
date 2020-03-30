@@ -26,7 +26,6 @@ public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorH
         this.lossInsulated = lossInsulated;
         this.tier = tier;
         this.amps = amps;
-        register(BlockCable.class);
     }
 
     public long getVoltage() {

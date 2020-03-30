@@ -1,6 +1,5 @@
 package muramasa.antimatter.tool;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import net.minecraft.block.BlockState;
@@ -34,8 +33,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         this.tier = tier;
         this.primary = primary;
         this.secondary = secondary;
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     @Override

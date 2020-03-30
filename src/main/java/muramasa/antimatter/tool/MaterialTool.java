@@ -1,6 +1,5 @@
 package muramasa.antimatter.tool;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
@@ -68,8 +67,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
                     (stack, world, entity) -> entity != null && entity.isHandActive() && entity.getActiveItemStack() == stack ? 1.0F : 0.0F);
         }
          */
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     // Powered variant
@@ -83,8 +80,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         this.toolTypes = type.getToolTypes();
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier; // Utils.getNumberOfDigits(type.getBaseMaxEnergy(), true);
-        setRegistryName(domain, getId());
-        AntimatterAPI.register(IAntimatterTool.class, this);
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
     }
 
     @Override
@@ -99,9 +99,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         }
         return id;
     }
-
-    @Override
-    public String getDomain() { return domain; }
 
     @Override
     public AntimatterToolType getType() { return type; }

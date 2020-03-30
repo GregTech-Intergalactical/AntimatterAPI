@@ -12,7 +12,6 @@ public class BlockItemPipe extends BlockPipe {
         this.restrictive = restrictive;
         this.slots = slots;
         this.steps = steps;
-        register(BlockItemPipe.class);
     }
 
     public int getSlotCount() {

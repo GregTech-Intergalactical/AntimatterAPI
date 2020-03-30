@@ -18,7 +18,7 @@ public class TextureSet implements IAntimatterObject {
         this.domain = domain;
         this.id = id;
         this.internalId = LAST_INTERNAL_ID++;
-        AntimatterAPI.register(TextureSet.class, this);
+        AntimatterAPI.register(TextureSet.class, id, this);
     }
 
     @Override
