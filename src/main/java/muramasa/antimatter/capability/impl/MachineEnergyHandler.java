@@ -16,13 +16,13 @@ public class MachineEnergyHandler extends EnergyHandler {
         super(0, 2, tile.getTier().getVoltage() * 64, tile.getTier().getVoltage(), tile.getTier().getVoltage());
         electric = Electric.ofProducer(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this, new IElectricEvent() {
             @Override
-            public void onOverVoltage(long position) {
-                tile.onOverVoltage(position);
+            public void onOverVoltage(IElectricNode node) {
+
             }
 
             @Override
-            public void onOverAmperage(long position) {
-                tile.onOverAmperage(position);
+            public void onOverAmperage(IElectricCable cable) {
+
             }
         });
     }
