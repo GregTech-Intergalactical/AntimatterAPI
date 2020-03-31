@@ -2,7 +2,6 @@ package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.tile.TileEntityRecipeMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -29,10 +28,10 @@ public class ScreenMachine extends AntimatterContainerScreen<ContainerMachine> {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         drawTitle(mouseX, mouseY);
-        if (container.getTile().hasFlag(MachineFlag.RECIPE)) {
+        if (container.getTile().has(MachineFlag.RECIPE)) {
             drawTooltipInArea("Show Recipes", mouseX, mouseY, (xSize / 2) - 10, 24, 20, 14);
         }
-        if (container.getTile().hasFlag(MachineFlag.FLUID)) {
+        if (container.getTile().has(MachineFlag.FLUID)) {
             //TODO
             //drawContainedFluids(mouseX, mouseY);
         }
@@ -52,7 +51,7 @@ public class ScreenMachine extends AntimatterContainerScreen<ContainerMachine> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (!ModList.get().isLoaded("jei") || !container.getTile().hasFlag(MachineFlag.RECIPE)) return false;
+        if (!ModList.get().isLoaded("jei") || !container.getTile().has(MachineFlag.RECIPE)) return false;
         if (isInGui((xSize / 2) - 10, 24, 20, 18, mouseX, mouseY)) {
             //TODO
             //GregTechJEIPlugin.showCategory(container.getTile().getMachineType());

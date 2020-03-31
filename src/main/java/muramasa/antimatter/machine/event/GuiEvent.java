@@ -1,6 +1,6 @@
-package muramasa.antimatter.gui;
+package muramasa.antimatter.machine.event;
 
-public enum GuiEvent {
+public enum GuiEvent implements IMachineEvent {
 
     PROGRESS(1.0f),
     MACHINE_STATE(1.0f),

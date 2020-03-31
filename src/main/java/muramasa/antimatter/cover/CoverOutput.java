@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.machine.MachineEvent;
+import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
@@ -15,8 +16,8 @@ public class CoverOutput extends Cover {
     }
 
     @Override
-    public void onMachineEvent(TileEntityMachine tile, MachineEvent event) {
-        if (event == MachineEvent.ITEM_OUTPUT) {
+    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
+        if (event == MachineEvent.ITEMS_OUTPUTTED) {
             Direction outputDir = tile.getOutputFacing();
             TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
             if (adjTile == null) return;

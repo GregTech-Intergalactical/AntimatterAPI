@@ -2,15 +2,10 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.IConfigHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.client.ModelConfig;
-import muramasa.antimatter.capability.AntimatterCapabilities;
-import muramasa.antimatter.capability.IConfigHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -122,7 +117,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = Utils.getTile(world, pos);
-            if (getType().hasFlag(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
+            if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
                 NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                 return ActionResultType.SUCCESS;
             }
@@ -207,7 +202,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        if (getType().hasFlag(BASIC)) {
+        if (getType().has(BASIC)) {
             tooltip.add(new TranslationTextComponent("machine.voltage.in").appendText(TextFormatting.GREEN + "" + getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")"));
             tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(TextFormatting.BLUE + "" + (getTier().getVoltage() * 64)));
         }

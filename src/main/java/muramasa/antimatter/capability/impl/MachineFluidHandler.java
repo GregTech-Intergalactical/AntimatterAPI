@@ -5,6 +5,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -57,6 +58,10 @@ public class MachineFluidHandler {
 
     public FluidStack[] getOutputs() {
         return getOutputList().toArray(new FluidStack[0]);
+    }
+
+    public FluidTankWrapper getWrapperForSide(Direction side) {
+        return inputWrapper != null ? inputWrapper : outputWrapper;
     }
 
     /** Returns raw FluidStacks from all inputs, including nulls **/

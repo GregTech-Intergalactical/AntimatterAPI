@@ -4,8 +4,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.machine.MachineEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -73,14 +71,6 @@ public class CoverHandler implements ICoverHandler {
             //default: return false;
         //}
         return true;
-    }
-
-    @Override
-    public void onMachineEvent(MachineEvent event) {
-        for (int i = 0; i < covers.length; i++) {
-            if (covers[i].isEmpty()) continue;
-            covers[i].onMachineEvent((TileEntityMachine) getTile(), event);
-        }
     }
 
     @Override

@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.machine.MachineEvent;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -17,8 +16,6 @@ public interface ICoverHandler {
     Cover get(Direction side);
 
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type);
-
-    void onMachineEvent(MachineEvent event);
 
     Cover[] getAll();
 
