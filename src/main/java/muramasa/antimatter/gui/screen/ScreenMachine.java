@@ -2,6 +2,7 @@ package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -43,8 +44,8 @@ public class ScreenMachine extends AntimatterContainerScreen<ContainerMachine> {
     }
 
     protected void drawProgress(float partialTicks, int mouseX, int mouseY) {
-        if (!(container.getTile() instanceof TileEntityRecipeMachine)) return;
-        int progressTime = (int)(20 * ((TileEntityRecipeMachine) container.getTile()).getClientProgress());
+        if (!(container.getTile() instanceof TileEntityMachine)) return;
+        int progressTime = (int)(20 * ((TileEntityMachine) container.getTile()).getClientProgress());
         drawTexture(gui, guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
     }
 

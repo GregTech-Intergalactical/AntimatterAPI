@@ -186,6 +186,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
+    //TODO Temp
+    public float getClientProgress() {
+        return 0f;
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
