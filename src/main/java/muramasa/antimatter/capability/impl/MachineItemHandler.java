@@ -22,20 +22,20 @@ public class MachineItemHandler {
 
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
-        inputHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getTier()).size()) {
+        inputHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
                 tile.onMachineEvent(ContentEvent.ITEM_INPUT_CHANGED, slot);
             }
         };
-        outputHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getTier()).size()) {
+        outputHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
                 tile.onMachineEvent(ContentEvent.ITEM_OUTPUT_CHANGED, slot);
             }
         };
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
-            cellHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getTier()).size()) {
+            cellHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size()) {
                 @Override
                 protected void onContentsChanged(int slot) {
                     tile.onMachineEvent(ContentEvent.ITEM_CELL_CHANGED, slot);

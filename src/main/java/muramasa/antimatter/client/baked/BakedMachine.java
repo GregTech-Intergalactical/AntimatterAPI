@@ -29,8 +29,8 @@ public class BakedMachine extends AntimatterBakedModel {
         List<BakedQuad> quads = new LinkedList<>();
         if (!data.hasProperty(MACHINE_TYPE) || !data.hasProperty(MACHINE_FACING)) return quads;
 
-        int type = data.getData(MACHINE_TYPE).getInternalId();
-        int facing = data.getData(MACHINE_FACING).getIndex();
+        //int type = data.getData(MACHINE_TYPE).getInternalId();
+        //int facing = data.getData(MACHINE_FACING).getIndex();
         //TextureData textureData = data.getData(MACHINE_TEXTURE);
         Cover[] covers = data.getData(MACHINE_COVER);
 

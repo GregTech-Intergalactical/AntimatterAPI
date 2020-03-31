@@ -1,20 +1,11 @@
 package muramasa.antimatter.machine;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-
 public class Tier implements IAntimatterObject {
-
-    private static HashMap<String, Tier> TIER_NAME_LOOKUP = new HashMap<>();
-    private static Int2ObjectOpenHashMap<Tier> TIER_ID_LOOKUP = new Int2ObjectOpenHashMap<>();
-
-    private static int lastInternalId = 0;
 
     //TODO move Tiers to GT?
 
@@ -35,25 +26,18 @@ public class Tier implements IAntimatterObject {
     public static Tier BRONZE = new Tier("gti", "bronze", 0, TextFormatting.WHITE);
     public static Tier STEEL = new Tier("gti", "steel", 0, TextFormatting.WHITE);
 
-    private int internalId;
     private String domain, id;
     private long voltage;
     private TextFormatting rarityColor;
     private Texture baseTexture;
 
     public Tier(String domain, String id, long voltage, TextFormatting rarityColor) {
-        internalId = lastInternalId++;
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture(domain, "block/machine/base/" + id);
-        TIER_NAME_LOOKUP.put(id, this);
-        TIER_ID_LOOKUP.put(internalId, this);
-    }
-
-    public int getInternalId() {
-        return internalId;
+        AntimatterAPI.register(Tier.class, getId(), this);
     }
 
     @Override
@@ -65,16 +49,12 @@ public class Tier implements IAntimatterObject {
         return voltage;
     }
 
-    public TextFormatting getRarityColor() {
+    public TextFormatting getRarityFormatting() {
         return rarityColor;
     }
 
     public Texture getBaseTexture() {
         return baseTexture;
-    }
-
-    public static int getCount() {
-        return TIER_NAME_LOOKUP.size();
     }
 
     public static Tier[] getSteam() {
@@ -89,16 +69,6 @@ public class Tier implements IAntimatterObject {
         return new Tier[]{ULV, LV, MV, HV, EV, IV, LUV, ZPM, UV, MAX};
     }
 
-    @Nullable
-    public static Tier get(String id) {
-        return TIER_NAME_LOOKUP.get(id);
-    }
-
-    @Nullable
-    public static Tier get(int id) {
-        return TIER_ID_LOOKUP.get(id);
-    }
-
     public static Tier[] getBasic() {
         return new Tier[]{BRONZE, STEEL, LV, MV, HV, EV, IV};
     }
@@ -107,19 +77,11 @@ public class Tier implements IAntimatterObject {
         return Tier.IV; //TODO update...
     }
 
-    public static Collection<Tier> getAll() {
-        return TIER_NAME_LOOKUP.values();
-    }
-
     public static Texture[] getTextures(Tier... tiers) {
         Texture[] textures = new Texture[tiers.length];
         for (int i = 0; i < tiers.length; i++) {
             textures[i] = tiers[i].getBaseTexture();
         }
         return textures;
-    }
-
-    public static Texture[] getAllTextures() {
-        return getTextures(TIER_NAME_LOOKUP.values().toArray(new Tier[0]));
     }
 }

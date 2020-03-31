@@ -7,27 +7,19 @@ import muramasa.antimatter.texture.Texture;
 
 public class TextureSet implements IAntimatterObject {
 
-    private static int LAST_INTERNAL_ID;
-
     public static TextureSet NONE = new TextureSet(Ref.ID, "none");
 
     private String domain, id;
-    private int internalId;
 
     public TextureSet(String domain, String id) {
         this.domain = domain;
         this.id = id;
-        this.internalId = LAST_INTERNAL_ID++;
         AntimatterAPI.register(TextureSet.class, id, this);
     }
 
     @Override
     public String getId() {
         return id;
-    }
-
-    public int getInternalId() {
-        return internalId;
     }
 
     public Texture getTexture(MaterialType<?> type, int layer) {
@@ -41,9 +33,5 @@ public class TextureSet implements IAntimatterObject {
             textures[i] = getTexture(type, i);
         }
         return textures;
-    }
-
-    public static int getLastInternalId() {
-        return LAST_INTERNAL_ID;
     }
 }
