@@ -53,7 +53,7 @@ public class AntimatterFluid implements IAntimatterObject {
         this.flowing.setRegistryName(domain, "flowing_" + id);
         this.containerItem = new BucketItem(this::getFluid, new Item.Properties().maxStackSize(1).containerItem(Items.BUCKET).group(ItemGroup.MISC));
         this.containerItem.setRegistryName(domain, id + "_bucket");
-        AntimatterAPI.register(AntimatterFluid.class, this);
+        AntimatterAPI.register(AntimatterFluid.class, getId(), this);
     }
 
     public AntimatterFluid(String domain, String id) {

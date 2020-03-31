@@ -1,7 +1,7 @@
 package muramasa.antimatter.fluid;
 
-import muramasa.antimatter.materials.Material;
-import muramasa.antimatter.materials.MaterialType;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidAttributes;
