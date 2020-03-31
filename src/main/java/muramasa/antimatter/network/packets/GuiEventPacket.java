@@ -44,7 +44,7 @@ public class GuiEventPacket {
                 World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimensionType);
                 TileEntity tile = Utils.getTile(world, msg.pos);
                 if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine) tile).onGuiEvent(msg.event);
+                    ((TileEntityMachine) tile).onMachineEvent(msg.event);
                 }
             }
         });

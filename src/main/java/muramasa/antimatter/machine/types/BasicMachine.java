@@ -16,6 +16,6 @@ public class BasicMachine extends Machine {
     }
 
     public BasicMachine(String domain, String name, Object... data) {
-        this(domain, name, TileEntityRecipeMachine::new, data);
+        this(domain, name, TileEntityMachine::new, data);
     }
 }
