@@ -26,7 +26,7 @@ public class ScreenHatchMachine extends ScreenMachine {
                 drawTexture(gui, guiLeft + slot.x - 1, guiTop + slot.y - 1, xSize, 18, 18, 18);
             }
         }
-        if (container.getTile().getMachineType().hasFlag(MachineFlag.FLUID)) {
+        if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {
             drawTexture(gui, guiLeft + 7, guiTop + 15, xSize, 36, 18, 54);
         }
     }

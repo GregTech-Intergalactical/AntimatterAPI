@@ -1,6 +1,6 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.gui.GuiEvent;
+import muramasa.antimatter.machine.event.GuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.PacketBuffer;

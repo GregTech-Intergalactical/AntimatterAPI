@@ -19,7 +19,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
-import muramasa.antimatter.tile.TileEntityRecipeMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -87,7 +87,7 @@ public class Data {
         @Nullable
         @Override
         public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
-            return tile instanceof TileEntityRecipeMachine ? new ContainerBasicMachine((TileEntityRecipeMachine) tile, playerInv, this, windowId) : null;
+            return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine) tile, playerInv, this, windowId) : null;
         }
 
         @Nullable

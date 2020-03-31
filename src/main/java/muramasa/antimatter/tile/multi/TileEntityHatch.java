@@ -1,16 +1,16 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.capability.impl.ComponentHandler;
 import muramasa.antimatter.capability.impl.HatchComponentHandler;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
-import muramasa.antimatter.machine.ContentEvent;
+import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     public void onLoad() {
         if (!isServerSide()) return;
         componentHandler = Optional.of(new HatchComponentHandler(this));
-        if (getMachineType().hasFlag(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000 * getTierId(), fluidData));
+        if (getMachineType().has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000 * getTierId(), fluidData));
         super.onLoad();
     }
 
@@ -35,22 +35,24 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
-    public void onContentsChanged(ContentEvent type, int slot) {
-        componentHandler.ifPresent(h -> h.getFirstController().ifPresent(controller -> {
-            switch (type) {
-                case ITEM_INPUT:
-                    controller.onContentsChanged(type, slot);
-                    break;
-                case ITEM_OUTPUT:
-                    controller.onContentsChanged(type, slot);
-                case ITEM_CELL:
-                    //TODO handle cells
-                    break;
-                case FLUID_INPUT:
-                    //TODO
-                    break;
-            }
-        }));
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+        if (event instanceof ContentEvent) {
+            componentHandler.flatMap(ComponentHandler::getFirstController).ifPresent(controller -> {
+                switch ((ContentEvent) event) {
+                    case ITEM_INPUT_CHANGED:
+                        controller.onMachineEvent(event, data);
+                        break;
+                    case ITEM_OUTPUT_CHANGED:
+                        controller.onMachineEvent(event, data);
+                    case ITEM_CELL_CHANGED:
+                        //TODO handle cells
+                        break;
+                    case FLUID_INPUT_CHANGED:
+                        //TODO
+                        break;
+                }
+            });
+        }
     }
 
     @Nonnull

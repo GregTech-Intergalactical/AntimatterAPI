@@ -2,7 +2,6 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.TileEntityRecipeMachine;
 
 import java.util.function.Supplier;
 

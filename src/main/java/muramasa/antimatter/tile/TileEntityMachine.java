@@ -6,9 +6,12 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCapabilities;
 import muramasa.antimatter.capability.impl.*;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.gui.GuiEvent;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.*;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,6 +25,8 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
@@ -31,6 +36,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider {
 
     /** NBT Data **/
@@ -40,13 +46,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     //TODO convert to Cap instance ->
     public Optional<MachineItemHandler> itemHandler = Optional.empty();
     public Optional<MachineFluidHandler> fluidHandler = Optional.empty();
+    public Optional<MachineRecipeHandler<?>> recipeHandler = Optional.empty();
     public Optional<MachineEnergyHandler> energyHandler = Optional.empty();
     public Optional<MachineCoverHandler> coverHandler = Optional.empty();
     public Optional<MachineConfigHandler> configHandler = Optional.empty();
 
     /** Machine Data **/
-    //private Machine type;
-    //private Tier tier;
     private MachineState machineState;
     private Direction facing;
 
@@ -56,28 +61,23 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public TileEntityType<?> getType() {
-        //if (type == null) type = ((BlockMachine) getBlockState().getBlock()).getType();
-        //if (tier == null) tier = ((BlockMachine) getBlockState().getBlock()).getTier();
         return ((BlockMachine) getBlockState().getBlock()).getType().getTileType();
     }
 
     @Override
     public void onLoad() {
         if (!isServerSide()) return;
-        if (!itemHandler.isPresent() && getMachineType().hasFlag(ITEM) && getMachineType().getGui().hasAnyItem(getTier()))
-            itemHandler = Optional.of(new MachineItemHandler(this, itemData));
-        if (!fluidHandler.isPresent() && getMachineType().hasFlag(FLUID) && getMachineType().getGui().hasAnyFluid(getTier()))
-            fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
-        if (!coverHandler.isPresent() && getMachineType().hasFlag(COVERABLE))
-            coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (!energyHandler.isPresent() && getMachineType().hasFlag(ENERGY))
-            energyHandler = Optional.of(new MachineEnergyHandler(this));
-        if (!configHandler.isPresent() && getMachineType().hasFlag(CONFIGURABLE))
-            configHandler = Optional.of(new MachineConfigHandler(this));
+        if (!itemHandler.isPresent() && has(ITEM) && getMachineType().getGui().hasAnyItem(getTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
+        if (!fluidHandler.isPresent() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+        if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
+        if (!energyHandler.isPresent() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (!configHandler.isPresent() && has(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
+        if (!recipeHandler.isPresent() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
     }
 
     @Override
     public void onServerUpdate() {
+        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         coverHandler.ifPresent(CoverHandler::update);
     }
 
@@ -87,22 +87,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         super.remove();
     }
 
-    /** Events **/
-    public void onContentsChanged(ContentEvent type, int slot) {
-        //NOOP
-    }
-
-    public void onGuiEvent(GuiEvent event) {
-        //NOOP
-    }
-
-    public void onMachineEvent(MachineEvent event) {
-        coverHandler.ifPresent(h -> h.onMachineEvent(event));
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+        recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
     }
 
     /** Getters **/
     public Machine getMachineType() {
-        /*return type != null ? type : Machines.INVALID;*/
         return ((BlockMachine) getBlockState().getBlock()).getType();
     }
 
@@ -119,8 +110,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return getTier().getInternalId();
     }
 
-    public boolean hasFlag(MachineFlag flag) {
-        return getMachineType().hasFlag(flag);
+    public boolean has(MachineFlag flag) {
+        return getMachineType().has(flag);
     }
 
     public Direction getFacing() {
@@ -128,7 +119,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public Direction getOutputFacing() {
-        return coverHandler.isPresent() ? coverHandler.get().getOutputFacing() : getFacing().getOpposite();
+        return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
     }
 
     public MachineState getMachineState() {
@@ -139,30 +130,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return MachineState.IDLE;
     }
 
-    public int getCurProgress() {
-        return 0;
-    }
-
-    public int getMaxProgress() {
-        return 0;
-    }
-
     public long getMaxInputVoltage() {
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0L);
-    }
-
-    /** Setters **/
-    public boolean setFacing(Direction side) { //Rotate the front to face a given direction
-        if (side == side) return false;
-        side = side;
-        markForRenderUpdate();
-        markDirty();
-        return true;
     }
 
     //TODO
     public void toggleDisabled() {
         setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
+    }
+
+    /** Helpers **/
+    public void resetMachine() {
+        setMachineState(getDefaultMachineState());
+        recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
     }
 
     public void setMachineState(MachineState newState) {
@@ -189,19 +169,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
-            return LazyOptional.of(() -> itemHandler).cast();
-        }
-        if (cap == AntimatterCapabilities.CONFIGURABLE && configHandler.isPresent())
-            return LazyOptional.of(() -> configHandler.get()).cast();
-        if (cap == AntimatterCapabilities.ENERGY && energyHandler.isPresent())
-            return LazyOptional.of(() -> energyHandler.get()).cast();
-        return super.getCapability(cap, side);
-    }
-
-    @Nonnull
-    @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType()).withInitial(AntimatterProperties.MACHINE_FACING, facing);
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getAll()));
@@ -216,47 +183,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nullable
     @Override
     public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
-        //return type.hasFlag(GUI) ? type.getGui().getContainerHandler().getContainer(windowId, world, pos, player, playerInv) : null;
-        //return getMachineType().hasFlag(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(windowId, inv, this) : null;
-        return getMachineType().hasFlag(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
-        //return getMachineType().hasFlag(GUI) ? new ContainerMachine(windowId, this, inv) : null;
+        return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
-    //    @Override
-//    public boolean hasCapability(Capability<?> capability, @Nullable Direction side) {
-//        //TODO if a side has a cover, disallow energy/items/fluid etc?
-//        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
-//            return true;
-//        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) {
-//            return true;
-//        } else if ((capability == GTCapabilities.ENERGY || capability == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) {
-//            return true;
-//        } else if (capability == GTCapabilities.COVERABLE && coverHandler.isPresent()) {
-//            return side == null || !coverHandler.get().get(side).isEmpty();
-//        } else if (getMachineType().hasFlag(CONFIGURABLE) && capability == GTCapabilities.CONFIGURABLE) {
-//            return true;
-//        }
-//        return super.hasCapability(capability, side);
-//    }
-
-//    @Nullable
-//    @Override
-//    public <T> T getCapability(Capability<T> capability, @Nullable Direction side) {
-//        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) {
-//            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(side == Direction.UP ? itemHandler.get().getInputHandler() : itemHandler.get().getOutputHandler());
-//        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) {
-//            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler.get().getInputWrapper() != null ? fluidHandler.get().getInputWrapper() : fluidHandler.get().getOutputWrapper());
-//        } else if (capability == GTCapabilities.ENERGY && energyHandler.isPresent()) {
-//            return GTCapabilities.ENERGY.cast(energyHandler.get());
-//        } else if (capability == CapabilityEnergy.ENERGY && energyHandler.isPresent()) {
-//            return CapabilityEnergy.ENERGY.cast(energyHandler.get());
-//        } else if (capability == GTCapabilities.COVERABLE && coverHandler.isPresent()) {
-//            return GTCapabilities.COVERABLE.cast(coverHandler.get());
-//        } else if (capability == GTCapabilities.CONFIGURABLE && configHandler.isPresent()) {
-//            return GTCapabilities.CONFIGURABLE.cast(configHandler.get());
-//        }
-//        return super.getCapability(capability, side);
-//    }
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
+        if ((cap == AntimatterCapabilities.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
+        if (cap == AntimatterCapabilities.COVERABLE && coverHandler.map(h -> h.get(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
+        if (cap == AntimatterCapabilities.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
+        return super.getCapability(cap, side);
+    }
 
     @Override
     public void read(CompoundNBT tag) {
@@ -283,13 +222,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         info.add("Tile: " + getClass().getName());
         info.add("Machine: " + getMachineType().getId() + " Tier: " + getTier().getId());
         String slots = "";
-        if (getMachineType().hasFlag(ITEM)) {
+        if (getMachineType().has(ITEM)) {
             int inputs = getMachineType().getGui().getSlots(SlotType.IT_IN, getTier()).size();
             int outputs = getMachineType().getGui().getSlots(SlotType.IT_OUT, getTier()).size();
             if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
             if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
         }
-        if (getMachineType().hasFlag(FLUID)) {
+        if (getMachineType().has(FLUID)) {
             int inputs = getMachineType().getGui().getSlots(SlotType.FL_IN, getTier()).size();
             int outputs = getMachineType().getGui().getSlots(SlotType.FL_OUT, getTier()).size();
             if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
@@ -304,6 +243,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             }
             info.add(builder.toString());
         });
+        recipeHandler.ifPresent(h -> info.add("Recipe: " + h.getCurProgress() + " / " + h.getMaxProgress()));
         return info;
     }
 }

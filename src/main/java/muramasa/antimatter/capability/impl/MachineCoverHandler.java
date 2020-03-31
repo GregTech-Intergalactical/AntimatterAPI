@@ -2,7 +2,9 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -10,7 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
-public class MachineCoverHandler extends RotatableCoverHandler {
+public class MachineCoverHandler extends RotatableCoverHandler implements IMachineHandler {
 
     protected int outputSide = 3;
 
@@ -47,6 +49,14 @@ public class MachineCoverHandler extends RotatableCoverHandler {
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
         if (type == Data.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
+    }
+
+    @Override
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+        for (int i = 0; i < covers.length; i++) {
+            if (covers[i].isEmpty()) continue;
+            covers[i].onMachineEvent((TileEntityMachine) getTile(), event);
+        }
     }
 
     @Override

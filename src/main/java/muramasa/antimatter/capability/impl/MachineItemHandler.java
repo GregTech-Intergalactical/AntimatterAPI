@@ -1,13 +1,14 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.ContentEvent;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -24,20 +25,20 @@ public class MachineItemHandler {
         inputHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentEvent.ITEM_INPUT, slot);
+                tile.onMachineEvent(ContentEvent.ITEM_INPUT_CHANGED, slot);
             }
         };
         outputHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getTier()).size()) {
             @Override
             protected void onContentsChanged(int slot) {
-                tile.onContentsChanged(ContentEvent.ITEM_OUTPUT, slot);
+                tile.onMachineEvent(ContentEvent.ITEM_OUTPUT_CHANGED, slot);
             }
         };
-        if (tile.getMachineType().hasFlag(MachineFlag.FLUID)) {
+        if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellHandler = new ItemStackHandler(tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getTier()).size()) {
                 @Override
                 protected void onContentsChanged(int slot) {
-                    tile.onContentsChanged(ContentEvent.ITEM_CELL, slot);
+                    tile.onMachineEvent(ContentEvent.ITEM_CELL_CHANGED, slot);
                 }
             };
         }
@@ -87,6 +88,10 @@ public class MachineItemHandler {
 
     public ItemStack getCellOutput() {
         return cellHandler.getStackInSlot(1);
+    }
+
+    public IItemHandler getHandlerForSide(Direction side) {
+        return side == Direction.UP ? inputHandler : outputHandler;
     }
 
     /** Gets a list of non empty input Items **/

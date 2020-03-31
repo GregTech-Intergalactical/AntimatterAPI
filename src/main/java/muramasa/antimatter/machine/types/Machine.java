@@ -187,7 +187,7 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
         structures.put(tier.getInternalId(), structure);
     }
 
-    public boolean hasFlag(MachineFlag flag) {
+    public boolean has(MachineFlag flag) {
         return flag.getTypes().contains(this);
     }
 

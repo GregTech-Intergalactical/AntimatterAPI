@@ -4,29 +4,29 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerConfigHandler;
-import muramasa.antimatter.gui.GuiEvent;
+import muramasa.antimatter.capability.impl.MachineRecipeHandler;
+import muramasa.antimatter.capability.impl.MultiMachineRecipeHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.machine.event.GuiEvent;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
-import muramasa.antimatter.tile.TileEntityRecipeMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class TileEntityMultiMachine extends TileEntityRecipeMachine implements IComponent {
+public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
@@ -39,6 +39,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
         if (!isServerSide()) return;
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
+        recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));
 
         //TODO fix this oversight
         itemHandler = Optional.empty();
@@ -110,62 +111,16 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
     }
 
     @Override
-    public void onGuiEvent(GuiEvent event) {
+    public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
-            checkRecipe();
+            recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
         }
-    }
-
-    @Override
-    public Recipe findRecipe() {
-        return getMachineType().getRecipeMap().find(getStoredItems(), getStoredFluids());
-    }
-
-    @Override
-    public void consumeInputs() {
-        if (activeRecipe.hasInputItems()) consumeItems(activeRecipe.getInputItems());
-        if (activeRecipe.hasInputFluids()) consumeFluids(activeRecipe.getInputFluids());
-    }
-
-    @Override
-    public boolean canOutput() {
-        if ((hasFlag(MachineFlag.ITEM) && !canItemsFit(activeRecipe.getOutputItems())) ||
-            (hasFlag(MachineFlag.FLUID) && !canFluidsFit(activeRecipe.getOutputFluids()))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void addOutputs() {
-        if (hasFlag(MachineFlag.ITEM)) outputItems(activeRecipe.getOutputItems());
-        if (hasFlag(MachineFlag.FLUID)) outputFluids(activeRecipe.getOutputFluids());
-    }
-
-    @Override
-    public boolean canRecipeContinue() {
-        if ((hasFlag(MachineFlag.ITEM) && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), getStoredItems())) ||
-            (hasFlag(MachineFlag.FLUID) && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), getStoredFluids()))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean consumeResourceForRecipe() {
-        //TODO breaks generators like combustion engine
-//        if (getStoredEnergy() >= activeRecipe.getPower()) {
-//            consumeEnergy(activeRecipe.getPower());
-//            return true;
-//        }
-//        return false;
-        return true;
     }
 
     /** Returns list of items across all input hatches. Merges equal filters empty **/
     public ItemStack[] getStoredItems() {
-        if (!hasFlag(MachineFlag.ITEM)) return new ItemStack[0];
+        if (!has(MachineFlag.ITEM)) return new ItemStack[0];
         ArrayList<ItemStack> all = new ArrayList<>();
         for (IComponentHandler hatch : getComponents("hatch_item_input")) {
             hatch.getItemHandler().ifPresent(h -> Utils.mergeItems(all, h.getInputList()));
@@ -176,7 +131,7 @@ public class TileEntityMultiMachine extends TileEntityRecipeMachine implements I
 
     /** Returns list of fluids across all input hatches. Merges equal filters empty **/
     public FluidStack[] getStoredFluids() {
-        if (!hasFlag(MachineFlag.FLUID)) return new FluidStack[0];
+        if (!has(MachineFlag.FLUID)) return new FluidStack[0];
         ArrayList<FluidStack> all = new ArrayList<>();
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             hatch.getFluidHandler().ifPresent(h -> Utils.mergeFluids(all, h.getInputList()));

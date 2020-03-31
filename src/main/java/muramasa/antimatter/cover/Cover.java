@@ -2,7 +2,7 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.machine.MachineEvent;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -51,7 +51,7 @@ public abstract class Cover {
         //NOOP
     }
 
-    public void onMachineEvent(TileEntityMachine tile, MachineEvent event) {
+    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
         //NOOP
     }
 
