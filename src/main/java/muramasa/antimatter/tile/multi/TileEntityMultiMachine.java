@@ -50,7 +50,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public boolean checkStructure() {
         if (!isServerSide()) return false;
-        Structure structure = getMachineType().getStructure(getTier());
+        Structure structure = getMachineType().getStructure(getMachineTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {

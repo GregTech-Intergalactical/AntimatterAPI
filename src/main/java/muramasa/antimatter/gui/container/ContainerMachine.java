@@ -15,7 +15,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
     private int lastState = -1;
 
     public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandler menuHandler, int windowId) {
-        super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getTier()).size());
+        super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
         this.tile = tile;
@@ -53,7 +53,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
     protected void addSlots(TileEntityMachine tile) {
         tile.itemHandler.ifPresent(h -> {
             int inputIndex = 0, outputIndex = 0, cellIndex = 0;
-            for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getTier())) {
+            for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
                 switch (slot.type) {
                     case IT_IN:
                         addSlot(new SlotInput(h.getInputHandler(), inputIndex++, slot.x, slot.y));
@@ -74,6 +74,6 @@ public abstract class ContainerMachine extends AntimatterContainer {
 
     @Override
     public boolean canInteractWith(PlayerEntity player) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, tile.getMachineType().getBlock(tile.getTier()));
+        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, tile.getMachineType().getBlock(tile.getMachineTier()));
     }
 }

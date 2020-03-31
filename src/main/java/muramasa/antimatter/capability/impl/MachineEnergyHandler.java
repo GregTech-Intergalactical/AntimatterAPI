@@ -12,7 +12,7 @@ public class MachineEnergyHandler extends EnergyHandler {
     protected GraphWrapper electric;
 
     public MachineEnergyHandler(TileEntityMachine tile) {
-        super(0, 2, tile.getTier().getVoltage() * 64, tile.getTier().getVoltage(), tile.getTier().getVoltage());
+        super(0, 2, tile.getMachineTier().getVoltage() * 64, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage());
         electric = TesseractAPI.asElectricProducer(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this, new IElectricEvent() {
             @Override
             public void onOverVoltage(IElectricNode node) {

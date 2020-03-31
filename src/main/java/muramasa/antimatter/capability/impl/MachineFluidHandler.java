@@ -24,8 +24,8 @@ public class MachineFluidHandler {
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
-        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getTier()).size();
-        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getTier()).size();
+        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
+        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
     }

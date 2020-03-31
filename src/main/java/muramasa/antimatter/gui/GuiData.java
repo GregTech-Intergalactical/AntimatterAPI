@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
@@ -154,8 +155,8 @@ public class GuiData {
 
     public GuiData add(String key, SlotData slot) {
         //TODO figure out better way to do this
-        Tier tier = Tier.get(key);
-        if (tier != null && tier.getInternalId() > highestTier.getInternalId()) highestTier = tier;
+        Tier tier = AntimatterAPI.get(Tier.class, key);
+        if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
 
         COUNT_LOOKUP.addTo(slot.type, 1);
         if (SLOT_LOOKUP.containsKey(key)) {
