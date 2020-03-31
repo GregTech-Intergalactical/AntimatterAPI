@@ -43,7 +43,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected CompoundNBT itemData, fluidData;
 
     /** Capabilities **/
-    //TODO convert to Cap instance ->
     public Optional<MachineItemHandler> itemHandler = Optional.empty();
     public Optional<MachineFluidHandler> fluidHandler = Optional.empty();
     public Optional<MachineRecipeHandler<?>> recipeHandler = Optional.empty();
@@ -54,6 +53,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     /** Machine Data **/
     private MachineState machineState;
     private Direction facing;
+
+    /** Client Data **/
+    protected float clientProgress = 0;
 
     public TileEntityMachine() {
         machineState = getDefaultMachineState();
@@ -167,6 +169,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
     }
 
+    public float getClientProgress() {
+        return clientProgress;
+    }
+
     @Nonnull
     @Override
     public IModelData getModelData() {
@@ -184,11 +190,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
-    }
-
-    //TODO Temp
-    public float getClientProgress() {
-        return 0f;
     }
 
     @Nonnull
