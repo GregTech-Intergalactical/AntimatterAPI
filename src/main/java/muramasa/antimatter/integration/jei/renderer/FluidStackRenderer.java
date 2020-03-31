@@ -3,7 +3,6 @@ package muramasa.antimatter.integration.jei.renderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.fluid.AntimatterFluid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.util.text.TextFormatting;
@@ -49,11 +48,13 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
         //tooltip.add(fluidStack.getFluid().getLocalizedName(fluidStack));
         tooltip.add(TextFormatting.BLUE + "Amount: " + fluidStack.getAmount());
         tooltip.add(TextFormatting.RED + "Temp: " + fluidStack.getFluid().getAttributes().getTemperature() + " K");
-        if (fluidStack.getFluid() instanceof AntimatterFluid) {
-            tooltip.add(TextFormatting.GREEN + "State: " + ((AntimatterFluid) fluidStack.getFluid()).getState());
-        } else {
+
+        //TODO @Rongmario
+        //if (fluidStack.getFluid() instanceof AntimatterFluid) {
+            //tooltip.add(TextFormatting.GREEN + "State: " + ((AntimatterFluid) fluidStack.getFluid()).getState());
+        //} else {
             tooltip.add(TextFormatting.GREEN + "State: " + (fluidStack.getFluid().getAttributes().isGaseous() ? "Gas" : "Liquid"));
-        }
+        //}
         return tooltip;
     }
 }
