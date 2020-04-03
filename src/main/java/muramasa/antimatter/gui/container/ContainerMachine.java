@@ -74,6 +74,6 @@ public abstract class ContainerMachine extends AntimatterContainer {
 
     @Override
     public boolean canInteractWith(PlayerEntity player) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, tile.getMachineType().getBlock(tile.getMachineTier()));
+        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, tile.getBlockState().getBlock());
     }
 }

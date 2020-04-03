@@ -28,19 +28,18 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
 
     /** Basic Members **/
-    protected Map<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
     protected TileEntityType<?> tileType;
-    protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileClassFunc = m -> () -> new TileEntityMachine(this);
+    protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
     protected ArrayList<Tier> tiers = new ArrayList<>();
 
@@ -70,8 +69,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
         if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return;
-        tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
-        this.tileType = TileEntityType.Builder.create(tileClassFunc.apply(this), blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(domain, id);
+        tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
     }
 
@@ -94,7 +92,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setTile(Function<Machine<?>, Supplier<? extends TileEntityMachine>> func) {
-        this.tileClassFunc = func;
+        this.tileFunc = func;
         return (T) this;
     }
 
@@ -186,15 +184,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     /** Getters **/
-    public Collection<BlockMachine> getBlocks() {
-        return blocks.values();
-    }
-
-    @Nullable
-    public BlockMachine getBlock(Tier tier) {
-        return blocks.get(tier);
-    }
-
     public TileEntityType<?> getTileType() {
         return tileType;
     }

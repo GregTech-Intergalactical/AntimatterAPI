@@ -34,16 +34,6 @@ public enum MachineFlag {
         return types;
     }
 
-    public Collection<MachineStack> getStacks() {
-        ArrayList<MachineStack> stacks = new ArrayList<>();
-        for (Machine<?> machine : types) {
-            for (Tier tier : machine.getTiers()) {
-                stacks.add(new MachineStack(machine, tier));
-            }
-        }
-        return stacks;
-    }
-
     public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
         ArrayList<Machine<?>> types = new ArrayList<>();
         for (MachineFlag flag : flags) {
