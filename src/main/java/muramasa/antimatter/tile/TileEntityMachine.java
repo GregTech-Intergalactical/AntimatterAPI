@@ -215,7 +215,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
-        info.add("Tile: " + getClass().getName());
         info.add("Machine: " + getMachineType().getId() + " Tier: " + getMachineTier().getId());
         String slots = "";
         if (getMachineType().has(ITEM)) {

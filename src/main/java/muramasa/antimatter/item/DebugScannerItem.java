@@ -9,12 +9,14 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -52,6 +54,10 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
     public ActionResultType onItemUse(ItemUseContext context) {
         if (context.getWorld().isRemote) return super.onItemUse(context);
         BlockState state = context.getWorld().getBlockState(context.getPos());
+        TileEntity tile = context.getWorld().getTileEntity(context.getPos());
+        if (tile instanceof TileEntityBase) {
+            ((TileEntityBase) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s)));
+        }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
             ((BlockDynamic) state.getBlock()).getInfo(new ArrayList<>(), context.getWorld(), state, context.getPos()).forEach(s -> {
                 context.getPlayer().sendMessage(new StringTextComponent(s));
