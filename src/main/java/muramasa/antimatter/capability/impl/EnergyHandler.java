@@ -7,20 +7,21 @@ import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
-    protected long energy, amperage, capacity, input, output;
+    protected long energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out;
 
-    public EnergyHandler(long energy, long amperage, long capacity, long input, long output) {
+    public EnergyHandler(long energy, long capacity, long voltage_in, long voltage_out, long amperage_in, long amperage_out) {
         this.energy = energy;
-        this.amperage = amperage;
         this.capacity = capacity;
-        this.input = input;
-        this.output = output;
+        this.voltage_in = voltage_in;
+        this.voltage_out = voltage_out;
+        this.amperage_in = amperage_in;
+        this.amperage_out = amperage_out;
     }
 
     /** GTI IEnergyHandler Implementations **/
     @Override
     public long insert(long toInsert, boolean simulate) {
-        if (!canInput()) return 0;
+        if (!canInput()) return 0L;
 
         // Not check the min input due to dynamic amperage value
         long inserted = Math.min(capacity - energy, toInsert);
@@ -31,7 +32,7 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
     @Override
     public long extract(long toExtract, boolean simulate) {
-        if (!canExtract()) return 0;
+        if (!canExtract()) return 0L;
 
         // Not check the min input due to dynamic amperage value
         long extracted = Math.min(energy, toExtract);
@@ -52,32 +53,32 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
     @Override
     public long getInputAmperage() {
-        return amperage * 2;
+        return amperage_in;
     }
 
     @Override
     public long getOutputAmperage() {
-        return amperage;
+        return amperage_out;
     }
 
     @Override
     public long getInputVoltage() {
-        return input;
+        return voltage_in;
     }
 
     @Override
     public long getOutputVoltage() {
-        return output;
+        return voltage_out;
     }
 
     @Override
     public boolean canInput() {
-        return input > 0L;
+        return voltage_in > 0L;
     }
 
     @Override
     public boolean canOutput() {
-        return output > 0L;
+        return voltage_out > 0L;
     }
 
     /** Forge IEnergyStorage Implementations **/

@@ -12,10 +12,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.GraphWrapper;
@@ -76,11 +78,15 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
         if (world.isRemote()) return; // Avoid client-side
         electric = TesseractAPI.asElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
+    @Override
+    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (electric != null) electric.remove();
+        super.onReplaced(state, world, pos, newState, isMoving);
+    }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         if (electric != null) electric.remove();
-        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
@@ -98,7 +104,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
         return true;
     }
 
-    //    @Nullable
+//    @Nullable
 //    @Override
 //    public String getHarvestTool(BlockState state) {
 //        return "wire_cutter";
