@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.impl.MultiMachineRecipeHandler;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.util.Utils;
 
@@ -8,6 +9,10 @@ import java.util.Optional;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
 public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
+
+    public TileEntityBasicMultiMachine(Machine type) {
+        super(type);
+    }
 
     @Override
     public void onLoad() {

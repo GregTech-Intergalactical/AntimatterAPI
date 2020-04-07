@@ -28,18 +28,18 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
-public class Machine implements IAntimatterObject, IRegistryEntryProvider {
+public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
 
     /** Basic Members **/
-    protected Map<Tier, BlockMachine> blocks = new Object2ObjectOpenHashMap<>();
     protected TileEntityType<?> tileType;
-    protected Supplier<? extends TileEntityMachine> tileClassSupplier;
+    protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
     protected ArrayList<Tier> tiers = new ArrayList<>();
 
@@ -59,23 +59,17 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
 
     //TODO get valid covers
 
-    public Machine(String domain, String id, Supplier<? extends TileEntityMachine> tile, Object... data) {
+    public Machine(String domain, String id, Object... data) {
         addData(data);
         this.domain = domain;
         this.id = id;
-        this.tileClassSupplier = tile;
         AntimatterAPI.register(Machine.class, id, this);
-    }
-
-    public Machine(String domain, String id, Object... data) {
-        this(domain, id, TileEntityMachine::new, data);
     }
 
     @Override
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
         if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return;
-        tiers.forEach(t -> blocks.put(t, new BlockMachine(this, t)));
-        this.tileType = TileEntityType.Builder.create(tileClassSupplier, blocks.values().toArray(new BlockMachine[0])).build(null).setRegistryName(domain, id);
+        tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
     }
 
@@ -95,6 +89,16 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
         addFlags(flags.toArray(new MachineFlag[0]));
+    }
+
+    public T setTile(Function<Machine<?>, Supplier<? extends TileEntityMachine>> func) {
+        this.tileFunc = func;
+        return (T) this;
+    }
+
+    public T setTile(Supplier<? extends TileEntityMachine> supplier) {
+        setTile(m -> supplier);
+        return (T) this;
     }
 
     public String getDomain() {
@@ -180,15 +184,6 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     /** Getters **/
-    public Collection<BlockMachine> getBlocks() {
-        return blocks.values();
-    }
-
-    @Nullable
-    public BlockMachine getBlock(Tier tier) {
-        return blocks.get(tier);
-    }
-
     public TileEntityType<?> getTileType() {
         return tileType;
     }
@@ -215,13 +210,13 @@ public class Machine implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     /** Static Methods **/
-    public static Machine get(String name) {
-        Machine machine = AntimatterAPI.get(Machine.class, name);
+    public static Machine<?> get(String name) {
+        Machine<?> machine = AntimatterAPI.get(Machine.class, name);
         return machine != null ? machine : Data.MACHINE_INVALID;
     }
 
-    public static Collection<Machine> getTypes(MachineFlag... flags) {
-        ArrayList<Machine> types = new ArrayList<>();
+    public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
+        ArrayList<Machine<?>> types = new ArrayList<>();
         for (MachineFlag flag : flags) {
             types.addAll(flag.getTypes());
         }

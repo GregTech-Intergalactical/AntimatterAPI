@@ -7,11 +7,7 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
 
     private boolean hadFirstTick;
 
-    public TileEntityTickable() {
-        super(null);
-    }
-
-    public TileEntityTickable(TileEntityType type) {
+    public TileEntityTickable(TileEntityType<?> type) {
         super(type);
     }
 

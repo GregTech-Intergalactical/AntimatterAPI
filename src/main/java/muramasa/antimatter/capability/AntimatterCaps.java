@@ -13,7 +13,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import javax.annotation.Nullable;
 
-public class AntimatterCapabilities {
+public class AntimatterCaps {
 
     @CapabilityInject(IEnergyHandler.class)
     public static Capability<IEnergyHandler> ENERGY;

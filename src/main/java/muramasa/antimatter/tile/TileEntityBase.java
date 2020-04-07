@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile;
 
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
@@ -10,12 +9,17 @@ import java.util.List;
 
 public abstract class TileEntityBase extends TileEntity {
 
-    public TileEntityBase() {
-        super(null);
-    }
-
     public TileEntityBase(TileEntityType<?> type) {
         super(type);
+    }
+
+    @Override //TODO needed in onLoad?
+    public void onLoad() {
+        if (isServerSide()) initCaps();
+    }
+
+    public void initCaps() {
+        //NOOP
     }
 
     public boolean isClientSide() {
@@ -24,14 +28,6 @@ public abstract class TileEntityBase extends TileEntity {
 
     public boolean isServerSide() {
         return !world.isRemote;
-    }
-
-    public BlockState getState() {
-        return world.getBlockState(pos);
-    }
-
-    public void setState(BlockState state) {
-        world.setBlockState(pos, state);
     }
 
     /** Syncs NBT between Client & Server **/
@@ -46,6 +42,8 @@ public abstract class TileEntityBase extends TileEntity {
 
     //TODO pass constant StringBuilder
     public List<String> getInfo() {
-        return new ArrayList<>();
+        List<String> info = new ArrayList<>();
+        info.add("Tile: " + getClass().getName());
+        return info;
     }
 }

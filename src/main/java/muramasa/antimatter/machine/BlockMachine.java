@@ -3,7 +3,7 @@ package muramasa.antimatter.machine;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockDynamic;
-import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IConfigHandler;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -121,7 +121,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                 return ActionResultType.SUCCESS;
             }
-            LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCapabilities.CONFIGURABLE);
+            LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
             interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), getToolType(player)));
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);

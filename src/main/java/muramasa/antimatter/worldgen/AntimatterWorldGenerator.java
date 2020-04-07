@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
@@ -12,16 +11,12 @@ import net.minecraft.block.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
-
-    private static final Queue<Runnable> DEFERRED_QUEUE = new LinkedList<>();
 
     public static void init() {
         try {
@@ -34,7 +29,6 @@ public class AntimatterWorldGenerator {
                 feat.init();
             });
             WorldGenHelper.init();
-            DEFERRED_QUEUE.forEach(DeferredWorkQueue::runLater);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
@@ -51,10 +45,6 @@ public class AntimatterWorldGenerator {
         return feat != null ? feat.getRegistry().computeIfAbsent(dim, k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
-    public static void addToWorkQueue(Runnable runnable) {  // Could have a global Antimatter queue
-        DEFERRED_QUEUE.add(runnable);
-    }
-
     private static void removeStoneFeatures() {
         removeDecoratedFeatureFromAllBiomes(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.ANDESITE.getDefaultState(), Blocks.GRANITE.getDefaultState(), Blocks.DIORITE.getDefaultState());
     }
@@ -64,42 +54,39 @@ public class AntimatterWorldGenerator {
     }
 
     /**
+     * Removes specific features, in specific generation stages, in specific biomes
+     * @param biomes set containing biomes wish to remove features from
+     * @param stage generation stage where the feature is added to
+     * @param featureToRemove feature instance wishing to be removed
+     * @param states BlockStates wish to be removed
+     */
+    public static void removeDecoratedFeaturesFromBiomes(Set<Biome> biomes, GenerationStage.Decoration stage, Feature<?> featureToRemove, BlockState... states) {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+            if (!biomes.contains(biome)) continue;
+            for (BlockState state : states) {
+                biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
+            }
+        }
+    }
+
+    /**
      * Removes specific features, in specific generation stages, in all biomes registered
      * @param stage generation stage where the feature is added to
      * @param featureToRemove feature instance wishing to be removed
      * @param states BlockStates wish to be removed
      */
-    public static void removeDecoratedFeatureFromAllBiomes(@Nonnull final GenerationStage.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
-        if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-        addToWorkQueue(() -> {
-            for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
-                for (BlockState state : states) {
-                    biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
-                }
-            }
-        });
-    }
-
-    /**
-     * Removes specific features, in specific generation stages, in specific biomes
-     * @param biome Biome wish to remove feature from
-     * @param stage generation stage where the feature is added to
-     * @param featureToRemove feature instance wishing to be removed
-     * @param states BlockStates wish to be removed
-     */
-    public static void removeDecoratedFeaturesFromBiome(@Nonnull final Biome biome, final @Nonnull GenerationStage.Decoration stage, final @Nonnull Feature<?> featureToRemove, BlockState... states) {
-        if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-        addToWorkQueue(() -> {
+    public static void removeDecoratedFeatureFromAllBiomes(GenerationStage.Decoration stage, Feature<?> featureToRemove, BlockState... states) {
+        for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
             for (BlockState state : states) {
                 biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
             }
-        });
+        }
     }
 
     /**
      * Check with BlockState in a feature if it is disabled
      */
-    public static boolean isDecoratedFeatureDisabled(@Nonnull ConfiguredFeature<?, ?> configuredFeature, @Nonnull Feature<?> featureToRemove, @Nonnull BlockState state) {
+    public static boolean isDecoratedFeatureDisabled(ConfiguredFeature<?, ?> configuredFeature, Feature<?> featureToRemove, BlockState state) {
         if (configuredFeature.config instanceof DecoratedFeatureConfig) {
             DecoratedFeatureConfig config = (DecoratedFeatureConfig) configuredFeature.config;
             Feature<?> feature = config.feature.feature;
@@ -110,7 +97,7 @@ public class AntimatterWorldGenerator {
                     if (configState != null && state == configState) return true;
                 }
                 if (featureConfig instanceof BlockStateFeatureConfig) {
-                    BlockState configState = ((BlockStateFeatureConfig) featureConfig).field_227270_a_; // Constructor BlockState var
+                    BlockState configState = ((BlockStateFeatureConfig) featureConfig).field_227270_a_;
                     if (configState != null && state == configState) return true;
                 }
             }

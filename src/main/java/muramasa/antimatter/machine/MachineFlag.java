@@ -24,28 +24,18 @@ public enum MachineFlag {
         VALUES = values();
     }
 
-    private Set<Machine> types = new HashSet<>();
+    private Set<Machine<?>> types = new HashSet<>();
 
-    public void add(Machine... machines) {
+    public void add(Machine<?>... machines) {
         types.addAll(Arrays.asList(machines));
     }
 
-    public Set<Machine> getTypes() {
+    public Set<Machine<?>> getTypes() {
         return types;
     }
 
-    public Collection<MachineStack> getStacks() {
-        ArrayList<MachineStack> stacks = new ArrayList<>();
-        for (Machine machine : types) {
-            for (Tier tier : machine.getTiers()) {
-                stacks.add(new MachineStack(machine, tier));
-            }
-        }
-        return stacks;
-    }
-
-    public static Collection<Machine> getTypes(MachineFlag... flags) {
-        ArrayList<Machine> types = new ArrayList<>();
+    public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
+        ArrayList<Machine<?>> types = new ArrayList<>();
         for (MachineFlag flag : flags) {
             types.addAll(flag.getTypes());
         }

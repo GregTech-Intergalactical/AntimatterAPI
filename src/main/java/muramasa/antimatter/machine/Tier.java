@@ -7,6 +7,9 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Tier implements IAntimatterObject {
 
+    //TODO refactor the concept of this class
+    //TODO Have MachineTier and VoltageTier
+
     //TODO move Tiers to GT?
 
     /** Electricity Tiers **/

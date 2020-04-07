@@ -1,11 +1,12 @@
 package muramasa.antimatter.tile.multi;
 
-import muramasa.antimatter.capability.AntimatterCapabilities;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.ComponentHandler;
 import muramasa.antimatter.capability.impl.HatchComponentHandler;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
@@ -20,6 +21,10 @@ import static muramasa.antimatter.machine.MachineFlag.FLUID;
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     protected Optional<HatchComponentHandler> componentHandler = Optional.empty();
+
+    public TileEntityHatch(Machine type) {
+        super(type);
+    }
 
     @Override
     public void onLoad() {
@@ -58,7 +63,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCapabilities.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
+        if (cap == AntimatterCaps.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
         return super.getCapability(cap, side);
     }
 }
