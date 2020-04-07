@@ -10,7 +10,6 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.GuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.structure.Structure;
@@ -20,7 +19,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -36,25 +34,18 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     protected Optional<StructureResult> result = Optional.empty();
 
-    public TileEntityMultiMachine(TileEntityType<?> tileType) {
-        super(tileType);
-    }
-
-    public TileEntityMultiMachine(Machine type) {
-        super(type);
-    }
-
     @Override
-    public void initCaps() {
-        super.initCaps();
+    public void onLoad() {
+        if (!isServerSide()) return;
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
         recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));
 
-        //TODO fix this oversight. This should not be needed? since super checks for proper flags? needs tested
+        //TODO fix this oversight
         itemHandler = Optional.empty();
         fluidHandler = Optional.empty();
         energyHandler = Optional.empty();
+        super.onLoad();
     }
 
     public boolean checkStructure() {

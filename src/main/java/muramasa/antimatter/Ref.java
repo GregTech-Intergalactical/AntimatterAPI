@@ -59,6 +59,7 @@ public class Ref {
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_NO_CONSUME = "noconsume";
 
+    public static final String KEY_MACHINE_TILE_FACING = "mf";
     public static final String KEY_MACHINE_TILE_STATE = "ms";
     public static final String KEY_MACHINE_TILE_TINT = "mc";
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";

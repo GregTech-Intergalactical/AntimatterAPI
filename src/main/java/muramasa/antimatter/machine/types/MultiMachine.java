@@ -8,14 +8,14 @@ import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MultiMachine extends Machine<MultiMachine> {
+public class MultiMachine extends Machine {
 
-    public MultiMachine(String domain, String name, Object... data) {
-        super(domain, name, data);
-        setTile(() -> new TileEntityMultiMachine(this));
+    public MultiMachine(String domain, String name, Supplier<? extends TileEntityMultiMachine> tile, Object... data) {
+        super(domain, name, tile, data);
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
         setGUI(Data.MULTI_MENU_HANDLER);
     }

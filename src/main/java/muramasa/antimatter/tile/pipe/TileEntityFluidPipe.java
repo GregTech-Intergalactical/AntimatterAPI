@@ -1,10 +1,11 @@
-package muramasa.antimatter.tile.pipe;
-
-import muramasa.antimatter.pipe.types.PipeType;
-
-public class TileEntityFluidPipe extends TileEntityPipe {
-
-    public TileEntityFluidPipe(PipeType<?> type) {
-        super(type);
-    }
-}
+//package muramasa.antimatter.tileentities.pipe;
+//
+//import net.minecraft.tileentity.TileEntity;
+//
+//public class TileEntityFluidPipe extends TileEntityPipe {
+//
+//    @Override
+//    public boolean canConnect(TileEntity tile) {
+//        return tile instanceof TileEntityFluidPipe;
+//    }
+//}

@@ -1,23 +1,22 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import muramasa.antimatter.material.Material;
 
-public class BlockFluidPipe extends BlockPipe<ItemPipe<?>> {
+public class BlockFluidPipe extends BlockPipe {
 
-    public BlockFluidPipe(PipeType<?> type, PipeSize size) {
-        super(type.getId(), type, size);
+    protected int heatResistance;
+    protected int capacity;
+    protected boolean gasProof;
+
+    public BlockFluidPipe(String domain, Material material, PipeSize size, int capacity, int heatResistance, boolean gasProof) {
+        super(domain, PipeType.FLUID, material, size);
+        this.heatResistance = heatResistance;
+        this.gasProof = gasProof;
+        this.capacity = capacity;
     }
 
-    @Override
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        return state.getBlock() instanceof BlockFluidPipe;
-    }
-
-    //    @Override
+//
+//    @Override
 //    public String getDisplayName(ItemStack stack) {
 //        //TODO add prefix and suffix for local
 //        PipeSize size = PipeSize.VALUES[stack.getMetadata()];
@@ -32,4 +31,38 @@ public class BlockFluidPipe extends BlockPipe<ItemPipe<?>> {
 //        tooltip.add("Fluid Capacity: " + TextFormatting.BLUE + (capacities[size.ordinal()] * 20) + "L/s");
 //        tooltip.add("Heat Limit: " + TextFormatting.RED + heatResistance + " K");
 //    }
+
+    public static class BlockFluidPipeBuilder extends BlockPipeBuilder {
+
+        protected int heatResistance;
+        protected boolean gasProof;
+        protected int[] caps;
+
+        public BlockFluidPipeBuilder(String domain, Material material, int heatResistance, boolean gasProof, PipeSize... sizes) {
+            super(domain, material, sizes);
+            this.heatResistance = heatResistance;
+            this.gasProof = gasProof;
+        }
+
+        public BlockFluidPipeBuilder(String domain, Material material, int heatResistance, boolean gasProof) {
+            this(domain, material, heatResistance, gasProof, PipeSize.VALUES);
+        }
+
+        public BlockFluidPipeBuilder caps(int baseCap) {
+            this.caps = new int[]{baseCap / 6, baseCap / 6, baseCap / 3, baseCap, baseCap * 2, baseCap * 4};
+            return this;
+        }
+
+        public BlockFluidPipeBuilder caps(int... caps) {
+            this.caps = caps;
+            return this;
+        }
+
+        @Override
+        public void build() {
+            for (int i = 0; i < sizes.length; i++) {
+                new BlockFluidPipe(domain, material, sizes[i], caps[i], heatResistance, gasProof);
+            }
+        }
+    }
 }

@@ -1,12 +1,10 @@
 
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.pipe.types.Cable;
-import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
-import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,46 +22,41 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
 
-public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler, IElectricCable {
+public class BlockCable extends BlockPipe implements IItemBlockProvider, IColorHandler, IElectricCable {
 
+    // TODO: Finish cables
     protected boolean insulated;
+    protected int loss, lossInsulated;
+    protected int amps;
+    protected Tier tier;
     protected GraphWrapper electric;
 
-    public BlockCable(PipeType<?> type, PipeSize size, boolean insulated) {
-        super(insulated ? "cable" : "wire", type, size);
+    public BlockCable(String domain, Material material, PipeSize size, boolean insulated, int loss, int lossInsulated, int amps, Tier tier) {
+        super(domain, insulated ? PipeType.CABLE : PipeType.WIRE, material, size);
         this.insulated = insulated;
-
-        String prefix = insulated ? "cable" : "wire";
-        this.modelId = 2;
-        this.side = new Texture(Ref.ID, "block/pipe/" + prefix + "_side");
-        this.faces = new Texture[] {
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_vtiny"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_tiny"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_small"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_normal"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_large"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_huge")
-        };
-    }
-
-    @Override
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        return state.getBlock() instanceof BlockCable;
+        this.loss = loss;
+        this.lossInsulated = lossInsulated;
+        this.tier = tier;
+        this.amps = amps;
     }
 
     @Override
     public long getVoltage() {
-        return getType().getTier().getVoltage();
+        return tier.getVoltage();
     }
 
     @Override
     public int getLoss() {
-        return getType().getLoss();
+        return insulated ? lossInsulated : loss;
     }
 
     @Override
     public int getAmps() {
-        return getType().getAmps(getSize());
+        return amps;
+    }
+
+    public Tier getTier() {
+        return tier;
     }
 
     @Override
@@ -80,7 +73,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
         if (electric != null) electric.remove();
-        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return true;
     }
 
     @Override
@@ -104,17 +97,6 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
 //        return "wire_cutter";
 //    }
 
-    @Override
-    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        if (!(state.getBlock() instanceof BlockCable) && world == null || pos == null) return -1;
-        return insulated ? i == 1 ? getRGB() : -1 : i == 0 || i == 1 ? getRGB() : -1;
-    }
-
-    @Override
-    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return insulated ? i == 1 ? getRGB() : -1 : getRGB();
-    }
-
 //    @Override
 //    public String getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
@@ -131,4 +113,58 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
 //        tooltip.add("Max Amperage: " + TextFormatting.YELLOW + getAmps(size));
 //        tooltip.add("Loss/Meter/Ampere: " + TextFormatting.RED + getLoss(ins) + TextFormatting.GRAY + " EU-Volt");
 //    }
+
+    @Override
+    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
+        if (!(state.getBlock() instanceof BlockCable) && world == null || pos == null) return -1;
+        return insulated ? i == 2 ? getRGB() : -1 : i == 0 || i == 2 ? getRGB() : -1;
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        return insulated ? i == 1 ? getRGB() : -1 : getRGB();
+    }
+
+    public static class BlockCableBuilder extends BlockPipeBuilder {
+
+        protected int loss, lossInsulated;
+        protected Tier tier;
+        protected int[] amps;
+        protected boolean buildUninsulated = true, buildInsulated = true;
+
+        public BlockCableBuilder(String domain, Material material, int loss, int lossInsulated, Tier tier, PipeSize[] sizes) {
+            super(domain, material, sizes);
+            this.loss = loss;
+            this.lossInsulated = lossInsulated;
+            this.tier = tier;
+        }
+
+        public BlockCableBuilder(String domain, Material material, int loss, int lossInsulated, Tier tier) {
+            this(domain, material, loss, lossInsulated, tier, PipeSize.VALUES);
+        }
+
+        public BlockCableBuilder amps(int baseAmps) {
+            this.amps = new int[]{baseAmps, baseAmps * 2, baseAmps * 4, baseAmps * 8, baseAmps * 12, baseAmps * 16};
+            return this;
+        }
+
+        public BlockCableBuilder amps(int... amps) {
+            this.amps = amps;
+            return this;
+        }
+
+        public BlockCableBuilder insul(boolean buildInsulated, boolean buildUninsulated) {
+            this.buildInsulated = buildInsulated;
+            this.buildUninsulated = buildUninsulated;
+            return this;
+        }
+
+        @Override
+        public void build() {
+            for (int i = 0; i < sizes.length; i++) {
+                if (buildInsulated) new BlockCable(domain, material, sizes[i], true, loss, lossInsulated, amps[i], tier);
+                if (buildUninsulated) new BlockCable(domain, material, sizes[i], false, loss, lossInsulated, amps[i], tier);
+            }
+        }
+    }
 }
