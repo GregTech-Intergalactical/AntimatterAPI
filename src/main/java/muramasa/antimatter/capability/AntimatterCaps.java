@@ -42,7 +42,7 @@ public class AntimatterCaps {
                 }
                 instance.insert(((LongNBT)nbt).getLong(), false);
             }
-        }, () -> new MachineEnergyHandler(null, false));
+        }, () -> new MachineEnergyHandler(null));
 
         CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
             @Nullable

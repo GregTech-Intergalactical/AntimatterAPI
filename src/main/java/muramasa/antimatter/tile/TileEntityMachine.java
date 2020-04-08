@@ -75,7 +75,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (!itemHandler.isPresent() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
         if (!fluidHandler.isPresent() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (!energyHandler.isPresent() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, false));
+        if (!energyHandler.isPresent() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
         if (!configHandler.isPresent() && has(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
         if (!recipeHandler.isPresent() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
     }
