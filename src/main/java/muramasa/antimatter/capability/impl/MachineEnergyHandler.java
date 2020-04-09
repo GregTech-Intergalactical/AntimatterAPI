@@ -3,34 +3,32 @@ package muramasa.antimatter.capability.impl;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
-import tesseract.api.GraphWrapper;
-import tesseract.api.IConnectable;
 import tesseract.api.electric.IElectricEvent;
-import tesseract.graph.Connectivity;
+import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 public class MachineEnergyHandler extends EnergyHandler implements IElectricEvent {
+    protected ITickingController electric = null;
+    TileEntityMachine tile;
 
-    protected GraphWrapper electric;
-    protected byte output;
-
-    public MachineEnergyHandler(TileEntityMachine tile, boolean storage) {
-        super(0, tile.getMachineTier().getVoltage() * 64, 1, 0, 1, 0);
-        output = new OutputEnergyHandler(tile).output; //TODO: refactor may be?
-        World world = tile.getWorld();
-        if (world != null) {
-            electric = storage ?
-                TesseractAPI.asElectricController(world.getDimension().getType().getId(), tile.getPos().toLong(), output,this, this) :
-                TesseractAPI.asElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+    public MachineEnergyHandler(TileEntityMachine tile) {
+        super(0, tile == null ? 0 : tile.getMachineTier().getVoltage() * 64, 1, 0, 1, 0);
+        this.tile = tile;
+        if (tile != null) {
+            World world = tile.getWorld();
+            if (world != null)
+                TesseractAPI.addElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this, this);
         }
     }
 
     public void update() {
-        electric.update();
+        if (electric != null)
+            electric.tick();
     }
 
     public void remove() {
-        electric.remove();
+        if (tile != null && tile.getWorld() != null)
+            TesseractAPI.removeNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
     }
 
     @Override
@@ -41,19 +39,26 @@ public class MachineEnergyHandler extends EnergyHandler implements IElectricEven
     public void onOverAmperage(long cable) {
     }
 
-    /* Use like a additional connectivity handler for output sides */
-    static class OutputEnergyHandler implements IConnectable {
-        TileEntityMachine tile;
-        byte output;
+    @Override
+    public boolean connects(Dir direction) {
+        return false;
+    }
 
-        public OutputEnergyHandler(TileEntityMachine tile) {
-            this.tile = tile;
-            output = Connectivity.of(this);
-        }
+    @Override
+    public void reset(ITickingController oldController, ITickingController newController) {
+        if (oldController == null || (electric == oldController && newController == null) || electric != oldController)
+          electric = newController;
+    }
 
-        @Override
-        public boolean connects(Dir direction) {
-            return direction.getIndex() == tile.getFacing().getIndex();
-        }
+    /**
+     * Used to determine which sides can output energy (if any).
+     * Output cannot be used as input.
+     *
+     * @param direction Direction to test
+     * @return Returns true if the given direction is output side
+     */
+    @Override
+    public boolean canOutput(Dir direction) {
+        return false;
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.util.Dir;
 
-public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
+abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
     protected long energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out;
 

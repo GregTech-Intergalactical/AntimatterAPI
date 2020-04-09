@@ -9,10 +9,7 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -20,7 +17,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
-import tesseract.api.GraphWrapper;
 import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
 
@@ -29,7 +25,6 @@ import javax.annotation.Nullable;
 public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler, IElectricCable {
 
     protected boolean insulated;
-    protected GraphWrapper electric;
 
     public BlockCable(PipeType<?> type, PipeSize size, boolean insulated) {
         super(insulated ? "cable" : "wire", type, size);
@@ -76,22 +71,22 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (world.isRemote()) return; // Avoid client-side
-        electric = TesseractAPI.asElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
+        TesseractAPI.addElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
     @Override
     public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (electric != null) electric.remove();
+        TesseractAPI.removeNode(world.getDimension().getType().getId(), pos.toLong());
         super.onReplaced(state, world, pos, newState, isMoving);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        if (electric != null) electric.remove();
+        TesseractAPI.removeNode(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-        if (electric != null) electric.remove();
+        TesseractAPI.removeNode(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
     @Override
