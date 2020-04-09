@@ -27,7 +27,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IElectricEven
     }
 
     public void remove() {
-        if (tile != null)
+        if (tile != null && tile.getWorld() != null)
             TesseractAPI.removeNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
     }
 
@@ -46,7 +46,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IElectricEven
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || electric == oldController)
+        if (oldController == null || (electric == oldController && newController == null) || electric != oldController)
           electric = newController;
     }
 
