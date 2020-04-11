@@ -7,14 +7,19 @@ import tesseract.api.electric.IElectricEvent;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
+
 public class MachineEnergyHandler extends EnergyHandler implements IElectricEvent {
-    protected ITickingController electric = null;
-    TileEntityMachine tile;
+    protected ITickingController electric;
+    protected TileEntityMachine tile;
 
     public MachineEnergyHandler(TileEntityMachine tile) {
-        super(0, tile == null ? 0 : tile.getMachineTier().getVoltage() * 64, 1, 0, 1, 0);
+        super(0, 0, 0, 0, 1, 0);
         this.tile = tile;
         if (tile != null) {
+            this.capacity = tile.getMachineTier().getVoltage() * 64;
+            this.voltage_in = tile.getMachineTier().getVoltage();
+
             World world = tile.getWorld();
             if (world != null)
                 TesseractAPI.addElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this, this);
@@ -22,13 +27,15 @@ public class MachineEnergyHandler extends EnergyHandler implements IElectricEven
     }
 
     public void update() {
-        if (electric != null)
-            electric.tick();
+        if (electric != null) electric.tick();
     }
 
     public void remove() {
-        if (tile != null && tile.getWorld() != null)
-            TesseractAPI.removeNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+        if (tile != null) {
+            World world = tile.getWorld();
+            if (world != null)
+                TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
+        }
     }
 
     @Override
@@ -40,14 +47,14 @@ public class MachineEnergyHandler extends EnergyHandler implements IElectricEven
     }
 
     @Override
-    public boolean connects(Dir direction) {
-        return false;
+    public boolean connects(@Nonnull Dir direction) {
+        return true;
     }
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
         if (oldController == null || (electric == oldController && newController == null) || electric != oldController)
-          electric = newController;
+            electric = newController;
     }
 
     /**
@@ -58,7 +65,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IElectricEven
      * @return Returns true if the given direction is output side
      */
     @Override
-    public boolean canOutput(Dir direction) {
+    public boolean canOutput(@Nonnull Dir direction) {
         return false;
     }
 }

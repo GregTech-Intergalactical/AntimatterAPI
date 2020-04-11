@@ -20,6 +20,7 @@ import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler, IElectricCable {
@@ -64,41 +65,40 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(@Nonnull Dir direction) {
         return true;
     }
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        if (world.isRemote()) return; // Avoid client-side
-        TesseractAPI.addElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
+        if (!world.isRemote()) TesseractAPI.addElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
+
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-        TesseractAPI.removeNode(world.getDimension().getType().getId(), pos.toLong());
+    public void onReplaced(BlockState state, World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
+        if (!world.isRemote()) TesseractAPI.removeElectric(world.getDimension().getType().getId(), pos.toLong());
         super.onReplaced(state, world, pos, newState, isMoving);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        TesseractAPI.removeNode(worldIn.getDimension().getType().getId(), pos.toLong());
+        if (!worldIn.isRemote()) TesseractAPI.removeElectric(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-        TesseractAPI.removeNode(worldIn.getDimension().getType().getId(), pos.toLong());
+        if (!worldIn.isRemote()) TesseractAPI.removeElectric(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    @Override
-    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
-        return true;
-    }
-
-    @Override
-    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
-        return true;
-    }
-
+//    @Override
+//    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
+//        return true;
+//    }
 //    @Nullable
 //    @Override
 //    public String getHarvestTool(BlockState state) {

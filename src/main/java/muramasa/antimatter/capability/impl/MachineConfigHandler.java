@@ -9,7 +9,7 @@ import net.minecraft.util.Hand;
 
 public class MachineConfigHandler implements IConfigHandler {
 
-    private TileEntityMachine tile;
+    protected TileEntityMachine tile;
 
     public MachineConfigHandler(TileEntityMachine tile) {
         this.tile = tile;

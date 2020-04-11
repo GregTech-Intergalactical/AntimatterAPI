@@ -5,6 +5,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
+
 abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
     protected long energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out;
@@ -113,7 +115,7 @@ abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(@Nonnull Dir direction) {
         return true;
     }
 }
