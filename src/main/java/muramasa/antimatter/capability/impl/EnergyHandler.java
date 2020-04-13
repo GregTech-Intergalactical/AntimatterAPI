@@ -1,17 +1,14 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.capability.IEnergyHandler;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.util.Dir;
+import tesseract.api.electric.IElectricNode;
 
-import javax.annotation.Nonnull;
+abstract public class EnergyHandler implements IEnergyStorage, IElectricNode {
 
-abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
+    protected long energy, capacity;
+    protected int voltage_in, voltage_out, amperage_in, amperage_out;
 
-    protected long energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out;
-
-    public EnergyHandler(long energy, long capacity, long voltage_in, long voltage_out, long amperage_in, long amperage_out) {
+    public EnergyHandler(long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         this.energy = energy;
         this.capacity = capacity;
         this.voltage_in = voltage_in;
@@ -20,24 +17,22 @@ abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
         this.amperage_out = amperage_out;
     }
 
-    /** GTI IEnergyHandler Implementations **/
+    /** Tesseract IElectricNode Implementations **/
     @Override
-    public long insert(long toInsert, boolean simulate) {
-        if (!canInput()) return 0L;
+    public long insert(long maxReceive, boolean simulate) {
+        if (!canInput()) return 0;
 
-        // Not check the min input due to dynamic amperage value
-        long inserted = Math.min(capacity - energy, toInsert);
+        long inserted = Math.min(capacity - energy, maxReceive);
         if (!simulate) energy += inserted;
 
         return inserted;
     }
 
     @Override
-    public long extract(long toExtract, boolean simulate) {
-        if (!canExtract()) return 0L;
+    public long extract(long maxExtract, boolean simulate) {
+        if (!canOutput()) return 0;
 
-        // Not check the min input due to dynamic amperage value
-        long extracted = Math.min(energy, toExtract);
+        long extracted = Math.min(energy, maxExtract);
         if (!simulate) energy -= extracted;
 
         return extracted;
@@ -54,33 +49,33 @@ abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
     }
 
     @Override
-    public long getInputAmperage() {
+    public int getInputAmperage() {
         return amperage_in;
     }
 
     @Override
-    public long getOutputAmperage() {
+    public int getOutputAmperage() {
         return amperage_out;
     }
 
     @Override
-    public long getInputVoltage() {
+    public int getInputVoltage() {
         return voltage_in;
     }
 
     @Override
-    public long getOutputVoltage() {
+    public int getOutputVoltage() {
         return voltage_out;
     }
 
     @Override
     public boolean canInput() {
-        return voltage_in > 0L;
+        return voltage_in > 0;
     }
 
     @Override
     public boolean canOutput() {
-        return voltage_out > 0L;
+        return voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/
@@ -112,10 +107,5 @@ abstract public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
     @Override
     public boolean canExtract() {
         return canOutput();
-    }
-
-    @Override
-    public boolean connects(@Nonnull Dir direction) {
-        return true;
     }
 }

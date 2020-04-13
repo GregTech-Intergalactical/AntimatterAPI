@@ -29,6 +29,10 @@ public class Configs {
         public boolean HARDCORE_CABLES = true;
 
         //@RequiresMcRestart
+        //@Comment("Enable hardcore pipe loss - Default: true")
+        public boolean HARDCORE_PIPES = true;
+
+        //@RequiresMcRestart
         //@Comment("Allow GT Axes to fell trees - Default: true")
         public boolean AXE_TIMBER = true;
 

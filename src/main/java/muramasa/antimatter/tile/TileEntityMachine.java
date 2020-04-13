@@ -126,8 +126,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return MachineState.IDLE;
     }
 
-    public long getMaxInputVoltage() {
-        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0L);
+    public int getMaxInputVoltage() {
+        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
     //TODO

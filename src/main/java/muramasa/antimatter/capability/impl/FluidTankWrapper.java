@@ -5,23 +5,40 @@ import muramasa.antimatter.util.Utils;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import tesseract.graph.ITickingController;
+import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FluidTankWrapper implements IFluidHandler {
 
-    protected FluidTank[] tanks;
+    protected FluidTankHandler[] tanks;
     public boolean dirty = false;
 
     public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
-//        tanks = new FluidTank[count];
+//        tanks = new FluidTankHandler[count];
 //        for (int i = 0; i < count; i++) {
-//            tanks[i] = new FluidTank(capacity) {
+//            tanks[i] = new FluidTankHandler(capacity, 1000, 1000) {
+//                @Override
+//                public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+//
+//                }
+//
+//                @Override
+//                public boolean connects(@Nonnull Dir direction) {
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean canOutput(@Nonnull Dir direction) {
+//                    return false;
+//                }
+//
 //                @Override
 //                protected void onContentsChanged() {
 //                    dirty = true;
-//                    machine.onContentsChanged(input ? ContentEvent.FLUID_INPUT : ContentEvent.FLUID_OUTPUT, 0);
+//                    //machine.onContentsChanged(input ? ContentEvent.FLUID_INPUT : ContentEvent.FLUID_OUTPUT, 0);
 //                }
 //            };
 //            tanks[i].setCanFill(true);
@@ -67,14 +84,14 @@ public class FluidTankWrapper implements IFluidHandler {
 //    }
 
     public void setFirstValidOrEmptyTank(FluidStack fluid) {
-        FluidTank tank = getFirstValidTank();
+        FluidTankHandler tank = getFirstValidTank();
         if (tank == null) tank = getFirstEmptyTank();
         if (tank != null) {
             tank.setFluid(fluid);
         }
     }
 
-    public FluidTank getFirstEmptyTank() {
+    public FluidTankHandler getFirstEmptyTank() {
         for (int i = 0; i < tanks.length; i++) {
             if (tanks[i].getFluid() == null) return tanks[i];
         }
@@ -82,7 +99,7 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
-    public FluidTank getFirstValidTank() {
+    public FluidTankHandler getFirstValidTank() {
         for (int i = 0; i < tanks.length; i++) {
             if (tanks[i].getFluid() != null) return tanks[i];
         }
@@ -90,7 +107,7 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
-    public FluidTank findFluidInTanks(FluidStack fluid) {
+    public FluidTankHandler findFluidInTanks(FluidStack fluid) {
         for (int i = 0; i < tanks.length; i++) {
             if (tanks[i].getFluid() != null && Utils.equals(tanks[i].getFluid(), fluid)) return tanks[i];
         }

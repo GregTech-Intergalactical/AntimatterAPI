@@ -11,13 +11,17 @@ import java.util.stream.Collectors;
 
 public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
 
-    protected int maxTemp;
+    protected int loss;
+    protected int temp;
+    protected int pressure;
     protected boolean gasProof;
     protected int[] caps;
 
-    public FluidPipe(String domain, Material material, int maxTemp, boolean gasProof) {
+    public FluidPipe(String domain, Material material, int loss, int pressure, int temp, boolean gasProof) {
         super(domain, material);
-        this.maxTemp = maxTemp;
+        this.loss = loss;
+        this.pressure = pressure;
+        this.temp = temp;
         this.gasProof = gasProof;
         setTile(() -> new TileEntityFluidPipe(this));
     }
@@ -32,8 +36,16 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         return sizes.stream().map(s -> new BlockFluidPipe(this, s)).collect(Collectors.toSet());
     }
 
-    public int getMaxTemp() {
-        return maxTemp;
+    public int getLoss() {
+        return loss;
+    }
+
+    public int getPressure() {
+        return pressure;
+    }
+
+    public int getTemp() {
+        return temp;
     }
 
     public boolean isGasProof() {
