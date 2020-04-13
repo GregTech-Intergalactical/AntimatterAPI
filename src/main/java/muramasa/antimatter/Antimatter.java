@@ -48,6 +48,7 @@ import org.apache.logging.log4j.Logger;
 import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricEvent;
 import tesseract.api.fluid.IFluidEvent;
+import tesseract.api.item.IItemEvent;
 
 @Mod(Ref.ID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
@@ -131,6 +132,13 @@ public class Antimatter implements IAntimatterRegistrar {
 
             @Override
             public void onPipeGasLeak(int dim, long pos) {
+
+            }
+        };
+
+        TesseractAPI.GLOBAL_ITEM_EVENT = new IItemEvent() {
+            @Override
+            public void onPipeOverCapacity(int dim, long pos) {
 
             }
         };

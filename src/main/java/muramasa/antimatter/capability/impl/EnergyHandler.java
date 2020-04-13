@@ -108,4 +108,9 @@ abstract public class EnergyHandler implements IEnergyStorage, IElectricNode {
     public boolean canExtract() {
         return canOutput();
     }
+
+    /** Forge IEnergyStorage Utils **/
+    public long getSpace() {
+        return Math.max(0L, capacity - energy);
+    }
 }

@@ -9,13 +9,14 @@ import javax.annotation.Nonnull;
 
 abstract public class FluidTankHandler implements IFluidTank, IFluidNode {
 
-    protected FluidStack fluid = FluidStack.EMPTY;
     protected int capacity, pressure_in, pressure_out;
+    protected FluidStack fluid;
 
     public FluidTankHandler(int capacity, int pressure_in, int pressure_out) {
         this.capacity = capacity;
         this.pressure_in = pressure_in;
         this.pressure_out = pressure_out;
+        this.fluid = FluidStack.EMPTY;
     }
 
     /** Tesseract IFluidNode Implementations **/

@@ -16,34 +16,32 @@ public class FluidTankWrapper implements IFluidHandler {
     protected FluidTankHandler[] tanks;
     public boolean dirty = false;
 
-    public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
-//        tanks = new FluidTankHandler[count];
-//        for (int i = 0; i < count; i++) {
-//            tanks[i] = new FluidTankHandler(capacity, 1000, 1000) {
-//                @Override
-//                public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-//
-//                }
-//
-//                @Override
-//                public boolean connects(@Nonnull Dir direction) {
-//                    return false;
-//                }
-//
-//                @Override
-//                public boolean canOutput(@Nonnull Dir direction) {
-//                    return false;
-//                }
-//
-//                @Override
-//                protected void onContentsChanged() {
-//                    dirty = true;
-//                    //machine.onContentsChanged(input ? ContentEvent.FLUID_INPUT : ContentEvent.FLUID_OUTPUT, 0);
-//                }
-//            };
-//            tanks[i].setCanFill(true);
-//            tanks[i].setCanDrain(input);
-//        }
+    public FluidTankWrapper(TileEntityMachine machine, ITickingController controller, int count, int capacity, boolean input) {
+        tanks = new FluidTankHandler[count];
+        for (int i = 0; i < count; i++) {
+            tanks[i] = new FluidTankHandler(capacity, 1000, input ? 0 : 1000) {
+                @Override
+                public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+
+                }
+
+                @Override
+                public boolean connects(@Nonnull Dir direction) {
+                    return true;
+                }
+
+                @Override
+                public boolean canOutput(@Nonnull Dir direction) {
+                    return !input;
+                }
+
+                @Override
+                protected void onContentsChanged() {
+                    dirty = true;
+                    //machine.onContentsChanged(input ? ContentEvent.FLUID_INPUT : ContentEvent.FLUID_OUTPUT, 0);
+                }
+            };
+        }
     }
 
 //    @Override

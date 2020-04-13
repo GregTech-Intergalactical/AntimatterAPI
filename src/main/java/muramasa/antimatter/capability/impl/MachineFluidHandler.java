@@ -6,9 +6,12 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.TesseractAPI;
+import tesseract.graph.ITickingController;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -20,14 +23,20 @@ public class MachineFluidHandler {
     protected static int DEFAULT_CAPACITY = 99999;
 
     protected TileEntityMachine tile;
+    protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity) {
         this.tile = tile;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
-        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
-        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
+        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, controller, inputCount, capacity, true);
+        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, controller, outputCount, capacity, false);
+
+
+        /*World world = tile.getWorld();
+        if (world != null)
+            TesseractAPI.addFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);*/
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -254,5 +263,17 @@ public class MachineFluidHandler {
             }
         }
         return builder.toString();
+    }
+
+    public void update() {
+        if (controller != null) controller.tick();
+    }
+
+    public void remove() {
+        if (tile != null) {
+            World world = tile.getWorld();
+            if (world != null)
+                TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
+        }
     }
 }

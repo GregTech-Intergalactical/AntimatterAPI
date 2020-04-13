@@ -10,8 +10,9 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 
 public class MachineEnergyHandler extends EnergyHandler {
-    protected ITickingController electric;
+
     protected TileEntityMachine tile;
+    protected ITickingController controller;
 
     public MachineEnergyHandler(TileEntityMachine tile) {
         super(0, 0, 0, 0, 1, 0);
@@ -27,7 +28,7 @@ public class MachineEnergyHandler extends EnergyHandler {
     }
 
     public void update() {
-        if (electric != null) electric.tick();
+        if (controller != null) controller.tick();
     }
 
     public void remove() {
@@ -45,8 +46,8 @@ public class MachineEnergyHandler extends EnergyHandler {
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (electric == oldController && newController == null) || electric != oldController)
-            electric = newController;
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 
     @Override
