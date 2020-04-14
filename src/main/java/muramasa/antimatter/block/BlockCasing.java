@@ -1,6 +1,6 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -10,7 +10,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public class BlockCasing extends BlockDynamic  {
+public class BlockCasing extends BlockDynamic {
 
     public BlockCasing(String domain, String id, Block.Properties properties) {
         super(domain, id, properties);
@@ -23,7 +23,7 @@ public class BlockCasing extends BlockDynamic  {
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return AntimatterAPI.WRENCH_TOOL_TYPE;
+        return Data.WRENCH.getToolType();
     }
 
     @Override
