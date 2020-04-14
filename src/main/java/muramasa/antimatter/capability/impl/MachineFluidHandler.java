@@ -10,46 +10,66 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
+import tesseract.api.fluid.IFluidNode;
 import tesseract.graph.ITickingController;
+import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MachineFluidHandler {
+public class MachineFluidHandler implements IFluidNode {
 
     protected static int DEFAULT_CAPACITY = 99999;
+    protected static int DEFAULT_PRESSURE = 99999;
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
+    protected int capacity, pressure_in, pressure_out;
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity) {
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure_in, int pressure_out) {
         this.tile = tile;
+        this.capacity = capacity;
+        this.pressure_in = pressure_in;
+        this.pressure_out = pressure_out;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
-        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, controller, inputCount, capacity, true);
-        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, controller, outputCount, capacity, false);
+        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
+        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
 
-
-        /*World world = tile.getWorld();
+        World world = tile.getWorld();
         if (world != null)
-            TesseractAPI.addFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);*/
+            TesseractAPI.addFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
-        this(tile, DEFAULT_CAPACITY);
+        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, CompoundNBT fluidData) {
-        this(tile, capacity);
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure_in, int pressure_out, CompoundNBT fluidData) {
+        this(tile, capacity, pressure_in, pressure_out);
         if (fluidData != null) deserialize(fluidData);
     }
 
     public MachineFluidHandler(TileEntityMachine tile, CompoundNBT fluidData) {
-        this(tile, DEFAULT_CAPACITY, fluidData);
+        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE, fluidData);
+    }
+
+    public void update() {
+        if (controller != null) controller.tick();
+    }
+
+    public void remove() {
+        if (tile != null) {
+            World world = tile.getWorld();
+            if (world != null)
+                TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
+        }
     }
 
     public FluidTankWrapper getInputWrapper() {
@@ -76,10 +96,10 @@ public class MachineFluidHandler {
     /** Returns raw FluidStacks from all inputs, including nulls **/
     @Nullable
     public FluidStack[] getInputsRaw() {
-        if (inputWrapper == null || inputWrapper.tanks.length == 0) return null;
-        FluidStack[] inputs = new FluidStack[inputWrapper.tanks.length];
+        if (inputWrapper == null || inputWrapper.getTanks() == 0) return null;
+        FluidStack[] inputs = new FluidStack[inputWrapper.getTanks()];
         for (int i = 0; i < inputs.length; i++) {
-            inputs[i] = inputWrapper.tanks[i].getFluid();
+            inputs[i] = inputWrapper.getFluidInTank(i);
         }
         return inputs;
     }
@@ -87,27 +107,27 @@ public class MachineFluidHandler {
     /** Returns raw FluidStacks from all outputs, including nulls **/
     @Nullable
     public FluidStack[] getOutputsRaw() {
-        if (outputWrapper == null || outputWrapper.tanks.length == 0) return null;
-        FluidStack[] outputs = new FluidStack[outputWrapper.tanks.length];
+        if (outputWrapper == null || outputWrapper.getTanks() == 0) return null;
+        FluidStack[] outputs = new FluidStack[outputWrapper.getTanks()];
         for (int i = 0; i < outputs.length; i++) {
-            outputs[i] = outputWrapper.tanks[i].getFluid();
+            outputs[i] = outputWrapper.getFluidInTank(i);
         }
         return outputs;
     }
 
     /** Directly sets inputs. Only to be used for special cases like fluid syncing **/
     public void setInputs(FluidStack[] inputs) {
-        if (inputWrapper == null || inputs.length != inputWrapper.tanks.length) return;
+        if (inputWrapper == null || inputs.length != inputWrapper.getTanks()) return;
         for (int i = 0; i < inputs.length; i++) {
-            inputWrapper.tanks[i].setFluid(inputs[i]);
+            inputWrapper.setFluidToTank(i, inputs[i]);
         }
     }
 
     /** Directly sets outputs. Only to be used for special cases like fluid syncing **/
     public void setOutputs(FluidStack[] outputs) {
-        if (outputWrapper == null || outputs.length != outputWrapper.tanks.length) return;
+        if (outputWrapper == null || outputs.length != outputWrapper.getTanks()) return;
         for (int i = 0; i < outputs.length; i++) {
-            outputWrapper.tanks[i].setFluid(outputs[i]);
+            outputWrapper.setFluidToTank(i, outputs[i]);
         }
     }
 
@@ -115,8 +135,9 @@ public class MachineFluidHandler {
     public List<FluidStack> getInputList() {
         if (inputWrapper == null) return Collections.emptyList();
         ArrayList<FluidStack> list = new ArrayList<>();
-        for (int i = 0; i < inputWrapper.tanks.length; i++) {
-            if (inputWrapper.tanks[i].getFluid() != null) list.add(inputWrapper.tanks[i].getFluid());
+        for (int i = 0; i < inputWrapper.getTanks(); i++) {
+            FluidStack stack = inputWrapper.getFluidInTank(i);
+            if (stack != FluidStack.EMPTY) list.add(stack);
         }
         return list;
     }
@@ -125,8 +146,9 @@ public class MachineFluidHandler {
     public List<FluidStack> getOutputList() {
         if (outputWrapper == null) return Collections.emptyList();
         ArrayList<FluidStack> list = new ArrayList<>();
-        for (int i = 0; i < outputWrapper.tanks.length; i++) {
-            if (outputWrapper.tanks[i].getFluid() != null) list.add(outputWrapper.tanks[i].getFluid());
+        for (int i = 0; i < outputWrapper.getTanks(); i++) {
+            FluidStack stack = outputWrapper.getFluidInTank(i);
+            if (stack != FluidStack.EMPTY) list.add(stack);
         }
         return list;
     }
@@ -134,22 +156,22 @@ public class MachineFluidHandler {
     //TODO called by Basic machines, should they use consumeAndReturn?
     public void consumeInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
-        for (int i = 0; i < inputs.length; i++) {
-            inputWrapper.drain(inputs[i], IFluidHandler.FluidAction.EXECUTE);
+        for (FluidStack input : inputs) {
+            inputWrapper.drain(input, IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
     public void addInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
-        for (int i = 0; i < inputs.length; i++) {
-            inputWrapper.fill(inputs[i], IFluidHandler.FluidAction.EXECUTE);
+        for (FluidStack input : inputs) {
+            inputWrapper.fill(input, IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
     public void addOutputs(FluidStack... outputs) {
         if (outputWrapper == null || outputs == null || outputs.length == 0) return;
-        for (int i = 0; i < outputs.length; i++) {
-            outputWrapper.fill(outputs[i], IFluidHandler.FluidAction.EXECUTE);
+        for (FluidStack output : outputs) {
+            outputWrapper.fill(output, IFluidHandler.FluidAction.EXECUTE);
         }
     }
 
@@ -160,8 +182,8 @@ public class MachineFluidHandler {
     public int getSpaceForOutputs(FluidStack[] outputs) {
         int matchCount = 0;
         if (outputWrapper == null) return matchCount;
-        for (int i = 0; i < outputs.length; i++) {
-            if (outputWrapper.fill(outputs[i], IFluidHandler.FluidAction.SIMULATE) == outputs[i].getAmount()) matchCount++;
+        for (FluidStack output : outputs) {
+            if (outputWrapper.fill(output, IFluidHandler.FluidAction.SIMULATE) == output.getAmount()) matchCount++;
         }
         return matchCount;
     }
@@ -170,14 +192,14 @@ public class MachineFluidHandler {
         if (inputWrapper == null) return new FluidStack[0];
         ArrayList<FluidStack> notConsumed = new ArrayList<>();
         FluidStack result;
-        for (int i = 0; i < inputs.length; i++) {
-            result = inputWrapper.drain(inputs[i], IFluidHandler.FluidAction.EXECUTE);
-            if (result != null) {
-                if (result.getAmount() != inputs[i].getAmount()) { //Fluid was partially consumed
-                    notConsumed.add(Utils.ca(inputs[i].getAmount() - result.getAmount(), inputs[i]));
+        for (FluidStack input : inputs) {
+            result = inputWrapper.drain(input, IFluidHandler.FluidAction.EXECUTE);
+            if (result != FluidStack.EMPTY) {
+                if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
+                    notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
                 }
             } else {
-                notConsumed.add(inputs[i]); //Fluid not present in input tanks
+                notConsumed.add(input); //Fluid not present in input tanks
             }
         }
 
@@ -201,17 +223,17 @@ public class MachineFluidHandler {
         CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
             ListNBT list = new ListNBT();
-            for (int i = 0; i < inputWrapper.tanks.length; i++) {
-                if (inputWrapper.tanks[i].getFluid() == null) continue;
-                list.add(inputWrapper.tanks[i].writeToNBT(new CompoundNBT()));
+            for (int i = 0; i < inputWrapper.getTanks(); i++) {
+                if (inputWrapper.getFluidInTank(i) == FluidStack.EMPTY) continue;
+                list.add(inputWrapper.writeToNBT(i, new CompoundNBT()));
             }
             tag.put("Input-Fluids", list);
         }
         if (outputWrapper != null) {
             ListNBT list = new ListNBT();
-            for (int i = 0; i < outputWrapper.tanks.length; i++) {
-                if (outputWrapper.tanks[i].getFluid() == null) continue;
-                list.add(outputWrapper.tanks[i].writeToNBT(new CompoundNBT()));
+            for (int i = 0; i < outputWrapper.getTanks(); i++) {
+                if (outputWrapper.getFluidInTank(i) == FluidStack.EMPTY) continue;
+                list.add(outputWrapper.writeToNBT(i, new CompoundNBT()));
             }
             tag.put("Output-Fluids", list);
         }
@@ -222,16 +244,16 @@ public class MachineFluidHandler {
         if (inputWrapper != null) {
             ListNBT list = tag.getList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
-                if (i < inputWrapper.tanks.length) {
-                    inputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
+                if (i < inputWrapper.getTanks()) {
+                    inputWrapper.setFluidToTank(i, FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
                 }
             }
         }
         if (outputWrapper != null) {
             ListNBT list = tag.getList("Output-Fluids", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
-                if (i < outputWrapper.tanks.length) {
-                    outputWrapper.tanks[i].setFluid(FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
+                if (i < outputWrapper.getTanks()) {
+                    outputWrapper.setFluidToTank(i, FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
                 }
             }
         }
@@ -242,10 +264,11 @@ public class MachineFluidHandler {
         StringBuilder builder = new StringBuilder();
         if (inputWrapper != null) {
             builder.append("Inputs:\n");
-            for (int i = 0; i < inputWrapper.tanks.length; i++) {
-                if (inputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(inputWrapper.tanks[i].getFluid().getFluid().getRegistryName()).append(" - ").append(inputWrapper.tanks[i].getFluid().getAmount());
-                    if (i != inputWrapper.tanks.length - 1) {
+            for (int i = 0; i < inputWrapper.getTanks(); i++) {
+                FluidStack stack = inputWrapper.getFluidInTank(i);
+                if (stack != FluidStack.EMPTY) {
+                    builder.append(stack.getFluid().getRegistryName()).append(" - ").append(stack.getAmount());
+                    if (i != inputWrapper.getTanks() - 1) {
                         builder.append("\n");
                     }
                 }
@@ -253,10 +276,11 @@ public class MachineFluidHandler {
         }
         if (outputWrapper != null) {
             builder.append("Outputs:\n");
-            for (int i = 0; i < outputWrapper.tanks.length; i++) {
-                if (outputWrapper.tanks[i].getFluid() != null) {
-                    builder.append(outputWrapper.tanks[i].getFluid().getFluid().getRegistryName()).append(" - ").append(outputWrapper.tanks[i].getFluid().getAmount());
-                    if (i != outputWrapper.tanks.length - 1) {
+            for (int i = 0; i < outputWrapper.getTanks(); i++) {
+                FluidStack stack = outputWrapper.getFluidInTank(i);
+                if (stack != FluidStack.EMPTY) {
+                    builder.append(stack.getFluid().getRegistryName()).append(" - ").append(stack.getAmount());
+                    if (i != outputWrapper.getTanks() - 1) {
                         builder.append("\n");
                     }
                 }
@@ -265,15 +289,65 @@ public class MachineFluidHandler {
         return builder.toString();
     }
 
-    public void update() {
-        if (controller != null) controller.tick();
+    /** Tesseract IFluidNode Implementations **/
+    @Override
+    public int insert(@Nonnull Object stack, boolean simulate) {
+        FluidStack resource = (FluidStack) stack;
+        FluidTank tank = inputWrapper.findFluidInTanks(resource);
+        if (tank != null) return tank.fill(resource, simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
+        return inputWrapper.setFirstEmptyOrValidTank(resource) ? resource.getAmount() : 0;
     }
 
-    public void remove() {
-        if (tile != null) {
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
-        }
+    @Nullable
+    @Override
+    public Object extract(int maxDrain, boolean simulate) {
+        FluidTank tank = outputWrapper.getFirstValidTank();
+        return tank != null ? tank.drain(maxDrain, simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE) : null;
+    }
+
+    @Override
+    public boolean isValidFluid(@Nonnull Object stack) {
+        return inputWrapper.findFluidInTanks((FluidStack) stack) != null || inputWrapper.getFirstEmptyTank() != null;
+    }
+
+    @Override
+    public int getCapacity() {
+        return capacity;
+    }
+
+    @Override
+    public int getOutputPressure() {
+        return pressure_out;
+    }
+
+    @Override
+    public int getInputPressure() {
+        return pressure_in;
+    }
+
+    @Override
+    public boolean canOutput() {
+        return outputWrapper != null;
+    }
+
+    @Override
+    public boolean canInput() {
+        return inputWrapper != null;
+    }
+
+    @Override
+    public boolean canOutput(@Nonnull Dir direction) {
+        return tile.getOutputFacing().getIndex() == direction.getIndex();
+    }
+
+    @Override
+    public boolean connects(@Nonnull Dir direction) {
+        return tile.getFacing().getIndex() != direction.getIndex();
+    }
+
+    @Override
+    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 }

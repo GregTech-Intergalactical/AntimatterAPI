@@ -41,7 +41,7 @@ public class MachineEnergyHandler extends EnergyHandler {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return true;
+        return tile.getFacing().getIndex() != direction.getIndex();
     }
 
     @Override
