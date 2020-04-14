@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -36,8 +35,6 @@ public final class AntimatterAPI {
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
-    public static final ToolType WRENCH_TOOL_TYPE = ToolType.get("wrench");
-
     private static void registerInternal(Class<?> c, String id, Object o, boolean checkDuplicates) {
         OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
         if (checkDuplicates && OBJECTS.get(c).containsKey(id)) throw new IllegalStateException("Object: " + id + " for class " + c.getName() + " has already been registered by " + OBJECTS.get(c).get(id));
@@ -50,6 +47,10 @@ public final class AntimatterAPI {
         if (o instanceof Block && !hasObjectBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
         if (o instanceof IRegistryEntryProvider && !hasObjectBeenRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o, true);
         if (o instanceof Material) MATERIAL_HASH_LOOKUP.put(((Material) o).getHash(), (Material) o);
+    }
+
+    public static void register(IAntimatterObject o) {
+        register(o.getClass(), o.getId(), o);
     }
 
     private static boolean hasObjectBeenRegistered(Class<?> c, String id) {
@@ -111,8 +112,7 @@ public final class AntimatterAPI {
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {
-        IAntimatterRegistrar registrar = get(IAntimatterRegistrar.class, id);
-        return registrar != null ? Optional.of(registrar) : Optional.empty();
+        return Optional.ofNullable(get(IAntimatterRegistrar.class, id));
     }
 
     public static boolean isRegistrarEnabled(String id) {

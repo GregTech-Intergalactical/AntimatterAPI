@@ -1,6 +1,7 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.block.IInfoProvider;
@@ -117,10 +118,9 @@ public abstract class BlockPipe<T extends PipeType> extends BlockDynamic impleme
         return getType().getTileType().create();
     }
 
-    @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return AntimatterAPI.WRENCH_TOOL_TYPE;
+        return Data.WRENCH.getToolType();
     }
 
     //    @Override
