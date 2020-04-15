@@ -13,7 +13,7 @@ public class RotatableCoverHandler extends CoverHandler {
     }
 
     @Override
-    public void update() {
+    public void onUpdate() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
             covers[i].onUpdate(getTile(), Utils.rotateFacingAlt(Ref.DIRECTIONS[i], getTileFacing()));

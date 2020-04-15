@@ -49,7 +49,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public long getVoltage() {
+    public int getVoltage() {
         return getType().getTier().getVoltage();
     }
 

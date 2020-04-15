@@ -8,6 +8,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import tesseract.TesseractAPI;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.util.Dir;
 
@@ -51,23 +52,23 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        //if (!world.isRemote())
+        if (!world.isRemote()) TesseractAPI.registerFluidPipe(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
     public void onReplaced(BlockState state, World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        //if (!world.isRemote())
+        if (!world.isRemote()) TesseractAPI.removeFluid(world.getDimension().getType().getId(), pos.toLong());
         super.onReplaced(state, world, pos, newState, isMoving);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        //if (!worldIn.isRemote())
+        if (!worldIn.isRemote()) TesseractAPI.removeFluid(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-        //if (!worldIn.isRemote())
+        if (!worldIn.isRemote()) TesseractAPI.removeFluid(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
 //    @Override

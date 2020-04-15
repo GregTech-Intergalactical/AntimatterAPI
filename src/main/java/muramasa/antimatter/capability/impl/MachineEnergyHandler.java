@@ -26,11 +26,11 @@ public class MachineEnergyHandler extends EnergyHandler {
         }
     }
 
-    public void update() {
+    public void onUpdate() {
         if (controller != null) controller.tick();
     }
 
-    public void remove() {
+    public void onRemove() {
         if (tile != null) {
             World world = tile.getWorld();
             if (world != null)

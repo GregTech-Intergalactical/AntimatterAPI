@@ -63,11 +63,11 @@ public class MachineFluidHandler implements IFluidNode {
         this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE, fluidData);
     }
 
-    public void update() {
+    public void onUpdate() {
         if (controller != null) controller.tick();
     }
 
-    public void remove() {
+    public void onRemove() {
         if (tile != null) {
             World world = tile.getWorld();
             if (world != null)

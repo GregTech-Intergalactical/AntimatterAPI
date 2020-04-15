@@ -35,7 +35,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public void update() {
+    public void onUpdate() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
             covers[i].onUpdate(getTile(), Ref.DIRECTIONS[i]);

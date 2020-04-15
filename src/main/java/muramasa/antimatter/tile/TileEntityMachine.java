@@ -11,10 +11,8 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -23,9 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.Explosion;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -84,12 +80,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public void onServerUpdate() {
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
-        coverHandler.ifPresent(CoverHandler::update);
+        fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
+        itemHandler.ifPresent(MachineItemHandler::onUpdate);
+        coverHandler.ifPresent(CoverHandler::onUpdate);
     }
 
     @Override
     public void remove() {
-        energyHandler.ifPresent(MachineEnergyHandler::remove);
+        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
+        itemHandler.ifPresent(MachineItemHandler::onRemove);
         super.remove();
     }
 
