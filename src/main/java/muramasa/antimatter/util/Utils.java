@@ -13,6 +13,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -22,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
@@ -29,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -502,6 +505,30 @@ public class Utils {
             }
         }
         return set;
+    }
+
+    public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
+        if (world != null) {
+            if (!world.isRemote)
+                world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), explosionRadius, modeIn);
+            else
+                world.addParticle(ParticleTypes.SMOKE, pos.getX(), pos.getY() + 0.5D, pos.getZ(), 0.0D, 0.0D, 0.0D);
+            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        }
+    }
+
+    public static void createFireAround(@Nullable World world, BlockPos pos) {
+        if (world != null) {
+            boolean fired = false;
+            for (Direction direction : Direction.values()) {
+                BlockPos offset = pos.offset(direction);
+                if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
+                    world.setBlockState(offset, Blocks.FIRE.getDefaultState());
+                    fired = true;
+                }
+            }
+            if (!fired) world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        }
     }
 
     /**

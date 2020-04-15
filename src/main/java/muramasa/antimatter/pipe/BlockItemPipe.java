@@ -4,9 +4,17 @@ import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import tesseract.TesseractAPI;
+import tesseract.api.item.IItemPipe;
+import tesseract.util.Dir;
 
-public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
+import javax.annotation.Nonnull;
+
+public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
 
     protected boolean restrictive;
 
@@ -18,6 +26,37 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
     @Override
     public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
         return state.getBlock() instanceof BlockItemPipe;
+    }
+
+    @Override
+    public int getCapacity() {
+        return getType().getSlotSize(getSize());
+    }
+
+    @Override
+    public boolean connects(@Nonnull Dir direction) {
+        return true;
+    }
+
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (!world.isRemote()) TesseractAPI.registerItemPipe(world.getDimension().getType().getId(), pos.toLong(), this);
+    }
+
+    @Override
+    public void onReplaced(BlockState state, World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
+        if (!world.isRemote()) TesseractAPI.removeItem(world.getDimension().getType().getId(), pos.toLong());
+        super.onReplaced(state, world, pos, newState, isMoving);
+    }
+
+    @Override
+    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
+        if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
+    }
+
+    @Override
+    public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
+        if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
     //    @Override

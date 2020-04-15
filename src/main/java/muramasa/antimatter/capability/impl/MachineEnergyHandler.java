@@ -1,36 +1,56 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.world.World;
 import tesseract.TesseractAPI;
-import tesseract.api.GraphWrapper;
-import tesseract.api.electric.IElectricCable;
-import tesseract.api.electric.IElectricEvent;
-import tesseract.api.electric.IElectricNode;
+import tesseract.graph.ITickingController;
+import tesseract.util.Dir;
+
+import javax.annotation.Nonnull;
 
 public class MachineEnergyHandler extends EnergyHandler {
 
-    protected GraphWrapper electric;
+    protected TileEntityMachine tile;
+    protected ITickingController controller;
 
     public MachineEnergyHandler(TileEntityMachine tile) {
-        super(0, 2, tile.getMachineTier().getVoltage() * 64, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage());
-        electric = TesseractAPI.asElectricProducer(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this, new IElectricEvent() {
-            @Override
-            public void onOverVoltage(IElectricNode node) {
+        super(0, 0, 0, 0, 1, 0);
+        this.tile = tile;
+        if (tile != null) {
+            this.capacity = tile.getMachineTier().getVoltage() * 64L;
+            this.voltage_in = tile.getMachineTier().getVoltage();
 
-            }
-
-            @Override
-            public void onOverAmperage(IElectricCable cable) {
-
-            }
-        });
+            World world = tile.getWorld();
+            if (world != null)
+                TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+        }
     }
 
-    public void update() {
-        electric.update();
+    public void onUpdate() {
+        if (controller != null) controller.tick();
     }
 
-    public void remove() {
-        electric.remove();
+    public void onRemove() {
+        if (tile != null) {
+            World world = tile.getWorld();
+            if (world != null)
+                TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
+        }
+    }
+
+    @Override
+    public boolean connects(@Nonnull Dir direction) {
+        return tile.getFacing().getIndex() != direction.getIndex();
+    }
+
+    @Override
+    public void reset(ITickingController oldController, ITickingController newController) {
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
+    }
+
+    @Override
+    public boolean canOutput(@Nonnull Dir direction) {
+        return false;
     }
 }

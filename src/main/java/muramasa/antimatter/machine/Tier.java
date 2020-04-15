@@ -30,11 +30,11 @@ public class Tier implements IAntimatterObject {
     public static Tier STEEL = new Tier("gti", "steel", 0, TextFormatting.WHITE);
 
     private String domain, id;
-    private long voltage;
+    private int voltage;
     private TextFormatting rarityColor;
     private Texture baseTexture;
 
-    public Tier(String domain, String id, long voltage, TextFormatting rarityColor) {
+    public Tier(String domain, String id, int voltage, TextFormatting rarityColor) {
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
@@ -48,7 +48,7 @@ public class Tier implements IAntimatterObject {
         return id;
     }
 
-    public long getVoltage() {
+    public int getVoltage() {
         return voltage;
     }
 

@@ -9,25 +9,22 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
-import tesseract.api.GraphWrapper;
 import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler, IElectricCable {
 
     protected boolean insulated;
-    protected GraphWrapper electric;
 
     public BlockCable(PipeType<?> type, PipeSize size, boolean insulated) {
         super(insulated ? "cable" : "wire", type, size);
@@ -52,7 +49,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public long getVoltage() {
+    public int getVoltage() {
         return getType().getTier().getVoltage();
     }
 
@@ -67,38 +64,41 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(@Nonnull Dir direction) {
         return true;
     }
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        if (world.isRemote()) return; // Avoid client-side
-        electric = TesseractAPI.asElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
+        if (!world.isRemote()) TesseractAPI.registerElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
-        if (electric != null) electric.remove();
-        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+    public void onReplaced(BlockState state, World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
+        if (!world.isRemote()) TesseractAPI.removeElectric(world.getDimension().getType().getId(), pos.toLong());
+        super.onReplaced(state, world, pos, newState, isMoving);
+    }
+
+    @Override
+    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
+        if (!worldIn.isRemote()) TesseractAPI.removeElectric(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-        if (electric != null) electric.remove();
+        if (!worldIn.isRemote()) TesseractAPI.removeElectric(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    @Override
-    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
-        return true;
-    }
-
-    @Override
-    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
-        return true;
-    }
-
-    //    @Nullable
+//    @Override
+//    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
+//        return true;
+//    }
+//    @Nullable
 //    @Override
 //    public String getHarvestTool(BlockState state) {
 //        return "wire_cutter";

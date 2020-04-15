@@ -80,12 +80,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public void onServerUpdate() {
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
-        coverHandler.ifPresent(CoverHandler::update);
+        fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
+        itemHandler.ifPresent(MachineItemHandler::onUpdate);
+        coverHandler.ifPresent(CoverHandler::onUpdate);
     }
 
     @Override
     public void remove() {
-        energyHandler.ifPresent(MachineEnergyHandler::remove);
+        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
+        itemHandler.ifPresent(MachineItemHandler::onRemove);
         super.remove();
     }
 
@@ -123,8 +127,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return MachineState.IDLE;
     }
 
-    public long getMaxInputVoltage() {
-        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0L);
+    public int getMaxInputVoltage() {
+        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
     //TODO
@@ -145,16 +149,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
         machineState = newState;
     }
-
-    /*public void onOverVoltage() {
-        BlockPos pos = BlockPos.fromLong(position); // Gets the position of consumer to expload
-        world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), 4.0F, Explosion.Mode.BREAK);
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
-    }
-
-    public void onOverAmperage() {
-        world.setBlockState(BlockPos.fromLong(position), Blocks.FIRE.getDefaultState());
-    }*/
 
     public Cover[] getValidCovers() {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);

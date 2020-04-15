@@ -56,16 +56,16 @@ public abstract class ContainerMachine extends AntimatterContainer {
             for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
                 switch (slot.type) {
                     case IT_IN:
-                        addSlot(new SlotInput(h.getInputHandler(), inputIndex++, slot.x, slot.y));
+                        addSlot(new SlotInput(h.getInputWrapper(), inputIndex++, slot.x, slot.y));
                         break;
                     case IT_OUT:
-                        addSlot(new SlotOutput(h.getOutputHandler(), outputIndex++, slot.x, slot.y));
+                        addSlot(new SlotOutput(h.getOutputWrapper(), outputIndex++, slot.x, slot.y));
                         break;
                     case CELL_IN:
-                        addSlot(new SlotInput(h.getCellHandler(), cellIndex++, slot.x, slot.y));
+                        addSlot(new SlotInput(h.getCellWrapper(), cellIndex++, slot.x, slot.y));
                         break;
                     case CELL_OUT:
-                        addSlot(new SlotOutput(h.getCellHandler(), cellIndex++, slot.x, slot.y));
+                        addSlot(new SlotOutput(h.getCellWrapper(), cellIndex++, slot.x, slot.y));
                         break;
                 }
             }

@@ -1,7 +1,9 @@
 package muramasa.antimatter.capability.impl;
 
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -11,22 +13,20 @@ import javax.annotation.Nullable;
 
 public class FluidTankWrapper implements IFluidHandler {
 
-    protected FluidTank[] tanks;
-    public boolean dirty = false;
+    private FluidTank[] tanks;
+    private boolean dirty = false;
 
     public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
-//        tanks = new FluidTank[count];
-//        for (int i = 0; i < count; i++) {
-//            tanks[i] = new FluidTank(capacity) {
-//                @Override
-//                protected void onContentsChanged() {
-//                    dirty = true;
-//                    machine.onContentsChanged(input ? ContentEvent.FLUID_INPUT : ContentEvent.FLUID_OUTPUT, 0);
-//                }
-//            };
-//            tanks[i].setCanFill(true);
-//            tanks[i].setCanDrain(input);
-//        }
+        tanks = new FluidTank[count];
+        for (int i = 0; i < count; i++) {
+            tanks[i] = new FluidTank(capacity) {
+                @Override
+                protected void onContentsChanged() {
+                    dirty = true;
+                    machine.onMachineEvent(input ? ContentEvent.FLUID_INPUT_CHANGED : ContentEvent.FLUID_OUTPUT_CHANGED);
+                }
+            };
+        }
     }
 
 //    @Override
@@ -38,100 +38,99 @@ public class FluidTankWrapper implements IFluidHandler {
 //        return properties;
 //    }
 
-//    @Override
-//    public int fill(FluidStack resource, boolean doFill) {
-//        FluidTank tank = findFluidInTanks(resource);
-//        if (tank != null) {
-//            return tank.fill(resource, doFill);
-//        } else {
-//            tank = getFirstEmptyTank();
-//            if (tank != null) return tank.fill(resource, doFill);
-//        }
-//        return 0;
-//    }
-//
-//    @Nullable
-//    @Override
-//    public FluidStack drain(FluidStack resource, boolean doDrain) {
-//        FluidTank tank = findFluidInTanks(resource);
-//        if (tank != null) return tank.drain(resource, doDrain);
-//        return null;
-//    }
-//
-//    @Nullable
-//    @Override
-//    public FluidStack drain(int maxDrain, boolean doDrain) {
-//        FluidTank tank = getFirstValidTank();
-//        if (tank != null) return tank.drain(maxDrain, doDrain);
-//        return null;
-//    }
-
-    public void setFirstValidOrEmptyTank(FluidStack fluid) {
-        FluidTank tank = getFirstValidTank();
-        if (tank == null) tank = getFirstEmptyTank();
+    public int setFirstEmptyOrValidTank(FluidStack fluid) {
+        FluidTank tank = getFirstEmptyTank();
+        if (tank == null) tank = getFirstValidTank();
         if (tank != null) {
             tank.setFluid(fluid);
+            return fluid.getAmount();
         }
+        return 0;
     }
 
     public FluidTank getFirstEmptyTank() {
-        for (int i = 0; i < tanks.length; i++) {
-            if (tanks[i].getFluid() == null) return tanks[i];
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty()) return tank;
         }
         return null;
     }
 
     @Nullable
     public FluidTank getFirstValidTank() {
-        for (int i = 0; i < tanks.length; i++) {
-            if (tanks[i].getFluid() != null) return tanks[i];
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty()) return tank;
         }
         return null;
     }
 
     @Nullable
     public FluidTank findFluidInTanks(FluidStack fluid) {
-        for (int i = 0; i < tanks.length; i++) {
-            if (tanks[i].getFluid() != null && Utils.equals(tanks[i].getFluid(), fluid)) return tanks[i];
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty() && Utils.equals(tank.getFluid(), fluid)) return tank;
         }
         return null;
     }
 
     @Override
     public int getTanks() {
-        return 0;
+        return tanks.length;
     }
 
     @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
-        return null;
+        return tanks[tank].getFluid();
+    }
+
+    public void setFluidToTank(int tank, FluidStack stack) {
+        tanks[tank].setFluid(stack);
+    }
+
+    @Nonnull
+    public CompoundNBT writeToNBT(int tank, CompoundNBT nbt) {
+        tanks[tank].writeToNBT(nbt);
+        return nbt;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return 0;
+        return tanks[tank].getCapacity();
     }
 
     @Override
     public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-        return false;
+        return tanks[tank].isFluidValid(stack);
     }
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
+        FluidTank tank = findFluidInTanks(resource);
+        if (tank != null) {
+            return tank.fill(resource, action);
+        } else {
+            tank = getFirstEmptyTank();
+            if (tank != null) return tank.fill(resource, action);
+        }
         return 0;
     }
 
     @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        return null;
+        FluidTank tank = findFluidInTanks(resource);
+        if (tank != null) return tank.drain(resource, action);
+        return FluidStack.EMPTY;
     }
 
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        return null;
+        FluidTank tank = getFirstValidTank();
+        if (tank != null) return tank.drain(maxDrain, action);
+        return FluidStack.EMPTY;
+    }
+
+    public boolean isDirty() {
+        return dirty;
     }
 }

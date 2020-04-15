@@ -9,7 +9,7 @@ import net.minecraft.util.Hand;
 
 public interface ICoverHandler {
 
-    void update();
+    void onUpdate();
 
     boolean set(Direction side, Cover cover);
 
