@@ -1,6 +1,6 @@
 package muramasa.antimatter.machine;
 
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.capability.AntimatterCaps;
@@ -154,7 +154,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return AntimatterAPI.WRENCH_TOOL_TYPE;
+        return Data.WRENCH.getToolType();
     }
 
     /** TileEntity Drops Start **/

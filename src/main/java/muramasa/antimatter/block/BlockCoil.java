@@ -1,6 +1,6 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -30,7 +30,7 @@ public class BlockCoil extends BlockBasic {
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
-        return AntimatterAPI.WRENCH_TOOL_TYPE;
+        return Data.WRENCH.getToolType();
     }
 
     @Override
