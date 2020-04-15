@@ -22,7 +22,7 @@ public class CoverOutput extends Cover {
             TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
             if (adjTile == null) return;
             adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
-                tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler));
+                tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputWrapper(), adjHandler));
             });
         }
     }

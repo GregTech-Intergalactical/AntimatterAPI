@@ -33,6 +33,10 @@ public class Configs {
         public boolean HARDCORE_PIPES = true;
 
         //@RequiresMcRestart
+        //@Comment("Amount of gas retained during the passage of a leaky pipe- Default: 90%")
+        public double PIPE_LEAKING = 0.9D;
+
+        //@RequiresMcRestart
         //@Comment("Allow GT Axes to fell trees - Default: true")
         public boolean AXE_TIMBER = true;
 

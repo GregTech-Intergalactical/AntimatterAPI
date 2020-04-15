@@ -3,13 +3,13 @@ package muramasa.antimatter.capability.impl;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.IFluidNode;
@@ -21,6 +21,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class MachineFluidHandler implements IFluidNode {
 
@@ -44,7 +47,7 @@ public class MachineFluidHandler implements IFluidNode {
 
         World world = tile.getWorld();
         if (world != null)
-            TesseractAPI.addFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+            TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -157,21 +160,21 @@ public class MachineFluidHandler implements IFluidNode {
     public void consumeInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
         for (FluidStack input : inputs) {
-            inputWrapper.drain(input, IFluidHandler.FluidAction.EXECUTE);
+            inputWrapper.drain(input, EXECUTE);
         }
     }
 
     public void addInputs(FluidStack... inputs) {
         if (inputWrapper == null) return;
         for (FluidStack input : inputs) {
-            inputWrapper.fill(input, IFluidHandler.FluidAction.EXECUTE);
+            inputWrapper.fill(input, EXECUTE);
         }
     }
 
     public void addOutputs(FluidStack... outputs) {
         if (outputWrapper == null || outputs == null || outputs.length == 0) return;
         for (FluidStack output : outputs) {
-            outputWrapper.fill(output, IFluidHandler.FluidAction.EXECUTE);
+            outputWrapper.fill(output, EXECUTE);
         }
     }
 
@@ -183,7 +186,7 @@ public class MachineFluidHandler implements IFluidNode {
         int matchCount = 0;
         if (outputWrapper == null) return matchCount;
         for (FluidStack output : outputs) {
-            if (outputWrapper.fill(output, IFluidHandler.FluidAction.SIMULATE) == output.getAmount()) matchCount++;
+            if (outputWrapper.fill(output, SIMULATE) == output.getAmount()) matchCount++;
         }
         return matchCount;
     }
@@ -193,7 +196,7 @@ public class MachineFluidHandler implements IFluidNode {
         ArrayList<FluidStack> notConsumed = new ArrayList<>();
         FluidStack result;
         for (FluidStack input : inputs) {
-            result = inputWrapper.drain(input, IFluidHandler.FluidAction.EXECUTE);
+            result = inputWrapper.drain(input, EXECUTE);
             if (result != FluidStack.EMPTY) {
                 if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
                     notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
@@ -202,7 +205,6 @@ public class MachineFluidHandler implements IFluidNode {
                 notConsumed.add(input); //Fluid not present in input tanks
             }
         }
-
         return notConsumed.toArray(new FluidStack[0]);
     }
 
@@ -211,7 +213,7 @@ public class MachineFluidHandler implements IFluidNode {
         ArrayList<FluidStack> notExported = new ArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
-            result = outputWrapper.fill(outputs[i], IFluidHandler.FluidAction.EXECUTE);
+            result = outputWrapper.fill(outputs[i], EXECUTE);
             if (result == 0) notExported.add(outputs[i]); //Valid space was not found
             else outputs[i] = Utils.ca(result, outputs[i]); //Fluid was partially exported
         }
@@ -294,20 +296,43 @@ public class MachineFluidHandler implements IFluidNode {
     public int insert(@Nonnull Object stack, boolean simulate) {
         FluidStack resource = (FluidStack) stack;
         FluidTank tank = inputWrapper.findFluidInTanks(resource);
-        if (tank != null) return tank.fill(resource, simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE);
-        return inputWrapper.setFirstEmptyOrValidTank(resource) ? resource.getAmount() : 0;
+        if (tank != null) return tank.fill(resource, simulate ? SIMULATE : EXECUTE);
+        if (!simulate) return inputWrapper.setFirstEmptyOrValidTank(resource);
+        tank = inputWrapper.getFirstEmptyTank();
+        return tank != null ? Math.min(tank.getCapacity(), resource.getAmount()) : 0;
     }
 
     @Nullable
     @Override
     public Object extract(int maxDrain, boolean simulate) {
         FluidTank tank = outputWrapper.getFirstValidTank();
-        return tank != null ? tank.drain(maxDrain, simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE) : null;
+        return tank != null && !tank.isEmpty() ? tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE) : null;
     }
 
     @Override
-    public boolean isValidFluid(@Nonnull Object stack) {
+    public boolean canHold(@Nonnull Object stack) {
         return inputWrapper.findFluidInTanks((FluidStack) stack) != null || inputWrapper.getFirstEmptyTank() != null;
+    }
+
+    @Override
+    @Nonnull
+    public Object getFluid(@Nonnull Object stack) {
+        return ((FluidStack)stack).getFluid();
+    }
+
+    @Override
+    public int getAmount(@Nonnull Object stack) {
+        return ((FluidStack)stack).getAmount();
+    }
+
+    @Override
+    public int getTemperature(@Nonnull Object fluid) {
+        return ((Fluid)fluid).getAttributes().getTemperature();
+    }
+
+    @Override
+    public boolean isGaseous(@Nonnull Object fluid) {
+        return ((Fluid)fluid).getAttributes().isGaseous();
     }
 
     @Override

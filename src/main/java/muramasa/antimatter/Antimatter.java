@@ -16,21 +16,20 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,6 +37,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -49,6 +49,8 @@ import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricEvent;
 import tesseract.api.fluid.IFluidEvent;
 import tesseract.api.item.IItemEvent;
+
+import javax.annotation.Nonnull;
 
 @Mod(Ref.ID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
@@ -73,72 +75,56 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.addRegistrar(INSTANCE);
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
 
+        // TODO: Make explosions depend on voltage, amp
         TesseractAPI.GLOBAL_ELECTRIC_EVENT = new IElectricEvent() {
             @Override
-            public void onNodeOverVoltage(int dim, long pos) {
-                World world = WORLDS.get(dim);
-                if (world != null) {
-                    BlockPos position = BlockPos.fromLong(pos);
-                    if (!world.isRemote)
-                        world.createExplosion(null, position.getX(), position.getY() + 0.0625D, position.getZ(), 4.0F, Explosion.Mode.BREAK);
-                    else
-                        world.addParticle(ParticleTypes.SMOKE, position.getX(), position.getY() + 0.5D, position.getZ(), 0.0D, 0.0D, 0.0D);
-                    world.setBlockState(position, Blocks.AIR.getDefaultState());
-                }
+            public void onNodeOverVoltage(int dim, long pos, int voltage) {
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
             }
 
             @Override
-            public void onCableOverAmperage(int dim, long pos) {
-                World world = WORLDS.get(dim);
-                if (world != null) {
-                    BlockPos position = BlockPos.fromLong(pos); boolean fired = false;
-                    for (Direction direction : Direction.values()) {
-                        BlockPos offset = position.offset(direction);
-                        if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
-                            world.setBlockState(offset, Blocks.FIRE.getDefaultState());
-                            fired = true;
-                        }
-                    }
-                    if (!fired) world.setBlockState(position, Blocks.AIR.getDefaultState());
-                }
+            public void onCableOverAmperage(int dim, long pos, int amperage) {
+                Utils.createFireAround(WORLDS.get(dim), BlockPos.fromLong(pos));
             }
 
             @Override
-            public void onCableOverVoltage(int dim, long pos) {
-                // TODO: Melt cables ?
-                onCableOverAmperage(dim, pos);
+            public void onCableOverVoltage(int dim, long pos, int voltage) {
+                Utils.createFireAround(WORLDS.get(dim), BlockPos.fromLong(pos));
             }
         };
+        // TODO: Make explosions depend on pressure, capacity, temperature
         TesseractAPI.GLOBAL_FLUID_EVENT = new IFluidEvent() {
             @Override
-            public void onNodeOverPressure(int dim, long pos) {
-
+            public void onNodeOverPressure(int dim, long pos, int pressure) {
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
             }
 
             @Override
-            public void onPipeOverTemp(int dim, long pos) {
-
+            public void onPipeOverPressure(int dim, long pos, int pressure) {
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
             }
 
             @Override
-            public void onPipeOverPressure(int dim, long pos) {
-
+            public void onPipeOverCapacity(int dim, long pos, int capacity) {
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
             }
 
             @Override
-            public void onPipeOverCapacity(int dim, long pos) {
-
+            public void onPipeOverTemp(int dim, long pos, int temperature) {
+                World world = WORLDS.get(dim);
+                if (world != null) world.setBlockState(BlockPos.fromLong(pos), temperature >= Fluids.LAVA.getAttributes().getTemperature() ? Blocks.LAVA.getDefaultState() : Blocks.FIRE.getDefaultState());
             }
 
             @Override
-            public void onPipeGasLeak(int dim, long pos) {
-
+            public void onPipeGasLeak(int dim, long pos, @Nonnull Object stack) {
+                FluidStack resource = (FluidStack) stack;
+                resource.setAmount((int)(resource.getAmount() * Configs.GAMEPLAY.PIPE_LEAKING));
             }
         };
 
         TesseractAPI.GLOBAL_ITEM_EVENT = new IItemEvent() {
             @Override
-            public void onPipeOverCapacity(int dim, long pos) {
+            public void onPipeOverCapacity(int dim, long pos, int capacity, @Nonnull Object[] stacks) {
 
             }
         };

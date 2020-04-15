@@ -10,7 +10,6 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
@@ -71,7 +70,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
 
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        if (!world.isRemote()) TesseractAPI.addElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
+        if (!world.isRemote()) TesseractAPI.registerElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override

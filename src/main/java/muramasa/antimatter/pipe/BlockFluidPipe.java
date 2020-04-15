@@ -45,7 +45,7 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     }
 
     @Override
-    public long getTemp() {
+    public long getTemperature() {
         return getType().getTemp();
     }
 

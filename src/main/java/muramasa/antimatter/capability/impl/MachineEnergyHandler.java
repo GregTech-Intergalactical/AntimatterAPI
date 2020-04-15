@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.impl;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
-import tesseract.api.electric.IElectricEvent;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
@@ -23,7 +22,7 @@ public class MachineEnergyHandler extends EnergyHandler {
 
             World world = tile.getWorld();
             if (world != null)
-                TesseractAPI.addElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+                TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
         }
     }
 
