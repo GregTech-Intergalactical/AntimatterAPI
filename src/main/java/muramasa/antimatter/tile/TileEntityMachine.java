@@ -98,10 +98,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
     }
 
-    public void onContentsChanged(ContentEvent event) {
-
-    }
-
     /** Getters **/
     public Machine<?> getMachineType() {
         return type != null ? type : ((BlockMachine) getBlockState().getBlock()).getType();
