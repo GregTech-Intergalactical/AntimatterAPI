@@ -311,24 +311,20 @@ public class MachineItemHandler implements IItemNode {
     }
 
     @Override
-    public int getAvailableSlots() {
-        return 0;
-    }
-
-    @Override
-    public int getLimit() {
-        return 0;
-    }
-
-    @Nonnull
-    @Override
-    public Object getItem() {
-        return null;
+    public int getCount(@Nonnull Object stack) {
+        return ((ItemStack)stack).getCount();
     }
 
     @Override
     public boolean canAccept(@Nonnull Object stack) {
-        return false;
+        Pair<Integer, ItemStack> pair = inputWrapper.findItemInSlots(((ItemStack) stack).getItem());
+        if (pair != null) {
+            ItemStack item = pair.getValue();
+            if (item.getCount() < item.getMaxStackSize()) {
+                return true;
+            }
+        }
+        return inputWrapper.getFirstEmptySlot() != -1;
     }
 
     @Override

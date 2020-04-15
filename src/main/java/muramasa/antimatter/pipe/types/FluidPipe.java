@@ -11,15 +11,13 @@ import java.util.stream.Collectors;
 
 public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
 
-    protected int loss;
     protected int temp;
     protected int pressure;
     protected boolean gasProof;
     protected int[] caps;
 
-    public FluidPipe(String domain, Material material, int loss, int pressure, int temp, boolean gasProof) {
+    public FluidPipe(String domain, Material material, int pressure, int temp, boolean gasProof) {
         super(domain, material);
-        this.loss = loss;
         this.pressure = pressure;
         this.temp = temp;
         this.gasProof = gasProof;
@@ -34,10 +32,6 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     @Override
     public Set<Block> getBlocks() {
         return sizes.stream().map(s -> new BlockFluidPipe(this, s)).collect(Collectors.toSet());
-    }
-
-    public int getLoss() {
-        return loss;
     }
 
     public int getPressure() {

@@ -30,6 +30,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.api.distmarker.Dist;
@@ -79,7 +80,7 @@ public class Antimatter implements IAntimatterRegistrar {
         TesseractAPI.GLOBAL_ELECTRIC_EVENT = new IElectricEvent() {
             @Override
             public void onNodeOverVoltage(int dim, long pos, int voltage) {
-                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.BREAK);
             }
 
             @Override
@@ -96,17 +97,17 @@ public class Antimatter implements IAntimatterRegistrar {
         TesseractAPI.GLOBAL_FLUID_EVENT = new IFluidEvent() {
             @Override
             public void onNodeOverPressure(int dim, long pos, int pressure) {
-                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.NONE);
             }
 
             @Override
             public void onPipeOverPressure(int dim, long pos, int pressure) {
-                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.BREAK);
             }
 
             @Override
             public void onPipeOverCapacity(int dim, long pos, int capacity) {
-                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos));
+                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 1.0F, Explosion.Mode.NONE);
             }
 
             @Override

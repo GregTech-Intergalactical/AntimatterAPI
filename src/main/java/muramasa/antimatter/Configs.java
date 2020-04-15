@@ -29,10 +29,6 @@ public class Configs {
         public boolean HARDCORE_CABLES = true;
 
         //@RequiresMcRestart
-        //@Comment("Enable hardcore pipe loss - Default: true")
-        public boolean HARDCORE_PIPES = true;
-
-        //@RequiresMcRestart
         //@Comment("Amount of gas retained during the passage of a leaky pipe- Default: 90%")
         public double PIPE_LEAKING = 0.9D;
 

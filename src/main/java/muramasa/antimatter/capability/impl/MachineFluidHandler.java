@@ -306,7 +306,7 @@ public class MachineFluidHandler implements IFluidNode {
     @Override
     public Object extract(int maxDrain, boolean simulate) {
         FluidTank tank = outputWrapper.getFirstValidTank();
-        return tank != null && !tank.isEmpty() ? tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE) : null;
+        return tank != null ? tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE) : null;
     }
 
     @Override

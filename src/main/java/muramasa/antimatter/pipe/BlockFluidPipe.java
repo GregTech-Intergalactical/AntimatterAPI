@@ -30,22 +30,17 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     }
 
     @Override
-    public int getLoss() {
-        return getType().getLoss();
-    }
-
-    @Override
     public int getCapacity() {
         return getType().getCapacity(getSize());
     }
 
     @Override
-    public long getPressure() {
+    public int getPressure() {
         return getType().getPressure();
     }
 
     @Override
-    public long getTemperature() {
+    public int getTemperature() {
         return getType().getTemp();
     }
 

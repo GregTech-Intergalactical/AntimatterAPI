@@ -94,12 +94,12 @@ public class FluidTankWrapper implements IFluidHandler {
 
     @Override
     public int getTankCapacity(int tank) {
-        return 0;
+        return tanks[tank].getCapacity();
     }
 
     @Override
     public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-        return false;
+        return tanks[tank].isFluidValid(stack);
     }
 
     @Override

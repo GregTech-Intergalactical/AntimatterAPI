@@ -507,10 +507,10 @@ public class Utils {
         return set;
     }
 
-    public static void createExplosion(@Nullable World world, BlockPos pos) {
+    public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
         if (world != null) {
             if (!world.isRemote)
-                world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), 4.0F, Explosion.Mode.BREAK);
+                world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), explosionRadius, modeIn);
             else
                 world.addParticle(ParticleTypes.SMOKE, pos.getX(), pos.getY() + 0.5D, pos.getZ(), 0.0D, 0.0D, 0.0D);
             world.setBlockState(pos, Blocks.AIR.getDefaultState());
