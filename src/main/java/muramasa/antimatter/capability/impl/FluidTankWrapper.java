@@ -50,7 +50,7 @@ public class FluidTankWrapper implements IFluidHandler {
 
     public FluidTank getFirstEmptyTank() {
         for (FluidTank tank : tanks) {
-            if (!tank.getFluid().isEmpty()) return tank;
+            if (!tank.isEmpty()) return tank;
         }
         return null;
     }
@@ -58,7 +58,7 @@ public class FluidTankWrapper implements IFluidHandler {
     @Nullable
     public FluidTank getFirstValidTank() {
         for (FluidTank tank : tanks) {
-            if (!tank.getFluid().isEmpty()) return tank;
+            if (!tank.isEmpty()) return tank;
         }
         return null;
     }
@@ -66,7 +66,7 @@ public class FluidTankWrapper implements IFluidHandler {
     @Nullable
     public FluidTank findFluidInTanks(FluidStack fluid) {
         for (FluidTank tank : tanks) {
-            if (!tank.getFluid().isEmpty() && Utils.equals(tank.getFluid(), fluid)) return tank;
+            if (!tank.isEmpty() && Utils.equals(tank.getFluid(), fluid)) return tank;
         }
         return null;
     }
