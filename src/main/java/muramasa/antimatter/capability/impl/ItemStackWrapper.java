@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -36,7 +36,7 @@ abstract public class ItemStackWrapper extends ItemStackHandler {
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
             if (!stack.isEmpty() && stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
-                return new Pair<>(i, stack);
+                return Pair.of(i, stack);
             }
         }
         return null;
