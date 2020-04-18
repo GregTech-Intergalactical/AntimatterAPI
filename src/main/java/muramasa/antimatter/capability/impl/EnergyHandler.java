@@ -3,7 +3,7 @@ package muramasa.antimatter.capability.impl;
 import muramasa.antimatter.capability.IEnergyHandler;
 import net.minecraftforge.energy.IEnergyStorage;
 
-abstract public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
+public abstract class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected long energy, capacity;
     protected int voltage_in, voltage_out, amperage_in, amperage_out;

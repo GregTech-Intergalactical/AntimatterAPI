@@ -7,7 +7,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-abstract public class ItemStackWrapper extends ItemStackHandler {
+public abstract class ItemStackWrapper extends ItemStackHandler {
 
     public ItemStackWrapper(int size) {
         super(size);
@@ -35,7 +35,7 @@ abstract public class ItemStackWrapper extends ItemStackHandler {
     public Pair<Integer, ItemStack> findItemInSlots(Item item) {
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
+            if (!stack.isEmpty() && stack.getItem().equals(item)/* && stack.getMaxStackSize() > stack.getCount()*/) {
                 return new Pair<>(i, stack);
             }
         }

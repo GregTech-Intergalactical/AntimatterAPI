@@ -47,6 +47,7 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -55,16 +56,16 @@ import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
-    protected Machine type;
+    protected Machine<?> type;
     protected Tier tier;
 
-    public BlockMachine(Machine type, Tier tier) {
+    public BlockMachine(Machine<?> type, Tier tier) {
         super(type.getDomain(), type.getId() + "_" + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
         this.type = type;
         this.tier = tier;
     }
 
-    public Machine getType() {
+    public Machine<?> getType() {
         return type;
     }
 
@@ -78,7 +79,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onReplaced(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
         //TODO determine if shouldRefresh func needs to be added back in
         //return (oldState.getBlock() != newState.getBlock());
         super.onReplaced(state, world, pos, newState, isMoving);
@@ -113,6 +114,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             return null;
         return ((IAntimatterTool) stack.getItem()).getType();
     }
+    @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
@@ -121,6 +123,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                 return ActionResultType.SUCCESS;
             }
+            assert tile != null;
             LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
             interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), getToolType(player)));
         }
@@ -128,7 +131,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
 
 //    @Override
-//    public boolean onBldockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
+//    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 //        TileEntity tile = Utils.getTile(world, pos);
 //        if (tile != null && GregTechAPI.interact(tile, player, hand, side, hitX, hitY, hitZ)) return true;
 //        if (tile instanceof TileEntityMachine) {

@@ -7,4 +7,6 @@ public class TileEntityCable extends TileEntityPipe {
     public TileEntityCable(PipeType<?> type) {
         super(type);
     }
+
+
 }

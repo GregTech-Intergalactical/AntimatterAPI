@@ -1,8 +1,12 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
@@ -25,12 +29,13 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
 
     @Override
     public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        return state.getBlock() instanceof BlockItemPipe;
+        Block block = state.getBlock();
+        return block instanceof BlockMachine ? ((BlockMachine)block).getType().has(MachineFlag.ITEM) : block instanceof BlockItemPipe;
     }
 
     @Override
     public int getCapacity() {
-        return getType().getSlotSize(getSize());
+        return getType().getCapacity(getSize());
     }
 
     @Override
@@ -59,7 +64,12 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
         if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    //    @Override
+    @Override
+    public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
+        if (worldIn.isRemote()) return;
+    }
+
+//    @Override
 //    public String getDisplayName(ItemStack stack) {
 //        boolean res = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[res ? stack.getMetadata() - 8 : stack.getMetadata()];
