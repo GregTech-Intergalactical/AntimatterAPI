@@ -21,7 +21,6 @@ import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -37,7 +36,6 @@ import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
@@ -155,13 +153,6 @@ public class Antimatter implements IAntimatterRegistrar {
             e.getRegistry().register(f.getFlowingFluid());
         });
     }
-
-    /*@SubscribeEvent
-    public static void onBlockPlace(BlockEvent.EntityPlaceEvent e) {
-        if (e.getPlacedBlock().getBlock() == Blocks.CHEST) {
-
-        }
-    }*/
 
     @SubscribeEvent
     public static void onTileRegistry(RegistryEvent.Register<TileEntityType<?>> e) {

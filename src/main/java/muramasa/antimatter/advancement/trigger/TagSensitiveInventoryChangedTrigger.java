@@ -13,7 +13,6 @@ import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.criterion.*;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;

@@ -14,9 +14,6 @@ import tesseract.api.fluid.FluidData;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
-
 public class FluidTankWrapper implements IFluidHandler {
 
     private FluidTank[] tanks;

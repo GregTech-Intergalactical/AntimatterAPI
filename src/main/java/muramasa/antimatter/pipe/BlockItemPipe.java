@@ -6,7 +6,6 @@ import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
