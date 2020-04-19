@@ -75,10 +75,10 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
         if (!worldIn.isRemote()) TesseractAPI.removeFluid(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    @Override
+    /*@Override
     public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
         if (worldIn.isRemote()) return;
-    }
+    }*/
 
 //    @Override
 //    public String getDisplayName(ItemStack stack) {

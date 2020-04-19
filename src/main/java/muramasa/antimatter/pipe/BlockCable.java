@@ -96,10 +96,10 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
         if (!worldIn.isRemote()) TesseractAPI.removeElectric(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    @Override
+    /*@Override
     public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
         if (worldIn.isRemote()) return;
-    }
+    }*/
 
     @Override
     public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) {

@@ -1,13 +1,14 @@
 package muramasa.antimatter.capability.impl;
 
-import javafx.util.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
+import tesseract.api.item.ItemData;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class ItemStackWrapper extends ItemStackHandler {
+public class ItemStackWrapper extends ItemStackHandler {
 
     public ItemStackWrapper(int size) {
         super(size);
@@ -15,16 +16,8 @@ public abstract class ItemStackWrapper extends ItemStackHandler {
 
     public int getFirstEmptySlot() {
         for (int i = 0; i < getSlots(); i++) {
-            if (getStackInSlot(i).isEmpty()) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public int getFirstValidSlot() {
-        for (int i = 0; i < getSlots(); i++) {
-            if (!getStackInSlot(i).isEmpty()) {
+            ItemStack stack = getStackInSlot(i);
+            if (stack.isEmpty()) {
                 return i;
             }
         }
@@ -32,22 +25,34 @@ public abstract class ItemStackWrapper extends ItemStackHandler {
     }
 
     @Nullable
-    public Pair<Integer, ItemStack> findItemInSlots(Item item) {
+    public ItemData findItemInSlots(@Nonnull ItemStack resource) {
+        Item item = resource.getItem();
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem().equals(item)/* && stack.getMaxStackSize() > stack.getCount()*/) {
-                return new Pair<>(i, stack);
+            if (!stack.isEmpty() && stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
+                return new ItemData(i, stack);
             }
         }
         return null;
     }
 
-    public int setFirstEmptyOrValidSlot(ItemStack item) {
+    @Nonnull
+    public int[] getAvailableSlots() {
+        int[] slots = new int[getSlots()]; int count = 0;
+        for (int i = 0; i < getSlots(); i++) {
+            ItemStack stack = getStackInSlot(i);
+            if (!stack.isEmpty()) {
+                slots[count++] = i;
+            }
+        }
+        return slots;
+    }
+
+    public int setFirstEmptySlot(@Nonnull ItemStack resource) {
         int slot = getFirstEmptySlot();
-        if (slot != -1) slot = getFirstValidSlot();
         if (slot != -1) {
-            setStackInSlot(slot, item);
-            return item.getCount();
+            setStackInSlot(slot, resource);
+            return resource.getCount();
         }
         return 0;
     }

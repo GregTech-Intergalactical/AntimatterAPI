@@ -3,13 +3,19 @@ package muramasa.antimatter.capability.impl;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import tesseract.api.fluid.FluidData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class FluidTankWrapper implements IFluidHandler {
 
@@ -38,9 +44,8 @@ public class FluidTankWrapper implements IFluidHandler {
 //        return properties;
 //    }
 
-    public int setFirstEmptyOrValidTank(FluidStack fluid) {
+    public int setFirstEmptyTank(FluidStack fluid) {
         FluidTank tank = getFirstEmptyTank();
-        if (tank == null) tank = getFirstValidTank();
         if (tank != null) {
             tank.setFluid(fluid);
             return fluid.getAmount();
@@ -132,5 +137,11 @@ public class FluidTankWrapper implements IFluidHandler {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    public static FluidData pack(FluidStack resource) {
+        Fluid fluid = resource.getFluid();
+        FluidAttributes attr = fluid.getAttributes();
+        return new FluidData(resource, fluid, resource.getAmount(), attr.getTemperature(), attr.isGaseous());
     }
 }

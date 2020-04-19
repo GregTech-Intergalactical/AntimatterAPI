@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.impl;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
@@ -12,6 +11,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
+import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
@@ -297,42 +297,21 @@ public class MachineFluidHandler implements IFluidNode {
         FluidStack resource = (FluidStack) stack;
         FluidTank tank = inputWrapper.findFluidInTanks(resource);
         if (tank != null) return tank.fill(resource, simulate ? SIMULATE : EXECUTE);
-        if (!simulate) return inputWrapper.setFirstEmptyOrValidTank(resource);
+        if (!simulate) return inputWrapper.setFirstEmptyTank(resource);
         tank = inputWrapper.getFirstEmptyTank();
         return tank != null ? Math.min(tank.getCapacity(), resource.getAmount()) : 0;
     }
 
     @Nullable
     @Override
-    public Object extract(int maxDrain, boolean simulate) {
+    public FluidData extract(int maxDrain, boolean simulate) {
         FluidTank tank = outputWrapper.getFirstValidTank();
-        return tank != null ? tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE) : null;
+        return (tank != null) ? FluidTankWrapper.pack(tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE)) : null;
     }
 
     @Override
     public boolean canHold(@Nonnull Object stack) {
         return inputWrapper.findFluidInTanks((FluidStack) stack) != null || inputWrapper.getFirstEmptyTank() != null;
-    }
-
-    @Override
-    @Nonnull
-    public Object getFluid(@Nonnull Object stack) {
-        return ((FluidStack)stack).getFluid();
-    }
-
-    @Override
-    public int getAmount(@Nonnull Object stack) {
-        return ((FluidStack)stack).getAmount();
-    }
-
-    @Override
-    public int getTemperature(@Nonnull Object fluid) {
-        return ((Fluid)fluid).getAttributes().getTemperature();
-    }
-
-    @Override
-    public boolean isGaseous(@Nonnull Object fluid) {
-        return ((Fluid)fluid).getAttributes().isGaseous();
     }
 
     @Override

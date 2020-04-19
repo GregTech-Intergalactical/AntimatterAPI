@@ -64,10 +64,10 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
         if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    @Override
+    /*@Override
     public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
         if (worldIn.isRemote()) return;
-    }
+    }*/
 
 //    @Override
 //    public String getDisplayName(ItemStack stack) {
