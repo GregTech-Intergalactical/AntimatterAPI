@@ -293,8 +293,8 @@ public class MachineFluidHandler implements IFluidNode {
 
     /** Tesseract IFluidNode Implementations **/
     @Override
-    public int insert(@Nonnull Object stack, boolean simulate) {
-        FluidStack resource = (FluidStack) stack;
+    public int insert(@Nonnull FluidData fluid, boolean simulate) {
+        FluidStack resource = (FluidStack) fluid.getStack();
         FluidTank tank = inputWrapper.findFluidInTanks(resource);
         if (tank != null) return tank.fill(resource, simulate ? SIMULATE : EXECUTE);
         if (!simulate) return inputWrapper.setFirstEmptyTank(resource);
@@ -310,8 +310,8 @@ public class MachineFluidHandler implements IFluidNode {
     }
 
     @Override
-    public boolean canHold(@Nonnull Object stack) {
-        return inputWrapper.findFluidInTanks((FluidStack) stack) != null || inputWrapper.getFirstEmptyTank() != null;
+    public boolean canHold(@Nonnull FluidData fluid) {
+        return inputWrapper.findFluidInTanks((FluidStack) fluid.getStack()) != null || inputWrapper.getFirstEmptyTank() != null;
     }
 
     @Override

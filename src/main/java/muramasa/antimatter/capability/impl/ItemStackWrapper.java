@@ -1,5 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -37,12 +39,12 @@ public class ItemStackWrapper extends ItemStackHandler {
     }
 
     @Nonnull
-    public int[] getAvailableSlots() {
-        int[] slots = new int[getSlots()]; int count = 0;
+    public IntList getAvailableSlots() {
+        IntList slots = new IntArrayList(getSlots());
         for (int i = 0; i < getSlots(); i++) {
             ItemStack stack = getStackInSlot(i);
             if (!stack.isEmpty()) {
-                slots[count++] = i;
+                slots.add(i);
             }
         }
         return slots;

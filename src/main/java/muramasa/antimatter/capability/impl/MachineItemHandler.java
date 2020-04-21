@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
@@ -293,8 +294,8 @@ public class MachineItemHandler implements IItemNode {
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(@Nonnull Object stack, boolean simulate) {
-        ItemStack resource = (ItemStack) stack;
+    public int insert(@Nonnull ItemData item, boolean simulate) {
+        ItemStack resource = (ItemStack) item.getStack();
         ItemData data = inputWrapper.findItemInSlots(resource);
         if (data != null) return inputWrapper.insertItem(data.getSlot(), (ItemStack) data.getStack(), simulate).getCount();
         if (!simulate) return inputWrapper.setFirstEmptySlot(resource);
@@ -311,7 +312,7 @@ public class MachineItemHandler implements IItemNode {
 
     @Nonnull
     @Override
-    public int[] getAvailableSlots() {
+    public IntList getAvailableSlots() {
         return outputWrapper.getAvailableSlots();
     }
 
@@ -321,8 +322,8 @@ public class MachineItemHandler implements IItemNode {
     }
 
     @Override
-    public boolean canAccept(@Nonnull Object stack) {
-        return inputWrapper.findItemInSlots(((ItemStack) stack)) != null || inputWrapper.getFirstEmptySlot() != -1;
+    public boolean canAccept(@Nonnull ItemData item) {
+        return inputWrapper.findItemInSlots(((ItemStack) item.getStack())) != null || inputWrapper.getFirstEmptySlot() != -1;
     }
 
     @Override
