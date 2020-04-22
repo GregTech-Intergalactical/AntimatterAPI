@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
