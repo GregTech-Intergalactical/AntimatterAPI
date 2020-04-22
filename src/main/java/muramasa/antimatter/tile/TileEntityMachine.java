@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -131,6 +132,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
+    public boolean canConnect(Direction dir) {
+        return energyHandler.map(h -> h.connects(Dir.VALUES[dir.getIndex()])).orElse(false);
+    }
+
     //TODO
     public void toggleDisabled() {
         setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
@@ -156,6 +161,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public float getClientProgress() {
         return clientProgress;
+    }
+
+    public TileEntityMachine asMachine() {
+        return this;
     }
 
     @Nonnull

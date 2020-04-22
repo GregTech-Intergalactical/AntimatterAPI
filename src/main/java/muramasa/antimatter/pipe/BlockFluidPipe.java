@@ -1,7 +1,10 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -22,7 +25,8 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
 
     @Override
     public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        return state.getBlock() instanceof BlockFluidPipe;
+        Block block = state.getBlock();
+        return block instanceof BlockMachine ? ((BlockMachine)block).getType().has(MachineFlag.FLUID) : block instanceof BlockFluidPipe;
     }
 
     @Override
@@ -37,12 +41,12 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
 
     @Override
     public int getPressure() {
-        return getType().getPressure();
+        return getType().getPressure(getSize());
     }
 
     @Override
     public int getTemperature() {
-        return getType().getTemp();
+        return getType().getTemperature();
     }
 
     @Override
@@ -70,6 +74,11 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
         if (!worldIn.isRemote()) TesseractAPI.removeFluid(worldIn.getDimension().getType().getId(), pos.toLong());
     }
+
+    /*@Override
+    public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
+        if (worldIn.isRemote()) return;
+    }*/
 
 //    @Override
 //    public String getDisplayName(ItemStack stack) {

@@ -48,8 +48,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricEvent;
+import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidEvent;
-import tesseract.api.item.IItemEvent;
 
 import javax.annotation.Nonnull;
 
@@ -117,16 +117,9 @@ public class Antimatter implements IAntimatterRegistrar {
             }
 
             @Override
-            public void onPipeGasLeak(int dim, long pos, @Nonnull Object stack) {
-                FluidStack resource = (FluidStack) stack;
+            public void onPipeGasLeak(int dim, long pos, @Nonnull FluidData fluid) {
+                FluidStack resource = (FluidStack) fluid.getFluid();
                 resource.setAmount((int)(resource.getAmount() * Configs.GAMEPLAY.PIPE_LEAKING));
-            }
-        };
-
-        TesseractAPI.GLOBAL_ITEM_EVENT = new IItemEvent() {
-            @Override
-            public void onPipeOverCapacity(int dim, long pos, int capacity, @Nonnull Object[] stacks) {
-
             }
         };
     }

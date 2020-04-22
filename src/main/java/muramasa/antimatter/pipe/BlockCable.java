@@ -1,7 +1,10 @@
 
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -10,11 +13,13 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
@@ -45,7 +50,8 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
 
     @Override
     public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        return state.getBlock() instanceof BlockCable;
+        Block block = state.getBlock();
+        return block instanceof BlockMachine ? ((BlockMachine) block).getType().has(MachineFlag.ENERGY) : block instanceof BlockCable;
     }
 
     @Override
@@ -89,20 +95,31 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
         if (!worldIn.isRemote()) TesseractAPI.removeElectric(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-//    @Override
-//    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
-//        return true;
-//    }
-//    @Nullable
-//    @Override
-//    public String getHarvestTool(BlockState state) {
-//        return "wire_cutter";
-//    }
+    /*@Override
+    public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
+        if (worldIn.isRemote()) return;
+    }*/
+
+    @Override
+    public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        return 300;
+    }
+
+    @Override
+    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+        return true;
+    }
+
+    @Override
+    public boolean isFireSource(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public ToolType getHarvestTool(BlockState state) {
+        return Data.WIRE_CUTTER.getToolType();
+    }
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {

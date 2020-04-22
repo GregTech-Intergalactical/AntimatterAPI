@@ -1,12 +1,11 @@
 package muramasa.antimatter.capability.impl;
 
-import org.apache.commons.lang3.tuple.Pair;
+import it.unimi.dsi.fastutil.ints.IntList;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -16,6 +15,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemNode;
+import tesseract.api.item.ItemData;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
@@ -294,37 +294,36 @@ public class MachineItemHandler implements IItemNode {
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(@Nonnull Object stack, boolean simulate) {
-        ItemStack resource = (ItemStack) stack;
-        Pair<Integer, ItemStack> pair = inputWrapper.findItemInSlots(resource.getItem());
-        if (pair != null) return inputWrapper.insertItem(pair.getKey(), pair.getValue(), simulate).getCount();
-        if (!simulate) return inputWrapper.setFirstEmptyOrValidSlot(resource);
+    public int insert(@Nonnull ItemData item, boolean simulate) {
+        ItemStack resource = (ItemStack) item.getStack();
+        ItemData data = inputWrapper.findItemInSlots(resource);
+        if (data != null) return inputWrapper.insertItem(data.getSlot(), (ItemStack) data.getStack(), simulate).getCount();
+        if (!simulate) return inputWrapper.setFirstEmptySlot(resource);
         int slot = inputWrapper.getFirstEmptySlot();
         return slot != -1 ? resource.getCount() : 0;
     }
 
     @Nullable
     @Override
-    public Object extract(int maxExtract, boolean simulate) {
-        int slot = outputWrapper.getFirstValidSlot();
-        return slot != -1 ? outputWrapper.extractItem(slot, maxExtract, simulate) : null;
+    public ItemData extract(int slot, int amount, boolean simulate) {
+        ItemStack resource = outputWrapper.extractItem(slot, amount, simulate);
+        return resource.isEmpty() ? null : new ItemData(slot, resource);
+    }
+
+    @Nonnull
+    @Override
+    public IntList getAvailableSlots() {
+        return outputWrapper.getAvailableSlots();
     }
 
     @Override
-    public int getCount(@Nonnull Object stack) {
-        return ((ItemStack)stack).getCount();
+    public int getOutputAmount() {
+        return 4;
     }
 
     @Override
-    public boolean canAccept(@Nonnull Object stack) {
-        Pair<Integer, ItemStack> pair = inputWrapper.findItemInSlots(((ItemStack) stack).getItem());
-        if (pair != null) {
-            ItemStack item = pair.getValue();
-            if (item.getCount() < item.getMaxStackSize()) {
-                return true;
-            }
-        }
-        return inputWrapper.getFirstEmptySlot() != -1;
+    public boolean canAccept(@Nonnull ItemData item) {
+        return inputWrapper.findItemInSlots(((ItemStack) item.getStack())) != null || inputWrapper.getFirstEmptySlot() != -1;
     }
 
     @Override

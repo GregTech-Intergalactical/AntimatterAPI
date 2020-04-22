@@ -527,7 +527,7 @@ public class Utils {
                     fired = true;
                 }
             }
-            if (!fired) world.setBlockState(pos, Blocks.AIR.getDefaultState());
+            if (!fired) world.setBlockState(pos, Blocks.FIRE.getDefaultState());
         }
     }
 
