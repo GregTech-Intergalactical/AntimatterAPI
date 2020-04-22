@@ -1,24 +1,47 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import tesseract.api.item.ItemData;
+import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ItemStackWrapper extends ItemStackHandler {
+public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
-    public ItemStackWrapper(int size) {
-        super(size);
+    private ItemStackHandler handler;
+    private Int2ObjectMap<ObjectSet<?>> filter = new Int2ObjectLinkedOpenHashMap<>(6);
+
+    public ItemStackWrapper(TileEntityMachine machine, int size, ContentEvent event) {
+        handler = new ItemStackHandler(size) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                machine.onMachineEvent(event, slot);
+            }
+        };
+
+        for (Dir direction : Dir.VALUES) {
+            filter.put(direction.getIndex(), new ObjectLinkedOpenHashSet<>()); //TODO: Which size ?
+        }
     }
 
     public int getFirstEmptySlot() {
-        for (int i = 0; i < getSlots(); i++) {
-            ItemStack stack = getStackInSlot(i);
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
             if (stack.isEmpty()) {
                 return i;
             }
@@ -27,12 +50,12 @@ public class ItemStackWrapper extends ItemStackHandler {
     }
 
     @Nullable
-    public ItemData findItemInSlots(@Nonnull ItemStack resource) {
-        Item item = resource.getItem();
-        for (int i = 0; i < getSlots(); i++) {
-            ItemStack stack = getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
-                return new ItemData(i, stack);
+    public ItemData findItemInSlots(@Nonnull ItemStack stack) {
+        Item item = stack.getItem();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack resource = handler.getStackInSlot(i);
+            if (!resource.isEmpty() && resource.getItem().equals(item) && resource.getMaxStackSize() > resource.getCount()) {
+                return new ItemData(i, resource, resource.getItem());
             }
         }
         return null;
@@ -40,9 +63,10 @@ public class ItemStackWrapper extends ItemStackHandler {
 
     @Nonnull
     public IntList getAvailableSlots() {
-        IntList slots = new IntArrayList(getSlots());
-        for (int i = 0; i < getSlots(); i++) {
-            ItemStack stack = getStackInSlot(i);
+        int size = handler.getSlots();
+        IntList slots = new IntArrayList(size);
+        for (int i = 0; i < size; i++) {
+            ItemStack stack = handler.getStackInSlot(i);
             if (!stack.isEmpty()) {
                 slots.add(i);
             }
@@ -50,12 +74,59 @@ public class ItemStackWrapper extends ItemStackHandler {
         return slots;
     }
 
-    public int setFirstEmptySlot(@Nonnull ItemStack resource) {
+    public int setFirstEmptySlot(@Nonnull ItemStack stack) {
         int slot = getFirstEmptySlot();
         if (slot != -1) {
-            setStackInSlot(slot, resource);
-            return resource.getCount();
+            handler.setStackInSlot(slot, stack);
+            return stack.getCount();
         }
         return 0;
+    }
+
+    @Nullable
+    public ObjectSet<?> getFilteredItems(int dir) {
+        return filter.get(dir);
+    }
+
+    @Override
+    public int getSlots() {
+        return handler.getSlots();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return handler.getStackInSlot(slot);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        return handler.insertItem(slot, stack, simulate);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        return handler.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return handler.getSlotLimit(slot);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        return handler.isItemValid(slot, stack);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        handler.setStackInSlot(slot, stack);
+    }
+
+    public void setSize(int size) {
+        handler.setSize(size);
     }
 }

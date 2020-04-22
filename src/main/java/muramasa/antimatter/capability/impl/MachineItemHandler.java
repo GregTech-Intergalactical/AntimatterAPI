@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
@@ -33,25 +34,10 @@ public class MachineItemHandler implements IItemNode {
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
         this.tile = tile;
-        inputWrapper = new ItemStackWrapper(tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size()) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                tile.onMachineEvent(ContentEvent.ITEM_INPUT_CHANGED, slot);
-            }
-        };
-        outputWrapper = new ItemStackWrapper(tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size()) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                tile.onMachineEvent(ContentEvent.ITEM_OUTPUT_CHANGED, slot);
-            }
-        };
+        inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
+        outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
-            cellWrapper = new ItemStackWrapper(tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size()) {
-                @Override
-                protected void onContentsChanged(int slot) {
-                    tile.onMachineEvent(ContentEvent.ITEM_CELL_CHANGED, slot);
-                }
-            };
+            cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
 
         World world = tile.getWorld();
@@ -294,20 +280,20 @@ public class MachineItemHandler implements IItemNode {
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(@Nonnull ItemData item, boolean simulate) {
-        ItemStack resource = (ItemStack) item.getStack();
-        ItemData data = inputWrapper.findItemInSlots(resource);
-        if (data != null) return inputWrapper.insertItem(data.getSlot(), (ItemStack) data.getStack(), simulate).getCount();
-        if (!simulate) return inputWrapper.setFirstEmptySlot(resource);
+    public int insert(@Nonnull ItemData data, boolean simulate) {
+        ItemStack stack = (ItemStack) data.getStack();
+        ItemData item = inputWrapper.findItemInSlots(stack);
+        if (item != null) return inputWrapper.insertItem(item.getSlot(), (ItemStack) item.getStack(), simulate).getCount();
+        if (!simulate) return inputWrapper.setFirstEmptySlot(stack);
         int slot = inputWrapper.getFirstEmptySlot();
-        return slot != -1 ? resource.getCount() : 0;
+        return slot != -1 ? stack.getCount() : 0;
     }
 
     @Nullable
     @Override
     public ItemData extract(int slot, int amount, boolean simulate) {
-        ItemStack resource = outputWrapper.extractItem(slot, amount, simulate);
-        return resource.isEmpty() ? null : new ItemData(slot, resource);
+        ItemStack stack = outputWrapper.extractItem(slot, amount, simulate);
+        return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
     }
 
     @Nonnull
@@ -317,13 +303,18 @@ public class MachineItemHandler implements IItemNode {
     }
 
     @Override
+    public boolean isEmpty(int slot) {
+        return outputWrapper.getStackInSlot(slot).isEmpty();
+    }
+
+    @Override
     public int getOutputAmount() {
         return 4;
     }
 
     @Override
-    public boolean canAccept(@Nonnull ItemData item) {
-        return inputWrapper.findItemInSlots(((ItemStack) item.getStack())) != null || inputWrapper.getFirstEmptySlot() != -1;
+    public boolean canAccept(@Nonnull Object item) {
+        return inputWrapper.findItemInSlots((ItemStack) item) != null || inputWrapper.getFirstEmptySlot() != -1;
     }
 
     @Override
@@ -339,6 +330,18 @@ public class MachineItemHandler implements IItemNode {
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
+    }
+
+    @Nonnull
+    @Override
+    public ObjectSet<?> getOutputFilter(@Nonnull Dir direction) {
+        return outputWrapper.getFilteredItems(direction.getIndex());
+    }
+
+    @Nonnull
+    @Override
+    public ObjectSet<?> getInputFilter(@Nonnull Dir direction) {
+        return inputWrapper.getFilteredItems(direction.getIndex());
     }
 
     @Override

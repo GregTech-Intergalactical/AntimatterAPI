@@ -19,14 +19,14 @@ public class FluidTankWrapper implements IFluidHandler {
     private FluidTank[] tanks;
     private boolean dirty = false;
 
-    public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, boolean input) {
+    public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, ContentEvent event) {
         tanks = new FluidTank[count];
         for (int i = 0; i < count; i++) {
             tanks[i] = new FluidTank(capacity) {
                 @Override
                 protected void onContentsChanged() {
                     dirty = true;
-                    machine.onMachineEvent(input ? ContentEvent.FLUID_INPUT_CHANGED : ContentEvent.FLUID_OUTPUT_CHANGED);
+                    machine.onMachineEvent(event);
                 }
             };
         }
@@ -134,11 +134,5 @@ public class FluidTankWrapper implements IFluidHandler {
 
     public boolean isDirty() {
         return dirty;
-    }
-
-    public static FluidData pack(FluidStack resource) {
-        Fluid fluid = resource.getFluid();
-        FluidAttributes attr = fluid.getAttributes();
-        return new FluidData(resource, fluid, resource.getAmount(), attr.getTemperature(), attr.isGaseous());
     }
 }
