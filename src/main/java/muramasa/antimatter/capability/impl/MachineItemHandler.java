@@ -298,8 +298,8 @@ public class MachineItemHandler implements IItemNode {
 
     @Nonnull
     @Override
-    public IntList getAvailableSlots() {
-        return outputWrapper.getAvailableSlots();
+    public IntList getAvailableSlots(int dir) {
+        return outputWrapper.getAvailableSlots(dir);
     }
 
     @Override
@@ -310,11 +310,6 @@ public class MachineItemHandler implements IItemNode {
     @Override
     public int getOutputAmount() {
         return 4;
-    }
-
-    @Override
-    public boolean canAccept(@Nonnull Object item) {
-        return inputWrapper.findItemInSlots((ItemStack) item) != null || inputWrapper.getFirstEmptySlot() != -1;
     }
 
     @Override
@@ -332,16 +327,9 @@ public class MachineItemHandler implements IItemNode {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
-    @Nonnull
     @Override
-    public ObjectSet<?> getOutputFilter(@Nonnull Dir direction) {
-        return outputWrapper.getFilteredItems(direction.getIndex());
-    }
-
-    @Nonnull
-    @Override
-    public ObjectSet<?> getInputFilter(@Nonnull Dir direction) {
-        return inputWrapper.getFilteredItems(direction.getIndex());
+    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
+        return inputWrapper.isItemAvailable(item, direction.getIndex()) && (inputWrapper.findItemInSlots(item) != null || inputWrapper.getFirstEmptySlot() != -1);
     }
 
     @Override

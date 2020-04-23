@@ -59,6 +59,17 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         return null;
     }
 
+    @Nullable
+    public ItemData findItemInSlots(@Nonnull Object item) {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack resource = handler.getStackInSlot(i);
+            if (!resource.isEmpty() && resource.getItem().equals(item) && resource.getMaxStackSize() > resource.getCount()) {
+                return new ItemData(i, resource, resource.getItem());
+            }
+        }
+        return null;
+    }
+
     @Nonnull
     public IntList getAvailableSlots() {
         int size = handler.getSlots();
@@ -72,6 +83,21 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         return slots;
     }
 
+    @Nonnull
+    public IntList getAvailableSlots(int dir) {
+        ObjectSet<?> filtered = filter.get(dir);
+        if (filtered.isEmpty()) return getAvailableSlots();
+        int size = handler.getSlots();
+        IntList slots = new IntArrayList(size);
+        for (int i = 0; i < size; i++) {
+            ItemStack stack = handler.getStackInSlot(i);
+            if (!stack.isEmpty() && filtered.contains(stack.getItem())) {
+                slots.add(i);
+            }
+        }
+        return slots;
+    }
+
     public int setFirstEmptySlot(@Nonnull ItemStack stack) {
         int slot = getFirstEmptySlot();
         if (slot != -1) {
@@ -79,11 +105,6 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
             return stack.getCount();
         }
         return 0;
-    }
-
-    @Nonnull
-    public ObjectSet<?> getFilteredItems(int dir) {
-        return filter.get(dir);
     }
 
     @Override
@@ -126,5 +147,10 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
     public void setSize(int size) {
         handler.setSize(size);
+    }
+
+    public boolean isItemAvailable(@Nonnull Object item, int dir) {
+        ObjectSet<?> filtered = filter.get(dir);
+        return filtered.isEmpty() || filtered.contains(item);
     }
 }

@@ -308,18 +308,19 @@ public class MachineFluidHandler implements IFluidNode {
 
     @Nullable
     @Override
-    public FluidData extract(int maxDrain, boolean simulate) {
-        FluidTank tank = outputWrapper.getFirstValidTank();
-        if (tank == null) return null;
-        FluidStack stack = tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE);
+    public FluidData extract(@Nonnull Object ref, int amount, boolean simulate) {
+        FluidTank tank = (FluidTank) ref;
+        if (tank.isEmpty()) return null;
+        FluidStack stack = tank.drain(amount, simulate ? SIMULATE : EXECUTE);
         Fluid fluid = stack.getFluid();
         FluidAttributes attr = fluid.getAttributes();
         return new FluidData(stack, fluid, stack.getAmount(), attr.getTemperature(), attr.isGaseous());
     }
 
+    @Nullable
     @Override
-    public boolean canHold(@Nonnull Object fluid) {
-        return inputWrapper.findFluidInTanks((FluidStack) fluid) != null || inputWrapper.getFirstEmptyTank() != null;
+    public Object getAvailableTank(int dir) {
+        return outputWrapper.getAvailableTank(dir);
     }
 
     @Override
@@ -352,16 +353,9 @@ public class MachineFluidHandler implements IFluidNode {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
-    @Nonnull
     @Override
-    public ObjectSet<?> getOutputFilter(@Nonnull Dir direction) {
-        return outputWrapper.getFilteredFluids(direction.getIndex());
-    }
-
-    @Nonnull
-    @Override
-    public ObjectSet<?> getInputFilter(@Nonnull Dir direction) {
-        return inputWrapper.getFilteredFluids(direction.getIndex());
+    public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
+        return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && (inputWrapper.findFluidInTanks(fluid) != null || inputWrapper.getFirstEmptyTank() != null);
     }
 
     @Override

@@ -68,6 +68,16 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
+    public FluidTank getAvailableTank(int dir) {
+        ObjectSet<?> set = filter.get(dir);
+        if (set.isEmpty()) return getFirstValidTank();
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty() && set.contains(tank.getFluid().getFluid())) return tank;
+        }
+        return null;
+    }
+
+    @Nullable
     public FluidTank getFirstValidTank() {
         for (FluidTank tank : tanks) {
             if (!tank.isEmpty()) return tank;
@@ -79,6 +89,15 @@ public class FluidTankWrapper implements IFluidHandler {
     public FluidTank findFluidInTanks(FluidStack fluid) {
         for (FluidTank tank : tanks) {
             if (!tank.isEmpty() && Utils.equals(tank.getFluid(), fluid)) return tank;
+        }
+        return null;
+    }
+
+    /* Looks for Fluid */
+    @Nullable
+    public FluidTank findFluidInTanks(Object fluid) {
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty() && tank.getFluid().getFluid().equals(fluid)) return tank;
         }
         return null;
     }
@@ -146,8 +165,8 @@ public class FluidTankWrapper implements IFluidHandler {
         return dirty;
     }
 
-    @Nonnull
-    public ObjectSet<?> getFilteredFluids(int dir) {
-        return filter.get(dir);
+    public boolean isFluidAvailable(@Nonnull Object fluid, int dir) {
+        ObjectSet<?> filtered = filter.get(dir);
+        return filtered.isEmpty() || filtered.contains(fluid);
     }
 }
