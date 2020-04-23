@@ -10,8 +10,6 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -35,7 +33,7 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         };
 
         for (Dir direction : Dir.VALUES) {
-            filter.put(direction.getIndex(), new ObjectLinkedOpenHashSet<>()); //TODO: Which size ?
+            filter.put(direction.getIndex(), new ObjectLinkedOpenHashSet<>(size));
         }
     }
 
@@ -83,7 +81,7 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         return 0;
     }
 
-    @Nullable
+    @Nonnull
     public ObjectSet<?> getFilteredItems(int dir) {
         return filter.get(dir);
     }

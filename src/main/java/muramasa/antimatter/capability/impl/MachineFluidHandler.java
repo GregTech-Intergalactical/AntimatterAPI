@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -349,6 +350,18 @@ public class MachineFluidHandler implements IFluidNode {
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
+    }
+
+    @Nonnull
+    @Override
+    public ObjectSet<?> getOutputFilter(@Nonnull Dir direction) {
+        return outputWrapper.getFilteredFluids(direction.getIndex());
+    }
+
+    @Nonnull
+    @Override
+    public ObjectSet<?> getInputFilter(@Nonnull Dir direction) {
+        return inputWrapper.getFilteredFluids(direction.getIndex());
     }
 
     @Override

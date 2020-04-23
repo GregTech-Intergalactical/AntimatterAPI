@@ -1,5 +1,9 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -10,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.api.fluid.FluidData;
+import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,6 +23,7 @@ public class FluidTankWrapper implements IFluidHandler {
 
     private FluidTank[] tanks;
     private boolean dirty = false;
+    private Int2ObjectMap<ObjectSet<?>> filter = new Int2ObjectLinkedOpenHashMap<>(6);
 
     public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, ContentEvent event) {
         tanks = new FluidTank[count];
@@ -29,6 +35,10 @@ public class FluidTankWrapper implements IFluidHandler {
                     machine.onMachineEvent(event);
                 }
             };
+        }
+
+        for (Dir direction : Dir.VALUES) {
+            filter.put(direction.getIndex(), new ObjectLinkedOpenHashSet<>(count));
         }
     }
 
@@ -134,5 +144,10 @@ public class FluidTankWrapper implements IFluidHandler {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    @Nonnull
+    public ObjectSet<?> getFilteredFluids(int dir) {
+        return filter.get(dir);
     }
 }
