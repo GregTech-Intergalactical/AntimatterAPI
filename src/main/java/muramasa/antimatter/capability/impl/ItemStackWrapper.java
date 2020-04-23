@@ -1,7 +1,5 @@
 package muramasa.antimatter.capability.impl;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
@@ -18,11 +16,13 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
     private ItemStackHandler handler;
-    private Int2ObjectMap<ObjectSet<?>> filter = new Int2ObjectLinkedOpenHashMap<>(6);
+    private Map<Dir, ObjectSet<?>> filter = new EnumMap<>(Dir.class);
 
     public ItemStackWrapper(TileEntityMachine machine, int size, ContentEvent event) {
         handler = new ItemStackHandler(size) {
@@ -33,7 +33,7 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         };
 
         for (Dir direction : Dir.VALUES) {
-            filter.put(direction.getIndex(), new ObjectLinkedOpenHashSet<>(size));
+            filter.put(direction, new ObjectLinkedOpenHashSet<>(size));
         }
     }
 
@@ -84,8 +84,8 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
     }
 
     @Nonnull
-    public IntList getAvailableSlots(int dir) {
-        ObjectSet<?> filtered = filter.get(dir);
+    public IntList getAvailableSlots(@Nonnull Dir direction) {
+        ObjectSet<?> filtered = filter.get(direction);
         if (filtered.isEmpty()) return getAvailableSlots();
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
@@ -149,8 +149,8 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         handler.setSize(size);
     }
 
-    public boolean isItemAvailable(@Nonnull Object item, int dir) {
-        ObjectSet<?> filtered = filter.get(dir);
+    public boolean isItemAvailable(@Nonnull Object item, @Nonnull Dir direction) {
+        ObjectSet<?> filtered = filter.get(direction);
         return filtered.isEmpty() || filtered.contains(item);
     }
 }

@@ -37,13 +37,12 @@ public class MachineFluidHandler implements IFluidNode {
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
-    protected int capacity, pressure_in, pressure_out;
+    protected int capacity, pressure;
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure_in, int pressure_out) {
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure) {
         this.tile = tile;
         this.capacity = capacity;
-        this.pressure_in = pressure_in;
-        this.pressure_out = pressure_out;
+        this.pressure = pressure;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
@@ -55,16 +54,16 @@ public class MachineFluidHandler implements IFluidNode {
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE);
+        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure_in, int pressure_out, CompoundNBT fluidData) {
-        this(tile, capacity, pressure_in, pressure_out);
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure, CompoundNBT fluidData) {
+        this(tile, capacity, pressure);
         if (fluidData != null) deserialize(fluidData);
     }
 
     public MachineFluidHandler(TileEntityMachine tile, CompoundNBT fluidData) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE, fluidData);
+        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, fluidData);
     }
 
     public void onUpdate() {
@@ -319,8 +318,8 @@ public class MachineFluidHandler implements IFluidNode {
 
     @Nullable
     @Override
-    public Object getAvailableTank(int dir) {
-        return outputWrapper.getAvailableTank(dir);
+    public Object getAvailableTank(@Nonnull Dir direction) {
+        return outputWrapper.getAvailableTank(direction);
     }
 
     @Override
@@ -329,13 +328,8 @@ public class MachineFluidHandler implements IFluidNode {
     }
 
     @Override
-    public int getOutputPressure() {
-        return pressure_out;
-    }
-
-    @Override
-    public int getInputPressure() {
-        return pressure_in;
+    public int getOutputAmount(@Nonnull Dir direction) {
+        return pressure;
     }
 
     @Override
@@ -355,7 +349,7 @@ public class MachineFluidHandler implements IFluidNode {
 
     @Override
     public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
-        return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && (inputWrapper.findFluidInTanks(fluid) != null || inputWrapper.getFirstEmptyTank() != null);
+        return inputWrapper.isFluidAvailable(fluid, direction) && (inputWrapper.findFluidInTanks(fluid) != null || inputWrapper.getFirstEmptyTank() != null);
     }
 
     @Override

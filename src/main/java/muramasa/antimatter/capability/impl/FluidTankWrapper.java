@@ -1,29 +1,26 @@
 package muramasa.antimatter.capability.impl;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import tesseract.api.fluid.FluidData;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class FluidTankWrapper implements IFluidHandler {
 
     private FluidTank[] tanks;
     private boolean dirty = false;
-    private Int2ObjectMap<ObjectSet<?>> filter = new Int2ObjectLinkedOpenHashMap<>(6);
+    private Map<Dir, ObjectSet<?>> filter = new EnumMap<>(Dir.class);
 
     public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, ContentEvent event) {
         tanks = new FluidTank[count];
@@ -38,7 +35,7 @@ public class FluidTankWrapper implements IFluidHandler {
         }
 
         for (Dir direction : Dir.VALUES) {
-            filter.put(direction.getIndex(), new ObjectLinkedOpenHashSet<>(count));
+            filter.put(direction, new ObjectLinkedOpenHashSet<>(count));
         }
     }
 
@@ -68,8 +65,8 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Nullable
-    public FluidTank getAvailableTank(int dir) {
-        ObjectSet<?> set = filter.get(dir);
+    public FluidTank getAvailableTank(@Nonnull Dir direction) {
+        ObjectSet<?> set = filter.get(direction);
         if (set.isEmpty()) return getFirstValidTank();
         for (FluidTank tank : tanks) {
             if (!tank.isEmpty() && set.contains(tank.getFluid().getFluid())) return tank;
@@ -165,8 +162,8 @@ public class FluidTankWrapper implements IFluidHandler {
         return dirty;
     }
 
-    public boolean isFluidAvailable(@Nonnull Object fluid, int dir) {
-        ObjectSet<?> filtered = filter.get(dir);
+    public boolean isFluidAvailable(@Nonnull Object fluid, @Nonnull Dir direction) {
+        ObjectSet<?> filtered = filter.get(direction);
         return filtered.isEmpty() || filtered.contains(fluid);
     }
 }

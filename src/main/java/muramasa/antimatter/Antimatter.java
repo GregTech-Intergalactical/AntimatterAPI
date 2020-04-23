@@ -96,11 +96,6 @@ public class Antimatter implements IAntimatterRegistrar {
         // TODO: Make explosions depend on pressure, capacity, temperature
         TesseractAPI.GLOBAL_FLUID_EVENT = new IFluidEvent() {
             @Override
-            public void onNodeOverPressure(int dim, long pos, int pressure) {
-                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.NONE);
-            }
-
-            @Override
             public void onPipeOverPressure(int dim, long pos, int pressure) {
                 Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.BREAK);
             }
