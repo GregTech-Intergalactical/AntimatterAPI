@@ -313,6 +313,11 @@ public class MachineItemHandler implements IItemNode {
     }
 
     @Override
+    public int getPriority(@Nonnull Dir direction) {
+        return 0;
+    }
+
+    @Override
     public boolean canOutput() {
         return outputWrapper != null;
     }

@@ -333,6 +333,11 @@ public class MachineFluidHandler implements IFluidNode {
     }
 
     @Override
+    public int getPriority(@Nonnull Dir direction) {
+        return 0;
+    }
+
+    @Override
     public boolean canOutput() {
         return outputWrapper != null;
     }
