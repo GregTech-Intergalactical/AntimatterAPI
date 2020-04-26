@@ -1,16 +1,12 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
 
 public class MachineEnergyHandler extends EnergyHandler {
 
