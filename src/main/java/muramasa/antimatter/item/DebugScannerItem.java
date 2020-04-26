@@ -22,6 +22,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         }
     }
 
+    @Nonnull
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         if (context.getWorld().isRemote) return super.onItemUse(context);

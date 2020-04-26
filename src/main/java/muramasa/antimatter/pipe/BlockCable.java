@@ -12,9 +12,11 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -22,10 +24,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricCable;
+import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler, IElectricCable {
 
@@ -130,6 +135,13 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
         return insulated ? i == 1 ? getRGB() : -1 : getRGB();
+    }
+
+    @Override
+    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        ITickingController controller = TesseractAPI.getElectricController(world.getDimension().getType().getId(), pos.toLong());
+        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+        return info;
     }
 
 //    @Override

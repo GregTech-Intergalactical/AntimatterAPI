@@ -5,10 +5,12 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -23,6 +25,7 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,6 +80,12 @@ public class MachineFluidHandler implements IFluidNode {
                 TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
         }
     }
+
+//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+//        ITickingController controller = TesseractAPI.getFluidController(world.getDimension().getType().getId(), pos.toLong());
+//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+//        return info;
+//    }
 
     public FluidTankWrapper getInputWrapper() {
         return inputWrapper;
@@ -323,11 +332,6 @@ public class MachineFluidHandler implements IFluidNode {
     }
 
     @Override
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
     public int getOutputAmount(@Nonnull Dir direction) {
         return pressure;
     }
@@ -335,6 +339,11 @@ public class MachineFluidHandler implements IFluidNode {
     @Override
     public int getPriority(@Nonnull Dir direction) {
         return 0;
+    }
+
+    @Override
+    public int getCapacity() {
+        return capacity;
     }
 
     @Override

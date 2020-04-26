@@ -1,12 +1,16 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 
 public class MachineEnergyHandler extends EnergyHandler {
 
@@ -37,6 +41,12 @@ public class MachineEnergyHandler extends EnergyHandler {
                 TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
         }
     }
+
+//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+//        ITickingController controller = TesseractAPI.getElectricController(world.getDimension().getType().getId(), pos.toLong());
+//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+//        return info;
+//    }
 
     @Override
     public boolean connects(@Nonnull Dir direction) {

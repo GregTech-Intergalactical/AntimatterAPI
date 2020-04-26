@@ -39,7 +39,7 @@ public abstract class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public long getPower() {
+    public long getEnergy() {
         return energy;
     }
 
@@ -91,7 +91,7 @@ public abstract class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public int getEnergyStored() {
-        return (int) getPower();
+        return (int) getEnergy();
     }
 
     @Override

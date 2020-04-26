@@ -2,7 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -18,11 +18,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
     private ItemStackHandler handler;
-    private Map<Dir, ObjectSet<?>> filter = new EnumMap<>(Dir.class);
+    private Map<Dir, Set<?>> filter = new EnumMap<>(Dir.class);
 
     public ItemStackWrapper(TileEntityMachine machine, int size, ContentEvent event) {
         handler = new ItemStackHandler(size) {
@@ -33,7 +34,7 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         };
 
         for (Dir direction : Dir.VALUES) {
-            filter.put(direction, new ObjectLinkedOpenHashSet<>(size));
+            filter.put(direction, new ObjectOpenHashSet<>(size));
         }
     }
 
@@ -85,7 +86,7 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
     @Nonnull
     public IntList getAvailableSlots(@Nonnull Dir direction) {
-        ObjectSet<?> filtered = filter.get(direction);
+        Set<?> filtered = filter.get(direction);
         if (filtered.isEmpty()) return getAvailableSlots();
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
@@ -150,7 +151,7 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
     }
 
     public boolean isItemAvailable(@Nonnull Object item, @Nonnull Dir direction) {
-        ObjectSet<?> filtered = filter.get(direction);
+        Set<?> filtered = filter.get(direction);
         return filtered.isEmpty() || filtered.contains(item);
     }
 }

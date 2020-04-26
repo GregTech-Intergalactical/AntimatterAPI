@@ -13,9 +13,12 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemPipe;
+import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
 
@@ -63,7 +66,14 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
         if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
     }
 
-    /*@Override
+    @Override
+    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        ITickingController controller = TesseractAPI.getItemController(world.getDimension().getType().getId(), pos.toLong());
+        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+        return info;
+    }
+
+/*@Override
     public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
         if (worldIn.isRemote()) return;
     }*/

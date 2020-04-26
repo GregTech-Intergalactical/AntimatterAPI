@@ -175,6 +175,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return builder.build();
     }
 
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return getMachineType().getDisplayName(getMachineTier());
@@ -182,7 +183,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Nullable
     @Override
-    public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+    public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
@@ -205,6 +206,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (tag.contains(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidData = tag.getCompound(Ref.KEY_MACHINE_TILE_FLUIDS);
     }
 
+    @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag

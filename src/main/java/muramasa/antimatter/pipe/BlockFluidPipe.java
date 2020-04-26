@@ -13,9 +13,12 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.IFluidPipe;
+import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPipe {
 
@@ -73,6 +76,13 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
         if (!worldIn.isRemote()) TesseractAPI.removeFluid(worldIn.getDimension().getType().getId(), pos.toLong());
+    }
+
+    @Override
+    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        ITickingController controller = TesseractAPI.getFluidController(world.getDimension().getType().getId(), pos.toLong());
+        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+        return info;
     }
 
     /*@Override
