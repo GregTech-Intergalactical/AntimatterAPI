@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -51,6 +52,9 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         AntimatterAPI.all(Block.class)
             .stream().filter(b -> b.getRegistryName().getNamespace().equals(domain))
             .forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
+        AntimatterAPI.all(IAntimatterTool.class)
+            .stream().filter(t -> t.getDomain().equals(domain))
+            .forEach(t -> tex(t.asItem(), "item/handheld", t.getTextures()));
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {

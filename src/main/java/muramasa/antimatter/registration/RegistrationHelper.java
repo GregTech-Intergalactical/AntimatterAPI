@@ -3,6 +3,8 @@ package muramasa.antimatter.registration;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
+import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -42,6 +44,21 @@ public class RegistrationHelper {
             AntimatterAPI.all(Item.class, domain, i -> {
                 if (i instanceof IAntimatterObject) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
                 ((IForgeRegistry) e.getRegistry()).register(i);
+            });
+            AntimatterAPI.all(AntimatterToolType.class, domain, t -> {
+                if (t.isPowered()) {
+                    for (IAntimatterTool i : t.instantiatePoweredTools(domain)) {
+                        Item item = i.asItem();
+                        item.setRegistryName(domain, i.getId());
+                        ((IForgeRegistry) e.getRegistry()).register(item);
+                    }
+                }
+                else {
+                    IAntimatterTool i = t.instantiateTools(domain);
+                    Item item = i.asItem();
+                    item.setRegistryName(domain, i.getId());
+                    ((IForgeRegistry) e.getRegistry()).register(item);
+                }
             });
         }
     }

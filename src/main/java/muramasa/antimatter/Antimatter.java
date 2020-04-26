@@ -54,7 +54,6 @@ public class Antimatter implements IAntimatterRegistrar {
                 //Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "desc", false));
             }
         });
-
         AntimatterAPI.addRegistrar(INSTANCE);
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
     }
@@ -91,7 +90,7 @@ public class Antimatter implements IAntimatterRegistrar {
     }
 
     @SubscribeEvent
-    public static void onTileRegistry(RegistryEvent.Register<TileEntityType<?>> e) {
+    public static void onTileRegistry(final RegistryEvent.Register<TileEntityType<?>> e) {
         AntimatterAPI.all(TileEntityType.class, t -> e.getRegistry().register(t));
     }
 

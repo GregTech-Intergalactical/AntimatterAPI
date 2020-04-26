@@ -13,30 +13,25 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IItemProvider;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    String getDomain();
+    @Nonnull AntimatterToolType getType();
 
-    AntimatterToolType getType();
+    @Nonnull Material getPrimaryMaterial(@Nonnull ItemStack stack);
 
-    IItemTier getTier();
+    @Nonnull Material getSecondaryMaterial(@Nonnull ItemStack stack);
 
-    Material getPrimaryMaterial();
+    @Nonnull Item asItem();
 
-    @Nullable Material getSecondaryMaterial();
-
-    Item asItem();
-
-    @Override default String getId() {
-        return getPrimaryMaterial().getId() + "_" + (getSecondaryMaterial() == null ? "" : getSecondaryMaterial().getId() + "_") + getType().getId();
-    }
+    @Nonnull ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary);
 
     @Override default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? getPrimaryMaterial().getRGB() : getSecondaryMaterial() != null ? getSecondaryMaterial().getRGB() : -1;
+        return i == 0 ? getPrimaryMaterial(stack).getRGB() : getSecondaryMaterial(stack) != null ? getSecondaryMaterial(stack).getRGB() : -1;
     }
 
     @Override default Texture[] getTextures() {
@@ -46,7 +41,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/" + getType().getId() + "_" + i)));
+                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getType().getId(), "_", Integer.toString(i))));
             }
         }
         return textures.toArray(new Texture[textures.size()]);
@@ -55,4 +50,5 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     @Override default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         prov.tex(item, "minecraft:item/handheld", getTextures());
     }
+
 }

@@ -1,5 +1,8 @@
 package muramasa.antimatter.tool;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.util.Utils;
@@ -7,31 +10,40 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class AntimatterItemTier implements IItemTier {
 
-    private boolean hasSecondary = false;
-    private AntimatterToolType type;
     private Material primary;
-    @Nullable private Material secondary;
+    private Material secondary;
 
-    public AntimatterItemTier(AntimatterToolType type, Material primary, Material secondary) {
-        this.type = type;
+    public static final AntimatterItemTier NULL = new AntimatterItemTier(Data.NULL, Data.NULL);
+
+    public static final Object2ObjectMap<Pair<Material, Material>, IItemTier> TIERS = new Object2ObjectOpenHashMap<>();
+
+    static {
+        TIERS.put(Pair.of(Data.NULL, Data.NULL), NULL);
+    }
+
+    protected AntimatterItemTier(@Nonnull Material primary, @Nonnull Material secondary) {
         this.primary = primary;
         this.secondary = secondary;
-        // Handling enchantments as a product of crafting recipe and not creative menu
+    }
+
+    public static IItemTier getOrCreate(@Nonnull Material primary, @Nonnull Material secondary) {
+        return TIERS.computeIfAbsent(Pair.of(primary, secondary), v -> new AntimatterItemTier(primary, secondary));
     }
 
     @Override
     public int getMaxUses() {
-        return primary.getToolDurability() + (hasSecondary ? secondary.getHandleDurability() : 0);
+        return primary.getToolDurability() + secondary.getHandleDurability();
     }
 
     @Override
     public float getEfficiency() {
-        return primary.getToolSpeed() + ( hasSecondary ? secondary.getHandleSpeed() : 0);
+        return primary.getToolSpeed() + secondary.getHandleSpeed();
     }
 
     // Can't pass type.getBaseAttackDamage() since MaterialSword does that in the constructor
@@ -40,7 +52,7 @@ public class AntimatterItemTier implements IItemTier {
 
     @Override
     public int getHarvestLevel() {
-        return type.getBaseQuality()  + primary.getToolQuality();
+        return /* type.getBaseQuality()  +  */ primary.getToolQuality();
     }
 
     @Override
@@ -50,7 +62,7 @@ public class AntimatterItemTier implements IItemTier {
 
     @Override
     public Ingredient getRepairMaterial() {
-        if (type.isPowered()) return null;
+        // if (type.isPowered()) return null;
         if (primary.has(MaterialType.GEM)) {
             return Ingredient.fromTag(Utils.getForgeItemTag("gems/".concat(primary.getId())));
         }
@@ -70,11 +82,7 @@ public class AntimatterItemTier implements IItemTier {
         return primary;
     }
 
-    public boolean hasSecondary() {
-        return hasSecondary;
-    }
-
-    @Nullable public Material getSecondaryMaterial() {
+    public Material getSecondaryMaterial() {
         return secondary;
     }
 

@@ -200,11 +200,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
-    //TODO temp method to fix compilation until a GT pr has been made
-    public Material addTools(float toolSpeed, int toolDurability, int toolQuality) {
-        return addTools(0f, toolSpeed, toolDurability, toolQuality);
-    }
-
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
@@ -214,11 +209,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.toolQuality = toolQuality;
         this.toolEnchantment = ImmutableMap.of();
         return this;
-    }
-
-    //TODO temp method to fix compilation until a GT pr has been made
-    public Material addTools(float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        return addTools(0f, toolSpeed, toolDurability, toolQuality, toolEnchantment);
     }
     
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
