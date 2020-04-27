@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class BetterShapedRecipeBuilder {
+public class AntimatterShapedRecipeBuilder {
 
     private final ItemStack result;
     private final List<String> pattern = Lists.newArrayList();
@@ -34,39 +34,49 @@ public class BetterShapedRecipeBuilder {
     private final Advancement.Builder advBuilder = Advancement.Builder.builder();
     private String group;
 
-    public BetterShapedRecipeBuilder(ItemStack result) {
+    public AntimatterShapedRecipeBuilder(ItemStack result) {
         this.result = result;
     }
 
     /**
      * Creates a new builder for a shaped recipe.
      */
-    public static BetterShapedRecipeBuilder shapedRecipe(IItemProvider result, int count) {
-        return new BetterShapedRecipeBuilder(new ItemStack(result, count));
+    public static AntimatterShapedRecipeBuilder shapedRecipe(IItemProvider result) {
+        return new AntimatterShapedRecipeBuilder(new ItemStack(result, 1));
     }
 
-    public static BetterShapedRecipeBuilder shapedRecipe(ItemStack result) {
-        return new BetterShapedRecipeBuilder(result);
+    /**
+     * Creates a new builder for a shaped recipe.
+     */
+    public static AntimatterShapedRecipeBuilder shapedRecipe(IItemProvider result, int count) {
+        return new AntimatterShapedRecipeBuilder(new ItemStack(result, count));
+    }
+
+    /**
+     * Creates a new builder for a shaped recipe.
+     */
+    public static AntimatterShapedRecipeBuilder shapedRecipe(ItemStack result) {
+        return new AntimatterShapedRecipeBuilder(result);
     }
 
     /**
      * Adds a key to the recipe pattern.
      */
-    public BetterShapedRecipeBuilder key(Character symbol, Tag<Item> tag) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, Tag<Item> tag) {
         return this.key(symbol, Ingredient.fromTag(tag));
     }
 
     /**
      * Adds a key to the recipe pattern.
      */
-    public BetterShapedRecipeBuilder key(Character symbol, IItemProvider item) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, IItemProvider item) {
         return this.key(symbol, Ingredient.fromItems(item));
     }
 
     /**
      * Adds a key to the recipe pattern.
      */
-    public BetterShapedRecipeBuilder key(Character symbol, Ingredient ingredient) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, Ingredient ingredient) {
         if (this.key.containsKey(symbol)) {
             throw new IllegalArgumentException("Symbol '" + symbol + "' is already defined!");
         } else if (symbol == ' ') {
@@ -80,7 +90,7 @@ public class BetterShapedRecipeBuilder {
     /**
      * Adds a new entry to the patterns for this recipe.
      */
-    public BetterShapedRecipeBuilder patternLine(String pattern) {
+    public AntimatterShapedRecipeBuilder patternLine(String pattern) {
         if (!this.pattern.isEmpty() && pattern.length() != this.pattern.get(0).length()) {
             throw new IllegalArgumentException("Pattern must be the same width on every line!");
         } else {
@@ -92,12 +102,12 @@ public class BetterShapedRecipeBuilder {
     /**
      * Adds a criterion needed to unlock the recipe.
      */
-    public BetterShapedRecipeBuilder addCriterion(String name, ICriterionInstance criterion) {
+    public AntimatterShapedRecipeBuilder addCriterion(String name, ICriterionInstance criterion) {
         this.advBuilder.withCriterion(name, criterion);
         return this;
     }
 
-    public BetterShapedRecipeBuilder setGroup(String group) {
+    public AntimatterShapedRecipeBuilder setGroup(String group) {
         this.group = group;
         return this;
     }
