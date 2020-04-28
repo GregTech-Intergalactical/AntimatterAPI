@@ -71,7 +71,7 @@ public class FluidNode implements IFluidNode, ITickingNode {
 
     @Override
     public int getCapacity() {
-        return 0
+        return 0;
     }
 
     @Override
