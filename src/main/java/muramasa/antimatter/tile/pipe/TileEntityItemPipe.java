@@ -11,6 +11,6 @@ public class TileEntityItemPipe extends TileEntityPipe {
     @Override
     public void onServerUpdate() {
         if (!isServerSide()) return;
-        callTick();
+        callPipeTick();
     }
 }

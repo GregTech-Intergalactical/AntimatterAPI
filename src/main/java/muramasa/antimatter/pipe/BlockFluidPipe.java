@@ -37,7 +37,7 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     }
 
     @Override
-    public void tick() {
+    public void onTick() {
         if (controller != null) controller.tick();
     }
 

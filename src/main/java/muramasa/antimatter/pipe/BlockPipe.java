@@ -33,7 +33,7 @@ import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
 
-public abstract class BlockPipe<T extends PipeType> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
+public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
     protected PipeType<?> type;
     protected PipeSize size;
@@ -49,9 +49,7 @@ public abstract class BlockPipe<T extends PipeType> extends BlockDynamic impleme
         AntimatterAPI.register(BlockPipe.class, getId(), this);
     }
 
-    public void tick() {
-
-    }
+    public abstract void onTick();
 
     public T getType() {
         return (T) type;

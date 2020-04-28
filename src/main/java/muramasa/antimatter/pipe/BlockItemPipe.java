@@ -33,7 +33,7 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe, 
     }
 
     @Override
-    public void tick() {
+    public void onTick() {
         if (controller != null) controller.tick();
     }
 

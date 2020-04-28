@@ -58,6 +58,11 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
+    public void onTick() {
+        // non require tick
+    }
+
+    @Override
     public int getVoltage() {
         return getType().getTier().getVoltage();
     }
