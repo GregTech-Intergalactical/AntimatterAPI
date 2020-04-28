@@ -4,20 +4,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
-import tesseract.api.ITickingNode;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
-import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FluidNode implements IFluidNode, ITickingNode {
+public class FluidNode implements IFluidNode {
 
     private TileEntity tile;
     private FluidTank tank;
-    private ITickingController controller;
 
     public FluidNode(TileEntity tile, FluidTank tank) {
         this.tile = tile;
@@ -33,12 +30,6 @@ public class FluidNode implements IFluidNode, ITickingNode {
         World world = tile.getWorld();
         if (world != null)
             TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
-    }
-
-    //TODO: Call tick from nearest pipe ?
-    @Override
-    public void tick() {
-        if (controller != null) controller.tick();
     }
 
     //TODO: Finish this after testing of items
@@ -97,11 +88,5 @@ public class FluidNode implements IFluidNode, ITickingNode {
     @Override
     public boolean connects(@Nonnull Dir direction) {
         return true;
-    }
-
-    @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
-            controller = newController;
     }
 }

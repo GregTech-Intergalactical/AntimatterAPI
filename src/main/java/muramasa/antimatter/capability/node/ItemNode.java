@@ -7,20 +7,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import tesseract.TesseractAPI;
-import tesseract.api.ITickingNode;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
-import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ItemNode implements IItemNode, ITickingNode {
+public class ItemNode implements IItemNode {
 
     private TileEntity tile;
     private ItemStackWrapper handler;
-    private ITickingController controller;
 
     public ItemNode(TileEntity tile, ItemStackHandler handler) {
         this.tile = tile;
@@ -36,12 +33,6 @@ public class ItemNode implements IItemNode, ITickingNode {
         World world = tile.getWorld();
         if (world != null)
             TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
-    }
-
-    //TODO: Call tick from nearest pipe ?
-    @Override
-    public void tick() {
-        if (controller != null) controller.tick();
     }
 
     @Override
@@ -105,11 +96,5 @@ public class ItemNode implements IItemNode, ITickingNode {
     @Override
     public boolean connects(@Nonnull Dir direction) {
         return true;
-    }
-
-    @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
-            controller = newController;
     }
 }

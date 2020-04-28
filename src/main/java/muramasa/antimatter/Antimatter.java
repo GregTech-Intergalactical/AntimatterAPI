@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.impl.EnergyHandler;
 import muramasa.antimatter.capability.node.EnergyNode;
 import muramasa.antimatter.capability.node.FluidNode;
 import muramasa.antimatter.capability.node.ItemNode;
@@ -34,7 +33,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
@@ -46,7 +44,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -64,10 +61,10 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tesseract.TesseractAPI;
-import tesseract.api.ITickingNode;
 import tesseract.api.electric.IElectricEvent;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidEvent;
+import tesseract.graph.IConnectable;
 
 import javax.annotation.Nonnull;
 
@@ -80,7 +77,7 @@ public class Antimatter implements IAntimatterRegistrar {
     public static Logger LOGGER = LogManager.getLogger(Ref.ID);
     public static IProxyHandler PROXY;
     public static Int2ObjectMap<World> WORLDS = new Int2ObjectOpenHashMap<>();
-    public static Long2ObjectMap<ITickingNode> NODES = new Long2ObjectOpenHashMap<>();
+    public static Long2ObjectMap<IConnectable> NODES = new Long2ObjectOpenHashMap<>();
 
     public Antimatter() {
         INSTANCE = this;
@@ -220,10 +217,8 @@ public class Antimatter implements IAntimatterRegistrar {
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent e) {
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
-        ITickingNode node = NODES.remove(e.getPos().toLong());
-        if (node != null) {
-            node.remove();
-        }
+        IConnectable node = NODES.remove(e.getPos().toLong());
+        if (node != null) node.remove();
     }
 
     @SubscribeEvent

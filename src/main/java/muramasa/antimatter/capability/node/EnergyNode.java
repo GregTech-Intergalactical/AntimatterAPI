@@ -4,19 +4,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.EnergyStorage;
 import tesseract.TesseractAPI;
-import tesseract.api.ITickingNode;
 import tesseract.api.electric.IElectricNode;
-import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class EnergyNode implements IElectricNode, ITickingNode {
+public class EnergyNode implements IElectricNode {
 
     private TileEntity tile;
     private EnergyStorage storage;
-    private ITickingController controller;
 
     public EnergyNode(TileEntity tile, EnergyStorage storage) {
         this.tile = tile;
@@ -32,12 +28,6 @@ public class EnergyNode implements IElectricNode, ITickingNode {
         World world = tile.getWorld();
         if (world != null)
             TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
-    }
-
-    //TODO: Call tick from nearest pipe ?
-    @Override
-    public void tick() {
-        if (controller != null) controller.tick();
     }
 
     @Override
@@ -98,11 +88,5 @@ public class EnergyNode implements IElectricNode, ITickingNode {
     @Override
     public boolean connects(@Nonnull Dir direction) {
         return true;
-    }
-
-    @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
-            controller = newController;
     }
 }

@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
+import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
@@ -28,7 +29,7 @@ import java.util.List;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler implements IFluidNode {
+public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     protected static int DEFAULT_CAPACITY = 99999;
     protected static int DEFAULT_PRESSURE = 99999;

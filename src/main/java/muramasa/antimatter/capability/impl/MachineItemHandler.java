@@ -17,6 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
+import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
@@ -24,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode {
+public class MachineItemHandler implements IItemNode, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
