@@ -1,5 +1,5 @@
 package muramasa.antimatter.cover.pipe;
-
+/*
 import it.unimi.dsi.fastutil.ints.IntList;
 import muramasa.antimatter.cover.CoverTransition;
 import net.minecraft.tileentity.TileEntity;
@@ -14,7 +14,7 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverItem extends CoverTransition implements IItemNode {
+public class TransitionItemCover extends CoverTransition implements IItemNode {
 
     @Override
     public String getId() {
@@ -35,9 +35,8 @@ public class CoverItem extends CoverTransition implements IItemNode {
 
     @Override
     public void onUpdate(TileEntity tile, Direction side) {
-        // TODO: update controller
+        if (controller != null) controller.tick();
     }
-
 
     @Override
     public int insert(@Nonnull ItemData data, boolean simulate) {
@@ -83,7 +82,7 @@ public class CoverItem extends CoverTransition implements IItemNode {
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return false;
+        return true;
     }
 
     @Override
@@ -93,11 +92,13 @@ public class CoverItem extends CoverTransition implements IItemNode {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return false;
+        return true;
     }
 
     @Override
     public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 }
+*/

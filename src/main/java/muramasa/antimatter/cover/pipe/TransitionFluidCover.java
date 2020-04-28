@@ -1,5 +1,5 @@
 package muramasa.antimatter.cover.pipe;
-
+/*
 import muramasa.antimatter.cover.CoverTransition;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -13,7 +13,7 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverFluid extends CoverTransition implements IFluidNode {
+public class TransitionFluidCover extends CoverTransition implements IFluidNode {
 
     @Override
     public String getId() {
@@ -34,7 +34,7 @@ public class CoverFluid extends CoverTransition implements IFluidNode {
 
     @Override
     public void onUpdate(TileEntity tile, Direction side) {
-        // TODO: update controller
+        if (controller != null) controller.tick();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class CoverFluid extends CoverTransition implements IFluidNode {
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return false;
+        return true;
     }
 
     @Override
@@ -91,11 +91,13 @@ public class CoverFluid extends CoverTransition implements IFluidNode {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return false;
+        return true;
     }
 
     @Override
     public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 }
+*/

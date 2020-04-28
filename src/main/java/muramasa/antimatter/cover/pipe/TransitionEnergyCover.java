@@ -1,6 +1,6 @@
 package muramasa.antimatter.cover.pipe;
 
-import muramasa.antimatter.cover.CoverTransition;
+/*import muramasa.antimatter.cover.CoverTransition;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
@@ -12,7 +12,7 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverEnergy extends CoverTransition implements IElectricNode {
+public class TransitionEnergyCover extends CoverTransition implements IElectricNode {
 
     @Override
     public String getId() {
@@ -33,7 +33,7 @@ public class CoverEnergy extends CoverTransition implements IElectricNode {
 
     @Override
     public void onUpdate(TileEntity tile, Direction side) {
-        // TODO: update controller
+        if (controller != null) controller.tick();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CoverEnergy extends CoverTransition implements IElectricNode {
 
     @Override
     public boolean canInput() {
-        return false;
+        return true;
     }
 
     @Override
@@ -93,11 +93,13 @@ public class CoverEnergy extends CoverTransition implements IElectricNode {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return false;
+        return true;
     }
 
     @Override
     public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
-
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 }
+*/
