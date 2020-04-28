@@ -1,6 +1,8 @@
 package muramasa.antimatter.material;
 
-import java.util.HashSet;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import java.util.Set;
 
 public class MaterialTag implements IMaterialTag {
@@ -33,7 +35,7 @@ public class MaterialTag implements IMaterialTag {
     //TODO get alloy flag for adding mixer and dust crafting recipes automatically
 
     private String id;
-    private Set<Material> materials = new HashSet<>();
+    private Set<Material> materials = new ObjectLinkedOpenHashSet<>();
 
     public MaterialTag(String id) {
         this.id = id;

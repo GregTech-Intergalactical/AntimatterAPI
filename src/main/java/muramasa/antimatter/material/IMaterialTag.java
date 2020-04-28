@@ -1,10 +1,10 @@
 package muramasa.antimatter.material;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 public interface IMaterialTag extends IAntimatterObject {
@@ -30,7 +30,7 @@ public interface IMaterialTag extends IAntimatterObject {
     }
 
     static Set<Material> all(IMaterialTag... tags) {
-        Set<Material> materials = new HashSet<>();
+        Set<Material> materials = new ObjectOpenHashSet<>();
         Arrays.stream(tags).forEach(t -> materials.addAll(t.all()));
         return materials;
     }

@@ -90,24 +90,23 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     /** Test **/
     public static void dumpHashCollisions() {
-        Int2ObjectMap<Map.Entry> previousHashes = new Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<Map.Entry<?, ?>> previousHashes = new Int2ObjectOpenHashMap<>();
         System.out.println("DUMP START");
-        for (RecipeMap map : AntimatterAPI.all(RecipeMap.class)) {
+        for (RecipeMap<?> map : AntimatterAPI.all(RecipeMap.class)) {
             previousHashes.clear();
-            map.getRawMap().entrySet().forEach(e -> {
-                Map.Entry entry = (Map.Entry) e;
-                if (previousHashes.containsKey(entry.getKey().hashCode())) {
+            for (Map.Entry<?, ?> e : map.getRawMap().entrySet()) {
+                if (previousHashes.containsKey(e.getKey().hashCode())) {
                     System.out.println("COLLISION:");
                     System.out.println("Map: " + map.getId());
-                    System.out.println("Existing Hash: " + previousHashes.get(entry.getKey().hashCode()).getKey().hashCode());
+                    System.out.println("Existing Hash: " + previousHashes.get(e.getKey().hashCode()).getKey().hashCode());
                     System.out.println("Existing Recipe: ");
-                    System.out.println(previousHashes.get(entry.getKey().hashCode()).getValue().toString());
-                    System.out.println("Duplicate Hash: " + entry.getKey().hashCode());
+                    System.out.println(previousHashes.get(e.getKey().hashCode()).getValue().toString());
+                    System.out.println("Duplicate Hash: " + e.getKey().hashCode());
                     System.out.println("Duplicate Recipe: ");
-                    System.out.println(entry.getValue().toString());
+                    System.out.println(e.getValue().toString());
                 }
-                previousHashes.put(entry.getKey().hashCode(), entry);
-            });
+                previousHashes.put(e.getKey().hashCode(), e);
+            }
         }
         System.out.println("DUMP END");
     }

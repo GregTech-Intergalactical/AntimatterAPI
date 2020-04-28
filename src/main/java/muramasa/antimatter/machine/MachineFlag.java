@@ -1,5 +1,7 @@
 package muramasa.antimatter.machine;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.types.Machine;
 
 import java.util.*;
@@ -24,7 +26,7 @@ public enum MachineFlag {
         VALUES = values();
     }
 
-    private Set<Machine<?>> types = new HashSet<>();
+    private Set<Machine<?>> types = new ObjectOpenHashSet<>();
 
     public void add(Machine<?>... machines) {
         types.addAll(Arrays.asList(machines));

@@ -1,5 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;

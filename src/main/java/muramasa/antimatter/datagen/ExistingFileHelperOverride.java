@@ -1,5 +1,6 @@
 package muramasa.antimatter.datagen;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
@@ -10,7 +11,7 @@ import java.util.*;
 /** Workaround until I figure out how to reference external resources from another mod for data gen **/
 public class ExistingFileHelperOverride extends ExistingFileHelper {
 
-    public static Set<String> GLOBAL_EXCLUDED_DOMAINS = new HashSet<>();
+    public static Set<String> GLOBAL_EXCLUDED_DOMAINS = new ObjectOpenHashSet<>();
 
     static {
         GLOBAL_EXCLUDED_DOMAINS.add(Ref.ID);
@@ -18,7 +19,7 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
         GLOBAL_EXCLUDED_DOMAINS.add("minecraft");
     }
 
-    Set<String> excludedDomains = new HashSet<>();
+    Set<String> excludedDomains = new ObjectOpenHashSet<>();
 
     public ExistingFileHelperOverride() {
         super(Collections.emptyList(), true);
@@ -26,7 +27,7 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
 
     public ExistingFileHelperOverride(String... domains) {
         this();
-        excludedDomains = new HashSet<>(Arrays.asList(domains));
+        excludedDomains = new ObjectOpenHashSet<>(Arrays.asList(domains));
     }
 
     public ExistingFileHelperOverride addDomains(String... domains) {

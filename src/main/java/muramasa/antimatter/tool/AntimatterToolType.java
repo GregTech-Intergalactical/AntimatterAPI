@@ -1,6 +1,9 @@
 package muramasa.antimatter.tool;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
@@ -27,9 +30,9 @@ public class AntimatterToolType implements IAntimatterObject {
 
     private final String domain, id;
     private final ToolType TOOL_TYPE;
-    private final Set<ToolType> TOOL_TYPES = new HashSet<>();
-    private final Set<Block> EFFECTIVE_BLOCKS = new HashSet<>();
-    private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new HashSet<>();
+    private final Set<ToolType> TOOL_TYPES = new ObjectLinkedOpenHashSet<>();
+    private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
+    private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
     private List<ITextComponent> tooltip = new ObjectArrayList<>();
     @Nullable private SoundEvent useSound;
     private boolean powered, repairable, blockBreakability, autogenerate;

@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
@@ -509,7 +510,7 @@ public class Utils {
             }
         }
 
-        Set<BlockPos> set = new HashSet<>();
+        Set<BlockPos> set = new ObjectOpenHashSet<>();
         BlockState state;
         for (int x = center.getX() - xRadius; x <= center.getX() + xRadius; x++) {
             for (int y = center.getY() - yRadius; y <= center.getY() + yRadius; y++) {
@@ -609,7 +610,7 @@ public class Utils {
         }
         else {
             LinkedList<BlockPos> blocks = new LinkedList<>();
-            Set<BlockPos> visited = new HashSet<>();
+            Set<BlockPos> visited = new ObjectOpenHashSet<>();
             int amount = Configs.GAMEPLAY.AXE_TIMBER_MAX;
             blocks.add(start);
             BlockPos pos;

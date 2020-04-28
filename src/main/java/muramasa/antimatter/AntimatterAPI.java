@@ -1,10 +1,7 @@
 package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
@@ -33,7 +30,7 @@ public final class AntimatterAPI {
     private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, Object>> OBJECTS = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<String, List<Runnable>> CALLBACKS = new Object2ObjectOpenHashMap<>();
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
-    private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new HashSet<>();
+    private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new ObjectOpenHashSet<>();
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
