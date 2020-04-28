@@ -1,10 +1,10 @@
-package muramasa.antimatter.cover.pipe;
+package muramasa.antimatter.capability.node;
 
-/*import muramasa.antimatter.cover.CoverTransition;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.EnergyStorage;
 import tesseract.TesseractAPI;
+import tesseract.api.ITickingNode;
 import tesseract.api.electric.IElectricNode;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
@@ -12,48 +12,52 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TransitionEnergyCover extends CoverTransition implements IElectricNode {
+public class EnergyNode implements IElectricNode, ITickingNode {
 
-    @Override
-    public String getId() {
-        return "energy_transition";
+    private TileEntity tile;
+    private EnergyStorage storage;
+    private ITickingController controller;
+
+    public EnergyNode(TileEntity tile, EnergyStorage storage) {
+        this.tile = tile;
+        this.storage = storage;
+
+        World world = tile.getWorld();
+        if (world != null)
+            TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     @Override
-    public void onPlace(TileEntity tile, Direction side) {
-        //World world = tile.getWorld();
-        //if (world != null)
-        //    TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+    public void remove() {
+        World world = tile.getWorld();
+        if (world != null)
+            TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 
+    //TODO: Call tick from nearest pipe ?
     @Override
-    public void onRemove(TileEntity tile, Direction side) {
-        // TODO: check neighbors
-    }
-
-    @Override
-    public void onUpdate(TileEntity tile, Direction side) {
+    public void tick() {
         if (controller != null) controller.tick();
     }
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        return 0;
+        return storage.receiveEnergy((int)maxReceive, simulate);
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        return 0;
+        return storage.extractEnergy((int)maxExtract, simulate);
     }
 
     @Override
     public long getEnergy() {
-        return 0;
+        return storage.getEnergyStored();
     }
 
     @Override
     public long getCapacity() {
-        return 0;
+        return storage.getMaxEnergyStored();
     }
 
     @Override
@@ -68,12 +72,12 @@ public class TransitionEnergyCover extends CoverTransition implements IElectricN
 
     @Override
     public int getInputAmperage() {
-        return 0;
+        return 1;
     }
 
     @Override
     public int getInputVoltage() {
-        return 0;
+        return 32;
     }
 
     @Override
@@ -83,7 +87,7 @@ public class TransitionEnergyCover extends CoverTransition implements IElectricN
 
     @Override
     public boolean canInput() {
-        return true;
+        return storage.canReceive();
     }
 
     @Override
@@ -102,4 +106,3 @@ public class TransitionEnergyCover extends CoverTransition implements IElectricN
             controller = newController;
     }
 }
-*/

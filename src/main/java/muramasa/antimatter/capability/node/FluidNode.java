@@ -1,10 +1,10 @@
-package muramasa.antimatter.cover.pipe;
-/*
-import muramasa.antimatter.cover.CoverTransition;
+package muramasa.antimatter.capability.node;
+
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
+import tesseract.api.ITickingNode;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.graph.ITickingController;
@@ -13,30 +13,35 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TransitionFluidCover extends CoverTransition implements IFluidNode {
+public class FluidNode implements IFluidNode, ITickingNode {
 
-    @Override
-    public String getId() {
-        return "fluid_transition";
+    private TileEntity tile;
+    private FluidTank tank;
+    private ITickingController controller;
+
+    public FluidNode(TileEntity tile, FluidTank tank) {
+        this.tile = tile;
+        this.tank = tank;
+
+        World world = tile.getWorld();
+        if (world != null)
+            TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     @Override
-    public void onPlace(TileEntity tile, Direction side) {
-        //World world = tile.getWorld();
-        //if (world != null)
-        //    TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+    public void remove() {
+        World world = tile.getWorld();
+        if (world != null)
+            TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 
+    //TODO: Call tick from nearest pipe ?
     @Override
-    public void onRemove(TileEntity tile, Direction side) {
-        // TODO: check neighbors
-    }
-
-    @Override
-    public void onUpdate(TileEntity tile, Direction side) {
+    public void tick() {
         if (controller != null) controller.tick();
     }
 
+    //TODO: Finish this after testing of items
     @Override
     public int insert(@Nonnull FluidData data, boolean simulate) {
         return 0;
@@ -66,22 +71,22 @@ public class TransitionFluidCover extends CoverTransition implements IFluidNode 
 
     @Override
     public int getCapacity() {
-        return 0;
+        return 0
     }
 
     @Override
     public boolean canOutput() {
-        return false;
+        return tank != null;
     }
 
     @Override
     public boolean canInput() {
-        return false;
+        return tank != null;
     }
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return true;
+        return true; // TODO: Should depend on neatrest pipe cover
     }
 
     @Override
@@ -100,4 +105,3 @@ public class TransitionFluidCover extends CoverTransition implements IFluidNode 
             controller = newController;
     }
 }
-*/

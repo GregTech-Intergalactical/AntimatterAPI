@@ -37,6 +37,14 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         }
     }
 
+    public ItemStackWrapper(ItemStackHandler handler) {
+        this.handler = handler;
+
+        for (Dir direction : Dir.VALUES) {
+            filter.put(direction, new ObjectOpenHashSet<>());
+        }
+    }
+
     public int getFirstEmptySlot() {
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
