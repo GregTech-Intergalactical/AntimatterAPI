@@ -13,12 +13,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CoverHandler implements ICoverHandler {
 
     private TileEntity tile;
-    protected ArrayList<String> validCovers;
+    protected List<String> validCovers;
 
     //TODO
     protected Cover[] covers = new Cover[] {
@@ -27,7 +27,7 @@ public class CoverHandler implements ICoverHandler {
 
     public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
-        validCovers = new ArrayList<>();
+        validCovers = new ObjectArrayList<>();
         validCovers.add(Data.COVER_NONE.getId());
         for (Cover cover : covers) {
             validCovers.add(cover.getId());
@@ -43,7 +43,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean set(Direction side, Cover cover) {
+    public boolean onPlace(Direction side, Cover cover) {
         if (!isValid(side, covers[side.getIndex()], cover)) return false;
         covers[side.getIndex()] = cover;
         //TODO add cover.onPlace and cover.onRemove to customize sounds
@@ -53,7 +53,15 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public Cover get(Direction side) {
+    public void onRemove() {
+        for (int i = 0; i < covers.length; i++) {
+            if (covers[i].isEmpty()) continue;
+            covers[i].onRemove(getTile(), Ref.DIRECTIONS[i]);
+        }
+    }
+
+    @Override
+    public Cover getCover(Direction side) {
         return covers[side.getIndex()];
     }
 
@@ -63,7 +71,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override /** Fires ones per hand **/
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
-        Cover cover = get(side);
+        Cover cover = getCover(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
         // switch (type) {
@@ -75,7 +83,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean hasCover(Direction side, Cover cover) {
-        return get(side).isEqual(cover);
+        return getCover(side).isEqual(cover);
     }
 
     @Override

@@ -35,7 +35,7 @@ public enum MachineFlag {
     }
 
     public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
-        ArrayList<Machine<?>> types = new ArrayList<>();
+        List<Machine<?>> types = new ObjectArrayList<>();
         for (MachineFlag flag : flags) {
             types.addAll(flag.getTypes());
         }

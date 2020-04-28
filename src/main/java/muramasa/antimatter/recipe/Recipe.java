@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Recipe {
@@ -72,7 +72,7 @@ public class Recipe {
         if (hasOutputItems()) {
             ItemStack[] outputs = itemsOutput.clone();
             if (chances != null) {
-                ArrayList<ItemStack> evaluated = new ArrayList<>();
+                List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
                     if (Ref.RNG.nextInt(100) < chances[i]) {
                         evaluated.add(outputs[i].copy());

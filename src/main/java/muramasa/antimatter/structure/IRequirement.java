@@ -1,12 +1,12 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import net.minecraft.block.BlockState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public interface IRequirement {
 
-    boolean test(HashMap<String, ArrayList<IComponentHandler>> components, HashMap<String, ArrayList<BlockState>> states);
+    boolean test(Object2ObjectMap<String, List<IComponentHandler>> components, Object2ObjectMap<String, List<BlockState>> states);
 }

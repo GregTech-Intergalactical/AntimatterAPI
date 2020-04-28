@@ -122,7 +122,7 @@ public class ClientEvents {
         if (state.getBlock() instanceof IInfoProvider) {
             e.getLeft().add("");
             e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
-            e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ArrayList<>(), world, state, pos));
+            e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ObjectArrayList<>(), world, state, pos));
         }
         if (MC.player.isCrouching()) {
             //TODO

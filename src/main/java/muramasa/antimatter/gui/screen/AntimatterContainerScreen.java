@@ -8,7 +8,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> {
@@ -35,7 +35,7 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     }
 
     public void drawTooltipInArea(String line, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
-        ArrayList<String> list = new ArrayList<>();
+        List<String> list = new ObjectArrayList<>();
         list.add(line);
         drawTooltipInArea(list, mouseX, mouseY, x, y, sizeX, sizeY);
     }

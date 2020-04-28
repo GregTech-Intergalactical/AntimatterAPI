@@ -19,7 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -62,8 +62,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
-    private ArrayList<MaterialStack> processInto = new ArrayList<>();
-    private ArrayList<Material> byProducts = new ArrayList<>();
+    private List<MaterialStack> processInto = new ObjectArrayList<>();
+    private List<Material> byProducts = new ObjectArrayList<>();
 
     public Material(String domain, String id, int rgb, TextureSet set) {
         this.domain = domain;
@@ -501,11 +501,11 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return macerateInto != this;
     }
 
-    public ArrayList<MaterialStack> getProcessInto() {
+    public List<MaterialStack> getProcessInto() {
         return processInto;
     }
 
-    public ArrayList<Material> getByProducts() {
+    public List<Material> getByProducts() {
         return byProducts;
     }
 

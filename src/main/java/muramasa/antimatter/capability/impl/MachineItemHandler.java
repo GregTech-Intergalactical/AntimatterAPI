@@ -21,7 +21,7 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public class MachineItemHandler implements IItemNode {
@@ -114,7 +114,7 @@ public class MachineItemHandler implements IItemNode {
 
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
-        ArrayList<ItemStack> list = new ArrayList<>();
+        List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < inputWrapper.getSlots(); i++) {
             if (!inputWrapper.getStackInSlot(i).isEmpty()) list.add(inputWrapper.getStackInSlot(i).copy());
         }
@@ -123,7 +123,7 @@ public class MachineItemHandler implements IItemNode {
 
     /** Gets a list of non empty output Items **/
     public List<ItemStack> getOutputList() {
-        ArrayList<ItemStack> list = new ArrayList<>();
+        List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < outputWrapper.getSlots(); i++) {
             if (!outputWrapper.getStackInSlot(i).isEmpty()) list.add(outputWrapper.getStackInSlot(i).copy());
         }
@@ -170,7 +170,7 @@ public class MachineItemHandler implements IItemNode {
     }
 
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
-        ArrayList<ItemStack> notConsumed = new ArrayList<>();
+        List<ItemStack> notConsumed = new ObjectArrayList<>();
         ItemStack result;
         for (int i = 0; i < inputs.length; i++) {
             for (int j = 0; j < inputWrapper.getSlots(); j++) {
@@ -189,7 +189,7 @@ public class MachineItemHandler implements IItemNode {
     }
 
     public ItemStack[] exportAndReturnOutputs(ItemStack... outputs) {
-        ArrayList<ItemStack> notExported = new ArrayList<>();
+        List<ItemStack> notExported = new ObjectArrayList<>();
         ItemStack result;
         for (int i = 0; i < outputs.length; i++) {
             for (int j = 0; j < outputWrapper.getSlots(); j++) {

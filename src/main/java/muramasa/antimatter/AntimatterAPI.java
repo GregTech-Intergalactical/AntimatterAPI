@@ -1,8 +1,10 @@
 package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 
 public final class AntimatterAPI {
 
-    private static final HashMap<Class<?>, LinkedHashMap<String, Object>> OBJECTS = new HashMap<>();
+    private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, Object>> OBJECTS = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<String, List<Runnable>> CALLBACKS = new Object2ObjectOpenHashMap<>();
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
     private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new HashSet<>();
@@ -36,7 +38,7 @@ public final class AntimatterAPI {
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
     private static void registerInternal(Class<?> c, String id, Object o, boolean checkDuplicates) {
-        OBJECTS.putIfAbsent(c, new LinkedHashMap<>());
+        OBJECTS.putIfAbsent(c, new Object2ObjectLinkedOpenHashMap<>());
         if (checkDuplicates && OBJECTS.get(c).containsKey(id)) throw new IllegalStateException("Object: " + id + " for class " + c.getName() + " has already been registered by " + OBJECTS.get(c).get(id));
         OBJECTS.get(c).put(id, o);
     }
@@ -54,23 +56,23 @@ public final class AntimatterAPI {
     }
 
     private static boolean hasObjectBeenRegistered(Class<?> c, String id) {
-        LinkedHashMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null && map.containsKey(id);
     }
 
     @Nullable
     public static <T> T get(Class<T> c, String id) {
-        LinkedHashMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null ? c.cast(map.get(id)) : null;
     }
 
     public static <T> boolean has(Class<T> c, String id) {
-        LinkedHashMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null && map.containsKey(id);
     }
 
     public static <T> List<T> all(Class<T> c) {
-        LinkedHashMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
@@ -102,7 +104,7 @@ public final class AntimatterAPI {
     }
 
     public static void onEvent(RegistrationEvent event, Runnable runnable) {
-        CALLBACKS.computeIfAbsent(event.name(), k -> new ArrayList<>()).add(runnable);
+        CALLBACKS.computeIfAbsent(event.name(), k -> new ObjectArrayList<>()).add(runnable);
     }
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
@@ -147,7 +149,7 @@ public final class AntimatterAPI {
     }
 
     /** Fluid Cell Registry **/
-    private final static Collection<ItemStack> FLUID_CELL_REGISTRY = new ArrayList<>();
+    private final static Collection<ItemStack> FLUID_CELL_REGISTRY = new ObjectArrayList<>();
 
     public static void registerFluidCell(ItemStack stack) {
         //if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
@@ -155,7 +157,7 @@ public final class AntimatterAPI {
     }
 
     public static List<ItemStack> getFluidCells() {
-        List<ItemStack> cells = new ArrayList<>();
+        List<ItemStack> cells = new ObjectArrayList<>();
         FLUID_CELL_REGISTRY.forEach(c -> cells.add(c.copy()));
         return cells;
     }
@@ -176,8 +178,8 @@ public final class AntimatterAPI {
     }
 
     /** Cover Registry Section **/
-    private final static HashMap<String, Cover> COVER_REGISTRY = new HashMap<>();
-    private final static HashMap<Item, Cover> CATALYST_TO_COVER = new HashMap<>();
+    private final static Object2ObjectMap<String, Cover> COVER_REGISTRY = new Object2ObjectOpenHashMap<>();
+    private final static Object2ObjectMap<Item, Cover> CATALYST_TO_COVER = new Object2ObjectOpenHashMap<>();
 
     /**
      * Registers a cover behaviour. This must be done during preInit.
@@ -235,8 +237,8 @@ public final class AntimatterAPI {
 
     /** Attempts to remove a cover at a given side **/
     public static boolean removeCover(PlayerEntity player, ICoverHandler coverHandler, Direction side) {
-        ItemStack toDrop = coverHandler.get(side).getDroppedStack();
-        if (coverHandler.set(side, Data.COVER_NONE)) {
+        ItemStack toDrop = coverHandler.getCover(side).getDroppedStack();
+        if (coverHandler.onPlace(side, Data.COVER_NONE)) {
             if (!player.isCreative()) player.dropItem(toDrop, false);
             return true;
         }

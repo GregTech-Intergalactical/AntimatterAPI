@@ -1,24 +1,26 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 import static muramasa.antimatter.util.Dir.*;
 
 public class Structure {
 
-    private ArrayList<Tuple<int3, StructureElement>> elements;
-    private HashMap<String, IRequirement> requirements = new HashMap<>();
+    private List<Tuple<int3, StructureElement>> elements;
+    private Object2ObjectMap<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
     private int3 size;
     private int2 offset = new int2();
 
-    public Structure(int3 size, ArrayList<Tuple<int3, StructureElement>> elements) {
+    public Structure(int3 size, List<Tuple<int3, StructureElement>> elements) {
         this.size = size;
         this.elements = elements;
     }
@@ -43,11 +45,11 @@ public class Structure {
         return this;
     }
 
-    public ArrayList<Tuple<int3, StructureElement>> getElements() {
+    public List<Tuple<int3, StructureElement>> getElements() {
         return elements;
     }
 
-    public HashMap<String, IRequirement> getRequirements() {
+    public Map<String, IRequirement> getRequirements() {
         return requirements;
     }
 

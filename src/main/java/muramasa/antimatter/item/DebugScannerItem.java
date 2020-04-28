@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
@@ -61,7 +61,7 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
             ((TileEntityBase) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s)));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
-            ((BlockDynamic) state.getBlock()).getInfo(new ArrayList<>(), context.getWorld(), state, context.getPos()).forEach(s -> {
+            ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getWorld(), state, context.getPos()).forEach(s -> {
                 context.getPlayer().sendMessage(new StringTextComponent(s));
             });
             return ActionResultType.SUCCESS;

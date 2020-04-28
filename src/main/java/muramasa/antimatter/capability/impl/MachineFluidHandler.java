@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -21,7 +22,7 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collections;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class MachineFluidHandler implements IFluidNode {
     /** Returns list of input fluids, filtering nulls **/
     public List<FluidStack> getInputList() {
         if (inputWrapper == null) return Collections.emptyList();
-        ArrayList<FluidStack> list = new ArrayList<>();
+        List<FluidStack> list = new ObjectArrayList<>();
         for (int i = 0; i < inputWrapper.getTanks(); i++) {
             FluidStack stack = inputWrapper.getFluidInTank(i);
             if (stack != FluidStack.EMPTY) list.add(stack);
@@ -156,7 +157,7 @@ public class MachineFluidHandler implements IFluidNode {
     /** Returns list of output fluids, filtering nulls **/
     public List<FluidStack> getOutputList() {
         if (outputWrapper == null) return Collections.emptyList();
-        ArrayList<FluidStack> list = new ArrayList<>();
+        List<FluidStack> list = new ObjectArrayList<>();
         for (int i = 0; i < outputWrapper.getTanks(); i++) {
             FluidStack stack = outputWrapper.getFluidInTank(i);
             if (stack != FluidStack.EMPTY) list.add(stack);
@@ -201,7 +202,7 @@ public class MachineFluidHandler implements IFluidNode {
 
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
         if (inputWrapper == null) return new FluidStack[0];
-        ArrayList<FluidStack> notConsumed = new ArrayList<>();
+        List<FluidStack> notConsumed = new ObjectArrayList<>();
         FluidStack result;
         for (FluidStack input : inputs) {
             result = inputWrapper.drain(input, EXECUTE);
@@ -218,7 +219,7 @@ public class MachineFluidHandler implements IFluidNode {
 
     public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {
         if (outputWrapper == null) return new FluidStack[0];
-        ArrayList<FluidStack> notExported = new ArrayList<>();
+        List<FluidStack> notExported = new ObjectArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
             result = outputWrapper.fill(outputs[i], EXECUTE);

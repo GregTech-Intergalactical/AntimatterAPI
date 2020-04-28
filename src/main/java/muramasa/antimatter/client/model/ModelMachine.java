@@ -24,7 +24,7 @@
 //import net.minecraftforge.common.model.IModelState;
 //import net.minecraftforge.common.model.TRSRTransformation;
 //
-//import java.util.ArrayList;
+//import java.util.List;
 //import java.util.Arrays;
 //import java.util.Collection;
 //import java.util.function.Function;
@@ -83,7 +83,7 @@
 //
 //    @Override
 //    public Collection<ResourceLocation> getTextures() {
-//        ArrayList<ResourceLocation> locations = new ArrayList<>();
+//        List<ResourceLocation> locations = new ObjectArrayList<>();
 //        for (Tier tier : Tier.getAllElectric()) {
 //            locations.add(tier.getBaseTexture());
 //        }

@@ -12,7 +12,7 @@ import net.minecraft.block.SoundType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 
 public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
@@ -90,7 +90,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
 //    }
 
     public static Collection<Texture> getAllTextures() {
-        ArrayList<Texture> textures = new ArrayList<>();
+        List<Texture> textures = new ObjectArrayList<>();
         for (StoneType type : getAllGeneratingBlock()) {
             textures.add(type.getTexture());
         }

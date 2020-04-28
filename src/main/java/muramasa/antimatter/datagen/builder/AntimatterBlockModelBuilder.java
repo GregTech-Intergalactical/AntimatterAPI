@@ -17,7 +17,7 @@ import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
     protected static String LAYERED = Ref.ID + ":block/preset/layered";
 
     protected ResourceLocation loader = null;
-    protected List<Consumer<JsonObject>> properties = new ArrayList<>();
+    protected List<Consumer<JsonObject>> properties = new ObjectArrayList<>();
 
     public AntimatterBlockModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
         super(outputLocation, existingFileHelper);

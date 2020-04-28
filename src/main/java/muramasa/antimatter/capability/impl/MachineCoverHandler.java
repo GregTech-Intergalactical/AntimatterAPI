@@ -28,7 +28,7 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
     }
 
     public boolean setOutputFacing(Direction side) {
-        if (set(side, Data.COVER_OUTPUT)) {
+        if (onPlace(side, Data.COVER_OUTPUT)) {
             if (covers[outputSide].isEqual(Data.COVER_OUTPUT)) covers[outputSide] = Data.COVER_NONE;
             outputSide = Utils.rotateFacing(side, getTileFacing()).getIndex();
             return true;
@@ -37,17 +37,17 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
     }
 
     @Override
-    public boolean set(Direction side, Cover cover) {
+    public boolean onPlace(Direction side, Cover cover) {
         if (cover.isEqual(Data.COVER_NONE) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
-            super.set(side, Data.COVER_NONE);
-            return super.set(side, Data.COVER_OUTPUT);
+            super.onPlace(side, Data.COVER_NONE);
+            return super.onPlace(side, Data.COVER_OUTPUT);
         }
-        return super.set(side, cover);
+        return super.onPlace(side, cover);
     }
 
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
-        if (type == Data.CROWBAR && get(side).isEqual(Data.COVER_OUTPUT)) return false;
+        if (type == Data.CROWBAR && getCover(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
     }
 

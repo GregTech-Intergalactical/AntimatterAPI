@@ -91,6 +91,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
+        coverHandler.ifPresent(CoverHandler::onRemove);
         super.remove();
     }
 
@@ -193,7 +194,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
         else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
         else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.get(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
+        else if (cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.getCover(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
         else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
         return super.getCapability(cap, side);
     }
@@ -239,7 +240,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (int i = 0; i < 6; i++) {
-                builder.append(h.get(Ref.DIRECTIONS[i]).getId()).append(" ");
+                builder.append(h.getCover(Ref.DIRECTIONS[i]).getId()).append(" ");
             }
             info.add(builder.toString());
         });

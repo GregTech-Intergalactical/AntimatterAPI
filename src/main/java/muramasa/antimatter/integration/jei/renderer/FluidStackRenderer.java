@@ -9,7 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
@@ -44,7 +44,7 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     }
 
     public static List<String> getFluidTooltip(FluidStack fluidStack) {
-        List<String> tooltip = new ArrayList<>();
+        List<String> tooltip = new ObjectArrayList<>();
         //tooltip.add(fluidStack.getFluid().getLocalizedName(fluidStack));
         tooltip.add(TextFormatting.BLUE + "Amount: " + fluidStack.getAmount());
         tooltip.add(TextFormatting.RED + "Temp: " + fluidStack.getFluid().getAttributes().getTemperature() + " K");

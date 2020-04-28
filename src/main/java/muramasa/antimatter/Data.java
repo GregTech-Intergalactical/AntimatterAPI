@@ -4,6 +4,9 @@ import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
+import muramasa.antimatter.cover.pipe.CoverEnergy;
+import muramasa.antimatter.cover.pipe.CoverFluid;
+import muramasa.antimatter.cover.pipe.CoverItem;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.container.ContainerHatchMachine;
@@ -78,10 +81,14 @@ public class Data {
     public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC);
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
 
-    public static Machine MACHINE_INVALID = new Machine(Ref.ID, "invalid");
+    public static Machine<?> MACHINE_INVALID = new Machine(Ref.ID, "invalid");
 
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();
+    /** Pipe covers **/
+    public static Cover COVER_ENERGY = new CoverEnergy();
+    public static Cover COVER_FLUID = new CoverFluid();
+    public static Cover COVER_ITEM = new CoverItem();
 
     public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler(Ref.ID, "container_basic") {
         @Nullable

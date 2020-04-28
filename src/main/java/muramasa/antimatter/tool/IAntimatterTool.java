@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IItemProvider;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
@@ -40,7 +40,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     @Override default Texture[] getTextures() {
-        List<Texture> textures = new ArrayList<>();
+        List<Texture> textures = new ObjectArrayList<>();
         int layers = getType().getOverlayLayers();
         textures.add(new Texture(getDomain(), "item/tool/".concat(getType().getId())));
         if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getType().getId())));

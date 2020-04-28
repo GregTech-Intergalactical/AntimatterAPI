@@ -8,7 +8,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class GuiData {
     protected BarDir side = BarDir.LEFT;
     protected IInfoRenderer infoRenderer;
 
-    protected LinkedHashMap<String, ArrayList<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
+    protected LinkedHashMap<String, List<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
     protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
 
     public GuiData(String domain, String id) {
@@ -162,7 +162,7 @@ public class GuiData {
         if (SLOT_LOOKUP.containsKey(key)) {
             SLOT_LOOKUP.get(key).add(slot);
         } else {
-            ArrayList<SlotData> list = new ArrayList<>();
+            List<SlotData> list = new ObjectArrayList<>();
             list.add(slot);
             SLOT_LOOKUP.put(key, list);
         }
@@ -170,12 +170,12 @@ public class GuiData {
     }
 
     public boolean hasSlots() {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(ANY);
+        List<SlotData> slots = SLOT_LOOKUP.get(ANY);
         return slots != null && slots.size() > 0;
     }
 
     public boolean hasSlots(Tier tier) {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
+        List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         return slots != null && slots.size() > 0;
     }
 
@@ -188,14 +188,14 @@ public class GuiData {
     }
 
     public List<SlotData> getSlots(Tier tier) {
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
+        List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
-        return slots != null ? slots : new ArrayList<>();
+        return slots != null ? slots : new ObjectArrayList<>();
     }
 
     public List<SlotData> getSlots(SlotType type, Tier tier) {
-        ArrayList<SlotData> types = new ArrayList<>();
-        ArrayList<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
+        List<SlotData> types = new ObjectArrayList<>();
+        List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
         for (SlotData slot : slots) {

@@ -1,5 +1,9 @@
 package muramasa.antimatter.recipe;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
@@ -13,13 +17,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
-    private HashMap<RecipeInput, Recipe> LOOKUP;
+    private Object2ObjectMap<RecipeInput, Recipe> LOOKUP;
     private String id;
     private B builder;
 
@@ -27,7 +30,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.id = "gt.recipe_map." + categoryId;
         this.builder = builder;
         this.builder.setMap(this);
-        LOOKUP = new HashMap<>();
+        LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
         AntimatterAPI.register(RecipeMap.class, id, this);
     }
 
@@ -49,13 +52,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return builder;
     }
 
-    public HashMap<RecipeInput, Recipe> getRawMap() {
+    public Map<RecipeInput, Recipe> getRawMap() {
         return LOOKUP;
     }
 
     public Collection<Recipe> getRecipes(boolean filterHidden) {
         if (filterHidden) return LOOKUP.values().stream().filter(r -> !r.isHidden()).collect(Collectors.toList());
-        return LOOKUP.values().stream().collect(Collectors.toList());
+        return LOOKUP.values();
     }
 
     void add(Recipe recipe) {
@@ -87,7 +90,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     /** Test **/
     public static void dumpHashCollisions() {
-        HashMap<Integer, Map.Entry> previousHashes = new HashMap<>();
+        Int2ObjectMap<Map.Entry> previousHashes = new Int2ObjectOpenHashMap<>();
         System.out.println("DUMP START");
         for (RecipeMap map : AntimatterAPI.all(RecipeMap.class)) {
             previousHashes.clear();

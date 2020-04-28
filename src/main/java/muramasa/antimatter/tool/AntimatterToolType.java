@@ -30,7 +30,7 @@ public class AntimatterToolType implements IAntimatterObject {
     private final Set<ToolType> TOOL_TYPES = new HashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new HashSet<>();
     private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new HashSet<>();
-    private List<ITextComponent> tooltip = new ArrayList<>();
+    private List<ITextComponent> tooltip = new ObjectArrayList<>();
     @Nullable private SoundEvent useSound;
     private boolean powered, repairable, blockBreakability, autogenerate;
     private long baseMaxEnergy;
@@ -117,7 +117,7 @@ public class AntimatterToolType implements IAntimatterObject {
      */
     public List<IAntimatterTool> instantiatePoweredVariants(String domain, Material primary, @Nullable Material secondary) {
         AntimatterItemTier tier = new AntimatterItemTier(this, primary, secondary);
-        List<IAntimatterTool> poweredTools = new ArrayList<>();
+        List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
         Item.Properties properties = prepareInstantiation(domain, tier);
         for (int energyTier : energyTiers) {
             //System.out.println(Ref.VN[energyTier].toLowerCase(Locale.ENGLISH));
