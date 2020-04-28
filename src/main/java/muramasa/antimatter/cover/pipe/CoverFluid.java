@@ -1,13 +1,8 @@
 package muramasa.antimatter.cover.pipe;
 
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
-import tesseract.TesseractAPI;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.graph.ITickingController;

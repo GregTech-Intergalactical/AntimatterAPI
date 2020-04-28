@@ -25,7 +25,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.List;
 
 public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
 

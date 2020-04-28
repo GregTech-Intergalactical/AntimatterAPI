@@ -5,7 +5,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
 import java.util.List;
-import java.util.List;
 
 public abstract class TileEntityBase extends TileEntity {
 

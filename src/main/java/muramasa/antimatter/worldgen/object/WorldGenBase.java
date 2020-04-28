@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.object;
 
-import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.world.biome.Biome;
 
@@ -23,7 +23,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
 
     public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, int... dimensions) {
         this.id = id;
-        this.dimensions = Arrays.stream(dimensions).boxed().collect(Collectors.toCollection(Sets::newLinkedHashSet));
+        this.dimensions = Arrays.stream(dimensions).boxed().collect(Collectors.toCollection(ObjectOpenHashSet::new));
         AntimatterWorldGenerator.register(c, this);
     }
 

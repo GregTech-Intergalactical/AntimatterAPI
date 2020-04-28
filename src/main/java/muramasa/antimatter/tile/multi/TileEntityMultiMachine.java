@@ -23,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.List;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

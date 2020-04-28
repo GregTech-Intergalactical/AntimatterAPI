@@ -26,7 +26,6 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
 
-import java.util.List;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;

@@ -20,8 +20,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.Heightmap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 
-import java.util.List;
-
 public class WorldGenHelper {
 
     public static Object2ObjectOpenHashMap<BlockState, StoneType> STONE_MAP = new Object2ObjectOpenHashMap<>();

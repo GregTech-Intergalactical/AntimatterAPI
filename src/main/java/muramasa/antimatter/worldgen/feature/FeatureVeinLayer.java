@@ -16,7 +16,6 @@ import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
-import java.util.List;
 import java.util.Random;
 
 public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {

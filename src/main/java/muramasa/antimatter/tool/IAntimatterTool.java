@@ -15,7 +15,6 @@ import net.minecraft.util.IItemProvider;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.List;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 

@@ -3,8 +3,6 @@ package muramasa.antimatter.cover.pipe;
 import muramasa.antimatter.cover.Cover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
-import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricNode;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;

@@ -10,7 +10,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.List;
 
 public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
 

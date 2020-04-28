@@ -4,8 +4,6 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import muramasa.antimatter.cover.Cover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
-import tesseract.TesseractAPI;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
 import tesseract.graph.ITickingController;

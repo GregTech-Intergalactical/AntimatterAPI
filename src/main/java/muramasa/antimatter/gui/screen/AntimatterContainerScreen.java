@@ -9,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
-import java.util.List;
 
 public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> {
 

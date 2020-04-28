@@ -22,7 +22,6 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.List;
 
 public class MachineItemHandler implements IItemNode {
 
