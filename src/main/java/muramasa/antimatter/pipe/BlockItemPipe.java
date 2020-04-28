@@ -13,20 +13,28 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemPipe;
+import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
+public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe, ITickHost {
 
     protected boolean restrictive;
+    protected ITickingController controller;
 
     public BlockItemPipe(PipeType<?> type, PipeSize size, boolean restrictive) {
         super(restrictive ? "item_restrictive" : "item", type, size);
         this.restrictive = restrictive;
+    }
+
+    @Override
+    public void tick() {
+        if (controller != null) controller.tick();
     }
 
     @Override
@@ -43,6 +51,12 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
     @Override
     public boolean connects(@Nonnull Dir direction) {
         return true;
+    }
+
+    @Override
+    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 
     @Override

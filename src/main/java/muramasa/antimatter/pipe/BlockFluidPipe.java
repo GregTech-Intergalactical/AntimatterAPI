@@ -13,14 +13,18 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.IFluidPipe;
+import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPipe {
+public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPipe, ITickHost {
+
+    protected ITickingController controller;
 
     public BlockFluidPipe(PipeType<?> type, PipeSize size) {
         super(type.getId(), type, size);
@@ -30,6 +34,11 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
         Block block = state.getBlock();
         return block instanceof BlockMachine ? ((BlockMachine)block).getType().has(MachineFlag.FLUID) : block instanceof BlockFluidPipe;
+    }
+
+    @Override
+    public void tick() {
+        if (controller != null) controller.tick();
     }
 
     @Override
@@ -55,6 +64,12 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> implements IFluidPip
     @Override
     public boolean connects(@Nonnull Dir direction) {
         return true;
+    }
+
+    @Override
+    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+            controller = newController;
     }
 
     @Override

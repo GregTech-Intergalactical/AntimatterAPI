@@ -48,10 +48,6 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
     @Override
     public abstract String getId();
 
-    /*public void tick() {
-
-    }*/
-
     public Material getMaterial() {
         return material;
     }
