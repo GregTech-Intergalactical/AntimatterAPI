@@ -1,8 +1,10 @@
 package muramasa.antimatter.cover.pipe;
 
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverTransition;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.world.World;
+import tesseract.TesseractAPI;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.graph.ITickingController;
@@ -11,28 +13,28 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverFluid extends Cover implements IFluidNode {
+public class CoverFluid extends CoverTransition implements IFluidNode {
 
     @Override
     public String getId() {
-        return "fluid";
-    }
-
-    /*@Override
-    public void onSet(TileEntity tile, Direction side) {
-        World world = tile.getWorld();
-        if (world != null)
-            TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+        return "fluid_transition";
     }
 
     @Override
-    public void onRemove() {
+    public void onPlace(TileEntity tile, Direction side) {
+        //World world = tile.getWorld();
+        //if (world != null)
+        //    TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+    }
 
-    }*/
+    @Override
+    public void onRemove(TileEntity tile, Direction side) {
+        // TODO: check neighbors
+    }
 
     @Override
     public void onUpdate(TileEntity tile, Direction side) {
-
+        // TODO: update controller
     }
 
     @Override

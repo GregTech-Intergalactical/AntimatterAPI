@@ -1,9 +1,11 @@
 package muramasa.antimatter.cover.pipe;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverTransition;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.world.World;
+import tesseract.TesseractAPI;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
 import tesseract.graph.ITickingController;
@@ -12,29 +14,30 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverItem extends Cover implements IItemNode {
+public class CoverItem extends CoverTransition implements IItemNode {
 
     @Override
     public String getId() {
-        return "item";
+        return "item_transition";
     }
 
-    /*@Override
-    public void onSet(TileEntity tile, Direction side) {
-        World world = tile.getWorld();
-        if (world != null)
-            TesseractAPI.registerItemNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
-    }*/
+    @Override
+    public void onPlace(TileEntity tile, Direction side) {
+        //World world = tile.getWorld();
+        //if (world != null)
+        //    TesseractAPI.registerItemNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+    }
 
     @Override
     public void onRemove(TileEntity tile, Direction side) {
-
+        // TODO: check neighbors
     }
 
     @Override
     public void onUpdate(TileEntity tile, Direction side) {
-
+        // TODO: update controller
     }
+
 
     @Override
     public int insert(@Nonnull ItemData data, boolean simulate) {
