@@ -4,9 +4,6 @@ import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
-import muramasa.antimatter.cover.pipe.TransitionEnergyCover;
-import muramasa.antimatter.cover.pipe.TransitionFluidCover;
-import muramasa.antimatter.cover.pipe.CoverItem;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.container.ContainerHatchMachine;
@@ -85,10 +82,6 @@ public class Data {
 
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();
-    /** Pipe covers **/
-    public static Cover COVER_ENERGY = new TransitionEnergyCover();
-    public static Cover COVER_FLUID = new TransitionFluidCover();
-    public static Cover COVER_ITEM = new CoverItem();
 
     public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler(Ref.ID, "container_basic") {
         @Nullable

@@ -16,6 +16,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     public ItemPipe(String domain, Material material) {
         super(domain, material);
         setTile(() -> new TileEntityItemPipe(this));
+
     }
 
     @Override

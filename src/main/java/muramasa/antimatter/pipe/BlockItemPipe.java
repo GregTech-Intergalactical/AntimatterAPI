@@ -73,7 +73,7 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
         return info;
     }
 
-/*@Override
+    /*@Override
     public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
         if (worldIn.isRemote()) return;
     }*/

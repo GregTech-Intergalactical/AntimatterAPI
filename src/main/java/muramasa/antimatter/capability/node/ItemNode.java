@@ -5,7 +5,6 @@ import muramasa.antimatter.capability.impl.ItemStackWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import tesseract.TesseractAPI;
 import tesseract.api.ITickingNode;
@@ -95,7 +94,7 @@ public class ItemNode implements IItemNode, ITickingNode {
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return true; // TODO: Should depend on neatrest pipe cover
+        return true; // TODO: Should depend on nearest pipe cover
     }
 
     @Override
