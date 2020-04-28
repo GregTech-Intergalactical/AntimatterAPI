@@ -4,6 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.PipeBakedModel;

@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;

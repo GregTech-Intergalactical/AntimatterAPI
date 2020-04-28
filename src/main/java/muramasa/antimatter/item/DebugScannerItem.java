@@ -1,5 +1,6 @@
 package muramasa.antimatter.item;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockCoil;
 import muramasa.antimatter.block.BlockDynamic;

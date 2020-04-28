@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;

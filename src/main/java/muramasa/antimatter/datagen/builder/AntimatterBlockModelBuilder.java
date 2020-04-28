@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;

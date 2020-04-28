@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerComponentHandler;

@@ -1,6 +1,7 @@
 package muramasa.antimatter.integration.jei.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import muramasa.antimatter.client.RenderHelper;
 import net.minecraft.client.Minecraft;

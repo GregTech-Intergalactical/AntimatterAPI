@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;

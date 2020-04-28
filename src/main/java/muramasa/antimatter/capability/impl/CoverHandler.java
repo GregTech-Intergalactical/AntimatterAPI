@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;

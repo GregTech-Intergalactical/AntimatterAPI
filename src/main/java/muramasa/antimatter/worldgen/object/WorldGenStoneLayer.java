@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen.object;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.StoneLayerOre;

@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen;
 
 import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
