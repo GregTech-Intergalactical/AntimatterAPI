@@ -21,14 +21,14 @@ public class FluidNode implements IFluidNode {
         this.tank = tank;
 
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     @Override
     public void remove() {
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 

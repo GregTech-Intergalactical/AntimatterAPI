@@ -49,8 +49,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         AntimatterAPI.register(BlockPipe.class, getId(), this);
     }
 
-    public abstract void onTick();
-
     public T getType() {
         return (T) type;
     }

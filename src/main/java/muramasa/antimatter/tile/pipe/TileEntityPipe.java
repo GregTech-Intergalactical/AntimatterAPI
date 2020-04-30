@@ -50,10 +50,6 @@ public class TileEntityPipe extends TileEntityTickable {
         //if (isServerSide()) refreshConnections();
     }
 
-    public void callPipeTick() {
-        ((BlockPipe<?>) getBlockState().getBlock()).onTick();
-    }
-
     public PipeType<?> getPipeType() {
         return type != null ? type : (type = ((BlockPipe<?>) getBlockState().getBlock()).getType());
     }

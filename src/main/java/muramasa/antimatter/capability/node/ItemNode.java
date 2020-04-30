@@ -24,14 +24,14 @@ public class ItemNode implements IItemNode {
         this.handler = new ItemStackWrapper(handler);
 
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.registerItemNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     @Override
     public void remove() {
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 

@@ -16,7 +16,6 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     public ItemPipe(String domain, Material material) {
         super(domain, material);
         setTile(() -> new TileEntityItemPipe(this));
-
     }
 
     @Override
@@ -26,7 +25,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
     @Override
     public Set<Block> getBlocks() {
-        return sizes.stream().map(s -> new BlockItemPipe(this, s, false)).collect(Collectors.toSet());
+        return sizes.stream().map(s -> new BlockItemPipe(this, s)).collect(Collectors.toSet());
     }
 
     public int getCapacity(PipeSize size) {

@@ -49,7 +49,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
 
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
@@ -71,11 +71,9 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     }
 
     public void onRemove() {
-        if (tile != null) {
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
-        }
+        World world = tile.getWorld();
+        if (world != null && !world.isRemote())
+            TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 
 //    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {

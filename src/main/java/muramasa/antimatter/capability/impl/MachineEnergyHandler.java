@@ -16,14 +16,12 @@ public class MachineEnergyHandler extends EnergyHandler {
     public MachineEnergyHandler(TileEntityMachine tile) {
         super(0, 0, 0, 0, 1, 0);
         this.tile = tile;
-        if (tile != null) {
-            this.capacity = tile.getMachineTier().getVoltage() * 64L;
-            this.voltage_in = tile.getMachineTier().getVoltage();
+        this.capacity = tile.getMachineTier().getVoltage() * 64L;
+        this.voltage_in = tile.getMachineTier().getVoltage();
 
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
-        }
+        World world = tile.getWorld();
+        if (world != null && !world.isRemote())
+            TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
@@ -31,11 +29,9 @@ public class MachineEnergyHandler extends EnergyHandler {
     }
 
     public void onRemove() {
-        if (tile != null) {
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
-        }
+        World world = tile.getWorld();
+        if (world != null && !world.isRemote())
+            TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 
 //    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {

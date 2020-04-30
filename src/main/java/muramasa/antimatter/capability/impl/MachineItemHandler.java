@@ -41,7 +41,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         }
 
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.registerItemNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
@@ -55,11 +55,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void onRemove() {
-        if (tile != null) {
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
-        }
+        World world = tile.getWorld();
+        if (world != null && !world.isRemote())
+            TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 
 //    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
