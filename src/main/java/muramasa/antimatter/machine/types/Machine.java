@@ -2,6 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -41,7 +42,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected TileEntityType<?> tileType;
     protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
-    protected ArrayList<Tier> tiers = new ArrayList<>();
+    protected List<Tier> tiers = new ObjectArrayList<>();
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -74,8 +75,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     protected void addData(Object... data) {
-        ArrayList<Tier> tiers = new ArrayList<>();
-        ArrayList<MachineFlag> flags = new ArrayList<>();
+        List<Tier> tiers = new ObjectArrayList<>();
+        List<MachineFlag> flags = new ObjectArrayList<>();
         for (Object o : data) {
             if (o instanceof RecipeMap) {
                 recipeMap = (RecipeMap<?>) o;
@@ -115,7 +116,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public List<Texture> getTextures() {
-        ArrayList<Texture> textures = new ArrayList<>();
+        List<Texture> textures = new ObjectArrayList<>();
         for (Tier tier : getTiers()) {
             //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
             textures.add(getBaseTexture(tier));
@@ -163,7 +164,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public void setTiers(Tier... tiers) {
-        this.tiers = new ArrayList<>(Arrays.asList(tiers));
+        this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
     }
 
     public void setGUI(MenuHandler<?> menuHandler) {
@@ -216,7 +217,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
-        ArrayList<Machine<?>> types = new ArrayList<>();
+        List<Machine<?>> types = new ObjectArrayList<>();
         for (MachineFlag flag : flags) {
             types.addAll(flag.getTypes());
         }

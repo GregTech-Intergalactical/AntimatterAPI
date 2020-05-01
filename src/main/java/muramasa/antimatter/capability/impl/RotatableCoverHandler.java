@@ -21,12 +21,12 @@ public class RotatableCoverHandler extends CoverHandler {
     }
 
     @Override
-    public boolean set(Direction side, Cover cover) {
-        return super.set(Utils.rotateFacing(side, getTileFacing()), cover);
+    public boolean onPlace(Direction side, Cover cover) {
+        return super.onPlace(Utils.rotateFacing(side, getTileFacing()), cover);
     }
 
     @Override
-    public Cover get(Direction side) {
-        return super.get(Utils.rotateFacing(side, getTileFacing()));
+    public Cover getCover(Direction side) {
+        return super.getCover(Utils.rotateFacing(side, getTileFacing()));
     }
 }

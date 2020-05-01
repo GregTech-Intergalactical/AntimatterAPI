@@ -1,10 +1,10 @@
 package muramasa.antimatter.tile;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TileEntityBase extends TileEntity {
@@ -42,7 +42,7 @@ public abstract class TileEntityBase extends TileEntity {
 
     //TODO pass constant StringBuilder
     public List<String> getInfo() {
-        List<String> info = new ArrayList<>();
+        List<String> info = new ObjectArrayList<>();
         info.add("Tile: " + getClass().getName());
         return info;
     }

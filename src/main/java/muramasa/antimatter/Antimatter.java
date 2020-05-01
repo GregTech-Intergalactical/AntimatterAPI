@@ -2,8 +2,13 @@ package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.node.EnergyNode;
+import muramasa.antimatter.capability.node.FluidNode;
+import muramasa.antimatter.capability.node.ItemNode;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
@@ -16,6 +21,7 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
@@ -27,6 +33,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -35,21 +42,29 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricEvent;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidEvent;
+import tesseract.graph.IConnectable;
 
 import javax.annotation.Nonnull;
 
@@ -62,6 +77,7 @@ public class Antimatter implements IAntimatterRegistrar {
     public static Logger LOGGER = LogManager.getLogger(Ref.ID);
     public static IProxyHandler PROXY;
     public static Int2ObjectMap<World> WORLDS = new Int2ObjectOpenHashMap<>();
+    public static Long2ObjectMap<IConnectable> NODES = new Long2ObjectOpenHashMap<>();
 
     public Antimatter() {
         INSTANCE = this;
@@ -95,11 +111,6 @@ public class Antimatter implements IAntimatterRegistrar {
         };
         // TODO: Make explosions depend on pressure, capacity, temperature
         TesseractAPI.GLOBAL_FLUID_EVENT = new IFluidEvent() {
-            @Override
-            public void onNodeOverPressure(int dim, long pos, int pressure) {
-                Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.NONE);
-            }
-
             @Override
             public void onPipeOverPressure(int dim, long pos, int pressure) {
                 Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.BREAK);
@@ -183,6 +194,31 @@ public class Antimatter implements IAntimatterRegistrar {
         if (e.includeServer()) {
 
         }
+    }
+
+    @SubscribeEvent
+    public static void onBlockPlace(BlockEvent.EntityPlaceEvent e) {
+        TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
+        if (!(tile instanceof TileEntityMachine)) return;
+        tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(handler -> {
+            if (!(handler instanceof FluidTank)) return;
+            NODES.put(e.getPos().toLong(), new FluidNode(tile, (FluidTank) handler));
+        });
+        tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
+            if (!(handler instanceof ItemStackHandler)) return;
+            NODES.put(e.getPos().toLong(), new ItemNode(tile, (ItemStackHandler) handler));
+        });
+        tile.getCapability(CapabilityEnergy.ENERGY).ifPresent(handler -> {
+            if (!(handler instanceof EnergyStorage)) return;
+            NODES.put(e.getPos().toLong(), new EnergyNode(tile, (EnergyStorage) handler));
+        });
+    }
+
+    @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent e) {
+        TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
+        IConnectable node = NODES.remove(e.getPos().toLong());
+        if (node != null) node.remove();
     }
 
     @SubscribeEvent

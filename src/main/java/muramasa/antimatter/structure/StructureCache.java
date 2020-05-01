@@ -1,6 +1,8 @@
 package muramasa.antimatter.structure;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
@@ -14,7 +16,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Mod.EventBusSubscriber
@@ -95,8 +96,8 @@ public class StructureCache {
 
     public static class DimensionEntry {
 
-        private HashMap<BlockPos, BlockPos> STRUCTURE_TO_CONTROLLER = new HashMap<>(); //Structure Position -> Controller Position
-        private HashMap<BlockPos, List<BlockPos>> CONTROLLER_TO_STRUCTURE = new HashMap<>(); //Controller Pos -> All Structure Positions
+        private Object2ObjectMap<BlockPos, BlockPos> STRUCTURE_TO_CONTROLLER = new Object2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
+        private Object2ObjectMap<BlockPos, List<BlockPos>> CONTROLLER_TO_STRUCTURE = new Object2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public int dimension;
 

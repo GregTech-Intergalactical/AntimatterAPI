@@ -4,6 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.PipeBakedModel;
@@ -26,7 +27,6 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -68,7 +68,7 @@ public class AntimatterModelManager {
     }
 
     public static void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
-        PROVIDERS.computeIfAbsent(domain, k -> new ArrayList<>()).add(providerFunc);
+        PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
     }
 
     public static void onProviderInit(String domain, DataGenerator gen) {

@@ -1,12 +1,13 @@
 package muramasa.antimatter.recipe;
 
-import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Recipe {
@@ -17,7 +18,7 @@ public class Recipe {
     private long power;
     private int[] chances;
     private boolean hidden;
-    private Set<RecipeTag> tags = Sets.newHashSet();
+    private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
     public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
         this.itemsInput = stacksInput;
@@ -72,7 +73,7 @@ public class Recipe {
         if (hasOutputItems()) {
             ItemStack[] outputs = itemsOutput.clone();
             if (chances != null) {
-                ArrayList<ItemStack> evaluated = new ArrayList<>();
+                List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
                     if (Ref.RNG.nextInt(100) < chances[i]) {
                         evaluated.add(outputs[i].copy());

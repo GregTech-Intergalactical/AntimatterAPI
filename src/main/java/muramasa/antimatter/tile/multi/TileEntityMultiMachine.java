@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerComponentHandler;
@@ -23,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -92,7 +92,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public List<IComponentHandler> getComponents(String id) {
         if (result.isPresent()) {
-            ArrayList<IComponentHandler> list = result.get().components.get(id);
+            List<IComponentHandler> list = result.get().components.get(id);
             return list != null ? list : Collections.emptyList();
         }
         return Collections.emptyList();
@@ -100,7 +100,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public List<BlockState> getStates(String id) {
         if (result.isPresent()) {
-            ArrayList<BlockState> list = result.get().states.get(id);
+            List<BlockState> list = result.get().states.get(id);
             return list != null ? list : Collections.emptyList();
         }
         return Collections.emptyList();
@@ -130,7 +130,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     /** Returns list of items across all input hatches. Merges equal filters empty **/
     public ItemStack[] getStoredItems() {
         if (!has(MachineFlag.ITEM)) return new ItemStack[0];
-        ArrayList<ItemStack> all = new ArrayList<>();
+        List<ItemStack> all = new ObjectArrayList<>();
         for (IComponentHandler hatch : getComponents("hatch_item_input")) {
             hatch.getItemHandler().ifPresent(h -> Utils.mergeItems(all, h.getInputList()));
         }
@@ -141,7 +141,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     /** Returns list of fluids across all input hatches. Merges equal filters empty **/
     public FluidStack[] getStoredFluids() {
         if (!has(MachineFlag.FLUID)) return new FluidStack[0];
-        ArrayList<FluidStack> all = new ArrayList<>();
+        List<FluidStack> all = new ObjectArrayList<>();
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             hatch.getFluidHandler().ifPresent(h -> Utils.mergeFluids(all, h.getInputList()));
         }

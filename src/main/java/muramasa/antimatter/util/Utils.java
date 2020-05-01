@@ -2,6 +2,9 @@ package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
@@ -36,6 +39,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -49,6 +53,9 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class Utils {
 
@@ -239,6 +246,18 @@ public class Utils {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
                 ItemHandlerHelper.insertItem(to, from.extractItem(i, from.getStackInSlot(i).getCount(), false), false);
+            }
+        }
+    }
+
+    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
+        for (int i = 0; i < to.getTanks(); i++) {
+            if (i >= from.getTanks()) break;
+            FluidStack toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            int filled = to.fill(toInsert, SIMULATE);
+            if (filled > 0) {
+                toInsert.setAmount(filled);
+                to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
     }
@@ -489,7 +508,7 @@ public class Utils {
             }
         }
 
-        Set<BlockPos> set = new HashSet<>();
+        Set<BlockPos> set = new ObjectOpenHashSet<>();
         BlockState state;
         for (int x = center.getX() - xRadius; x <= center.getX() + xRadius; x++) {
             for (int y = center.getY() - yRadius; y <= center.getY() + yRadius; y++) {
@@ -589,7 +608,7 @@ public class Utils {
         }
         else {
             LinkedList<BlockPos> blocks = new LinkedList<>();
-            Set<BlockPos> visited = new HashSet<>();
+            Set<BlockPos> visited = new ObjectOpenHashSet<>();
             int amount = Configs.GAMEPLAY.AXE_TIMBER_MAX;
             blocks.add(start);
             BlockPos pos;
@@ -682,7 +701,7 @@ public class Utils {
      */
     public static DyeColor determineColour(int rgb) {
         Color colour = new Color(rgb);
-        Map<Double, DyeColor> distances = new HashMap<>();
+        Double2ObjectMap<DyeColor> distances = new Double2ObjectOpenHashMap<>();
         for (DyeColor dyeColour : DyeColor.values()) {
             Color enumColour = new Color(dyeColour.getColorValue());
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
@@ -690,7 +709,7 @@ public class Utils {
                 + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
             distances.put(distance, dyeColour);
         }
-        return distances.get(Collections.min(distances.keySet()));
+        return distances.get((double) Collections.min(distances.keySet()));
     }
     
     public static String lowerUnderscoreToUpperSpaced(String string) {

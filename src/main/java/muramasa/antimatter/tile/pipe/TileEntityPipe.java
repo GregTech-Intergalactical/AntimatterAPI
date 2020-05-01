@@ -1,8 +1,10 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.impl.CoverHandler;
 import muramasa.antimatter.capability.impl.PipeConfigHandler;
+import muramasa.antimatter.capability.impl.PipeCoverHandler;
+import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
@@ -23,7 +25,7 @@ public class TileEntityPipe extends TileEntityTickable {
     protected PipeSize size;
 
     /** Capabilities **/
-    public Optional<CoverHandler> coverHandler = Optional.empty();
+    public Optional<PipeCoverHandler> coverHandler = Optional.empty();
     public Optional<PipeConfigHandler> configHandler = Optional.empty();
 
     protected byte connections, disabledConnections;
@@ -39,7 +41,7 @@ public class TileEntityPipe extends TileEntityTickable {
 
     @Override
     public void initCaps() {
-        coverHandler = Optional.of(new CoverHandler(this));
+        coverHandler = Optional.of(new PipeCoverHandler(this));
         configHandler = Optional.of(new PipeConfigHandler(this));
     }
 
@@ -98,6 +100,10 @@ public class TileEntityPipe extends TileEntityTickable {
             System.out.println("Disabled Connection for " + side);
         }
         //refreshConnections();
+    }
+
+    public Cover[] getValidCovers() {
+        return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
     }
 
     @Nonnull

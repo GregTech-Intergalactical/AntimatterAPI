@@ -1,31 +1,35 @@
 package muramasa.antimatter.capability.impl;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
+import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler implements IFluidNode {
+public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     protected static int DEFAULT_CAPACITY = 99999;
     protected static int DEFAULT_PRESSURE = 99999;
@@ -33,34 +37,33 @@ public class MachineFluidHandler implements IFluidNode {
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
-    protected int capacity, pressure_in, pressure_out;
+    protected int capacity, pressure;
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure_in, int pressure_out) {
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure) {
         this.tile = tile;
         this.capacity = capacity;
-        this.pressure_in = pressure_in;
-        this.pressure_out = pressure_out;
+        this.pressure = pressure;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
-        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, true);
-        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, false);
+        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
+        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
 
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE);
+        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure_in, int pressure_out, CompoundNBT fluidData) {
-        this(tile, capacity, pressure_in, pressure_out);
+    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure, CompoundNBT fluidData) {
+        this(tile, capacity, pressure);
         if (fluidData != null) deserialize(fluidData);
     }
 
     public MachineFluidHandler(TileEntityMachine tile, CompoundNBT fluidData) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, DEFAULT_PRESSURE, fluidData);
+        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, fluidData);
     }
 
     public void onUpdate() {
@@ -68,12 +71,16 @@ public class MachineFluidHandler implements IFluidNode {
     }
 
     public void onRemove() {
-        if (tile != null) {
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
-        }
+        World world = tile.getWorld();
+        if (world != null && !world.isRemote())
+            TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
+
+//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+//        ITickingController controller = TesseractAPI.getFluidController(world.getDimension().getType().getId(), pos.toLong());
+//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+//        return info;
+//    }
 
     public FluidTankWrapper getInputWrapper() {
         return inputWrapper;
@@ -137,7 +144,7 @@ public class MachineFluidHandler implements IFluidNode {
     /** Returns list of input fluids, filtering nulls **/
     public List<FluidStack> getInputList() {
         if (inputWrapper == null) return Collections.emptyList();
-        ArrayList<FluidStack> list = new ArrayList<>();
+        List<FluidStack> list = new ObjectArrayList<>();
         for (int i = 0; i < inputWrapper.getTanks(); i++) {
             FluidStack stack = inputWrapper.getFluidInTank(i);
             if (stack != FluidStack.EMPTY) list.add(stack);
@@ -148,7 +155,7 @@ public class MachineFluidHandler implements IFluidNode {
     /** Returns list of output fluids, filtering nulls **/
     public List<FluidStack> getOutputList() {
         if (outputWrapper == null) return Collections.emptyList();
-        ArrayList<FluidStack> list = new ArrayList<>();
+        List<FluidStack> list = new ObjectArrayList<>();
         for (int i = 0; i < outputWrapper.getTanks(); i++) {
             FluidStack stack = outputWrapper.getFluidInTank(i);
             if (stack != FluidStack.EMPTY) list.add(stack);
@@ -193,7 +200,7 @@ public class MachineFluidHandler implements IFluidNode {
 
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
         if (inputWrapper == null) return new FluidStack[0];
-        ArrayList<FluidStack> notConsumed = new ArrayList<>();
+        List<FluidStack> notConsumed = new ObjectArrayList<>();
         FluidStack result;
         for (FluidStack input : inputs) {
             result = inputWrapper.drain(input, EXECUTE);
@@ -210,7 +217,7 @@ public class MachineFluidHandler implements IFluidNode {
 
     public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {
         if (outputWrapper == null) return new FluidStack[0];
-        ArrayList<FluidStack> notExported = new ArrayList<>();
+        List<FluidStack> notExported = new ObjectArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
             result = outputWrapper.fill(outputs[i], EXECUTE);
@@ -293,40 +300,45 @@ public class MachineFluidHandler implements IFluidNode {
 
     /** Tesseract IFluidNode Implementations **/
     @Override
-    public int insert(@Nonnull FluidData fluid, boolean simulate) {
-        FluidStack resource = (FluidStack) fluid.getStack();
-        FluidTank tank = inputWrapper.findFluidInTanks(resource);
-        if (tank != null) return tank.fill(resource, simulate ? SIMULATE : EXECUTE);
-        if (!simulate) return inputWrapper.setFirstEmptyTank(resource);
+    public int insert(@Nonnull FluidData data, boolean simulate) {
+        FluidStack stack = (FluidStack) data.getStack();
+        FluidTank tank = inputWrapper.findFluidInTanks(stack);
+        if (tank != null) return tank.fill(stack, simulate ? SIMULATE : EXECUTE);
+        if (!simulate) return inputWrapper.setFirstEmptyTank(stack);
         tank = inputWrapper.getFirstEmptyTank();
-        return tank != null ? Math.min(tank.getCapacity(), resource.getAmount()) : 0;
+        return tank != null ? Math.min(tank.getCapacity(), stack.getAmount()) : 0;
     }
 
     @Nullable
     @Override
-    public FluidData extract(int maxDrain, boolean simulate) {
-        FluidTank tank = outputWrapper.getFirstValidTank();
-        return (tank != null) ? FluidTankWrapper.pack(tank.drain(maxDrain, simulate ? SIMULATE : EXECUTE)) : null;
+    public FluidData extract(@Nonnull Object ref, int amount, boolean simulate) {
+        FluidTank tank = (FluidTank) ref;
+        if (tank.isEmpty()) return null;
+        FluidStack stack = tank.drain(amount, simulate ? SIMULATE : EXECUTE);
+        Fluid fluid = stack.getFluid();
+        FluidAttributes attr = fluid.getAttributes();
+        return new FluidData(stack, fluid, stack.getAmount(), attr.getTemperature(), attr.isGaseous());
+    }
+
+    @Nullable
+    @Override
+    public Object getAvailableTank(@Nonnull Dir direction) {
+        return outputWrapper.getAvailableTank(direction);
     }
 
     @Override
-    public boolean canHold(@Nonnull FluidData fluid) {
-        return inputWrapper.findFluidInTanks((FluidStack) fluid.getStack()) != null || inputWrapper.getFirstEmptyTank() != null;
+    public int getOutputAmount(@Nonnull Dir direction) {
+        return pressure;
+    }
+
+    @Override
+    public int getPriority(@Nonnull Dir direction) {
+        return 0;
     }
 
     @Override
     public int getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public int getOutputPressure() {
-        return pressure_out;
-    }
-
-    @Override
-    public int getInputPressure() {
-        return pressure_in;
     }
 
     @Override
@@ -342,6 +354,11 @@ public class MachineFluidHandler implements IFluidNode {
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
+    }
+
+    @Override
+    public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
+        return inputWrapper.isFluidAvailable(fluid, direction) && (inputWrapper.findFluidInTanks(fluid) != null || inputWrapper.getFirstEmptyTank() != null);
     }
 
     @Override

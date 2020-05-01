@@ -1,6 +1,7 @@
 package muramasa.antimatter.tool.behaviour;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.MaterialTool;
@@ -21,7 +22,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class BehaviourBlockTilling implements IItemUse<MaterialTool> {
 
-    public static final Object2ObjectOpenHashMap<BlockState, BlockState> TILLING_MAP = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectMap<BlockState, BlockState> TILLING_MAP = new Object2ObjectOpenHashMap<>();
 
     static {
         ImmutableMap.of(Blocks.GRASS_BLOCK, Blocks.FARMLAND, Blocks.GRASS_PATH, Blocks.FARMLAND, Blocks.DIRT, Blocks.FARMLAND, Blocks.COARSE_DIRT, Blocks.DIRT)

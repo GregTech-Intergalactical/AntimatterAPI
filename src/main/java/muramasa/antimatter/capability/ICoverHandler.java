@@ -11,9 +11,11 @@ public interface ICoverHandler {
 
     void onUpdate();
 
-    boolean set(Direction side, Cover cover);
+    boolean onPlace(Direction side, Cover cover);
 
-    Cover get(Direction side);
+    void onRemove();
+
+    Cover getCover(Direction side);
 
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type);
 

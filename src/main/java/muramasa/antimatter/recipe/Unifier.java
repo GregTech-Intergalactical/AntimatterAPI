@@ -1,17 +1,17 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class Unifier {
 
-    private static Set<ItemWrapper> UNIFICATION_BLACKLIST = new HashSet<>();
+    private static Set<ItemWrapper> UNIFICATION_BLACKLIST = new ObjectOpenHashSet<>();
 
     private static Object2ObjectOpenHashMap<Fluid, Fluid> FLUID_DICT = new Object2ObjectOpenHashMap<>();
 

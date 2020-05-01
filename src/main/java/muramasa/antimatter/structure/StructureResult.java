@@ -1,12 +1,13 @@
 package muramasa.antimatter.structure;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IComponentHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +19,9 @@ public class StructureResult {
 
     //TODO compile list of positions
 
-    public HashMap<String, ArrayList<IComponentHandler>> components = new HashMap<>();
-    public HashMap<String, ArrayList<BlockState>> states = new HashMap<>();
-    public List<BlockPos> positions = new ArrayList<>();
+    public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
+    public Object2ObjectMap<String, List<BlockState>> states = new Object2ObjectOpenHashMap<>();
+    public List<BlockPos> positions = new ObjectArrayList<>();
 
     public StructureResult(Structure structure) {
         this.structure = structure;
@@ -37,7 +38,7 @@ public class StructureResult {
     }
 
     public void addComponent(String elementId, IComponentHandler component) {
-        ArrayList<IComponentHandler> existing = components.get(component.getId());
+        List<IComponentHandler> existing = components.get(component.getId());
         if (existing == null) components.put(component.getId(), Lists.newArrayList(component));
         else existing.add(component);
         if (!elementId.isEmpty() && !elementId.equals(component.getId())) {
@@ -50,7 +51,7 @@ public class StructureResult {
 
     public void addState(String elementId, BlockPos pos, BlockState state) {
         if (!elementId.equals(StructureElement.IGNORE.elementId)) {
-            ArrayList<BlockState> existing = states.get(elementId);
+            List<BlockState> existing = states.get(elementId);
             if (existing == null) states.put(elementId, Lists.newArrayList(state));
             else existing.add(state);
             positions.add(pos);

@@ -1,5 +1,8 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
@@ -9,10 +12,10 @@ import java.util.*;
 
 public class StructureBuilder {
 
-    private static HashMap<String, StructureElement> globalElementLookup = new HashMap<>();
+    private static Object2ObjectMap<String, StructureElement> globalElementLookup = new Object2ObjectOpenHashMap<>();
 
-    private ArrayList<String[]> slices = new ArrayList<>();
-    private HashMap<String, StructureElement> elementLookup = new HashMap<>();
+    private List<String[]> slices = new ObjectArrayList<>();
+    private Object2ObjectMap<String, StructureElement> elementLookup = new Object2ObjectOpenHashMap<>();
 
     //TODO, probably move to StructureElement?
     public static void addGlobalElement(String key, StructureElement element) {
@@ -62,7 +65,7 @@ public class StructureBuilder {
     }
 
     public Structure build() {
-        ArrayList<Tuple<int3, StructureElement>> elements = new ArrayList<>();
+        List<Tuple<int3, StructureElement>> elements = new ObjectArrayList<>();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
         for (int y = 0; y < size.getY(); y++) {
@@ -81,7 +84,7 @@ public class StructureBuilder {
     }
 
     public static IAntimatterObject[] getAntiObjects(Object... objects) {
-        List<IAntimatterObject> antiObjects = new ArrayList<>();
+        List<IAntimatterObject> antiObjects = new ObjectArrayList<>();
         Arrays.stream(objects).forEach(o -> {
             if (o instanceof RegistryObject && ((RegistryObject<?>) o).get() instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) ((RegistryObject<?>) o).get());
             if (o instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) o);

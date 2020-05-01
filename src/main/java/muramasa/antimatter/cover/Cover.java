@@ -43,10 +43,14 @@ public abstract class Cover {
         return true;
     }
 
-    /**
-     * @param tile containing the cover
-     * @param side global side of the cover
-     */
+    public void onPlace(TileEntity tile, Direction side) {
+        //NOOP
+    }
+
+    public void onRemove(TileEntity tile, Direction side) {
+        //NOOP
+    }
+
     public void onUpdate(TileEntity tile, Direction side) {
         //NOOP
     }

@@ -1,5 +1,6 @@
 package muramasa.antimatter.material;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
@@ -102,7 +103,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible;
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
-    protected Map<MaterialType<?>, Tag<?>> tagMap = new HashMap<>();
+    protected Map<MaterialType<?>, Tag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {

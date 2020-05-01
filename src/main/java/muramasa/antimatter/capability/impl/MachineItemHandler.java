@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
@@ -16,15 +17,15 @@ import net.minecraftforge.items.IItemHandler;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
+import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode {
+public class MachineItemHandler implements IItemNode, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -33,29 +34,14 @@ public class MachineItemHandler implements IItemNode {
     /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
         this.tile = tile;
-        inputWrapper = new ItemStackWrapper(tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size()) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                tile.onMachineEvent(ContentEvent.ITEM_INPUT_CHANGED, slot);
-            }
-        };
-        outputWrapper = new ItemStackWrapper(tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size()) {
-            @Override
-            protected void onContentsChanged(int slot) {
-                tile.onMachineEvent(ContentEvent.ITEM_OUTPUT_CHANGED, slot);
-            }
-        };
+        inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
+        outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
-            cellWrapper = new ItemStackWrapper(tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size()) {
-                @Override
-                protected void onContentsChanged(int slot) {
-                    tile.onMachineEvent(ContentEvent.ITEM_CELL_CHANGED, slot);
-                }
-            };
+            cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
 
         World world = tile.getWorld();
-        if (world != null)
+        if (world != null && !world.isRemote())
             TesseractAPI.registerItemNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
@@ -69,12 +55,16 @@ public class MachineItemHandler implements IItemNode {
     }
 
     public void onRemove() {
-        if (tile != null) {
-            World world = tile.getWorld();
-            if (world != null)
-                TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
-        }
+        World world = tile.getWorld();
+        if (world != null && !world.isRemote())
+            TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
+
+//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+//        ITickingController controller = TesseractAPI.getItemController(world.getDimension().getType().getId(), pos.toLong());
+//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+//        return info;
+//    }
 
     /** Handler Access **/
     public IItemHandler getInputWrapper() {
@@ -123,7 +113,7 @@ public class MachineItemHandler implements IItemNode {
 
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
-        ArrayList<ItemStack> list = new ArrayList<>();
+        List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < inputWrapper.getSlots(); i++) {
             if (!inputWrapper.getStackInSlot(i).isEmpty()) list.add(inputWrapper.getStackInSlot(i).copy());
         }
@@ -132,7 +122,7 @@ public class MachineItemHandler implements IItemNode {
 
     /** Gets a list of non empty output Items **/
     public List<ItemStack> getOutputList() {
-        ArrayList<ItemStack> list = new ArrayList<>();
+        List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < outputWrapper.getSlots(); i++) {
             if (!outputWrapper.getStackInSlot(i).isEmpty()) list.add(outputWrapper.getStackInSlot(i).copy());
         }
@@ -179,7 +169,7 @@ public class MachineItemHandler implements IItemNode {
     }
 
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
-        ArrayList<ItemStack> notConsumed = new ArrayList<>();
+        List<ItemStack> notConsumed = new ObjectArrayList<>();
         ItemStack result;
         for (int i = 0; i < inputs.length; i++) {
             for (int j = 0; j < inputWrapper.getSlots(); j++) {
@@ -198,7 +188,7 @@ public class MachineItemHandler implements IItemNode {
     }
 
     public ItemStack[] exportAndReturnOutputs(ItemStack... outputs) {
-        ArrayList<ItemStack> notExported = new ArrayList<>();
+        List<ItemStack> notExported = new ObjectArrayList<>();
         ItemStack result;
         for (int i = 0; i < outputs.length; i++) {
             for (int j = 0; j < outputWrapper.getSlots(); j++) {
@@ -294,36 +284,41 @@ public class MachineItemHandler implements IItemNode {
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(@Nonnull ItemData item, boolean simulate) {
-        ItemStack resource = (ItemStack) item.getStack();
-        ItemData data = inputWrapper.findItemInSlots(resource);
-        if (data != null) return inputWrapper.insertItem(data.getSlot(), (ItemStack) data.getStack(), simulate).getCount();
-        if (!simulate) return inputWrapper.setFirstEmptySlot(resource);
+    public int insert(@Nonnull ItemData data, boolean simulate) {
+        ItemStack stack = (ItemStack) data.getStack();
+        ItemData item = inputWrapper.findItemInSlots(stack);
+        if (item != null) return inputWrapper.insertItem(item.getSlot(), (ItemStack) item.getStack(), simulate).getCount();
+        if (!simulate) return inputWrapper.setFirstEmptySlot(stack);
         int slot = inputWrapper.getFirstEmptySlot();
-        return slot != -1 ? resource.getCount() : 0;
+        return slot != -1 ? stack.getCount() : 0;
     }
 
     @Nullable
     @Override
     public ItemData extract(int slot, int amount, boolean simulate) {
-        ItemStack resource = outputWrapper.extractItem(slot, amount, simulate);
-        return resource.isEmpty() ? null : new ItemData(slot, resource);
+        ItemStack stack = outputWrapper.extractItem(slot, amount, simulate);
+        return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
     }
 
     @Nonnull
     @Override
-    public IntList getAvailableSlots() {
-        return outputWrapper.getAvailableSlots();
+    public IntList getAvailableSlots(@Nonnull Dir direction) {
+        return outputWrapper.getAvailableSlots(direction);
     }
 
     @Override
-    public int getOutputAmount() {
+    public int getOutputAmount(@Nonnull Dir direction) {
         return 4;
     }
 
     @Override
-    public boolean canAccept(@Nonnull ItemData item) {
-        return inputWrapper.findItemInSlots(((ItemStack) item.getStack())) != null || inputWrapper.getFirstEmptySlot() != -1;
+    public int getPriority(@Nonnull Dir direction) {
+        return 0;
+    }
+
+    @Override
+    public boolean isEmpty(int slot) {
+        return outputWrapper.getStackInSlot(slot).isEmpty();
     }
 
     @Override
@@ -339,6 +334,11 @@ public class MachineItemHandler implements IItemNode {
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
+    }
+
+    @Override
+    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
+        return inputWrapper.isItemAvailable(item, direction) && (inputWrapper.findItemInSlots(item) != null || inputWrapper.getFirstEmptySlot() != -1);
     }
 
     @Override

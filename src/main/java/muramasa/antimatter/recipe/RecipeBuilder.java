@@ -1,12 +1,11 @@
 package muramasa.antimatter.recipe;
 
-import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class RecipeBuilder {
@@ -18,7 +17,7 @@ public class RecipeBuilder {
     private int duration, special;
     private long power;
     private boolean hidden;
-    private Set<RecipeTag> tags = new HashSet<>();
+    private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
     public Recipe add() {
         if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
@@ -55,7 +54,7 @@ public class RecipeBuilder {
         );
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
-        recipe.addTags(new HashSet<>(tags));
+        recipe.addTags(new ObjectOpenHashSet<>(tags));
         recipeMap.add(recipe);
 
         return recipe;
@@ -108,7 +107,7 @@ public class RecipeBuilder {
     }
 
     public RecipeBuilder tags(RecipeTag... tags) {
-        this.tags = Sets.newHashSet(tags);
+        this.tags = new ObjectOpenHashSet<>(tags);
         return this;
     }
 

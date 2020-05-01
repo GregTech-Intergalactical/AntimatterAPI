@@ -13,17 +13,19 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemPipe;
+import tesseract.graph.ITickHost;
+import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
-public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
+public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
 
-    protected boolean restrictive;
-
-    public BlockItemPipe(PipeType<?> type, PipeSize size, boolean restrictive) {
-        super(restrictive ? "item_restrictive" : "item", type, size);
-        this.restrictive = restrictive;
+    public BlockItemPipe(PipeType<?> type, PipeSize size) {
+        super(type.getId(), type, size);
     }
 
     @Override
@@ -33,40 +35,11 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> implements IItemPipe {
     }
 
     @Override
-    public int getCapacity() {
-        return getType().getCapacity(getSize());
+    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        ITickingController controller = TesseractAPI.getItemController(world.getDimension().getType().getId(), pos.toLong());
+        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+        return info;
     }
-
-    @Override
-    public boolean connects(@Nonnull Dir direction) {
-        return true;
-    }
-
-    @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        if (!world.isRemote()) TesseractAPI.registerItemPipe(world.getDimension().getType().getId(), pos.toLong(), this);
-    }
-
-    @Override
-    public void onReplaced(BlockState state, World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        if (!world.isRemote()) TesseractAPI.removeItem(world.getDimension().getType().getId(), pos.toLong());
-        super.onReplaced(state, world, pos, newState, isMoving);
-    }
-
-    @Override
-    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
-    }
-
-    @Override
-    public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-        if (!worldIn.isRemote()) TesseractAPI.removeItem(worldIn.getDimension().getType().getId(), pos.toLong());
-    }
-
-    /*@Override
-    public void updateNeighbors(@Nonnull BlockState stateIn, @Nonnull IWorld worldIn, @Nonnull BlockPos pos, int flags) {
-        if (worldIn.isRemote()) return;
-    }*/
 
 //    @Override
 //    public String getDisplayName(ItemStack stack) {
