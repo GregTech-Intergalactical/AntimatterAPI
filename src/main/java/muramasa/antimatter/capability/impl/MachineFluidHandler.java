@@ -5,15 +5,11 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
@@ -47,10 +43,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
-
-        World world = tile.getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.registerFluidNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+        TesseractAPI.registerFluidNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -71,9 +64,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     }
 
     public void onRemove() {
-        World world = tile.getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.removeFluid(world.getDimension().getType().getId(), tile.getPos().toLong());
+        TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
     }
 
 //    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
@@ -302,27 +293,24 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     @Override
     public int insert(@Nonnull FluidData data, boolean simulate) {
         FluidStack stack = (FluidStack) data.getStack();
-        FluidTank tank = inputWrapper.findFluidInTanks(stack);
-        if (tank != null) return tank.fill(stack, simulate ? SIMULATE : EXECUTE);
-        if (!simulate) return inputWrapper.setFirstEmptyTank(stack);
-        tank = inputWrapper.getFirstEmptyTank();
-        return tank != null ? Math.min(tank.getCapacity(), stack.getAmount()) : 0;
+        return inputWrapper.getFirstValidTank(stack.getFluid()) != -1 ? inputWrapper.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
     }
 
     @Nullable
     @Override
-    public FluidData extract(@Nonnull Object ref, int amount, boolean simulate) {
-        FluidTank tank = (FluidTank) ref;
-        if (tank.isEmpty()) return null;
-        FluidStack stack = tank.drain(amount, simulate ? SIMULATE : EXECUTE);
-        Fluid fluid = stack.getFluid();
-        FluidAttributes attr = fluid.getAttributes();
-        return new FluidData(stack, fluid, stack.getAmount(), attr.getTemperature(), attr.isGaseous());
+    public FluidData extract(int tank, int amount, boolean simulate) {
+        FluidStack fluid = outputWrapper.getFluidInTank(tank);
+        if (fluid.getAmount() > amount) {
+            fluid = fluid.copy();
+            fluid.setAmount(amount);
+        }
+
+        FluidStack stack = outputWrapper.drain(fluid, simulate ? SIMULATE : EXECUTE);
+        return stack.isEmpty() ? null : new FluidData(stack, stack.getFluid(), stack.getAmount(), stack.getFluid().getAttributes().getTemperature(), stack.getFluid().getAttributes().isGaseous());
     }
 
-    @Nullable
     @Override
-    public Object getAvailableTank(@Nonnull Dir direction) {
+    public int getAvailableTank(@Nonnull Dir direction) {
         return outputWrapper.getAvailableTank(direction);
     }
 
@@ -358,7 +346,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     @Override
     public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
-        return inputWrapper.isFluidAvailable(fluid, direction) && (inputWrapper.findFluidInTanks(fluid) != null || inputWrapper.getFirstEmptyTank() != null);
+        return inputWrapper.isFluidAvailable(fluid, direction) && inputWrapper.getFirstValidTank(fluid) != -1;
     }
 
     @Override

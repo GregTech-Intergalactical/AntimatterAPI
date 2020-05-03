@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
@@ -18,20 +17,15 @@ public class MachineEnergyHandler extends EnergyHandler {
         this.tile = tile;
         this.capacity = tile.getMachineTier().getVoltage() * 64L;
         this.voltage_in = tile.getMachineTier().getVoltage();
+        TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
+    }
 
-        World world = tile.getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.registerElectricNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+    public void onRemove() {
+        TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
     }
 
     public void onUpdate() {
         if (controller != null) controller.tick();
-    }
-
-    public void onRemove() {
-        World world = tile.getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.removeElectric(world.getDimension().getType().getId(), tile.getPos().toLong());
     }
 
 //    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {

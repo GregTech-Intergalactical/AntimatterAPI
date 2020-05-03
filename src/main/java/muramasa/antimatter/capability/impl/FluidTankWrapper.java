@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 
 public class FluidTankWrapper implements IFluidHandler {
 
@@ -39,64 +40,9 @@ public class FluidTankWrapper implements IFluidHandler {
         }
     }
 
-//    @Override
-//    public IFluidTankProperties[] getTankProperties() {
-//        IFluidTankProperties[] properties = new IFluidTankProperties[tanks.length];
-//        for (int i = 0; i < tanks.length; i++) {
-//            properties[i] = new FluidTankProperties(tanks[i].getFluid(), tanks[i].getCapacity(), tanks[i].canFill(), tanks[i].canDrain());
-//        }
-//        return properties;
-//    }
-
-    public int setFirstEmptyTank(FluidStack fluid) {
-        FluidTank tank = getFirstEmptyTank();
-        if (tank != null) {
-            tank.setFluid(fluid);
-            return fluid.getAmount();
-        }
-        return 0;
-    }
-
-    public FluidTank getFirstEmptyTank() {
-        for (FluidTank tank : tanks) {
-            if (!tank.isEmpty()) return tank;
-        }
-        return null;
-    }
-
-    @Nullable
-    public FluidTank getAvailableTank(@Nonnull Dir direction) {
-        ObjectSet<?> set = filter.get(direction);
-        if (set.isEmpty()) return getFirstValidTank();
-        for (FluidTank tank : tanks) {
-            if (!tank.isEmpty() && set.contains(tank.getFluid().getFluid())) return tank;
-        }
-        return null;
-    }
-
-    @Nullable
-    public FluidTank getFirstValidTank() {
-        for (FluidTank tank : tanks) {
-            if (!tank.isEmpty()) return tank;
-        }
-        return null;
-    }
-
-    @Nullable
-    public FluidTank findFluidInTanks(FluidStack fluid) {
-        for (FluidTank tank : tanks) {
-            if (!tank.isEmpty() && Utils.equals(tank.getFluid(), fluid)) return tank;
-        }
-        return null;
-    }
-
-    /* Looks for Fluid */
-    @Nullable
-    public FluidTank findFluidInTanks(Object fluid) {
-        for (FluidTank tank : tanks) {
-            if (!tank.isEmpty() && tank.getFluid().getFluid().equals(fluid)) return tank;
-        }
-        return null;
+    @Nonnull
+    public FluidTank getTank(int tank) {
+        return tanks[tank];
     }
 
     @Override
@@ -132,38 +78,97 @@ public class FluidTankWrapper implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        FluidTank tank = findFluidInTanks(resource);
-        if (tank != null) {
-            return tank.fill(resource, action);
-        } else {
-            tank = getFirstEmptyTank();
-            if (tank != null) return tank.fill(resource, action);
-        }
-        return 0;
+        int tank = getFirstValidTank(resource.getFluid());
+        return tank != -1 ? getTank(tank).fill(resource, action) : 0;
     }
 
     @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
         FluidTank tank = findFluidInTanks(resource);
-        if (tank != null) return tank.drain(resource, action);
-        return FluidStack.EMPTY;
+        return tank != null ? tank.drain(resource, action) : FluidStack.EMPTY;
     }
 
     @Nonnull
     @Override
+    @Deprecated
     public FluidStack drain(int maxDrain, FluidAction action) {
         FluidTank tank = getFirstValidTank();
-        if (tank != null) return tank.drain(maxDrain, action);
-        return FluidStack.EMPTY;
+        return tank != null ? tank.drain(maxDrain, action) : FluidStack.EMPTY;
     }
 
     public boolean isDirty() {
         return dirty;
     }
 
-    public boolean isFluidAvailable(@Nonnull Object fluid, @Nonnull Dir direction) {
-        ObjectSet<?> filtered = filter.get(direction);
+    public boolean isFluidAvailable(@Nonnull Object fluid, Dir direction) {
+        Set<?> filtered = filter.get(direction);
         return filtered.isEmpty() || filtered.contains(fluid);
+    }
+
+    // Fast way to find available tank for fluid
+    public int getFirstValidTank(@Nonnull Object fluid) {
+        int tank = -1;
+        for (int i = 0; i < getTanks(); i++) {
+            FluidStack stack = getFluidInTank(i);
+            if (stack.isEmpty()) {
+                tank = i;
+            } else {
+                if (stack.getFluid().equals(fluid) && getTankCapacity(i) > stack.getAmount()) {
+                    return i;
+                }
+            }
+        }
+        return tank;
+    }
+
+    public int getAvailableTank(@Nonnull Dir direction) {
+        Set<?> set = filter.get(direction);
+        if (set.isEmpty()) {
+            for (int i = 0; i < getTanks(); i++) {
+                FluidStack stack = getFluidInTank(i);
+                if (!stack.isEmpty()) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = 0; i < getTanks(); i++) {
+                FluidStack stack = getFluidInTank(i);
+                if (!stack.isEmpty() && set.contains(stack.getFluid())) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Nullable
+    private FluidTank findFluidInTanks(FluidStack fluid) {
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty() && Utils.equals(tank.getFluid(), fluid)) {
+                return tank;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private FluidTank getFirstValidTank() {
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty()) {
+                return tank;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private FluidTank getFirstEmptyTank() {
+        for (FluidTank tank : tanks) {
+            if (!tank.isEmpty()) {
+                return tank;
+            }
+        }
+        return null;
     }
 }

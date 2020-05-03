@@ -7,18 +7,11 @@ import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import tesseract.TesseractAPI;
-import tesseract.api.item.IItemPipe;
-import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
-import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 

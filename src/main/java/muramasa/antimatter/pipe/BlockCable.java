@@ -15,17 +15,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import tesseract.TesseractAPI;
-import tesseract.api.electric.IElectricCable;
 import tesseract.graph.ITickingController;
-import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -96,7 +91,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
         return info;
     }
 
-//    @Override
+    //    @Override
 //    public String getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];

@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
@@ -13,18 +12,17 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     public TileEntityCable(PipeType<?> type) {
         super(type);
-
-        World world = getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.registerElectricCable(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
-    public void remove() {
-        World world = getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.removeElectric(world.getDimension().getType().getId(), getPos().toLong());
-        super.remove();
+    public void onInit() {
+        super.onInit();
+        TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
+    }
+
+    @Override
+    public void onRemove() {
+        TesseractAPI.removeElectric(getDimention(), pos.toLong());
     }
 
     @Override

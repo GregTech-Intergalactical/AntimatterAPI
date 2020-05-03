@@ -1,9 +1,6 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.capability.impl.ComponentHandler;
-import muramasa.antimatter.capability.impl.CoverHandler;
-import muramasa.antimatter.capability.impl.MachineConfigHandler;
-import muramasa.antimatter.capability.impl.MachineEnergyHandler;
+import muramasa.antimatter.capability.impl.*;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.LongNBT;
 import net.minecraft.util.Direction;
@@ -42,7 +39,7 @@ public class AntimatterCaps {
                 }
                 instance.insert(((LongNBT)nbt).getLong(), false);
             }
-        }, () -> new MachineEnergyHandler(null));
+        }, () -> new EnergyHandler(0, 1000, 0, 0, 0, 0));
 
         CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
             @Nullable

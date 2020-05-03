@@ -40,7 +40,7 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
-    public void initCaps() {
+    public void onInit() {
         coverHandler = Optional.of(new PipeCoverHandler(this));
         configHandler = Optional.of(new PipeConfigHandler(this));
     }

@@ -29,7 +29,11 @@ public class Configs {
         public boolean HARDCORE_CABLES = true;
 
         //@RequiresMcRestart
-        //@Comment("Amount of gas retained during the passage of a leaky pipe- Default: 90%")
+        //@Comment("The ratio of the eu to the rf energy converting - Default: (1 EU = 4 RF)")
+        public double EU_TO_RF = 4.0D;
+
+        //@RequiresMcRestart
+        //@Comment("Amount of gas retained during the passage of a leaky pipe - Default: 90%")
         public double PIPE_LEAKING = 0.9D;
 
         //@RequiresMcRestart

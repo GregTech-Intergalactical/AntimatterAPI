@@ -2,8 +2,13 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.capability.IEnergyHandler;
 import net.minecraftforge.energy.IEnergyStorage;
+import tesseract.graph.ITickingController;
+import tesseract.util.Dir;
 
-public abstract class EnergyHandler implements IEnergyStorage, IEnergyHandler {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected long energy, capacity;
     protected int voltage_in, voltage_out, amperage_in, amperage_out;
@@ -74,8 +79,18 @@ public abstract class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
+    public boolean canOutput(@Nonnull Dir direction) {
+        return false;
+    }
+
+    @Override
     public boolean canOutput() {
         return voltage_out > 0;
+    }
+
+    @Override
+    public boolean canInput(int voltage) {
+        return voltage <= voltage_in;
     }
 
     /** Forge IEnergyStorage Implementations **/
@@ -109,8 +124,12 @@ public abstract class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         return canOutput();
     }
 
-    /** Forge IEnergyStorage Utils **/
-    public long getSpace() {
-        return Math.max(0L, capacity - energy);
+    @Override
+    public boolean connects(@Nonnull Dir direction) {
+        return true;
+    }
+
+    @Override
+    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
     }
 }

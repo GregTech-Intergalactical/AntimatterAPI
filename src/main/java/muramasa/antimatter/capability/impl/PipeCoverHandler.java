@@ -2,9 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverTransition;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
-import net.minecraft.util.Direction;
 
 public class PipeCoverHandler extends CoverHandler {
 

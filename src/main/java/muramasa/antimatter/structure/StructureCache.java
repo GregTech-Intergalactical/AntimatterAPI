@@ -1,8 +1,9 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.*;
+import jdk.internal.jline.internal.Nullable;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
@@ -16,30 +17,24 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
-
 @Mod.EventBusSubscriber
 public class StructureCache {
 
-    private static Int2ObjectOpenHashMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
 
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
         return entry != null && entry.get(pos) != null;
     }
 
+    @Nullable
     public static BlockPos get(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
-        if (entry == null) return null;
-        return entry.get(pos);
+        return entry != null ? entry.get(pos) : null;
     }
 
-    public static void add(World world, BlockPos pos, List<BlockPos> structure) {
-        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
-        if (entry == null) {
-            entry = new DimensionEntry(world.getDimension().getType().getId());
-            LOOKUP.put(world.getDimension().getType().getId(), entry);
-        }
+    public static void add(World world, BlockPos pos, LongList structure) {
+        DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
         entry.add(pos, structure);
         Antimatter.LOGGER.info("Added Structure to Store!");
     }
@@ -96,28 +91,34 @@ public class StructureCache {
 
     public static class DimensionEntry {
 
-        private Object2ObjectMap<BlockPos, BlockPos> STRUCTURE_TO_CONTROLLER = new Object2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
-        private Object2ObjectMap<BlockPos, List<BlockPos>> CONTROLLER_TO_STRUCTURE = new Object2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
+        private Long2LongMap STRUCTURE_TO_CONTROLLER = new Long2LongOpenHashMap(); //Structure Position -> Controller Position
+        private Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
-        public int dimension;
-
-        public DimensionEntry(int dimension) {
-            this.dimension = dimension;
+        public DimensionEntry() {
+            STRUCTURE_TO_CONTROLLER.defaultReturnValue(Long.MAX_VALUE);
+            CONTROLLER_TO_STRUCTURE.defaultReturnValue(LongLists.EMPTY_LIST);
         }
 
+        @Nullable
         public BlockPos get(BlockPos pos) {
-            return STRUCTURE_TO_CONTROLLER.get(pos);
+            long at = STRUCTURE_TO_CONTROLLER.get(pos.toLong());
+            return at != Long.MAX_VALUE ? BlockPos.fromLong(at) : null;
         }
 
-        public void add(BlockPos pos, List<BlockPos> structure) {
-            CONTROLLER_TO_STRUCTURE.put(pos, structure);
-            structure.forEach(s -> STRUCTURE_TO_CONTROLLER.put(s, pos));
+        public void add(BlockPos pos, LongList structure) {
+            long at = pos.toLong();
+            CONTROLLER_TO_STRUCTURE.put(at, structure);
+            for (long s : structure) {
+                STRUCTURE_TO_CONTROLLER.put(s, at);
+            }
         }
 
         public void remove(BlockPos pos) {
-            List<BlockPos> structure = CONTROLLER_TO_STRUCTURE.remove(pos);
-            if (structure == null) return;
-            structure.forEach(s -> STRUCTURE_TO_CONTROLLER.remove(s));
+            long at = pos.toLong();
+            LongList structure = CONTROLLER_TO_STRUCTURE.remove(at);
+            for (long s : structure) {
+                STRUCTURE_TO_CONTROLLER.remove(s);
+            }
         }
     }
 }

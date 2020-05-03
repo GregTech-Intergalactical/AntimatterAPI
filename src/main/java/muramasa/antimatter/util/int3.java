@@ -3,6 +3,8 @@ package muramasa.antimatter.util;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created By Muramasa -  https://github.com/Muramasa-
  * Allows easily stepping in directions given a Direction
@@ -12,7 +14,6 @@ public class int3 extends BlockPos.Mutable {
     public Direction side = Direction.NORTH; //Used for moving in a direction
 
     public int3() {
-
     }
 
     public int3(int x, int y, int z) {
@@ -55,19 +56,23 @@ public class int3 extends BlockPos.Mutable {
         return offset(n, side.getOpposite());
     }
 
+    @Nonnull
     public int3 up(int n) {
         return offset(n, Direction.UP);
     }
 
+    @Nonnull
     public int3 down(int n) {
         return offset(n, Direction.DOWN);
     }
 
+    @Nonnull
     @Override
     public BlockPos offset(Direction side) {
         return offset(1, side);
     }
 
+    @Nonnull
     @Override
     public BlockPos offset(Direction side, int n) {
         return offset(n, side);
@@ -105,6 +110,7 @@ public class int3 extends BlockPos.Mutable {
         return this;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "(" + x + ", " + y + ", " + z + ")";
