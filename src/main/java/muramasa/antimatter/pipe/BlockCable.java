@@ -10,14 +10,17 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.energy.CapabilityEnergy;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 
@@ -47,9 +50,8 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        Block block = state.getBlock();
-        return block instanceof BlockMachine ? ((BlockMachine) block).getType().has(MachineFlag.ENERGY) : block instanceof BlockCable;
+    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
+        return state.getBlock() instanceof BlockCable || tile != null && tile.getCapability(CapabilityEnergy.ENERGY).isPresent();
     }
 
     @Override
@@ -90,6 +92,11 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
         if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
         return info;
     }
+
+//    @Override
+//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
+//        PipeCache.setElectric(world, direction, neighbour);
+//    }
 
     //    @Override
 //    public String getDisplayName(ItemStack stack) {

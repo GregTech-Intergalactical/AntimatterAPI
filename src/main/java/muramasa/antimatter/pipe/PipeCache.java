@@ -1,106 +1,100 @@
 package muramasa.antimatter.pipe;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import muramasa.antimatter.capability.INodeHandler;
+import muramasa.antimatter.capability.impl.EnergyNodeHandler;
+import muramasa.antimatter.capability.impl.FluidNodeHandler;
+import muramasa.antimatter.capability.impl.ItemNodeHandler;
+import muramasa.antimatter.structure.StructureCache;
+import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber
 public class PipeCache {
 
-    //private static Int2ObjectMap<Long2ObjectMap<INodeHandler>> LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static Int2ObjectMap<Long2ObjectMap<INodeHandler[]>> LOOKUP = new Int2ObjectOpenHashMap<>();
 
-    //TODO: For testing purpose, covers should do that
-    /*@SubscribeEvent
+    // TODO: Should be handled by pipes/cables
+    @SubscribeEvent
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent e) {
         TileEntity tile = Utils.getTile(e.getWorld(), e.getPos());
         if (tile == null || tile instanceof TileEntityMachine) return;
-        tile.getCapability(CapabilityEnergy.ENERGY).ifPresent(handler -> {
-            LOOKUP.computeIfAbsent(e.getWorld().getDimension().getType().getId(), Long2ObjectOpenHashMap::new)
-                  .computeIfAbsent(e.getPos().toLong(), n -> new EnergyNode(tile, handler));
-        });
-        tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(handler -> {
-            LOOKUP.computeIfAbsent(e.getWorld().getDimension().getType().getId(), Long2ObjectOpenHashMap::new)
-                  .computeIfAbsent(e.getPos().toLong(), n -> new FluidNode(tile, handler));
-        });
-        tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
-            LOOKUP.computeIfAbsent(e.getWorld().getDimension().getType().getId(), Long2ObjectOpenHashMap::new)
-                  .computeIfAbsent(e.getPos().toLong(), n -> new ItemNode(tile, handler));
-        });
-    }*/
-
-    /*@SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent e) {
-        Long2ObjectMap<INodeHandler> data = LOOKUP.remove(e.getWorld().getDimension().getType().getId());
-        if (data != null) {
-            INodeHandler node = data.remove(e.getPos().toLong());
-            if (node != null) {
-                node.onRemove(null);
+        LOOKUP.computeIfAbsent(e.getWorld().getDimension().getType().getId(), Long2ObjectOpenHashMap::new)
+            .put(e.getPos().toLong(),
+                // They are automatically removed on the caps invalidation
+                new INodeHandler[] {
+                    EnergyNodeHandler.of(tile),
+                    FluidNodeHandler.of(tile),
+                    ItemNodeHandler.of(tile)
             }
-        }
-    }*/
-
-    // TODO: Add nodes with covers
-    /*private static Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+        );
+    }
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
         LOOKUP.remove(e.getWorld().getDimension().getType().getId());
     }
-]
-    public static void addElectric(World world, BlockPos pos, TileEntity tile) {
-        DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
-        entry.addElectric(pos, tile);
+
+    @Nullable
+    public static INodeHandler[] get(World world, BlockPos pos) {
+        Long2ObjectMap<INodeHandler[]> entry = LOOKUP.get(world.getDimension().getType().getId());
+        return entry != null ? entry.get(pos.toLong()) : null;
     }
 
-    public static void addFluid(World world, BlockPos pos, TileEntity tile) {
+    /*
+    public static void setElectric(World world, Direction direction, TileEntity tile) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
-        entry.addFluid(pos, tile);
+        entry.setElectric(direction, tile);
     }
 
-    public static void addItem(World world, BlockPos pos, TileEntity tile) {
+    public static void setFluid(World world, Direction direction, TileEntity tile) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
-        entry.addItem(pos, tile);
-    }*/
+        entry.setFluid(direction, tile);
+    }
 
-    /*public static class DimensionEntry {
+    public static void setItem(World world, Direction direction, TileEntity tile) {
+        DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
+        entry.setItem(direction, tile);
+    }
 
-        private Long2ObjectMap<IRemovable[]> CAPABILITY_BLOCK = new Long2ObjectOpenHashMap<>();
+    public static class DimensionEntry {
+
+        private Long2ObjectMap<INodeHandler[]> NODE_BLOCK = new Long2ObjectOpenHashMap<>();
 
         public DimensionEntry() {
         }
 
-        public void addElectric(BlockPos pos, TileEntity tile) {
-            LazyOptional<IEnergyStorage> capability = tile.getCapability(CapabilityEnergy.ENERGY);
-            capability.ifPresent(handler -> {
-                IRemovable[] data = CAPABILITY_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new IRemovable[3]);
-                if (data[0] == null) {
-                    data[0] = new EnergyNode(tile, handler);
-                    capability.addListener(c -> data[0].remove());
-                }
-                //((EnergyNode)data[0]).()
-            });
+        public void setElectric(Direction direction, TileEntity tile) {
+            INodeHandler[] data = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new INodeHandler[3]);
+            if (data[0] == null || data[0].isEmpty()) data[0] = EnergyNode.of(tile);
+            if (data[0] == null) return;
+            data[0].onUpdate(direction, null);
         }
 
-        public void addFluid(BlockPos pos, TileEntity tile) {
-            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-            capability.ifPresent(handler -> {
-                IRemovable[] data = CAPABILITY_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new IRemovable[3]);
-                if (data[1] == null) {
-                    data[1] = new FluidNode(tile, handler);
-                    capability.addListener(c -> data[1].remove());
-                }
-                //((FluidNode)data[1]).()
-            });
+        public void setFluid(Direction direction, TileEntity tile) {
+            INodeHandler[] data = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new INodeHandler[3]);
+            if (data[1] == null || data[1].isEmpty()) data[1] = FluidNode.of(tile);
+            if (data[1] == null) return;
+            data[1].onUpdate(direction, null);
         }
 
-        public void addItem(BlockPos pos, TileEntity tile) {
-            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            capability.ifPresent(handler -> {
-                IRemovable[] data = CAPABILITY_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new IRemovable[3]);
-                if (data[2] == null) {
-                    data[2] = new ItemNode(tile, handler);
-                    capability.addListener(c -> data[2].remove());
-                }
-                //((ItemNode)data[2]).()
-            });
+        public void setItem(Direction direction, TileEntity tile) {
+            INodeHandler[] data = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new INodeHandler[3]);
+            if (data[2] == null || data[2].isEmpty()) data[2] = ItemNode.of(tile);
+            if (data[2] == null) return;
+            data[2].onUpdate(direction, null);
         }
     }*/
 }

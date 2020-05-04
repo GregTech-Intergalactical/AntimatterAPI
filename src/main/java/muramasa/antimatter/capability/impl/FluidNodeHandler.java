@@ -1,8 +1,9 @@
-package muramasa.antimatter.capability.enet;
+package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverOutput;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -17,52 +18,61 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class FluidNode implements IFluidNode, INodeHandler {
+public class FluidNodeHandler implements IFluidNode, INodeHandler {
 
+    // TODO: Add black/white lister filter mode
     private TileEntity tile;
     private IFluidHandler handler;
-    private Map<Dir, Set<Fluid>> filter = new EnumMap<>(Dir.class);
-    private Map<Dir, Boolean> output = new EnumMap<>(Dir.class);
-    //private boolean out = new Random().nextBoolean(); // TODO: For test
-    private int capacity;
+    private Set<Fluid>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
+    private boolean[] output = new boolean[]{false, false, false, false, false, false};
+    private boolean[] input = new boolean[]{true, true, true, true, true, true};
+    private boolean valid = true;
 
-    public FluidNode(TileEntity tile) {
+    private FluidNodeHandler(TileEntity tile, IFluidHandler handler) {
         this.tile = tile;
         this.handler = handler;
+    }
 
-        LazyOptional<IFluidHandler> fluid = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-        if (energy.isPresent()) {
-            new FluidNode(tile);
+    @Nullable
+    public static FluidNodeHandler of(TileEntity tile) {
+        LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        if (capability.isPresent()) {
+            FluidNodeHandler node = new FluidNodeHandler(tile, capability.orElse(null));
+            capability.addListener(x -> node.onRemove(null));
+            TesseractAPI.registerFluidNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            return node;
         }
-
-        for (Dir direction : Dir.VALUES) {
-            filter.put(direction, new ObjectOpenHashSet<>());
-            output.put(direction, false);
-        }
-
-        // Find the smallest capacity
-        for (int i = 0; i < handler.getTanks(); i++) {
-            capacity = Math.min(capacity, handler.getTankCapacity(i));
-        }
-
-        TesseractAPI.registerFluidNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this);
+        return null;
     }
 
     @Override
-    public void onRemove(Direction side) {
-        TesseractAPI.removeFluid(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+    public void onRemove(@Nullable Direction side) {
+        if (side != null) {
+            output[side.getIndex()] = false;
+        } else {
+            TesseractAPI.removeFluid(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+            valid = false;
+        }
     }
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-        //if (cover instanceof CoverFilter)
+        /*if (cover instanceof CoverFilter) {
+            filter.put(side, ((CoverFilter<Fluid>)cover).getFilter());
+        }*/
+        if (cover instanceof CoverOutput) {
+            output[side.getIndex()] = true;
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        return valid;
     }
 
     @Override
@@ -85,7 +95,7 @@ public class FluidNode implements IFluidNode, INodeHandler {
 
     @Override
     public int getAvailableTank(@Nonnull Dir direction) {
-        Set<?> set = filter.get(direction);
+        Set<?> set = filter[direction.getIndex()];
         if (set.isEmpty()) {
             for (int i = 0; i < handler.getTanks(); i++) {
                 FluidStack stack = handler.getFluidInTank(i);
@@ -115,11 +125,6 @@ public class FluidNode implements IFluidNode, INodeHandler {
     }
 
     @Override
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
     public boolean canOutput() {
         return handler != null;
     }
@@ -131,12 +136,12 @@ public class FluidNode implements IFluidNode, INodeHandler {
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return output.get(direction);
+        return output[direction.getIndex()];
     }
 
     @Override
-    public boolean canInput(@Nonnull Object fluid, Dir direction) {
-        return isFluidAvailable(fluid, direction) && getFirstValidTank(fluid) != -1;
+    public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
+        return input[direction.getIndex()] && isFluidAvailable(fluid, direction) && getFirstValidTank(fluid) != -1;
     }
 
     @Override
@@ -144,8 +149,8 @@ public class FluidNode implements IFluidNode, INodeHandler {
         return true;
     }
 
-    private boolean isFluidAvailable(@Nonnull Object fluid, Dir direction) {
-        Set<?> filtered = filter.get(direction);
+    private boolean isFluidAvailable(@Nonnull Object fluid, @Nonnull Dir direction) {
+        Set<?> filtered = filter[direction.getIndex()];
         return filtered.isEmpty() || filtered.contains(fluid);
     }
 

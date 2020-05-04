@@ -1,10 +1,12 @@
 package muramasa.antimatter.capability.impl;
 ;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -19,9 +21,10 @@ import java.util.Set;
 
 public class FluidTankWrapper implements IFluidHandler {
 
+    // TODO: Add black/white lister filter mode
     private FluidTank[] tanks;
     private boolean dirty = false;
-    private Map<Dir, ObjectSet<?>> filter = new EnumMap<>(Dir.class);
+    private Set<Fluid>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
 
     public FluidTankWrapper(TileEntityMachine machine, int count, int capacity, ContentEvent event) {
         tanks = new FluidTank[count];
@@ -33,10 +36,6 @@ public class FluidTankWrapper implements IFluidHandler {
                     machine.onMachineEvent(event);
                 }
             };
-        }
-
-        for (Dir direction : Dir.VALUES) {
-            filter.put(direction, new ObjectLinkedOpenHashSet<>(count));
         }
     }
 
@@ -101,8 +100,8 @@ public class FluidTankWrapper implements IFluidHandler {
         return dirty;
     }
 
-    public boolean isFluidAvailable(@Nonnull Object fluid, Dir direction) {
-        Set<?> filtered = filter.get(direction);
+    public boolean isFluidAvailable(@Nonnull Object fluid, @Nonnull Dir direction) {
+        Set<?> filtered = filter[direction.getIndex()];
         return filtered.isEmpty() || filtered.contains(fluid);
     }
 
@@ -123,7 +122,7 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     public int getAvailableTank(@Nonnull Dir direction) {
-        Set<?> set = filter.get(direction);
+        Set<?> set = filter[direction.getIndex()];
         if (set.isEmpty()) {
             for (int i = 0; i < getTanks(); i++) {
                 FluidStack stack = getFluidInTank(i);

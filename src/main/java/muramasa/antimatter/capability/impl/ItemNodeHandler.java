@@ -1,10 +1,11 @@
-package muramasa.antimatter.capability.enet;
+package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverOutput;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -19,42 +20,58 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
-public class ItemNode implements IItemNode, INodeHandler {
+public class ItemNodeHandler implements IItemNode, INodeHandler {
 
+    // TODO: Add black/white lister filter mode
     private TileEntity tile;
     private IItemHandler handler;
-    private Map<Dir, Set<Item>> filter = new EnumMap<>(Dir.class);
-    private boolean out = new Random().nextBoolean(); // TODO: For test
+    private Set<Item>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
+    private boolean[] output = new boolean[]{false, false, false, false, false, false};
+    private boolean[] input = new boolean[]{true, true, true, true, true, true};
+    private boolean valid = true;
 
-    public ItemNode(TileEntity tile) {
+    private ItemNodeHandler(TileEntity tile, IItemHandler handler) {
         this.tile = tile;
         this.handler = handler;
+    }
 
-        LazyOptional<IItemHandler> item = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-        if (energy.isPresent()) {
-            new ItemNode(tile);
+    @Nullable
+    public static ItemNodeHandler of(TileEntity tile) {
+        LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        if (capability.isPresent()) {
+            ItemNodeHandler node = new ItemNodeHandler(tile, capability.orElse(null));
+            capability.addListener(o -> node.onRemove(null));
+            TesseractAPI.registerItemNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            return node;
         }
-
-        for (Dir direction : Dir.VALUES) {
-            filter.put(direction, new ObjectOpenHashSet<>());
-        }
-
-        TesseractAPI.registerItemNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this);
+        return null;
     }
 
     @Override
-    public void onRemove(Direction side) {
-        TesseractAPI.removeItem(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+    public void onRemove(@Nullable Direction side) {
+        if (side != null) {
+            output[side.getIndex()] = false;
+        } else {
+            TesseractAPI.removeItem(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+            valid = false;
+        }
     }
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-        //if (cover instanceof CoverFilter)
+        /*if (cover instanceof CoverFilter) {
+            filter.put(side, ((CoverFilter<Item>)cover).getFilter());
+        }*/
+        if (cover instanceof CoverOutput) {
+            output[side.getIndex()] = true;
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        return valid;
     }
 
     @Override
@@ -84,7 +101,7 @@ public class ItemNode implements IItemNode, INodeHandler {
     @Nonnull
     @Override
     public IntList getAvailableSlots(@Nonnull Dir direction) {
-        Set<?> filtered = filter.get(direction);
+        Set<?> filtered = filter[direction.getIndex()];
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
         if (filtered.isEmpty()) {
@@ -132,12 +149,12 @@ public class ItemNode implements IItemNode, INodeHandler {
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return out; // TODO: Should depend on nearest pipe cover
+        return output[direction.getIndex()];
     }
 
     @Override
-    public boolean canInput(@Nonnull Object item, Dir direction) {
-        return isItemAvailable(item, direction) && getFirstValidSlot(item) != -1;
+    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
+        return input[direction.getIndex()] && isItemAvailable(item, direction) && getFirstValidSlot(item) != -1;
     }
 
     @Override
@@ -145,8 +162,8 @@ public class ItemNode implements IItemNode, INodeHandler {
         return true;
     }
 
-    private boolean isItemAvailable(@Nonnull Object item, Dir direction) {
-        Set<?> filtered = filter.get(direction);
+    private boolean isItemAvailable(@Nonnull Object item, @Nonnull Dir direction) {
+        Set<?> filtered = filter[direction.getIndex()];
         return filtered.isEmpty() || filtered.contains(item);
     }
 

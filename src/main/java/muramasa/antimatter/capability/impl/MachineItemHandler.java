@@ -337,7 +337,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     @Override
-    public boolean canInput(@Nonnull Object item, Dir direction) {
+    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
         return inputWrapper.isItemAvailable(item, direction) && inputWrapper.getFirstValidSlot(item) != -1;
     }
 

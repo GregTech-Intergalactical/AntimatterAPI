@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -18,8 +19,9 @@ import java.util.Set;
 
 public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
+    // TODO: Add black/white lister filter mode
     private ItemStackHandler handler;
-    private Map<Dir, Set<?>> filter = new EnumMap<>(Dir.class);
+    private Set<Item>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
 
     public ItemStackWrapper(TileEntityMachine machine, int size, ContentEvent event) {
         handler = new ItemStackHandler(size) {
@@ -28,23 +30,15 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
                 machine.onMachineEvent(event, slot);
             }
         };
-
-        for (Dir direction : Dir.VALUES) {
-            filter.put(direction, new ObjectOpenHashSet<>(size));
-        }
     }
 
     public ItemStackWrapper(ItemStackHandler handler) {
         this.handler = handler;
-
-        for (Dir direction : Dir.VALUES) {
-            filter.put(direction, new ObjectOpenHashSet<>());
-        }
     }
 
     @Nonnull
     public IntList getAvailableSlots(@Nonnull Dir direction) {
-        Set<?> filtered = filter.get(direction);
+        Set<?> filtered = filter[direction.getIndex()];
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
         if (filtered.isEmpty()) {
@@ -107,8 +101,8 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         handler.setSize(size);
     }
 
-    public boolean isItemAvailable(@Nonnull Object item, Dir direction) {
-        Set<?> filtered = filter.get(direction);
+    public boolean isItemAvailable(@Nonnull Object item, @Nonnull Dir direction) {
+        Set<?> filtered = filter[direction.getIndex()];
         return filtered.isEmpty() || filtered.contains(item);
     }
 

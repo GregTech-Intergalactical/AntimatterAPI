@@ -33,11 +33,10 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
-    protected int capacity, pressure;
+    protected int pressure;
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure) {
         this.tile = tile;
-        this.capacity = capacity;
         this.pressure = pressure;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
@@ -322,11 +321,6 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     @Override
     public int getPriority(@Nonnull Dir direction) {
         return 0;
-    }
-
-    @Override
-    public int getCapacity() {
-        return capacity;
     }
 
     @Override

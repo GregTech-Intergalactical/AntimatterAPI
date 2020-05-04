@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.enet;
+package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.capability.INodeHandler;
@@ -15,38 +15,45 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class EnergyNode implements IElectricNode, INodeHandler {
+public class EnergyNodeHandler implements IElectricNode, INodeHandler {
 
     private TileEntity tile;
     private IEnergyStorage storage;
-    private int voltage;
-
-    private EnergyNode() {
+    private boolean valid = true;
+    
+    private EnergyNodeHandler(TileEntity tile, IEnergyStorage storage) {
+        this.tile = tile;
+        this.storage = storage;
     }
 
     @Nullable
-    public static EnergyNode of(TileEntity tile) {
-        LazyOptional<IEnergyStorage> energy = tile.getCapability(CapabilityEnergy.ENERGY);
-        EnergyNode node = new EnergyNode();
-        if (energy.isPresent()) {
-            energy.addListener(x -> node.onRemove(null));
-        } else {
-            return null;
+    public static EnergyNodeHandler of(TileEntity tile) {
+        LazyOptional<IEnergyStorage> capability = tile.getCapability(CapabilityEnergy.ENERGY);
+        if (capability.isPresent()) {
+            EnergyNodeHandler node = new EnergyNodeHandler(tile, capability.orElse(null));
+            capability.addListener(o -> node.onRemove(null));
+            TesseractAPI.registerElectricNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            return node;
         }
-        node.tile = tile;
-        node.storage = energy.orElse(null);
-        TesseractAPI.registerElectricNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+        return null;
     }
 
     @Override
-    public void onRemove(Direction side) {
-        TesseractAPI.removeElectric(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+    public void onRemove(@Nullable Direction side) {
+        if (side == null) {
+            TesseractAPI.removeElectric(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+            valid = false;
+        }
     }
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-
         //if (cover instanceof CoverFilter)
+    }
+
+    @Override
+    public boolean isValid() {
+        return valid;
     }
 
     @Override
@@ -86,7 +93,7 @@ public class EnergyNode implements IElectricNode, INodeHandler {
 
     @Override
     public int getInputVoltage() {
-        return voltage;
+        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -102,12 +109,6 @@ public class EnergyNode implements IElectricNode, INodeHandler {
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
         return false;
-    }
-
-    @Override
-    public boolean canInput(int voltage) {
-        this.voltage = voltage;
-        return true; // Accept any voltage
     }
 
     @Override

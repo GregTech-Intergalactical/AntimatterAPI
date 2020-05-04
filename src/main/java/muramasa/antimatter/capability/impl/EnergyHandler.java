@@ -88,11 +88,6 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         return voltage_out > 0;
     }
 
-    @Override
-    public boolean canInput(int voltage) {
-        return voltage <= voltage_in;
-    }
-
     /** Forge IEnergyStorage Implementations **/
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {

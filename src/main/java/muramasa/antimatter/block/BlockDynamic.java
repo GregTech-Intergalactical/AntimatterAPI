@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.ModelConfig;
 import net.minecraft.block.BlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -11,6 +12,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -34,15 +36,16 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     /** Connection Logic **/
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[1];
-        BlockState adjState;
         for (int s = 0; s < 6; s++) {
-            adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
-            if (canConnect(world, adjState, mut)) ct[0] += 1 << s;
+            mut.setPos(pos.offset(Ref.DIRECTIONS[s]));
+            BlockState adjState = world.getBlockState(mut);
+            TileEntity adjTile = world.getTileEntity(mut);
+            if (canConnect(world, adjState, adjTile, mut)) ct[0] += 1 << s;
         }
         return config.set(ct[0] == 0 ? DEFAULT_CONFIG : ct);
     }
 
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
+    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
         return state.getBlock() == this;
     }
 

@@ -6,12 +6,16 @@ import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,9 +26,8 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
     }
 
     @Override
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        Block block = state.getBlock();
-        return block instanceof BlockMachine ? ((BlockMachine)block).getType().has(MachineFlag.FLUID) : block instanceof BlockFluidPipe;
+    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
+        return state.getBlock() instanceof BlockFluidPipe || tile != null && tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override
@@ -33,6 +36,11 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
         if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
         return info;
     }
+
+//    @Override
+//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
+//         PipeCache.setFluid(world, direction, neighbour);
+//    }
 
 //    @Override
 //    public String getDisplayName(ItemStack stack) {

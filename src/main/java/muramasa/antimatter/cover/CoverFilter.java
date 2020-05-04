@@ -2,11 +2,13 @@ package muramasa.antimatter.cover;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
 public abstract class CoverFilter<T> extends Cover {
 
+    // TODO: Add black/white lister filter mode
     protected Set<T> filter = new ObjectOpenHashSet<>();
 
     @Override
@@ -20,13 +22,6 @@ public abstract class CoverFilter<T> extends Cover {
 
     public void addToFilter(Collection<? extends T> values) {
         filter.addAll(values);
-    }
-
-    @SafeVarargs
-    public final void addToFilter(T... values) {
-        for (T v : values) {
-            filter.add(v);
-        }
     }
 
     public Set<T> getFilter() {
