@@ -8,7 +8,6 @@ import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.capability.impl.EnergyNodeHandler;
 import muramasa.antimatter.capability.impl.FluidNodeHandler;
 import muramasa.antimatter.capability.impl.ItemNodeHandler;
-import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;

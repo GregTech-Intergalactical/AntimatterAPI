@@ -13,8 +13,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {

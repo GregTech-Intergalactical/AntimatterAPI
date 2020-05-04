@@ -2,7 +2,6 @@ package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;

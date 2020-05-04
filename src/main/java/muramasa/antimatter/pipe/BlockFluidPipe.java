@@ -1,17 +1,13 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 
