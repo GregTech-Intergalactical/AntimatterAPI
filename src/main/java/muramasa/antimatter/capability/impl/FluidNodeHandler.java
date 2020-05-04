@@ -31,6 +31,7 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
     private Set<Fluid>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
     private boolean[] output = new boolean[]{false, false, false, false, false, false};
     private boolean[] input = new boolean[]{true, true, true, true, true, true};
+    private int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     private boolean valid = true;
 
     private FluidNodeHandler(TileEntity tile, IFluidHandler handler) {
@@ -121,7 +122,7 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
 
     @Override
     public int getPriority(@Nonnull Dir direction) {
-        return 0;
+        return priority[direction.getIndex()];
     }
 
     @Override
@@ -141,7 +142,7 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
 
     @Override
     public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
-        return input[direction.getIndex()] && isFluidAvailable(fluid, direction) && getFirstValidTank(fluid) != -1;
+        return isFluidAvailable(fluid, direction.getIndex()) && getFirstValidTank(fluid) != -1;
     }
 
     @Override
@@ -149,9 +150,9 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
         return true;
     }
 
-    private boolean isFluidAvailable(@Nonnull Object fluid, @Nonnull Dir direction) {
-        Set<?> filtered = filter[direction.getIndex()];
-        return filtered.isEmpty() || filtered.contains(fluid);
+    private boolean isFluidAvailable(@Nonnull Object fluid, int dir) {
+        Set<?> filtered = filter[dir];
+        return input[dir] && (filtered.isEmpty() || filtered.contains(fluid));
     }
 
     // Fast way to find available tank for fluid

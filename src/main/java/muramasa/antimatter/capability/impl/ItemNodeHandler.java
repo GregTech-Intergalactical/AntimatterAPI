@@ -30,6 +30,7 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
     private Set<Item>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
     private boolean[] output = new boolean[]{false, false, false, false, false, false};
     private boolean[] input = new boolean[]{true, true, true, true, true, true};
+    private int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     private boolean valid = true;
 
     private ItemNodeHandler(TileEntity tile, IItemHandler handler) {
@@ -129,7 +130,7 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
 
     @Override
     public int getPriority(@Nonnull Dir direction) {
-        return 0;
+        return priority[direction.getIndex()];
     }
 
     @Override
@@ -154,7 +155,7 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
 
     @Override
     public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
-        return input[direction.getIndex()] && isItemAvailable(item, direction) && getFirstValidSlot(item) != -1;
+        return isItemAvailable(item, direction.getIndex()) && getFirstValidSlot(item) != -1;
     }
 
     @Override
@@ -162,9 +163,9 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
         return true;
     }
 
-    private boolean isItemAvailable(@Nonnull Object item, @Nonnull Dir direction) {
-        Set<?> filtered = filter[direction.getIndex()];
-        return filtered.isEmpty() || filtered.contains(item);
+    private boolean isItemAvailable(@Nonnull Object item, int dir) {
+        Set<?> filtered = filter[dir];
+        return input[dir] && (filtered.isEmpty() || filtered.contains(item));
     }
 
     // Fast way to find available slot for item

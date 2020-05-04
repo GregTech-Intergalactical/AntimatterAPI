@@ -29,6 +29,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper;
+    protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
     public MachineItemHandler(TileEntityMachine tile) {
         this.tile = tile;
@@ -303,7 +304,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     @Nonnull
     @Override
     public IntList getAvailableSlots(@Nonnull Dir direction) {
-        return outputWrapper.getAvailableSlots(direction);
+        return outputWrapper.getAvailableSlots(direction.getIndex());
     }
 
     @Override
@@ -313,7 +314,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Override
     public int getPriority(@Nonnull Dir direction) {
-        return 0;
+        return priority[direction.getIndex()];
     }
 
     @Override
@@ -338,7 +339,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Override
     public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
-        return inputWrapper.isItemAvailable(item, direction) && inputWrapper.getFirstValidSlot(item) != -1;
+        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
+        if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        return inputWrapper.isItemAvailable(item, direction.getIndex()) && inputWrapper.getFirstValidSlot(item) != -1;
     }
 
     @Override

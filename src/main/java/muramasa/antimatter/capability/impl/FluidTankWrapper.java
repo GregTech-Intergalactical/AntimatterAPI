@@ -96,8 +96,8 @@ public class FluidTankWrapper implements IFluidHandler {
         return dirty;
     }
 
-    public boolean isFluidAvailable(@Nonnull Object fluid, @Nonnull Dir direction) {
-        Set<?> filtered = filter[direction.getIndex()];
+    public boolean isFluidAvailable(@Nonnull Object fluid, int dir) {
+        Set<?> filtered = filter[dir];
         return filtered.isEmpty() || filtered.contains(fluid);
     }
 
@@ -117,8 +117,8 @@ public class FluidTankWrapper implements IFluidHandler {
         return tank;
     }
 
-    public int getAvailableTank(@Nonnull Dir direction) {
-        Set<?> set = filter[direction.getIndex()];
+    public int getAvailableTank(int dir) {
+        Set<?> set = filter[dir];
         if (set.isEmpty()) {
             for (int i = 0; i < getTanks(); i++) {
                 FluidStack stack = getFluidInTank(i);

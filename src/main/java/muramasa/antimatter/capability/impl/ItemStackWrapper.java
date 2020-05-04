@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -35,8 +34,8 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
     }
 
     @Nonnull
-    public IntList getAvailableSlots(@Nonnull Dir direction) {
-        Set<?> filtered = filter[direction.getIndex()];
+    public IntList getAvailableSlots(int dir) {
+        Set<?> filtered = filter[dir];
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
         if (filtered.isEmpty()) {
@@ -99,8 +98,8 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         handler.setSize(size);
     }
 
-    public boolean isItemAvailable(@Nonnull Object item, @Nonnull Dir direction) {
-        Set<?> filtered = filter[direction.getIndex()];
+    public boolean isItemAvailable(@Nonnull Object item, int dir) {
+        Set<?> filtered = filter[dir];
         return filtered.isEmpty() || filtered.contains(item);
     }
 

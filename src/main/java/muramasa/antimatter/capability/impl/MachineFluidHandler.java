@@ -33,6 +33,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
+    protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     protected int pressure;
 
     public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure) {
@@ -310,7 +311,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     @Override
     public int getAvailableTank(@Nonnull Dir direction) {
-        return outputWrapper.getAvailableTank(direction);
+        return outputWrapper.getAvailableTank(direction.getIndex());
     }
 
     @Override
@@ -320,7 +321,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     @Override
     public int getPriority(@Nonnull Dir direction) {
-        return 0;
+        return priority[direction.getIndex()];
     }
 
     @Override
@@ -340,7 +341,9 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     @Override
     public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
-        return inputWrapper.isFluidAvailable(fluid, direction) && inputWrapper.getFirstValidTank(fluid) != -1;
+        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
+        if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && inputWrapper.getFirstValidTank(fluid) != -1;
     }
 
     @Override
