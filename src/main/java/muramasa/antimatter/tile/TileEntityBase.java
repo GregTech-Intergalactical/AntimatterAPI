@@ -15,10 +15,20 @@ public abstract class TileEntityBase extends TileEntity {
 
     @Override //TODO needed in onLoad?
     public void onLoad() {
-        if (isServerSide()) initCaps();
+        if (isServerSide()) onInit();
     }
 
-    public void initCaps() {
+    @Override
+    public void remove() {
+        super.remove();
+        if (isServerSide()) onRemove();
+    }
+
+    public void onInit() {
+        //NOOP
+    }
+
+    public void onRemove() {
         //NOOP
     }
 
@@ -28,6 +38,10 @@ public abstract class TileEntityBase extends TileEntity {
 
     public boolean isServerSide() {
         return !world.isRemote;
+    }
+
+    public int getDimention() {
+        return world.getDimension().getType().getId();
     }
 
     /** Syncs NBT between Client & Server **/

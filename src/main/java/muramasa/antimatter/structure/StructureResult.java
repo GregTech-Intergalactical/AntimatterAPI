@@ -1,9 +1,10 @@
 package muramasa.antimatter.structure;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IComponentHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -21,16 +22,15 @@ public class StructureResult {
 
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
     public Object2ObjectMap<String, List<BlockState>> states = new Object2ObjectOpenHashMap<>();
-    public List<BlockPos> positions = new ObjectArrayList<>();
+    public LongList positions = new LongArrayList();
 
     public StructureResult(Structure structure) {
         this.structure = structure;
     }
 
-    public StructureResult withError(String error) {
+    public void withError(String error) {
         this.error = error;
         hasError = true;
-        return this;
     }
 
     public String getError() {
@@ -46,7 +46,7 @@ public class StructureResult {
             if (existing == null) components.put(elementId, Lists.newArrayList(component));
             else existing.add(component);
         }
-        positions.add(component.getTile().getPos());
+        positions.add(component.getTile().getPos().toLong());
     }
 
     public void addState(String elementId, BlockPos pos, BlockState state) {
@@ -54,7 +54,7 @@ public class StructureResult {
             List<BlockState> existing = states.get(elementId);
             if (existing == null) states.put(elementId, Lists.newArrayList(state));
             else existing.add(state);
-            positions.add(pos);
+            positions.add(pos.toLong());
         }
     }
 

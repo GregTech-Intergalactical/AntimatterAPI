@@ -3,8 +3,6 @@ package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -13,19 +11,16 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.energy.CapabilityEnergy;
 import tesseract.TesseractAPI;
-import tesseract.api.electric.IElectricCable;
 import tesseract.graph.ITickingController;
-import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -52,9 +47,8 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
-        Block block = state.getBlock();
-        return block instanceof BlockMachine ? ((BlockMachine) block).getType().has(MachineFlag.ENERGY) : block instanceof BlockCable;
+    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
+        return state.getBlock() instanceof BlockCable || tile != null && tile.getCapability(CapabilityEnergy.ENERGY).isPresent();
     }
 
     @Override
@@ -97,6 +91,11 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
 //    @Override
+//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
+//        PipeCache.setElectric(world, direction, neighbour);
+//    }
+
+    //    @Override
 //    public String getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];

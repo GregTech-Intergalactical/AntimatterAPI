@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.item.IItemPipe;
 import tesseract.graph.ITickHost;
@@ -18,18 +17,17 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     public TileEntityItemPipe(PipeType<?> type) {
         super(type);
-
-        World world = getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.registerItemPipe(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
-    public void remove() {
-        World world = getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.removeItem(world.getDimension().getType().getId(), getPos().toLong());
-        super.remove();
+    public void onInit() {
+        super.onInit();
+        TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
+    }
+
+    @Override
+    public void onRemove() {
+        TesseractAPI.removeItem(getDimention(), pos.toLong());
     }
 
     @Override

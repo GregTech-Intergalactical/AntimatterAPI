@@ -69,7 +69,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void initCaps() {
+    public void onInit() {
         if (!itemHandler.isPresent() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
         if (!fluidHandler.isPresent() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
@@ -79,20 +79,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
+    public void onRemove() {
+        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
+        itemHandler.ifPresent(MachineItemHandler::onRemove);
+        coverHandler.ifPresent(CoverHandler::onRemove);
+    }
+
+    @Override
     public void onServerUpdate() {
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
         coverHandler.ifPresent(CoverHandler::onUpdate);
-    }
-
-    @Override
-    public void remove() {
-        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
-        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
-        itemHandler.ifPresent(MachineItemHandler::onRemove);
-        coverHandler.ifPresent(CoverHandler::onRemove);
-        super.remove();
     }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {

@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.TesseractAPI;
@@ -30,8 +29,8 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     protected TileEntityMachine tile;
     protected ITickingController controller;
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper;
+    protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
-    /** Constructor **/
     public MachineItemHandler(TileEntityMachine tile) {
         this.tile = tile;
         inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
@@ -39,10 +38,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
-
-        World world = tile.getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.registerItemNode(world.getDimension().getType().getId(), tile.getPos().toLong(), this);
+        TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineItemHandler(TileEntityMachine tile, CompoundNBT itemData) {
@@ -55,9 +51,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void onRemove() {
-        World world = tile.getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.removeItem(world.getDimension().getType().getId(), tile.getPos().toLong());
+        TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
     }
 
 //    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
@@ -286,11 +280,18 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     @Override
     public int insert(@Nonnull ItemData data, boolean simulate) {
         ItemStack stack = (ItemStack) data.getStack();
-        ItemData item = inputWrapper.findItemInSlots(stack);
-        if (item != null) return inputWrapper.insertItem(item.getSlot(), (ItemStack) item.getStack(), simulate).getCount();
-        if (!simulate) return inputWrapper.setFirstEmptySlot(stack);
-        int slot = inputWrapper.getFirstEmptySlot();
-        return slot != -1 ? stack.getCount() : 0;
+        int slot = inputWrapper.getFirstValidSlot(stack.getItem());
+        if (slot == -1) {
+            return 0;
+        }
+
+        ItemStack inserted = inputWrapper.insertItem(slot, stack, simulate);
+        int count = stack.getCount();
+        if (!inserted.isEmpty()) {
+            count -= inserted.getCount() ;
+        }
+
+        return count;
     }
 
     @Nullable
@@ -303,7 +304,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     @Nonnull
     @Override
     public IntList getAvailableSlots(@Nonnull Dir direction) {
-        return outputWrapper.getAvailableSlots(direction);
+        return outputWrapper.getAvailableSlots(direction.getIndex());
     }
 
     @Override
@@ -313,7 +314,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Override
     public int getPriority(@Nonnull Dir direction) {
-        return 0;
+        return priority[direction.getIndex()];
     }
 
     @Override
@@ -338,7 +339,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Override
     public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
-        return inputWrapper.isItemAvailable(item, direction) && (inputWrapper.findItemInSlots(item) != null || inputWrapper.getFirstEmptySlot() != -1);
+        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
+        if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        return inputWrapper.isItemAvailable(item, direction.getIndex()) && inputWrapper.getFirstValidSlot(item) != -1;
     }
 
     @Override

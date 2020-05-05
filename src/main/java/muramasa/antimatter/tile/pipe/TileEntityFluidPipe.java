@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.world.World;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.graph.ITickHost;
@@ -18,18 +17,17 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     public TileEntityFluidPipe(PipeType<?> type) {
         super(type);
-
-        World world = getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.registerFluidPipe(world.getDimension().getType().getId(), pos.toLong(), this);
     }
 
     @Override
-    public void remove() {
-        World world = getWorld();
-        if (world != null && !world.isRemote())
-            TesseractAPI.removeFluid(world.getDimension().getType().getId(), getPos().toLong());
-        super.remove();
+    public void onInit() {
+        super.onInit();
+        TesseractAPI.registerFluidPipe(getDimention(), pos.toLong(), this);
+    }
+
+    @Override
+    public void onRemove() {
+        TesseractAPI.removeFluid(getDimention(), pos.toLong());
     }
 
     @Override
