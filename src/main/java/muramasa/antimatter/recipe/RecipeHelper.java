@@ -67,11 +67,11 @@ public class RecipeHelper {
 //        IRecipe recipe = new ShapelessOreRecipe(null, Unifier.get(result), parse(data, false)).setRegistryName(path);
 //        ForgeRegistries.RECIPES.register(recipe);
     }
-    
+
     public static void removeRecipeByName(String location) {
         removeRecipeByName(new ResourceLocation(location));
     }
-    
+
     /**
      * Providing removeRecipeByName only. As getting getRecipeOutput means looping through
      */
@@ -127,7 +127,7 @@ public class RecipeHelper {
     public static void addSmelting(ItemStack input, ItemStack output) {
         addSmelting(input, output, 1.0f);
     }
-    
+
     public static void removeSmelting(ItemStack output) {
         //TODO
 //        ItemStack recipeResult;

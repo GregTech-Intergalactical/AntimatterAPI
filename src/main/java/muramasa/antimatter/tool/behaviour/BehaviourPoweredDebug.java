@@ -20,8 +20,8 @@ public class BehaviourPoweredDebug implements IItemUse<MaterialTool> {
     public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
         if (instance.getType().isPowered() && c.getWorld().getBlockState(c.getPos()) == Blocks.REDSTONE_BLOCK.getDefaultState() && c.getPlayer() != null) {
             ItemStack stack = c.getPlayer().getHeldItem(c.getHand());
-            CompoundNBT nbt = instance.getTag(stack);
-            if (instance.getMaxEnergy(stack) - instance.getEnergy(stack) <= 50000) nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, instance.getMaxEnergy(stack));
+            CompoundNBT nbt = instance.getDataTag(stack);
+            if (instance.getMaxEnergy(stack) - instance.getCurrentEnergy(stack) <= 50000) nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, instance.getMaxEnergy(stack));
             else nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, nbt.getLong(Ref.KEY_TOOL_DATA_ENERGY) + 50000);
             return ActionResultType.SUCCESS;
         }
