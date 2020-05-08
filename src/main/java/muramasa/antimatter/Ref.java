@@ -68,6 +68,7 @@ public class Ref {
     public static final String TAG_TOOL_DATA = "tooldata";
     public static final String KEY_TOOL_DATA_PRIMARY_MATERIAL = "m";
     public static final String KEY_TOOL_DATA_SECONDARY_MATERIAL = "sm";
+    public static final String KEY_TOOL_DATA_TIER = "t";
     public static final String KEY_TOOL_DATA_ENERGY = "e";
     public static final String KEY_TOOL_DATA_MAX_ENERGY = "me";
 

@@ -229,6 +229,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.isHandle = true;
         this.handleDurability = durability;
         this.handleSpeed = speed;
+        this.toolEnchantment = ImmutableMap.of();
         return this;
     }
 

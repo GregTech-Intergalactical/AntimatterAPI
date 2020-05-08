@@ -531,7 +531,7 @@ public class Utils {
     /**
      * AntimatterToolType sensitive variant of BlockState::isToolEffective
      * @param type AntimatterToolType object
-     * @param state BLockState that is being checked against
+     * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
     @Deprecated

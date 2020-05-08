@@ -4,6 +4,7 @@ import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
@@ -18,6 +19,7 @@ import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.feature.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
@@ -111,11 +113,12 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public static void onDataGather(GatherDataEvent e) {
+        DataGenerator gen = e.getGenerator();
         if (e.includeClient()) {
-            AntimatterModelManager.onProviderInit(Ref.ID, e.getGenerator());
+            AntimatterModelManager.onProviderInit(Ref.ID, gen);
         }
         if (e.includeServer()) {
-
+            gen.addProvider(new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, gen));
         }
     }
 

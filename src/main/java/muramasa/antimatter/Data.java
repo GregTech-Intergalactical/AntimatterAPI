@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
@@ -29,6 +30,7 @@ import muramasa.antimatter.tool.behaviour.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.UseAction;
@@ -54,7 +56,7 @@ public class Data {
 
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
-    public static final Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3).addHandleStat(0, 0.0F);
+    public static final Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F);
 
     public static final AntimatterToolType SWORD = new AntimatterToolType(Ref.ID, "sword", 2, 1, 10, 4.0F, -2.4F).setToolClass(MaterialSword.class);
     public static final AntimatterToolType PICKAXE = new AntimatterToolType(Ref.ID, "pickaxe", 1, 2, 10, 1.5F, -2.8F).addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON);

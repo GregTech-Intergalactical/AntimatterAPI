@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.MaterialSword;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -48,16 +49,14 @@ public class RegistrationHelper {
             AntimatterAPI.all(AntimatterToolType.class, domain, t -> {
                 if (t.isPowered()) {
                     for (IAntimatterTool i : t.instantiatePoweredTools(domain)) {
-                        Item item = i.asItem();
-                        item.setRegistryName(domain, i.getId());
-                        ((IForgeRegistry) e.getRegistry()).register(item);
+                        i.asItem().setRegistryName(domain, i.getId());
+                        ((IForgeRegistry) e.getRegistry()).register(i.asItem());
                     }
                 }
                 else {
                     IAntimatterTool i = t.instantiateTools(domain);
-                    Item item = i.asItem();
-                    item.setRegistryName(domain, i.getId());
-                    ((IForgeRegistry) e.getRegistry()).register(item);
+                    i.asItem().setRegistryName(domain, i.getId());
+                    ((IForgeRegistry) e.getRegistry()).register(i.asItem());
                 }
             });
         }

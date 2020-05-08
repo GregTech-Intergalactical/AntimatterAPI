@@ -2,10 +2,11 @@ package muramasa.antimatter.tool;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
-import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.util.Utils;
@@ -31,20 +32,20 @@ public class AntimatterToolType implements IAntimatterObject {
     private final ToolType TOOL_TYPE;
     private final Set<ToolType> TOOL_TYPES = new HashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new HashSet<>();
-    private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new HashSet<>();
+    private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
+    private final Object2ObjectMap<String, IBehaviour<MaterialTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private List<ITextComponent> tooltip = new ArrayList<>();
-    @Nullable private SoundEvent useSound;
-    private boolean powered, repairable, blockBreakability, autogenerate;
+    private boolean powered, repairable, blockBreakability;
     private long baseMaxEnergy;
     private int[] energyTiers;
     private int baseQuality, useDurability, attackDurability, craftingDurability, overlayLayers;
     private float baseAttackDamage, baseAttackSpeed;
     private ItemGroup itemGroup;
     private Tag<Item> tag; // Set?
-    private UseAction useAction;
+    @Nonnull private UseAction useAction;
+    @Nonnull private Class<? extends IAntimatterTool> toolClass;
+    @Nullable private SoundEvent useSound;
     @Nullable private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
-    private Class<? extends IAntimatterTool> toolClass;
-    private final Object2ObjectMap<String, IBehaviour<MaterialTool>> behaviours = new Object2ObjectOpenHashMap<>();
 
     /**
      * Instantiates a AntimatterToolType with its basic values
@@ -68,7 +69,6 @@ public class AntimatterToolType implements IAntimatterObject {
         this.useSound = null;
         this.repairable = true;
         this.blockBreakability = true;
-        this.autogenerate = true;
         this.baseQuality = 0;
         this.useDurability = useDurability;
         this.attackDurability = attackDurability;
@@ -114,18 +114,22 @@ public class AntimatterToolType implements IAntimatterObject {
      * Instantiates powered MaterialTools
      */
     public List<IAntimatterTool> instantiatePoweredTools(String domain) {
-        List<IAntimatterTool> poweredTools = new ArrayList<>();
+        List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
         Item.Properties properties = prepareInstantiation(domain);
+        boolean isSword = toolClass == MaterialSword.class;
         for (int energyTier : energyTiers) {
-            poweredTools.add(new MaterialTool(domain, this, properties, energyTier));
+            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties, energyTier));
+            else poweredTools.add(new MaterialTool(domain, this, properties, energyTier));
         }
         return poweredTools;
     }
 
     public List<IAntimatterTool> instantiatePoweredTools(String domain, Supplier<Item.Properties> properties) {
-        List<IAntimatterTool> poweredTools = new ArrayList<>();
+        List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
+        boolean isSword = toolClass == MaterialSword.class;
         for (int energyTier : energyTiers) {
-            poweredTools.add(new MaterialTool(domain, this, properties.get(), energyTier));
+            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties.get(), energyTier));
+            else poweredTools.add(new MaterialTool(domain, this, properties.get(), energyTier));
         }
         return poweredTools;
     }
@@ -134,10 +138,12 @@ public class AntimatterToolType implements IAntimatterObject {
      * Instantiates a MaterialTool
      */
     public IAntimatterTool instantiateTools(String domain) {
+        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, prepareInstantiation(domain));
         return new MaterialTool(domain, this, prepareInstantiation(domain));
     }
 
     public IAntimatterTool instantiateTools(String domain, Supplier<Item.Properties> properties) {
+        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, properties.get());
         return new MaterialTool(domain, this, properties.get());
     }
 
@@ -170,11 +176,6 @@ public class AntimatterToolType implements IAntimatterObject {
         this.powered = true;
         this.baseMaxEnergy = baseMaxEnergy;
         this.energyTiers = energyTiers;
-        return this;
-    }
-
-    public AntimatterToolType setAutogenerate(boolean autogenerate) {
-        this.autogenerate = autogenerate;
         return this;
     }
 
@@ -275,56 +276,6 @@ public class AntimatterToolType implements IAntimatterObject {
 
     /** GETTERS **/
 
-    /**
-     * @param primary   material
-     * @param secondary material, it is nullable
-     * @return Item variant of an AntimatterToolType
-     */
-    /*
-    public Item get(Material primary, Material secondary) {
-        if (overlayLayers == 0 && secondary != null) {
-            Utils.onInvalidData("GET ERROR - SECONDARY MATERIAL SHOULD BE NULL: T(" + id + ") M(" + secondary.getId() + ")");
-        }
-        if (primary.equals(secondary)) {
-            Utils.onInvalidData("GET ERROR - PRIMARY AND SECONDARY MATERIALS SHOULD BE DIFFERENT: T(" + id + ") M(" + primary.getId() + ") AND M(" + secondary.getId() + ")");
-        }
-        if (secondary != null && (secondaryMaterialRequirement != null && !secondary.has(secondaryMaterialRequirement))) {
-            Utils.onInvalidData("GET ERROR - SECONDARY MATERIAL REQUIREMENT MISMATCH: T(" + id + ") M(" + secondary.getId() + ")");
-        }
-        IAntimatterTool item = AntimatterAPI.get(IAntimatterTool.class, primary.getId() + "_" + (secondary == null ? "" : secondary.getId() + "_") + id);
-        if (item == null) {
-            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
-        }
-        return item != null ? item.asItem() : Items.AIR;
-    }
-     */
-
-    /**
-     * // @param primary   material
-     * // @param secondary material, it is nullable
-     * @return ItemStack variant of an AntimatterToolType, it will come with an enchantment if the primary and/or secondary has native enchants
-     */
-    /*
-    public ItemStack get(Material primary, Material secondary, int count) {
-        Item item = get(primary, secondary);
-        if (item == null) {
-            Utils.onInvalidData("GET ERROR - TOOL ITEM NULL: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
-        }
-        ItemStack stack = new ItemStack(item, count);
-        if (stack.isEmpty()) {
-            Utils.onInvalidData("GET ERROR - TOOL STACK EMPTY: T(" + id + ") M(" + primary.getId() + ") AND M(" + (secondary == null ? "" : secondary.getId()) + ")");
-        }
-        // TODO: DISABLE UNBREAKING TO BE APPLIED ONTO TOOLS
-        if (!primary.getEnchantments().isEmpty()) {
-            primary.getEnchantments().forEach(stack::addEnchantment);
-        }
-        if (secondary != null && secondary.getEnchantments() != null && !secondary.getEnchantments().isEmpty()) {
-            secondary.getEnchantments().forEach(stack::addEnchantment);
-        }
-        return stack;
-    }
-     */
-
     public String getDomain() {
         return domain;
     }
@@ -346,10 +297,6 @@ public class AntimatterToolType implements IAntimatterObject {
         return tooltip;
     }
 
-    public SoundEvent getUseSound() {
-        return useSound;
-    }
-
     public boolean isPowered() {
         return powered;
     }
@@ -364,10 +311,6 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public Class<? extends IAntimatterTool> getToolClass() {
         return toolClass;
-    }
-
-    public boolean isAutogenerated() {
-        return autogenerate;
     }
 
     public int getBaseQuality() {
@@ -406,8 +349,10 @@ public class AntimatterToolType implements IAntimatterObject {
         return tag;
     }
 
-    public UseAction getUseAction() {
-        return useAction;
+    @Nonnull public UseAction getUseAction() { return useAction; }
+
+    @Nullable public SoundEvent getUseSound() {
+        return useSound;
     }
 
     @Nullable
