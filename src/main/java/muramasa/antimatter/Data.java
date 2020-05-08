@@ -80,7 +80,7 @@ public class Data {
     public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC);
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
 
-    public static Machine MACHINE_INVALID = new Machine(Ref.ID, "invalid");
+    public static Machine<?> MACHINE_INVALID = new Machine(Ref.ID, "invalid");
 
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();

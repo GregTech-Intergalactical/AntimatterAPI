@@ -1,18 +1,19 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class RecipeHelper {
 
-    private static HashMap<Character, String> REPLACEMENTS = new HashMap<>();
+    private static Object2ObjectMap<Character, String> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
 
     public static boolean ALWAYS_USE_ORE_DICT = true;
 
@@ -80,7 +81,7 @@ public class RecipeHelper {
     }
 
     public static Object[] parse(Object[] data, boolean shaped) {
-        ArrayList<Object> dataList = Lists.newArrayList(data);
+        List<Object> dataList = Lists.newArrayList(data);
         if (shaped) { //Insert tool dataList replacements
             if (!(dataList.get(0) instanceof String) || !(dataList.get(1) instanceof String) || !(dataList.get(2) instanceof String)) {
                 throw new IllegalArgumentException("Shaped recipes require 3 initial string args");

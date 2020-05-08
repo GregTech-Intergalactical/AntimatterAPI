@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
-    protected int[] slots, steps;
+    protected int[] caps;
 
     public ItemPipe(String domain, Material material) {
         super(domain, material);
@@ -25,34 +25,20 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
     @Override
     public Set<Block> getBlocks() {
-        return sizes.stream().map(s -> new BlockItemPipe(this, s, false)).collect(Collectors.toSet());
+        return sizes.stream().map(s -> new BlockItemPipe(this, s)).collect(Collectors.toSet());
     }
 
-    public int getSlotSize(PipeSize size) {
-        return slots[size.ordinal()];
+    public int getCapacity(PipeSize size) {
+        return caps[size.ordinal()];
     }
 
-    public int getStepSize(PipeSize size) {
-        return steps[size.ordinal()];
-    }
-
-    public T slots(int baseSlots) {
-        slots = new int[]{baseSlots, baseSlots, baseSlots, baseSlots, baseSlots * 2, baseSlots * 4};
+    public T caps(int baseCap) {
+        this.caps = new int[]{baseCap, baseCap * 2, baseCap * 3, baseCap * 4, baseCap * 5, baseCap * 6};
         return (T) this;
     }
 
-    public T slots(int[] slots) {
-        this.slots = slots;
-        return (T) this;
-    }
-
-    public T steps(int baseSteps) {
-        steps = new int[]{32768 / baseSteps, 32768 / baseSteps, 32768 / baseSteps, 32768 / baseSteps, 16384 / baseSteps, 8192 / baseSteps};
-        return (T) this;
-    }
-
-    public T steps(int[] steps) {
-        this.steps = steps;
+    public T caps(int... caps) {
+        this.caps = caps;
         return (T) this;
     }
 }

@@ -2,6 +2,9 @@ package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
@@ -13,6 +16,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -22,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
@@ -29,10 +34,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -46,6 +53,9 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class Utils {
 
@@ -236,6 +246,18 @@ public class Utils {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
                 ItemHandlerHelper.insertItem(to, from.extractItem(i, from.getStackInSlot(i).getCount(), false), false);
+            }
+        }
+    }
+
+    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
+        for (int i = 0; i < to.getTanks(); i++) {
+            if (i >= from.getTanks()) break;
+            FluidStack toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            int filled = to.fill(toInsert, SIMULATE);
+            if (filled > 0) {
+                toInsert.setAmount(filled);
+                to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
     }
@@ -486,7 +508,7 @@ public class Utils {
             }
         }
 
-        Set<BlockPos> set = new HashSet<>();
+        Set<BlockPos> set = new ObjectOpenHashSet<>();
         BlockState state;
         for (int x = center.getX() - xRadius; x <= center.getX() + xRadius; x++) {
             for (int y = center.getY() - yRadius; y <= center.getY() + yRadius; y++) {
@@ -502,6 +524,31 @@ public class Utils {
             }
         }
         return set;
+    }
+
+    public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
+        if (world != null) {
+            if (!world.isRemote) {
+                world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), explosionRadius, modeIn);
+            } else {
+                world.addParticle(ParticleTypes.SMOKE, pos.getX(), pos.getY() + 0.5D, pos.getZ(), 0.0D, 0.0D, 0.0D);
+            }
+            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        }
+    }
+
+    public static void createFireAround(@Nullable World world, BlockPos pos) {
+        if (world != null) {
+            boolean fired = false;
+            for (Direction direction : Direction.values()) {
+                BlockPos offset = pos.offset(direction);
+                if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
+                    world.setBlockState(offset, Blocks.FIRE.getDefaultState());
+                    fired = true;
+                }
+            }
+            if (!fired) world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+        }
     }
 
     /**
@@ -562,7 +609,7 @@ public class Utils {
         }
         else {
             LinkedList<BlockPos> blocks = new LinkedList<>();
-            Set<BlockPos> visited = new HashSet<>();
+            Set<BlockPos> visited = new ObjectOpenHashSet<>();
             int amount = Configs.GAMEPLAY.AXE_TIMBER_MAX;
             blocks.add(start);
             BlockPos pos;
@@ -655,7 +702,7 @@ public class Utils {
      */
     public static DyeColor determineColour(int rgb) {
         Color colour = new Color(rgb);
-        Map<Double, DyeColor> distances = new HashMap<>();
+        Double2ObjectMap<DyeColor> distances = new Double2ObjectOpenHashMap<>();
         for (DyeColor dyeColour : DyeColor.values()) {
             Color enumColour = new Color(dyeColour.getColorValue());
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
@@ -663,7 +710,7 @@ public class Utils {
                 + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
             distances.put(distance, dyeColour);
         }
-        return distances.get(Collections.min(distances.keySet()));
+        return distances.get((double) Collections.min(distances.keySet()));
     }
     
     public static String lowerUnderscoreToUpperSpaced(String string) {

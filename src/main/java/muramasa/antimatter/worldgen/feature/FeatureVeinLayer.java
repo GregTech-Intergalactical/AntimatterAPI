@@ -1,5 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
@@ -14,7 +15,6 @@ import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -57,7 +57,7 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
         int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
         int northZ = chunkZ - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
         int southZ = chunkZ + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
-        List<Tuple<Integer, Integer>> res = new ArrayList<>();
+        List<Tuple<Integer, Integer>> res = new ObjectArrayList<>();
         // Search for oreVein seeds and add to the list;
         for (int x = westX; x < eastX; x++) {
             for (int z = northZ; z < southZ; z++) {

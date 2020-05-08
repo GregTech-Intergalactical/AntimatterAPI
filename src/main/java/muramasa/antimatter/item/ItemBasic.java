@@ -1,5 +1,6 @@
 package muramasa.antimatter.item;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Configs;
 import muramasa.antimatter.Ref;
@@ -12,14 +13,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatterObject, ITextureProvider, IModelProvider {
 
     protected String domain, id, tooltip = "";
     protected boolean enabled = true;
-    protected Set<ItemTag> tags = new HashSet<>();
+    protected Set<ItemTag> tags = new ObjectOpenHashSet<>();
 
     public ItemBasic(String domain, String id, Properties properties) {
         super(properties);

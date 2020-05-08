@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen;
 
 import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -19,8 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.Heightmap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-
-import java.util.ArrayList;
 
 public class WorldGenHelper {
 
@@ -83,7 +82,7 @@ public class WorldGenHelper {
     }
 
     public static boolean addOre(IWorld world, BlockPos pos, Material material, boolean normalOre) {
-        FeatureOre.ORES.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>()).add(new ImmutableTriple<>(pos, material, normalOre));
+        FeatureOre.ORES.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new ImmutableTriple<>(pos, material, normalOre));
         return true;
     }
 
@@ -95,7 +94,7 @@ public class WorldGenHelper {
 
     public static boolean addRockRaw(IWorld world, BlockPos pos, Material material, int chance) {
         if (world.getRandom().nextInt(chance) != 0) return false;
-        FeatureSurfaceRock.ROCKS.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ArrayList<>()).add(new Tuple<>(pos, material));
+        FeatureSurfaceRock.ROCKS.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new Tuple<>(pos, material));
         return true;
     }
 

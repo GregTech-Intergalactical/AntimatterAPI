@@ -13,7 +13,7 @@ public class TileEntitySteamMachine extends TileEntityMachine {
 
     protected static FluidStack STEAM = Material.get("steam").getGas(1);
 
-    public TileEntitySteamMachine(Machine type) {
+    public TileEntitySteamMachine(Machine<?> type) {
         super(type);
     }
 

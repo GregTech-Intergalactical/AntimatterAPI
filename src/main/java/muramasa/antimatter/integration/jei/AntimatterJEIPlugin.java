@@ -1,5 +1,8 @@
 package muramasa.antimatter.integration.jei;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -14,8 +17,6 @@ import muramasa.antimatter.recipe.RecipeMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -23,7 +24,7 @@ import java.util.Set;
 public class AntimatterJEIPlugin implements IModPlugin {
 
     private static IJeiRuntime runtime;
-    private static HashMap<String, Tuple<RecipeMap, GuiData>> REGISTRY = new HashMap<>();
+    private static Object2ObjectMap<String, Tuple<RecipeMap, GuiData>> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public AntimatterJEIPlugin() {
         Antimatter.LOGGER.debug("AntimatterJEIPlugin created");
@@ -52,7 +53,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registry) {
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
 
-        Set<String> registeredMachineCats = new HashSet<>();
+        Set<String> registeredMachineCats = new ObjectOpenHashSet<>();
         //TODO redo JEI categories to revolve around maps instead of machines
 /*
         for (Machine type : MachineFlag.RECIPE.getTypes()) {

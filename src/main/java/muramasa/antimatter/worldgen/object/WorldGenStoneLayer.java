@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen.object;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.StoneLayerOre;
@@ -68,7 +69,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
     }
 
     public static void addCollision(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
-        COLLISION_MAP.computeIfAbsent(Objects.hash(top, bottom), k -> new ArrayList<>()).addAll(Arrays.asList(oresToAdd));
+        COLLISION_MAP.computeIfAbsent(Objects.hash(top, bottom), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
     }
 
     public static List<StoneLayerOre> getCollision(StoneType middle, BlockState top, BlockState bottom) {

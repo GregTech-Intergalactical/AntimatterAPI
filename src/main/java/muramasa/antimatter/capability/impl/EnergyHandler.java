@@ -1,47 +1,50 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.capability.IEnergyHandler;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.IEnergyStorage;
+import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
-public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    protected long energy, amperage, capacity, input, output;
+public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
-    public EnergyHandler(long energy, long amperage, long capacity, long input, long output) {
+    protected long energy, capacity;
+    protected int voltage_in, voltage_out, amperage_in, amperage_out;
+
+    public EnergyHandler(long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         this.energy = energy;
-        this.amperage = amperage;
         this.capacity = capacity;
-        this.input = input;
-        this.output = output;
+        this.voltage_in = voltage_in;
+        this.voltage_out = voltage_out;
+        this.amperage_in = amperage_in;
+        this.amperage_out = amperage_out;
     }
 
-    /** GTI IEnergyHandler Implementations **/
+    /** Tesseract IElectricNode Implementations **/
     @Override
-    public long insert(long toInsert, boolean simulate) {
+    public long insert(long maxReceive, boolean simulate) {
         if (!canInput()) return 0;
 
-        // Not check the min input due to dynamic amperage value
-        long inserted = Math.min(capacity - energy, toInsert);
+        long inserted = Math.min(capacity - energy, maxReceive);
         if (!simulate) energy += inserted;
 
         return inserted;
     }
 
     @Override
-    public long extract(long toExtract, boolean simulate) {
-        if (!canExtract()) return 0;
+    public long extract(long maxExtract, boolean simulate) {
+        if (!canOutput()) return 0;
 
-        // Not check the min input due to dynamic amperage value
-        long extracted = Math.min(energy, toExtract);
+        long extracted = Math.min(energy, maxExtract);
         if (!simulate) energy -= extracted;
 
         return extracted;
     }
 
     @Override
-    public long getPower() {
+    public long getEnergy() {
         return energy;
     }
 
@@ -51,33 +54,38 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
     }
 
     @Override
-    public long getInputAmperage() {
-        return amperage * 2;
+    public int getInputAmperage() {
+        return amperage_in;
     }
 
     @Override
-    public long getOutputAmperage() {
-        return amperage;
+    public int getOutputAmperage() {
+        return amperage_out;
     }
 
     @Override
-    public long getInputVoltage() {
-        return input;
+    public int getInputVoltage() {
+        return voltage_in;
     }
 
     @Override
-    public long getOutputVoltage() {
-        return output;
+    public int getOutputVoltage() {
+        return voltage_out;
     }
 
     @Override
     public boolean canInput() {
-        return input > 0L;
+        return voltage_in > 0;
+    }
+
+    @Override
+    public boolean canOutput(@Nonnull Dir direction) {
+        return false;
     }
 
     @Override
     public boolean canOutput() {
-        return output > 0L;
+        return voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/
@@ -93,7 +101,7 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
 
     @Override
     public int getEnergyStored() {
-        return (int) getPower();
+        return (int) getEnergy();
     }
 
     @Override
@@ -112,7 +120,11 @@ public class EnergyHandler implements IEnergyHandler, IEnergyStorage {
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(@Nonnull Dir direction) {
         return true;
+    }
+
+    @Override
+    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
     }
 }

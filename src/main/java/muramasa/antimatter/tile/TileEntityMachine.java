@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,7 +69,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void initCaps() {
+    public void onInit() {
         if (!itemHandler.isPresent() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
         if (!fluidHandler.isPresent() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
@@ -78,15 +79,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onServerUpdate() {
-        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
-        coverHandler.ifPresent(CoverHandler::update);
+    public void onRemove() {
+        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
+        itemHandler.ifPresent(MachineItemHandler::onRemove);
+        coverHandler.ifPresent(CoverHandler::onRemove);
     }
 
     @Override
-    public void remove() {
-        energyHandler.ifPresent(MachineEnergyHandler::remove);
-        super.remove();
+    public void onServerUpdate() {
+        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
+        fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
+        itemHandler.ifPresent(MachineItemHandler::onUpdate);
+        coverHandler.ifPresent(CoverHandler::onUpdate);
     }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {
@@ -123,8 +128,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return MachineState.IDLE;
     }
 
-    public long getMaxInputVoltage() {
-        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0L);
+    public int getMaxInputVoltage() {
+        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
+    }
+
+    public boolean canConnect(Direction dir) {
+        return energyHandler.map(h -> h.connects(Dir.VALUES[dir.getIndex()])).orElse(false);
     }
 
     //TODO
@@ -146,22 +155,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         machineState = newState;
     }
 
-    /*public void onOverVoltage() {
-        BlockPos pos = BlockPos.fromLong(position); // Gets the position of consumer to expload
-        world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), 4.0F, Explosion.Mode.BREAK);
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
-    }
-
-    public void onOverAmperage() {
-        world.setBlockState(BlockPos.fromLong(position), Blocks.FIRE.getDefaultState());
-    }*/
-
     public Cover[] getValidCovers() {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
     }
 
     public float getClientProgress() {
         return clientProgress;
+    }
+
+    public TileEntityMachine asMachine() {
+        return this;
     }
 
     @Nonnull
@@ -172,6 +175,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return builder.build();
     }
 
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return getMachineType().getDisplayName(getMachineTier());
@@ -179,7 +183,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Nullable
     @Override
-    public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+    public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
@@ -189,7 +193,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
         else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
         else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.get(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
+        else if (cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.getCover(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
         else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
         return super.getCapability(cap, side);
     }
@@ -202,6 +206,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (tag.contains(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidData = tag.getCompound(Ref.KEY_MACHINE_TILE_FLUIDS);
     }
 
+    @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
@@ -234,7 +239,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (int i = 0; i < 6; i++) {
-                builder.append(h.get(Ref.DIRECTIONS[i]).getId()).append(" ");
+                builder.append(h.getCover(Ref.DIRECTIONS[i]).getId()).append(" ");
             }
             info.add(builder.toString());
         });

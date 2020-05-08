@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.MatrixApplyingVertexBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
@@ -122,7 +123,7 @@ public class ClientEvents {
         if (state.getBlock() instanceof IInfoProvider) {
             e.getLeft().add("");
             e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
-            e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ArrayList<>(), world, state, pos));
+            e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ObjectArrayList<>(), world, state, pos));
         }
         if (MC.player.isCrouching()) {
             //TODO

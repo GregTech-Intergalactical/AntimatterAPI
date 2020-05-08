@@ -349,9 +349,13 @@ public class AntimatterToolType implements IAntimatterObject {
         return tag;
     }
 
-    @Nonnull public UseAction getUseAction() { return useAction; }
+    @Nonnull 
+    public UseAction getUseAction() {
+        return useAction;
+    }
 
-    @Nullable public SoundEvent getUseSound() {
+    @Nullable 
+    public SoundEvent getUseSound() {
         return useSound;
     }
 

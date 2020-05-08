@@ -1,8 +1,8 @@
 package muramasa.antimatter.datagen.providers;
 
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.data.DataGenerator;
@@ -14,6 +14,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -27,6 +28,7 @@ public class AntimatterAdvancementProvider implements IDataProvider {
     private final List<Consumer<Consumer<Advancement>>> advancements;
     private String providerDomain, providerName;
 
+    @SafeVarargs
     public AntimatterAdvancementProvider(String providerDomain, String providerName, DataGenerator gen, Consumer<Consumer<Advancement>>... advancements) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
@@ -36,9 +38,9 @@ public class AntimatterAdvancementProvider implements IDataProvider {
     }
 
     @Override
-    public void act(DirectoryCache cache) throws IOException {
+    public void act(@Nonnull DirectoryCache cache) throws IOException {
         Path folder = this.gen.getOutputFolder();
-        Set<ResourceLocation> locs = Sets.newHashSet();
+        Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = (advancement) -> {
             if (!locs.add(advancement.getId())) throw new IllegalStateException("Duplicate advancement " + advancement.getId());
             else {
@@ -57,6 +59,7 @@ public class AntimatterAdvancementProvider implements IDataProvider {
         return path.resolve(String.join("", "data/", providerDomain, "/advancements/", advancement.getId().getPath(), ".json"));
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return providerName;

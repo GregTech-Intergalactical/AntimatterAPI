@@ -1,5 +1,6 @@
 package muramasa.antimatter.registration;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
@@ -16,13 +17,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class RegistrationHelper {
 
-    private static List<BlockItem> ITEM_BLOCKS = new ArrayList<>();
+    private static List<BlockItem> ITEM_BLOCKS = new ObjectArrayList<>();
 
     @SubscribeEvent
     public static void onRegistryEvent(RegistryEvent.Register<?> e) {

@@ -22,7 +22,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     protected Optional<HatchComponentHandler> componentHandler = Optional.empty();
 
-    public TileEntityHatch(Machine type) {
+    public TileEntityHatch(Machine<?> type) {
         super(type);
     }
 
@@ -30,7 +30,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     public void onLoad() {
         if (!isServerSide()) return;
         componentHandler = Optional.of(new HatchComponentHandler(this));
-        if (getMachineType().has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, fluidData));
+        if (getMachineType().has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, 1000, fluidData));
         super.onLoad();
     }
 

@@ -33,7 +33,7 @@ import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
 
-public abstract class BlockPipe<T extends PipeType> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
+public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
     protected PipeType<?> type;
     protected PipeSize size;
@@ -108,6 +108,12 @@ public abstract class BlockPipe<T extends PipeType> extends BlockDynamic impleme
 
 
     @Override
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+
+    }
+
+    @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
     }
@@ -169,11 +175,12 @@ public abstract class BlockPipe<T extends PipeType> extends BlockDynamic impleme
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int ct = 0;
-        int cull = 0;
-        BlockState adjState;
+        //int cull = 0;
         for (int s = 0; s < 6; s++) {
-            adjState = world.getBlockState(mut.setPos(pos.offset(Ref.DIRECTIONS[s])));
-            if (canConnect(world, adjState, mut)) {
+            mut.setPos(pos.offset(Ref.DIRECTIONS[s]));
+            BlockState adjState = world.getBlockState(mut);
+            TileEntity adjTile = world.getTileEntity(mut);
+            if (canConnect(world, adjState, adjTile, mut)) {
                 ct += 1 << s;
                 //if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
             }
@@ -181,8 +188,19 @@ public abstract class BlockPipe<T extends PipeType> extends BlockDynamic impleme
         return config.set(new int[]{getPipeID(ct, /*cull > 0 ? 0 : 1*/0)});
     }
 
+    /*@Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        for (Direction direction : Direction.values()) {
+            TileEntity neighbour = Utils.getTile(world, pos.offset(direction));
+            if (neighbour != null) onNeighborCatch(world, direction, neighbour);
+        }
+    }*/
+
+    //protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
+    //}
+
     @Override
-    public boolean canConnect(IBlockReader world, BlockState state, BlockPos pos) {
+    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
         return state.getBlock() instanceof BlockPipe;
     }
 
