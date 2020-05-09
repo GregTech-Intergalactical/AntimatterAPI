@@ -132,8 +132,8 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (tile instanceof TileEntityPipe) {
             ((TileEntityPipe) tile).refreshConnections();
         }
-        /*for (Direction direction : Ref.DIRECTIONS) {
-            TileEntity neighbour = Utils.getTile(world, pos.offset(direction));
+        /*for (Direction dir : Ref.DIRECTIONS) {
+            TileEntity neighbour = Utils.getTile(world, pos.offset(dir));
             if (neighbour != null) onNeighborCatch(world, direction, neighbour);
         }*/
     }
@@ -169,20 +169,16 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int ct = 0;
-        //int cull = 0;
-        // TODO: Can be null ? How get tile more correctly ?
         TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(mut);
-        for (Direction direction : Ref.DIRECTIONS) {
-            mut.setPos(pos.offset(direction));
-            //BlockState adjState = world.getBlockState(mut);
+        for (Direction dir : Ref.DIRECTIONS) {
+            mut.setPos(pos.offset(dir));
             TileEntity adjTile = world.getTileEntity(mut);
             if (adjTile == null) continue;
-            if (tile.canConnect(adjTile, direction)) {
-                ct += 1 << direction.getIndex();
-                //if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
+            if (tile.canConnect(adjTile, dir)) {
+                ct += 1 << dir.getIndex();
             }
         }
-        return config.set(new int[]{getPipeID(ct, /*cull > 0 ? 0 : 1*/0)});
+        return config.set(new int[]{getPipeID(ct, 0)});
     }
 
     @Override

@@ -67,20 +67,16 @@ public class TileEntityPipe extends TileEntityTickable {
 
     public void refreshConnections() {
         connections = 0;
-        //int sideMask, smallerPipes = 0;
-        for (Direction direction : Ref.DIRECTIONS) {
-            TileEntity adjTile = Utils.getTile(world, pos.offset(direction));
+        for (Direction dir : Ref.DIRECTIONS) {
+            TileEntity adjTile = Utils.getTile(world, pos.offset(dir));
             if (adjTile == null) continue;
-            int mask = 1 << direction.getIndex();
-            if ((disabledConnections & mask) == 0) { //Connection side has not been disabled
-                if (canConnect(adjTile, direction)) {
-                    connections |= mask;
-                    //TODO check isFullCube to allow more culled connections?
-                    //if (((TileEntityPipe) adjTile).getPipeSize().ordinal() < getPipeSize().ordinal()) smallerPipes++;
+            int sideMask = 1 << dir.getIndex();
+            if ((disabledConnections & sideMask) == 0) { //Connection side has not been disabled
+                if (canConnect(adjTile, dir)) {
+                    connections |= sideMask;
                 }
             }
         }
-        //if (smallerPipes == 0) connections += 64; //Use culled models if there are no smaller pipes adjacent
         markForNBTSync();
     }
 
@@ -89,11 +85,11 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     public void toggleConnection(Direction side) {
-        int mask = 1 << side.getIndex();
-        if ((disabledConnections & mask) > 0) { // Is Disabled, so remove mask
-            disabledConnections &= ~mask;
+        int sideMask = 1 << side.getIndex();
+        if ((disabledConnections & sideMask) > 0) { // Is Disabled, so remove mask
+            disabledConnections &= ~sideMask;
         } else { // Is not disabled, so add mask
-            disabledConnections |= mask;
+            disabledConnections |= sideMask;
         }
         refreshConnections();
     }

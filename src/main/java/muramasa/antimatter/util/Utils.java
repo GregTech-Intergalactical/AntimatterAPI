@@ -540,8 +540,8 @@ public class Utils {
     public static void createFireAround(@Nullable World world, BlockPos pos) {
         if (world != null) {
             boolean fired = false;
-            for (Direction direction : Direction.values()) {
-                BlockPos offset = pos.offset(direction);
+            for (Direction dir : Ref.DIRECTIONS) {
+                BlockPos offset = pos.offset(dir);
                 if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
                     world.setBlockState(offset, Blocks.FIRE.getDefaultState());
                     fired = true;

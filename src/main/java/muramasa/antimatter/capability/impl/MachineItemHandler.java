@@ -349,7 +349,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex() && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial);
+        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
     }
 
     @Override
