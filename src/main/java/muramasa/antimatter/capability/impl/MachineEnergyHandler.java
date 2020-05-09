@@ -1,5 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.tile.TileEntityMachine;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
@@ -28,15 +30,14 @@ public class MachineEnergyHandler extends EnergyHandler {
         if (controller != null) controller.tick();
     }
 
-//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-//        ITickingController controller = TesseractAPI.getElectricController(world.getDimension().getType().getId(), pos.toLong());
-//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
-//        return info;
-//    }
+    public void onReset() {
+        TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
+        TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
+    }
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex();
+        return tile.getFacing().getIndex() != direction.getIndex() && tile.getCover(Ref.DIRECTIONS[direction.getIndex()]).isEqual(Data.COVER_NONE);
     }
 
     @Override

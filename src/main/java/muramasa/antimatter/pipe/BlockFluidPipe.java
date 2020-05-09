@@ -22,11 +22,6 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
     }
 
     @Override
-    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
-        return state.getBlock() instanceof BlockFluidPipe || tile != null && tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).isPresent();
-    }
-
-    @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
         ITickingController controller = TesseractAPI.getFluidController(world.getDimension().getType().getId(), pos.toLong());
         if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));

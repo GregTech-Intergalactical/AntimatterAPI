@@ -47,11 +47,6 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
     @Override
-    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
-        return state.getBlock() instanceof BlockCable || tile != null && tile.getCapability(CapabilityEnergy.ENERGY).isPresent();
-    }
-
-    @Override
     public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
         return 300;
     }

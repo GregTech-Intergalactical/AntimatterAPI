@@ -1,9 +1,14 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import tesseract.TesseractAPI;
 import tesseract.api.fluid.IFluidPipe;
+import tesseract.graph.Connectivity;
 import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
@@ -31,8 +36,23 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
     }
 
     @Override
+    public void refreshConnections() {
+        byte temp = connections;
+        super.refreshConnections();
+        if (temp != connections && isServerSide()) {
+            TesseractAPI.removeFluid(getDimention(), pos.toLong());
+            TesseractAPI.registerFluidPipe(getDimention(), pos.toLong(), this);
+        }
+    }
+
+    @Override
     public void onServerUpdate() {
         if (controller != null) controller.tick();
+    }
+
+    @Override
+    public boolean canConnect(TileEntity tile, Direction side) {
+        return tile instanceof TileEntityFluidPipe && getCover(side).isEqual(Data.COVER_NONE) || tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override
@@ -57,7 +77,7 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return true;
+        return Connectivity.has(connections, direction);
     }
 
     @Override

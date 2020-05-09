@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.ModelConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -36,11 +37,13 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     /** Connection Logic **/
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[1];
-        for (int s = 0; s < 6; s++) {
-            mut.setPos(pos.offset(Ref.DIRECTIONS[s]));
+        for (Direction direction : Ref.DIRECTIONS) {
+            mut.setPos(pos.offset(direction));
             BlockState adjState = world.getBlockState(mut);
             TileEntity adjTile = world.getTileEntity(mut);
-            if (canConnect(world, adjState, adjTile, mut)) ct[0] += 1 << s;
+            if (canConnect(world, adjState, adjTile, mut)) {
+                ct[0] += 1 << direction.getIndex();
+            }
         }
         return config.set(ct[0] == 0 ? DEFAULT_CONFIG : ct);
     }

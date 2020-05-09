@@ -2,6 +2,7 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.*;
@@ -86,6 +87,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(CoverHandler::onRemove);
     }
 
+    // Should be called on the rotation or cover changes to update connections
+    //public void onReset() {
+    //    energyHandler.ifPresent(MachineEnergyHandler::onReset);
+    //    fluidHandler.ifPresent(MachineFluidHandler::onReset);
+    //    itemHandler.ifPresent(MachineItemHandler::onReset);
+    //}
+
     @Override
     public void onServerUpdate() {
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
@@ -132,8 +140,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
-    public boolean canConnect(Direction dir) {
-        return energyHandler.map(h -> h.connects(Dir.VALUES[dir.getIndex()])).orElse(false);
+    public Cover getCover(Direction side) {
+        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
     }
 
     //TODO
@@ -185,6 +193,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+        if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
+        else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
+        return super.getCapability(cap);
     }
 
     @Nonnull

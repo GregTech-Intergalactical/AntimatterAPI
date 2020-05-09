@@ -1,6 +1,8 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.PipeConfigHandler;
 import muramasa.antimatter.capability.impl.PipeCoverHandler;
@@ -9,10 +11,14 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -47,7 +53,7 @@ public class TileEntityPipe extends TileEntityTickable {
 
     @Override
     public void onFirstTick() {
-        //if (isServerSide()) refreshConnections();
+        if (isServerSide()) refreshConnections();
     }
 
     public PipeType<?> getPipeType() {
@@ -66,44 +72,45 @@ public class TileEntityPipe extends TileEntityTickable {
         return disabledConnections;
     }
 
-//    public void refreshConnections() {
-////        System.out.println("refresh");
-//        connections = 0;
-//        int sideMask, smallerPipes = 0;
-//        TileEntity adjTile;
-//        for (int s = 0; s < 6; s++) {
-//            adjTile = Utils.getTile(world, pos.offset(Ref.DIRECTIONS[s]));
-//            if (adjTile == null) continue;
-//            sideMask = 1 << s;
-//            if ((disabledConnections & sideMask) == 0) { //Connection side has not been disabled
-//                if (canConnect(adjTile)) {
-//                    connections |= sideMask;
-//                    //TODO check isFullCube to allow more culled connections?
-//                    if (((TileEntityPipe) adjTile).getPipeSize().ordinal() < getPipeSize().ordinal()) smallerPipes++;
-//                } else if (adjTile.getCapability(AntimatterCaps.ENERGY, Ref.DIRECTIONS[s].getOpposite()).isPresent()) {
-//                    connections |= sideMask;
-////                    machineConnections |= sideMask;
-//                }
-//            }
-//        }
-//        if (smallerPipes == 0) connections += 64; //Use culled models if there are no smaller pipes adjacent
-//        markForNBTSync();
-//    }
+    public void refreshConnections() {
+        connections = 0;
+        //int sideMask, smallerPipes = 0;
+        for (Direction direction : Ref.DIRECTIONS) {
+            TileEntity adjTile = Utils.getTile(world, pos.offset(direction));
+            if (adjTile == null) continue;
+            int mask = 1 << direction.getIndex();
+            if ((disabledConnections & mask) == 0) { //Connection side has not been disabled
+                if (canConnect(adjTile, direction)) {
+                    connections |= mask;
+                    //TODO check isFullCube to allow more culled connections?
+                    //if (((TileEntityPipe) adjTile).getPipeSize().ordinal() < getPipeSize().ordinal()) smallerPipes++;
+                }
+            }
+        }
+        //if (smallerPipes == 0) connections += 64; //Use culled models if there are no smaller pipes adjacent
+        markForNBTSync();
+    }
+
+    public boolean canConnect(TileEntity tile, Direction side) {
+        return true;
+    }
 
     public void toggleConnection(Direction side) {
-        int sideMask = 1 << side.getIndex();
-        if ((disabledConnections & sideMask) != 0) { //Is Disabled, so remove mask
-            disabledConnections &= ~sideMask;
-            System.out.println("Enabled Connection for " + side);
-        } else { //Is not disabled, so add mask
-            disabledConnections |= sideMask;
-            System.out.println("Disabled Connection for " + side);
+        int mask = 1 << side.getIndex();
+        if ((disabledConnections & mask) > 0) { // Is Disabled, so remove mask
+            disabledConnections &= ~mask;
+        } else { // Is not disabled, so add mask
+            disabledConnections |= mask;
         }
-        //refreshConnections();
+        refreshConnections();
     }
 
     public Cover[] getValidCovers() {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
+    }
+
+    public Cover getCover(Direction side) {
+        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
     }
 
     @Nonnull

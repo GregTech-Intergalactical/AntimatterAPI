@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.util.Utils;
@@ -379,5 +380,9 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public Object2ObjectMap<String, IBehaviour<MaterialTool>> getBehaviours() {
         return behaviours;
+    }
+
+    public ItemStack get(Material m, Material aNull, int i) {
+        return ItemStack.EMPTY;
     }
 }
