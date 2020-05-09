@@ -139,13 +139,20 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+    public void updateNeighbors(BlockState stateIn, IWorld worldIn, BlockPos pos, int flags) {
         TileEntity tile = Utils.getTile(worldIn, pos);
         if (tile instanceof TileEntityPipe) {
             ((TileEntityPipe) tile).refreshConnections();
         }
     }
+
+    /*@Override
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        TileEntity tile = Utils.getTile(worldIn, pos);
+        if (tile instanceof TileEntityPipe) {
+            ((TileEntityPipe) tile).refreshConnections();
+        }
+    }*/
 
     //protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
     //}

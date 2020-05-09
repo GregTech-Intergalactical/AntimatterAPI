@@ -19,21 +19,23 @@ public class MachineEnergyHandler extends EnergyHandler {
         this.tile = tile;
         this.capacity = tile.getMachineTier().getVoltage() * 64L;
         this.voltage_in = tile.getMachineTier().getVoltage();
-        TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
+        if (tile.isServerSide()) TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public void onRemove() {
-        TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
+        if (tile.isServerSide()) TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
     }
 
     public void onUpdate() {
         if (controller != null) controller.tick();
     }
 
-    public void onReset() {
-        TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
-        TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
-    }
+    /*public void onReset() {
+        if (tile.isServerSide()) {
+            TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
+            TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
+        }
+    }*/
 
     @Override
     public boolean connects(@Nonnull Dir direction) {

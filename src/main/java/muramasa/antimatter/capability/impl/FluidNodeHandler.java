@@ -39,6 +39,8 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
         this.handler = handler;
     }
 
+    // TODO: Make sure that registartion on the server side
+
     @Nullable
     public static FluidNodeHandler of(TileEntity tile) {
         LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);

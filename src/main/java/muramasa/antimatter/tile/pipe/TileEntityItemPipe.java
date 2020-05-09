@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
@@ -25,24 +24,15 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
     }
 
     @Override
-    public void onInit() {
-        super.onInit();
-        TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
+    public void refreshConnections() {
+        if (isServerSide()) TesseractAPI.removeItem(getDimention(), pos.toLong());
+        super.refreshConnections();
+        if (isServerSide()) TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
     }
 
     @Override
     public void onRemove() {
-        TesseractAPI.removeItem(getDimention(), pos.toLong());
-    }
-
-    @Override
-    public void refreshConnections() {
-        byte temp = connections;
-        super.refreshConnections();
-        if (temp != connections && isServerSide()) {
-            TesseractAPI.removeItem(getDimention(), pos.toLong());
-            TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
-        }
+        if (isServerSide()) TesseractAPI.removeItem(getDimention(), pos.toLong());
     }
 
     @Override
@@ -52,7 +42,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     @Override
     public boolean canConnect(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityItemPipe && getCover(side).isEqual(Data.COVER_NONE) || tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent();
+        return tile instanceof TileEntityItemPipe/* && getCover(side).isEqual(Data.COVER_NONE)*/ || tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override

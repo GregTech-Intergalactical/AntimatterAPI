@@ -40,7 +40,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
-        TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
+        if (tile.isServerSide()) TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineItemHandler(TileEntityMachine tile, CompoundNBT itemData) {
@@ -53,13 +53,15 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void onRemove() {
-        TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
+        if (tile.isServerSide()) TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
     }
 
-    public void onReset() {
-        TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
-        TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
-    }
+    /*public void onReset() {
+        if (tile.isServerSide()) {
+            TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
+            TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
+        }
+    }*/
 
     /** Handler Access **/
     public IItemHandler getInputWrapper() {

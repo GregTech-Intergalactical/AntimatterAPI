@@ -30,7 +30,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,7 +69,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onInit() {
+    public void onLoad() {
         if (!itemHandler.isPresent() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
         if (!fluidHandler.isPresent() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
@@ -84,7 +83,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
-        coverHandler.ifPresent(CoverHandler::onRemove);
+        coverHandler.ifPresent(MachineCoverHandler::onRemove);
     }
 
     // Should be called on the rotation or cover changes to update connections
@@ -99,7 +98,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
-        coverHandler.ifPresent(CoverHandler::onUpdate);
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {

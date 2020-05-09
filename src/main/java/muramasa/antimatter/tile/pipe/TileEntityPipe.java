@@ -17,8 +17,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -46,14 +44,9 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
-    public void onInit() {
+    public void onLoad() {
         coverHandler = Optional.of(new PipeCoverHandler(this));
         configHandler = Optional.of(new PipeConfigHandler(this));
-    }
-
-    @Override
-    public void onFirstTick() {
-        if (isServerSide()) refreshConnections();
     }
 
     public PipeType<?> getPipeType() {

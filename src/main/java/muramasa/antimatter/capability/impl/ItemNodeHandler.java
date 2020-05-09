@@ -38,6 +38,8 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
         this.handler = handler;
     }
 
+    // TODO: Make sure that registartion on the server side
+
     @Nullable
     public static ItemNodeHandler of(TileEntity tile) {
         LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);

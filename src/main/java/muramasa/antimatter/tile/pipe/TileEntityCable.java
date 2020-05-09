@@ -1,7 +1,5 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
@@ -21,29 +19,20 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
     }
 
     @Override
-    public void onInit() {
-        super.onInit();
-        TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
+    public void refreshConnections() {
+        if (isServerSide()) TesseractAPI.removeElectric(getDimention(), pos.toLong());
+        super.refreshConnections();
+        if (isServerSide()) TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
     }
 
     @Override
     public void onRemove() {
-        TesseractAPI.removeElectric(getDimention(), pos.toLong());
-    }
-
-    @Override
-    public void refreshConnections() {
-        byte temp = connections;
-        super.refreshConnections();
-        if (temp != connections && isServerSide()) {
-            TesseractAPI.removeElectric(getDimention(), pos.toLong());
-            TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
-        }
+        if (isServerSide()) TesseractAPI.removeElectric(getDimention(), pos.toLong());
     }
 
     @Override
     public boolean canConnect(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityCable && getCover(side).isEqual(Data.COVER_NONE) || tile.getCapability(CapabilityEnergy.ENERGY).isPresent();
+        return tile instanceof TileEntityCable/* && getCover(side).isEqual(Data.COVER_NONE)*/ || tile.getCapability(CapabilityEnergy.ENERGY).isPresent();
     }
 
     @Override
