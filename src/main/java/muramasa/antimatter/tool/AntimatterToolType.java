@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.util.Utils;
@@ -247,7 +248,7 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     public AntimatterToolType setOverlayLayers(int layers) {
-        if (layers < 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have less than 1 overlayer layers!");
+        if (layers < 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have less than 0 overlayer layers!");
         this.overlayLayers = layers;
         return this;
     }
@@ -275,6 +276,10 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     /** GETTERS **/
+
+    public ItemStack getToolStack(Material primary, Material secondary) {
+        return AntimatterAPI.get(IAntimatterTool.class, id).asItemStack(primary, secondary);
+    }
 
     public String getDomain() {
         return domain;

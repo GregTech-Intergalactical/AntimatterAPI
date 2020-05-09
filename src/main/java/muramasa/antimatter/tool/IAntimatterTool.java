@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
@@ -38,7 +39,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,6 +58,10 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     @Nonnull default Material[] getMaterials(@Nonnull ItemStack stack) {
         CompoundNBT nbt = getDataTag(stack);
         return new Material[] { Material.get(nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
+    }
+
+    default int getSubColour(@Nonnull ItemStack stack) {
+        return getDataTag(stack).getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
     }
 
     default long getCurrentEnergy(ItemStack stack) {
@@ -196,7 +200,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     @Override default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 ? getPrimaryMaterial(stack).getRGB() : getSecondaryMaterial(stack).getRGB();
+        return i == 0 ? getPrimaryMaterial(stack).getRGB() : getSubColour(stack) == 0 ? getSecondaryMaterial(stack).getRGB() : getSubColour(stack);
     }
 
     @Override default Texture[] getTextures() {

@@ -40,6 +40,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -75,7 +76,6 @@ public class Antimatter implements IAntimatterRegistrar {
         });
         AntimatterAPI.addRegistrar(INSTANCE);
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-
         // TODO: Make explosions depend on voltage, amp
         TesseractAPI.GLOBAL_ELECTRIC_EVENT = new IElectricEvent() {
             @Override
@@ -130,6 +130,8 @@ public class Antimatter implements IAntimatterRegistrar {
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
       
         //if (AntimatterModelManager.RESOURCE_METHOD == ResourceMethod.DYNAMIC_PACK) AntimatterModelManager.runProvidersDynamically();
+
+        AntimatterAPI.getWorkQueue().forEach(DeferredWorkQueue::runLater);
     }
   
     @SubscribeEvent
