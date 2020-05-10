@@ -53,9 +53,9 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        for (int i = 0; i < covers.length; i++) {
-            if (covers[i].isEmpty()) continue;
-            covers[i].onMachineEvent((TileEntityMachine) getTile(), event);
+        for (Cover cover : covers) {
+            if (cover.isEmpty()) continue;
+            cover.onMachineEvent((TileEntityMachine) getTile(), event);
         }
     }
 

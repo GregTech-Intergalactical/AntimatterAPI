@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.cover.CoverMaterial;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -67,11 +69,12 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
     }
 
-//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-//        ITickingController controller = TesseractAPI.getFluidController(world.getDimension().getType().getId(), pos.toLong());
-//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
-//        return info;
-//    }
+    /*public void onReset() {
+        if (tile.isServerSide()) {
+            TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
+            TesseractAPI.registerFluidNode(tile.getDimention(), tile.getPos().toLong(), this);
+        }
+    }*/
 
     public FluidTankWrapper getInputWrapper() {
         return inputWrapper;
@@ -348,7 +351,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex();
+        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
     }
 
     @Override

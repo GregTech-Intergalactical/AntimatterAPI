@@ -3,15 +3,11 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.TesseractAPI;
 import tesseract.graph.ITickingController;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,11 +15,6 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
 
     public BlockItemPipe(PipeType<?> type, PipeSize size) {
         super(type.getId(), type, size);
-    }
-
-    @Override
-    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
-        return state.getBlock() instanceof BlockItemPipe || tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override

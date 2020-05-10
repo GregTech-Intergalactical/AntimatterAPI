@@ -46,7 +46,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     @Override
     public void onInit() {
-        super.onInit();
+        super.onLoad();
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
         configHandler = Optional.of(new ControllerConfigHandler(this));
         recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));

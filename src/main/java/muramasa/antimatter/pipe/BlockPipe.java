@@ -14,16 +14,20 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
@@ -73,7 +77,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         return faces[size.ordinal()];
     }
 
-    //    @Override
+//    @Override
 //    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
 //        IExtendedBlockState exState = (IExtendedBlockState) state;
 //        TileEntity tile = Utils.getTile(world, pos);
@@ -106,13 +110,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 //        return FULL_BLOCK_AABB;
 //    }
 
-
-    @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-
-    }
-
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
@@ -129,39 +126,36 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         return Data.WRENCH.getToolType();
     }
 
-    //    @Override
-//    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        return tile != null && GregTechAPI.interact(tile, player, hand, side, hitX, hitY, hitZ);
-//    }
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
+        TileEntity tile = Utils.getTile(world, pos);
+        if (tile instanceof TileEntityPipe) {
+            ((TileEntityPipe) tile).refreshConnections();
+        }
+        /*for (Direction dir : Ref.DIRECTIONS) {
+            TileEntity neighbour = Utils.getTile(world, pos.offset(dir));
+            if (neighbour != null) onNeighborCatch(world, direction, neighbour);
+        }*/
+    }
 
-    //not needed probably
-//    @Override
-//    public void onBlockAdded(World world, BlockPos pos, BlockState state) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityPipe) {
-////            ((TileEntityPipe) tile).refreshConnections();
-//        }
-//    }
+    @Override
+    public void updateNeighbors(BlockState stateIn, IWorld worldIn, BlockPos pos, int flags) {
+        TileEntity tile = Utils.getTile(worldIn, pos);
+        if (tile instanceof TileEntityPipe) {
+            ((TileEntityPipe) tile).refreshConnections();
+        }
+    }
 
-//    @Override
-//    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityPipe) {
-//            ((TileEntityPipe) tile).refreshConnections();
-//        }
-//    }
+    /*@Override
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        TileEntity tile = Utils.getTile(worldIn, pos);
+        if (tile instanceof TileEntityPipe) {
+            ((TileEntityPipe) tile).refreshConnections();
+        }
+    }*/
 
-//    @Override
-//    public boolean isFullCube(BlockState state) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isOpaqueCube(BlockState state) {
-//        return false;
-//    }
-
+    //protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
+    //}
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
@@ -175,33 +169,16 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int ct = 0;
-        //int cull = 0;
-        for (int s = 0; s < 6; s++) {
-            mut.setPos(pos.offset(Ref.DIRECTIONS[s]));
-            BlockState adjState = world.getBlockState(mut);
+        TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(mut);
+        for (Direction dir : Ref.DIRECTIONS) {
+            mut.setPos(pos.offset(dir));
             TileEntity adjTile = world.getTileEntity(mut);
-            if (canConnect(world, adjState, adjTile, mut)) {
-                ct += 1 << s;
-                //if (((BlockPipe) adjState.getBlock()).getSize().ordinal() < getSize().ordinal()) cull += 1;
+            if (adjTile == null) continue;
+            if (tile.canConnect(adjTile, dir)) {
+                ct += 1 << dir.getIndex();
             }
         }
-        return config.set(new int[]{getPipeID(ct, /*cull > 0 ? 0 : 1*/0)});
-    }
-
-    /*@Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean isMoving) {
-        for (Direction direction : Direction.values()) {
-            TileEntity neighbour = Utils.getTile(world, pos.offset(direction));
-            if (neighbour != null) onNeighborCatch(world, direction, neighbour);
-        }
-    }*/
-
-    //protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
-    //}
-
-    @Override
-    public boolean canConnect(IBlockReader world, BlockState state, @Nullable TileEntity tile, BlockPos pos) {
-        return state.getBlock() instanceof BlockPipe;
+        return config.set(new int[]{getPipeID(ct, 0)});
     }
 
     @Override

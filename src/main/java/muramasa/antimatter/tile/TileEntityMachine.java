@@ -2,6 +2,7 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.*;
@@ -29,7 +30,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -83,15 +83,22 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
-        coverHandler.ifPresent(CoverHandler::onRemove);
+        coverHandler.ifPresent(MachineCoverHandler::onRemove);
     }
+
+    // Should be called on the rotation or cover changes to update connections
+    //public void onReset() {
+    //    energyHandler.ifPresent(MachineEnergyHandler::onReset);
+    //    fluidHandler.ifPresent(MachineFluidHandler::onReset);
+    //    itemHandler.ifPresent(MachineItemHandler::onReset);
+    //}
 
     @Override
     public void onServerUpdate() {
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
-        coverHandler.ifPresent(CoverHandler::onUpdate);
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {
@@ -132,8 +139,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
-    public boolean canConnect(Direction dir) {
-        return energyHandler.map(h -> h.connects(Dir.VALUES[dir.getIndex()])).orElse(false);
+    public Cover getCover(Direction side) {
+        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
     }
 
     //TODO
@@ -185,6 +192,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+        if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
+        else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
+        return super.getCapability(cap);
     }
 
     @Nonnull

@@ -15,7 +15,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
     }
 
     @Override
-    public void onLoad() {
+    public void onInit() {
         recipeHandler = Optional.of(new MultiMachineRecipeHandler<TileEntityMultiMachine>(this) {
             @Override
             public Recipe findRecipe() { //TODO support fluids?

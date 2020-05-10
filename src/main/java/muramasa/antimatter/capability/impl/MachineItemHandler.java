@@ -2,6 +2,8 @@ package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.cover.CoverMaterial;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
@@ -54,11 +56,12 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
     }
 
-//    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-//        ITickingController controller = TesseractAPI.getItemController(world.getDimension().getType().getId(), pos.toLong());
-//        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
-//        return info;
-//    }
+    /*public void onReset() {
+        if (tile.isServerSide()) {
+            TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
+            TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
+        }
+    }*/
 
     /** Handler Access **/
     public IItemHandler getInputWrapper() {
@@ -346,7 +349,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex();
+        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
     }
 
     @Override

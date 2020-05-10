@@ -26,6 +26,8 @@ public class EnergyNodeHandler implements IElectricNode, INodeHandler {
         this.storage = storage;
     }
 
+    // TODO: Make sure that registartion on the server side
+
     @Nullable
     public static EnergyNodeHandler of(TileEntity tile) {
         LazyOptional<IEnergyStorage> capability = tile.getCapability(CapabilityEnergy.ENERGY);

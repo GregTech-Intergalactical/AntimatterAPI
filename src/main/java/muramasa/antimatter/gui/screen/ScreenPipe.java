@@ -1,8 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.machine.MachineState;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 

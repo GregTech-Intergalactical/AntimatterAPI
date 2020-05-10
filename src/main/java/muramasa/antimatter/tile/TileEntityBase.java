@@ -13,7 +13,7 @@ public abstract class TileEntityBase extends TileEntity {
         super(type);
     }
 
-    @Override //TODO needed in onLoad?
+    @Override
     public void onLoad() {
         if (isServerSide()) onInit();
     }
