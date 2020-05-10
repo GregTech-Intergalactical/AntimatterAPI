@@ -45,7 +45,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
-        if (tile.isServerSide()) TesseractAPI.registerFluidNode(tile.getDimention(), tile.getPos().toLong(), this);
+        TesseractAPI.registerFluidNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -66,7 +66,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     }
 
     public void onRemove() {
-        if (tile.isServerSide()) TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
+        TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
     }
 
     /*public void onReset() {

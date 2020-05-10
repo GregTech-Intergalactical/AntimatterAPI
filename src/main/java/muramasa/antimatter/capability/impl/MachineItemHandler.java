@@ -40,7 +40,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
-        if (tile.isServerSide()) TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
+        TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineItemHandler(TileEntityMachine tile, CompoundNBT itemData) {
@@ -53,7 +53,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void onRemove() {
-        if (tile.isServerSide()) TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
+        TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
     }
 
     /*public void onReset() {
