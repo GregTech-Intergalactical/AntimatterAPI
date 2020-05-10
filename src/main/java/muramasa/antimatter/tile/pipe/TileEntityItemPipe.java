@@ -25,9 +25,9 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     @Override
     public void refreshConnections() {
-        TesseractAPI.removeItem(getDimention(), pos.toLong());
+        if (isServerSide()) TesseractAPI.removeItem(getDimention(), pos.toLong());
         super.refreshConnections();
-        TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
+        if (isServerSide()) TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return Connectivity.has(connections, direction);
+        return true;//Connectivity.has(connections, direction);
     }
 
     @Override

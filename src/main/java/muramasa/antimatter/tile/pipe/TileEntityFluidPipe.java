@@ -25,9 +25,9 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public void refreshConnections() {
-        TesseractAPI.removeFluid(getDimention(), pos.toLong());
+        if (isServerSide()) TesseractAPI.removeFluid(getDimention(), pos.toLong());
         super.refreshConnections();
-        TesseractAPI.registerFluidPipe(getDimention(), pos.toLong(), this);
+        if (isServerSide()) TesseractAPI.registerFluidPipe(getDimention(), pos.toLong(), this);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return Connectivity.has(connections, direction);
+        return true;//Connectivity.has(connections, direction);
     }
 
     @Override

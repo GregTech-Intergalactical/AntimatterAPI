@@ -20,9 +20,9 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public void refreshConnections() {
-        TesseractAPI.removeElectric(getDimention(), pos.toLong());
+        if (isServerSide()) TesseractAPI.removeElectric(getDimention(), pos.toLong());
         super.refreshConnections();
-        TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
+        if (isServerSide()) TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
     }
 
     @Override
@@ -52,6 +52,6 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return Connectivity.has(connections, direction);
+        return true;//Connectivity.has(connections, direction);
     }
 }
