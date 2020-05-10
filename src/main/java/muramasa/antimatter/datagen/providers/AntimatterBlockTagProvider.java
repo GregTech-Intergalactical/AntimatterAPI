@@ -33,7 +33,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
         processTags(providerDomain);
     }
 
-    public void processTags(String domain) {
+    protected void processTags(String domain) {
         AntimatterAPI.all(StoneType.class, s -> IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
             if (m.has(ORE)) {
                 Block block = ORE.get().get(m, s).asBlock();

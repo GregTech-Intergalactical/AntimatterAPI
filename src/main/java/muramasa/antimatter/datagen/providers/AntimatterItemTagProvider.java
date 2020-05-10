@@ -35,7 +35,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         processTags(providerDomain);
     }
 
-    public void processTags(String domain) {
+    protected void processTags(String domain) {
         Tag<Block> blockTag = BLOCK.getTag();
         Tag<Block> frameTag = FRAME.getTag();
         this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
