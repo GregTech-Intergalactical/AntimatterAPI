@@ -53,6 +53,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     protected void registerMaterialRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
+
         //        RegistrationHelper.getMaterialsForDomain(Ref.ID).stream().filter(m -> m.has(DUST)).forEach(mat -> {
 //            Item dust = DUST.get(mat);
 //            if (mat.has(ROCK)) {
@@ -179,6 +180,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         recipeBuilder = recipeBuilder.setGroup(groupName);
         recipeBuilder = recipeBuilder.addCriterion(criterionName, criterion);
         return recipeBuilder;
+    }
+
+    protected void addItemRecipe(Consumer<IFinishedRecipe> consumer, String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+        addStackRecipe(consumer, "", "", groupName, criterionName, criterion, new ItemStack(output), inputs, inputPattern);
     }
 
     protected void addItemRecipe(Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
