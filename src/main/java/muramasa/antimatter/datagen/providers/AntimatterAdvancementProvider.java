@@ -69,8 +69,8 @@ public class AntimatterAdvancementProvider implements IDataProvider {
         return Advancement.Builder.builder().withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), backgroundPath, type, toast, announce, hide);
     }
 
-    public static Advancement.Builder buildAdvancement(IItemProvider provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.builder().withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide);
+    public static Advancement.Builder buildAdvancement(Advancement parent, IItemProvider provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
+        return Advancement.Builder.builder().withParent(parent).withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide);
     }
 
 }

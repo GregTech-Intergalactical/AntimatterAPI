@@ -14,6 +14,7 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -32,6 +33,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
@@ -54,6 +56,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
 
+import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.UNBOUNDED;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
@@ -260,6 +263,34 @@ public class Utils {
                 to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
+    }
+
+    /**
+     * Creates a new {@link EnterBlockTrigger} for use with recipe unlock criteria.
+     */
+    public static EnterBlockTrigger.Instance enteredBlock(Block blockIn) {
+        return new EnterBlockTrigger.Instance(blockIn, StatePropertiesPredicate.EMPTY);
+    }
+
+    /**
+     * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
+     */
+    public static InventoryChangeTrigger.Instance hasItem(IItemProvider itemIn) {
+        return hasItem(ItemPredicate.Builder.create().item(itemIn).build());
+    }
+
+    /**
+     * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
+     */
+    public static InventoryChangeTrigger.Instance hasItem(Tag<Item> tagIn) {
+        return hasItem(ItemPredicate.Builder.create().tag(tagIn).build());
+    }
+
+    /**
+     * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
+     */
+    public static InventoryChangeTrigger.Instance hasItem(ItemPredicate... predicates) {
+        return new InventoryChangeTrigger.Instance(UNBOUNDED, UNBOUNDED, UNBOUNDED, predicates);
     }
 
 //    @Nullable

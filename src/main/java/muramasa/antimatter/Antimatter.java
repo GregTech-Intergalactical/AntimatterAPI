@@ -2,7 +2,6 @@ package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.antimatter.advancement.trigger.AntimatterTriggers;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -123,7 +122,6 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
 
         AntimatterWorldGenerator.init();
-        AntimatterTriggers.init();
         AntimatterAPI.onRegistration(RegistrationEvent.RECIPE);
         AntimatterCaps.register(); //TODO broken
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
