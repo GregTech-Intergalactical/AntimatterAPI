@@ -90,10 +90,8 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         handleMats.forEach(handle -> {
             AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
                 Tag<Item> plateTag = getForgeItemTag("plates/" + rubber.getId()), rodTag = getForgeItemTag("rods/" + handle.getId());
-                ItemStack plunger = PLUNGER.getToolStack(handle, rubber);
-                // plunger.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, DyeColor.RED.getFireworkColor());
                 addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
-                        "has_material_" + rubber.getId(), this.hasItem(plateTag), plunger,
+                        "has_material_" + rubber.getId(), this.hasItem(plateTag), PLUNGER.getToolStack(handle, rubber),
                         of('W', WIRE_CUTTER.getTag(), 'P', plateTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WPS", " RP", "R F");
             });
         });
@@ -102,7 +100,6 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             if (!main.has(INGOT)) return; // TODO: For time being
             final Tag<Item> ingotTag = getForgeItemTag("ingots/" + main.getId()), plateTag = getForgeItemTag("plates/" + main.getId()), mainRodTag = getForgeItemTag("rods/" + main.getId());
             final InventoryChangeTrigger.Instance ingotTrigger = this.hasItem(ingotTag), plateTrigger = this.hasItem(plateTag), rodTrigger = this.hasItem(mainRodTag);
-
 
             addStackRecipe(consumer, Ref.ID, WRENCH.getId() + "_" + main.getId(), "antimatter_wrenches",
                     "has_material_" + main.getId(), ingotTrigger, WRENCH.getToolStack(main, NULL), of('I', ingotTag, 'H', HAMMER.getTag()), "IHI", "III", " I "); // CHANGED
