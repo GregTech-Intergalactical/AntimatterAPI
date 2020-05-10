@@ -27,11 +27,13 @@ public class AntimatterWorldGenerator {
             AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
             if (Configs.WORLD.DISABLE_VANILLA_STONE_GEN) removeStoneFeatures();
             if (Configs.WORLD.DISABLE_VANILLA_ORE_GEN) removeOreFeatures();
-            AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(feat -> {
-                feat.onDataOverride(new JsonObject());
-                feat.init();
+            AntimatterAPI.addToWorkQueue(() -> {
+                AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(feat -> {
+                    feat.onDataOverride(new JsonObject());
+                    feat.init();
+                });
+                WorldGenHelper.init();
             });
-            WorldGenHelper.init();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
