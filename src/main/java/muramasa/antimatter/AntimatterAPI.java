@@ -31,6 +31,7 @@ public final class AntimatterAPI {
     private static final Object2ObjectMap<String, List<Runnable>> CALLBACKS = new Object2ObjectOpenHashMap<>();
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
     private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new ObjectOpenHashSet<>();
+    private static final Queue<Runnable> DEFERRED_QUEUE = new LinkedList<>();
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
@@ -89,6 +90,14 @@ public final class AntimatterAPI {
     @Nullable
     public static Material getMaterialById(int hash) {
         return MATERIAL_HASH_LOOKUP.get(hash);
+    }
+
+    public static void addToWorkQueue(Runnable runnable) {
+        DEFERRED_QUEUE.add(runnable);
+    }
+
+    public static Queue<Runnable> getWorkQueue() {
+        return DEFERRED_QUEUE;
     }
 
     /** Registrar Section **/

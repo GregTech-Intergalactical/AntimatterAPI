@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
 
-    private static final Queue<Runnable> DEFERRED_QUEUE = new LinkedList<>();
-
     public static void init() {
         try {
             //Path config = FMLPaths.CONFIGDIR.get().resolve("GregTech/WorldGenDefault.json");
@@ -34,7 +32,6 @@ public class AntimatterWorldGenerator {
                 feat.init();
             });
             WorldGenHelper.init();
-            DEFERRED_QUEUE.forEach(DeferredWorkQueue::runLater);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
@@ -49,10 +46,6 @@ public class AntimatterWorldGenerator {
     public static <T> List<T> all(Class<T> c, int dim) {
         AntimatterFeature<?> feat = AntimatterAPI.get(AntimatterFeature.class, c.getName());
         return feat != null ? feat.getRegistry().computeIfAbsent(dim, k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
-    }
-
-    public static void addToWorkQueue(Runnable runnable) {  // Could have a global Antimatter queue
-        DEFERRED_QUEUE.add(runnable);
     }
 
     private static void removeStoneFeatures() {
@@ -71,7 +64,7 @@ public class AntimatterWorldGenerator {
      */
     public static void removeDecoratedFeatureFromAllBiomes(@Nonnull final GenerationStage.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-        addToWorkQueue(() -> {
+        AntimatterAPI.addToWorkQueue(() -> {
             for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
                 for (BlockState state : states) {
                     biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
@@ -89,7 +82,7 @@ public class AntimatterWorldGenerator {
      */
     public static void removeDecoratedFeaturesFromBiome(@Nonnull final Biome biome, final @Nonnull GenerationStage.Decoration stage, final @Nonnull Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-        addToWorkQueue(() -> {
+        AntimatterAPI.addToWorkQueue(() -> {
             for (BlockState state : states) {
                 biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
             }

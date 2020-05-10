@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe.condition;
 
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
@@ -31,6 +32,10 @@ public class ConfigCondition implements ICondition {
             int lastIndex = this.configName.lastIndexOf('.');
             return Class.forName(this.configName.substring(0, lastIndex)).getField(this.configName.substring(lastIndex + 1)).getBoolean(null);
         } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException e) {
+            e.printStackTrace();
+            return true;
+        } catch (NullPointerException e) {  // Support instance fields?
+            Utils.onInvalidData("For Config Conditionals to work, the conditional field must be set to static!");
             e.printStackTrace();
             return true;
         }

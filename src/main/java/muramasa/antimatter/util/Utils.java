@@ -822,6 +822,7 @@ public class Utils {
      * @return ItemTag
      */
     public static Tag<Item> getForgeItemTag(String name) {
+        // TODO: Change "wood" -> "wooden", forge recognises "wooden"
         return getItemTag(new ResourceLocation("forge", name));
     }
 
