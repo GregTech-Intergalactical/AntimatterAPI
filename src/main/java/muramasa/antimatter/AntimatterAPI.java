@@ -92,7 +92,7 @@ public final class AntimatterAPI {
         return MATERIAL_HASH_LOOKUP.get(hash);
     }
 
-    public static void addToWorkQueue(Runnable runnable) {  // Could have a global Antimatter queue
+    public static void addToWorkQueue(Runnable runnable) {
         DEFERRED_QUEUE.add(runnable);
     }
 
