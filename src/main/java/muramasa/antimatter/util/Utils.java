@@ -20,6 +20,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
@@ -29,6 +30,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
@@ -855,6 +857,14 @@ public class Utils {
     public static Tag<Item> getForgeItemTag(String name) {
         // TODO: Change "wood" -> "wooden", forge recognises "wooden"
         return getItemTag(new ResourceLocation("forge", name));
+    }
+
+    /**
+     * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
+     * @return FluidTag
+     */
+    public static Tag<Fluid> getForgeFluidTag(String name) {
+        return new FluidTags.Wrapper(new ResourceLocation("forge", name));
     }
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {
