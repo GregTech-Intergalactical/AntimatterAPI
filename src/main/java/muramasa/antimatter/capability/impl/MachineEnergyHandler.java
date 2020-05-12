@@ -2,7 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
 import tesseract.Tesseract;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;

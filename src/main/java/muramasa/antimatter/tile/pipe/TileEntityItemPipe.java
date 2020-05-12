@@ -8,8 +8,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.IItemPipe;
-import tesseract.graph.ITickHost;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickHost;
+import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;

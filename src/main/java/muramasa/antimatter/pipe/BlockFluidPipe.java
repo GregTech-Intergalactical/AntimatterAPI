@@ -6,7 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import tesseract.Tesseract;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickingController;
 
 import java.util.Arrays;
 import java.util.List;

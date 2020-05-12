@@ -17,7 +17,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import tesseract.Tesseract;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickingController;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

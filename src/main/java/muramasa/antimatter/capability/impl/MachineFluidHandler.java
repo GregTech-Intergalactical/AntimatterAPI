@@ -13,8 +13,8 @@ import net.minecraftforge.fluids.FluidStack;
 import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
-import tesseract.graph.ITickHost;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickHost;
+import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
