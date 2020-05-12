@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
@@ -47,7 +47,7 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
         if (capability.isPresent()) {
             FluidNodeHandler node = new FluidNodeHandler(tile, capability.orElse(null));
             capability.addListener(x -> node.onRemove(null));
-            TesseractAPI.registerFluidNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            Tesseract.FLUID.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
         }
         return null;
@@ -58,7 +58,7 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
         if (side != null) {
             output[side.getIndex()] = false;
         } else {
-            TesseractAPI.removeFluid(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+            Tesseract.FLUID.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
             valid = false;
         }
     }

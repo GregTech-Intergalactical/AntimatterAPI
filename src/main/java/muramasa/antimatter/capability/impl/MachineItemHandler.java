@@ -2,8 +2,6 @@ package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.cover.CoverMaterial;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
@@ -15,7 +13,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
 import tesseract.graph.ITickHost;
@@ -40,7 +38,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
-        TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
+        Tesseract.ITEM.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineItemHandler(TileEntityMachine tile, CompoundNBT itemData) {
@@ -53,7 +51,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void onRemove() {
-        TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
+        Tesseract.ITEM.remove(tile.getDimention(), tile.getPos().toLong());
     }
 
     /*public void onReset() {

@@ -5,7 +5,7 @@ import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.graph.ITickingController;
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        ITickingController controller = TesseractAPI.getFluidController(world.getDimension().getType().getId(), pos.toLong());
+        ITickingController controller = Tesseract.FLUID.getController(world.getDimension().getType().getId(), pos.toLong());
         if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
         return info;
     }

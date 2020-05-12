@@ -13,7 +13,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
 import tesseract.util.Dir;
@@ -46,7 +46,7 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
         if (capability.isPresent()) {
             ItemNodeHandler node = new ItemNodeHandler(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
-            TesseractAPI.registerItemNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            Tesseract.ITEM.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
         }
         return null;
@@ -57,7 +57,7 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
         if (side != null) {
             output[side.getIndex()] = false;
         } else {
-            TesseractAPI.removeItem(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+            Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
             valid = false;
         }
     }

@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
 
@@ -15,7 +15,7 @@ public class MachineEnergyHandler extends EnergyHandler {
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
+        Tesseract.ELECTRIC.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
@@ -23,7 +23,7 @@ public class MachineEnergyHandler extends EnergyHandler {
     }
 
     public void onRemove() {
-        TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
+        Tesseract.ELECTRIC.remove(tile.getDimention(), tile.getPos().toLong());
     }
 
     public void onUpdate() {

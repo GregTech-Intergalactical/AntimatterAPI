@@ -47,7 +47,7 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.electric.IElectricEvent;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidEvent;
@@ -76,7 +76,7 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.addRegistrar(INSTANCE);
         AntimatterModelManager.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
         // TODO: Make explosions depend on voltage, amp
-        TesseractAPI.GLOBAL_ELECTRIC_EVENT = new IElectricEvent() {
+        Tesseract.GLOBAL_ELECTRIC_EVENT = new IElectricEvent() {
             @Override
             public void onNodeOverVoltage(int dim, long pos, int voltage) {
                 Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.BREAK);
@@ -93,7 +93,7 @@ public class Antimatter implements IAntimatterRegistrar {
             }
         };
         // TODO: Make explosions depend on pressure, capacity, temperature
-        TesseractAPI.GLOBAL_FLUID_EVENT = new IFluidEvent() {
+        Tesseract.GLOBAL_FLUID_EVENT = new IFluidEvent() {
             @Override
             public void onPipeOverPressure(int dim, long pos, int pressure) {
                 Utils.createExplosion(WORLDS.get(dim), BlockPos.fromLong(pos), 4.0F, Explosion.Mode.BREAK);

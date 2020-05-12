@@ -5,9 +5,9 @@ import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.items.CapabilityItemHandler;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
+import tesseract.api.item.IItemNode;
 import tesseract.api.item.IItemPipe;
-import tesseract.graph.Connectivity;
 import tesseract.graph.ITickHost;
 import tesseract.graph.ITickingController;
 import tesseract.util.Dir;
@@ -25,14 +25,14 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     @Override
     public void refreshConnections() {
-        if (isServerSide()) TesseractAPI.removeItem(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.ITEM.remove(getDimention(), pos.toLong());
         super.refreshConnections();
-        if (isServerSide()) TesseractAPI.registerItemPipe(getDimention(), pos.toLong(), this);
+        if (isServerSide()) Tesseract.ITEM.registerNode(getDimention(), pos.toLong(), (IItemNode) this);
     }
 
     @Override
     public void onRemove() {
-        TesseractAPI.removeItem(getDimention(), pos.toLong());
+        Tesseract.ITEM.remove(getDimention(), pos.toLong());
     }
 
     @Override

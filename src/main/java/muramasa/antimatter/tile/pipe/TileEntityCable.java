@@ -5,9 +5,8 @@ import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.energy.CapabilityEnergy;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.electric.IElectricCable;
-import tesseract.graph.Connectivity;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -20,14 +19,14 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public void refreshConnections() {
-        if (isServerSide()) TesseractAPI.removeElectric(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
         super.refreshConnections();
-        if (isServerSide()) TesseractAPI.registerElectricCable(getDimention(), pos.toLong(), this);
+        if (isServerSide()) Tesseract.ELECTRIC.registerConnector(getDimention(), pos.toLong(), this);
     }
 
     @Override
     public void onRemove() {
-        TesseractAPI.removeElectric(getDimention(), pos.toLong());
+        Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
     }
 
     @Override
