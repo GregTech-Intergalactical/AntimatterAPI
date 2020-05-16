@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-
+libsDirName = "libs/muramasa/antimatter/antimatter/${antimatter_version}"
 version = "${antimatter_version}"
 group = 'muramasa.antimatter' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'antimatter'
@@ -58,7 +58,6 @@ minecraft {
             mods {
                 antimatter {
                     source sourceSets.main
-//                    source sourceSets.generated
                 }
             }
         }
@@ -88,24 +87,14 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'antimatter', '--all', '--output', '"' + project.file('src/generated/resources/') + '"',
-                    '--existing', '"' + sourceSets.main.resources.srcDirs[0] + '"'
+            args '--mod', 'antimatter', '--all', '--output', project.file('src/generated/resources/'),
+                    '--existing', sourceSets.main.resources.srcDirs[0] 
 
             mods {
                 antimatter {
                     source sourceSets.main
                 }
             }
-        }
-
-        clientIdea {
-            parent runs.client
-            ideaModule "${project.name}.main"
-        }
-
-        dataIdea {
-            parent runs.data
-            ideaModule "${project.name}.main"
         }
     }
 }
@@ -148,14 +137,6 @@ jar {
         ])
     }
 }
-
-//processResources {
-//    outputs.upToDateWhen { false }
-//    filesMatching('META-INF/mods.toml') {
-//        //Replace some keys from the mods.toml with values from the gradle.properties file
-//        expand "version": antimatter_version, "mc_version": minecraft_version, "forge_version": min_forge_version, "loader_version": loader_version
-//    }
-//}
 
 // Example configuration to allow publishing using the maven-publish task
 // we define a custom artifact that is sourced from the reobfJar output task
