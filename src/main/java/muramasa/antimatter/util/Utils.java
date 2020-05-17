@@ -6,7 +6,7 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -636,9 +636,9 @@ public class Utils {
      * @return if tree logging was successful
      */
     public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull PlayerEntity player, @Nonnull World world) {
-        if (!Configs.GAMEPLAY.TREE_DETECTION) {
+        if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
             BlockPos.Mutable tempPos = new BlockPos.Mutable(start);
-            for (int y = start.getY() + 1; y < start.getY() + Configs.GAMEPLAY.AXE_TIMBER_MAX; y++) {
+            for (int y = start.getY() + 1; y < start.getY() + AntimatterConfig.GAMEPLAY.AXE_TIMBER_MAX; y++) {
                 if (stack.getDamage() < 2) return false;
                 tempPos.move(Direction.UP);
                 BlockState state = world.getBlockState(tempPos);
@@ -651,7 +651,7 @@ public class Utils {
         else {
             LinkedList<BlockPos> blocks = new LinkedList<>();
             Set<BlockPos> visited = new ObjectOpenHashSet<>();
-            int amount = Configs.GAMEPLAY.AXE_TIMBER_MAX;
+            int amount = AntimatterConfig.GAMEPLAY.AXE_TIMBER_MAX;
             blocks.add(start);
             BlockPos pos;
             Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };

@@ -1,6 +1,6 @@
 package muramasa.antimatter.common.event;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.inventory.IInventory;
@@ -14,7 +14,7 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
-        if (!Configs.GAMEPLAY.PLAY_CRAFTING_SOUNDS) return;
+        if (!AntimatterConfig.GAMEPLAY.PLAY_CRAFTING_SOUNDS) return;
         IInventory inv = e.getInventory();
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             if (inv.getStackInSlot(i).getItem() instanceof IAntimatterTool) {

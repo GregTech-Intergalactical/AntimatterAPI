@@ -2,7 +2,7 @@ package muramasa.antimatter.worldgen;
 
 import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
@@ -12,7 +12,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -25,8 +24,8 @@ public class AntimatterWorldGenerator {
         try {
             //Path config = FMLPaths.CONFIGDIR.get().resolve("GregTech/WorldGenDefault.json");
             AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
-            if (Configs.WORLD.DISABLE_VANILLA_STONE_GEN) removeStoneFeatures();
-            if (Configs.WORLD.DISABLE_VANILLA_ORE_GEN) removeOreFeatures();
+            if (!AntimatterConfig.WORLD.VANILLA_STONE_GEN) removeStoneFeatures();
+            if (!AntimatterConfig.WORLD.VANILLA_ORE_GEN) removeOreFeatures();
             AntimatterAPI.addToWorkQueue(() -> {
                 AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(feat -> {
                     feat.onDataOverride(new JsonObject());

@@ -1,7 +1,7 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -37,7 +37,7 @@ public class RecipeBuilder {
             return Utils.getEmptyRecipe();
         }
 
-        if (Configs.RECIPE.ENABLE_RECIPE_UNIFICATION && itemsOutput != null) {
+        if (/*AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION && */itemsOutput != null) {
             for (int i = 0; i < itemsOutput.length; i++) {
                 itemsOutput[i] = Unifier.get(itemsOutput[i]);
             }

@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.old;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.material.MaterialType;
@@ -56,7 +56,7 @@ public class WorldGenAsteroid extends WorldGenBase {
             if (WorldGenVeinLayer.getTotalWeight() > 0 && layerCount > 0) {
                 int randomWeight;
                 WorldGenVeinLayer layer;
-                for (int i = 0; i < Configs.WORLD.ORE_VEIN_FIND_ATTEMPTS; i++) {
+                for (int i = 0; i < AntimatterConfig.WORLD.ORE_VEIN_FIND_ATTEMPTS; i++) {
                     randomWeight = rand.nextInt(WorldGenVeinLayer.getTotalWeight());
                     for (int j = 0; j < layerCount; j++) {
                         layer = layers.get(j);

@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.worldgen.WorldGenHelper;
@@ -31,7 +31,7 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean enabled() {
-        return Configs.WORLD.ENABLE_STONE_LAYER_ORES;
+        return AntimatterConfig.WORLD.STONE_LAYER_ORES;
     }
 
     @Override

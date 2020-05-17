@@ -115,7 +115,7 @@ public final class AntimatterAPI {
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar == Antimatter.INSTANCE) INTERNAL_REGISTRAR = registrar;
-        else if (registrar.isEnabled() || Configs.MODCOMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar, true);
+        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar, true);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistrationHelper::onRegistryEvent);
     }
 
