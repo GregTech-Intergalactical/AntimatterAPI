@@ -88,8 +88,8 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'antimatter', '--all', '--output', '"' + project.file('src/generated/resources/') + '"',
-                    '--existing', '"' + sourceSets.main.resources.srcDirs[0] + '"'
+            args '--mod', 'antimatter', '--all', '--output', project.file('src/generated/resources/'),
+                    '--existing', sourceSets.main.resources.srcDirs[0] 
 
             mods {
                 antimatter {
