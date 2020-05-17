@@ -9,7 +9,6 @@ import net.minecraft.util.Hand;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 public class ConfigHandler implements IConfigHandler {
 

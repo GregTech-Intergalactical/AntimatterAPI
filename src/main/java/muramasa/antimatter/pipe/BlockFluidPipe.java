@@ -3,23 +3,13 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-
-import static muramasa.antimatter.pipe.PipeType.FLUID;
 
 public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
 

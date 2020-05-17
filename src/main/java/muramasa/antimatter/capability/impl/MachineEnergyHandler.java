@@ -2,9 +2,6 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;

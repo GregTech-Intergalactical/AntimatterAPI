@@ -5,7 +5,6 @@ import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.world.IWorldReader;
 import tesseract.Tesseract;
 import tesseract.api.item.IItemPipe;
 import tesseract.api.ITickHost;

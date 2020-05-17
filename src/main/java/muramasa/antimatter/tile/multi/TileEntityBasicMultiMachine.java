@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.impl.MultiMachineRecipeHandler;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.util.Utils;
