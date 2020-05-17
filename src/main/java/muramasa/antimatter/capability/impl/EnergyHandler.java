@@ -2,7 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.capability.IEnergyHandler;
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;

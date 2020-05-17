@@ -5,11 +5,11 @@ import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
+import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
-import tesseract.graph.Connectivity;
-import tesseract.graph.ITickHost;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickHost;
+import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -25,14 +25,14 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public void refreshConnections() {
-        if (isServerSide()) TesseractAPI.removeFluid(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.FLUID.remove(getDimention(), pos.toLong());
         super.refreshConnections();
-        if (isServerSide()) TesseractAPI.registerFluidPipe(getDimention(), pos.toLong(), this);
+        if (isServerSide()) Tesseract.FLUID.registerNode(getDimention(), pos.toLong(), (IFluidNode) this);
     }
 
     @Override
     public void onRemove() {
-        TesseractAPI.removeFluid(getDimention(), pos.toLong());
+        Tesseract.FLUID.remove(getDimention(), pos.toLong());
     }
 
     @Override

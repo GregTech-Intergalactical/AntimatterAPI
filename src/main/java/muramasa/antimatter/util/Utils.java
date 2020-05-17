@@ -41,10 +41,12 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -265,6 +267,12 @@ public class Utils {
                 to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
+    }
+
+    public static Optional<World> getServerWorld(int dimension) {
+        DimensionType type = DimensionType.getById(dimension);
+        if (type == null) return Optional.empty();
+        return Optional.of(ServerLifecycleHooks.getCurrentServer().getWorld(type));
     }
 
     /**

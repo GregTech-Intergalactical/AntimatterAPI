@@ -1,8 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.cover.CoverMaterial;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -12,11 +10,11 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
-import tesseract.graph.ITickHost;
-import tesseract.graph.ITickingController;
+import tesseract.api.ITickHost;
+import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -45,7 +43,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
-        TesseractAPI.registerFluidNode(tile.getDimention(), tile.getPos().toLong(), this);
+        Tesseract.FLUID.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
@@ -66,7 +64,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     }
 
     public void onRemove() {
-        TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
+        Tesseract.FLUID.remove(tile.getDimention(), tile.getPos().toLong());
     }
 
     /*public void onReset() {

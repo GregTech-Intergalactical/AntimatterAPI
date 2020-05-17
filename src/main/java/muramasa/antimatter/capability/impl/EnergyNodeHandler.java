@@ -8,7 +8,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.TesseractAPI;
+import tesseract.Tesseract;
 import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
@@ -34,7 +34,7 @@ public class EnergyNodeHandler implements IElectricNode, INodeHandler {
         if (capability.isPresent()) {
             EnergyNodeHandler node = new EnergyNodeHandler(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
-            TesseractAPI.registerElectricNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            Tesseract.ELECTRIC.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
         }
         return null;
@@ -43,7 +43,7 @@ public class EnergyNodeHandler implements IElectricNode, INodeHandler {
     @Override
     public void onRemove(@Nullable Direction side) {
         if (side == null) {
-            TesseractAPI.removeElectric(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+            Tesseract.ELECTRIC.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
             valid = false;
         }
     }

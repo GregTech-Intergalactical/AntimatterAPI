@@ -16,8 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
-import tesseract.TesseractAPI;
-import tesseract.graph.ITickingController;
+import tesseract.Tesseract;
+import tesseract.api.ITickingController;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -78,7 +78,7 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        ITickingController controller = TesseractAPI.getElectricController(world.getDimension().getType().getId(), pos.toLong());
+        ITickingController controller = Tesseract.ELECTRIC.getController(world.getDimension().getType().getId(), pos.toLong());
         if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
         return info;
     }
