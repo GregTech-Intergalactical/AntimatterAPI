@@ -1,9 +1,8 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.tesseract;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverOutput;
 import net.minecraft.item.Item;
@@ -22,29 +21,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-public class ItemNodeHandler implements IItemNode, INodeHandler {
+public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
     // TODO: Add black/white lister filter mode
     private TileEntity tile;
     private IItemHandler handler;
     private Set<Item>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
     private boolean[] output = new boolean[]{false, false, false, false, false, false};
-    private boolean[] input = new boolean[]{true, true, true, true, true, true};
+    private boolean[] input = new boolean[]{false, false, false, false, false, false};
     private int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     private boolean valid = true;
 
-    private ItemNodeHandler(TileEntity tile, IItemHandler handler) {
+    private ItemTileWrapper(TileEntity tile, IItemHandler handler) {
         this.tile = tile;
         this.handler = handler;
     }
 
-    // TODO: Make sure that registartion on the server side
-
     @Nullable
-    public static ItemNodeHandler of(TileEntity tile) {
+    public static ItemTileWrapper of(TileEntity tile) {
         LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         if (capability.isPresent()) {
-            ItemNodeHandler node = new ItemNodeHandler(tile, capability.orElse(null));
+            ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
             Tesseract.ITEM.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
@@ -55,7 +52,7 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
     @Override
     public void onRemove(@Nullable Direction side) {
         if (side != null) {
-            output[side.getIndex()] = false;
+            output[side.getIndex()] = input[side.getIndex()] = false;
         } else {
             Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
             valid = false;
@@ -63,13 +60,14 @@ public class ItemNodeHandler implements IItemNode, INodeHandler {
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
+    public void onUpdate(@Nonnull Direction side, @Nullable Cover cover) {
         /*if (cover instanceof CoverFilter) {
             filter.put(side, ((CoverFilter<Item>)cover).getFilter());
         }*/
         if (cover instanceof CoverOutput) {
             output[side.getIndex()] = true;
         }
+        input[side.getIndex()] = true;
     }
 
     @Override

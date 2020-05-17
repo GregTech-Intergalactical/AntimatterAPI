@@ -1,15 +1,17 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraftforge.energy.CapabilityEnergy;
 import tesseract.Tesseract;
 import tesseract.api.electric.IElectricCable;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+
+import static muramasa.antimatter.pipe.PipeType.ELECTRIC;
 
 public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
@@ -18,20 +20,24 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
     }
 
     @Override
-    public void refreshConnections() {
-        if (isServerSide()) Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
-        super.refreshConnections();
-        if (isServerSide()) Tesseract.ELECTRIC.registerConnector(getDimention(), pos.toLong(), this);
+    public void onLoad() {
+        if (isServerSide()) Tesseract.ELECTRIC.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        super.onLoad();
+    }
+
+    @Override
+    public void refreshConnection() {
+        if (isServerSide()) {
+            Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
+            Tesseract.ELECTRIC.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        } else {
+            super.refreshConnection();
+        }
     }
 
     @Override
     public void onRemove() {
-        Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
-    }
-
-    @Override
-    public boolean canConnect(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityCable/* && getCover(side).isEqual(Data.COVER_NONE)*/ || tile.getCapability(CapabilityEnergy.ENERGY).isPresent();
+        if (isServerSide()) Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
     }
 
     @Override
@@ -51,6 +57,16 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return true;//Connectivity.has(connections, direction);
+        return canConnect(direction.getIndex());
+    }
+
+    @Override
+    protected void onNeighborUpdate(TileEntity neighbor, Direction direction) {
+        PipeCache.update(ELECTRIC, world, direction, neighbor, null);
+    }
+
+    @Override
+    protected void onNeighborRemove(TileEntity neighbor, Direction direction) {
+        PipeCache.remove(ELECTRIC, world, direction, neighbor);
     }
 }

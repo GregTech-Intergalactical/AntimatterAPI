@@ -1,22 +1,25 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.impl.MultiMachineRecipeHandler;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.util.Utils;
 
 import java.util.Optional;
 
+import static muramasa.antimatter.machine.MachineFlag.RECIPE;
+
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
 public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
-    public TileEntityBasicMultiMachine(Machine type) {
+    public TileEntityBasicMultiMachine(Machine<?> type) {
         super(type);
     }
 
     @Override
-    public void onInit() {
-        recipeHandler = Optional.of(new MultiMachineRecipeHandler<TileEntityMultiMachine>(this) {
+    public void onLoad() {
+        if (isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MultiMachineRecipeHandler<TileEntityMultiMachine>(this) {
             @Override
             public Recipe findRecipe() { //TODO support fluids?
                 return getMachineType().getRecipeMap().find(itemHandler.get(), null);
@@ -47,5 +50,6 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
                 return true;
             }
         });
+        super.onLoad();
     }
 }

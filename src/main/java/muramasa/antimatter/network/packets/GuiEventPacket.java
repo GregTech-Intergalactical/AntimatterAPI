@@ -26,15 +26,13 @@ public class GuiEventPacket {
     }
 
     public static void encode(GuiEventPacket msg, PacketBuffer buf) {
-        buf.writeInt(msg.event.ordinal());
-        buf.writeInt(msg.pos.getX());
-        buf.writeInt(msg.pos.getY());
-        buf.writeInt(msg.pos.getZ());
-        buf.writeInt(msg.dimension);
+        buf.writeEnumValue(msg.event);
+        buf.writeBlockPos(msg.pos);
+        buf.writeVarInt(msg.dimension);
     }
 
     public static GuiEventPacket decode(PacketBuffer buf) {
-        return new GuiEventPacket(GuiEvent.VALUES[buf.readInt()], new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()), buf.readInt());
+        return new GuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readVarInt());
     }
 
     public static void handle(final GuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {

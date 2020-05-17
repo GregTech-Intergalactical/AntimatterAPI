@@ -12,6 +12,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.advancements.criterion.*;
@@ -403,9 +404,7 @@ public class Utils {
 
     @Nullable
     public static TileEntity getTileFromBuf(PacketBuffer buf) {
-        return DistExecutor.runForDist(() -> () -> {
-            return Antimatter.PROXY.getClientWorld().getTileEntity(buf.readBlockPos());
-        }, () -> () -> {
+        return DistExecutor.runForDist(() -> () -> Antimatter.PROXY.getClientWorld().getTileEntity(buf.readBlockPos()), () -> () -> {
             throw new RuntimeException("Shouldn't be called on server!");
         });
     }
@@ -581,8 +580,8 @@ public class Utils {
     public static void createFireAround(@Nullable World world, BlockPos pos) {
         if (world != null) {
             boolean fired = false;
-            for (Direction dir : Ref.DIRECTIONS) {
-                BlockPos offset = pos.offset(dir);
+            for (Direction side : Ref.DIRECTIONS) {
+                BlockPos offset = pos.offset(side);
                 if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
                     world.setBlockState(offset, Blocks.FIRE.getDefaultState());
                     fired = true;
@@ -660,8 +659,8 @@ public class Utils {
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
                 if (!world.getBlockState(pos).getBlock().isIn(BlockTags.LOGS)) continue;
-                for (Direction dir : dirs) {
-                    BlockPos dirPos = pos.offset(dir);
+                for (Direction side : dirs) {
+                    BlockPos dirPos = pos.offset(side);
                     if (!visited.contains(dirPos)) blocks.add(dirPos);
                 }
                 for (int x = 0; x < 3; x++)  {
@@ -896,6 +895,14 @@ public class Utils {
             return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id),'_', ' ');
         }
         return StringUtils.capitalize(id);
+    }
+
+    @Nullable
+    public static AntimatterToolType getToolType(PlayerEntity player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool))
+            return null;
+        return ((IAntimatterTool) stack.getItem()).getType();
     }
 
     /**

@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static muramasa.antimatter.machine.MachineFlag.*;
+
 public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
@@ -45,16 +47,11 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     @Override
-    public void onInit() {
-        super.onLoad();
+    public void onLoad() {
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
-        configHandler = Optional.of(new ControllerConfigHandler(this));
-        recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));
-
-        //TODO fix this oversight. This should not be needed? since super checks for proper flags? needs tested
-        itemHandler = Optional.empty();
-        fluidHandler = Optional.empty();
-        energyHandler = Optional.empty();
+        if (has(CONFIGURABLE)) configHandler = Optional.of(new ControllerConfigHandler(this));
+        if (isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));
+        super.onLoad();
     }
 
     public boolean checkStructure() {

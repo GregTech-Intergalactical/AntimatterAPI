@@ -10,13 +10,17 @@ import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -32,7 +36,7 @@ public class TileEntityPipe extends TileEntityTickable {
     public Optional<PipeCoverHandler> coverHandler = Optional.empty();
     public Optional<PipeConfigHandler> configHandler = Optional.empty();
 
-    protected byte connections, disabledConnections;
+    protected byte connection;
 
     public TileEntityPipe(TileEntityType<?> tileType) {
         super(tileType);
@@ -44,9 +48,20 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
-    public void onInit() {
-        coverHandler = Optional.of(new PipeCoverHandler(this));
-        configHandler = Optional.of(new PipeConfigHandler(this));
+    public void onLoad() {
+        if (!coverHandler.isPresent()) coverHandler = Optional.of(new PipeCoverHandler(this));
+        if (!configHandler.isPresent()) configHandler = Optional.of(new PipeConfigHandler(this));
+    }
+
+    @Override
+    public void onRemove() {
+        for (Direction side : Ref.DIRECTIONS) {
+            TileEntity neighbor = Utils.getTile(world, pos.offset(side));
+            // Check that entity is not GT one
+            if (neighbor != null && !(neighbor instanceof TileEntityBase)) {
+                onNeighborRemove(neighbor, side.getOpposite());
+            }
+        }
     }
 
     public PipeType<?> getPipeType() {
@@ -57,41 +72,42 @@ public class TileEntityPipe extends TileEntityTickable {
         return size != null ? size : (size = ((BlockPipe<?>) getBlockState().getBlock()).getSize());
     }
 
-    public byte getConnections() {
-        return connections;
+    public byte getConnection() {
+        return connection;
     }
 
-    public byte getDisabledConnections() {
-        return disabledConnections;
+    public void setConnection(Direction side) {
+        connection = Connectivity.set(connection, side.getIndex());
+        refreshConnection();
     }
 
-    public void refreshConnections() {
-        connections = 0;
-        for (Direction dir : Ref.DIRECTIONS) {
-            TileEntity adjTile = Utils.getTile(world, pos.offset(dir));
-            if (adjTile == null) continue;
-            int sideMask = 1 << dir.getIndex();
-            if ((disabledConnections & sideMask) == 0) { //Connection side has not been disabled
-                if (canConnect(adjTile, dir)) {
-                    connections |= sideMask;
+    public void toggleConnection(Direction side, boolean isTarget) {
+        connection = Connectivity.toggle(connection, side.getIndex());
+        refreshConnection();
+        if (isTarget && isServerSide()) {
+            TileEntity target = Utils.getTile(world, pos.offset(side));
+            // Check that entity is not GT one
+            if (target != null && !(target instanceof TileEntityBase)) {
+                if (Connectivity.has(connection, side.getIndex())) {
+                    onNeighborUpdate(target, side.getOpposite());
+                } else {
+                    onNeighborRemove(target, side.getOpposite());
                 }
             }
         }
-        markForNBTSync();
     }
 
-    public boolean canConnect(TileEntity tile, Direction side) {
-        return true;
+    public void clearConnection(Direction side) {
+        connection = Connectivity.clear(connection, side.getIndex());
+        refreshConnection();
     }
 
-    public void toggleConnection(Direction side) {
-        int sideMask = 1 << side.getIndex();
-        if ((disabledConnections & sideMask) > 0) { // Is Disabled, so remove mask
-            disabledConnections &= ~sideMask;
-        } else { // Is not disabled, so add mask
-            disabledConnections |= sideMask;
-        }
-        refreshConnections();
+    public void refreshConnection() {
+        markForRenderUpdate();
+    }
+
+    public boolean canConnect(int side) {
+        return Connectivity.has(connection, side);
     }
 
     public Cover[] getValidCovers() {
@@ -105,24 +121,29 @@ public class TileEntityPipe extends TileEntityTickable {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()) return LazyOptional.of(() -> coverHandler.get()).cast();
-        else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
-        return super.getCapability(cap);
+        return cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent() ? LazyOptional.of(() -> configHandler.get()).cast() : super.getCapability(cap);
     }
 
-    //TODO move to cap
-//    @Override
-//    public void readFromNBT(CompoundNBT tag) {
-//        super.readFromNBT(tag);
-//        if (tag.hasKey(Ref.KEY_PIPE_CONNECTIONS)) connections = tag.getByte(Ref.KEY_PIPE_CONNECTIONS);
-//    }
-//
-//    @Override
-//    public CompoundNBT writeToNBT(CompoundNBT tag) {
-//        super.writeToNBT(tag);
-//        tag.setInteger(Ref.KEY_PIPE_CONNECTIONS, connections);
-//        return tag;
-//    }
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        return cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.getCover(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
+    }
+
+    @Override
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if (tag.contains(Ref.KEY_PIPE_CONNECTIVITY)) connection = tag.getByte(Ref.KEY_PIPE_CONNECTIVITY);
+        refreshConnection();
+    }
+
+    @Nonnull
+    @Override
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag); //TODO get tile data tag
+        tag.putByte(Ref.KEY_PIPE_CONNECTIVITY, connection);
+        return tag;
+    }
 
     @Override
     public List<String> getInfo() {
@@ -130,5 +151,17 @@ public class TileEntityPipe extends TileEntityTickable {
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;
+    }
+
+    /**
+     * Called when block is placed to init inputs to neighbors nodes.
+     */
+    protected void onNeighborUpdate(TileEntity neighbor, Direction direction) {
+    }
+
+    /**
+     * Called when block is replaced to remove inputs from neighbors nodes.
+     */
+    protected void onNeighborRemove(TileEntity neighbor, Direction direction) {
     }
 }

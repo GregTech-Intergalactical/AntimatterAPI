@@ -14,8 +14,6 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -107,25 +105,19 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return true;
     }
 
-    @Nullable
-    private AntimatterToolType getToolType(PlayerEntity player) {
-        ItemStack stack = player.getHeldItemMainhand();
-        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool))
-            return null;
-        return ((IAntimatterTool) stack.getItem()).getType();
-    }
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = Utils.getTile(world, pos);
-            if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
-                return ActionResultType.SUCCESS;
+            if (tile != null) {
+                if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
+                    return ActionResultType.SUCCESS;
+                }
+                LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
+                interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
             }
-            assert tile != null;
-            LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
-            interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), getToolType(player)));
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }

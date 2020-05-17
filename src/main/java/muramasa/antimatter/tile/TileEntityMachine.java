@@ -69,13 +69,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onInit() {
-        if (!itemHandler.isPresent() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
-        if (!fluidHandler.isPresent() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+    public void onLoad() {
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (!energyHandler.isPresent() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
         if (!configHandler.isPresent() && has(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
-        if (!recipeHandler.isPresent() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
+        if (!itemHandler.isPresent() && isServerSide() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this, itemData));
+        if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this, fluidData));
+        if (!energyHandler.isPresent() && isServerSide() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
     }
 
     @Override
@@ -123,6 +123,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return getBlockState().get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
+    // TODO: Fix
     public Direction getOutputFacing() {
         return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
     }

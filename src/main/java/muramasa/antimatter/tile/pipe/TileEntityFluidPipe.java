@@ -1,12 +1,12 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraft.world.IWorldReader;
 import tesseract.Tesseract;
-import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
@@ -14,6 +14,8 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static muramasa.antimatter.pipe.PipeType.FLUID;
 
 public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, ITickHost {
 
@@ -24,25 +26,29 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
     }
 
     @Override
-    public void refreshConnections() {
-        if (isServerSide()) Tesseract.FLUID.remove(getDimention(), pos.toLong());
-        super.refreshConnections();
-        if (isServerSide()) Tesseract.FLUID.registerNode(getDimention(), pos.toLong(), (IFluidNode) this);
+    public void onLoad() {
+        if (isServerSide()) Tesseract.FLUID.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        super.onLoad();
+    }
+
+    @Override
+    public void refreshConnection() {
+        if (isServerSide()) {
+            Tesseract.FLUID.remove(getDimention(), pos.toLong());
+            Tesseract.FLUID.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        } else {
+            super.refreshConnection();
+        }
     }
 
     @Override
     public void onRemove() {
-        Tesseract.FLUID.remove(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.FLUID.remove(getDimention(), pos.toLong());
     }
 
     @Override
     public void onServerUpdate() {
         if (controller != null) controller.tick();
-    }
-
-    @Override
-    public boolean canConnect(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityFluidPipe/* && getCover(side).isEqual(Data.COVER_NONE)*/ || tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override
@@ -67,12 +73,22 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return true;//Connectivity.has(connections, direction);
+        return canConnect(direction.getIndex());
     }
 
     @Override
     public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
+    }
+
+    @Override
+    protected void onNeighborUpdate(TileEntity neighbor, Direction direction) {
+        PipeCache.update(FLUID, world, direction, neighbor, null);
+    }
+
+    @Override
+    protected void onNeighborRemove(TileEntity neighbor, Direction direction) {
+        PipeCache.remove(FLUID, world, direction, neighbor);
     }
 }

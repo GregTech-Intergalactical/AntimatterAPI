@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static muramasa.antimatter.machine.MachineFlag.FLUID;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
@@ -27,10 +27,9 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
-    public void onInit() {
-        if (!isServerSide()) return;
+    public void onLoad() {
         componentHandler = Optional.of(new HatchComponentHandler(this));
-        if (getMachineType().has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, 1000, fluidData));
+        if (isServerSide() && has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, 1000, fluidData));
         super.onLoad();
     }
 

@@ -5,16 +5,20 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
@@ -23,7 +27,9 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler {
+import static muramasa.antimatter.pipe.PipeType.ELECTRIC;
+
+public class BlockCable extends BlockPipe<Cable<?>> {
 
     protected boolean insulated;
 
@@ -84,20 +90,14 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
 //    @Override
-//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
-//        PipeCache.setElectric(world, direction, neighbour);
-//    }
-
-    //    @Override
-//    public String getDisplayName(ItemStack stack) {
+//    public ITextComponent getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];
-//        return size.getCableThickness() + "x " + material.getDisplayName() + (ins ? " Cable" : " Wire");
+//         return size.getCableThickness() + "x " + material.getDisplayName() + (ins ? " Cable" : " Wire");
 //    }
 //
 //    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+//    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];
 //        tooltip.add("Max Voltage: " + TextFormatting.GREEN + getVoltage() + " (" + getTier().getId().toUpperCase(Locale.ENGLISH) + ")");

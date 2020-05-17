@@ -9,6 +9,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class ComponentHandler implements IComponentHandler {
@@ -21,38 +22,43 @@ public class ComponentHandler implements IComponentHandler {
         this.componentTile = componentTile;
     }
 
+    @Nonnull
     @Override
     public String getId() {
         return componentId;
     }
 
+    @Nonnull
     @Override
     public TileEntityBase getTile() {
         return componentTile;
     }
 
+    @Nonnull
     @Override
     public Optional<MachineItemHandler> getItemHandler() {
         return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : Optional.empty();
     }
 
+    @Nonnull
     @Override
     public Optional<MachineFluidHandler> getFluidHandler() {
         return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : Optional.empty();
     }
 
+    @Nonnull
     @Override
     public Optional<MachineEnergyHandler> getEnergyHandler() {
         return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : Optional.empty();
     }
 
     @Override
-    public void onStructureFormed(TileEntityMultiMachine controllerTile) {
+    public void onStructureFormed(@Nonnull TileEntityMultiMachine controllerTile) {
 
     }
 
     @Override
-    public void onStructureInvalidated(TileEntityMultiMachine controllerTile) {
+    public void onStructureInvalidated(@Nonnull TileEntityMultiMachine controllerTile) {
 
     }
 
@@ -61,6 +67,7 @@ public class ComponentHandler implements IComponentHandler {
         return StructureCache.has(getTile().getWorld(), getTile().getPos());
     }
 
+    @Nonnull
     @Override
     public Optional<TileEntityMultiMachine> getFirstController() {
 //        int size = controllers.size();

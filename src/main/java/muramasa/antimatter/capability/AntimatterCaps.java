@@ -52,7 +52,7 @@ public class AntimatterCaps {
             public void readNBT(Capability<IConfigHandler> capability, IConfigHandler instance, Direction side, INBT nbt) {
 
             }
-        }, () -> new MachineConfigHandler(null));
+        }, () -> new ConfigHandler(null));
 
         CapabilityManager.INSTANCE.register(ICoverHandler.class, new Capability.IStorage<ICoverHandler>() {
             @Nullable

@@ -3,13 +3,23 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+
+import static muramasa.antimatter.pipe.PipeType.FLUID;
 
 public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
 
@@ -25,20 +35,14 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
     }
 
 //    @Override
-//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
-//         PipeCache.setFluid(world, direction, neighbour);
-//    }
-
-//    @Override
-//    public String getDisplayName(ItemStack stack) {
+//    public ITextComponent getDisplayName(ItemStack stack) {
 //        //TODO add prefix and suffix for local
 //        PipeSize size = PipeSize.VALUES[stack.getMetadata()];
 //        return (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + material.getDisplayName() + " Fluid Pipe";
 //    }
 //
 //    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+//    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 //        PipeSize size = PipeSize.VALUES[stack.getMetadata()];
 //        //TODO localize
 //        tooltip.add("Fluid Capacity: " + TextFormatting.BLUE + (capacities[size.ordinal()] * 20) + "L/s");
