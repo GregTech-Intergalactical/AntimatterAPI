@@ -57,7 +57,7 @@ public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        return storage.receiveEnergy((int)(maxReceive * Configs.GAMEPLAY.EU_TO_RF), simulate);
+        return storage.receiveEnergy((int)(maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
     }
 
     @Override
