@@ -1,6 +1,6 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.cover.Cover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

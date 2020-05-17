@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.impl.PipeConfigHandler;
 import muramasa.antimatter.capability.impl.PipeCoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -158,11 +159,13 @@ public class TileEntityPipe extends TileEntityTickable {
      * Called when block is placed to init inputs to neighbors nodes.
      */
     protected void onNeighborUpdate(TileEntity neighbor, Direction direction) {
+        PipeCache.update(getPipeType(), world, direction, neighbor, null);
     }
 
     /**
      * Called when block is replaced to remove inputs from neighbors nodes.
      */
     protected void onNeighborRemove(TileEntity neighbor, Direction direction) {
+        PipeCache.remove(getPipeType(), world, direction, neighbor);
     }
 }

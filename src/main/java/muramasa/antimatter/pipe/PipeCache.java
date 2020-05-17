@@ -4,6 +4,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import mcp.MethodsReturnNonnullByDefault;
+import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.ITileWrapper;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
@@ -18,10 +22,13 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.BiFunction;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Map;
 
 @Mod.EventBusSubscriber
+@ParametersAreNonnullByDefault
 public class PipeCache {
 
     private static Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
@@ -31,56 +38,40 @@ public class PipeCache {
         LOOKUP.remove(e.getWorld().getDimension().getType().getId());
     }
 
-    public static void update(PipeType type, IWorldReader world, Direction direction, TileEntity tile, @Nullable Cover cover) {
+    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity tile, @Nullable Cover cover) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
         entry.update(type, direction, tile, cover);
     }
 
-    public static void remove(PipeType type, IWorldReader world, Direction direction, TileEntity tile) {
+    public static void remove(PipeType<?> type, IWorldReader world, Direction direction, TileEntity tile) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
         entry.remove(type, direction, tile);
     }
 
-    @Nullable
-    public static ITileWrapper get(PipeType type, World world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
-        return entry != null ? entry.get(type, pos) : null;
-    }
-
     public static class DimensionEntry {
 
-        private Long2ObjectMap<ITileWrapper[]> NODE_BLOCK = new Long2ObjectOpenHashMap<>();
-        private static final BiFunction<PipeType, TileEntity, ITileWrapper> supplier = (PipeType type, TileEntity tile) -> {
-            switch (type) {
-                case ELECTRIC: return EnergyTileWrapper.of(tile);
-                case FLUID: return FluidTileWrapper.of(tile);
-                case ITEM: return ItemTileWrapper.of(tile);
-                default: return null;
-            }
-        };
+        private Long2ObjectMap<Map<String, ITileWrapper>> NODE_BLOCK = new Long2ObjectOpenHashMap<>();
 
         public DimensionEntry() {
         }
 
-        public void update(PipeType type, Direction direction, TileEntity tile, @Nullable Cover cover) {
-            ITileWrapper[] data = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new ITileWrapper[3]); // Can be replaced with EnumMap
-            int id = type.ordinal();
-            if (data[id] == null || !data[id].isValid()) data[id] = supplier.apply(type, tile);
-            if (data[id] == null) return; // If wasn't initialized, then stop
-            data[id].onUpdate(direction, cover);
+        public void update(PipeType<?> type, Direction direction, TileEntity tile, @Nullable Cover cover) {
+            get(type, tile).onUpdate(direction, cover);
         }
 
-        public void remove(PipeType type, Direction direction, TileEntity tile) {
-            ITileWrapper[] data = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new ITileWrapper[3]); // Can be replaced with EnumMap
-            int id = type.ordinal();
-            if (data[id] == null) return; // If wasn't initialized, then stop
-            data[id].onRemove(direction);
+        public void remove(PipeType<?> type, Direction direction, TileEntity tile) {
+            get(type, tile).onRemove(direction);
         }
 
-        @Nullable
-        public ITileWrapper get(PipeType type, BlockPos pos) {
-            ITileWrapper[] data = NODE_BLOCK.get(pos.toLong());
-            return data != null ? data[type.ordinal()] : null;
+        @Nonnull
+        private ITileWrapper get(PipeType<?> type, TileEntity tile) {
+            Map<String, ITileWrapper> map = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new Object2ObjectArrayMap<>()); // Can be replaced with EnumMap
+            ITileWrapper wrapper = map.get(type.getId());
+            if (wrapper == null || !wrapper.isValid()) {
+                wrapper = type.getWrapper(tile);
+                map.put(type.getId(), wrapper);
+            }
+            return wrapper;
         }
     }
 }

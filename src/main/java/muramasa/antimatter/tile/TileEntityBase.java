@@ -15,8 +15,8 @@ public abstract class TileEntityBase extends TileEntity {
 
     @Override
     public void remove() {
-        super.remove();
         onRemove();
+        super.remove();
     }
 
     public void onRemove() {

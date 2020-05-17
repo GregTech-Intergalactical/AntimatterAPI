@@ -1,20 +1,15 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import tesseract.Tesseract;
-import tesseract.api.item.IItemPipe;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
+import tesseract.api.item.IItemPipe;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static muramasa.antimatter.pipe.PipeType.ITEM;
 
 public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITickHost {
 
@@ -64,15 +59,5 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
     public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
-    }
-
-    @Override
-    protected void onNeighborUpdate(TileEntity neighbor, Direction direction) {
-        PipeCache.update(ITEM, world, direction, neighbor, null);
-    }
-
-    @Override
-    protected void onNeighborRemove(TileEntity neighbor, Direction direction) {
-        PipeCache.remove(ITEM, world, direction, neighbor);
     }
 }
