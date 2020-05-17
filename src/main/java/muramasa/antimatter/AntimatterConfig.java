@@ -278,7 +278,7 @@ public class AntimatterConfig {
 
     }
 
-    public static void bakeClientConfig() {
+    private static void bakeClientConfig() {
 
         CLIENT.BASIC_MACHINE_MODELS =  CLIENT_CONFIG.BASIC_MACHINE_MODELS.get();
         CLIENT.SHOW_ALL_MATERIAL_ITEMS = CLIENT_CONFIG.SHOW_ALL_MATERIAL_ITEMS.get();
@@ -286,7 +286,7 @@ public class AntimatterConfig {
 
     }
 
-    public static void bakeCommonConfig() {
+    private static void bakeCommonConfig() {
 
         WORLD.VANILLA_ORE_GEN = COMMON_CONFIG.VANILLA_ORE_GEN.get();
         WORLD.VANILLA_STONE_GEN = COMMON_CONFIG.VANILLA_STONE_GEN.get();
