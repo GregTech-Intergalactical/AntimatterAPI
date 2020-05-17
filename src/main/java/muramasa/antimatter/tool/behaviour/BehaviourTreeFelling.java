@@ -1,6 +1,6 @@
 package muramasa.antimatter.tool.behaviour;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.MaterialTool;
@@ -31,7 +31,7 @@ public class BehaviourTreeFelling implements IBlockDestroyed<MaterialTool> {
             boolean isToolEffective = Utils.isToolEffective(type, state);
             if (isToolEffective && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
                 if (type == CHAINSAW || instance.getTier().getHarvestLevel() > 1 && (type == AXE || type.getToolTypes().contains("axe"))) {
-                    if (!Configs.GAMEPLAY.AXE_TIMBER) return true;
+                    if (!AntimatterConfig.GAMEPLAY.AXE_TIMBER) return true;
                     if (state.getBlock().isIn(BlockTags.LOGS)) {
                         Utils.treeLogging(instance, stack, pos, player, world);
                     }

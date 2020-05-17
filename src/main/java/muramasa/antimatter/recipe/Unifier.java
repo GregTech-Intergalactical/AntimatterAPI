@@ -2,7 +2,7 @@ package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -16,9 +16,9 @@ public class Unifier {
     private static Object2ObjectOpenHashMap<Fluid, Fluid> FLUID_DICT = new Object2ObjectOpenHashMap<>();
 
     static {
-        if (Configs.RECIPE.MOD_PRIORITY.length == 0 || Configs.RECIPE.MOD_PRIORITY[0].equals(Ref.ID)) {
-            Configs.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
-        }
+        // if (AntimatterConfig.RECIPE.MOD_PRIORITY.length == 0 || AntimatterConfig.RECIPE.MOD_PRIORITY[0].equals(Ref.ID)) {
+            // AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
+        // }
     }
 
     public static ItemStack get(ItemStack stack) {

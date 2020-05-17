@@ -3,7 +3,7 @@ package muramasa.antimatter.worldgen.object;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -83,7 +83,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         if (materials[2] == null || !materials[2].has(MaterialType.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE tag");
         if (materials[3] == null || !materials[3].has(MaterialType.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " material either doesn't exist or doesn't have the ORE tag");
 
-        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
+        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
             if (materials[0] == null || !materials[0].has(MaterialType.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " material either doesn't exist or doesn't have the ORE_SMALL tag");
             if (materials[1] == null || !materials[1].has(MaterialType.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " material either doesn't exist or doesn't have the ORE_SMALL tag");
             if (materials[2] == null || !materials[2].has(MaterialType.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE_SMALL tag");
@@ -150,12 +150,12 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
             int veinCount = veins.size();
-            if (oreVeinPercentageRoll < Configs.WORLD.ORE_VEIN_CHANCE && WorldGenVeinLayer.TOTAL_WEIGHT > 0 && veinCount > 0) {
+            if (oreVeinPercentageRoll < AntimatterConfig.WORLD.ORE_VEIN_CHANCE && WorldGenVeinLayer.TOTAL_WEIGHT > 0 && veinCount > 0) {
                 int placementAttempts = 0;
                 boolean oreVeinFound = false;
                 int i;
 
-                for (i = 0; i < Configs.WORLD.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < Configs.WORLD.ORE_VEIN_PLACE_ATTEMPTS; i++) {
+                for (i = 0; i < AntimatterConfig.WORLD.ORE_VEIN_FIND_ATTEMPTS && !oreVeinFound && placementAttempts < AntimatterConfig.WORLD.ORE_VEIN_PLACE_ATTEMPTS; i++) {
                     int tRandomWeight = oreVeinRNG.nextInt(WorldGenVeinLayer.TOTAL_WEIGHT);
                     for (WorldGenVeinLayer vein : veins) {
                         tRandomWeight -= vein.weight;
@@ -195,9 +195,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                         Antimatter.LOGGER.info("Empty oreVeinSeed="+ oreVeinSeed + " chunkX="+ chunkX + " chunkZ="+ chunkZ + " oreSeedX="+ oreSeedX + " oreSeedZ="+ oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getDimension());
                     VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
                 }
-            } else if (oreVeinPercentageRoll >= Configs.WORLD.ORE_VEIN_CHANCE) {
+            } else if (oreVeinPercentageRoll >= AntimatterConfig.WORLD.ORE_VEIN_CHANCE) {
                 if (Ref.debugOreVein)
-                    Antimatter.LOGGER.info("Skipped oreVeinSeed="+ oreVeinSeed + " chunkX="+ chunkX + " chunkZ="+ chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + Configs.WORLD.ORE_VEIN_CHANCE+ " dimension=" + world.getDimension());
+                    Antimatter.LOGGER.info("Skipped oreVeinSeed="+ oreVeinSeed + " chunkX="+ chunkX + " chunkZ="+ chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.WORLD.ORE_VEIN_CHANCE + " dimension=" + world.getDimension());
                 VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
             }
         } else {
@@ -273,8 +273,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
 
         //Place small ores for the vein
-        if (Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
-            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * Configs.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
+            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
             generateSmallOres(world, rand, posX, posZ, nSmallOres);
         }
         // Something (at least the bottom layer must have 1 block) must have been placed, return true

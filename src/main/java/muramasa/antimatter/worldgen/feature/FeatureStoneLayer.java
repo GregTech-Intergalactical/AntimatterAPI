@@ -1,6 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.NoiseGenerator;
@@ -36,7 +36,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean enabled() {
-        return Configs.WORLD.ENABLE_STONE_LAYERS && getRegistry().size() > 0;
+        return AntimatterConfig.WORLD.STONE_LAYERS && getRegistry().size() > 0;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                         }
                     }
 
-                    if (!isAir && Configs.WORLD.ENABLE_STONE_LAYER_ORES) {
+                    if (!isAir && AntimatterConfig.WORLD.STONE_LAYER_ORES) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
                                 if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.add(i, tY, j), ore.getMaterial(), layers[0] == layers[6])) {
@@ -102,7 +102,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                     if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
                         BlockState below = world.getBlockState(pos.add(i, tY - 1, j));
                         if (!below.isAir(world, pos.add(i, tY - 1, j)) && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.addRockRaw(world, pos.add(i, tY, j), lastMaterial, Configs.WORLD.STONE_LAYER_ROCK_CHANCE);
+                            WorldGenHelper.addRockRaw(world, pos.add(i, tY, j), lastMaterial, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
                         }
                     }
 

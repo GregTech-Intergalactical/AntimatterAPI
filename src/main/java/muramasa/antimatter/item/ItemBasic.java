@@ -2,7 +2,7 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
@@ -57,7 +57,7 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
     }
 
     public boolean isEnabled() {
-        return enabled || Configs.DATA.ENABLE_ALL_MATERIAL_ITEMS;
+        return enabled || AntimatterConfig.DATA.ALL_MATERIAL_ITEMS;
     }
 
     /*

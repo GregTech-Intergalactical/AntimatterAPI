@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.cover.Cover;
 import net.minecraft.tileentity.TileEntity;
@@ -60,7 +60,7 @@ public class EnergyNodeHandler implements IElectricNode, INodeHandler {
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        return storage.receiveEnergy((int)(maxReceive * Configs.GAMEPLAY.EU_TO_RF), simulate);
+        return storage.receiveEnergy((int)(maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
     }
 
     @Override
