@@ -1,6 +1,10 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
@@ -51,5 +55,17 @@ public class MachineEnergyHandler extends EnergyHandler {
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
         return false;
+    }
+
+    /** NBT **/
+    // TODO: Finish
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putLong("Energy", energy);
+        return tag;
+    }
+
+    public void deserialize(CompoundNBT tag) {
+        energy = tag.getLong("Energy");
     }
 }

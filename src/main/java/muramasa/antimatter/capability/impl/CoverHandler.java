@@ -8,6 +8,8 @@ import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -104,5 +106,16 @@ public class CoverHandler implements ICoverHandler {
     public TileEntity getTile() {
         if (tile == null) throw new NullPointerException("CoverHandler cannot have a null tile");
         return tile;
+    }
+
+    /** NBT **/
+    // TODO: Finish
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        return tag;
+    }
+
+    public void deserialize(CompoundNBT compound) {
+
     }
 }

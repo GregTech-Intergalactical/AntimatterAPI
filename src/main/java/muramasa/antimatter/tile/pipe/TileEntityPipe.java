@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.graph.Connectivity;
@@ -133,7 +132,8 @@ public class TileEntityPipe extends TileEntityTickable {
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
-        if (tag.contains(Ref.KEY_PIPE_CONNECTIVITY)) connection = tag.getByte(Ref.KEY_PIPE_CONNECTIVITY);
+        if (tag.contains(Ref.KEY_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.KEY_PIPE_TILE_CONNECTIVITY);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
         refreshConnection();
     }
 
@@ -141,7 +141,8 @@ public class TileEntityPipe extends TileEntityTickable {
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
-        tag.putByte(Ref.KEY_PIPE_CONNECTIVITY, connection);
+        tag.putByte(Ref.KEY_PIPE_TILE_CONNECTIVITY, connection);
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize()));
         return tag;
     }
 
