@@ -24,6 +24,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.tool.behaviour.*;
@@ -127,39 +128,19 @@ public class Data {
     };
 
     public static void init() {
-        AXE.addBehaviour(new BehaviourLogStripping());
-        AXE.addBehaviour(new BehaviourTreeFelling());
-        CHAINSAW.addBehaviour(new BehaviourTreeFelling());
-        CHAINSAW.addBehaviour(new BehaviourLogStripping());
-        CHAINSAW.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
+
+        AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
+        CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
-        WRENCH.addBehaviour(new BehaviourBlockRotate());
-        PLUNGER.addBehaviour(new BehaviourWaterlogToggle());
-        IItemUse<MaterialTool> shovelBehaviour = (instance, c) -> {
-            if (c.getFace() == Direction.DOWN) return ActionResultType.PASS;
-            BlockState state = c.getWorld().getBlockState(c.getPos());
-            BlockState changedState = null;
-            if (state.getBlock() == Blocks.GRASS_BLOCK && c.getWorld().isAirBlock(c.getPos().up())) {
-                c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                changedState = Blocks.GRASS_PATH.getDefaultState();
-            }
-            else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
-                c.getWorld().playEvent(c.getPlayer(), 1009, c.getPos(), 0);
-                changedState = state.with(CampfireBlock.LIT, false);
-            }
-            if (changedState != null) {
-                c.getWorld().setBlockState(c.getPos(), changedState, 11);
-                c.getItem().damageItem(instance.getType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
-                return ActionResultType.SUCCESS;
-            }
-            else return ActionResultType.PASS;
-        };
+        WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE);
+        PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
 
-        AntimatterAPI.all(AntimatterToolType.class).stream().filter(t -> t.getToolTypes().contains("shovel")).forEach(t -> t.addBehaviour(shovelBehaviour));
-
-        AntimatterAPI.all(AntimatterToolType.class).stream().filter(t -> t.getToolTypes().contains("hoe")).forEach(t -> t.addBehaviour(new BehaviourBlockTilling()));
-        AntimatterAPI.all(AntimatterToolType.class).stream().filter(t -> t.isPowered()).forEach(t -> t.addBehaviour(new BehaviourPoweredDebug()));
+        for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
+            if (type.getToolTypes().contains("shovel")) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
+            if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
+            if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
+        }
 
     }
 }
