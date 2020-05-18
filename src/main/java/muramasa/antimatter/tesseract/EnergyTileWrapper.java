@@ -1,7 +1,6 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.cover.Cover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -15,24 +14,22 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class EnergyNodeHandler implements IElectricNode, INodeHandler {
+public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
 
     private TileEntity tile;
     private IEnergyStorage storage;
     private boolean valid = true;
     
-    private EnergyNodeHandler(TileEntity tile, IEnergyStorage storage) {
+    private EnergyTileWrapper(TileEntity tile, IEnergyStorage storage) {
         this.tile = tile;
         this.storage = storage;
     }
 
-    // TODO: Make sure that registartion on the server side
-
     @Nullable
-    public static EnergyNodeHandler of(TileEntity tile) {
+    public static EnergyTileWrapper of(TileEntity tile) {
         LazyOptional<IEnergyStorage> capability = tile.getCapability(CapabilityEnergy.ENERGY);
         if (capability.isPresent()) {
-            EnergyNodeHandler node = new EnergyNodeHandler(tile, capability.orElse(null));
+            EnergyTileWrapper node = new EnergyTileWrapper(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
             Tesseract.ELECTRIC.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
@@ -49,8 +46,8 @@ public class EnergyNodeHandler implements IElectricNode, INodeHandler {
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
-        //if (cover instanceof CoverFilter)
+    public void onUpdate(@Nonnull Direction side, @Nullable Cover cover) {
+
     }
 
     @Override

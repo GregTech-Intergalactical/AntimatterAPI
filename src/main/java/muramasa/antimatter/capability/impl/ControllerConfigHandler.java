@@ -7,6 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
+import javax.annotation.Nonnull;
+
 public class ControllerConfigHandler extends MachineConfigHandler {
 
     public ControllerConfigHandler(TileEntityMultiMachine tile) {
@@ -14,7 +16,7 @@ public class ControllerConfigHandler extends MachineConfigHandler {
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, AntimatterToolType type) {
         if (type == Data.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
             if (!machine.isStructureValid()) {

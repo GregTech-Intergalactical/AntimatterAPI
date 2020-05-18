@@ -2,12 +2,10 @@ package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
-import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
@@ -31,7 +29,6 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.Data.SAW;
 import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
 import static muramasa.antimatter.material.MaterialType.*;
 import static muramasa.antimatter.util.Utils.getForgeItemTag;

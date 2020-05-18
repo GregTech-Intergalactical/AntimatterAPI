@@ -8,6 +8,7 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 import static muramasa.antimatter.machine.MachineState.*;
@@ -166,5 +167,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     /** Setters **/
     public void setClientProgress(float progress) {
         clientProgress = progress;
+    }
+
+    /** NBT **/
+    // TODO: Finish
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        return tag;
+    }
+
+    public void deserialize(CompoundNBT compound) {
     }
 }

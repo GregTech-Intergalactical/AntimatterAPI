@@ -1,9 +1,13 @@
 package muramasa.antimatter.network;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.network.packets.GuiEventPacket;
+import muramasa.antimatter.network.packets.SoundPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -24,10 +28,13 @@ public class AntimatterNetwork {
             serverAcceptedVersions(PROTOCOL_VERSION::equals).
             networkProtocolVersion(() -> PROTOCOL_VERSION).
             simpleChannel();
+        register();
     }
 
     public void register() {
+        handler.registerMessage(currMessageId++, SoundPacket.class, SoundPacket::encode, SoundPacket::decode, SoundPacket::handle);
         handler.registerMessage(currMessageId++, GuiEventPacket.class, GuiEventPacket::encode, GuiEventPacket::decode, GuiEventPacket::handle);
+        handler.registerMessage(currMessageId++, FluidStackPacket.class, FluidStackPacket::encode, FluidStackPacket::decode, FluidStackPacket::handle);
     }
 
     public void sendToServer(Object msg) {
@@ -38,27 +45,9 @@ public class AntimatterNetwork {
         if (!(player instanceof FakePlayer)) handler.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
-    /*
-    public static void init() {
-        NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Ref.MODID);
-        NETWORK.registerMessage(SoundMessage.SoundMessageHandler.class, SoundMessage.class, NetworkEvent.SOUND.ordinal(), Side.CLIENT);
-        NETWORK.registerMessage(FluidStackMessage.FluidStackMessageHandler.class, FluidStackMessage.class, NetworkEvent.FLUID.ordinal(), Side.CLIENT);
-        NETWORK.registerMessage(GuiEventMessage.SoundMessageHandler.class, GuiEventMessage.class, NetworkEvent.GUI.ordinal(), Side.SERVER);
+    public void sendToAllAround(Object msg, World world, AxisAlignedBB alignedBB) {
+        for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, alignedBB)) {
+            sendTo(msg, player);
+        }
     }
-
-    public static void playSoundOnClient(SoundType type) {
-        GregTech.PROXY.playSound(type);
-    }
-
-    public static void syncMachineTanks(TileEntityMachine tile) {
-        if (tile == null) return;
-        tile.fluidHandler.ifPresent(h -> {
-            NETWORK.sendToAllTracking(new FluidStackMessage(h.getInputsRaw(), h.getOutputsRaw()), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 1));
-        });
-    }
-
-    public static void sendGuiEvent(GuiEvent event, TileEntityMachine tile) {
-        NETWORK.sendToServer(new GuiEventMessage(event, tile.getPos(), tile.getWorld().provider.getDimension()));
-    }
-    */
 }

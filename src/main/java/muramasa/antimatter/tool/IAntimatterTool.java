@@ -48,17 +48,21 @@ import java.util.stream.Collectors;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    @Nonnull AntimatterToolType getType();
+    @Nonnull
+    AntimatterToolType getType();
 
-    @Nonnull default Material getPrimaryMaterial(@Nonnull ItemStack stack) {
+    @Nonnull
+    default Material getPrimaryMaterial(@Nonnull ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
     }
 
-    @Nonnull default Material getSecondaryMaterial(@Nonnull ItemStack stack) {
+    @Nonnull
+    default Material getSecondaryMaterial(@Nonnull ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
     }
 
-    @Nonnull default Material[] getMaterials(@Nonnull ItemStack stack) {
+    @Nonnull
+    default Material[] getMaterials(@Nonnull ItemStack stack) {
         CompoundNBT nbt = getDataTag(stack);
         return new Material[] { Material.get(nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
     }
@@ -81,14 +85,17 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     Item asItem();
 
-    @Nonnull ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary);
+    @Nonnull
+    ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary);
 
-    @Nonnull default CompoundNBT getDataTag(ItemStack stack) {
+    @Nonnull
+    default CompoundNBT getDataTag(ItemStack stack) {
         CompoundNBT dataTag = stack.getChildTag(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, Data.NULL, Data.NULL, 0, 10000);
     }
 
-    @Nonnull default IItemTier getTier(@Nonnull ItemStack stack) {
+    @Nonnull
+    default IItemTier getTier(@Nonnull ItemStack stack) {
         CompoundNBT dataTag = getDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
         return tier.orElseGet(() -> resolveTierTag(dataTag));
@@ -204,11 +211,13 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return stack.getDamage() >= damage;
     }
 
-    @Override default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+    @Override
+    default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
         return i == 0 ? getPrimaryMaterial(stack).getRGB() : getSubColour(stack) == 0 ? getSecondaryMaterial(stack).getRGB() : getSubColour(stack);
     }
 
-    @Override default Texture[] getTextures() {
+    @Override
+    default Texture[] getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getType().getOverlayLayers();
         textures.add(new Texture(getDomain(), "item/tool/".concat(getType().getId())));
@@ -221,7 +230,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return textures.toArray(new Texture[textures.size()]);
     }
 
-    @Override default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    @Override
+    default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         prov.tex(item, "minecraft:item/handheld", getTextures());
     }
 

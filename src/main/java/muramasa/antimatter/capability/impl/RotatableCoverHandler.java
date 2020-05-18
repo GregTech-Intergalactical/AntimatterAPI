@@ -6,6 +6,8 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 
+import javax.annotation.Nonnull;
+
 public class RotatableCoverHandler extends CoverHandler {
 
     public RotatableCoverHandler(TileEntity tile, Cover... covers) {
@@ -21,7 +23,7 @@ public class RotatableCoverHandler extends CoverHandler {
     }
 
     @Override
-    public boolean onPlace(Direction side, Cover cover) {
+    public boolean onPlace(Direction side, @Nonnull Cover cover) {
         return super.onPlace(Utils.rotateFacing(side, getTileFacing()), cover);
     }
 

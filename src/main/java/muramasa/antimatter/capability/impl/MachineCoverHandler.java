@@ -12,6 +12,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
+import javax.annotation.Nonnull;
+
 public class MachineCoverHandler extends RotatableCoverHandler implements IMachineHandler {
 
     protected int outputSide = 3;
@@ -37,7 +39,7 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
     }
 
     @Override
-    public boolean onPlace(Direction side, Cover cover) {
+    public boolean onPlace(Direction side, @Nonnull Cover cover) {
         if (cover.isEqual(Data.COVER_NONE) && Utils.rotateFacing(side, getTileFacing()).getIndex() == outputSide) {
             super.onPlace(side, Data.COVER_NONE);
             return super.onPlace(side, Data.COVER_OUTPUT);
@@ -46,7 +48,7 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
         if (type == Data.CROWBAR && getCover(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
     }
@@ -60,7 +62,7 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
     }
 
     @Override
-    public boolean isValid(Direction side, Cover existing, Cover replacement) {
+    public boolean isValid(@Nonnull Direction side, Cover existing, @Nonnull Cover replacement) {
         if (!validCovers.contains(replacement.getId())) return false;
         return (existing.isEqual(Data.COVER_OUTPUT) && !replacement.isEqual(Data.COVER_NONE)) || super.isValid(side, existing, replacement);
     }

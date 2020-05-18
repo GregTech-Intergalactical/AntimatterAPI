@@ -1,7 +1,6 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.tesseract;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.capability.INodeHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverOutput;
 import net.minecraft.fluid.Fluid;
@@ -23,29 +22,27 @@ import java.util.Set;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class FluidNodeHandler implements IFluidNode, INodeHandler {
+public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
     // TODO: Add black/white lister filter mode
     private TileEntity tile;
     private IFluidHandler handler;
     private Set<Fluid>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
     private boolean[] output = new boolean[]{false, false, false, false, false, false};
-    private boolean[] input = new boolean[]{true, true, true, true, true, true};
+    private boolean[] input = new boolean[]{false, false, false, false, false, false};
     private int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     private boolean valid = true;
 
-    private FluidNodeHandler(TileEntity tile, IFluidHandler handler) {
+    private FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
         this.tile = tile;
         this.handler = handler;
     }
 
-    // TODO: Make sure that registartion on the server side
-
     @Nullable
-    public static FluidNodeHandler of(TileEntity tile) {
+    public static FluidTileWrapper of(TileEntity tile) {
         LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
         if (capability.isPresent()) {
-            FluidNodeHandler node = new FluidNodeHandler(tile, capability.orElse(null));
+            FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
             capability.addListener(x -> node.onRemove(null));
             Tesseract.FLUID.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
@@ -64,13 +61,14 @@ public class FluidNodeHandler implements IFluidNode, INodeHandler {
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
+    public void onUpdate(@Nonnull Direction side, @Nullable Cover cover) {
         /*if (cover instanceof CoverFilter) {
             filter.put(side, ((CoverFilter<Fluid>)cover).getFilter());
         }*/
         if (cover instanceof CoverOutput) {
             output[side.getIndex()] = true;
         }
+        input[side.getIndex()] = true;
     }
 
     @Override

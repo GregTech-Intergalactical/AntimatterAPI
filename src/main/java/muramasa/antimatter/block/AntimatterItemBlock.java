@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.annotation.Nonnull;
+
 public class AntimatterItemBlock extends BlockItem {
 
     public AntimatterItemBlock(Block block) {
@@ -16,8 +18,9 @@ public class AntimatterItemBlock extends BlockItem {
         if (block.getRegistryName() != null) setRegistryName(block.getRegistryName());
     }
 
+    @Nonnull
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
+    public ITextComponent getDisplayName(@Nonnull ItemStack stack) {
         return getBlock() instanceof IItemBlockProvider ? ((IItemBlockProvider) getBlock()).getDisplayName(stack) : new TranslationTextComponent(stack.getTranslationKey());
     }
 }

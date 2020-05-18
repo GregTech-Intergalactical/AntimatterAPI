@@ -8,12 +8,14 @@ import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class CoverHandler implements ICoverHandler {
@@ -44,7 +46,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean onPlace(Direction side, Cover cover) {
+    public boolean onPlace(Direction side, @Nonnull Cover cover) {
         int i = side.getIndex();
         if (!isValid(side, covers[i], cover)) return false;
         covers[i] = cover;
@@ -72,8 +74,8 @@ public class CoverHandler implements ICoverHandler {
         return covers;
     }
 
-    @Override /** Fires ones per hand **/
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+    @Override
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
         Cover cover = getCover(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
@@ -85,12 +87,12 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean hasCover(Direction side, Cover cover) {
+    public boolean hasCover(@Nonnull Direction side, @Nonnull Cover cover) {
         return getCover(side).isEqual(cover);
     }
 
     @Override
-    public boolean isValid(Direction side, Cover existing, Cover replacement) {
+    public boolean isValid(@Nonnull Direction side, Cover existing, @Nonnull Cover replacement) {
         return (existing.isEmpty() || replacement.isEqual(Data.COVER_NONE)) && validCovers.contains(replacement.getId());
     }
 
@@ -103,5 +105,16 @@ public class CoverHandler implements ICoverHandler {
     public TileEntity getTile() {
         if (tile == null) throw new NullPointerException("CoverHandler cannot have a null tile");
         return tile;
+    }
+
+    /** NBT **/
+    // TODO: Finish
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        return tag;
+    }
+
+    public void deserialize(CompoundNBT compound) {
+
     }
 }
