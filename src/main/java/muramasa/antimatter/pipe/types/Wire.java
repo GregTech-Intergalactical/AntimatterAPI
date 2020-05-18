@@ -15,6 +15,11 @@ public class Wire<T extends Wire<T>> extends Cable<T> {
     }
 
     @Override
+    public String getId() {
+        return "wire";
+    }
+
+    @Override
     public Set<Block> getBlocks() {
         return sizes.stream().map(s -> new BlockCable(this, s, false)).collect(Collectors.toSet());
     }
