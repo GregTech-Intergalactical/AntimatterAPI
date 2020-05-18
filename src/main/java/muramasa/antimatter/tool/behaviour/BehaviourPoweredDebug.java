@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IItemUse;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -9,7 +10,10 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 
-public class BehaviourPoweredDebug implements IItemUse<MaterialTool> {
+// TODO: REPLACE WITH CAPABILITY
+public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
+
+    public static final BehaviourPoweredDebug INSTANCE = new BehaviourPoweredDebug();
 
     @Override
     public String getId() {
@@ -17,7 +21,7 @@ public class BehaviourPoweredDebug implements IItemUse<MaterialTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
+    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
         if (instance.getType().isPowered() && c.getWorld().getBlockState(c.getPos()) == Blocks.REDSTONE_BLOCK.getDefaultState() && c.getPlayer() != null) {
             ItemStack stack = c.getPlayer().getHeldItem(c.getHand());
             CompoundNBT nbt = instance.getDataTag(stack);

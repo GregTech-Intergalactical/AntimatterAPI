@@ -36,12 +36,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
@@ -58,6 +61,10 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     @Nonnull default Material[] getMaterials(@Nonnull ItemStack stack) {
         CompoundNBT nbt = getDataTag(stack);
         return new Material[] { Material.get(nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
+    }
+
+    @Nonnull default Set<ToolType> getToolTypes() {
+        return getType().getToolTypes().stream().map(ToolType::get).collect(Collectors.toSet());
     }
 
     default int getSubColour(@Nonnull ItemStack stack) {
@@ -84,7 +91,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     @Nonnull default IItemTier getTier(@Nonnull ItemStack stack) {
         CompoundNBT dataTag = getDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
-        return tier.isPresent() ? tier.get() : resolveTierTag(dataTag);
+        return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
     default ItemStack resolveStack(@Nonnull Material primary, @Nonnull Material secondary, long startingEnergy, long maxEnergy) {
@@ -122,9 +129,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         }
         if (getType().getTooltip().size() != 0) {
-            for (ITextComponent text : getType().getTooltip()) {
-                tooltip.add(text);
-            }
+            tooltip.addAll(getType().getTooltip());
         }
     }
 
@@ -138,14 +143,14 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
             if (getType().getUseSound() != null) player.playSound(getType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
-            boolean isToolEffective = Utils.isToolEffective(getType(), state);
+            boolean isToolEffective = Utils.isToolEffective(getType(), getToolTypes(), state);
             if (state.getBlockHardness(world, pos) != 0.0F) {
                 stack.damageItem(isToolEffective ? getType().getUseDurability() : getType().getUseDurability() + 1, entity, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
             }
         }
         boolean returnValue = true;
-        for (Map.Entry<String, IBehaviour<MaterialTool>> e : getType().getBehaviours().entrySet()) {
-            IBehaviour b = e.getValue();
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
             if (!(b instanceof IBlockDestroyed)) continue;
             returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos ,entity);
         }
@@ -154,8 +159,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default ActionResultType onGenericItemUse(ItemUseContext ctx) {
         ActionResultType result = ActionResultType.PASS;
-        for (Map.Entry<String, IBehaviour<MaterialTool>> e : getType().getBehaviours().entrySet()) {
-            IBehaviour b = e.getValue();
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemUse)) continue;
             ActionResultType r = ((IItemUse) b).onItemUse(this, ctx);
             if (result != ActionResultType.SUCCESS) result = r;

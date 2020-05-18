@@ -1,6 +1,7 @@
 package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUseContext;
@@ -9,7 +10,9 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 
-public class BehaviourWaterlogToggle implements IItemUse<MaterialTool> {
+public class BehaviourWaterlogToggle implements IItemUse<IAntimatterTool> {
+
+    public static final BehaviourWaterlogToggle INSTANCE = new BehaviourWaterlogToggle();
 
     @Override
     public String getId() {
@@ -17,7 +20,7 @@ public class BehaviourWaterlogToggle implements IItemUse<MaterialTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
+    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         if (state.has(BlockStateProperties.WATERLOGGED)) {
             if (state.get(BlockStateProperties.WATERLOGGED)) {
