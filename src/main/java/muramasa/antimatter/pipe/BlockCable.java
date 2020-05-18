@@ -5,8 +5,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -23,7 +21,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvider, IColorHandler {
+public class BlockCable extends BlockPipe<Cable<?>> {
 
     protected boolean insulated;
 
@@ -84,20 +82,14 @@ public class BlockCable extends BlockPipe<Cable<?>> implements IItemBlockProvide
     }
 
 //    @Override
-//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
-//        PipeCache.setElectric(world, direction, neighbour);
-//    }
-
-    //    @Override
-//    public String getDisplayName(ItemStack stack) {
+//    public ITextComponent getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];
-//        return size.getCableThickness() + "x " + material.getDisplayName() + (ins ? " Cable" : " Wire");
+//         return size.getCableThickness() + "x " + material.getDisplayName() + (ins ? " Cable" : " Wire");
 //    }
 //
 //    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+//    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];
 //        tooltip.add("Max Voltage: " + TextFormatting.GREEN + getVoltage() + " (" + getTier().getId().toUpperCase(Locale.ENGLISH) + ")");

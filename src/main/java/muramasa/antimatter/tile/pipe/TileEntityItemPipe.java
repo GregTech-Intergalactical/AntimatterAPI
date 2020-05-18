@@ -2,14 +2,10 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
-import tesseract.api.item.IItemNode;
-import tesseract.api.item.IItemPipe;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
+import tesseract.api.item.IItemPipe;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -24,25 +20,29 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
     }
 
     @Override
-    public void refreshConnections() {
-        if (isServerSide()) Tesseract.ITEM.remove(getDimention(), pos.toLong());
-        super.refreshConnections();
-        if (isServerSide()) Tesseract.ITEM.registerNode(getDimention(), pos.toLong(), (IItemNode) this);
+    public void onLoad() {
+        if (isServerSide()) Tesseract.ITEM.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        super.onLoad();
+    }
+
+    @Override
+    public void refreshConnection() {
+        if (isServerSide()) {
+            Tesseract.ITEM.remove(getDimention(), pos.toLong());
+            Tesseract.ITEM.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        } else {
+            super.refreshConnection();
+        }
     }
 
     @Override
     public void onRemove() {
-        Tesseract.ITEM.remove(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.ITEM.remove(getDimention(), pos.toLong());
     }
 
     @Override
     public void onServerUpdate() {
         if (controller != null) controller.tick();
-    }
-
-    @Override
-    public boolean canConnect(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityItemPipe/* && getCover(side).isEqual(Data.COVER_NONE)*/ || tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
-        return true;//Connectivity.has(connections, direction);
+        return canConnect(direction.getIndex());
     }
 
     @Override

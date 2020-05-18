@@ -1,22 +1,21 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.capability.IConfigHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
-public class MachineConfigHandler implements IConfigHandler {
+import javax.annotation.Nonnull;
 
-    protected TileEntityMachine tile;
+public class MachineConfigHandler extends ConfigHandler {
 
     public MachineConfigHandler(TileEntityMachine tile) {
-        this.tile = tile;
+        super(tile);
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, AntimatterToolType type) {
         if (type == null) return false;
         /*
         switch (type) {
@@ -39,11 +38,5 @@ public class MachineConfigHandler implements IConfigHandler {
         }
          */
         return true;
-    }
-
-    @Override
-    public TileEntityMachine getTile() {
-        if (tile == null) throw new NullPointerException("ConfigHandler cannot have a null tile");
-        return tile;
     }
 }

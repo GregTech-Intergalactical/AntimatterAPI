@@ -50,15 +50,6 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure, CompoundNBT fluidData) {
-        this(tile, capacity, pressure);
-        if (fluidData != null) deserialize(fluidData);
-    }
-
-    public MachineFluidHandler(TileEntityMachine tile, CompoundNBT fluidData) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE, fluidData);
-    }
-
     public void onUpdate() {
         if (controller != null) controller.tick();
     }

@@ -3,6 +3,7 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -16,7 +17,9 @@ import net.minecraft.world.World;
 import static muramasa.antimatter.Data.AXE;
 import static muramasa.antimatter.Data.CHAINSAW;
 
-public class BehaviourTreeFelling implements IBlockDestroyed<MaterialTool> {
+public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
+
+    public static final BehaviourTreeFelling INSTANCE = new BehaviourTreeFelling();
 
     @Override
     public String getId() {
@@ -24,17 +27,13 @@ public class BehaviourTreeFelling implements IBlockDestroyed<MaterialTool> {
     }
 
     @Override
-    public boolean onBlockDestroyed(MaterialTool instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+        if (!AntimatterConfig.GAMEPLAY.AXE_TIMBER) return true;
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            AntimatterToolType type = instance.getType();
-            boolean isToolEffective = Utils.isToolEffective(type, state);
-            if (isToolEffective && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
-                if (type == CHAINSAW || instance.getTier().getHarvestLevel() > 1 && (type == AXE || type.getToolTypes().contains("axe"))) {
-                    if (!AntimatterConfig.GAMEPLAY.AXE_TIMBER) return true;
-                    if (state.getBlock().isIn(BlockTags.LOGS)) {
-                        Utils.treeLogging(instance, stack, pos, player, world);
-                    }
+            if (Utils.isToolEffective(instance, state) && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
+                if (state.getBlock().isIn(BlockTags.LOGS)) {
+                    Utils.treeLogging(instance, stack, pos, player, world);
                 }
             }
         }

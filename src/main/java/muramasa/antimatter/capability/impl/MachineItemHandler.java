@@ -41,11 +41,6 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         Tesseract.ITEM.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
 
-    public MachineItemHandler(TileEntityMachine tile, CompoundNBT itemData) {
-        this(tile);
-        if (itemData != null) deserialize(itemData);
-    }
-
     public void onUpdate() {
         if (controller != null) controller.tick();
     }

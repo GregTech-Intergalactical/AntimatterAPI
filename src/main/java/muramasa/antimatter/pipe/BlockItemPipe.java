@@ -25,20 +25,14 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
     }
 
 //    @Override
-//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
-//        PipeCache.setItem(world, direction, neighbour);
-//    }
-
-//    @Override
-//    public String getDisplayName(ItemStack stack) {
+//    public ITextComponent getDisplayName(ItemStack stack) {
 //        boolean res = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[res ? stack.getMetadata() - 8 : stack.getMetadata()];
 //        return (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + (res ? "Restrictive " : "") + material.getDisplayName() + " Item Pipe";
 //    }
 //
 //    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+//    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 //        boolean res = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[res ? stack.getMetadata() - 8 : stack.getMetadata()];
 //        tooltip.add("Item Capacity: " + TextFormatting.BLUE + getSlotCount(size) + " Stacks/s");

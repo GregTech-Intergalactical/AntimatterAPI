@@ -4,7 +4,7 @@ import muramasa.antimatter.machine.types.Machine;
 
 public class TileEntityTank extends TileEntityMachine {
 
-    public TileEntityTank(Machine type) {
+    public TileEntityTank(Machine<?> type) {
         super(type);
     }
 }

@@ -14,22 +14,12 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     @Override
-    public void onLoad() {
-        if (isServerSide()) onInit();
-    }
-
-    @Override
     public void remove() {
+        onRemove();
         super.remove();
-        if (isServerSide()) onRemove();
-    }
-
-    public void onInit() {
-        //NOOP
     }
 
     public void onRemove() {
-        //NOOP
     }
 
     public boolean isClientSide() {

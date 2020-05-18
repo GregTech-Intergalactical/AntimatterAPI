@@ -25,20 +25,14 @@ public class BlockFluidPipe extends BlockPipe<FluidPipe<?>> {
     }
 
 //    @Override
-//    protected void onNeighborCatch(World world, Direction direction, TileEntity neighbour) {
-//         PipeCache.setFluid(world, direction, neighbour);
-//    }
-
-//    @Override
-//    public String getDisplayName(ItemStack stack) {
+//    public ITextComponent getDisplayName(ItemStack stack) {
 //        //TODO add prefix and suffix for local
 //        PipeSize size = PipeSize.VALUES[stack.getMetadata()];
 //        return (size == PipeSize.NORMAL ? "" : size.getDisplayName() + " ") + material.getDisplayName() + " Fluid Pipe";
 //    }
 //
 //    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+//    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 //        PipeSize size = PipeSize.VALUES[stack.getMetadata()];
 //        //TODO localize
 //        tooltip.add("Fluid Capacity: " + TextFormatting.BLUE + (capacities[size.ordinal()] * 20) + "L/s");

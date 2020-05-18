@@ -31,10 +31,10 @@ public class AntimatterToolType implements IAntimatterObject {
 
     private final String domain, id;
     private final ToolType TOOL_TYPE;
-    private final Set<ToolType> TOOL_TYPES = new HashSet<>();
+    private final Set<String> TOOL_TYPES = new HashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new HashSet<>();
     private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
-    private final Object2ObjectMap<String, IBehaviour<MaterialTool>> behaviours = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private List<ITextComponent> tooltip = new ArrayList<>();
     private boolean powered, repairable, blockBreakability;
     private long baseMaxEnergy;
@@ -81,8 +81,8 @@ public class AntimatterToolType implements IAntimatterObject {
         this.tag = Utils.getItemTag(new ResourceLocation(Ref.ID, id));
         this.useAction = UseAction.NONE;
         this.toolClass = MaterialTool.class;
-        this.TOOL_TYPE = net.minecraftforge.common.ToolType.get(id);
-        this.TOOL_TYPES.add(TOOL_TYPE);
+        this.TOOL_TYPE = ToolType.get(id);
+        this.TOOL_TYPES.add(id);
         AntimatterAPI.register(this);
     }
 
@@ -182,9 +182,7 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public AntimatterToolType addToolTypes(String... types) {
         if (types.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
-        for (String type : types) {
-            this.TOOL_TYPES.add(net.minecraftforge.common.ToolType.get(type));
-        }
+        this.TOOL_TYPES.addAll(Arrays.asList(types));
         return this;
     }
 
@@ -263,22 +261,22 @@ public class AntimatterToolType implements IAntimatterObject {
         return this;
     }
 
-    public void addBehaviour(IBehaviour<MaterialTool>... behaviours) {
+    public void addBehaviour(IBehaviour<IAntimatterTool>... behaviours) {
         Arrays.stream(behaviours).forEach(b -> this.behaviours.put(b.getId(), b));
     }
 
-    public IBehaviour<MaterialTool> getBehaviour(String id) {
+    public IBehaviour<IAntimatterTool> getBehaviour(String id) {
         return behaviours.get(id);
     }
 
     public void removeBehaviour(String... ids) {
-        Arrays.stream(ids).forEach(s -> behaviours.remove(s));
+        Arrays.stream(ids).forEach(behaviours::remove);
     }
 
     /** GETTERS **/
 
-    public ItemStack getToolStack(Material primary, Material secondary) {
-        return AntimatterAPI.get(IAntimatterTool.class, id).asItemStack(primary, secondary);
+    public ItemStack getToolStack(@Nonnull Material primary, @Nonnull Material secondary) {
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, secondary);
     }
 
     public String getDomain() {
@@ -294,7 +292,7 @@ public class AntimatterToolType implements IAntimatterObject {
         return TOOL_TYPE;
     }
 
-    public Set<ToolType> getToolTypes() {
+    public Set<String> getToolTypes() {
         return TOOL_TYPES;
     }
 
@@ -382,11 +380,8 @@ public class AntimatterToolType implements IAntimatterObject {
         return EFFECTIVE_MATERIALS;
     }
 
-    public Object2ObjectMap<String, IBehaviour<MaterialTool>> getBehaviours() {
+    public Object2ObjectMap<String, IBehaviour<IAntimatterTool>> getBehaviours() {
         return behaviours;
     }
 
-    public ItemStack get(Material m, Material aNull, int i) {
-        return ItemStack.EMPTY;
-    }
 }
