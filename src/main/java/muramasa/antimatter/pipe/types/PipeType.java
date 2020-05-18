@@ -50,6 +50,8 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
     @Override
     public abstract String getId();
 
+    public abstract String getTypeName();
+
     public abstract ITileWrapper getTileWrapper(TileEntity tile);
 
     public Material getMaterial() {

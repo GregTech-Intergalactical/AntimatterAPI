@@ -59,10 +59,10 @@ public class PipeCache {
         @Nonnull
         private ITileWrapper get(PipeType<?> type, TileEntity tile) {
             Map<String, ITileWrapper> map = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new Object2ObjectArrayMap<>()); // Can be replaced with EnumMap
-            ITileWrapper wrapper = map.get(type.getId());
+            ITileWrapper wrapper = map.get(type.getTypeName());
             if (wrapper == null || !wrapper.isValid()) {
                 wrapper = type.getTileWrapper(tile);
-                map.put(type.getId(), wrapper);
+                map.put(type.getTypeName(), wrapper);
             }
             return wrapper;
         }

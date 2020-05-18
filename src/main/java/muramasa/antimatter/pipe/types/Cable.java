@@ -32,6 +32,11 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
     }
 
     @Override
+    public String getTypeName() {
+        return "energy";
+    }
+
+    @Override
     public ITileWrapper getTileWrapper(TileEntity tile) {
         return EnergyTileWrapper.of(tile);
     }

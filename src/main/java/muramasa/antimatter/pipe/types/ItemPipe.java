@@ -27,6 +27,11 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     }
 
     @Override
+    public String getTypeName() {
+        return "item";
+    }
+
+    @Override
     public ITileWrapper getTileWrapper(TileEntity tile) {
         return ItemTileWrapper.of(tile);
     }
