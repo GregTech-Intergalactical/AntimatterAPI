@@ -27,7 +27,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     }
 
     @Override
-    public ITileWrapper getWrapper(TileEntity tile) {
+    public ITileWrapper getTileWrapper(TileEntity tile) {
         return ItemTileWrapper.of(tile);
     }
 

@@ -5,19 +5,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.ITileWrapper;
-import muramasa.antimatter.tesseract.EnergyTileWrapper;
-import muramasa.antimatter.tesseract.FluidTileWrapper;
-import muramasa.antimatter.tesseract.ItemTileWrapper;
 import muramasa.antimatter.cover.Cover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -68,7 +61,7 @@ public class PipeCache {
             Map<String, ITileWrapper> map = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new Object2ObjectArrayMap<>()); // Can be replaced with EnumMap
             ITileWrapper wrapper = map.get(type.getId());
             if (wrapper == null || !wrapper.isValid()) {
-                wrapper = type.getWrapper(tile);
+                wrapper = type.getTileWrapper(tile);
                 map.put(type.getId(), wrapper);
             }
             return wrapper;

@@ -31,7 +31,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     }
 
     @Override
-    public ITileWrapper getWrapper(TileEntity tile) {
+    public ITileWrapper getTileWrapper(TileEntity tile) {
         return FluidTileWrapper.of(tile);
     }
 

@@ -32,7 +32,7 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
     }
 
     @Override
-    public ITileWrapper getWrapper(TileEntity tile) {
+    public ITileWrapper getTileWrapper(TileEntity tile) {
         return EnergyTileWrapper.of(tile);
     }
 
