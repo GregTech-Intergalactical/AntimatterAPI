@@ -6,6 +6,8 @@ import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IConfigHandler;
 import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -50,6 +52,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static muramasa.antimatter.Data.COVER_NONE;
+import static muramasa.antimatter.Data.COVER_OUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
@@ -111,14 +115,20 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = Utils.getTile(world, pos);
             if (tile != null) {
+                Cover c = ((TileEntityMachine)tile).coverHandler.get().getCover(hit.getFace());
+                if (c != null && c != COVER_NONE && c != COVER_OUTPUT) {
+                    //TODO: utils.getToolType?Gu
+                    c.onInteract(tile, player, hand, hit.getFace(), null);
+                    return ActionResultType.SUCCESS;
+                }
                 if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                     return ActionResultType.SUCCESS;
                 }
                 LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
                 interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
+                }
             }
-        }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }
 

@@ -9,6 +9,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+import java.util.List;
+
 public class ScreenHatchMachine extends ScreenMachine {
 
     public ScreenHatchMachine(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
@@ -19,7 +21,8 @@ public class ScreenHatchMachine extends ScreenMachine {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        for (SlotData slot : container.getTile().getMachineType().getGui().getSlots(container.getTile().getMachineTier())) {
+        List<SlotData> list = container.getTile().getMachineType().getGui().getSlots(container.getTile().getMachineTier());
+        for (SlotData slot : list) {
             if (slot.type == SlotType.IT_IN || slot.type == SlotType.IT_OUT) {
                 drawTexture(gui, guiLeft + slot.x - 1, guiTop + slot.y - 1, xSize, 0, 18, 18);
             } else if (slot.type == SlotType.FL_IN || slot.type == SlotType.FL_OUT) {

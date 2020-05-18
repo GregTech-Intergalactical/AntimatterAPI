@@ -48,7 +48,7 @@ public class CoverHandler implements ICoverHandler {
     @Override
     public boolean onPlace(Direction side, @Nonnull Cover cover) {
         int i = side.getIndex();
-        if (!isValid(side, covers[i], cover)) return false;
+ //       if (!isValid(side, covers[i], cover)) return false;
         covers[i] = cover;
         covers[i].onPlace(getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds

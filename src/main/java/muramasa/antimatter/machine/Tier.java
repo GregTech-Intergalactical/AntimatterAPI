@@ -48,6 +48,18 @@ public class Tier implements IAntimatterObject {
         return id;
     }
 
+    public int getIntegerId() {
+        switch (this.getId()) {
+            case "ulv": return 0;
+            case "lv": return 1;
+            case "mv": return 2;
+            case "hv": return 3;
+            case "ev": return 4;
+            case "iv": return 5;
+            default: return 1;
+        }
+    }
+
     public int getVoltage() {
         return voltage;
     }

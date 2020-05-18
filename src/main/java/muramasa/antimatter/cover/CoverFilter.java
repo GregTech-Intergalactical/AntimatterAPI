@@ -1,14 +1,18 @@
 package muramasa.antimatter.cover;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.machine.Tier;
 
 import java.util.Collection;
 import java.util.Set;
+
+;
 
 public abstract class CoverFilter<T> extends Cover {
 
     // TODO: Add black/white lister filter mode
     protected Set<T> filter = new ObjectOpenHashSet<>();
+
 
     @Override
     public String getId() {
