@@ -1,5 +1,5 @@
 package muramasa.antimatter.capability.impl;
-;
+
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
