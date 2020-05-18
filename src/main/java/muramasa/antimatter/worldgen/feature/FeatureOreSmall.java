@@ -1,6 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
@@ -33,7 +33,7 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean enabled() {
-        return Configs.WORLD.ENABLE_SMALL_ORES && getRegistry().size() > 0;
+        return AntimatterConfig.WORLD.SMALL_ORES && getRegistry().size() > 0;
     }
 
     @Override

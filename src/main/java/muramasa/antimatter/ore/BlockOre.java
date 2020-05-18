@@ -1,6 +1,6 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
@@ -117,7 +117,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     public static Block.Properties getOreProperties(Block.Properties properties) {
-        if (Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().lightValue(15);
+        if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().lightValue(15);
         return properties;
     }
 }

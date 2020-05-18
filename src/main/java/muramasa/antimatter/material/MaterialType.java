@@ -2,7 +2,7 @@ package muramasa.antimatter.material;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
@@ -175,7 +175,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public boolean isVisible() {
-        return visible || Configs.JEI.SHOW_ALL_MATERIAL_ITEMS;
+        return visible || AntimatterConfig.JEI.SHOW_ALL_MATERIAL_ITEMS;
     }
 
     public boolean allowItemGen(Material material) {

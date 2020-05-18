@@ -1,6 +1,6 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluids;
@@ -42,6 +42,6 @@ public class AntimatterFluidController extends FluidController {
     @Override
     public void onPipeGasLeak(int dim, long pos, @Nonnull FluidData fluid) {
         FluidStack resource = (FluidStack) fluid.getFluid();
-        resource.setAmount((int)(resource.getAmount() * Configs.GAMEPLAY.PIPE_LEAKING));
+        resource.setAmount((int)(resource.getAmount() * AntimatterConfig.GAMEPLAY.PIPE_LEAK));
     }
 }

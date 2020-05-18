@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Configs;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +31,7 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public boolean enabled() {
-        return Configs.WORLD.ENABLE_ORE_VEINS && getRegistry().size() > 0;
+        return AntimatterConfig.WORLD.ORE_VEINS && getRegistry().size() > 0;
     }
 
     @Override
@@ -53,10 +53,10 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public static List<Tuple<Integer, Integer>> getVeinSeeds(int chunkX, int chunkZ) {
         // Determine bounding box on how far out to check for ore veins affecting this chunk
-        int westX = chunkX - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-        int eastX = chunkX + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
-        int northZ = chunkZ - (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16);
-        int southZ = chunkZ + (Configs.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
+        int westX = chunkX - (AntimatterConfig.WORLD.ORE_VEIN_MAX_SIZE / 16);
+        int eastX = chunkX + (AntimatterConfig.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1); // Need to add 1 since it is compared using a <
+        int northZ = chunkZ - (AntimatterConfig.WORLD.ORE_VEIN_MAX_SIZE / 16);
+        int southZ = chunkZ + (AntimatterConfig.WORLD.ORE_VEIN_MAX_SIZE / 16 + 1);
         List<Tuple<Integer, Integer>> res = new ObjectArrayList<>();
         // Search for oreVein seeds and add to the list;
         for (int x = westX; x < eastX; x++) {
