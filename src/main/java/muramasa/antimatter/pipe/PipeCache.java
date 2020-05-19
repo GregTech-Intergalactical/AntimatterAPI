@@ -31,7 +31,7 @@ public class PipeCache {
         LOOKUP.remove(e.getWorld().getDimension().getType().getId());
     }
 
-    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity target, @Nullable Cover cover) {
+    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity target, Cover cover) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
         entry.update(type, direction, target, cover);
     }
@@ -48,7 +48,7 @@ public class PipeCache {
         public DimensionEntry() {
         }
 
-        public void update(PipeType<?> type, Direction direction, TileEntity target, @Nullable Cover cover) {
+        public void update(PipeType<?> type, Direction direction, TileEntity target, Cover cover) {
             get(type, target).onUpdate(direction.getOpposite(), cover);
         }
 
@@ -60,7 +60,7 @@ public class PipeCache {
         private ITileWrapper get(PipeType<?> type, TileEntity target) {
             Map<String, ITileWrapper> map = NODE_BLOCK.computeIfAbsent(target.getPos().toLong(), e -> new Object2ObjectArrayMap<>(3));
             ITileWrapper wrap = map.get(type.getTypeName());
-            if (wrap == null || !wrap.isValid()) {
+            if (wrap == null || wrap.isRemoved()) {
                 wrap = type.getTileWrapper(target);
                 map.put(type.getTypeName(), wrap);
             }
