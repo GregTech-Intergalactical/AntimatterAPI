@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-//TODO rename to ?
 @ParametersAreNonnullByDefault
 public interface IInteractHandler {
 
