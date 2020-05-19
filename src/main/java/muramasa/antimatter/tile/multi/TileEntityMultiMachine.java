@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.impl.ControllerComponentHandler;
-import muramasa.antimatter.capability.impl.ControllerConfigHandler;
+import muramasa.antimatter.capability.impl.ControllerInteractHandler;
 import muramasa.antimatter.capability.impl.MachineRecipeHandler;
 import muramasa.antimatter.capability.impl.MultiMachineRecipeHandler;
 import muramasa.antimatter.machine.MachineFlag;
@@ -49,7 +49,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     @Override
     public void onLoad() {
         componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
-        if (has(CONFIGURABLE)) configHandler = Optional.of(new ControllerConfigHandler(this));
+        if (has(CONFIGURABLE)) interactHandler = Optional.of(new ControllerInteractHandler(this));
         if (isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));
         super.onLoad();
     }

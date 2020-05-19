@@ -58,8 +58,8 @@
 //
 //            IModel overlayEmpty = ModelUtils.load(new ModelResourceLocation(Ref.MODID + ":machine/overlay_empty"));
 //            BakedMachine.OVERLAY_EMPTY = new IBakedModel[6];
-//            for (int i = 0; i < 6; i++) {
-//                BakedMachine.OVERLAY_EMPTY[i] = overlayEmpty.bake(TRSRTransformation.from(Ref.DIRECTIONS[i]), format, getter);
+//            for (int s = 0; s < 6; s++) {
+//                BakedMachine.OVERLAY_EMPTY[s] = overlayEmpty.bake(TRSRTransformation.from(Ref.DIRECTIONS[s]), format, getter);
 //            }
 //        }
 //

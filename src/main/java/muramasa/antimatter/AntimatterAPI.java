@@ -221,8 +221,8 @@ public final class AntimatterAPI {
 //            if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
 //        }
 //        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, targetSide)) {
-//            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
-//            if (configHandler != null && configHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
+//            IInteractHandler interactHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
+//            if (interactHandler != null && interactHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
 //        }
         return false;
     }

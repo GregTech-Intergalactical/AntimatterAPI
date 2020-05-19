@@ -12,6 +12,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.advancements.criterion.*;
@@ -399,6 +400,10 @@ public class Utils {
 //        } else {
 //            return blockAccess.getTileEntity(pos);
 //        }
+    }
+
+    public static boolean isForeignTile(@Nullable TileEntity target) {
+        return target != null && !(target instanceof TileEntityBase);
     }
 
     @Nullable

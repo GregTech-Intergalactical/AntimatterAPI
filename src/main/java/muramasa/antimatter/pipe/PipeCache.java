@@ -31,14 +31,14 @@ public class PipeCache {
         LOOKUP.remove(e.getWorld().getDimension().getType().getId());
     }
 
-    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity tile, @Nullable Cover cover) {
+    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity target, @Nullable Cover cover) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
-        entry.update(type, direction, tile, cover);
+        entry.update(type, direction, target, cover);
     }
 
-    public static void remove(PipeType<?> type, IWorldReader world, Direction direction, TileEntity tile) {
+    public static void remove(PipeType<?> type, IWorldReader world, Direction direction, TileEntity target) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
-        entry.remove(type, direction, tile);
+        entry.remove(type, direction, target);
     }
 
     public static class DimensionEntry {
@@ -48,23 +48,23 @@ public class PipeCache {
         public DimensionEntry() {
         }
 
-        public void update(PipeType<?> type, Direction direction, TileEntity tile, @Nullable Cover cover) {
-            get(type, tile).onUpdate(direction, cover);
+        public void update(PipeType<?> type, Direction direction, TileEntity target, @Nullable Cover cover) {
+            get(type, target).onUpdate(direction.getOpposite(), cover);
         }
 
-        public void remove(PipeType<?> type, Direction direction, TileEntity tile) {
-            get(type, tile).onRemove(direction);
+        public void remove(PipeType<?> type, Direction direction, TileEntity target) {
+            get(type, target).onRemove(direction.getOpposite());
         }
 
         @Nonnull
-        private ITileWrapper get(PipeType<?> type, TileEntity tile) {
-            Map<String, ITileWrapper> map = NODE_BLOCK.computeIfAbsent(tile.getPos().toLong(), e -> new Object2ObjectArrayMap<>()); // Can be replaced with EnumMap
-            ITileWrapper wrapper = map.get(type.getTypeName());
-            if (wrapper == null || !wrapper.isValid()) {
-                wrapper = type.getTileWrapper(tile);
-                map.put(type.getTypeName(), wrapper);
+        private ITileWrapper get(PipeType<?> type, TileEntity target) {
+            Map<String, ITileWrapper> map = NODE_BLOCK.computeIfAbsent(target.getPos().toLong(), e -> new Object2ObjectArrayMap<>(3));
+            ITileWrapper wrap = map.get(type.getTypeName());
+            if (wrap == null || !wrap.isValid()) {
+                wrap = type.getTileWrapper(target);
+                map.put(type.getTypeName(), wrap);
             }
-            return wrapper;
+            return wrap;
         }
     }
 }

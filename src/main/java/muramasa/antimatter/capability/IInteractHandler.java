@@ -10,9 +10,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-//TODO rename to IInteractHandler?
+//TODO rename to ?
 @ParametersAreNonnullByDefault
-public interface IConfigHandler {
+public interface IInteractHandler {
 
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
 

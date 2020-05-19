@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IConfigHandler;
+import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -109,13 +109,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote) { //Only try opening containers server side
-            TileEntity tile = Utils.getTile(world, pos);
+            TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                     return ActionResultType.SUCCESS;
                 }
-                LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
+                LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
                 interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
             }
         }
@@ -141,9 +141,11 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        Direction dir = Direction.getFacingFromVector((float)placer.getLookVec().x, (float)placer.getLookVec().y, (float)placer.getLookVec().z).getOpposite();
-        if (dir.getAxis().isVertical()) dir = Direction.NORTH; //TODO fix
-        world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
+        if (placer != null) {
+            Direction dir = Direction.getFacingFromVector((float) placer.getLookVec().x, (float) placer.getLookVec().y, (float) placer.getLookVec().z).getOpposite();
+            if (dir.getAxis().isVertical()) dir = Direction.NORTH; //TODO fix
+            world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
+        }
     }
 
     @Nullable
@@ -219,23 +221,21 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier));
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
-        for (int i = 0; i < 6; i++) {
-            b.texture("overlay" + Ref.DIRECTIONS[i].getName(), overlays[i]);
+        for (int s = 0; s < 6; s++) {
+            b.texture("overlay" + Ref.DIRECTIONS[s].getName(), overlays[s]);
         }
     }
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         Texture[] overlays = type.getOverlayTextures(MachineState.IDLE);
-        prov.state(block, prov.getBuilder(block).config(0, (b, l) -> {
-            return l.add(
-                b.of(type.getOverlayModel(Ref.DIRECTIONS[0])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[0])),
-                b.of(type.getOverlayModel(Ref.DIRECTIONS[1])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[1])),
-                b.of(type.getOverlayModel(Ref.DIRECTIONS[2])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[2])),
-                b.of(type.getOverlayModel(Ref.DIRECTIONS[3])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[3])),
-                b.of(type.getOverlayModel(Ref.DIRECTIONS[4])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[4])),
-                b.of(type.getOverlayModel(Ref.DIRECTIONS[5])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[5]))
-            );
-        }));
+        prov.state(block, prov.getBuilder(block).config(0, (b, l) -> l.add(
+            b.of(type.getOverlayModel(Ref.DIRECTIONS[0])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[0])),
+            b.of(type.getOverlayModel(Ref.DIRECTIONS[1])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[1])),
+            b.of(type.getOverlayModel(Ref.DIRECTIONS[2])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[2])),
+            b.of(type.getOverlayModel(Ref.DIRECTIONS[3])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[3])),
+            b.of(type.getOverlayModel(Ref.DIRECTIONS[4])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[4])),
+            b.of(type.getOverlayModel(Ref.DIRECTIONS[5])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[5]))
+        )));
     }
 }

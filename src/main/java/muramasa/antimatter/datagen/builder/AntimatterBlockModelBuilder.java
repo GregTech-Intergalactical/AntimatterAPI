@@ -147,8 +147,8 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         if (textures.length == 1) {
             builder.put("all", textures[0]);
         } else if (textures.length == 6) {
-            for (int i = 0; i < 6; i++) {
-                builder.put(Ref.DIRECTIONS[i].toString(), textures[i]);
+            for (int s = 0; s < 6; s++) {
+                builder.put(Ref.DIRECTIONS[s].toString(), textures[s]);
             }
         }
         return builder.build();

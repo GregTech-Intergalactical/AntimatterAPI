@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -48,7 +47,7 @@ public class StructureCache {
     }
 
     private static void invalidateController(IWorld world, BlockPos pos) {
-        TileEntity tile = Utils.getTile(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
         remove(world, pos);
     }

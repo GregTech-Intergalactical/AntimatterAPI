@@ -2,8 +2,6 @@ package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Ref;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 

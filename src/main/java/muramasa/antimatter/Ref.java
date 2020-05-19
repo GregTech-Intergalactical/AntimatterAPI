@@ -70,6 +70,7 @@ public class Ref {
 
     public static final String KEY_PIPE_TILE_CONNECTIVITY = "pc";
     public static final String KEY_PIPE_TILE_COVER = "pco";
+    public static final String KEY_PIPE_TILE_CONFIG = "pcf";
 
     public static final String TAG_TOOL_DATA = "tooldata";
     public static final String KEY_TOOL_DATA_PRIMARY_MATERIAL = "m";

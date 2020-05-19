@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.capability.IConfigHandler;
+import muramasa.antimatter.capability.IInteractHandler;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -10,11 +11,11 @@ import net.minecraft.util.Hand;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ConfigHandler implements IConfigHandler {
+public class InteractHandler implements IInteractHandler {
 
-    protected TileEntity tile;
+    private TileEntity tile;
 
-    public ConfigHandler(TileEntity tile) {
+    public InteractHandler(TileEntity tile) {
         this.tile = tile;
     }
 

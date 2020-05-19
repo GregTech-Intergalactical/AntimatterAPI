@@ -53,7 +53,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public Optional<MachineRecipeHandler<?>> recipeHandler = Optional.empty();
     public Optional<MachineEnergyHandler> energyHandler = Optional.empty();
     public Optional<MachineCoverHandler> coverHandler = Optional.empty();
-    public Optional<MachineConfigHandler> configHandler = Optional.empty();
+    public Optional<MachineInteractHandler> interactHandler = Optional.empty();
 
     public TileEntityMachine(TileEntityType<?> tileType) {
         super(tileType);
@@ -68,7 +68,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public void onLoad() {
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (!configHandler.isPresent() && has(CONFIGURABLE)) configHandler = Optional.of(new MachineConfigHandler(this));
+        if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
         if (!itemHandler.isPresent() && isServerSide() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
         if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this));
         if (!energyHandler.isPresent() && isServerSide() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
@@ -120,6 +120,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return getBlockState().get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
+    // TODO: Finish
+    public boolean setFacing(Direction side) {
+        return false;
+    }
+
     // TODO: Fix
     public Direction getOutputFacing() {
         return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
@@ -137,19 +142,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
-    public Cover getCover(Direction side) {
-        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
-    }
-
-    //TODO
-    public void toggleDisabled() {
-        setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
-    }
-
     /** Helpers **/
     public void resetMachine() {
         setMachineState(getDefaultMachineState());
         recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
+    }
+
+    public void toggleMachine() {
+        //setMachineState(getDefaultMachineState());
+        //recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
+        setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
     }
 
     public void setMachineState(MachineState newState) {
@@ -162,6 +164,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public Cover[] getValidCovers() {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
+    }
+
+    public Cover[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new Cover[0]);
+    }
+
+    public Cover getCover(Direction side) {
+        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
     }
 
     public float getClientProgress() {
@@ -196,7 +206,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
         if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
+        else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap);
     }
 
@@ -207,7 +217,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
         else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
         else if (cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.getCover(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
-        else if (cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent()) return LazyOptional.of(() -> configHandler.get()).cast();
+        else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap, side);
     }
 
@@ -257,8 +267,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergyStored() + " / " + h.getMaxEnergyStored()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
-            for (int i = 0; i < 6; i++) {
-                builder.append(h.getCover(Ref.DIRECTIONS[i]).getId()).append(" ");
+            for (Direction side : Ref.DIRECTIONS) {
+                builder.append(h.getCover(side).getId()).append(" ");
             }
             info.add(builder.toString());
         });
