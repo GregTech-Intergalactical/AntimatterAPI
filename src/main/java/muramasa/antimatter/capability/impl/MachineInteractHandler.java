@@ -24,7 +24,7 @@ public class MachineInteractHandler extends InteractHandler {
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, AntimatterToolType type) {
         TileEntityMachine tile = (TileEntityMachine) getTile();
         if (type == WRENCH || type == ELECTRIC_WRENCH) {
-            return player.isCrouching() ? tile.setFacing(side) : tile.coverHandler.map(h -> h.setOutputFacing(side)).orElse(false);
+            return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
         } else if (type == HAMMER) {
             tile.toggleMachine();
             player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
