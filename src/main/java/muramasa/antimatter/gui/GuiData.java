@@ -13,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+//GuiData with a type parameter T representing a GUI-able type,
+//e.g. machine o r cover.
 public class GuiData<T extends IAntimatterObject> {
 
     //TODO This whole class needs rethought
@@ -56,11 +58,13 @@ public class GuiData<T extends IAntimatterObject> {
         return this.menuHandler;
     }
 
-    public ResourceLocation getTexture(Tier tier) {
-        if (hasSlots(tier)) {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/machine/" + loc.getPath() + "_" + tier.getId() + ".png");
+    //Type represents what type of texture this data is representing.
+    //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
+    public ResourceLocation getTexture(Tier tier, String type) {
+        if (hasSlots(tier) && type.equals("machine")) {
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
         } else {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/machine/" + loc.getPath() + ".png");
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
         }
     }
 

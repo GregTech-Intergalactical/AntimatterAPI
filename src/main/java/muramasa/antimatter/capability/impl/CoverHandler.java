@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,7 +49,11 @@ public class CoverHandler implements ICoverHandler {
     @Override
     public boolean onPlace(Direction side, @Nonnull Cover cover) {
         int i = side.getIndex();
- //       if (!isValid(side, covers[i], cover)) return false;
+        //TODO: Do not allow putting on front face.
+        if (((TileEntityMachine)getTile()).getFacing() == Direction.byIndex(i)) {
+            return false;
+        }
+        if (!isValid(side, covers[i], cover)) return false;
         covers[i] = cover;
         covers[i].onPlace(getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds

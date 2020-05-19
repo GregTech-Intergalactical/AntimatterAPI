@@ -116,7 +116,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             TileEntity tile = Utils.getTile(world, pos);
             if (tile != null) {
                 Cover c = ((TileEntityMachine)tile).coverHandler.get().getCover(hit.getFace());
-                if (c != null && c != COVER_NONE && c != COVER_OUTPUT) {
+                if (c != null && c.hasGui()) {
                     //TODO: utils.getToolType?Gu
                     c.onInteract(tile, player, hand, hit.getFace(), null);
                     return ActionResultType.SUCCESS;

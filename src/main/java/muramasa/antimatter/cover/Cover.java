@@ -15,6 +15,8 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -22,36 +24,42 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class Cover implements INamedContainerProvider, IAntimatterObject {
+    protected GuiData<Cover> gui;
+    protected TileEntity tile;
 
     protected Tier tier;
 
-    protected GuiData gui;
-
-    protected TileEntity tile;
-
-    public Cover() {
-
+    public Tier getTier() {
+        return tier;
     }
 
     public void setTier(Tier tier) {
         this.tier = tier;
     }
 
-    public Tier getTier() {
-        return tier;
+    public Cover() {
+    }
+
+    public void setGui(GuiData<Cover> setGui) {
+        this.gui = setGui;
+    }
+
+    public GuiData<Cover> getGui() {
+        if (gui == null) {
+            this.gui = new GuiData<Cover>(this);
+            gui.setEnablePlayerSlots(true);
+        }
+        return gui;
     }
 
     public abstract String getId();
-
-    public GuiData getGui() {
-        return gui;
-    }
 
     public TileEntity getTileOn() {
         return tile;
@@ -64,6 +72,8 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     //Called on generating a new instance of this cover. For stateful covers this
     //creates a new cover instance.
     public final Cover onNewInstance(ItemStack stack) {
+        this.gui = new GuiData<Cover>(this);
+        gui.setEnablePlayerSlots(true);
         return onPlace(stack);
     }
 
@@ -101,7 +111,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     }
 
     public boolean hasGui() {
-        return true;
+        return false;
     }
 
     public TileEntityMachine getConnectedEntity() {
@@ -137,5 +147,16 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     public void onRegister() {
 
+    }
+    @Override
+    public ITextComponent getDisplayName() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        //TODO: runtimexception?
+        throw new RuntimeException("CreateMenu called on superclass of Cover with invalid gui");
     }
 }

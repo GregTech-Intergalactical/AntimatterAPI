@@ -1,14 +1,12 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-
+//A screen showing the GUI for the cover.
 public class ScreenCover extends AntimatterContainerScreen<ContainerCover> implements IHasContainer<ContainerCover> {
 
     protected ContainerCover container;
@@ -18,7 +16,7 @@ public class ScreenCover extends AntimatterContainerScreen<ContainerCover> imple
     public ScreenCover(ContainerCover container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        gui = container.getCover().getGui().getTexture(container.getCover().getTier());
+        this.gui = container.getCover().getGui().getTexture(container.getCover().getTier(),"cover");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {

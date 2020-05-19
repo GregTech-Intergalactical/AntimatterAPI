@@ -21,8 +21,8 @@ public class ItemCover extends ItemBasic<ItemCover> {
 
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
+        //TODO: only on server? Sync covers. For now do on both
      //   if (context.getWorld().isRemote) return super.onItemUse(context);
-
         TileEntity te = context.getWorld().getTileEntity(context.getPos());
         if (te == null) {
             return ActionResultType.PASS;
@@ -30,14 +30,15 @@ public class ItemCover extends ItemBasic<ItemCover> {
         if (!(te instanceof TileEntityMachine)) {
             return ActionResultType.PASS;
         }
+        //TODO: TileEntityBase for pipes.
         TileEntityMachine m = (TileEntityMachine) te;
         if (!m.coverHandler.isPresent()) {
             return ActionResultType.PASS;
         }
         MachineCoverHandler h = m.coverHandler.get();
-        Cover c = AntimatterAPI.getCoverFromCatalyst(context.getItem());
-        h.onPlace(context.getFace(), c);
-        return ActionResultType.SUCCESS;
+        //Get a new cover instance.
+        Cover c = AntimatterAPI.getCoverFromCatalyst(context.getItem()).onNewInstance(context.getItem());
+        return h.onPlace(context.getFace(), c) ? ActionResultType.SUCCESS : ActionResultType.PASS;
     }
 
 }
