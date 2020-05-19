@@ -2,14 +2,12 @@ package muramasa.antimatter.tesseract;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSets;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverFilter;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.CoverTintable;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

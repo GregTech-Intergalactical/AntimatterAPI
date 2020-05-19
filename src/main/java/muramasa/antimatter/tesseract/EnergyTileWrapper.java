@@ -11,7 +11,6 @@ import tesseract.Tesseract;
 import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
