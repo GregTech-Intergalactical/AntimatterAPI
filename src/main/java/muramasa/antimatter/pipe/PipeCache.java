@@ -23,7 +23,7 @@ import java.util.Map;
 @ParametersAreNonnullByDefault
 public class PipeCache {
 
-    private static Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
