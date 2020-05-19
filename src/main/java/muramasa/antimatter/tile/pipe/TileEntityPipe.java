@@ -4,18 +4,15 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.impl.PipeConfigHandler;
+import muramasa.antimatter.capability.impl.CoverHandler;
+import muramasa.antimatter.capability.impl.PipeInteractHandler;
 import muramasa.antimatter.capability.impl.PipeCoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityTickable;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,7 +31,7 @@ public class TileEntityPipe extends TileEntityTickable {
 
     /** Capabilities **/
     public Optional<PipeCoverHandler> coverHandler = Optional.empty();
-    public Optional<PipeConfigHandler> configHandler = Optional.empty();
+    public Optional<PipeInteractHandler> interactHandler = Optional.empty();
 
     protected byte connection;
 
@@ -50,18 +47,13 @@ public class TileEntityPipe extends TileEntityTickable {
     @Override
     public void onLoad() {
         if (!coverHandler.isPresent()) coverHandler = Optional.of(new PipeCoverHandler(this));
-        if (!configHandler.isPresent()) configHandler = Optional.of(new PipeConfigHandler(this));
+        if (!interactHandler.isPresent()) interactHandler = Optional.of(new PipeInteractHandler(this));
     }
 
     @Override
     public void onRemove() {
-        for (Direction side : Ref.DIRECTIONS) {
-            TileEntity neighbor = Utils.getTile(world, pos.offset(side));
-            // Check that entity is not GT one
-            if (neighbor != null && !(neighbor instanceof TileEntityBase)) {
-                onNeighborRemove(neighbor, side.getOpposite());
-            }
-        }
+        coverHandler.ifPresent(PipeCoverHandler::onRemove);
+        interactHandler.ifPresent(PipeInteractHandler::onRemove);
     }
 
     public PipeType<?> getPipeType() {
@@ -81,25 +73,18 @@ public class TileEntityPipe extends TileEntityTickable {
         refreshConnection();
     }
 
-    public void toggleConnection(Direction side, boolean isTarget) {
+    public void toggleConnection(Direction side) {
         connection = Connectivity.toggle(connection, side.getIndex());
         refreshConnection();
-        if (isTarget && isServerSide()) {
-            TileEntity target = Utils.getTile(world, pos.offset(side));
-            // Check that entity is not GT one
-            if (target != null && !(target instanceof TileEntityBase)) {
-                if (Connectivity.has(connection, side.getIndex())) {
-                    onNeighborUpdate(target, side.getOpposite());
-                } else {
-                    onNeighborRemove(target, side.getOpposite());
-                }
-            }
-        }
     }
 
     public void clearConnection(Direction side) {
         connection = Connectivity.clear(connection, side.getIndex());
         refreshConnection();
+    }
+
+    public void changeConnection(Direction side) {
+        interactHandler.ifPresent(h -> h.onChange(side));
     }
 
     public void refreshConnection() {
@@ -114,6 +99,10 @@ public class TileEntityPipe extends TileEntityTickable {
         return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
     }
 
+    public Cover[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new Cover[0]);
+    }
+
     public Cover getCover(Direction side) {
         return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
     }
@@ -121,7 +110,7 @@ public class TileEntityPipe extends TileEntityTickable {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        return cap == AntimatterCaps.CONFIGURABLE && configHandler.isPresent() ? LazyOptional.of(() -> configHandler.get()).cast() : super.getCapability(cap);
+        return cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent() ? LazyOptional.of(() -> interactHandler.get()).cast() : super.getCapability(cap);
     }
 
     @Nonnull
@@ -135,6 +124,7 @@ public class TileEntityPipe extends TileEntityTickable {
         super.read(tag);
         if (tag.contains(Ref.KEY_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.KEY_PIPE_TILE_CONNECTIVITY);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
+        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
         refreshConnection();
     }
 
@@ -144,6 +134,7 @@ public class TileEntityPipe extends TileEntityTickable {
         super.write(tag); //TODO get tile data tag
         tag.putByte(Ref.KEY_PIPE_TILE_CONNECTIVITY, connection);
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize()));
+        interactHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_CONFIG, h.serialize()));
         return tag;
     }
 
@@ -153,19 +144,5 @@ public class TileEntityPipe extends TileEntityTickable {
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;
-    }
-
-    /**
-     * Called when block is placed to init inputs to neighbors nodes.
-     */
-    protected void onNeighborUpdate(TileEntity neighbor, Direction direction) {
-        PipeCache.update(getPipeType(), world, direction, neighbor, null);
-    }
-
-    /**
-     * Called when block is replaced to remove inputs from neighbors nodes.
-     */
-    protected void onNeighborRemove(TileEntity neighbor, Direction direction) {
-        PipeCache.remove(getPipeType(), world, direction, neighbor);
     }
 }

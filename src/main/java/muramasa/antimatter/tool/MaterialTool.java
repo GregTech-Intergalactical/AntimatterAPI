@@ -208,9 +208,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 //        EnumActionResult result = EnumActionResult.PASS;
 //        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, facing)) {
 //            Direction targetSide = Utils.getInteractSide(facing, hitX, hitY, hitZ);
-//            IConfigHandler configHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
-//            if (configHandler != null) {
-//                if (type != null && configHandler.onInteract(player, hand, targetSide, type)) {
+//            IInteractHandler interactHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
+//            if (interactHandler != null) {
+//                if (type != null && interactHandler.onInteract(player, hand, targetSide, type)) {
 //                    damage(stack, type.getDamageCrafting(), player, true);
 //                    result = EnumActionResult.SUCCESS;
 //                }

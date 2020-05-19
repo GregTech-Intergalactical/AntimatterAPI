@@ -9,9 +9,9 @@ import net.minecraft.util.Hand;
 
 import javax.annotation.Nonnull;
 
-public class ControllerConfigHandler extends MachineConfigHandler {
+public class ControllerInteractHandler extends MachineInteractHandler {
 
-    public ControllerConfigHandler(TileEntityMultiMachine tile) {
+    public ControllerInteractHandler(TileEntityMultiMachine tile) {
         super(tile);
     }
 

@@ -11,14 +11,15 @@ import tesseract.Tesseract;
 import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
 
     private TileEntity tile;
+    private boolean removed;
     private IEnergyStorage storage;
-    private boolean valid = true;
     
     private EnergyTileWrapper(TileEntity tile, IEnergyStorage storage) {
         this.tile = tile;
@@ -39,20 +40,20 @@ public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
 
     @Override
     public void onRemove(@Nullable Direction side) {
-        if (side == null) {
+        if (side == null && tile.isRemoved()) {
             Tesseract.ELECTRIC.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
-            valid = false;
+            removed = true;
         }
     }
 
     @Override
-    public void onUpdate(@Nonnull Direction side, @Nullable Cover cover) {
+    public void onUpdate(Direction side, Cover cover) {
 
     }
 
     @Override
-    public boolean isValid() {
-        return valid;
+    public boolean isRemoved() {
+        return removed;
     }
 
     @Override
@@ -106,12 +107,12 @@ public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
+    public boolean canOutput(Dir direction) {
         return false;
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return true;
     }
 }

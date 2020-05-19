@@ -7,7 +7,7 @@ import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IConfigHandler;
+import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -95,35 +95,15 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 //    @Override
 //    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
 //        IExtendedBlockState exState = (IExtendedBlockState) state;
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityPipe) {
-//            TileEntityPipe pipe = (TileEntityPipe) tile;
-//            exState = exState.withProperty(PIPE_CONNECTIONS, pipe.getConnections());
+//        TileEntityPipe tile = getTilePipe(world, pos);
+//        if (tile != null) {
+//            exState = exState.withProperty(PIPE_CONNECTIONS, tile.getConnections());
 //            exState = exState.withProperty(TEXTURE, getData());
-//            if (pipe.coverHandler.isPresent()) {
-//                exState = exState.withProperty(COVER, pipe.coverHandler.get().getAll());
+//            if (tile.coverHandler.isPresent()) {
+//                exState = exState.withProperty(COVER, tile.coverHandler.get().getAll());
 //            }
 //        }
 //        return exState;
-//    }
-
-//    @Override
-//    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
-//        TileEntity tile = Utils.getTile(source, pos);
-//        if (tile instanceof TileEntityPipe) {
-//            TileEntityPipe pipe = (TileEntityPipe) tile;
-//            PipeSize size = pipe.getSize();
-////            if (size == null) return FULL_BLOCK_AABB;
-////            switch (BakedPipe.CONFIG_MAP.get(pipe.connections)[0]) {
-//////                case 0: return new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(0.0625f * size.ordinal());
-//////                case 1: new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(1, 0, 0);
-////                default: return new AxisAlignedBB(0.4375, 0.4375, 0.4375, 0.5625, 0.5625, 0.5625).grow(0.0625f * size.ordinal());
-////            }
-//
-//            //TODO temp disable
-//            //return size != null ? size.getAABB() : PipeSize.TINY.getAABB();
-//        }
-//        return FULL_BLOCK_AABB;
 //    }
 
     @Override
@@ -142,18 +122,17 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         return Data.WRENCH.getToolType();
     }
 
+    // TODO: Block if covers are exist
+
     @Override // Used to set connection for sides where neighbor has pre-set connection
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        TileEntity tile = Utils.getTile(worldIn, pos);
-        if (tile instanceof TileEntityPipe) {
-            TileEntityPipe pipe = (TileEntityPipe) tile;
+        TileEntityPipe tile = getTilePipe(worldIn, pos);
+        if (tile != null) {
             for (Direction side : Ref.DIRECTIONS) {
-                TileEntity target = Utils.getTile(worldIn, pos.offset(side));
-                // TODO: Block if covers are exist
-                if (target instanceof TileEntityPipe) {
-                    TileEntityPipe neighbor = (TileEntityPipe) target;
+                TileEntityPipe neighbor = getTilePipe(worldIn, pos.offset(side));
+                if (neighbor != null) {
                     if (neighbor.canConnect(side.getOpposite().getIndex())) {
-                        pipe.setConnection(side);
+                        tile.setConnection(side);
                     }
                 }
             }
@@ -162,28 +141,42 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     // Used to set connection between pipes on which block was placed
     public void onBlockPlacedTo(World world, BlockPos pos, Direction face) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityPipe) {
-            TileEntityPipe pipe = (TileEntityPipe) tile;
-            TileEntity target = Utils.getTile(world, pos.offset(face.getOpposite()));
-            // TODO: Block if covers are exist
-            if (target instanceof TileEntityPipe) {
-                TileEntityPipe neighbor = (TileEntityPipe) target;
-                if (!neighbor.canConnect(face.getIndex())) neighbor.setConnection(face);
-                pipe.setConnection(face.getOpposite());
+        TileEntityPipe tile = getTilePipe(world, pos);
+        if (tile != null) {
+            TileEntityPipe neighbor = getTilePipe(world, pos.offset(face.getOpposite()));
+            if (neighbor != null) {
+                tile.setConnection(face.getOpposite());
+                if (!neighbor.canConnect(face.getIndex())) {
+                     neighbor.setConnection(face);
+                }
             }
         }
     }
 
     @Override // Used to clear connection for sides where neighbor was removed
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        TileEntity tile = Utils.getTile(world, pos);
-        if (tile instanceof TileEntityPipe) {
-            TileEntityPipe pipe = (TileEntityPipe) tile;
+        TileEntityPipe tile = getTilePipe(world, pos);
+        if (tile != null) {
             for (Direction side : Ref.DIRECTIONS) {
                 // Looking for the side where is a neighbor was
                 if (pos.offset(side).equals(neighbor)) {
-                    pipe.clearConnection(side);
+                    tile.clearConnection(side);
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override // Used to catch new placed neighbors near pipe which enable connection
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos from, boolean isMoving) {
+        TileEntityPipe tile = getTilePipe(world, pos);
+        if (tile != null) {
+            for (Direction side : Ref.DIRECTIONS) {
+                // Looking for the side where is a neighbor changed
+                if (pos.offset(side).equals(from)) {
+                    if (tile.canConnect(side.getIndex())) {
+                        tile.changeConnection(side);
+                    }
                     return;
                 }
             }
@@ -193,9 +186,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        TileEntity tile = Utils.getTile(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile != null) {
-            LazyOptional<IConfigHandler> interaction = tile.getCapability(AntimatterCaps.CONFIGURABLE);
+            LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
             interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
@@ -210,14 +203,19 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         return ((size.ordinal() + 1) * 100) + ((getModelId() + 1) * 1000) + (cull == 0 ? 0 : 10000) + config;
     }
 
+    @Nullable
+    private static TileEntityPipe getTilePipe(IBlockReader world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        return tile instanceof TileEntityPipe ? (TileEntityPipe) tile : null;
+    }
+
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int ct = 0;
-        TileEntity tile = world.getTileEntity(mut);
-        if (tile instanceof TileEntityPipe) {
-            TileEntityPipe pipe = (TileEntityPipe) tile;
+        TileEntityPipe tile = getTilePipe(world, pos);
+        if (tile != null) {
             for (int s = 0; s < 6; s++) {
-                if (pipe.canConnect(s)) {
+                if (tile.canConnect(s)) {
                     ct += 1 << s;
                 }
             }

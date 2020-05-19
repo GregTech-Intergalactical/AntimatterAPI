@@ -2,10 +2,12 @@ package muramasa.antimatter.tesseract;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverFilter;
 import muramasa.antimatter.cover.CoverOutput;
-import net.minecraft.item.Item;
+import muramasa.antimatter.cover.CoverTintable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -19,18 +21,19 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
+@ParametersAreNonnullByDefault
 public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
-    // TODO: Add black/white lister filter mode
     private TileEntity tile;
+    private boolean removed;
     private IItemHandler handler;
-    private Set<Item>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
-    private boolean[] output = new boolean[]{false, false, false, false, false, false};
-    private boolean[] input = new boolean[]{false, false, false, false, false, false};
-    private int[] priority = new int[]{0, 0, 0, 0, 0, 0};
-    private boolean valid = true;
+
+    private Cover[] covers = new Cover[] {
+        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
+    };
 
     private ItemTileWrapper(TileEntity tile, IItemHandler handler) {
         this.tile = tile;
@@ -51,32 +54,28 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
     @Override
     public void onRemove(@Nullable Direction side) {
-        if (side != null) {
-            output[side.getIndex()] = input[side.getIndex()] = false;
+        if (side == null) {
+            if (tile.isRemoved()) {
+                Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+                removed = true;
+            }
         } else {
-            Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
-            valid = false;
+            covers[side.getIndex()] = Data.COVER_NONE;
         }
     }
 
     @Override
-    public void onUpdate(@Nonnull Direction side, @Nullable Cover cover) {
-        /*if (cover instanceof CoverFilter) {
-            filter.put(side, ((CoverFilter<Item>)cover).getFilter());
-        }*/
-        if (cover instanceof CoverOutput) {
-            output[side.getIndex()] = true;
-        }
-        input[side.getIndex()] = true;
+    public void onUpdate(Direction side, Cover cover) {
+        covers[side.getIndex()] = cover;
     }
 
     @Override
-    public boolean isValid() {
-        return valid;
+    public boolean isRemoved() {
+        return removed;
     }
 
     @Override
-    public int insert(@Nonnull ItemData data, boolean simulate) {
+    public int insert(ItemData data, boolean simulate) {
         ItemStack stack = (ItemStack) data.getStack();
         int slot = getFirstValidSlot(stack.getItem());
         if (slot == -1) {
@@ -101,8 +100,8 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
     @Nonnull
     @Override
-    public IntList getAvailableSlots(@Nonnull Dir direction) {
-        Set<?> filtered = filter[direction.getIndex()];
+    public IntList getAvailableSlots(Dir direction) {
+        Set<?> filtered = getFiltered(direction.getIndex());
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
         if (filtered.isEmpty()) {
@@ -124,13 +123,13 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     @Override
-    public int getOutputAmount(@Nonnull Dir direction) {
+    public int getOutputAmount(Dir direction) {
         return 1;
     }
 
     @Override
-    public int getPriority(@Nonnull Dir direction) {
-        return priority[direction.getIndex()];
+    public int getPriority(Dir direction) {
+        return 0;
     }
 
     @Override
@@ -149,27 +148,28 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
-        return output[direction.getIndex()];
+    public boolean canOutput(Dir direction) {
+        return covers[direction.getIndex()] instanceof CoverOutput;
     }
 
     @Override
-    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
+    public boolean canInput(Object item, Dir direction) {
         return isItemAvailable(item, direction.getIndex()) && getFirstValidSlot(item) != -1;
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return true;
     }
 
-    private boolean isItemAvailable(@Nonnull Object item, int dir) {
-        Set<?> filtered = filter[dir];
-        return input[dir] && (filtered.isEmpty() || filtered.contains(item));
+    private boolean isItemAvailable(Object item, int dir) {
+        if (covers[dir] instanceof CoverTintable) return false;
+        Set<?> filtered = getFiltered(dir);
+        return filtered.isEmpty() || filtered.contains(item);
     }
 
     // Fast way to find available slot for item
-    private int getFirstValidSlot(@Nonnull Object item) {
+    private int getFirstValidSlot(Object item) {
         int slot = -1;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
@@ -182,5 +182,9 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
             }
         }
         return slot;
+    }
+
+    private Set<?> getFiltered(int index) {
+        return covers[index] instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index]).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

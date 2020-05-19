@@ -8,7 +8,6 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
@@ -101,7 +100,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
         if (player.isCrouching()) return ActionResultType.FAIL;
-        harvestBlock(world, player, pos, state, Utils.getTile(world, pos), player.getHeldItem(hand));
+        harvestBlock(world, player, pos, state, world.getTileEntity(pos), player.getHeldItem(hand));
         if (super.removedByPlayer(state, world, pos, player, true, null)) {
             player.addItemStackToInventory(MaterialType.ROCK.get(material, 1));
             return ActionResultType.SUCCESS;

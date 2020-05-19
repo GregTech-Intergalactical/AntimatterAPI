@@ -1,9 +1,8 @@
 package muramasa.antimatter.tesseract;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverOutput;
-import net.minecraft.fluid.Fluid;
+import it.unimi.dsi.fastutil.objects.ObjectSets;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.cover.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
@@ -15,23 +14,23 @@ import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
+@ParametersAreNonnullByDefault
 public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
-    // TODO: Add black/white lister filter mode
     private TileEntity tile;
+    private boolean removed;
     private IFluidHandler handler;
-    private Set<Fluid>[] filter = new Set[]{new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>()};
-    private boolean[] output = new boolean[]{false, false, false, false, false, false};
-    private boolean[] input = new boolean[]{false, false, false, false, false, false};
-    private int[] priority = new int[]{0, 0, 0, 0, 0, 0};
-    private boolean valid = true;
+
+    private Cover[] covers = new Cover[] {
+        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
+    };
 
     private FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
         this.tile = tile;
@@ -52,32 +51,28 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
     @Override
     public void onRemove(@Nullable Direction side) {
-        if (side != null) {
-            output[side.getIndex()] = false;
+        if (side == null) {
+            if (tile.isRemoved()) {
+                Tesseract.FLUID.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+                removed = true;
+            }
         } else {
-            Tesseract.FLUID.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
-            valid = false;
+            covers[side.getIndex()] = Data.COVER_NONE;
         }
     }
 
     @Override
-    public void onUpdate(@Nonnull Direction side, @Nullable Cover cover) {
-        /*if (cover instanceof CoverFilter) {
-            filter.put(side, ((CoverFilter<Fluid>)cover).getFilter());
-        }*/
-        if (cover instanceof CoverOutput) {
-            output[side.getIndex()] = true;
-        }
-        input[side.getIndex()] = true;
+    public void onUpdate(Direction side, Cover cover) {
+        covers[side.getIndex()] = cover;
     }
 
     @Override
-    public boolean isValid() {
-        return valid;
+    public boolean isRemoved() {
+        return removed;
     }
 
     @Override
-    public int insert(@Nonnull FluidData data, boolean simulate) {
+    public int insert(FluidData data, boolean simulate) {
         FluidStack stack = (FluidStack) data.getStack();
         return getFirstValidTank(stack.getFluid()) != -1 ? handler.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
     }
@@ -95,9 +90,9 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     @Override
-    public int getAvailableTank(@Nonnull Dir direction) {
-        Set<?> set = filter[direction.getIndex()];
-        if (set.isEmpty()) {
+    public int getAvailableTank(Dir direction) {
+        Set<?> filtered = getFiltered(direction.getIndex());
+        if (filtered.isEmpty()) {
             for (int i = 0; i < handler.getTanks(); i++) {
                 FluidStack stack = handler.getFluidInTank(i);
                 if (!stack.isEmpty()) {
@@ -107,7 +102,7 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
         } else {
             for (int i = 0; i < handler.getTanks(); i++) {
                 FluidStack stack = handler.getFluidInTank(i);
-                if (!stack.isEmpty() && set.contains(stack.getFluid())) {
+                if (!stack.isEmpty() && filtered.contains(stack.getFluid())) {
                     return i;
                 }
             }
@@ -116,13 +111,13 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     @Override
-    public int getOutputAmount(@Nonnull Dir direction) {
+    public int getOutputAmount(Dir direction) {
         return 1;
     }
 
     @Override
-    public int getPriority(@Nonnull Dir direction) {
-        return priority[direction.getIndex()];
+    public int getPriority(Dir direction) {
+        return 0;
     }
 
     @Override
@@ -136,27 +131,28 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
-        return output[direction.getIndex()];
+    public boolean canOutput(Dir direction) {
+        return covers[direction.getIndex()]  instanceof CoverOutput;
     }
 
     @Override
-    public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
+    public boolean canInput(Object fluid, Dir direction) {
         return isFluidAvailable(fluid, direction.getIndex()) && getFirstValidTank(fluid) != -1;
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return true;
     }
 
-    private boolean isFluidAvailable(@Nonnull Object fluid, int dir) {
-        Set<?> filtered = filter[dir];
-        return input[dir] && (filtered.isEmpty() || filtered.contains(fluid));
+    private boolean isFluidAvailable(Object fluid, int dir) {
+        if (covers[dir] instanceof CoverTintable) return false;
+        Set<?> filtered = getFiltered(dir);
+        return filtered.isEmpty() || filtered.contains(fluid);
     }
 
     // Fast way to find available tank for fluid
-    private int getFirstValidTank(@Nonnull Object fluid) {
+    private int getFirstValidTank(Object fluid) {
         int tank = -1;
         for (int i = 0; i < handler.getTanks(); i++) {
             FluidStack stack = handler.getFluidInTank(i);
@@ -169,5 +165,9 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
             }
         }
         return tank;
+    }
+
+    private Set<?> getFiltered(int index) {
+        return covers[index] instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index]).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

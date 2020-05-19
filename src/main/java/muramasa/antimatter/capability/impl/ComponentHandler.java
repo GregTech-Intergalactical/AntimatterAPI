@@ -5,7 +5,6 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
@@ -80,7 +79,7 @@ public class ComponentHandler implements IComponentHandler {
         //TODO support multiple controllers
         BlockPos controllerPos = StructureCache.get(getTile().getWorld(), getTile().getPos());
         if (controllerPos != null) {
-            TileEntity tile = Utils.getTile(getTile().getWorld(), getTile().getPos());
+            TileEntity tile = getTile().getWorld().getTileEntity(getTile().getPos());
             if (tile instanceof TileEntityMultiMachine) return Optional.of((TileEntityMultiMachine) tile);
         }
         return Optional.empty();

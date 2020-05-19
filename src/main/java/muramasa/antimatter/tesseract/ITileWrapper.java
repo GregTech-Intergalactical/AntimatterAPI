@@ -11,7 +11,7 @@ public interface ITileWrapper {
 
     void onRemove(@Nullable Direction side);
 
-    void onUpdate(Direction side, @Nullable Cover cover);
+    void onUpdate(Direction side, Cover cover);
 
-    boolean isValid();
+    boolean isRemoved();
 }

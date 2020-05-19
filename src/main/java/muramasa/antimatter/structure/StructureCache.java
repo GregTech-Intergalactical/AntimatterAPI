@@ -49,7 +49,7 @@ public class StructureCache {
     }
 
     private static void invalidateController(IWorld world, BlockPos pos) {
-        TileEntity tile = Utils.getTile(world, pos);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
         remove(world, pos);
     }

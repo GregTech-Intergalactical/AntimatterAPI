@@ -15,8 +15,8 @@ public class AntimatterCaps {
     @CapabilityInject(IEnergyHandler.class)
     public static Capability<IEnergyHandler> ENERGY;
 
-    @CapabilityInject(IConfigHandler.class)
-    public static Capability<IConfigHandler> CONFIGURABLE;
+    @CapabilityInject(IInteractHandler.class)
+    public static Capability<IInteractHandler> INTERACTABLE;
 
     @CapabilityInject(ICoverHandler.class)
     public static Capability<ICoverHandler> COVERABLE;
@@ -41,18 +41,18 @@ public class AntimatterCaps {
             }
         }, () -> new EnergyHandler(0, 1000, 0, 0, 0, 0));
 
-        CapabilityManager.INSTANCE.register(IConfigHandler.class, new Capability.IStorage<IConfigHandler>() {
+        CapabilityManager.INSTANCE.register(IInteractHandler.class, new Capability.IStorage<IInteractHandler>() {
             @Nullable
             @Override
-            public INBT writeNBT(Capability<IConfigHandler> capability, IConfigHandler instance, Direction side) {
+            public INBT writeNBT(Capability<IInteractHandler> capability, IInteractHandler instance, Direction side) {
                 return null;
             }
 
             @Override
-            public void readNBT(Capability<IConfigHandler> capability, IConfigHandler instance, Direction side, INBT nbt) {
+            public void readNBT(Capability<IInteractHandler> capability, IInteractHandler instance, Direction side, INBT nbt) {
 
             }
-        }, () -> new ConfigHandler(null));
+        }, () -> new InteractHandler(null));
 
         CapabilityManager.INSTANCE.register(ICoverHandler.class, new Capability.IStorage<ICoverHandler>() {
             @Nullable
