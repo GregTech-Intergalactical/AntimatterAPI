@@ -5,15 +5,10 @@ import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
-import muramasa.antimatter.gui.MenuHandler;
-import muramasa.antimatter.gui.container.ContainerBasicMachine;
-import muramasa.antimatter.gui.container.ContainerHatchMachine;
-import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.container.ContainerMultiMachine;
-import muramasa.antimatter.gui.screen.ScreenBasicMachine;
-import muramasa.antimatter.gui.screen.ScreenHatchMachine;
-import muramasa.antimatter.gui.screen.ScreenMachine;
-import muramasa.antimatter.gui.screen.ScreenMultiMachine;
+import muramasa.antimatter.gui.MenuHandlerCover;
+import muramasa.antimatter.gui.MenuHandlerMachine;
+import muramasa.antimatter.gui.container.*;
+import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
@@ -31,6 +26,7 @@ import muramasa.antimatter.tool.behaviour.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -86,25 +82,39 @@ public class Data {
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();
 
-    public static MenuHandler BASIC_MENU_HANDLER = new MenuHandler(Ref.ID, "container_basic") {
+    public static MenuHandlerMachine<?> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
+
+
         @Nullable
         @Override
-        public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
+        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine) tile, playerInv, this, windowId) : null;
         }
 
-        @Nullable
         @Override
         public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
             return new ScreenBasicMachine(container, inv, name);
         }
     };
 
-    public static MenuHandler MULTI_MENU_HANDLER = new MenuHandler(Ref.ID, "container_multi") {
-        @Nullable
+    public static MenuHandlerCover COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
+
         @Override
-        public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
+        public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+            return new ContainerCover((Cover)tile,  playerInv, this, windowId);
+        }
+
+        @Override
+        public ScreenCover getScreen(ContainerCover container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenCover(container,inv,name);
+        }
+    };
+
+    public static MenuHandlerMachine MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_multi") {
+        @Override
+        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine) tile, playerInv, this, windowId) : null;
+
         }
 
         @Nullable
@@ -114,16 +124,15 @@ public class Data {
         }
     };
 
-    public static MenuHandler HATCH_MENU_HANDLER = new MenuHandler(Ref.ID, "container_hatch") {
-        @Nullable
+    public static MenuHandlerMachine HATCH_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_hatch") {
         @Override
-        public Container getMenu(TileEntity tile, PlayerInventory playerInv, int windowId) {
+        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityHatch ? new ContainerHatchMachine((TileEntityHatch) tile, playerInv, this, windowId) : null;
         }
 
         @Override
         public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenHatchMachine(container, inv, name);
+            return new ScreenHatchMachine((ContainerMachine)container, inv, name);
         }
     };
 

@@ -6,13 +6,16 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class GuiData {
+//GuiData with a type parameter T representing a GUI-able type,
+//e.g. machine o r cover.
+public class GuiData<T extends IAntimatterObject> {
 
     //TODO This whole class needs rethought
 
@@ -21,7 +24,7 @@ public class GuiData {
     private static final String ANY = "any";
 
     protected ResourceLocation loc;
-    protected MenuHandler<?> menuHandler;
+    protected IMenuHandler menuHandler;
 
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
@@ -37,29 +40,31 @@ public class GuiData {
         this.loc = new ResourceLocation(domain, id);
     }
 
-    public GuiData(String domain, String id, MenuHandler<?> menuHandler) {
+    public GuiData(String domain, String id, IMenuHandler menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
     }
 
-    public GuiData(Machine type) {
+    public GuiData(T type) {
         this(type.getDomain(), type.getId());
     }
 
-    public GuiData(Machine type, MenuHandler<?> menuHandler) {
+    public GuiData(T type, IMenuHandler menuHandler) {
         this(type);
         this.menuHandler = menuHandler;
     }
 
-    public MenuHandler<?> getMenuHandler() {
-        return menuHandler;
+    public IMenuHandler getMenuHandler() {
+        return this.menuHandler;
     }
 
-    public ResourceLocation getTexture(Tier tier) {
-        if (hasSlots(tier)) {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/machine/" + loc.getPath() + "_" + tier.getId() + ".png");
+    //Type represents what type of texture this data is representing.
+    //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
+    public ResourceLocation getTexture(Tier tier, String type) {
+        if (hasSlots(tier) && type.equals("machine")) {
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
         } else {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/machine/" + loc.getPath() + ".png");
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
         }
     }
 
@@ -123,7 +128,8 @@ public class GuiData {
 
     /** Copies ALL slots from an existing GuiData **/
     public GuiData add(GuiData data) {
-        for (SlotData slot : data.getAnySlots()) {
+        List<SlotData> list = data.getAnySlots();
+        for (SlotData slot : list) {
             add(ANY, slot);
         }
         return this;
@@ -131,7 +137,8 @@ public class GuiData {
 
     /** Copies ALL slots from an existing Machine **/
     public GuiData add(Machine type) {
-        for (SlotData slot : type.getGui().getAnySlots()) {
+        List<SlotData> list = type.getGui().getAnySlots();
+        for (SlotData slot : list) {
             add(ANY, slot);
         }
         return this;
@@ -139,7 +146,8 @@ public class GuiData {
 
     /** Copies ALL slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine type) {
-        for (SlotData slot : type.getGui().getAnySlots()) {
+        List<SlotData> list = type.getGui().getAnySlots();
+        for (SlotData slot : list) {
             add(toTier.getId(), slot);
         }
         return this;
@@ -147,7 +155,8 @@ public class GuiData {
 
     /** Copies fromTier slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine type, Tier fromTier) {
-        for (SlotData slot : type.getGui().getSlots(fromTier)) {
+        List<SlotData> list = type.getGui().getSlots(fromTier);
+        for (SlotData slot : list) {
             add(toTier.getId(), slot);
         }
         return this;

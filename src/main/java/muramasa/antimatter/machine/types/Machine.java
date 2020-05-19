@@ -7,7 +7,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.IMenuHandler;
+import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -29,7 +30,9 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -167,8 +170,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
     }
 
-    public void setGUI(MenuHandler<?> menuHandler) {
-        guiData = new GuiData(this, menuHandler);
+    public void setGUI(MenuHandlerMachine<?> menuHandler) {
+        guiData = new GuiData(this, (IMenuHandler)menuHandler);
         addFlags(MachineFlag.GUI);
     }
 

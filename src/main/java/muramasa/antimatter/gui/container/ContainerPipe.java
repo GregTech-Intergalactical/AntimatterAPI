@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.container;
 
-import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,7 +12,7 @@ public class ContainerPipe extends AntimatterContainer {
     protected TileEntityPipe tile;
     private int lastState = -1;
 
-    public ContainerPipe(TileEntityPipe tile, PlayerInventory playerInv, MenuHandler menuHandler, int windowId) {
+    public ContainerPipe(TileEntityPipe tile, PlayerInventory playerInv, MenuHandlerMachine menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
         //super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
         //addSlots(tile);
