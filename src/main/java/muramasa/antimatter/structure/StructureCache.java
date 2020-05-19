@@ -6,12 +6,13 @@ import it.unimi.dsi.fastutil.longs.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,7 +22,7 @@ import javax.annotation.Nullable;
 @Mod.EventBusSubscriber
 public class StructureCache {
 
-    private static Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
 
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
@@ -58,24 +59,21 @@ public class StructureCache {
         LOOKUP.remove(e.getWorld().getDimension().getType().getId());
     }
 
-    @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent e) {
-        DimensionEntry entry = LOOKUP.get(e.getWorld().getDimension().getType().getId());
+    /**
+     * COREMOD METHOD INSERTION: Runs every time when this is called:
+     * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
+    */
+    @SuppressWarnings("unused")
+    public static void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState) {
+        if (oldState == newState) return;  // TODO: better checks?
+        DimensionEntry entry = LOOKUP.get(world.dimension.getType().getId());
         if (entry == null) return;
-        BlockPos controllerPos = entry.get(e.getPos());
-        if (controllerPos != null) invalidateController(e.getWorld(), controllerPos);
+        BlockPos controllerPos = entry.get(pos);
+        if (controllerPos != null) invalidateController(world, controllerPos);
     }
 
-    @SubscribeEvent
-    public static void onBlockPlace(BlockEvent.EntityPlaceEvent e) {
-        DimensionEntry entry = LOOKUP.get(e.getWorld().getDimension().getType().getId());
-        if (entry == null) return;
-        BlockPos controllerPos = entry.get(e.getPos());
-        if (controllerPos != null) invalidateController(e.getWorld(), controllerPos);
-    }
-
-    @SubscribeEvent
-    public static void onBlockClickEvent(PlayerInteractEvent.RightClickBlock e) {
+//    @SubscribeEvent
+//    public static void onBlockClickEvent(PlayerInteractEvent.RightClickBlock e) {
 //        if (e.getEntityPlayer().isSneaking()) return;
 //        DimensionEntry entry = LOOKUP.get(e.getWorld().getDimension().getType().getId());
 //        if (entry == null) return;
@@ -88,7 +86,7 @@ public class StructureCache {
 //            state.getBlock().onBlockActivated(e.getWorld(), controllerPos, state, e.getEntityPlayer(), e.getHand(), e.getFace(), (float) hit.x, (float) hit.y, (float) hit.z);
 //        }
 //        e.setCanceled(true);
-    }
+//    }
 
     public static class DimensionEntry {
 
