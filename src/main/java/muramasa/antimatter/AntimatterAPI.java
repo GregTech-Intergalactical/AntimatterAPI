@@ -10,6 +10,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -17,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -32,6 +35,7 @@ public final class AntimatterAPI {
     private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
     private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new ObjectOpenHashSet<>();
     private static final Queue<Runnable> DEFERRED_QUEUE = new LinkedList<>();
+    private static final List<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ArrayList<>();
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
@@ -249,5 +253,23 @@ public final class AntimatterAPI {
             return true;
         }
         return false;
+    }
+
+    public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {
+        BLOCK_UPDATE_HANDLERS.add(handler);
+    }
+
+    /**
+     * COREMOD METHOD INSERTION: Runs every time when this is called:
+     * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
+     */
+    @SuppressWarnings("unused")
+    public static void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState) {
+        BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState));
+    }
+
+    public interface IBlockUpdateEvent {
+
+        void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState);
     }
 }

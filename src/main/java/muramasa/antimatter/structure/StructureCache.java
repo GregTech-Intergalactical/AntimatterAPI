@@ -4,15 +4,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +20,16 @@ import javax.annotation.Nullable;
 public class StructureCache {
 
     private static final Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+
+    static {
+        AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState) -> {
+            if (oldState == newState) return;  // TODO: better checks?
+            StructureCache.DimensionEntry entry = LOOKUP.get(world.dimension.getType().getId());
+            if (entry == null) return;
+            BlockPos controllerPos = entry.get(pos);
+            if (controllerPos != null) invalidateController(world, controllerPos);
+        });
+    }
 
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
@@ -57,19 +64,6 @@ public class StructureCache {
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
         LOOKUP.remove(e.getWorld().getDimension().getType().getId());
-    }
-
-    /**
-     * COREMOD METHOD INSERTION: Runs every time when this is called:
-     * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
-    */
-    @SuppressWarnings("unused")
-    public static void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState) {
-        if (oldState == newState) return;  // TODO: better checks?
-        DimensionEntry entry = LOOKUP.get(world.dimension.getType().getId());
-        if (entry == null) return;
-        BlockPos controllerPos = entry.get(pos);
-        if (controllerPos != null) invalidateController(world, controllerPos);
     }
 
 //    @SubscribeEvent
