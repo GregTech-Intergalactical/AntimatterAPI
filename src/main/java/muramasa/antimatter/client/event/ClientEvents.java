@@ -46,7 +46,7 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
 public class ClientEvents {
 
-    private static Minecraft MC = Minecraft.getInstance();
+    private static final Minecraft MC = Minecraft.getInstance();
 
     @SubscribeEvent
     public static void onBlockHighlight(DrawHighlightEvent.HighlightBlock event) throws IllegalAccessException {
@@ -57,13 +57,13 @@ public class ClientEvents {
         if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool)) return;
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getType();
-        IBehaviour<MaterialTool> behaviour = type.getBehaviour("aoe_break");
+        IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
         if (!(behaviour instanceof BehaviourAOEBreak)) return;
         BehaviourAOEBreak aoeBreakBehaviour = (BehaviourAOEBreak) behaviour;
 
         BlockPos currentPos = event.getTarget().getPos();
         BlockState state = world.getBlockState(currentPos);
-        if (state.isAir(world, currentPos) || !Utils.isToolEffective(type, state)) return;
+        if (state.isAir(world, currentPos) || !Utils.isToolEffective(item, state)) return;
 
         Vec3d viewPosition = event.getInfo().getProjectedView();
         Entity entity = event.getInfo().getRenderViewEntity();

@@ -3,6 +3,7 @@ package muramasa.antimatter.tool.behaviour;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -13,9 +14,11 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 
-public class BehaviourLogStripping implements IItemUse<MaterialTool> {
+public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 
-    public static final Object2ObjectOpenHashMap<BlockState, BlockState> STRIPPING_MAP = new Object2ObjectOpenHashMap<>();
+    public static final BehaviourLogStripping INSTANCE = new BehaviourLogStripping();
+
+    private static final Object2ObjectOpenHashMap<BlockState, BlockState> STRIPPING_MAP = new Object2ObjectOpenHashMap<>();
 
     static {
         new ImmutableMap.Builder<Block, Block>().put(Blocks.OAK_WOOD, Blocks.STRIPPED_OAK_WOOD).put(Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG).put(Blocks.DARK_OAK_WOOD, Blocks.STRIPPED_DARK_OAK_WOOD)
@@ -31,7 +34,7 @@ public class BehaviourLogStripping implements IItemUse<MaterialTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(MaterialTool instance, ItemUseContext c) {
+    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         BlockState stripped = STRIPPING_MAP.get(state);
         if (stripped != null) {
@@ -40,7 +43,7 @@ public class BehaviourLogStripping implements IItemUse<MaterialTool> {
             }
             c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
             c.getWorld().setBlockState(c.getPos(), stripped);
-            if (c.getPlayer() != null) c.getPlayer().getHeldItem(c.getHand()).damageItem(instance.getType().getUseDurability(), c.getPlayer(), (onBroken) -> onBroken.sendBreakAnimation(c.getHand()));
+            c.getItem().damageItem(instance.getType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
