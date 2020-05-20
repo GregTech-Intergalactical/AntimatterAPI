@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
@@ -113,13 +114,17 @@ public class CoverHandler implements ICoverHandler {
     }
 
     /** NBT **/
-    // TODO: Finish
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
+        for (int i = 0; i < covers.length; i++) {
+            tag.putString("Cover-".concat(Integer.toString(i)), covers[i].getId());
+        }
         return tag;
     }
 
     public void deserialize(CompoundNBT compound) {
-
+        for (int i = 0; i < covers.length; i++) {
+            covers[i] = AntimatterAPI.getCover(compound.getString("Cover-".concat(Integer.toString(i))));
+        }
     }
 }

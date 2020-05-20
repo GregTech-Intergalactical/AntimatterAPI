@@ -26,23 +26,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class Cover implements INamedContainerProvider, IAntimatterObject {
+
     protected GuiData<Cover> gui;
     protected TileEntity tile;
-
     protected Tier tier;
-
-    public Tier getTier() {
-        return tier;
-    }
-
-    public void setTier(Tier tier) {
-        this.tier = tier;
-    }
 
     public Cover() {
     }
@@ -53,10 +46,18 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     public GuiData<Cover> getGui() {
         if (gui == null) {
-            this.gui = new GuiData<Cover>(this);
+            this.gui = new GuiData<>(this);
             gui.setEnablePlayerSlots(true);
         }
         return gui;
+    }
+
+    public Tier getTier() {
+        return tier;
+    }
+
+    public void setTier(Tier tier) {
+        this.tier = tier;
     }
 
     public abstract String getId();
@@ -72,7 +73,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     //Called on generating a new instance of this cover. For stateful covers this
     //creates a new cover instance.
     public final Cover onNewInstance(ItemStack stack) {
-        this.gui = new GuiData<Cover>(this);
+        this.gui = new GuiData<>(this);
         gui.setEnablePlayerSlots(true);
         return onPlace(stack);
     }
@@ -93,10 +94,11 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     public void onRemove(TileEntity tile, Direction side) {
         if (!tile.getWorld().isRemote) {
             BlockPos pos = tile.getPos();
-            ItemEntity itementity = new ItemEntity(tile.getWorld(), (double) pos.getX(), (double) pos.getY() + 5, (double) pos.getZ(), getDroppedStack());
+            ItemEntity itementity = new ItemEntity(tile.getWorld(), pos.getX(), pos.getY() + 5D, pos.getZ(), getDroppedStack());
             tile.getWorld().addEntity(itementity);
         }
-        }
+    }
+
     //Called on update of the world.
     public void onUpdate(TileEntity tile, Direction side) {
 
@@ -148,6 +150,8 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     public void onRegister() {
 
     }
+
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return null;
@@ -155,7 +159,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     @Nullable
     @Override
-    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+    public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_, @Nonnull PlayerEntity p_createMenu_3_) {
         //TODO: runtimexception?
         throw new RuntimeException("CreateMenu called on superclass of Cover with invalid gui");
     }

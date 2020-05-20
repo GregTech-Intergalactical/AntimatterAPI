@@ -40,9 +40,13 @@ public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
 
     @Override
     public void onRemove(@Nullable Direction side) {
-        if (side == null && tile.isRemoved()) {
-            Tesseract.ELECTRIC.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
-            removed = true;
+        if (side == null) {
+            if (tile.isRemoved()) {
+                Tesseract.ELECTRIC.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+                removed = true;
+            } else {
+                // What if tile is recreate cap ?
+            }
         }
     }
 
