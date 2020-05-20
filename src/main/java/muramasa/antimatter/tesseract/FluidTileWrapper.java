@@ -55,6 +55,8 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
             if (tile.isRemoved()) {
                 Tesseract.FLUID.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
                 removed = true;
+            } else {
+                // What if tile is recreate cap ?
             }
         } else {
             covers[side.getIndex()] = Data.COVER_NONE;

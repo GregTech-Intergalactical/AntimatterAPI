@@ -58,6 +58,8 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
             if (tile.isRemoved()) {
                 Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
                 removed = true;
+            } else {
+                // What if tile is recreate cap ?
             }
         } else {
             covers[side.getIndex()] = Data.COVER_NONE;
