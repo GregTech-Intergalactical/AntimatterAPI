@@ -20,7 +20,7 @@ function initializeCoreMod() {
             transformer: function(node) {
 
                 node.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                    "muramasa/antimatter/structure/StructureCache",
+                    "muramasa/antimatter/AntimatterAPI",
                     "onNotifyBlockUpdate",
                     "(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;)V"));
                 node.instructions.insert(new IntInsnNode(Opcodes.ALOAD, 3));

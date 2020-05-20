@@ -18,7 +18,7 @@ public class ScreenMachine extends AntimatterContainerScreen<ContainerMachine> {
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
-        gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier());
+        gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(),"machine");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {

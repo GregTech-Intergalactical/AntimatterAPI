@@ -6,7 +6,8 @@ import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.MenuHandlerCover;
+import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
@@ -103,7 +104,8 @@ public class Antimatter implements IAntimatterRegistrar {
 
     @SubscribeEvent
     public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> e) {
-        AntimatterAPI.all(MenuHandler.class, h -> e.getRegistry().register(h.getContainerType()));
+        AntimatterAPI.all(MenuHandlerMachine.class, h -> e.getRegistry().register(h.getContainerType()));
+        AntimatterAPI.all(MenuHandlerCover.class, h -> e.getRegistry().register(h.getContainerType()));
     }
 
     @SubscribeEvent

@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.container;
 
-import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerInventory;
 
@@ -8,7 +8,7 @@ public class ContainerBasicMachine extends ContainerMachine {
 
     private int lastProgress = -1;
 
-    public ContainerBasicMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandler handler, int windowId) {
+    public ContainerBasicMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine handler, int windowId) {
         super(tile, playerInv, handler, windowId);
     }
 

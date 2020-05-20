@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.container;
 
-import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.slot.SlotInput;
 import muramasa.antimatter.gui.slot.SlotOutput;
@@ -9,12 +9,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.IWorldPosCallable;
 
+import java.util.List;
+
 public abstract class ContainerMachine extends AntimatterContainer {
 
     protected TileEntityMachine tile;
     private int lastState = -1;
 
-    public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandler menuHandler, int windowId) {
+    public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
@@ -53,7 +55,8 @@ public abstract class ContainerMachine extends AntimatterContainer {
     protected void addSlots(TileEntityMachine tile) {
         tile.itemHandler.ifPresent(h -> {
             int inputIndex = 0, outputIndex = 0, cellIndex = 0;
-            for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
+            List<SlotData> lst = tile.getMachineType().getGui().getSlots(tile.getMachineTier());
+            for (SlotData slot : lst) {
                 switch (slot.type) {
                     case IT_IN:
                         addSlot(new SlotInput(h.getInputWrapper(), inputIndex++, slot.x, slot.y));
