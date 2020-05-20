@@ -187,12 +187,6 @@ public final class AntimatterAPI {
         return cells;
     }
 
-    public static Cover getCover(String name) { return get(Cover.class, name); }
-
-    public static Collection<Cover> getRegisteredCovers() {
-        return all(Cover.class);
-    }
-
     /** Attempts to do smart interaction with a compatible Tile/Block **/
     public static boolean interact(TileEntity tile, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 //        Direction targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
