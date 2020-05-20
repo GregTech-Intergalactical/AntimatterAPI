@@ -41,10 +41,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     protected Tier tier;
 
-    public Tier getTier() {
-        return tier;
-    }
-
     public Cover(Tier tier) {
         this.tier = tier;
     }
@@ -66,10 +62,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     public Tier getTier() {
         return tier;
-    }
-
-    public void setTier(Tier tier) {
-        this.tier = tier;
     }
 
     public abstract String getId();
@@ -161,7 +153,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     // TODO: refactor this if/when covers will be singletons
     public void onRegister() {
-        String id = tier == null ? getId() : (getId() + "_" + tier.getId());
+        String id = getId();
         if (AntimatterAPI.get(Cover.class, id) == null)
             AntimatterAPI.register(Cover.class, id, this);
     }
