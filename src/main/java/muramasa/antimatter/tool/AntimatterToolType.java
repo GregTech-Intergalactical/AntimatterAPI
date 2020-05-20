@@ -31,10 +31,10 @@ public class AntimatterToolType implements IAntimatterObject {
 
     private final String domain, id;
     private final ToolType TOOL_TYPE;
-    private final Set<ToolType> TOOL_TYPES = new ObjectOpenHashSet<>();
+    private final Set<String> TOOL_TYPES = new ObjectOpenHashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
-    private final Object2ObjectMap<String, IBehaviour<MaterialTool>> behaviours = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private List<ITextComponent> tooltip = new ObjectArrayList<>();
     private boolean powered, repairable, blockBreakability;
     private long baseMaxEnergy;
