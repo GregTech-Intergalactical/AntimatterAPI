@@ -31,11 +31,11 @@ public class AntimatterToolType implements IAntimatterObject {
 
     private final String domain, id;
     private final ToolType TOOL_TYPE;
-    private final Set<ToolType> TOOL_TYPES = new HashSet<>();
-    private final Set<Block> EFFECTIVE_BLOCKS = new HashSet<>();
+    private final Set<ToolType> TOOL_TYPES = new ObjectOpenHashSet<>();
+    private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
     private final Object2ObjectMap<String, IBehaviour<MaterialTool>> behaviours = new Object2ObjectOpenHashMap<>();
-    private List<ITextComponent> tooltip = new ArrayList<>();
+    private List<ITextComponent> tooltip = new ObjectArrayList<>();
     private boolean powered, repairable, blockBreakability;
     private long baseMaxEnergy;
     private int[] energyTiers;
@@ -272,7 +272,7 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     public void removeBehaviour(String... ids) {
-        Arrays.stream(ids).forEach(s -> behaviours.remove(s));
+        Arrays.stream(ids).forEach(behaviours::remove);
     }
 
     /** GETTERS **/
@@ -384,9 +384,5 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public Object2ObjectMap<String, IBehaviour<MaterialTool>> getBehaviours() {
         return behaviours;
-    }
-
-    public ItemStack get(Material m, Material aNull, int i) {
-        return ItemStack.EMPTY;
     }
 }
