@@ -99,8 +99,7 @@ public class AntimatterItemTier implements IItemTier {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         AntimatterItemTier tier = (AntimatterItemTier) obj;
-        if (primary == tier.getPrimary() && secondary == tier.getSecondary()) return true;
-        return false;
+        return primary == tier.getPrimary() && secondary == tier.getSecondary();
     }
 
     @Override

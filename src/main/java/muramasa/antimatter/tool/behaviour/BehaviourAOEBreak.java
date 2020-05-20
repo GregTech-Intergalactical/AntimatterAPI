@@ -1,6 +1,7 @@
 package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -10,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BehaviourAOEBreak implements IBlockDestroyed<MaterialTool> {
+public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool> {
 
     protected int column, row, depth;
 
@@ -39,7 +40,7 @@ public class BehaviourAOEBreak implements IBlockDestroyed<MaterialTool> {
     }
 
     @Override
-    public boolean onBlockDestroyed(MaterialTool instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
         //if(!super.onBlockDestroyed(stack, world, state, pos, entity)) return false;
         if (!(entity instanceof PlayerEntity)) return true;
         PlayerEntity player = (PlayerEntity) entity;

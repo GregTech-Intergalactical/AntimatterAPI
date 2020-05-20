@@ -2,6 +2,7 @@ package muramasa.antimatter.tool;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -27,11 +28,15 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-//TODO: power-sensitive version of MaterialSword
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     protected String domain;
@@ -74,6 +79,18 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         return type;
     }
 
+    @Nonnull
+    @Override
+    public Set<ToolType> getToolTypes(ItemStack stack) {
+        return type.getToolTypes().stream().map(ToolType::get).collect(Collectors.toSet());
+    }
+
+    /** Returns -1 if its not a powered tool **/
+    public int getEnergyTier() {
+        return energyTier;
+    }
+
+    @Nonnull
     @Override
     public Item asItem() { return this; }
 
@@ -86,7 +103,12 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
         if (group != Ref.TAB_TOOLS) return;
-        list.add(asItemStack(Data.NULL, Data.NULL));
+        if (type.isPowered()) {
+            ItemStack stack = asItemStack(Data.NULL, Data.NULL);
+            getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
+            list.add(stack);
+        }
+        else list.add(asItemStack(Data.NULL, Data.NULL));
     }
 
     @Override
@@ -117,7 +139,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Override
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {
-        return Utils.isToolEffective(type, state) && getTier(stack).getHarvestLevel() >= state.getHarvestLevel();
+        return Utils.isToolEffective(this, state) && getTier(stack).getHarvestLevel() >= state.getHarvestLevel();
     }
 
     @Override
@@ -138,7 +160,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         if (type.getToolTypes().contains("sword") && state.getBlock() == Blocks.COBWEB) return 15.0F;
-        return Utils.isToolEffective(type, state) ? getTier(stack).getEfficiency() : 1.0F;
+        return Utils.isToolEffective(this, state) ? getTier(stack).getEfficiency() : 1.0F;
     }
 
     @Override

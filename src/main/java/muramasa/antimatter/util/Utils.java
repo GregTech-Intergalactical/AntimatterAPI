@@ -44,6 +44,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
@@ -620,14 +621,23 @@ public class Utils {
     }
 
     /**
-     * AntimatterToolType sensitive variant of BlockState::isToolEffective
+     * IAntimatterTool-sensitive extension of IForgeBlockState::isToolEffective
+     * @param tool IAntimatterTool derivatives
+     * @param state BlockState that is being checked against
+     * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
+     */
+    public static boolean isToolEffective(IAntimatterTool tool, BlockState state) {
+        return tool.getType().getEffectiveBlocks().contains(state.getBlock()) || tool.getType().getEffectiveMaterials().contains(state.getMaterial()) || tool.getToolTypes().stream().anyMatch(state::isToolEffective);
+    }
+
+    /**
+     * AntimatterToolType-sensitive extension of IForgeBlockState::isToolEffective
      * @param type AntimatterToolType object
      * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
-    @Deprecated
-    public static boolean isToolEffective(AntimatterToolType type, BlockState state) {
-        return type.getToolTypes().stream().anyMatch(state::isToolEffective) || type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial());
+    public static boolean isToolEffective(AntimatterToolType type, Set<ToolType> toolTypes, BlockState state) {
+        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || toolTypes.stream().anyMatch(state::isToolEffective);
     }
 
     /**
@@ -659,7 +669,7 @@ public class Utils {
             BlockPos pos;
             Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
             while (amount > 0) {
-                if (blocks.isEmpty() || stack.getDamage() < 2) return false;
+                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamage() < tool.getType().getUseDurability())) return false;
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
                 if (!world.getBlockState(pos).getBlock().isIn(BlockTags.LOGS)) continue;
@@ -669,8 +679,8 @@ public class Utils {
                 }
                 for (int x = 0; x < 3; x++)  {
                     for (int z = 0; z < 3; z++) {
-                        BlockPos acaciaPos = pos.add(-1 + x, 1, -1 + z);
-                        if (!visited.contains(acaciaPos)) blocks.add(acaciaPos);
+                        BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
+                        if (!visited.contains(branchPos)) blocks.add(branchPos);
                     }
                 }
                 amount--;
@@ -693,7 +703,7 @@ public class Utils {
      */
     public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull IAntimatterTool tool, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
-        return totalBlocks.stream().filter(b -> isToolEffective(tool.getType(), world.getBlockState(b))).collect(ImmutableSet.toImmutableSet());
+        return totalBlocks.stream().filter(b -> isToolEffective(tool, world.getBlockState(b))).collect(ImmutableSet.toImmutableSet());
     }
 
     /**
@@ -718,8 +728,7 @@ public class Utils {
             for (int y = 0; y < depth; y++) {
                 for (int x = isX ? -column : -row; x <= (isX ? column : row); x++) {
                     for (int z = isX ? -row : -column; z <= (isX ? row : column); z++) {
-                        if (x == 0 && y == 0 && z == 0) continue;
-                        else blockPositions.add(result.getPos().add(x, isDown ? y : -y, z));
+                        if (!(x == 0 && y == 0 && z == 0)) blockPositions.add(result.getPos().add(x, isDown ? y : -y, z));
                     }
                 }
             }
@@ -730,8 +739,7 @@ public class Utils {
             for (int x = 0; x < depth; x++) {
                 for (int y = -column; y <= column; y++) {
                     for (int z = -row; z <= row; z++) {
-                        if (x == 0 && y == 0 && z == 0) continue;
-                        else blockPositions.add(result.getPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
+                        if (!(x == 0 && y == 0 && z == 0)) blockPositions.add(result.getPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
                     }
                 }
             }
