@@ -159,6 +159,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         return new ModelResourceLocation(Ref.ID + ":block/cover/basic");
     }
 
+    // TODO: refactor this if/when covers will be singletons
     public void onRegister() {
         String id = tier == null ? getId() : (getId() + "_" + tier.getId());
         if (AntimatterAPI.get(Cover.class, id) == null)
