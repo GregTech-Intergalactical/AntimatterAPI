@@ -38,7 +38,6 @@ public class Tier implements IAntimatterObject {
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture(domain, "block/machine/base/" + id);
-        this.compTexture = new Texture(domain, "item/component/base/" + id);
         AntimatterAPI.register(Tier.class, getId(), this);
     }
 
@@ -71,9 +70,6 @@ public class Tier implements IAntimatterObject {
         return baseTexture;
     }
 
-    public Texture getComponentTexture() {
-        return compTexture;
-    }
 
     public static Tier[] getSteam() {
         return new Tier[]{BRONZE, STEEL};
