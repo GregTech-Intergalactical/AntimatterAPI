@@ -23,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -56,6 +57,12 @@ public class ClientEvents {
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool)) return;
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
+        //Perform highlight of wrench
+        ActionResultType res = item.onGenericHighlight(player, event);
+        if (res.isSuccess()) {
+            event.setCanceled(true);
+            return;
+        }
         AntimatterToolType type = item.getType();
         IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
         if (!(behaviour instanceof BehaviourAOEBreak)) return;
@@ -64,7 +71,6 @@ public class ClientEvents {
         BlockPos currentPos = event.getTarget().getPos();
         BlockState state = world.getBlockState(currentPos);
         if (state.isAir(world, currentPos) || !Utils.isToolEffective(item, state)) return;
-
         Vec3d viewPosition = event.getInfo().getProjectedView();
         Entity entity = event.getInfo().getRenderViewEntity();
         IVertexBuilder builderLines = event.getBuffers().getBuffer(RenderType.LINES);

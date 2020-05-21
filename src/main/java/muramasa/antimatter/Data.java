@@ -18,23 +18,14 @@ import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.pipe.TileEntityCable;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialSword;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.tool.behaviour.*;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CampfireBlock;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.UseAction;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -143,8 +134,10 @@ public class Data {
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE);
+        WRENCH.addBehaviour(new BehaviourConnection(tile -> tile instanceof TileEntityMachine || tile instanceof TileEntityFluidPipe));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourConnection(tile -> tile instanceof TileEntityMachine || tile instanceof TileEntityFluidPipe));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
-
+        WIRE_CUTTER.addBehaviour(new BehaviourConnection(tile -> (tile instanceof TileEntityCable)));
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
             if (type.getToolTypes().contains("shovel")) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
