@@ -62,7 +62,7 @@ public class GuiData<T extends IAntimatterObject> {
     //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
     public ResourceLocation getTexture(Tier tier, String type) {
         if (hasSlots(tier) && type.equals("machine")) {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + '_' + tier.getId() + ".png");
         } else {
             return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
         }

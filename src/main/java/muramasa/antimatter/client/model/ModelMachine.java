@@ -68,7 +68,7 @@
 //                TextureData data = type.getTextureData(tier, MachineState.ACTIVE);
 //                IModel model = ModelUtils.tex(BASE, new String[]{"0", "1", "2", "3", "4", "5"}, data.getBase());
 //                model = ModelUtils.tex(model, new String[] {"6", "7", "8", "9", "10", "11"}, data.getOverlay());
-//                BakedMachine.ITEMS.put(type.getId() + "_" + tier.getId(), new BakedBase(model.bake(state, format, getter)));
+//                BakedMachine.ITEMS.put(type.getId() + '_' + tier.getId(), new BakedBase(model.bake(state, format, getter)));
 //            }
 //        }
 //

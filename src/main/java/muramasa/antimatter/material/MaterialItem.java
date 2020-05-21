@@ -36,7 +36,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
     protected MaterialType<?> type;
 
     public MaterialItem(String domain, MaterialType<?> type, Material material, Properties properties) {
-        super(domain, type.getId() + "_" + material.getId(), properties);
+        super(domain, type.getId() + '_' + material.getId(), properties);
         this.material = material;
         this.type = type;
     }

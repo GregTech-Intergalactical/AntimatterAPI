@@ -88,7 +88,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         handleMats.forEach(handle -> {
             AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
                 Tag<Item> plateTag = getForgeItemTag("plates/" + rubber.getId()), rodTag = getForgeItemTag("rods/" + handle.getId());
-                addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
+                addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + '_' + handle.getId() + '_' + rubber.getId(), "antimatter_plungers",
                         "has_material_" + rubber.getId(), this.hasItem(plateTag), PLUNGER.getToolStack(handle, rubber),
                         of('W', WIRE_CUTTER.getTag(), 'P', plateTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WPS", " RP", "R F");
             });
@@ -99,17 +99,17 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             final Tag<Item> ingotTag = getForgeItemTag("ingots/" + main.getId()), plateTag = getForgeItemTag("plates/" + main.getId()), mainRodTag = getForgeItemTag("rods/" + main.getId());
             final InventoryChangeTrigger.Instance ingotTrigger = this.hasItem(ingotTag), plateTrigger = this.hasItem(plateTag), rodTrigger = this.hasItem(mainRodTag);
 
-            addStackRecipe(consumer, Ref.ID, WRENCH.getId() + "_" + main.getId(), "antimatter_wrenches",
+            addStackRecipe(consumer, Ref.ID, WRENCH.getId() + '_' + main.getId(), "antimatter_wrenches",
                     "has_material_" + main.getId(), ingotTrigger, WRENCH.getToolStack(main, NULL), of('I', ingotTag, 'H', HAMMER.getTag()), "IHI", "III", " I "); // CHANGED
 
-            addStackRecipe(consumer, Ref.ID, MORTAR.getId() + "_" + main.getId(), "antimatter_mortars",
+            addStackRecipe(consumer, Ref.ID, MORTAR.getId() + '_' + main.getId(), "antimatter_mortars",
                     "has_material_" + main.getId(), ingotTrigger, MORTAR.getToolStack(main, NULL), of('I', ingotTag, 'S', Tags.Items.STONE), " I ", "SIS", "SSS");
 
             for (DyeColor colour : DyeColor.values()) {
                 int colourValue = colour.getMapColor().colorValue;
                 ItemStack crowbarStack = CROWBAR.getToolStack(main, NULL);
                 crowbarStack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, colourValue);
-                addStackRecipe(consumer, Ref.ID, CROWBAR.getId() + "_" + main.getId() + "_" + colour.getName(), "antimatter_crowbars",
+                addStackRecipe(consumer, Ref.ID, CROWBAR.getId() + '_' + main.getId() + '_' + colour.getName(), "antimatter_crowbars",
                         "has_material_" + main.getId(), rodTrigger, crowbarStack, of('H', HAMMER.getTag(), 'C', colour.getTag(), 'R', mainRodTag, 'F', FILE.getTag()), "HCR", "CRC", "RCF");
             }
 
@@ -117,38 +117,38 @@ public class AntimatterRecipeProvider extends RecipeProvider {
                 String handleId = handle.getId() == "wood" ? "wooden" : handle.getId();
                 final Tag<Item> rodTag = getForgeItemTag("rods/" + handleId);
 
-                addStackRecipe(consumer, Ref.ID, PICKAXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_pickaxes",
+                addStackRecipe(consumer, Ref.ID, PICKAXE.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_pickaxes",
                         "has_material_" + main.getId(), ingotTrigger, PICKAXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "III", " R ", " R ");
 
-                addStackRecipe(consumer, Ref.ID, AXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_axes",
+                addStackRecipe(consumer, Ref.ID, AXE.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_axes",
                         "has_material_" + main.getId(), ingotTrigger, AXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IR ", " R "); // CHANGED
 
-                addStackRecipe(consumer, Ref.ID, HOE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_hoes",
+                addStackRecipe(consumer, Ref.ID, HOE.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_hoes",
                         "has_material_" + main.getId(), ingotTrigger, HOE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", " R ", " R "); // CHANGED
 
-                addStackRecipe(consumer, Ref.ID, SHOVEL.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_shovels",
+                addStackRecipe(consumer, Ref.ID, SHOVEL.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_shovels",
                         "has_material_" + main.getId(), ingotTrigger, SHOVEL.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "I", "R", "R");
 
-                addStackRecipe(consumer, Ref.ID, SWORD.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_swords",
+                addStackRecipe(consumer, Ref.ID, SWORD.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_swords",
                         "has_material_" + main.getId(), ingotTrigger, SWORD.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "I", "I", "R");
 
-                addStackRecipe(consumer, Ref.ID, HAMMER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_hammers",
+                addStackRecipe(consumer, Ref.ID, HAMMER.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_hammers",
                         "has_material_" + main.getId(), ingotTrigger, HAMMER.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IIR", "II "); // CHANGED
 
-                addStackRecipe(consumer, Ref.ID, SAW.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_saws",
+                addStackRecipe(consumer, Ref.ID, SAW.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_saws",
                         "has_material_" + main.getId(), plateTrigger, SAW.getToolStack(main, handle), of('P', plateTag, 'R', rodTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PPR", "FH ");
 
-                addStackRecipe(consumer, Ref.ID, FILE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_files",
+                addStackRecipe(consumer, Ref.ID, FILE.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_files",
                         "has_material_" + main.getId(), plateTrigger, FILE.getToolStack(main, handle), of('P', plateTag, 'R', rodTag), "P", "P", "R");
 
-                addStackRecipe(consumer, Ref.ID, KNIFE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_knives",
+                addStackRecipe(consumer, Ref.ID, KNIFE.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_knives",
                         "has_material_" + main.getId(), plateTrigger, KNIFE.getToolStack(main, handle), of('P', plateTag, 'R', rodTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FPH", " R ");
 
-                addStackRecipe(consumer, Ref.ID, SCREWDRIVER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_screwdrivers",
+                addStackRecipe(consumer, Ref.ID, SCREWDRIVER.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_screwdrivers",
                         "has_material_" + main.getId(), rodTrigger, SCREWDRIVER.getToolStack(main, handle),
                         of('M', mainRodTag, 'R', rodTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
 
-                addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + '_' + main.getId() + '_' + handle.getId(), "antimatter_wire_cutters",
                         "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
                         b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                                 .put('S', SCREWDRIVER.getTag()).put('W', getForgeItemTag("screws/" + main.getId())), "PFP", "HPS", "RWR");

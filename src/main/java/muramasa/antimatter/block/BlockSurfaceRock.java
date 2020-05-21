@@ -45,7 +45,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
     protected StoneType stoneType;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
-        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Block.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.STONE).doesNotBlockMovement().notSolid());
+        super(domain, "surface_rock_" + material.getId() + '_' + stoneType.getId(), Block.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.STONE).doesNotBlockMovement().notSolid());
         this.material = material;
         this.stoneType = stoneType;
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));

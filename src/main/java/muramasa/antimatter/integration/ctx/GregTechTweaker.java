@@ -59,7 +59,7 @@
 //            int sets = length / 16;
 //            CraftTweakerAPI.logWarning("You have loaded a list of materials that have more than 16 materials, and is a multiple of 16, we have automatically split them into " + Integer.toString(sets) + " sets of blocks.");
 //            for (int i = 0; i <= sets; i++) {
-//                new BlockStorage(id + "_" + Integer.toString(i), GregTechAPI.get(MaterialType.class, type), Arrays.copyOfRange(materials, i * sets, (i + 1) * sets));
+//                new BlockStorage(id + '_' + Integer.toString(i), GregTechAPI.get(MaterialType.class, type), Arrays.copyOfRange(materials, i * sets, (i + 1) * sets));
 //            }
 //        }
 //        //Everything here *should* be more than 16 but can't be divided by 16

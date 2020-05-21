@@ -2,42 +2,29 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.item.types.Component;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IModelProvider;
-import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemTiered<T extends ItemFactory<?>> extends Item implements IAntimatterObject, ITextureProvider, IModelProvider, IColorHandler {
+public class ItemComponent<T extends Component<?>> extends ItemBasic<ItemComponent<T>> implements IColorHandler {
 
-    protected ItemFactory<?> type;
+    protected Component<?> type;
     protected Tier tier;
 
-    public ItemTiered(ItemFactory<?> type, Tier tier, Properties properties) {
-        super(properties);
+    public ItemComponent(Component<?> type, Tier tier, Properties properties) {
+        super(type.getDomain(), type.getId() + '_' + tier.getId(), properties);
         this.type = type;
         this.tier = tier;
     }
 
-    public ItemTiered(ItemFactory<?> type, Tier tier) {
+    public ItemComponent(Component<?> type, Tier tier) {
         this(type, tier, new Properties().group(Ref.TAB_ITEMS));
-    }
-
-    @Override
-    public String getDomain() {
-        return type.getDomain();
-    }
-
-    @Override
-    public String getId() {
-        return type.getId();
     }
 
     public T getType() {
@@ -46,10 +33,6 @@ public class ItemTiered<T extends ItemFactory<?>> extends Item implements IAntim
 
     public Tier getTier() {
         return tier;
-    }
-
-    public String getTooltip() {
-        return "";//type.getTooltip();
     }
 
     @Override
@@ -61,11 +44,11 @@ public class ItemTiered<T extends ItemFactory<?>> extends Item implements IAntim
     public Texture[] getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getType().getLayers();
-        textures.add(new Texture(getDomain(), "item/component/".concat(getId())));
-        if (layers == 1) textures.add(new Texture(getDomain(), "item/component/overlay/".concat(getId())));
+        textures.add(new Texture(getDomain(), "item/component/".concat(type.getId())));
+        if (layers == 1) textures.add(new Texture(getDomain(), "item/component/overlay/".concat(type.getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/component/overlay/", getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(getDomain(), String.join("", "item/component/overlay/", type.getId(), "_", Integer.toString(i))));
             }
         }
         return textures.toArray(new Texture[textures.size()]);

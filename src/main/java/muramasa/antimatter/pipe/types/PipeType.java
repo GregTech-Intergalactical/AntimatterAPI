@@ -31,14 +31,14 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
-        AntimatterAPI.register(PipeType.class, getId() + "_" + material.getId(), this);
+        AntimatterAPI.register(PipeType.class, getId() + '_' + material.getId(), this);
     }
 
     @Override
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
         if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return;
-        tileType = new TileEntityType<>(tileFunc.apply(this), getBlocks(), null).setRegistryName(domain, getId() + "_" + material.getId());
-        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getTileType());
+        tileType = new TileEntityType<>(tileFunc.apply(this), getBlocks(), null).setRegistryName(domain, getId() + '_' + material.getId());
+        AntimatterAPI.register(TileEntityType.class, getId() + '_' + material.getId(), getTileType());
     }
 
     public abstract Set<Block> getBlocks();
