@@ -2,7 +2,7 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.item.types.Component;
+import muramasa.antimatter.item.types.ItemType;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.texture.Texture;
@@ -12,18 +12,18 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemComponent<T extends Component<?>> extends ItemBasic<ItemComponent<T>> implements IColorHandler {
+public class ItemComponent<T extends ItemType<?>> extends ItemBasic<ItemComponent<T>> implements IColorHandler {
 
-    protected Component<?> type;
+    protected ItemType<?> type;
     protected Tier tier;
 
-    public ItemComponent(Component<?> type, Tier tier, Properties properties) {
+    private ItemComponent(ItemType<?> type, Tier tier, Properties properties) {
         super(type.getDomain(), type.getId() + '_' + tier.getId(), properties);
         this.type = type;
         this.tier = tier;
     }
 
-    public ItemComponent(Component<?> type, Tier tier) {
+    public ItemComponent(ItemType<?> type, Tier tier) {
         this(type, tier, new Properties().group(Ref.TAB_ITEMS));
     }
 
