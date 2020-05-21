@@ -33,7 +33,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         this.texture = texture;
         this.soundType = soundType;
         this.generateBlock = generateBlock;
-        AntimatterAPI.register(StoneType.class, "stone_" + id, this);
+        AntimatterAPI.register(StoneType.class, "stone_".concat(id), this);
     }
 
     @Override

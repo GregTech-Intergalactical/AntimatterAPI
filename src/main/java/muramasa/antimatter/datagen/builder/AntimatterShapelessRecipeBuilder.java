@@ -134,7 +134,7 @@ public class AntimatterShapelessRecipeBuilder {
     public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
         this.validate(id);
         this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new AntimatterShapelessRecipeBuilder.Result(id, this.result, this.group == null ? "" : this.group, this.ingredients, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + "/" + id.getPath())));
+        consumerIn.accept(new AntimatterShapelessRecipeBuilder.Result(id, this.result, this.group == null ? "" : this.group, this.ingredients, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + '/' + id.getPath())));
     }
 
     /**

@@ -49,6 +49,6 @@ public class BlockMaterialType extends BlockBasic implements IColorHandler {
 
     @Override
     public Texture[] getTextures() {
-        return !textureFolder.isEmpty() ? new Texture[]{new Texture(getRegistryName().getNamespace(), "block/" + textureFolder + "/" + material.getId())} : material.getSet().getTextures(type);
+        return !textureFolder.isEmpty() ? new Texture[]{new Texture(getRegistryName().getNamespace(), "block/" + textureFolder + '/' + material.getId())} : material.getSet().getTextures(type);
     }
 }

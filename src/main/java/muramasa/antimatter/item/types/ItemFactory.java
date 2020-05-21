@@ -3,7 +3,7 @@ package muramasa.antimatter.item.types;
 import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.item.ItemBasic;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,20 +16,20 @@ public class ItemFactory<T extends ItemFactory<T>> implements IAntimatterObject,
     /** Basic Members **/
     protected String domain, id;
     protected int layers = 1;
-    protected ImmutableSet<Tier> tiers = ImmutableSet.of();
-    protected BiFunction<ItemFactory<?>, Tier, ? extends ItemBasic<?>> itemFunc;
+    protected ImmutableSet<VoltageTier> tiers = ImmutableSet.of();
+    protected BiFunction<ItemFactory<?>, VoltageTier, ? extends ItemBasic<?>> itemFunc;
 
     public ItemFactory(String domain, String id) {
         this.domain = domain;
         this.id = id;
-        tiers(Tier.getAllElectric());
+        tiers(VoltageTier.getAllElectric());
         AntimatterAPI.register(ItemFactory.class, getId(), this);
     }
 
     @Override
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
         if (!this.domain.equals(domain) || registry != ForgeRegistries.ITEMS) return;
-        for (Tier t : tiers) itemFunc.apply(this, t);
+        for (VoltageTier t : tiers) itemFunc.apply(this, t);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ItemFactory<T extends ItemFactory<T>> implements IAntimatterObject,
         return layers;
     }
 
-    public T tiers(Tier... tiers) {
+    public T tiers(VoltageTier... tiers) {
         this.tiers = ImmutableSet.copyOf(tiers);
         return (T) this;
     }
@@ -61,7 +61,7 @@ public class ItemFactory<T extends ItemFactory<T>> implements IAntimatterObject,
         return (T) this;
     }
 
-    public T setItem(BiFunction<ItemFactory<?>, Tier, ? extends ItemBasic<?>> func) {
+    public T setItem(BiFunction<ItemFactory<?>, VoltageTier, ? extends ItemBasic<?>> func) {
         this.itemFunc = func;
         return (T) this;
     }

@@ -2,7 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 
@@ -21,8 +21,8 @@ public class MultiMachine extends Machine<MultiMachine> {
     }
 
     @Override
-    public Texture getBaseTexture(Tier tier) {
-        return tiers.size() > 1 ? new Texture(domain, "block/machine/base/" + getId() + '_' + tier.getId()) : new Texture(domain, "block/machine/base/" + getId());
+    public Texture getBaseTexture(VoltageTier tier) {
+        return tiers.size() > 1 ? new Texture(getDomain(), "block/machine/base/" + getId() + '_' + tier.getId()) : new Texture(getDomain(), "block/machine/base/" + getId());
     }
 
     @Override

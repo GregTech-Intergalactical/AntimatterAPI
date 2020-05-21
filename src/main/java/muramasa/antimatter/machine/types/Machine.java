@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine.types;
 
+import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -7,12 +8,11 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.IMenuHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.recipe.RecipeBuilder;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -33,6 +33,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected TileEntityType<?> tileType;
     protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
-    protected List<Tier> tiers = new ObjectArrayList<>();
+    protected Set<VoltageTier> tiers = ImmutableSet.of();
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -59,7 +60,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Texture baseTexture;
 
     /** Multi Members **/
-    protected Object2ObjectMap<Tier, Structure> structures = new Object2ObjectOpenHashMap<>();
+    protected Object2ObjectMap<VoltageTier, Structure> structures = new Object2ObjectOpenHashMap<>();
 
     //TODO get valid covers
 
@@ -78,20 +79,20 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     protected void addData(Object... data) {
-        List<Tier> tiers = new ObjectArrayList<>();
+        List<VoltageTier> tiers = new ObjectArrayList<>();
         List<MachineFlag> flags = new ObjectArrayList<>();
         for (Object o : data) {
             if (o instanceof RecipeMap) {
                 recipeMap = (RecipeMap<?>) o;
                 flags.add(RECIPE);
             }
-            if (o instanceof Tier) tiers.add((Tier) o);
+            if (o instanceof VoltageTier) tiers.add((VoltageTier) o);
             if (o instanceof MachineFlag) flags.add((MachineFlag) o);
             if (o instanceof Texture) baseTexture = (Texture) o;
             if (o instanceof ItemGroup) group = (ItemGroup) o;
             //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
         }
-        setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
+        setTiers(tiers.size() > 0 ? tiers.toArray(new VoltageTier[0]) : VoltageTier.getStandard());
         addFlags(flags.toArray(new MachineFlag[0]));
     }
 
@@ -114,13 +115,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return id;
     }
 
-    public ITextComponent getDisplayName(Tier tier) {
-        return new TranslationTextComponent("machine." + id + "." + tier.getId());
+    public ITextComponent getDisplayName(VoltageTier tier) {
+        return new TranslationTextComponent("machine." + id + '.' + tier.getId());
     }
 
     public List<Texture> getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
-        for (Tier tier : getTiers()) {
+        for (VoltageTier tier : getTiers()) {
             //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
             textures.add(getBaseTexture(tier));
         }
@@ -129,24 +130,24 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return textures;
     }
 
-    public Texture getBaseTexture(Tier tier) {
+    public Texture getBaseTexture(VoltageTier tier) {
         return baseTexture != null ? baseTexture : tier.getBaseTexture();
     }
 
     public Texture[] getOverlayTextures(MachineState state) {
-        String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
+        String stateDir = state == MachineState.IDLE ? "" : state.getId() + '/';
         return new Texture[] {
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+            new Texture(getDomain(), "block/machine/overlay/" + id + '/' + stateDir + "bottom"),
+            new Texture(getDomain(), "block/machine/overlay/" + id + '/' + stateDir + "top"),
+            new Texture(getDomain(), "block/machine/overlay/" + id + '/' + stateDir + "front"),
+            new Texture(getDomain(), "block/machine/overlay/" + id + '/' + stateDir + "back"),
+            new Texture(getDomain(), "block/machine/overlay/" + id + '/' + stateDir + "side"),
+            new Texture(getDomain(), "block/machine/overlay/" + id + '/' + stateDir + "side"),
         };
     }
 
     public ResourceLocation getOverlayModel(Direction side) {
-        return new ResourceLocation(domain, "block/machine/overlay/" + id + "/" + side.getName());
+        return new ResourceLocation(getDomain(), "block/machine/overlay/" + id + '/' + side.getName());
     }
 
     public RecipeMap<?> getRecipeMap() {
@@ -166,12 +167,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addFlags(flags);
     }
 
-    public void setTiers(Tier... tiers) {
-        this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
+    public void setTiers(VoltageTier... tiers) {
+        this.tiers = ImmutableSet.copyOf(tiers);
     }
 
     public void setGUI(MenuHandlerMachine<?> menuHandler) {
-        guiData = new GuiData(this, (IMenuHandler)menuHandler);
+        guiData = new GuiData<>(this, menuHandler);
         addFlags(MachineFlag.GUI);
     }
 
@@ -179,7 +180,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         getTiers().forEach(t -> setStructure(t, structure));
     }
 
-    public void setStructure(Tier tier, Structure structure) {
+    public void setStructure(VoltageTier tier, Structure structure) {
         structures.put(tier, structure);
     }
 
@@ -192,16 +193,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tileType;
     }
 
-    public Collection<Tier> getTiers() {
+    public Collection<VoltageTier> getTiers() {
         return tiers;
     }
 
-    //TODO needed?
-    public Tier getFirstTier() {
-        return tiers.get(0);
-    }
-
-    public GuiData getGui() {
+    public GuiData<?> getGui() {
         return guiData;
     }
 
@@ -209,7 +205,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return group;
     }
 
-    public Structure getStructure(Tier tier) {
+    public Structure getStructure(VoltageTier tier) {
         return structures.get(tier);
     }
 

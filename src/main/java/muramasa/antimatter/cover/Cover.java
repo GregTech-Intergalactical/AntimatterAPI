@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
@@ -19,7 +19,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -35,7 +34,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     protected GuiData<Cover> gui;
     protected TileEntity tile;
-    protected Tier tier;
+    protected VoltageTier tier;
 
     public Cover() {
     }
@@ -52,11 +51,11 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         return gui;
     }
 
-    public Tier getTier() {
+    public VoltageTier getTier() {
         return tier;
     }
 
-    public void setTier(Tier tier) {
+    public void setTier(VoltageTier tier) {
         this.tier = tier;
     }
 

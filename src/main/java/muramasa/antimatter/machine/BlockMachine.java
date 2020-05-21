@@ -7,7 +7,6 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.ModelConfig;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -15,6 +14,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -52,16 +52,14 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.COVER_NONE;
-import static muramasa.antimatter.Data.COVER_OUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
     protected Machine<?> type;
-    protected Tier tier;
+    protected VoltageTier tier;
 
-    public BlockMachine(Machine<?> type, Tier tier) {
+    public BlockMachine(Machine<?> type, VoltageTier tier) {
         super(type.getDomain(), type.getId() + '_' + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
         this.type = type;
         this.tier = tier;
@@ -71,7 +69,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return type;
     }
 
-    public Tier getTier() {
+    public VoltageTier getTier() {
         return tier;
     }
 

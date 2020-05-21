@@ -810,14 +810,14 @@ public class Utils {
 
     public static String getConventionalStoneType(StoneType type) {
         String string = type.getId();
-        int index = string.indexOf("_");
+        int index = string.indexOf('_');
         if (index != -1) return string.substring(index + 1) + '_' + string.substring(0, index);
         return string;
     }
 
     public static String getConventionalMaterialType(MaterialType<?> type) {
         String id = type.getId();
-        int index = id.indexOf("_");
+        int index = id.indexOf('_');
         if (index != -1) {
             id = id.substring(index + 1) + '_' + id.substring(0, index) + 's';
             if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
@@ -888,7 +888,7 @@ public class Utils {
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {
         String id = type.getId();
-        int index = id.indexOf("_");
+        int index = id.indexOf('_');
         if (index != -1) {
             String joined = id.substring(index + 1) + '_' + id.substring(0, index);
             return lowerUnderscoreToUpperSpaced(joined).split(" ");
@@ -898,7 +898,7 @@ public class Utils {
 
     public static String getLocalizedType(IAntimatterObject type) {
         String id = type.getId();
-        int index = id.indexOf("_");
+        int index = id.indexOf('_');
         if (index != -1) {
             if (type instanceof MaterialType) {
                 String joined = id.substring(index + 1) + '_' + id.substring(0, index);

@@ -12,7 +12,7 @@ public class AntimatterItemGroup extends ItemGroup {
 
 
     public AntimatterItemGroup(String domain, String id, Supplier<ItemStack> iconSupplier) {
-        super(domain + "." + id);
+        super(domain + '.' + id);
         this.domain = domain;
         this.id = id;
         this.iconSupplier = iconSupplier;

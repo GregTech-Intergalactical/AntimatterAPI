@@ -37,7 +37,7 @@ public enum PipeSize implements IAntimatterObject {
     }
 
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("pipe." + getId());
+        return new TranslationTextComponent("pipe.".concat(getId()));
     }
 
     public int getCableThickness() {

@@ -43,7 +43,7 @@
 //				IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
 //				horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.energy_stored*} " + " ");
 //				horizontalPane.progress(energyStorage.getPower(), energyStorage.getCapacity(), probeInfo.defaultProgressStyle()
-//					.suffix("/" + energyStorage.getCapacity() + " EU")
+//					.suffix('/' + energyStorage.getCapacity() + " EU")
 //					.borderColor(0x00000000)
 //					.backgroundColor(0x00000000)
 //					.filledColor(0xFFFFE000)

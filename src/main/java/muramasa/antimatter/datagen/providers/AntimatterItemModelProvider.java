@@ -69,7 +69,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         ItemModelBuilder builder = getBuilder(item);
         builder.parent(new UncheckedModelFile(new ResourceLocation(parent)));
         for (int i = 0; i < textures.length; i++) {
-            builder.texture("layer" + i, textures[i]);
+            builder.texture("layer".concat(Integer.toString(i)), textures[i]);
         }
         return builder;
     }

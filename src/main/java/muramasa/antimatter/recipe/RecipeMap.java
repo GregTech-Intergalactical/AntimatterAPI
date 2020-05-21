@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.impl.MachineFluidHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -44,7 +44,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public ITextComponent getExtraString(String extraId) {
-        return new TranslationTextComponent("jei.category." + this.id + "." + extraId);
+        return new TranslationTextComponent("jei.category." + this.id + '.' + extraId);
     }
 
     public B RB() {
@@ -84,7 +84,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return r.getPower() <= tier ? r : null;
     }
 
-    public Recipe find(Tier tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
+    public Recipe find(VoltageTier tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
         return find(tier.getVoltage(), items, fluids);
     }
 

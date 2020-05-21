@@ -3,7 +3,7 @@ package muramasa.antimatter.item;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.types.ItemFactory;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
@@ -15,15 +15,15 @@ import java.util.List;
 public class ItemComponent<T extends ItemFactory<?>> extends ItemBasic<ItemComponent<T>> implements IColorHandler {
 
     protected ItemFactory<?> type;
-    protected Tier tier;
+    protected VoltageTier tier;
 
-    private ItemComponent(ItemFactory<?> type, Tier tier, Properties properties) {
+    private ItemComponent(ItemFactory<?> type, VoltageTier tier, Properties properties) {
         super(type.getDomain(), type.getId() + '_' + tier.getId(), properties);
         this.type = type;
         this.tier = tier;
     }
 
-    public ItemComponent(ItemFactory<?> type, Tier tier) {
+    public ItemComponent(ItemFactory<?> type, VoltageTier tier) {
         this(type, tier, new Properties().group(Ref.TAB_ITEMS));
     }
 
@@ -31,7 +31,7 @@ public class ItemComponent<T extends ItemFactory<?>> extends ItemBasic<ItemCompo
         return (T) type;
     }
 
-    public Tier getTier() {
+    public VoltageTier getTier() {
         return tier;
     }
 

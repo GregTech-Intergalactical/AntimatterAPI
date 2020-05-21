@@ -41,7 +41,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static FluidAttributes.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
-        FluidAttributes.Builder builder = getDefaultAttributesBuilder().color(material.getRGB()).translationKey("block." + domain + type.getId() + "." + material.getId());
+        FluidAttributes.Builder builder = getDefaultAttributesBuilder().color(material.getRGB()).translationKey("block." + domain + type.getId() + '.' + material.getId());
         int mass = material.getElement() == null ? 0 : material.getElement().getMass();
         if (type == MaterialType.GAS) {
             return builder.viscosity(200).density(-100 - mass).gaseous().temperature(material.getGasTemperature());

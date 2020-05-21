@@ -18,7 +18,7 @@ public class ConfigCondition implements ICondition {
     }
 
     public ConfigCondition(Class clazz, String variableName) {
-        this(clazz.getCanonicalName() + "." + variableName);
+        this(clazz.getCanonicalName() + '.' + variableName);
     }
 
     @Override

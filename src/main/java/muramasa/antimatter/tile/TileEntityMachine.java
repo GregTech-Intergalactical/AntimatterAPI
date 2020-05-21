@@ -11,7 +11,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.tier.VoltageTier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.entity.player.PlayerEntity;
@@ -108,7 +108,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return type != null ? type : ((BlockMachine) getBlockState().getBlock()).getType();
     }
 
-    public Tier getMachineTier() {
+    public VoltageTier getMachineTier() {
         return ((BlockMachine) getBlockState().getBlock()).getTier();
     }
 
@@ -258,16 +258,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (getMachineType().has(ITEM)) {
             int inputs = getMachineType().getGui().getSlots(SlotType.IT_IN, getMachineTier()).size();
             int outputs = getMachineType().getGui().getSlots(SlotType.IT_OUT, getMachineTier()).size();
-            if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
-            if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
+            if (inputs > 0) slots += (" IT_IN: " + inputs + ',');
+            if (outputs > 0) slots += (" IT_OUT: " + outputs + ',');
         }
         if (getMachineType().has(FLUID)) {
             int inputs = getMachineType().getGui().getSlots(SlotType.FL_IN, getMachineTier()).size();
             int outputs = getMachineType().getGui().getSlots(SlotType.FL_OUT, getMachineTier()).size();
-            if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
-            if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
+            if (inputs > 0) slots += (" FL_IN: " + inputs + ',');
+            if (outputs > 0) slots += (" FL_OUT: " + outputs + ',');
         }
-        if (slots.length() > 0) info.add("Slots:" + slots);
+        if (slots.length() > 0) info.add("Slots:".concat(slots));
         energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergyStored() + " / " + h.getMaxEnergyStored()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
