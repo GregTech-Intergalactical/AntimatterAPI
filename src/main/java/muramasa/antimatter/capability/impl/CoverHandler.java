@@ -6,6 +6,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -26,14 +27,14 @@ public class CoverHandler implements ICoverHandler {
     protected List<String> validCovers;
 
     //TODO
-    protected Cover[] covers = new Cover[] {
-        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
+    protected CoverInstance[] covers = new CoverInstance[] {
+        Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
     };
 
     public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
         validCovers = new ObjectArrayList<>();
-        validCovers.add(Data.COVER_NONE.getId());
+        validCovers.add(Data.COVERNONE.getId());
         for (Cover cover : covers) {
             validCovers.add(cover.getId());
         }
@@ -54,8 +55,8 @@ public class CoverHandler implements ICoverHandler {
         if (((TileEntityMachine)getTile()).getFacing() == Direction.byIndex(i)) {
             return false;
         }
-        if (!isValid(side, covers[i], cover)) return false;
-        covers[i] = cover;
+        if (!isValid(side, covers[i].getCover(), cover)) return false;
+        covers[i] = new CoverInstance(cover, this.getTile());
         covers[i].onPlace(getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds
         tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -72,17 +73,17 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public Cover getCover(Direction side) {
+    public CoverInstance getCover(Direction side) {
         return covers[side.getIndex()];
     }
 
-    public Cover[] getAll() {
+    public CoverInstance[] getAll() {
         return covers;
     }
 
     @Override
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
-        Cover cover = getCover(side);
+        CoverInstance cover = getCover(side);
         if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
         if (type == null) return false;
         // switch (type) {
@@ -99,7 +100,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean isValid(@Nonnull Direction side, Cover existing, @Nonnull Cover replacement) {
-        return (existing.isEmpty() || replacement.isEqual(Data.COVER_NONE)) && validCovers.contains(replacement.getId());
+        return (existing.isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
     }
 
     @Override
@@ -112,7 +113,6 @@ public class CoverHandler implements ICoverHandler {
         if (tile == null) throw new NullPointerException("CoverHandler cannot have a null tile");
         return tile;
     }
-
     /** NBT **/
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();

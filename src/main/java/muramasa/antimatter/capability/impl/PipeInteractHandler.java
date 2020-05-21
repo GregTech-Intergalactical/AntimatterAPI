@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
@@ -47,7 +48,7 @@ public class PipeInteractHandler extends InteractHandler {
             if (isTarget) {
                 if (tile.canConnect(side.getIndex())) {
                     connection = Connectivity.set(connection, side.getIndex());
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side));
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
                 } else {
                     connection = Connectivity.clear(connection, side.getIndex());
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
@@ -60,13 +61,13 @@ public class PipeInteractHandler extends InteractHandler {
 
     private void onInit() {
         TileEntityPipe tile = (TileEntityPipe) getTile();
-        Cover[] covers = tile.getAllCovers();
+        CoverInstance[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRECTIONS) {
             if (Connectivity.has(connection, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()]);
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()].getCover());
                 } else {
                     connection = Connectivity.clear(connection, side.getIndex());
                 }
@@ -80,7 +81,7 @@ public class PipeInteractHandler extends InteractHandler {
         TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
         if (Utils.isForeignTile(neighbor)) {
             connection = Connectivity.set(connection, side.getIndex());
-            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side));
+            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side).getCover());
         } else {
             connection = Connectivity.clear(connection, side.getIndex());
         }

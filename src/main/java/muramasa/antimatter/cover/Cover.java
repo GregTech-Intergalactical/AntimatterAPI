@@ -36,9 +36,6 @@ import java.util.List;
 public abstract class Cover implements INamedContainerProvider, IAntimatterObject {
 
     protected GuiData<Cover> gui;
-    protected TileEntity tile;
-    private Item item;
-
     protected Tier tier;
 
     public Cover(Tier tier) {
@@ -66,10 +63,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     public abstract String getId();
 
-    public TileEntity getTileOn() {
-        return tile;
-    }
-
     public ItemStack getDroppedStack() {
         return item == null ? ItemStack.EMPTY : new ItemStack(getItem(), 1);
     }
@@ -79,36 +72,34 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     public final Cover onNewInstance(ItemStack stack) {
         this.gui = new GuiData<>(this);
         gui.setEnablePlayerSlots(true);
-        return onPlace(stack);
+        return this;//onPlace(stack);
     }
 
-    public Cover onPlace(ItemStack stack) {
+    /*public Cover onPlace(ItemStack stack) {
         return this;
-    }
+    }*/
 
-    /** Fires once per Side **/
-    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+    /**
+     * Fires once per Side
+     **/
+    public boolean onInteract(CoverInstance instance, TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         return true;
     }
 
-    public void onPlace(TileEntity tile, Direction side) {
-        this.tile = tile;
+    public void onPlace(CoverInstance instance, TileEntity tile, Direction side) {
+
     }
 
-    public void onRemove(TileEntity tile, Direction side) {
-        if (!tile.getWorld().isRemote) {
-            BlockPos pos = tile.getPos();
-            ItemEntity itementity = new ItemEntity(tile.getWorld(), pos.getX(), pos.getY() + 5D, pos.getZ(), getDroppedStack());
-            tile.getWorld().addEntity(itementity);
-        }
-        }
+    public void onRemove(CoverInstance instance, TileEntity tile, Direction side) {
+
+    }
 
     //Called on update of the world.
-    public void onUpdate(TileEntity tile, Direction side) {
+    public void onUpdate(CoverInstance instance, TileEntity tile, Direction side) {
 
     }
 
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverInstance instance, TileEntityMachine tile, IMachineEvent event) {
         //NOOP
     }
 
@@ -133,12 +124,12 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     }
 
     public boolean isEmpty() {
-        return getId().equals(Data.COVER_NONE.getId());
+        return getId().equals(Data.COVERNONE.getId());
     }
 
     public Texture[] getTextures() {
-        return new Texture[] {
-            new Texture(Ref.ID, "block/machine/cover/" + getId())
+        return new Texture[]{
+                new Texture(Ref.ID, "block/machine/cover/" + getId())
         };
     }
 

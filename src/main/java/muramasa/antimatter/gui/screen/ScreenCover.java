@@ -16,7 +16,7 @@ public class ScreenCover extends AntimatterContainerScreen<ContainerCover> imple
     public ScreenCover(ContainerCover container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        this.gui = container.getCover().getGui().getTexture(container.getCover().getTier(),"cover");
+        this.gui = container.getCover().getCover().getGui().getTexture(container.getCover().getCover().getTier(),"cover");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {

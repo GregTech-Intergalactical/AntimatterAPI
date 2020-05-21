@@ -23,7 +23,7 @@ public class CoverOutput extends Cover {
     }
 
     @Override
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverInstance instance, TileEntityMachine tile, IMachineEvent event) {
         //TODO: Refactor?
         if (event == MachineEvent.ITEMS_OUTPUTTED) {
             Direction outputDir = tile.getOutputFacing();

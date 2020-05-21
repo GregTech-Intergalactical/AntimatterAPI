@@ -7,6 +7,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.*;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -170,12 +171,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
-    public Cover[] getAllCovers() {
-        return coverHandler.map(CoverHandler::getAll).orElse(new Cover[0]);
+    public CoverInstance[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new CoverInstance[0]);
     }
 
-    public Cover getCover(Direction side) {
-        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
+    public CoverInstance getCover(Direction side) {
+        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_EMPTY);
     }
 
     public float getClientProgress() {

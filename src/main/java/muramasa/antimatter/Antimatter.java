@@ -141,7 +141,7 @@ public class Antimatter implements IAntimatterRegistrar {
                 Data.init();
                 break;
 //            case DATA_READY:
-//                AntimatterAPI.registerCover(Data.COVER_NONE);
+//                AntimatterAPI.registerCover(Data.COVER_EMPTY);
 //                AntimatterAPI.registerCover(Data.COVER_OUTPUT);
 //                break;
             case WORLDGEN_INIT:
