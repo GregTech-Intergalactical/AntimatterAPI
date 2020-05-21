@@ -167,7 +167,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public Cover[] getValidCovers() {
-        return AntimatterAPI.getRegisteredCovers().toArray(new Cover[0]);
+        return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
     public Cover[] getAllCovers() {

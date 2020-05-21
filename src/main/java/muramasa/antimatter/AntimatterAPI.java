@@ -187,35 +187,6 @@ public final class AntimatterAPI {
         return cells;
     }
 
-    /** Cover Registry Section **/
-    private final static Object2ObjectMap<String, Cover> COVER_REGISTRY = new Object2ObjectOpenHashMap<>();
-    private final static Object2ObjectMap<Item, Cover> CATALYST_TO_COVER = new Object2ObjectOpenHashMap<>();
-
-    /**
-     * Registers a cover behaviour. This must be done during preInit.
-     * @param cover The behaviour instance to be attached.
-     */
-    public static void registerCover(Cover cover) {
-        cover.onRegister();
-        COVER_REGISTRY.put(cover.getId(), cover);
-    }
-
-    public static Cover getCover(String name) {
-        return COVER_REGISTRY.get(name);
-    }
-
-    public static void registerCoverStack(ItemStack stack, Cover cover) {
-        CATALYST_TO_COVER.put(stack.getItem(), cover);
-    }
-
-    public static Cover getCoverFromCatalyst(ItemStack stack) {
-        return CATALYST_TO_COVER.get(stack.getItem());
-    }
-
-    public static Collection<Cover> getRegisteredCovers() {
-        return COVER_REGISTRY.values();
-    }
-
     /** Attempts to do smart interaction with a compatible Tile/Block **/
     public static boolean interact(TileEntity tile, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 //        Direction targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);

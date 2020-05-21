@@ -71,9 +71,9 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
         return stack.getItem() == this;
     }
 
-    public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return AntimatterAPI.getCoverFromCatalyst(stack) != null;
-    }
+//    public static boolean doesShowExtendedHighlight(ItemStack stack) {
+//        return AntimatterAPI.getCoverFromCatalyst(stack) != null; //TODO: reimplement?
+//    }
 
     public ItemStack get(int count) {
         //TODO replace consumeTag with flag system
