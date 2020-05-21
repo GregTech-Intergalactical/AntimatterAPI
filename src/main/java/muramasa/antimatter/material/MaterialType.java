@@ -99,7 +99,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         }).blockType();
     }
 
-    protected String id;;
+    protected String id;
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible;
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI

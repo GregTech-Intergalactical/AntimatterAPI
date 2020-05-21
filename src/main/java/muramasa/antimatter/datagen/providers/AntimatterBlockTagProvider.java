@@ -9,11 +9,11 @@ import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
-import static muramasa.antimatter.material.MaterialType.ORE;
-import static muramasa.antimatter.material.MaterialType.ORE_SMALL;
+import static muramasa.antimatter.material.MaterialType.*;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterBlockTagProvider extends BlockTagsProvider {
@@ -56,6 +56,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
             this.getBuilder(type.getTag()).add(block);
             String name = getConventionalMaterialType(type) + '/' + block.getMaterial().getId();
             this.getBuilder(getForgeBlockTag(name)).add(block);
+            // if (block.getType() == FRAME) add climbable tag in 1.16
         });
     }
 
