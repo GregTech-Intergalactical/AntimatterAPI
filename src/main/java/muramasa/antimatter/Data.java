@@ -27,6 +27,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static muramasa.antimatter.material.TextureSet.NONE;
@@ -85,7 +86,7 @@ public class Data {
         }
     };
 
-    public static MenuHandlerCover COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
+    public static MenuHandlerCover<?> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
 
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
@@ -93,12 +94,12 @@ public class Data {
         }
 
         @Override
-        public ScreenCover getScreen(ContainerCover container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenCover(container,inv,name);
+        public ScreenCover getScreen(@Nonnull ContainerCover container, @Nonnull PlayerInventory inv, @Nonnull ITextComponent name) {
+            return new ScreenCover(container, inv, name);
         }
     };
 
-    public static MenuHandlerMachine MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_multi") {
+    public static MenuHandlerMachine<?> MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_multi") {
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine) tile, playerInv, this, windowId) : null;
@@ -112,7 +113,7 @@ public class Data {
         }
     };
 
-    public static MenuHandlerMachine HATCH_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_hatch") {
+    public static MenuHandlerMachine<?> HATCH_MENU_HANDLER = new MenuHandlerMachine<>(Ref.ID, "container_hatch") {
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityHatch ? new ContainerHatchMachine((TileEntityHatch) tile, playerInv, this, windowId) : null;
