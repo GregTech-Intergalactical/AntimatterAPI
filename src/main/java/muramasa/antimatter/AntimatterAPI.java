@@ -269,7 +269,6 @@ public final class AntimatterAPI {
     }
 
     public interface IBlockUpdateEvent {
-
         void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState);
     }
 }

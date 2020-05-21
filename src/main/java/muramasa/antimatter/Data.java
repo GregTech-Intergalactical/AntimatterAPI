@@ -1,7 +1,6 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
@@ -19,22 +18,11 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialSword;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.tool.behaviour.*;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CampfireBlock;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.UseAction;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -77,7 +65,7 @@ public class Data {
     public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC);
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
 
-    public static Machine<?> MACHINE_INVALID = new Machine(Ref.ID, "invalid");
+    public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
     public static Cover COVER_NONE = new CoverNone();
     public static Cover COVER_OUTPUT = new CoverOutput();
