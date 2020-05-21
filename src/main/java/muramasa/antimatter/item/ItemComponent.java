@@ -51,7 +51,7 @@ public class ItemComponent<T extends ItemFactory<?>> extends ItemBasic<ItemCompo
                 textures.add(new Texture(getDomain(),"item/component/overlay/" + type.getId() + '_' + i));
             }
         }
-        textures.add(new Texture(getDomain(), "item/component/overlay/" + type.getId() + '_' + tier.getId()));
+        //textures.add(new Texture(getDomain(), "item/component/overlay/" + type.getId() + '_' + tier.getId()));
         return textures.toArray(new Texture[textures.size()]);
     }
 }
