@@ -378,7 +378,7 @@ public class Utils {
         return DECIMAL_FORMAT.format(number);
     }
 
-    public static int getVoltageTier(long voltage) {
+    public static int getTier(long voltage) {
         int tier = 0;
         for (int i = 0; i < Ref.V.length; i++) {
             if (voltage <= Ref.V[i]) {

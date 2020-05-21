@@ -14,7 +14,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -57,9 +57,9 @@ import static muramasa.antimatter.machine.MachineFlag.BASIC;
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
     protected Machine<?> type;
-    protected VoltageTier tier;
+    protected Tier tier;
 
-    public BlockMachine(Machine<?> type, VoltageTier tier) {
+    public BlockMachine(Machine<?> type, Tier tier) {
         super(type.getDomain(), type.getId() + '_' + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
         this.type = type;
         this.tier = tier;
@@ -69,7 +69,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return type;
     }
 
-    public VoltageTier getTier() {
+    public Tier getTier() {
         return tier;
     }
 

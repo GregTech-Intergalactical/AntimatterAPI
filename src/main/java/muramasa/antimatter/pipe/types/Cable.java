@@ -1,6 +1,6 @@
 package muramasa.antimatter.pipe.types;
 
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.PipeSize;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 public class Cable<T extends Cable<T>> extends PipeType<T> {
 
     protected int loss;
-    protected VoltageTier tier;
+    protected Tier tier;
     protected int[] amps;
 
-    public Cable(String domain, Material material, int loss, VoltageTier tier) {
+    public Cable(String domain, Material material, int loss, Tier tier) {
         super(domain, material);
         this.loss = loss;
         this.tier = tier;
@@ -50,7 +50,7 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
         return loss;
     }
 
-    public VoltageTier getTier() {
+    public Tier getTier() {
         return tier;
     }
 

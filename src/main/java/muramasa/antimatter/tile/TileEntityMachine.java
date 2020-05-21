@@ -11,7 +11,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.entity.player.PlayerEntity;
@@ -108,7 +108,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return type != null ? type : ((BlockMachine) getBlockState().getBlock()).getType();
     }
 
-    public VoltageTier getMachineTier() {
+    public Tier getMachineTier() {
         return ((BlockMachine) getBlockState().getBlock()).getTier();
     }
 

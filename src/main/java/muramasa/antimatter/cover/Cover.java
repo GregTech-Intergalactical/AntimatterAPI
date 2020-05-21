@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
@@ -34,7 +34,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     protected GuiData<Cover> gui;
     protected TileEntity tile;
-    protected VoltageTier tier;
+    protected Tier tier;
 
     public Cover() {
     }
@@ -51,11 +51,11 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         return gui;
     }
 
-    public VoltageTier getTier() {
+    public Tier getTier() {
         return tier;
     }
 
-    public void setTier(VoltageTier tier) {
+    public void setTier(Tier tier) {
         this.tier = tier;
     }
 

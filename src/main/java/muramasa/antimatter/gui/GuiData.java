@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
@@ -26,7 +26,7 @@ public class GuiData<T extends IAntimatterObject> {
     protected ResourceLocation loc;
     protected IMenuHandler menuHandler;
 
-    protected VoltageTier highestTier = VoltageTier.LV;
+    protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
 
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
@@ -60,7 +60,7 @@ public class GuiData<T extends IAntimatterObject> {
 
     //Type represents what type of texture this data is representing.
     //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
-    public ResourceLocation getTexture(VoltageTier tier, String type) {
+    public ResourceLocation getTexture(Tier tier, String type) {
         if (hasSlots(tier) && type.equals("machine")) {
             return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + '/' + loc.getPath() + '_' + tier.getId() + ".png");
         } else {
@@ -122,7 +122,7 @@ public class GuiData<T extends IAntimatterObject> {
     }
 
     /** Adds a slot for the given Tier **/
-    public GuiData add(VoltageTier tier, SlotType type, int x, int y) {
+    public GuiData add(Tier tier, SlotType type, int x, int y) {
         return add(tier.getId(), new SlotData(type, x, y));
     }
 
@@ -145,7 +145,7 @@ public class GuiData<T extends IAntimatterObject> {
     }
 
     /** Copies ALL slots from type into toTier slots **/
-    public GuiData add(VoltageTier toTier, Machine type) {
+    public GuiData add(Tier toTier, Machine type) {
         List<SlotData> list = type.getGui().getAnySlots();
         for (SlotData slot : list) {
             add(toTier.getId(), slot);
@@ -154,7 +154,7 @@ public class GuiData<T extends IAntimatterObject> {
     }
 
     /** Copies fromTier slots from type into toTier slots **/
-    public GuiData add(VoltageTier toTier, Machine type, VoltageTier fromTier) {
+    public GuiData add(Tier toTier, Machine type, Tier fromTier) {
         List<SlotData> list = type.getGui().getSlots(fromTier);
         for (SlotData slot : list) {
             add(toTier.getId(), slot);
@@ -164,7 +164,7 @@ public class GuiData<T extends IAntimatterObject> {
 
     public GuiData add(String key, SlotData slot) {
         //TODO figure out better way to do this
-        VoltageTier tier = AntimatterAPI.get(VoltageTier.class, key);
+        Tier tier = AntimatterAPI.get(Tier.class, key);
         if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
 
         COUNT_LOOKUP.addTo(slot.type, 1);
@@ -183,7 +183,7 @@ public class GuiData<T extends IAntimatterObject> {
         return slots != null && slots.size() > 0;
     }
 
-    public boolean hasSlots(VoltageTier tier) {
+    public boolean hasSlots(Tier tier) {
         List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         return slots != null && slots.size() > 0;
     }
@@ -192,17 +192,17 @@ public class GuiData<T extends IAntimatterObject> {
         return SLOT_LOOKUP.get(ANY);
     }
 
-    public VoltageTier getHighestTier() {
+    public Tier getHighestTier() {
         return highestTier;
     }
 
-    public List<SlotData> getSlots(VoltageTier tier) {
+    public List<SlotData> getSlots(Tier tier) {
         List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         return slots != null ? slots : new ObjectArrayList<>();
     }
 
-    public List<SlotData> getSlots(SlotType type, VoltageTier tier) {
+    public List<SlotData> getSlots(SlotType type, Tier tier) {
         List<SlotData> types = new ObjectArrayList<>();
         List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
@@ -217,11 +217,11 @@ public class GuiData<T extends IAntimatterObject> {
         return getCount(type) > 0;
     }
 
-    public boolean hasAnyItem(VoltageTier tier) {
+    public boolean hasAnyItem(Tier tier) {
         return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0;
     }
 
-    public boolean hasAnyFluid(VoltageTier tier) {
+    public boolean hasAnyFluid(Tier tier) {
         return getSlots(SlotType.FL_IN, tier).size() > 0 || getSlots(SlotType.FL_OUT, tier).size() > 0;
     }
 

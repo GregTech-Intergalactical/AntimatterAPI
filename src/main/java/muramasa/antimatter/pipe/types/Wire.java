@@ -1,6 +1,6 @@
 package muramasa.antimatter.pipe.types;
 
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockCable;
 import net.minecraft.block.Block;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class Wire<T extends Wire<T>> extends Cable<T> {
 
-    public Wire(String domain, Material material, int loss, VoltageTier tier) {
+    public Wire(String domain, Material material, int loss, Tier tier) {
         super(domain, material, loss, tier);
     }
 

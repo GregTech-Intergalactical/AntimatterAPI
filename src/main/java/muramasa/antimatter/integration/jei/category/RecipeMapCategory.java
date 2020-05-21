@@ -14,7 +14,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.util.Utils;
@@ -40,7 +40,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     protected IDrawable background, icon;
     protected IDrawableAnimated progressBar;
     protected GuiData gui;
-    protected VoltageTier guiTier;
+    protected Tier guiTier;
 
 //    public RecipeMapCategory(MachineStack stack, Tier guiTier) {
 //        this(stack.getType().getRecipeMap(), stack.getType().getGui(), guiTier);
@@ -52,7 +52,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 //        icon = guiHelper.createDrawableIngredient(stack.asItemStack());
 //    }
 
-    public RecipeMapCategory(RecipeMap<?> map, GuiData gui, VoltageTier guiTier) {
+    public RecipeMapCategory(RecipeMap<?> map, GuiData gui, Tier guiTier) {
         id = map.getId();
         title = map.getDisplayName().getFormattedText();
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();

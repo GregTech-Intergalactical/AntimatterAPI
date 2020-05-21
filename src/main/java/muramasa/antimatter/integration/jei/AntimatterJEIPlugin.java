@@ -12,7 +12,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
-import muramasa.antimatter.tier.VoltageTier;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.RecipeMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -76,7 +76,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         }
  */
         REGISTRY.forEach((id, tuple) -> {
-            if (!registeredMachineCats.contains(tuple.getA().getId())) registry.addRecipeCategories(new RecipeMapCategory(tuple.getA(), tuple.getB(), VoltageTier.LV));
+            if (!registeredMachineCats.contains(tuple.getA().getId())) registry.addRecipeCategories(new RecipeMapCategory(tuple.getA(), tuple.getB(), Tier.LV));
         });
     }
     @Override
