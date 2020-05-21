@@ -24,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
@@ -177,10 +178,8 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         return onGenericItemUse(ctx);
     }
 
-    @Override
-    public void inventoryTick(ItemStack p_77663_1_, World p_77663_2_, Entity p_77663_3_, int p_77663_4_, boolean p_77663_5_) {
-        onGenericTick(p_77663_1_, p_77663_2_, p_77663_3_, p_77663_4_, p_77663_5_);
-        super.inventoryTick(p_77663_1_, p_77663_2_, p_77663_3_, p_77663_4_, p_77663_5_);
+    public void handleRenderHighlight(PlayerEntity entity, DrawHighlightEvent ev) {
+        onGenericHighlight(entity,ev);
     }
 
     @Override

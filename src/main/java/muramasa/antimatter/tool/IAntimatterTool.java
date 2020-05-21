@@ -5,7 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
-import muramasa.antimatter.behaviour.IItemTicker;
+import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -38,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
@@ -177,13 +178,15 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return result;
     }
 
-    default ActionResultType onGenericTick(ItemStack stack, World world, Entity entity, int val, boolean bo) {
+    default ActionResultType onGenericHighlight(PlayerEntity player, DrawHighlightEvent ev) {
         ActionResultType result = ActionResultType.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IItemTicker)) continue;
-            ((IItemTicker) b).onInventoryTick(stack,world,entity,val,bo);
-            return ActionResultType.PASS;
+            if (!(b instanceof IItemHighlight)) continue;
+            else {
+                ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player,ev);
+                if (result != ActionResultType.SUCCESS) result = type;
+            }
         }
         return result;
     }
