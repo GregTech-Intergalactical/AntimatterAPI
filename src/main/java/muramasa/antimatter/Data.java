@@ -143,6 +143,7 @@ public class Data {
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE);
+        WRENCH.addBehaviour(new BehaviourConnection());
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
 
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {

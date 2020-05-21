@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.behaviour.IItemTicker;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -21,6 +22,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.UnbreakingEnchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -171,6 +173,17 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             if (!(b instanceof IItemUse)) continue;
             ActionResultType r = ((IItemUse) b).onItemUse(this, ctx);
             if (result != ActionResultType.SUCCESS) result = r;
+        }
+        return result;
+    }
+
+    default ActionResultType onGenericTick(ItemStack stack, World world, Entity entity, int val, boolean bo) {
+        ActionResultType result = ActionResultType.PASS;
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IItemTicker)) continue;
+            ((IItemTicker) b).onInventoryTick(stack,world,entity,val,bo);
+            return ActionResultType.PASS;
         }
         return result;
     }

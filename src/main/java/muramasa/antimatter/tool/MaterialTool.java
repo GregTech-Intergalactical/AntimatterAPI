@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -174,6 +175,12 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
         return onGenericItemUse(ctx);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack p_77663_1_, World p_77663_2_, Entity p_77663_3_, int p_77663_4_, boolean p_77663_5_) {
+        onGenericTick(p_77663_1_, p_77663_2_, p_77663_3_, p_77663_4_, p_77663_5_);
+        super.inventoryTick(p_77663_1_, p_77663_2_, p_77663_3_, p_77663_4_, p_77663_5_);
     }
 
     @Override
