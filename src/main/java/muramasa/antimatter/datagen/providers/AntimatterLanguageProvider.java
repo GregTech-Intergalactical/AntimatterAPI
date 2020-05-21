@@ -44,38 +44,38 @@ public class AntimatterLanguageProvider extends LanguageProvider {
         AntimatterAPI.all(StoneType.class, s -> IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
             if (m.has(ORE)) {
                 add(ORE.get().get(m, s).asBlock(),
-                        String.join("", getLocalizedType(m), " ", getLocalizedType(s), " ", getLocalizedType(ORE)));
+                        getLocalizedType(m) + ' ' + getLocalizedType(s) + ' ' + getLocalizedType(ORE));
             }
             if (m.has(ORE_SMALL)) {
                 add(ORE_SMALL.get().get(m, s).asBlock(),
-                        String.join("", getLocalizedType(m), " ", getLocalizedType(s), " ", getLocalizedType(ORE_SMALL)));
+                        getLocalizedType(m) + ' ' + getLocalizedType(s) + ' ' + getLocalizedType(ORE_SMALL));
             }
         }));
         AntimatterAPI.all(BlockStone.class).stream().filter(s -> s.getRegistryName().getNamespace().equals(domain)).forEach(s -> add(s, getLocalizedType(s)));
         AntimatterAPI.all(BlockStorage.class).stream()
                 .filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
                     MaterialType<?> type = block.getType();
-                    add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(type)));
+                    add(block, getLocalizedType(block.getMaterial()) + ' ' + getLocalizedType(type));
         });
         AntimatterAPI.all(MaterialItem.class).stream()
                 .filter(i -> i.getMaterial().getDomain().equals(domain)).forEach(item -> {
                     MaterialType<?> type = item.getType();
                     if (type == ROCK) {
-                        add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
+                        add(item, getLocalizedType(item.getMaterial()) + " Bearing Rock");
                     }
                     else if (type == CRUSHED) {
-                        add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                        add(item, "Crushed " + getLocalizedType(item.getMaterial()) + " Ore");
                     }
                     else if (type == CRUSHED_PURIFIED) {
-                        add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                        add(item, "Purified Crushed " + getLocalizedType(item.getMaterial()) +  " Ore");
                     }
                     else if (type == CRUSHED_CENTRIFUGED) {
-                        add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                        add(item, "Centrifuged Crushed " + getLocalizedType(item.getMaterial()) + " Ore");
                     }
                     else {
                         String[] split = getLocalizedMaterialType(type);
-                        if (split.length > 1) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
-                        else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[0]));
+                        if (split.length > 1) add(item, split[0] + ' ' + getLocalizedType(item.getMaterial()) + ' ' + split[1]);
+                        else add(item, getLocalizedType(item.getMaterial()) + ' ' + split[0]);
                     }
                 });
         add(Ref.TAB_BLOCKS.getTranslationKey(), "Antimatter Blocks");

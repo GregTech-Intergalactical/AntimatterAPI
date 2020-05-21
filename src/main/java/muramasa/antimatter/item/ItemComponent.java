@@ -2,7 +2,7 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.item.types.ItemType;
+import muramasa.antimatter.item.types.ItemFactory;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.texture.Texture;
@@ -12,18 +12,18 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemComponent<T extends ItemType<?>> extends ItemBasic<ItemComponent<T>> implements IColorHandler {
+public class ItemComponent<T extends ItemFactory<?>> extends ItemBasic<ItemComponent<T>> implements IColorHandler {
 
-    protected ItemType<?> type;
+    protected ItemFactory<?> type;
     protected Tier tier;
 
-    private ItemComponent(ItemType<?> type, Tier tier, Properties properties) {
+    private ItemComponent(ItemFactory<?> type, Tier tier, Properties properties) {
         super(type.getDomain(), type.getId() + '_' + tier.getId(), properties);
         this.type = type;
         this.tier = tier;
     }
 
-    public ItemComponent(ItemType<?> type, Tier tier) {
+    public ItemComponent(ItemFactory<?> type, Tier tier) {
         this(type, tier, new Properties().group(Ref.TAB_ITEMS));
     }
 
@@ -48,9 +48,10 @@ public class ItemComponent<T extends ItemType<?>> extends ItemBasic<ItemComponen
         if (layers == 1) textures.add(new Texture(getDomain(), "item/component/overlay/".concat(type.getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/component/overlay/", type.getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(getDomain(),"item/component/overlay/" + type.getId() + '_' + i));
             }
         }
+        textures.add(new Texture(getDomain(), "item/component/overlay/" + type.getId() + '_' + tier.getId()));
         return textures.toArray(new Texture[textures.size()]);
     }
 }

@@ -45,11 +45,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
             AntimatterAPI.all(StoneType.class, s -> {
                 if (m.has(ORE)) {
-                    String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
+                    String name = getConventionalStoneType(s) + "_ores/" + m.getId();
                     this.copy(getForgeBlockTag(name), getForgeItemTag(name));
                 }
                 if (m.has(ORE_SMALL)) {
-                    String name = String.join("", getConventionalStoneType(s), "_", "small_ores/", m.getId());
+                    String name = getConventionalStoneType(s) + "_small_ores/" + m.getId();
                     this.copy(getForgeBlockTag(name), getForgeItemTag(name));
                 }
             });
@@ -61,14 +61,14 @@ public class AntimatterItemTagProvider extends ItemTagsProvider {
         AntimatterAPI.all(BlockStorage.class)
                 .stream().filter(block -> block.getMaterial().getDomain().equals(domain)).forEach(storage -> {
                     MaterialType<?> type = storage.getType();
-                    String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
+                    String name = getConventionalMaterialType(type) + '/' + storage.getMaterial().getId();
                     this.copy(getForgeBlockTag(name), getForgeItemTag(name));
                 });
         AntimatterAPI.all(MaterialItem.class).stream()
                 .filter(i -> i.getMaterial().getDomain().equals(domain)).forEach(item -> {
                     MaterialType<?> type = item.getType();
                     this.getBuilder(type.getTag()).add(item);
-                    String name = String.join("", getConventionalMaterialType(type), "/", item.getMaterial().getId());
+                    String name = getConventionalMaterialType(type) + '/' + item.getMaterial().getId();
                     this.getBuilder(getForgeItemTag(name)).add(item).replace(replace);
                     if (type == INGOT || type == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
                 });

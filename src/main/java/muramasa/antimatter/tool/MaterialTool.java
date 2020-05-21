@@ -67,7 +67,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public String getId() {
-        return type.isPowered() ? String.join("_", type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : type.getId();
+        return type.isPowered() ? type.getId() + '_' + Ref.VN[energyTier].toLowerCase(Locale.ENGLISH) : type.getId();
     }
 
     @Nonnull

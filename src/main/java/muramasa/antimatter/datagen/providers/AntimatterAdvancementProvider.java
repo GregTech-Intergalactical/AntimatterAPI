@@ -56,7 +56,7 @@ public class AntimatterAdvancementProvider implements IDataProvider {
     }
 
     private Path getPath(Path path, Advancement advancement) {
-        return path.resolve(String.join("", "data/", providerDomain, "/advancements/", advancement.getId().getPath(), ".json"));
+        return path.resolve("data/" + providerDomain + "/advancements/" + advancement.getId().getPath() + ".json");
     }
 
     @Nonnull

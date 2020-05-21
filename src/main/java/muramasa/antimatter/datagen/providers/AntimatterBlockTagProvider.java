@@ -37,13 +37,13 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
         AntimatterAPI.all(StoneType.class, s -> IMaterialTag.all(ORE, ORE_SMALL).stream().filter(m -> m.getDomain().equals(domain)).forEach(m -> {
             if (m.has(ORE)) {
                 Block block = ORE.get().get(m, s).asBlock();
-                String name = String.join("", getConventionalStoneType(s), "_", "ores/", m.getId());
+                String name = getConventionalStoneType(s) + "_ores/" + m.getId();
                 this.getBuilder(getForgeBlockTag(name)).add(block).replace(replace);
                 this.getBuilder(Tags.Blocks.ORES).add(block);
             }
             if (m.has(ORE_SMALL)) {
                 Block block = ORE_SMALL.get().get(m, s).asBlock();
-                String name = String.join("", getConventionalStoneType(s), "_", "small_ores/", m.getId());
+                String name = getConventionalStoneType(s) + "_small_ores/" + m.getId();
                 this.getBuilder(getForgeBlockTag(name)).add(block).replace(replace);
             }
         }));
@@ -54,7 +54,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider {
         AntimatterAPI.all(BlockStorage.class).stream().filter(storage -> storage.getMaterial().getDomain().equals(domain)).forEach(block -> {
             MaterialType<?> type = block.getType();
             this.getBuilder(type.getTag()).add(block);
-            String name = String.join("", getConventionalMaterialType(type), "/", block.getMaterial().getId());
+            String name = getConventionalMaterialType(type) + '/' + block.getMaterial().getId();
             this.getBuilder(getForgeBlockTag(name)).add(block);
         });
     }

@@ -811,7 +811,7 @@ public class Utils {
     public static String getConventionalStoneType(StoneType type) {
         String string = type.getId();
         int index = string.indexOf("_");
-        if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));
+        if (index != -1) return string.substring(index + 1) + '_' + string.substring(0, index);
         return string;
     }
 
@@ -819,7 +819,7 @@ public class Utils {
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1) {
-            id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
+            id = id.substring(index + 1) + '_' + id.substring(0, index) + 's';
             if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
             return id;
         }
@@ -890,7 +890,7 @@ public class Utils {
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1) {
-            String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
+            String joined = id.substring(index + 1) + '_' + id.substring(0, index);
             return lowerUnderscoreToUpperSpaced(joined).split(" ");
         }
         return new String[]{ lowerUnderscoreToUpperSpaced(id).replace('_', ' ') };
@@ -901,7 +901,7 @@ public class Utils {
         int index = id.indexOf("_");
         if (index != -1) {
             if (type instanceof MaterialType) {
-                String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
+                String joined = id.substring(index + 1) + '_' + id.substring(0, index);
                 return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(joined), '_', ' ');
             }
             return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id),'_', ' ');

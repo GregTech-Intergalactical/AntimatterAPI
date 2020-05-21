@@ -16,15 +16,15 @@ public class Tier implements IAntimatterObject {
 
     /** Electricity Tiers **/
     public static Tier ULV = new Tier("gti", "ulv", 8, new Color(139,69,19), TextFormatting.WHITE); //Tier 1
-    public static Tier LV = new Tier("gti", "lv", 32, new Color(115, 115, 115), TextFormatting.WHITE); //Tier 2
-    public static Tier MV = new Tier("gti", "mv", 128, new Color(223, 88, 33), TextFormatting.WHITE); //Tier 3
-    public static Tier HV = new Tier("gti", "hv", 512, new Color(187, 127, 40), TextFormatting.YELLOW); //Tier 4
-    public static Tier EV = new Tier("gti", "ev", 2048, new Color(57, 57, 57), TextFormatting.AQUA); //Tier 5
-    public static Tier IV = new Tier("gti", "iv", 8192, new Color(161, 161, 161), TextFormatting.LIGHT_PURPLE); //Tier 6
-    public static Tier LUV = new Tier("gti", "luv", 32768, new Color(199, 123, 123), TextFormatting.LIGHT_PURPLE); //Tier 7
-    public static Tier ZPM = new Tier("gti", "zpm", 131072, new Color(137, 185, 137), TextFormatting.LIGHT_PURPLE); //Tier 8
-    public static Tier UV = new Tier("gti", "uv", 524288, new Color(126, 195, 195), TextFormatting.LIGHT_PURPLE); //Tier 9
-    public static Tier MAX = new Tier("gti", "max", 2147483647, new Color(199, 129, 198), TextFormatting.LIGHT_PURPLE); //Tier 15
+    public static Tier LV = new Tier("gti", "lv", 32, new Color(175, 175, 175), TextFormatting.WHITE); //Tier 2
+    public static Tier MV = new Tier("gti", "mv", 128, new Color(255, 102, 37), TextFormatting.WHITE); //Tier 3
+    public static Tier HV = new Tier("gti", "hv", 512, new Color(255, 175, 44), TextFormatting.YELLOW); //Tier 4
+    public static Tier EV = new Tier("gti", "ev", 2048, new Color(140, 164, 255), TextFormatting.AQUA); //Tier 5
+    public static Tier IV = new Tier("gti", "iv", 8192, new Color(255, 255, 255), TextFormatting.LIGHT_PURPLE); //Tier 6
+    public static Tier LUV = new Tier("gti", "luv", 32768, new Color(255, 158, 158), TextFormatting.LIGHT_PURPLE); //Tier 7
+    public static Tier ZPM = new Tier("gti", "zpm", 131072, new Color(190, 255, 190), TextFormatting.LIGHT_PURPLE); //Tier 8
+    public static Tier UV = new Tier("gti", "uv", 524288, new Color(166, 255, 255), TextFormatting.LIGHT_PURPLE); //Tier 9
+    public static Tier MAX = new Tier("gti", "max", 2147483647, new Color(255, 167, 254), TextFormatting.LIGHT_PURPLE); //Tier 15
 
     /** Special Tiers **/
     //TODO make these Tier 0 and 1?

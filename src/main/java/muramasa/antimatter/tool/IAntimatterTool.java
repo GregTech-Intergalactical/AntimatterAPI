@@ -224,7 +224,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getType().getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(getDomain(), "item/tool/overlay/" + getType().getId() + "_" + i));
             }
         }
         return textures.toArray(new Texture[textures.size()]);

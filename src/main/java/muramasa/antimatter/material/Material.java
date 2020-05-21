@@ -272,7 +272,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     
     public void setChemicalFormula() {
     	if (element != null) chemicalFormula = element.getElement();
-    	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
+    	else if (!processInto.isEmpty()) chemicalFormula = processInto.stream().map(MaterialStack::toString).collect(Collectors.joining());
     }
 
     public void setLiquid(Fluid fluid) {
