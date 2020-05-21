@@ -1,23 +1,17 @@
 package muramasa.antimatter.gui;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityMerger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import org.lwjgl.system.NonnullDefault;
-
-import javax.annotation.Nullable;
 
 public abstract class MenuHandlerMachine<T extends Container> implements IAntimatterObject, IMenuHandler<T, ScreenMachine> {
 

@@ -10,7 +10,6 @@ import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
