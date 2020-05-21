@@ -135,9 +135,9 @@ public class Data {
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE);
         WRENCH.addBehaviour(new BehaviourConnection(tile -> tile instanceof TileEntityMachine || tile instanceof TileEntityFluidPipe));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourConnection(tile -> tile instanceof TileEntityMachine || tile instanceof TileEntityFluidPipe));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
         WIRE_CUTTER.addBehaviour(new BehaviourConnection(tile -> (tile instanceof TileEntityCable)));
-
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
             if (type.getToolTypes().contains("shovel")) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
