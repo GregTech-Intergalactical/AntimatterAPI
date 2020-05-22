@@ -6,10 +6,12 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -18,6 +20,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class CoverHandler implements ICoverHandler {
@@ -81,8 +84,19 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         CoverInstance cover = getCover(side);
+        //Allow placing cover on block interaction, if cover is empty.
+        if (cover.isEmpty() && player.getHeldItem(hand).getItem() instanceof ItemCover) {
+            ItemStack stack = player.getHeldItem(hand);
+            ItemCover item = (ItemCover) stack.getItem();
+            if (this.onPlace(side, item.getCover())) {
+                if (!player.isCreative()) {
+                    stack.shrink(1);
+                }
+                return true;
+            }
+        }
         if (cover.isEmpty()) return false;
         return cover.onInteract(player, hand, side, type);
     }

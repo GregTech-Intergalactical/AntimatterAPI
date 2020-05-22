@@ -6,9 +6,19 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.machine.Tier;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
@@ -31,6 +41,10 @@ public class ItemCover extends ItemBasic<ItemCover> {
         cover.setItem(this);
     }
 
+    public Cover getCover() {
+        return cover;
+    }
+
     public ItemCover(String domain, String id, Tier tier) {
         super(domain,id + "_" + tier.getId());
         cover = Objects.requireNonNull(AntimatterAPI.get(Cover.class, this.getId()));
@@ -41,10 +55,14 @@ public class ItemCover extends ItemBasic<ItemCover> {
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         TileEntity tile = context.getWorld().getTileEntity(context.getPos());
+        return itemPlaceCover(context.getPlayer(),context.getHand(),tile, context.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+    }
+
+    private boolean itemPlaceCover(PlayerEntity player, Hand hand, TileEntity tile,Direction dir) {
         if (tile != null) {
-            LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, context.getFace());
-            return coverable.map(i -> i.onPlace(context.getFace(),this.cover)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+            LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE,dir);
+            return coverable.map(i -> i.onInteract(player,hand,dir,null)).orElse(false);
         }
-        return ActionResultType.PASS;
+        return false;
     }
 }

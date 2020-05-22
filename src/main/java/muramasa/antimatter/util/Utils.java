@@ -45,10 +45,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -259,16 +262,48 @@ public class Utils {
         }
     }
 
-    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
+    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile) {
+        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        from.ifPresent(first -> {
+            to.ifPresent(second -> {
+                transferItems(first,second);
+            });
+        });
+    }
+
+    public static void transferFluidsOnCap(TileEntity fromTile, TileEntity toTile, int maxFluid) {
+        LazyOptional<IFluidHandler> from = fromTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        LazyOptional<IFluidHandler> to = toTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        from.ifPresent(first -> {
+            to.ifPresent(second -> {
+                transferFluids(first,second);
+            });
+        });
+    }
+
+    public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         for (int i = 0; i < to.getTanks(); i++) {
             if (i >= from.getTanks()) break;
-            FluidStack toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            FluidStack toInsert;
+            if (cap > 0) {
+                FluidStack fluid = from.getFluidInTank(i).copy();
+                int toDrain = Math.min(cap, fluid.getAmount());
+                fluid.setAmount(toDrain);
+                toInsert = from.drain(fluid, SIMULATE);
+            } else {
+                toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            }
             int filled = to.fill(toInsert, SIMULATE);
             if (filled > 0) {
                 toInsert.setAmount(filled);
                 to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
+    }
+
+    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
+        transferFluids(from,to,-1);
     }
 
     public static Optional<World> getServerWorld(int dimension) {

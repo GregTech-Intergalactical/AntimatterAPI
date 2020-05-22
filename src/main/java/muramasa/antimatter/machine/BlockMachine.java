@@ -115,7 +115,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 //TODO: priority order, or call this inside InteractHandler?
                 LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, hit.getFace());
                 boolean consume = coverable.map(i -> {
-                    //TODO: how does lazy optional work- does this work properly?
                      return i.onInteract(player,hand,hit.getFace(),Utils.getToolType(player));
                 }).orElse(false);
                 if (consume) {
