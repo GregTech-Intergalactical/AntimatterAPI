@@ -17,7 +17,7 @@ public class ContainerCover extends AntimatterContainer {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
         this.c =  on;
         this.m = menuHandler;
-        if (c.backing().getGui().enablePlayerSlots()) addPlayerSlots();
+        if (c.getCover().getGui().enablePlayerSlots()) addPlayerSlots();
         this.onEntity = Objects.requireNonNull(c.getTile());
     }
 

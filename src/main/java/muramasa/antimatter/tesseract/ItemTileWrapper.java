@@ -148,7 +148,7 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()].backing() instanceof CoverOutput;
+        return covers[direction.getIndex()].getCover() instanceof CoverOutput;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     private boolean isItemAvailable(Object item, int dir) {
-        if (covers[dir].backing() instanceof CoverTintable) return false;
+        if (covers[dir].getCover() instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(item);
     }
@@ -184,6 +184,6 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     private Set<?> getFiltered(int index) {
-        return covers[index].backing() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].backing()).getFilter() : ObjectSets.EMPTY_SET;
+        return covers[index].getCover() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].getCover()).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

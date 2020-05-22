@@ -69,7 +69,7 @@ public class CoverInstance implements INamedContainerProvider {
 
     //Gets the backing cover.
     //Because getCover().getCover() looks stupid
-    public Cover backing() {
+    public Cover getCover() {
         return cover;
     }
 

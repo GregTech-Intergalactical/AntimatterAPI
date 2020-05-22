@@ -177,7 +177,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public CoverInstance getCover(Direction side) {
-        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_EMPTY);
+        return coverHandler.map(h -> h.getCoverInstance(side)).orElse(Data.COVER_EMPTY);
     }
 
     public float getClientProgress() {
@@ -275,7 +275,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (Direction side : Ref.DIRECTIONS) {
-                builder.append(h.getCover(side).getId()).append(" ");
+                builder.append(h.getCoverInstance(side).getId()).append(" ");
             }
             info.add(builder.toString());
         });

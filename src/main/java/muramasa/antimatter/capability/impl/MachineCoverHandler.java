@@ -50,7 +50,7 @@ public class MachineCoverHandler extends RotatableCoverHandler implements IMachi
 
     @Override
     public boolean  onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
-        if (type == Data.CROWBAR && getCover(side).isEqual(Data.COVER_OUTPUT)) return false;
+        if (type == Data.CROWBAR && getCoverInstance(side).isEqual(Data.COVER_OUTPUT)) return false;
         return super.onInteract(player, hand, side, type);
     }
 

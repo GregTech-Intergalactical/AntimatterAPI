@@ -217,7 +217,7 @@ public final class AntimatterAPI {
 
     /** Attempts to remove a cover at a given side **/
     public static boolean removeCover(PlayerEntity player, ICoverHandler coverHandler, Direction side) {
-        ItemStack toDrop = coverHandler.getCover(side).backing().getDroppedStack();
+        ItemStack toDrop = coverHandler.getCoverInstance(side).getCover().getDroppedStack();
         if (coverHandler.onPlace(side, Data.COVERNONE)) {
             if (!player.isCreative()) player.dropItem(toDrop, false);
             return true;

@@ -105,7 +105,7 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     public CoverInstance getCover(Direction side) {
-        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_EMPTY);
+        return coverHandler.map(h -> h.getCoverInstance(side)).orElse(Data.COVER_EMPTY);
     }
 
     @Nonnull
@@ -117,7 +117,7 @@ public class TileEntityPipe extends TileEntityTickable {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        return cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> !h.getCover(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
+        return cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> !h.getCoverInstance(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
     }
 
     @Override

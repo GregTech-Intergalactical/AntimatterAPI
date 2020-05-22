@@ -19,7 +19,7 @@ public interface ICoverHandler {
 
     void onRemove();
 
-    CoverInstance getCover(Direction side);
+    CoverInstance getCoverInstance(Direction side);
     //If the player uses a cover in hand -> place cover if none exists.. Otherwises interact with the cover, if present.
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type);
 

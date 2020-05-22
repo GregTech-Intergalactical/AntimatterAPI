@@ -8,7 +8,6 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.item.ItemCover;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -58,9 +57,9 @@ public class CoverHandler implements ICoverHandler {
             return false;
         }
 
-        if (!isValid(side, covers[i].backing(), cover)) return false;
+        if (!isValid(side, covers[i].getCover(), cover)) return false;
         covers[side.getIndex()].onRemove(side);
-        Utils.dropItemInWorldAtTile(tile, covers[side.getIndex()].backing().getItem(), side);
+        Utils.dropItemInWorldAtTile(tile, covers[side.getIndex()].getCover().getItem(), side);
         //Emplace cover, calls onPlace!
         covers[i] = new CoverInstance(cover, this.getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds
@@ -78,7 +77,7 @@ public class CoverHandler implements ICoverHandler {
     }
 
     @Override
-    public CoverInstance getCover(Direction side) {
+    public CoverInstance getCoverInstance(Direction side) {
         return covers[side.getIndex()];
     }
 
@@ -88,7 +87,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
-        CoverInstance cover = getCover(side);
+        CoverInstance cover = getCoverInstance(side);
         //TODO: Dont do this here but create a behaviour.
         if (type == Data.CROWBAR && !cover.isEmpty() && !cover.equals(Data.COVER_OUTPUT)) {
             onPlace(side, Data.COVERNONE);
@@ -112,7 +111,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean hasCover(@Nonnull Direction side, @Nonnull Cover cover) {
-        return getCover(side).isEqual(cover);
+        return getCoverInstance(side).isEqual(cover);
     }
 
     @Override

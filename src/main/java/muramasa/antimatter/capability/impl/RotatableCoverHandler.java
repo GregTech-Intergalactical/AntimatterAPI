@@ -29,7 +29,7 @@ public class RotatableCoverHandler extends CoverHandler {
     }
 
     @Override
-    public CoverInstance getCover(Direction side) {
-        return super.getCover(Utils.rotateFacing(side, getTileFacing()));
+    public CoverInstance getCoverInstance(Direction side) {
+        return super.getCoverInstance(Utils.rotateFacing(side, getTileFacing()));
     }
 }
