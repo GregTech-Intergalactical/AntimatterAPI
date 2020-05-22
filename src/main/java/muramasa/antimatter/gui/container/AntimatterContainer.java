@@ -1,9 +1,11 @@
 package muramasa.antimatter.gui.container;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
 public abstract class AntimatterContainer extends Container {
 
@@ -27,33 +29,32 @@ public abstract class AntimatterContainer extends Container {
             this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
         }
     }
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
+        ItemStack itemstack = ItemStack.EMPTY;
+        Slot slot = this.inventorySlots.get(index);
 
-//    @Override
-//    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
-//        ItemStack itemstack = ItemStack.EMPTY;
-//        Slot slot = this.inventorySlots.get(index);
-//
-//        if (slot != null && slot.getHasStack()) {
-//            ItemStack itemstack1 = slot.getStack();
-//            itemstack = itemstack1.copy();
-//
-//            if (index < invSize) {
-//                if (!this.mergeItemStack(itemstack1, invSize, this.inventorySlots.size(), true)) {
-//                    return ItemStack.EMPTY;
-//                }
-//            }
-//            else if (!this.mergeItemStack(itemstack1, 0, invSize, false)) {
-//                return ItemStack.EMPTY;
-//            }
-//
-//            if (itemstack1.getCount() == 0) {
-//                slot.putStack(ItemStack.EMPTY);
-//            }
-//            else {
-//                slot.onSlotChanged();
-//            }
-//        }
-//
-//        return itemstack;
-//    }
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+
+            if (index < invSize) {
+                if (!this.mergeItemStack(itemstack1, invSize, this.inventorySlots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+            else if (!this.mergeItemStack(itemstack1, 0, invSize, false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (itemstack1.getCount() == 0) {
+                slot.putStack(ItemStack.EMPTY);
+            }
+            else {
+                slot.onSlotChanged();
+            }
+        }
+
+        return itemstack;
+    }
 }

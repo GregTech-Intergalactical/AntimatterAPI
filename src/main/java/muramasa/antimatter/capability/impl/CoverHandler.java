@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
@@ -53,11 +54,13 @@ public class CoverHandler implements ICoverHandler {
     @Override
     public boolean onPlace(Direction side, @Nonnull Cover cover) {
         int i = side.getIndex();
-        //TODO: Do not allow putting on front face.
-        if (((TileEntityMachine)getTile()).getFacing() == Direction.byIndex(i)) {
+        if (getTileFacing() == Direction.byIndex(i)) {
             return false;
         }
+
         if (!isValid(side, covers[i].backing(), cover)) return false;
+        covers[side.getIndex()].onRemove(side);
+        Utils.dropItemInWorldAtTile(tile, covers[side.getIndex()].backing().getItem(), side);
         //Emplace cover, calls onPlace!
         covers[i] = new CoverInstance(cover, this.getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds
@@ -86,10 +89,16 @@ public class CoverHandler implements ICoverHandler {
     @Override
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         CoverInstance cover = getCover(side);
+        //TODO: Dont do this here but create a behaviour.
+        if (type == Data.CROWBAR && !cover.isEmpty() && !cover.equals(Data.COVER_OUTPUT)) {
+            onPlace(side, Data.COVERNONE);
+            return true;
+        }
         //Allow placing cover on block interaction, if cover is empty.
         if (cover.isEmpty() && player.getHeldItem(hand).getItem() instanceof ItemCover) {
             ItemStack stack = player.getHeldItem(hand);
             ItemCover item = (ItemCover) stack.getItem();
+            //TODO: do this here?
             if (this.onPlace(side, item.getCover())) {
                 if (!player.isCreative()) {
                     stack.shrink(1);
@@ -108,7 +117,7 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean isValid(@Nonnull Direction side, Cover existing, @Nonnull Cover replacement) {
-        //The extending coverhandler should check validity on its own.
+        //TODO: The extending coverhandler should check validity on its own, this feels weird
         return true;//(existing.isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
     }
 
@@ -123,17 +132,38 @@ public class CoverHandler implements ICoverHandler {
         return tile;
     }
     /** NBT **/
+
+    //TODO: this is WIP
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
+        //dont store EMPTY covers unnecessarily
+        byte sides = 0;
         for (int i = 0; i < covers.length; i++) {
-            tag.putString("Cover-".concat(Integer.toString(i)), covers[i].getId());
+            if (!covers[i].isEmpty()) {
+                sides |= (1 << i);
+            }
+        }
+        tag.putByte("side",sides);
+        for (int i = 0; i < covers.length; i++) {
+            if (!covers[i].isEmpty()) {
+                CompoundNBT nbt = covers[i].serialize();
+                nbt.putString("id", covers[i].getId());
+                tag.put("cover-".concat(Integer.toString(i)), nbt);
+            }
         }
         return tag;
     }
 
     public void deserialize(CompoundNBT compound) {
+        byte sides = compound.getByte("side");
         for (int i = 0; i < covers.length; i++) {
-        //    covers[i] = AntimatterAPI.get(Cover.class, compound.getString("Cover-".concat(Integer.toString(i))));
+            if ((sides & (1 << i) )> 0) {
+                CompoundNBT nbt = compound.getCompound("cover-".concat(Integer.toString(i)));
+                covers[i] = new CoverInstance(AntimatterAPI.get(Cover.class, nbt.getString("id")), tile);
+                covers[i].deserialize(nbt);
+            } else {
+                covers[i] = Data.COVER_EMPTY;
+            }
         }
     }
 }

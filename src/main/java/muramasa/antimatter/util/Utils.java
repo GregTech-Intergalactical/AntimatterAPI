@@ -19,6 +19,7 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -929,6 +930,17 @@ public class Utils {
      */
     public static Tag<Fluid> getForgeFluidTag(String name) {
         return new FluidTags.Wrapper(new ResourceLocation("forge", name));
+    }
+
+    /**
+     * Spawns a new item entity
+     * @param tile the active tile
+     * @param item the item to spawn, 1.
+     * @param dir the direction to spawn it in.
+     */
+    public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
+        ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX()+dir.getXOffset(),tile.getPos().getY()+dir.getYOffset(),tile.getPos().getZ()+dir.getZOffset(), new ItemStack(item,1));
+        tile.getWorld().addEntity(entity);
     }
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {

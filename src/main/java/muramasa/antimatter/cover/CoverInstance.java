@@ -37,6 +37,7 @@ public class CoverInstance implements INamedContainerProvider {
     //This allows you to instantiate a non-stateful cover, like COVER_EMPTY.
     //Using state with this is a runtime error.
     public CoverInstance(Cover cover) {
+        this.nbt = new CompoundNBT();
         this.cover = cover;
     }
 
@@ -98,11 +99,6 @@ public class CoverInstance implements INamedContainerProvider {
 
     public void onRemove(Direction side) {
         cover.onRemove(this, side);
-        /*if (!tile.getWorld().isRemote) {
-            BlockPos pos = tile.getPos();
-            ItemEntity itementity = new ItemEntity(tile.getWorld(), pos.getX(), pos.getY() + 5D, pos.getZ(), cover.getDroppedStack());
-            tile.getWorld().addEntity(itementity);
-        }*/
     }
 
 
@@ -119,5 +115,15 @@ public class CoverInstance implements INamedContainerProvider {
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
         return cover.gui.getMenuHandler().getMenu(this, inv, windowId);
+    }
+
+    public CompoundNBT serialize() {
+        //Do final things before saving. Optional as state should usually be set during runtime
+        cover.serialize(nbt);
+        return nbt;
+    }
+
+    public void deserialize(CompoundNBT nbt) {
+        cover.deserialize(nbt);
     }
 }

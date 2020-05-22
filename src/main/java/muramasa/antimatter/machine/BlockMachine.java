@@ -113,6 +113,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 //TODO: priority order, or call this inside InteractHandler?
+                //I am not sure if the cover interaction is supposed to be done from IInteractHandler.
+
+                //TODO: This runs twice when right clicking a machine!
                 LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, hit.getFace());
                 boolean consume = coverable.map(i -> {
                      return i.onInteract(player,hand,hit.getFace(),Utils.getToolType(player));
