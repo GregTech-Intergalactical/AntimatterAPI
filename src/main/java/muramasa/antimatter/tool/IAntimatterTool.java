@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
+import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -21,6 +22,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.UnbreakingEnchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -36,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
@@ -171,6 +174,19 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             if (!(b instanceof IItemUse)) continue;
             ActionResultType r = ((IItemUse) b).onItemUse(this, ctx);
             if (result != ActionResultType.SUCCESS) result = r;
+        }
+        return result;
+    }
+
+    default ActionResultType onGenericHighlight(PlayerEntity player, DrawHighlightEvent ev) {
+        ActionResultType result = ActionResultType.PASS;
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IItemHighlight)) continue;
+            else {
+                ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player,ev);
+                if (result != ActionResultType.SUCCESS) result = type;
+            }
         }
         return result;
     }

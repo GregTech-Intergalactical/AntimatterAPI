@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -23,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
@@ -173,6 +175,10 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx) {
         return onGenericItemUse(ctx);
+    }
+
+    public void handleRenderHighlight(PlayerEntity entity, DrawHighlightEvent ev) {
+        onGenericHighlight(entity,ev);
     }
 
     @Override

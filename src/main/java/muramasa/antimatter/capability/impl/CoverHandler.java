@@ -124,7 +124,7 @@ public class CoverHandler implements ICoverHandler {
 
     public void deserialize(CompoundNBT compound) {
         for (int i = 0; i < covers.length; i++) {
-            covers[i] = AntimatterAPI.getCover(compound.getString("Cover-".concat(Integer.toString(i))));
+            covers[i] = AntimatterAPI.get(Cover.class, compound.getString("Cover-".concat(Integer.toString(i))));
         }
     }
 }

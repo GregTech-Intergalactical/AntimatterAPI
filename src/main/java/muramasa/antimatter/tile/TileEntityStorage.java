@@ -2,6 +2,7 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.capability.impl.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
+import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;

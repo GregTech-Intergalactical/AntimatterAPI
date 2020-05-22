@@ -1,5 +1,6 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
@@ -18,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -34,7 +36,13 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     protected GuiData<Cover> gui;
     protected TileEntity tile;
+    private Item item;
+
     protected Tier tier;
+
+    public Cover(Tier tier) {
+        this.tier = tier;
+    }
 
     public Cover() {
     }
@@ -55,10 +63,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         return tier;
     }
 
-    public void setTier(Tier tier) {
-        this.tier = tier;
-    }
-
     public abstract String getId();
 
     public TileEntity getTileOn() {
@@ -66,7 +70,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     }
 
     public ItemStack getDroppedStack() {
-        return ItemStack.EMPTY;
+        return item == null ? ItemStack.EMPTY : new ItemStack(getItem(), 1);
     }
 
     //Called on generating a new instance of this cover. For stateful covers this
@@ -96,7 +100,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
             ItemEntity itementity = new ItemEntity(tile.getWorld(), pos.getX(), pos.getY() + 5D, pos.getZ(), getDroppedStack());
             tile.getWorld().addEntity(itementity);
         }
-    }
+        }
 
     //Called on update of the world.
     public void onUpdate(TileEntity tile, Direction side) {
@@ -146,9 +150,13 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         return new ModelResourceLocation(Ref.ID + ":block/cover/basic");
     }
 
+    // TODO: refactor this if/when covers will be singletons
     public void onRegister() {
-
+        String id = getId();
+        if (AntimatterAPI.get(Cover.class, id) == null)
+            AntimatterAPI.register(Cover.class, id, this);
     }
+
 
     @Nonnull
     @Override
@@ -161,5 +169,13 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_, @Nonnull PlayerEntity p_createMenu_3_) {
         //TODO: runtimexception?
         throw new RuntimeException("CreateMenu called on superclass of Cover with invalid gui");
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }
