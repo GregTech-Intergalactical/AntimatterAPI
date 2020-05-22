@@ -134,7 +134,7 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()].instance()  instanceof CoverOutput;
+        return covers[direction.getIndex()].backing()  instanceof CoverOutput;
     }
 
     @Override
@@ -148,7 +148,7 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     private boolean isFluidAvailable(Object fluid, int dir) {
-        if (covers[dir].instance() instanceof CoverTintable) return false;
+        if (covers[dir].backing() instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(fluid);
     }
@@ -170,6 +170,6 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     private Set<?> getFiltered(int index) {
-        return covers[index].instance() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].instance()).getFilter() : ObjectSets.EMPTY_SET;
+        return covers[index].backing() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].backing()).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

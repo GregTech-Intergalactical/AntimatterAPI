@@ -66,7 +66,9 @@ public class CoverInstance implements INamedContainerProvider {
         return cover == Data.COVERNONE;
     }
 
-    public Cover instance() {
+    //Gets the backing cover.
+    //Because getCover().getCover() looks stupid
+    public Cover backing() {
         return cover;
     }
 

@@ -54,7 +54,7 @@ public class CoverHandler implements ICoverHandler {
         if (((TileEntityMachine)getTile()).getFacing() == Direction.byIndex(i)) {
             return false;
         }
-        if (!isValid(side, covers[i].instance(), cover)) return false;
+        if (!isValid(side, covers[i].backing(), cover)) return false;
         //Emplace cover, calls onPlace!
         covers[i] = new CoverInstance(cover, this.getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds

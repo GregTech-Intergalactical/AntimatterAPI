@@ -49,7 +49,7 @@ public class PipeInteractHandler extends InteractHandler {
             if (isTarget) {
                 if (tile.canConnect(side.getIndex())) {
                     connection = Connectivity.set(connection, side.getIndex());
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).instance());
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).backing());
                 } else {
                     connection = Connectivity.clear(connection, side.getIndex());
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
@@ -68,7 +68,7 @@ public class PipeInteractHandler extends InteractHandler {
             if (Connectivity.has(connection, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()].instance());
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()].backing());
                 } else {
                     connection = Connectivity.clear(connection, side.getIndex());
                 }
@@ -82,7 +82,7 @@ public class PipeInteractHandler extends InteractHandler {
         TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
         if (Utils.isForeignTile(neighbor)) {
             connection = Connectivity.set(connection, side.getIndex());
-            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side).instance());
+            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side).backing());
         } else {
             connection = Connectivity.clear(connection, side.getIndex());
         }

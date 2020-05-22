@@ -18,10 +18,10 @@ public class ScreenCover extends AntimatterContainerScreen<ContainerCover> imple
     public ScreenCover(ContainerCover container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        if (container.getCover().instance() instanceof CoverTiered) {
-            this.gui = container.getCover().instance().getGui().getTexture((((CoverTiered)container.getCover().instance()).getTier()),"cover");
+        if (container.getCover().backing() instanceof CoverTiered) {
+            this.gui = container.getCover().backing().getGui().getTexture((((CoverTiered)container.getCover().backing()).getTier()),"cover");
         } else {
-            this.gui = container.getCover().instance().getGui().getTexture(Tier.LV,"cover");
+            this.gui = container.getCover().backing().getGui().getTexture(Tier.LV,"cover");
         }
     }
 

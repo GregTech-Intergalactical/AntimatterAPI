@@ -12,8 +12,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public interface IInteractHandler {
-
-    boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
+    //ParsedSide represents the side as parsed by Utils.getInteractSide
+    boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nonnull Direction parsedSide, @Nullable AntimatterToolType type);
 
     @Nonnull
     TileEntity getTile();
