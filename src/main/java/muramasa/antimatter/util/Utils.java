@@ -479,53 +479,63 @@ public class Utils {
 
     //TODO replace with doRaytrace in block?
     //TODO optimize...
+
+    //TODO: combine constant here with BehaviourConnection?
+
+    final static double INTERACTION_OFFSET = 0.25;
+
+    public static Direction getInteractSide(BlockRayTraceResult res) {
+        Vec3d vec = res.getHitVec();
+        return getInteractSide(res.getFace(), (float)vec.x, (float)vec.y, (float)vec.z);
+    }
+
     public static Direction getInteractSide(Direction side, float x, float y, float z) {
         Direction backSide = side.getOpposite();
         switch (side.getIndex()) {
             case 0:
             case 1:
-                if (x < 0.25) {
-                    if (z < 0.25) return backSide;
-                    if (z > 0.75) return backSide;
+                if (x < INTERACTION_OFFSET) {
+                    if (z < INTERACTION_OFFSET) return backSide;
+                    if (z > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.WEST;
                 }
-                if (x > 0.75) {
-                    if (z < 0.25) return backSide;
-                    if (z > 0.75) return backSide;
+                if (x > 1 - INTERACTION_OFFSET) {
+                    if (z < INTERACTION_OFFSET) return backSide;
+                    if (z > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.EAST;
                 }
-                if (z < 0.25) return Direction.NORTH;
-                if (z > 0.75) return Direction.SOUTH;
+                if (z < INTERACTION_OFFSET) return Direction.NORTH;
+                if (z > 1 - INTERACTION_OFFSET) return Direction.SOUTH;
                 return side;
             case 2:
             case 3:
-                if (x < 0.25) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (x < INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.WEST;
                 }
-                if (x > 0.75) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (x > 1 - INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.EAST;
                 }
-                if (y < 0.25) return Direction.DOWN;
-                if (y > 0.75) return Direction.UP;
+                if (y < INTERACTION_OFFSET) return Direction.DOWN;
+                if (y > 1 - INTERACTION_OFFSET) return Direction.UP;
                 return side;
             case 4:
             case 5:
-                if (z < 0.25) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (z < INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.NORTH;
                 }
-                if (z > 0.75) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (z > 1 - INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.SOUTH;
                 }
-                if (y < 0.25) return Direction.DOWN;
-                if (y > 0.75) return Direction.UP;
+                if (y < INTERACTION_OFFSET) return Direction.DOWN;
+                if (y > 1 - INTERACTION_OFFSET) return Direction.UP;
                 return side;
         }
         return side;

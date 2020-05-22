@@ -114,20 +114,19 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             if (tile != null) {
                 //TODO: priority order, or call this inside InteractHandler?
                 LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, hit.getFace());
-                LazyOptional<Object> consume = coverable.map(i -> {
-                     boolean ok = i.onInteract(player,hand,hit.getFace(),Utils.getToolType(player));
-                    //TODO: how does lazy optional work
-                     return ok ? ok : null;
-                });
-                if (consume.isPresent()) {
+                boolean consume = coverable.map(i -> {
+                    //TODO: how does lazy optional work- does this work properly?
+                     return i.onInteract(player,hand,hit.getFace(),Utils.getToolType(player));
+                }).orElse(false);
+                if (consume) {
                     return ActionResultType.SUCCESS;
                 }
-               /* if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
+                if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                     return ActionResultType.SUCCESS;
-                }*/
+                }
                 LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
-                interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
+                    interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(),Utils.getInteractSide(hit), Utils.getToolType(player)));
                 }
             }
         return super.onBlockActivated(state, world, pos, player, hand, hit);

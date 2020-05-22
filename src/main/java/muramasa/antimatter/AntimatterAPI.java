@@ -3,7 +3,6 @@ package muramasa.antimatter;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -218,7 +217,7 @@ public final class AntimatterAPI {
 
     /** Attempts to remove a cover at a given side **/
     public static boolean removeCover(PlayerEntity player, ICoverHandler coverHandler, Direction side) {
-        ItemStack toDrop = coverHandler.getCover(side).getCover().getDroppedStack();
+        ItemStack toDrop = coverHandler.getCover(side).instance().getDroppedStack();
         if (coverHandler.onPlace(side, Data.COVERNONE)) {
             if (!player.isCreative()) player.dropItem(toDrop, false);
             return true;

@@ -1,21 +1,30 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
-public class CoverInstance {
+public class CoverInstance implements INamedContainerProvider {
     private Cover cover;
     private CompoundNBT nbt;
     private TileEntity tile;
@@ -34,7 +43,7 @@ public class CoverInstance {
     //Automatically calls onPlace.
     public CoverInstance(Cover cover, TileEntity tile, Direction side) {
         this(cover,tile);
-        onPlace(tile,side);
+        onPlace(side);
     }
 
     public void serialize(CompoundNBT nbt) {
@@ -57,12 +66,23 @@ public class CoverInstance {
         return cover == Data.COVERNONE;
     }
 
-    public Cover getCover() {
+    public Cover instance() {
         return cover;
     }
 
-    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-        return cover.onInteract(this,tile,player,hand,side,type);
+    public TileEntity getTile() {
+        return tile;
+    }
+
+    public Optional<TileEntityMachine> getMachine() {
+        if (tile instanceof TileEntityMachine) {
+            return Optional.of((TileEntityMachine)tile);
+        }
+        return Optional.empty();
+    }
+
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+        return cover.onInteract(this,player,hand,side,type);
     }
 
     public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
@@ -70,12 +90,12 @@ public class CoverInstance {
     }
 
 
-    public void onPlace(TileEntity tile, Direction side) {
-        cover.onPlace(this, tile, side);
+    public void onPlace(Direction side) {
+        cover.onPlace(this, side);
     }
 
-    public void onRemove(TileEntity tile, Direction side) {
-        cover.onRemove(this, tile, side);
+    public void onRemove(Direction side) {
+        cover.onRemove(this, side);
         /*if (!tile.getWorld().isRemote) {
             BlockPos pos = tile.getPos();
             ItemEntity itementity = new ItemEntity(tile.getWorld(), pos.getX(), pos.getY() + 5D, pos.getZ(), cover.getDroppedStack());
@@ -84,7 +104,18 @@ public class CoverInstance {
     }
 
 
-    public void onUpdate(TileEntity tile, Direction side) {
-        cover.onUpdate(this, tile, side);
+    public void onUpdate(Direction side) {
+        cover.onUpdate(this, side);
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new StringTextComponent("TODO");//TranslationTextComponent(cover.getId());
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
+        return cover.gui.getMenuHandler().getMenu(this, inv, windowId);
     }
 }

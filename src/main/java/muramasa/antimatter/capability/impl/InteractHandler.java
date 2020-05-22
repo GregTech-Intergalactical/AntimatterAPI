@@ -19,7 +19,7 @@ public class InteractHandler implements IInteractHandler {
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull Direction parsedSide, @Nullable AntimatterToolType type) {
         return false;
     }
 

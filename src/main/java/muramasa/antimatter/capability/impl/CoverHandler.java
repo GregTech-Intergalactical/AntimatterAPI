@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
@@ -44,7 +43,7 @@ public class CoverHandler implements ICoverHandler {
     public void onUpdate() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onUpdate(getTile(), Ref.DIRECTIONS[i]);
+            covers[i].onUpdate(Ref.DIRECTIONS[i]);
         }
     }
 
@@ -55,9 +54,9 @@ public class CoverHandler implements ICoverHandler {
         if (((TileEntityMachine)getTile()).getFacing() == Direction.byIndex(i)) {
             return false;
         }
-        if (!isValid(side, covers[i].getCover(), cover)) return false;
-        covers[i] = new CoverInstance(cover, this.getTile());
-        covers[i].onPlace(getTile(), side);
+        if (!isValid(side, covers[i].instance(), cover)) return false;
+        //Emplace cover, calls onPlace!
+        covers[i] = new CoverInstance(cover, this.getTile(), side);
         //TODO add cover.onPlace and cover.onRemove to customize sounds
         tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
         Utils.markTileForRenderUpdate(getTile());
@@ -68,7 +67,7 @@ public class CoverHandler implements ICoverHandler {
     public void onRemove() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onRemove(getTile(), Ref.DIRECTIONS[i]);
+            covers[i].onRemove(Ref.DIRECTIONS[i]);
         }
     }
 
@@ -84,13 +83,8 @@ public class CoverHandler implements ICoverHandler {
     @Override
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
         CoverInstance cover = getCover(side);
-        if (cover.isEmpty() || !cover.onInteract(getTile(), player, hand, side, type)) return false;
-        if (type == null) return false;
-        // switch (type) {
-            //case CROWBAR: return AntimatterAPI.removeCover(player, this, side);
-            //default: return false;
-        //}
-        return true;
+        if (cover.isEmpty()) return false;
+        return cover.onInteract(player, hand, side, type);
     }
 
     @Override
@@ -100,7 +94,8 @@ public class CoverHandler implements ICoverHandler {
 
     @Override
     public boolean isValid(@Nonnull Direction side, Cover existing, @Nonnull Cover replacement) {
-        return (existing.isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
+        //The extending coverhandler should check validity on its own.
+        return true;//(existing.isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
     }
 
     @Override
@@ -124,7 +119,7 @@ public class CoverHandler implements ICoverHandler {
 
     public void deserialize(CompoundNBT compound) {
         for (int i = 0; i < covers.length; i++) {
-            covers[i] = AntimatterAPI.get(Cover.class, compound.getString("Cover-".concat(Integer.toString(i))));
+        //    covers[i] = AntimatterAPI.get(Cover.class, compound.getString("Cover-".concat(Integer.toString(i))));
         }
     }
 }

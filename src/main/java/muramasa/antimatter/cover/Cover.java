@@ -33,16 +33,15 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 //The base Cover class. All cover classes extend from this.
-public abstract class Cover implements INamedContainerProvider, IAntimatterObject {
+public abstract class Cover implements IAntimatterObject {
 
     protected GuiData<Cover> gui;
-    protected Tier tier;
-
-    public Cover(Tier tier) {
-        this.tier = tier;
-    }
+    @Nullable
+    private Item item;
 
     public Cover() {
+        this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
+        gui.setEnablePlayerSlots(true);
     }
 
     public void setGui(GuiData<Cover> setGui) {
@@ -50,52 +49,32 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     }
 
     public GuiData<Cover> getGui() {
-        if (gui == null) {
-            this.gui = new GuiData<>(this);
-            gui.setEnablePlayerSlots(true);
-        }
         return gui;
     }
 
-    public Tier getTier() {
-        return tier;
-    }
-
     public abstract String getId();
-
     public ItemStack getDroppedStack() {
         return item == null ? ItemStack.EMPTY : new ItemStack(getItem(), 1);
     }
 
-    //Called on generating a new instance of this cover. For stateful covers this
-    //creates a new cover instance.
-    public final Cover onNewInstance(ItemStack stack) {
-        this.gui = new GuiData<>(this);
-        gui.setEnablePlayerSlots(true);
-        return this;//onPlace(stack);
-    }
-
-    /*public Cover onPlace(ItemStack stack) {
-        return this;
-    }*/
-
     /**
-     * Fires once per Side
+     * Fires once per Side. Return defines whether or not to consume the interaction.
      **/
-    public boolean onInteract(CoverInstance instance, TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-        return true;
+    public boolean onInteract(CoverInstance instance, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+        //Do not consume behaviour per default.
+        return false;
     }
 
-    public void onPlace(CoverInstance instance, TileEntity tile, Direction side) {
+    public void onPlace(CoverInstance instance, Direction side) {
 
     }
 
-    public void onRemove(CoverInstance instance, TileEntity tile, Direction side) {
+    public void onRemove(CoverInstance instance, Direction side) {
 
     }
 
     //Called on update of the world.
-    public void onUpdate(CoverInstance instance, TileEntity tile, Direction side) {
+    public void onUpdate(CoverInstance instance, Direction side) {
 
     }
 
@@ -109,10 +88,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
 
     public boolean hasGui() {
         return false;
-    }
-
-    public TileEntityMachine getConnectedEntity() {
-        return null;
     }
 
     public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {
@@ -147,20 +122,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         String id = getId();
         if (AntimatterAPI.get(Cover.class, id) == null)
             AntimatterAPI.register(Cover.class, id, this);
-    }
-
-
-    @Nonnull
-    @Override
-    public ITextComponent getDisplayName() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_, @Nonnull PlayerEntity p_createMenu_3_) {
-        //TODO: runtimexception?
-        throw new RuntimeException("CreateMenu called on superclass of Cover with invalid gui");
     }
 
     public Item getItem() {

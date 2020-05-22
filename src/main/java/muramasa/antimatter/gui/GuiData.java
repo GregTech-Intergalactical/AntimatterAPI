@@ -45,12 +45,8 @@ public class GuiData<T extends IAntimatterObject> {
         this.menuHandler = menuHandler;
     }
 
-    public GuiData(T type) {
-        this(type.getDomain(), type.getId());
-    }
-
     public GuiData(T type, IMenuHandler menuHandler) {
-        this(type);
+        this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
     }
 

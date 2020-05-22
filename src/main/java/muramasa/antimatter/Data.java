@@ -70,7 +70,7 @@ public class Data {
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
 
     public static Machine<?> MACHINE_INVALID = new Machine(Ref.ID, "invalid");
-    //TODO: deal with default?
+    //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static Cover COVERNONE = new CoverNone();
     public static Cover COVEROUTPUT = new CoverOutput();
 

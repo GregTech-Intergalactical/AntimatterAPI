@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui.container;
 
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
@@ -9,15 +8,18 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 
+import java.util.Objects;
+
 public class ContainerCover extends AntimatterContainer {
     protected TileEntity onEntity;
     private CoverInstance c;
-    private MenuHandlerMachine m;
+    private MenuHandlerCover m;
     public ContainerCover(CoverInstance on, PlayerInventory playerInv, MenuHandlerCover menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
         this.c =  on;
-        if (c.getCover().getGui().enablePlayerSlots()) addPlayerSlots();
-        this.onEntity = on.getCover().getConnectedEntity();
+        this.m = menuHandler;
+        if (c.instance().getGui().enablePlayerSlots()) addPlayerSlots();
+        this.onEntity = Objects.requireNonNull(c.getTile());
     }
 
     public CoverInstance getCover() {
