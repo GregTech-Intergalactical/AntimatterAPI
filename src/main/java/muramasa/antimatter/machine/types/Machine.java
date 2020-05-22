@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine.types;
 
+import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -45,13 +46,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected TileEntityType<?> tileType;
     protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
-    protected List<Tier> tiers = new ObjectArrayList<>();
+    protected ImmutableSet<Tier> tiers = ImmutableSet.of();
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
-    protected GuiData guiData;
+    protected GuiData<?> guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
@@ -167,11 +168,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public void setTiers(Tier... tiers) {
-        this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
+        this.tiers = ImmutableSet.copyOf(tiers);
     }
 
     public void setGUI(MenuHandlerMachine<?> menuHandler) {
-        guiData = new GuiData(this, (IMenuHandler)menuHandler);
+        guiData = new GuiData<>(this, menuHandler);
         addFlags(MachineFlag.GUI);
     }
 
@@ -196,12 +197,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tiers;
     }
 
-    //TODO needed?
-    public Tier getFirstTier() {
-        return tiers.get(0);
-    }
-
-    public GuiData getGui() {
+    public GuiData<?> getGui() {
         return guiData;
     }
 
