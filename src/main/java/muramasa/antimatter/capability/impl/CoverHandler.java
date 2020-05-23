@@ -29,9 +29,7 @@ public class CoverHandler implements ICoverHandler {
     protected List<String> validCovers;
 
     //TODO
-    protected CoverInstance[] covers = new CoverInstance[] {
-        Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
-    };
+    protected CoverInstance[] covers;
 
     public CoverHandler(TileEntity tile, Cover... covers) {
         this.tile = tile;
@@ -39,6 +37,10 @@ public class CoverHandler implements ICoverHandler {
         validCovers.add(Data.COVERNONE.getId());
         for (Cover cover : covers) {
             validCovers.add(cover.getId());
+        }
+        this.covers = new CoverInstance[6];
+        for (int i = 0; i < this.covers.length; i++) {
+            this.covers[i] = new CoverInstance(Data.COVERNONE, this.tile);
         }
     }
 
@@ -65,6 +67,7 @@ public class CoverHandler implements ICoverHandler {
         //TODO add cover.onPlace and cover.onRemove to customize sounds
         tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
         Utils.markTileForRenderUpdate(getTile());
+        tile.markDirty();
         return true;
     }
 
@@ -72,7 +75,7 @@ public class CoverHandler implements ICoverHandler {
     public void onRemove() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onRemove(Ref.DIRECTIONS[i]);
+            onPlace(Ref.DIRECTIONS[i], Data.COVERNONE);
         }
     }
 
@@ -106,7 +109,11 @@ public class CoverHandler implements ICoverHandler {
             }
         }
         if (cover.isEmpty()) return false;
-        return cover.onInteract(player, hand, side, type);
+        if (cover.onInteract(player, hand, side, type)) {
+            tile.markDirty();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -161,7 +168,7 @@ public class CoverHandler implements ICoverHandler {
                 covers[i] = new CoverInstance(AntimatterAPI.get(Cover.class, nbt.getString("id")), tile);
                 covers[i].deserialize(nbt);
             } else {
-                covers[i] = Data.COVER_EMPTY;
+                covers[i] = new CoverInstance(Data.COVERNONE, this.tile);
             }
         }
     }

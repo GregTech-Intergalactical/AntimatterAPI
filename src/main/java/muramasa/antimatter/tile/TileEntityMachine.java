@@ -103,6 +103,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        markDirty();
     }
 
     /** Getters **/
@@ -165,6 +166,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             markForRenderUpdate();
             System.out.println("RENDER UPDATE");
         }
+        markDirty();
         machineState = newState;
     }
 
@@ -237,6 +239,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (tag.contains(Ref.KEY_MACHINE_TILE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_TILE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_RECIPE)));
         if (tag.contains(Ref.KEY_MACHINE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT nbt = super.getUpdateTag();
+        this.write(nbt);
+        return nbt;
     }
 
     @Nonnull

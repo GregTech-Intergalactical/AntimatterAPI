@@ -1,5 +1,6 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -16,6 +17,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import javax.annotation.Nullable;
 
 public class CoverOutput extends Cover {
+
+    public CoverOutput() {
+        super();
+        AntimatterAPI.register(Cover.class, getId(), this);
+    }
 
     @Override
     public String getId() {
