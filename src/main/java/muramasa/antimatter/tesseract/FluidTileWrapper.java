@@ -28,8 +28,8 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     private boolean removed;
     private IFluidHandler handler;
 
-    private Cover[] covers = new Cover[] {
-        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
+    private CoverInstance[] covers = new CoverInstance[] {
+        Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
     };
 
     private FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
@@ -59,13 +59,13 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
                 // What if tile is recreate cap ?
             }
         } else {
-            covers[side.getIndex()] = Data.COVER_NONE;
+            covers[side.getIndex()] = Data.COVER_EMPTY;
         }
     }
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = cover;
+        covers[side.getIndex()] = new CoverInstance(cover, this.tile);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()]  instanceof CoverOutput;
+        return covers[direction.getIndex()].getCover()  instanceof CoverOutput;
     }
 
     @Override
@@ -148,7 +148,7 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     private boolean isFluidAvailable(Object fluid, int dir) {
-        if (covers[dir] instanceof CoverTintable) return false;
+        if (covers[dir].getCover() instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(fluid);
     }
@@ -170,6 +170,6 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
     }
 
     private Set<?> getFiltered(int index) {
-        return covers[index] instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index]).getFilter() : ObjectSets.EMPTY_SET;
+        return covers[index].getCover() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].getCover()).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

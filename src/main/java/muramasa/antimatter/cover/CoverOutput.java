@@ -1,5 +1,6 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -17,13 +18,18 @@ import javax.annotation.Nullable;
 
 public class CoverOutput extends Cover {
 
+    public CoverOutput() {
+        super();
+        AntimatterAPI.register(Cover.class, getId(), this);
+    }
+
     @Override
     public String getId() {
         return "output";
     }
 
     @Override
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverInstance instance, TileEntityMachine tile, IMachineEvent event) {
         //TODO: Refactor?
         if (event == MachineEvent.ITEMS_OUTPUTTED) {
             Direction outputDir = tile.getOutputFacing();

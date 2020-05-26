@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -18,11 +19,11 @@ public interface ICoverHandler {
 
     void onRemove();
 
-    Cover getCover(Direction side);
-
+    CoverInstance getCoverInstance(Direction side);
+    //If the player uses a cover in hand -> place cover if none exists.. Otherwises interact with the cover, if present.
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type);
 
-    Cover[] getAll();
+    CoverInstance[] getAll();
 
     boolean hasCover(Direction side, Cover cover);
 

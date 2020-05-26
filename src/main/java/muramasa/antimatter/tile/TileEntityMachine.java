@@ -7,6 +7,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.*;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -69,7 +70,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onLoad() {
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
         if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
-        if (!itemHandler.isPresent() && isServerSide() && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
+        //TODO: what are implications of this? just makes life easier
+        if (!itemHandler.isPresent() /*&& isServerSide()*/ && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
         if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this));
         if (!energyHandler.isPresent() && isServerSide() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
         if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
@@ -101,6 +103,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        markDirty();
     }
 
     /** Getters **/
@@ -163,6 +166,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             markForRenderUpdate();
             System.out.println("RENDER UPDATE");
         }
+        markDirty();
         machineState = newState;
     }
 
@@ -170,12 +174,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
-    public Cover[] getAllCovers() {
-        return coverHandler.map(CoverHandler::getAll).orElse(new Cover[0]);
+    public CoverInstance[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new CoverInstance[0]);
     }
 
-    public Cover getCover(Direction side) {
-        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
+    public CoverInstance getCover(Direction side) {
+        return coverHandler.map(h -> h.getCoverInstance(side)).orElse(Data.COVER_EMPTY);
     }
 
     public float getClientProgress() {
@@ -220,7 +224,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
         else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
         else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.getCover(side).isEmpty()).orElse(false)) return LazyOptional.of(() -> coverHandler.get()).cast();
+        //TODO: Not sure what the COVERABLE should mean. Does it mean EMPTY? because .isEmpty() is bad.
+        else if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()/*coverHandler.map(h -> true/*h.getCover(side).isEmpty()).orElse(false)*/) return LazyOptional.of(() -> coverHandler.get()).cast();
         else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap, side);
     }
@@ -234,6 +239,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (tag.contains(Ref.KEY_MACHINE_TILE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_TILE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_RECIPE)));
         if (tag.contains(Ref.KEY_MACHINE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT nbt = super.getUpdateTag();
+        this.write(nbt);
+        return nbt;
     }
 
     @Nonnull
@@ -272,7 +284,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (Direction side : Ref.DIRECTIONS) {
-                builder.append(h.getCover(side).getId()).append(" ");
+                builder.append(h.getCoverInstance(side).getId()).append(" ");
             }
             info.add(builder.toString());
         });

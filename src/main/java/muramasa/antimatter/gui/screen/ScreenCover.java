@@ -1,6 +1,8 @@
 package muramasa.antimatter.gui.screen;
 
+import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.gui.container.ContainerCover;
+import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,7 +18,11 @@ public class ScreenCover extends AntimatterContainerScreen<ContainerCover> imple
     public ScreenCover(ContainerCover container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        this.gui = container.getCover().getGui().getTexture(container.getCover().getTier(),"cover");
+        if (container.getCover().getCover() instanceof CoverTiered) {
+            this.gui = container.getCover().getCover().getGui().getTexture((((CoverTiered)container.getCover().getCover()).getTier()),"cover");
+        } else {
+            this.gui = container.getCover().getCover().getGui().getTexture(Tier.LV,"cover");
+        }
     }
 
     protected void drawTitle(int mouseX, int mouseY) {

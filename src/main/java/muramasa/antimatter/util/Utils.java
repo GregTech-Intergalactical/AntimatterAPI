@@ -19,6 +19,7 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -45,10 +46,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -259,16 +263,48 @@ public class Utils {
         }
     }
 
-    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
+    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile) {
+        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        from.ifPresent(first -> {
+            to.ifPresent(second -> {
+                transferItems(first,second);
+            });
+        });
+    }
+
+    public static void transferFluidsOnCap(TileEntity fromTile, TileEntity toTile, int maxFluid) {
+        LazyOptional<IFluidHandler> from = fromTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        LazyOptional<IFluidHandler> to = toTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+        from.ifPresent(first -> {
+            to.ifPresent(second -> {
+                transferFluids(first,second);
+            });
+        });
+    }
+
+    public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         for (int i = 0; i < to.getTanks(); i++) {
             if (i >= from.getTanks()) break;
-            FluidStack toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            FluidStack toInsert;
+            if (cap > 0) {
+                FluidStack fluid = from.getFluidInTank(i).copy();
+                int toDrain = Math.min(cap, fluid.getAmount());
+                fluid.setAmount(toDrain);
+                toInsert = from.drain(fluid, SIMULATE);
+            } else {
+                toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            }
             int filled = to.fill(toInsert, SIMULATE);
             if (filled > 0) {
                 toInsert.setAmount(filled);
                 to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
+    }
+
+    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
+        transferFluids(from,to,-1);
     }
 
     public static Optional<World> getServerWorld(int dimension) {
@@ -479,53 +515,63 @@ public class Utils {
 
     //TODO replace with doRaytrace in block?
     //TODO optimize...
+
+    //TODO: combine constant here with BehaviourConnection?
+
+    final static double INTERACTION_OFFSET = 0.25;
+
+    public static Direction getInteractSide(BlockRayTraceResult res) {
+        Vec3d vec = res.getHitVec();
+        return getInteractSide(res.getFace(), (float)vec.x, (float)vec.y, (float)vec.z);
+    }
+
     public static Direction getInteractSide(Direction side, float x, float y, float z) {
         Direction backSide = side.getOpposite();
         switch (side.getIndex()) {
             case 0:
             case 1:
-                if (x < 0.25) {
-                    if (z < 0.25) return backSide;
-                    if (z > 0.75) return backSide;
+                if (x < INTERACTION_OFFSET) {
+                    if (z < INTERACTION_OFFSET) return backSide;
+                    if (z > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.WEST;
                 }
-                if (x > 0.75) {
-                    if (z < 0.25) return backSide;
-                    if (z > 0.75) return backSide;
+                if (x > 1 - INTERACTION_OFFSET) {
+                    if (z < INTERACTION_OFFSET) return backSide;
+                    if (z > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.EAST;
                 }
-                if (z < 0.25) return Direction.NORTH;
-                if (z > 0.75) return Direction.SOUTH;
+                if (z < INTERACTION_OFFSET) return Direction.NORTH;
+                if (z > 1 - INTERACTION_OFFSET) return Direction.SOUTH;
                 return side;
             case 2:
             case 3:
-                if (x < 0.25) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (x < INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.WEST;
                 }
-                if (x > 0.75) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (x > 1 - INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.EAST;
                 }
-                if (y < 0.25) return Direction.DOWN;
-                if (y > 0.75) return Direction.UP;
+                if (y < INTERACTION_OFFSET) return Direction.DOWN;
+                if (y > 1 - INTERACTION_OFFSET) return Direction.UP;
                 return side;
             case 4:
             case 5:
-                if (z < 0.25) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (z < INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.NORTH;
                 }
-                if (z > 0.75) {
-                    if (y < 0.25) return backSide;
-                    if (y > 0.75) return backSide;
+                if (z > 1 - INTERACTION_OFFSET) {
+                    if (y < INTERACTION_OFFSET) return backSide;
+                    if (y > 1 - INTERACTION_OFFSET) return backSide;
                     return Direction.SOUTH;
                 }
-                if (y < 0.25) return Direction.DOWN;
-                if (y > 0.75) return Direction.UP;
+                if (y < INTERACTION_OFFSET) return Direction.DOWN;
+                if (y > 1 - INTERACTION_OFFSET) return Direction.UP;
                 return side;
         }
         return side;
@@ -884,6 +930,17 @@ public class Utils {
      */
     public static Tag<Fluid> getForgeFluidTag(String name) {
         return new FluidTags.Wrapper(new ResourceLocation("forge", name));
+    }
+
+    /**
+     * Spawns a new item entity
+     * @param tile the active tile
+     * @param item the item to spawn, 1.
+     * @param dir the direction to spawn it in.
+     */
+    public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
+        ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX()+dir.getXOffset(),tile.getPos().getY()+dir.getYOffset(),tile.getPos().getZ()+dir.getZOffset(), new ItemStack(item,1));
+        tile.getWorld().addEntity(entity);
     }
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {

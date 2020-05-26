@@ -22,6 +22,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -33,19 +34,15 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 //The base Cover class. All cover classes extend from this.
-public abstract class Cover implements INamedContainerProvider, IAntimatterObject {
+public abstract class Cover implements IAntimatterObject {
 
     protected GuiData<Cover> gui;
-    protected TileEntity tile;
+    @Nullable
     private Item item;
 
-    protected Tier tier;
-
-    public Cover(Tier tier) {
-        this.tier = tier;
-    }
-
     public Cover() {
+        this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
+        gui.setEnablePlayerSlots(true);
     }
 
     public void setGui(GuiData<Cover> setGui) {
@@ -53,62 +50,36 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     }
 
     public GuiData<Cover> getGui() {
-        if (gui == null) {
-            this.gui = new GuiData<>(this);
-            gui.setEnablePlayerSlots(true);
-        }
         return gui;
     }
 
-    public Tier getTier() {
-        return tier;
-    }
-
     public abstract String getId();
-
-    public TileEntity getTileOn() {
-        return tile;
-    }
-
     public ItemStack getDroppedStack() {
         return item == null ? ItemStack.EMPTY : new ItemStack(getItem(), 1);
     }
 
-    //Called on generating a new instance of this cover. For stateful covers this
-    //creates a new cover instance.
-    public final Cover onNewInstance(ItemStack stack) {
-        this.gui = new GuiData<>(this);
-        gui.setEnablePlayerSlots(true);
-        return onPlace(stack);
+    /**
+     * Fires once per Side. Return defines whether or not to consume the interaction.
+     **/
+    public boolean onInteract(CoverInstance instance, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+        //Do not consume behaviour per default.
+        return false;
     }
 
-    public Cover onPlace(ItemStack stack) {
-        return this;
+    public void onPlace(CoverInstance instance, Direction side) {
+
     }
 
-    /** Fires once per Side **/
-    public boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-        return true;
-    }
+    public void onRemove(CoverInstance instance, Direction side) {
 
-    public void onPlace(TileEntity tile, Direction side) {
-        this.tile = tile;
     }
-
-    public void onRemove(TileEntity tile, Direction side) {
-        if (!tile.getWorld().isRemote) {
-            BlockPos pos = tile.getPos();
-            ItemEntity itementity = new ItemEntity(tile.getWorld(), pos.getX(), pos.getY() + 5D, pos.getZ(), getDroppedStack());
-            tile.getWorld().addEntity(itementity);
-        }
-        }
 
     //Called on update of the world.
-    public void onUpdate(TileEntity tile, Direction side) {
+    public void onUpdate(CoverInstance instance, Direction side) {
 
     }
 
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverInstance instance, TileEntityMachine tile, IMachineEvent event) {
         //NOOP
     }
 
@@ -120,10 +91,6 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
         return false;
     }
 
-    public TileEntityMachine getConnectedEntity() {
-        return null;
-    }
-
     public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {
         return quads;
     }
@@ -133,12 +100,12 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     }
 
     public boolean isEmpty() {
-        return getId().equals(Data.COVER_NONE.getId());
+        return getId().equals(Data.COVERNONE.getId());
     }
 
     public Texture[] getTextures() {
-        return new Texture[] {
-            new Texture(Ref.ID, "block/machine/cover/" + getId())
+        return new Texture[]{
+                new Texture(Ref.ID, "block/machine/cover/" + getId())
         };
     }
 
@@ -158,25 +125,19 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
             AntimatterAPI.register(Cover.class, id, this);
     }
 
-
-    @Nonnull
-    @Override
-    public ITextComponent getDisplayName() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Container createMenu(int p_createMenu_1_, @Nonnull PlayerInventory p_createMenu_2_, @Nonnull PlayerEntity p_createMenu_3_) {
-        //TODO: runtimexception?
-        throw new RuntimeException("CreateMenu called on superclass of Cover with invalid gui");
-    }
-
     public Item getItem() {
         return item;
     }
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public void deserialize(CompoundNBT nbt) {
+
+    }
+
+    public void serialize(CompoundNBT nbt) {
+        //Write to the NBT at root level
     }
 }

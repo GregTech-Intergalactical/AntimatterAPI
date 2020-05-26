@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -18,7 +19,7 @@ public class RotatableCoverHandler extends CoverHandler {
     public void onUpdate() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            covers[i].onUpdate(getTile(), Utils.rotateFacingAlt(Ref.DIRECTIONS[i], getTileFacing()));
+            covers[i].onUpdate(Utils.rotateFacingAlt(Ref.DIRECTIONS[i], getTileFacing()));
         }
     }
 
@@ -28,7 +29,7 @@ public class RotatableCoverHandler extends CoverHandler {
     }
 
     @Override
-    public Cover getCover(Direction side) {
-        return super.getCover(Utils.rotateFacing(side, getTileFacing()));
+    public CoverInstance getCoverInstance(Direction side) {
+        return super.getCoverInstance(Utils.rotateFacing(side, getTileFacing()));
     }
 }
