@@ -3,8 +3,6 @@ package muramasa.antimatter.proxy;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.client.baked.PipeBakedModel;
-import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
@@ -37,7 +35,7 @@ public class ClientHandler implements IProxyHandler {
 
     public static void setup(FMLClientSetupEvent e) {
         // Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatterTest", "AntimatterTest", "^_^", false));
-        AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
+        AntimatterModelManager.init();
         AntimatterAPI.runLaterClient(
                 () -> {
                     AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));

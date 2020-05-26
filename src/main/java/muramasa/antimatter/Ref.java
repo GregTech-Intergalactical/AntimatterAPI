@@ -1,9 +1,8 @@
 package muramasa.antimatter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
-import muramasa.antimatter.datagen.DummyDataGenerator;
+import muramasa.antimatter.datagen.BackgroundDataGenerator;
+import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.ItemStack;
@@ -12,14 +11,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
 import java.io.File;
+import java.util.Collections;
 
 public class Ref {
 
     /** Global Objects **/
-    public static File CONFIG = null;
-    public static XSTR RNG = new XSTR();
-    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static DataGenerator DUMMY_GENERATOR = new DummyDataGenerator();
+    public static final XSTR RNG = new XSTR();
+    public static final DataGenerator DUMMY_GENERATOR = new DataGenerator(new File("").toPath(), Collections.emptySet());
+    public static final BackgroundDataGenerator BACKGROUND_DATA_GENERATOR = new BackgroundDataGenerator();
+    public static final DynamicPackFinder PACK_FINDER = new DynamicPackFinder("antimatter_pack", "Antimatter Resources", "EMPTY", false);
 
     /** Mod Data **/
     public static final String ID = "antimatter";
@@ -44,14 +44,9 @@ public class Ref {
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX", "", "", "", "", "", ""}; //TODO: Schedule to change? ZPM rename? Tier decisions?
     public static final Direction[] DIRECTIONS = Direction.values();
 
-    /** Internal Options **/
-    public static boolean INJECT_RESOURCES = true; //Attach and inject data with a custom resource pack
-    public static boolean GENERATE_RESOURCES = false; //Generate resources with providers
-
     /** Debug Options **/
-    public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;
     public static boolean SHOW_ITEM_TAGS = true;
-    public static boolean DATA_EXCEPTIONS = false; //TODO re-enable
+    public static boolean DATA_EXCEPTIONS = false; //TODO re-enable + config option
 
     //TODO maybe use these later
     public static boolean debugWorldGen = false;

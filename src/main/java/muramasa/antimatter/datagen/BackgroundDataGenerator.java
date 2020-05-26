@@ -5,38 +5,29 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is an extension of DataGenerator that does not scream time taken and such,
  */
-public class DynamicDataGenerator extends DataGenerator {
+public class BackgroundDataGenerator extends DataGenerator {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final ObjectList<IDataProvider> PROVIDERS = new ObjectArrayList<>();
 
-    public DynamicDataGenerator(Path output, Collection<Path> input) {
-        super(output, input);
+    public BackgroundDataGenerator() {
+        super(new File("").toPath(), Collections.emptySet());
     }
 
     @Override
+    @SuppressWarnings("all")
     public void run() throws IOException {
-        DirectoryCache cache = new DirectoryCache(this.getOutputFolder(), "cache");
-        cache.addProtectedPath(this.getOutputFolder().resolve("version.json"));
-        for(IDataProvider provider : PROVIDERS) {
-            provider.act(cache);
+        for (IDataProvider provider : PROVIDERS) {
+            provider.act(null);
         }
-        cache.writeCache();
-    }
-
-    public void addProvider() {
-
     }
 
     public void addProviders(IDataProvider... providers) {

@@ -20,8 +20,8 @@ import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterItemTagProvider extends ItemTagsProvider {
 
-    private String providerDomain, providerName;
-    private boolean replace;
+    private final String providerDomain, providerName;
+    private final boolean replace;
 
     public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);

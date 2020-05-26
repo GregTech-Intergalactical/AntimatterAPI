@@ -25,9 +25,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
         this.providerName = providerName;
         this.blockModelProvider = new AntimatterBlockModelProvider(gen, providerDomain, exFileHelper) {
             @Override
-            protected void registerModels() {
-                //NOOP
-            }
+            protected void registerModels() { }
 
             @Override
             public String getName() {

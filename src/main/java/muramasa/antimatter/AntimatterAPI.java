@@ -5,6 +5,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.forge.ForgeDummyTagProviders;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -13,24 +18,28 @@ import muramasa.antimatter.registration.*;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -40,6 +49,7 @@ public final class AntimatterAPI {
     private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, IAntimatterObject>> OBJECTS = new Object2ObjectOpenHashMap<>();
     private static final EnumMap<RegistrationEvent, List<Runnable>> CALLBACKS = new EnumMap<>(RegistrationEvent.class);
     private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet.noneOf(RegistrationEvent.class);
+    private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
@@ -108,6 +118,48 @@ public final class AntimatterAPI {
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
         all(c).stream().filter(o -> ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
+    }
+
+    /** Providers and Dynamic Resource Pack Section
+     *
+     * TODO: Client/Server separate? Together? Common?
+     */
+    public static void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
+        PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
+    }
+
+    public static void onProviderInit(String domain, DataGenerator gen) {
+        PROVIDERS.getOrDefault(domain, Collections.emptyList()).forEach(f -> gen.addProvider(f.apply(gen)));
+    }
+
+    public static void runBackgroundProviders() {
+        Antimatter.LOGGER.info("We do not condone these practices.");
+        Ref.BACKGROUND_DATA_GENERATOR.addProviders(ForgeDummyTagProviders.DUMMY_FORGE_PROVIDERS);
+        try {
+            Ref.BACKGROUND_DATA_GENERATOR.run();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void runProvidersDynamically(ResourceMethod method) {
+        if (method != ResourceMethod.DYNAMIC_PACK) return;
+        Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
+        PROVIDERS.forEach((k, v) -> v.forEach(f -> {
+            IAntimatterProvider prov = f.apply(Ref.DUMMY_GENERATOR);
+            LogManager.getLogger().info("Running Providers!");
+            prov.run();
+            if (prov instanceof BlockStateProvider) {
+                BlockStateProvider stateProv = (BlockStateProvider) prov;
+                stateProv.models().generatedModels.forEach(DynamicResourcePack::addBlock);
+                if (prov instanceof AntimatterBlockStateProvider) {
+                    ((AntimatterBlockStateProvider) stateProv).getRegisteredBlocks().forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
+                }
+            } else if (prov instanceof ItemModelProvider) {
+                ((ItemModelProvider) prov).generatedModels.forEach(DynamicResourcePack::addItem);
+            }
+        }));
     }
 
     /** DeferredWorkQueue Section **/
@@ -190,8 +242,7 @@ public final class AntimatterAPI {
                         return i;
                     }).orElse(originalItem);
         }
-        LogManager.getLogger().warn("Tag is null...");
-        return originalItem;
+        else throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
     }
 
     /** JEI Registry Section **/

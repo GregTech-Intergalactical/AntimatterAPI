@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -53,7 +54,7 @@ public class DynamicResourcePack implements IResourcePack {
     public static void addLang(ResourceLocation loc, String key, String value) {
         LANG.computeIfAbsent(getLangLoc(loc), k -> new JsonObject()).addProperty(key, value);
     }
-    
+
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
         if (type == ResourcePackType.SERVER_DATA) throw new UnsupportedOperationException("Dynamic Resource Pack only supports client resources");
