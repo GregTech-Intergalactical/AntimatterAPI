@@ -9,6 +9,7 @@ import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelBuilder;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
@@ -24,11 +25,11 @@ import java.util.stream.Collectors;
 
 public class DynamicResourcePack implements IResourcePack {
 
-    protected static ObjectOpenHashSet<String> DOMAINS = new ObjectOpenHashSet<>();
-    protected static Object2ObjectOpenHashMap<ResourceLocation, String> REGISTRY = new Object2ObjectOpenHashMap<>();
-    protected static Object2ObjectOpenHashMap<ResourceLocation, JsonObject> LANG = new Object2ObjectOpenHashMap<>();
+    protected static final ObjectOpenHashSet<String> DOMAINS = new ObjectOpenHashSet<>();
+    protected static final Object2ObjectOpenHashMap<ResourceLocation, String> REGISTRY = new Object2ObjectOpenHashMap<>();
+    protected static final Object2ObjectOpenHashMap<ResourceLocation, JsonObject> LANG = new Object2ObjectOpenHashMap<>();
 
-    protected String name;
+    private final String name;
 
     public DynamicResourcePack(String name) {
         this.name = name;
@@ -52,7 +53,7 @@ public class DynamicResourcePack implements IResourcePack {
     public static void addLang(ResourceLocation loc, String key, String value) {
         LANG.computeIfAbsent(getLangLoc(loc), k -> new JsonObject()).addProperty(key, value);
     }
-
+    
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
         if (type == ResourcePackType.SERVER_DATA) throw new UnsupportedOperationException("Dynamic Resource Pack only supports client resources");
@@ -64,13 +65,14 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     @Override
-    public InputStream getRootResourceStream(String fileName) throws IOException {
+    public InputStream getRootResourceStream(String fileName) {
         throw new UnsupportedOperationException("Dynamic Resource Pack cannot have root resources");
     }
 
     @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
         if (type == ResourcePackType.SERVER_DATA) return false;
+        LogManager.getLogger().info("RESOURCE EXISTS!");
         return REGISTRY.containsKey(location);
     }
 
@@ -92,12 +94,12 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Nullable
     @Override
-    public <T> T getMetadata(IMetadataSectionSerializer<T> deserializer) throws IOException {
+    public <T> T getMetadata(IMetadataSectionSerializer<T> deserializer) {
         return null;
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         //NOOP
     }
 

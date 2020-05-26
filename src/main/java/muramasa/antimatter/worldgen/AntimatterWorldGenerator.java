@@ -21,22 +21,24 @@ import java.util.stream.Collectors;
 public class AntimatterWorldGenerator {
 
     public static void init() {
+        AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
+        if (!AntimatterConfig.WORLD.VANILLA_STONE_GEN) removeStoneFeatures();
+        if (!AntimatterConfig.WORLD.VANILLA_ORE_GEN) removeOreFeatures();
+        AntimatterAPI.runLaterCommon(() -> {
+            AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(f -> {
+                f.onDataOverride(new JsonObject());
+                f.init();
+            });
+            WorldGenHelper.init();
+        });
+        /*
         try {
             //Path config = FMLPaths.CONFIGDIR.get().resolve("GregTech/WorldGenDefault.json");
-            AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
-            if (!AntimatterConfig.WORLD.VANILLA_STONE_GEN) removeStoneFeatures();
-            if (!AntimatterConfig.WORLD.VANILLA_ORE_GEN) removeOreFeatures();
-            AntimatterAPI.addToWorkQueue(() -> {
-                AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(feat -> {
-                    feat.onDataOverride(new JsonObject());
-                    feat.init();
-                });
-                WorldGenHelper.init();
-            });
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("AntimatterWorldGenerator caught an exception while initializing");
         }
+         */
     }
 
     public static void register(Class<?> c, WorldGenBase<?> base) {
@@ -65,7 +67,7 @@ public class AntimatterWorldGenerator {
      */
     public static void removeDecoratedFeatureFromAllBiomes(@Nonnull final GenerationStage.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-        AntimatterAPI.addToWorkQueue(() -> {
+        AntimatterAPI.runLaterCommon(() -> {
             for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
                 for (BlockState state : states) {
                     biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
@@ -83,7 +85,7 @@ public class AntimatterWorldGenerator {
      */
     public static void removeDecoratedFeaturesFromBiome(@Nonnull final Biome biome, final @Nonnull GenerationStage.Decoration stage, final @Nonnull Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-        AntimatterAPI.addToWorkQueue(() -> {
+        AntimatterAPI.runLaterCommon(() -> {
             for (BlockState state : states) {
                 biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
             }
@@ -101,11 +103,11 @@ public class AntimatterWorldGenerator {
                 IFeatureConfig featureConfig = config.feature.config;
                 if (featureConfig instanceof OreFeatureConfig) {
                     BlockState configState = ((OreFeatureConfig) featureConfig).state;
-                    if (configState != null && state == configState) return true;
+                    return state == configState;
                 }
                 if (featureConfig instanceof BlockStateFeatureConfig) {
                     BlockState configState = ((BlockStateFeatureConfig) featureConfig).field_227270_a_; // Constructor BlockState var
-                    if (configState != null && state == configState) return true;
+                    return state == configState;
                 }
             }
         }

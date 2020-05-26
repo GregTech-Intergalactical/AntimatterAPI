@@ -60,7 +60,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         super(type.getDomain(), prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON));
         this.type = type;
         this.size = size;
-        AntimatterAPI.register(BlockPipe.class, getId(), this);
+        AntimatterAPI.register(this);
     }
 
     public T getType() {

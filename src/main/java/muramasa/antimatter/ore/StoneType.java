@@ -12,35 +12,38 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
 import java.util.Collection;
+import java.util.Objects;
 
 public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
 
-    private String domain, id;
+    private final String domain, id;
     //private int harvestLevel;
-    private boolean gravity = false, generateBlock = false;
-    private Material material;
-    private Texture texture;
-    private SoundType soundType;
+    private final boolean gravity = false;
+    public boolean generateBlock = false;
+    private final Material material;
+    private final Texture texture;
+    private final SoundType soundType;
     private BlockState state;
     
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
         this.domain = domain;
-        this.id = id;
+        this.id = "stone_" + id;
         this.material = material;
         this.texture = texture;
         this.soundType = soundType;
         this.generateBlock = generateBlock;
-        AntimatterAPI.register(StoneType.class, "stone_" + id, this);
+        AntimatterAPI.register(this);
     }
 
     @Override
-    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain) || !doesGenerateBlock() || registry != ForgeRegistries.BLOCKS) return;
-        BlockStone stone = new BlockStone(this);
-        setState(stone);
+    public void onRegistryBuild(String currentDomain, IForgeRegistry<?> registry) {
+        if (!this.domain.equals(currentDomain) || !generateBlock || registry != null) return;
+        this.setState(new BlockStone(this));
     }
 
     public String getDomain() {

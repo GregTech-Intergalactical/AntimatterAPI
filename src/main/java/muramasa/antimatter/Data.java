@@ -75,7 +75,6 @@ public class Data {
 
     public static MenuHandlerMachine<?> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
 
-
         @Nullable
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
@@ -86,6 +85,7 @@ public class Data {
         public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
             return new ScreenBasicMachine(container, inv, name);
         }
+
     };
 
     public static MenuHandlerCover COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {

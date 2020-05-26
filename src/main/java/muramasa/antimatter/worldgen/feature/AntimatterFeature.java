@@ -19,7 +19,7 @@ public abstract class AntimatterFeature<F extends IFeatureConfig> extends Featur
 
     public AntimatterFeature(Function<Dynamic<?>, ? extends F> configFactory, @Nullable Class<?> c) {
         super(configFactory);
-        if (c != null) AntimatterAPI.register(AntimatterFeature.class, c.getName(), this);
+        AntimatterAPI.register(this);
     }
 
     public abstract boolean enabled();

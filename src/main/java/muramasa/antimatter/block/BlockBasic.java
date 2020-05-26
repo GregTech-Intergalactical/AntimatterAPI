@@ -17,7 +17,7 @@ public class BlockBasic extends Block implements IAntimatterObject, ITextureProv
         super(properties);
         this.domain = domain;
         this.id = id;
-        AntimatterAPI.register(getClass(), id, this);
+        AntimatterAPI.register(this);
     }
 
     public BlockBasic(String domain, String id) {

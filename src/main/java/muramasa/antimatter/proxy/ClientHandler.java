@@ -2,8 +2,10 @@ package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.client.baked.PipeBakedModel;
+import muramasa.antimatter.datagen.resources.DynamicPackFinder;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.machine.BlockMachine;
@@ -19,45 +21,57 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ClientHandler implements IProxyHandler {
 
-    @SubscribeEvent
+    public ClientHandler() { }
+
+    public static void onModelRegisterEvent(ModelRegistryEvent e) {
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_MAIN.getLoc(), AntimatterModelManager.LOADER_MAIN);
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_DYNAMIC.getLoc(), AntimatterModelManager.LOADER_DYNAMIC);
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_PIPE.getLoc(), AntimatterModelManager.LOADER_PIPE);
+    }
+
     public static void setup(FMLClientSetupEvent e) {
-        AntimatterModelManager.setup();
-        AntimatterAPI.all(AntimatterModelLoader.class, l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
-        AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
-        AntimatterAPI.all(MenuHandlerCover.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
-        AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-        AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-        AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-        // AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
-            // RenderTypeLookup.setRenderLayer(f.getFluidBlock(), RenderType.getTranslucent());
-            // RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
-            // RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
-        // });
+        // Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatterTest", "AntimatterTest", "^_^", false));
+        AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
+        AntimatterAPI.runLaterClient(
+                () -> {
+                    AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
+                    AntimatterAPI.all(MenuHandlerCover.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
+                },
+                () -> {
+                    AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+                    AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+                    AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+                    AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
+                        RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
+                        RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
+                    });
+                }
+        );
     }
 
-    @SubscribeEvent
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
-        AntimatterAPI.all(Item.class, i -> {
-            if (i instanceof IColorHandler && ((IColorHandler) i).registerColorHandlers()) e.getItemColors().register((stack, x) -> ((IColorHandler) i).getItemColor(stack, null, x), i);
-        });
-        AntimatterAPI.all(Block.class, b -> {
-            if (b instanceof IColorHandler && ((IColorHandler) b).registerColorHandlers()) e.getItemColors().register((stack, x) -> ((IColorHandler) b).getItemColor(stack, b, x), b.asItem());
-        });
+        for (Item item : AntimatterAPI.all(Item.class)) {
+            if (item instanceof IColorHandler && ((IColorHandler) item).registerColorHandlers()) {
+                e.getItemColors().register((stack, i) -> ((IColorHandler) item).getItemColor(stack, null, i), item);
+            }
+        }
+        for (Block block : AntimatterAPI.all(Block.class)) {
+            if (block instanceof IColorHandler && ((IColorHandler) block).registerColorHandlers()) {
+                e.getItemColors().register((stack, i) -> ((IColorHandler) block).getItemColor(stack, null, i), block.asItem());
+            }
+        }
     }
 
-    @SubscribeEvent
     public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
-        AntimatterAPI.all(Block.class, b -> {
-            if (b instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) b)::getBlockColor, b);
-        });
+        for (Block block : AntimatterAPI.all(Block.class)) {
+            if (block instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) block)::getBlockColor, block);
+        }
     }
 
     @Override

@@ -1,81 +1,105 @@
 package muramasa.antimatter;
 
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.*;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+
 public final class AntimatterAPI {
 
-    private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, Object>> OBJECTS = new Object2ObjectOpenHashMap<>();
-    private static final Object2ObjectMap<String, List<Runnable>> CALLBACKS = new Object2ObjectOpenHashMap<>();
-    private static final Int2ObjectOpenHashMap<Material> MATERIAL_HASH_LOOKUP = new Int2ObjectOpenHashMap<>();
-    private static final Set<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = new ObjectOpenHashSet<>();
-    private static final Queue<Runnable> DEFERRED_QUEUE = new LinkedList<>();
-    private static final List<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ArrayList<>();
+    private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, IAntimatterObject>> OBJECTS = new Object2ObjectOpenHashMap<>();
+    private static final EnumMap<RegistrationEvent, List<Runnable>> CALLBACKS = new EnumMap<>(RegistrationEvent.class);
+    private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet.noneOf(RegistrationEvent.class);
+    private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
+    private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
-    private static void registerInternal(Class<?> c, String id, Object o, boolean checkDuplicates) {
+    /** Internal Registry Section **/
+
+    private static void registerInternal(Class<?> c, String id, IAntimatterObject o) {
         OBJECTS.putIfAbsent(c, new Object2ObjectLinkedOpenHashMap<>());
-        if (checkDuplicates && OBJECTS.get(c).containsKey(id)) throw new IllegalStateException("Object: " + id + " for class " + c.getName() + " has already been registered by " + OBJECTS.get(c).get(id));
+        IAntimatterObject key = OBJECTS.get(c).get(id);
+        if (key != null) {
+            throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", key.getId()));
+        }
         OBJECTS.get(c).put(id, o);
     }
 
-    public static void register(Class<?> c, String id, Object o) {
-        registerInternal(c, id, o, true);
-        if (o instanceof Item && !hasObjectBeenRegistered(Item.class, id)) registerInternal(Item.class, id, o, true);
-        if (o instanceof Block && !hasObjectBeenRegistered(Block.class, id)) registerInternal(Block.class, id, o, true);
-        if (o instanceof IRegistryEntryProvider && !hasObjectBeenRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o, true);
-        if (o instanceof Material) MATERIAL_HASH_LOOKUP.put(((Material) o).getHash(), (Material) o);
+    public static void register(Class<?> clazz, String id, IAntimatterObject o) {
+        registerInternal(clazz, id, o);
+    }
+
+    public static void register(String id, IAntimatterObject o) {
+        registerInternal(o.getClass(), id, o);
+    }
+
+    public static void register(Class<?> clazz, IAntimatterObject o) {
+        registerInternal(clazz, o.getId(), o);
     }
 
     public static void register(IAntimatterObject o) {
-        register(o.getClass(), o.getId(), o);
+        registerInternal(o.getClass(), o.getId(), o);
+        if (o instanceof Block && isObjectFresh(Block.class, o.getId())) registerInternal(Block.class, o.getId(), o);
+        else if (o instanceof Item && isObjectFresh(Item.class, o.getId())) registerInternal(Item.class, o.getId(), o);
+        else if (o instanceof IRegistryEntryProvider && isObjectFresh(IRegistryEntryProvider.class, o.getId())) registerInternal(IRegistryEntryProvider.class, o.getId(), o);
     }
 
-    private static boolean hasObjectBeenRegistered(Class<?> c, String id) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        return map != null && map.containsKey(id);
+    private static boolean isObjectFresh(Class<?> c, String id) {
+        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
+        return map == null || !map.containsKey(id);
     }
 
     @Nullable
     public static <T> T get(Class<T> c, String id) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
         return map != null ? c.cast(map.get(id)) : null;
     }
 
     public static <T> boolean has(Class<T> c, String id) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
         return map != null && map.containsKey(id);
     }
 
     public static <T> List<T> all(Class<T> c) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
+        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
         return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
+    }
+
+    public static <T> List<T> all(Class<T> c, String domain) {
+        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
+        return map != null ? map.values().stream().filter(o -> o.getDomain().equals(domain)).map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
@@ -83,44 +107,54 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        all(c).stream().filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
+        all(c).stream().filter(o -> ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
     }
 
-    public static Material getMaterial(String id) {
-        Material material = get(Material.class, id);
-        return material != null ? material : Data.NULL;
+    /** DeferredWorkQueue Section **/
+
+    public static Optional<Deque<Runnable>> getCommonDeferredQueue() {
+        return Optional.ofNullable(DEFERRED_QUEUE.get(0));
     }
 
-    @Nullable
-    public static Material getMaterialById(int hash) {
-        return MATERIAL_HASH_LOOKUP.get(hash);
+    public static Optional<Deque<Runnable>> getClientDeferredQueue() {
+        return Optional.ofNullable(DEFERRED_QUEUE.get(1));
     }
 
-    public static void addToWorkQueue(Runnable runnable) {
-        DEFERRED_QUEUE.add(runnable);
+    public static Optional<Deque<Runnable>> getServerDeferredQueue() {
+        return Optional.ofNullable(DEFERRED_QUEUE.get(2));
     }
 
-    public static Queue<Runnable> getWorkQueue() {
-        return DEFERRED_QUEUE;
+    public static void runLaterCommon(Runnable... r) {
+        DEFERRED_QUEUE.computeIfAbsent(0, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+    }
+
+    public static void runLaterClient(Runnable... r) {
+        DEFERRED_QUEUE.computeIfAbsent(1, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+    }
+
+    public static void runLaterServer(Runnable... r) {
+        DEFERRED_QUEUE.computeIfAbsent(2, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
     }
 
     /** Registrar Section **/
+
     public static void onRegistration(RegistrationEvent event) {
         if (REGISTRATION_EVENTS_HANDLED.contains(event)) throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         REGISTRATION_EVENTS_HANDLED.add(event);
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event));
-        if (CALLBACKS.containsKey(event.name())) CALLBACKS.get(event.name()).forEach(Runnable::run);
+        if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
     }
 
-    public static void onEvent(RegistrationEvent event, Runnable runnable) {
-        CALLBACKS.computeIfAbsent(event.name(), k -> new ObjectArrayList<>()).add(runnable);
+    public static void runOnEvent(RegistrationEvent event, Runnable runnable) {
+        CALLBACKS.computeIfAbsent(event, k -> new ObjectArrayList<>()).add(runnable);
     }
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar == Antimatter.INSTANCE) INTERNAL_REGISTRAR = registrar;
-        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar, true);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistrationHelper::onRegistryEvent);
+        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::beforeRegister);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::onRegister);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {
@@ -131,24 +165,33 @@ public final class AntimatterAPI {
         return getRegistrar(id).map(IAntimatterRegistrar::isEnabled).orElse(false);
     }
 
-//    @Nullable
-//    public static Item getItem(String domain, String path) {
-//        return Item.getByNameOrId(new ResourceLocation(domain, path).toString());
-//    }
-//
-//    @Nullable
-//    public static Block getBlock(String domain, String path) {
-//        return Block.getBlockFromName(new ResourceLocation(domain, path).toString());
-//    }
-
-    /** Item Registry Section **/
-    public static void addReplacement(MaterialType<?> type, Material material, ItemStack stack) {
-        registerInternal(ItemStack.class, type.getId() + material.getId(), stack, true);
+    public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
+        // Tag<Item> tag = ItemTags.getCollection().get(new ResourceLocation("forge", String.join("", getConventionalMaterialType(type), "/", material.getId())));
+        Tag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
+        return getReplacement(null, tag, namespaces);
     }
 
-    public static ItemStack getReplacement(MaterialType<?> type, Material material) {
-        ItemStack stack = get(ItemStack.class, type.getId() + material.getId());
-        return stack != null ? stack.copy() : ItemStack.EMPTY;
+    /**
+     * This must run after DataGenerators have ran OR when the tag jsons are acknowledged. Otherwise this is useless!
+     *
+     * @param originalItem  Item that wants a replacement, may be null if only the tag should be the only query
+     * @param tag           Tag that wants a replacement (as the originalItem may have multiple tags to search from)
+     * @param namespaces    Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
+     * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
+     */
+    public static Item getReplacement(@Nullable Item originalItem, Tag<Item> tag, String... namespaces) {
+        if (tag != null) {
+            if (REPLACEMENTS.containsKey(tag.hashCode())) return REPLACEMENTS.get(tag.hashCode());
+            Set<String> checks = Sets.newHashSet(namespaces);
+            if (checks.isEmpty()) checks.add("minecraft");
+            return tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
+                    .findAny().map(i -> {
+                        REPLACEMENTS.put(tag.hashCode(), i);
+                        return i;
+                    }).orElse(originalItem);
+        }
+        LogManager.getLogger().warn("Tag is null...");
+        return originalItem;
     }
 
     /** JEI Registry Section **/
@@ -156,35 +199,6 @@ public final class AntimatterAPI {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
             //AntimatterJEIPlugin.registerCategory(map, gui);
         }
-    }
-
-    /** Fluid Cell Registry **/
-    private final static Collection<ItemStack> FLUID_CELL_REGISTRY = new ObjectArrayList<>();
-
-    public static void registerFluidCell(ItemStack stack) {
-        //if (!stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) return;
-        //FLUID_CELL_REGISTRY.add(stack);
-    }
-
-    public static List<ItemStack> getFluidCells() {
-        List<ItemStack> cells = new ObjectArrayList<>();
-        FLUID_CELL_REGISTRY.forEach(c -> cells.add(c.copy()));
-        return cells;
-    }
-
-    public static Collection<ItemStack> getFluidCells(Fluid fluid) {
-        return getFluidCells(fluid, -1);
-    }
-
-    public static Collection<ItemStack> getFluidCells(Fluid fluid, int amount) {
-        Collection<ItemStack> cells = getFluidCells();
-//        for (ItemStack stack : cells) {
-//            IFluidHandlerItem fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-//            if (fluidHandler == null) continue;
-//            amount = amount != -1 ? amount : Integer.MAX_VALUE;
-//            fluidHandler.fill(new FluidStack(fluid, amount), true);
-//        }
-        return cells;
     }
 
     /** Attempts to do smart interaction with a compatible Tile/Block **/
@@ -242,5 +256,6 @@ public final class AntimatterAPI {
     public interface IBlockUpdateEvent {
 
         void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState);
+
     }
 }

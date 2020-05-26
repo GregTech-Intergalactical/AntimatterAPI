@@ -16,9 +16,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
+
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getForgeItemTag;
 
 public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
@@ -153,20 +158,15 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public Item get(Material material) {
-        ItemStack replacement = AntimatterAPI.getReplacement(this, material);
-        if (!replacement.isEmpty()) return replacement.getItem();
-        MaterialItem item = AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
-        if (!allowItemGen(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
-        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
-        return item;
+        // if (!allowItemGen(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
+        Item replacement = AntimatterAPI.getReplacement(this, material);
+        return replacement == null ? AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId()) : replacement;
     }
 
     public ItemStack get(Material material, int count) {
+        if (count < 1) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + id + ") M(" + material.getId() + ")");
         Item item = get(material);
-        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
-        ItemStack stack = new ItemStack(item, count);
-        if (stack.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + id + ") M(" + material.getId() + ")");
-        return stack;
+        return new ItemStack(item, count);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public boolean allowItemGen(Material material) {
-        return generating && !blockType && materials.contains(material) && AntimatterAPI.getReplacement(this, material).isEmpty();
+        return generating && !blockType && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
     }
 
     public boolean allowBlockGen(Material material) {

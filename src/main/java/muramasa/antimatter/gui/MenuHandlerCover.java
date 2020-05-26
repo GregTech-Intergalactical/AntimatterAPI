@@ -29,7 +29,7 @@ public abstract class MenuHandlerCover<M extends Container>  implements IAntimat
 
     public MenuHandlerCover(String domain, String id) {
         this.registryName = new ResourceLocation(domain, id);
-        AntimatterAPI.register(MenuHandlerCover.class, id, this);
+        AntimatterAPI.register(this);
     }
 
     @Override
@@ -40,7 +40,6 @@ public abstract class MenuHandlerCover<M extends Container>  implements IAntimat
  //   @Nullable
    // public abstract M getMenu(Cover tile, PlayerInventory playerInv, int windowId);
 
-   @NonnullDefault
     public abstract ScreenCover getScreen(ContainerCover container, PlayerInventory inv, ITextComponent name);
 
 

@@ -3,6 +3,7 @@ package muramasa.antimatter.material;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
@@ -20,6 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,8 +30,6 @@ import static muramasa.antimatter.material.MaterialTag.METAL;
 import static muramasa.antimatter.material.MaterialType.*;
 
 public class Material implements IAntimatterObject, IRegistryEntryProvider {
-
-    private int hash;
 
     /** Basic Members **/
     private String domain, id;
@@ -69,11 +69,10 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public Material(String domain, String id, int rgb, TextureSet set) {
         this.domain = domain;
         this.id = id;
-        this.hash = id.hashCode();
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
-        AntimatterAPI.register(Material.class, id, this);
+        AntimatterAPI.register(this);
     }
 
     public Material(String domain, String id, int rgb, TextureSet set, Element element) {
@@ -82,11 +81,10 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     @Override
-    public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
+    public void onRegistryBuild(String domain, @Nullable IForgeRegistry<?> registry) {
         if (!this.domain.equals(domain)) return;
-        if (registry == ForgeRegistries.ITEMS) {
+        if (registry == null) {
             AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> new MaterialItem(domain, t, this));
-        } else if (registry == ForgeRegistries.BLOCKS) {
             if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
             if (has(FRAME)) new BlockStorage(domain, this, FRAME);
             if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(domain, this, s));
@@ -103,10 +101,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     @Override
     public String getId() {
         return id;
-    }
-
-    public int getHash() {
-        return hash;
     }
 
     @Override
@@ -528,25 +522,28 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public FluidStack getLiquid(int amount) {
-        if (liquid == null) throw new NullPointerException(getId() + ": Liquid is null");
+        if (liquid == null) throw new NullPointerException(id + ": Liquid is null");
         return new FluidStack(liquid, amount);
     }
 
     public FluidStack getGas(int amount) {
-        if (gas == null) throw new NullPointerException(getId() + ": Gas is null");
-        return new FluidStack(getGas(), amount);
+        if (gas == null) throw new NullPointerException(id + ": Gas is null");
+        return new FluidStack(gas, amount);
     }
 
     public FluidStack getPlasma(int amount) {
-        if (plasma == null) throw new NullPointerException(getId() + ": Plasma is null");
-        return new FluidStack(getPlasma(), amount);
+        if (plasma == null) throw new NullPointerException(id + ": Plasma is null");
+        return new FluidStack(plasma, amount);
     }
 
     public static Material get(String id) {
-        return AntimatterAPI.getMaterial(id);
+        Material material = AntimatterAPI.get(Material.class, id);
+        return material == null ? Data.NULL : material;
     }
 
-    public static Material get(int hash) {
-        return AntimatterAPI.getMaterialById(hash);
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
+
 }

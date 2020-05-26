@@ -66,9 +66,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     public void processBlocks(String domain) {
-        AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b.getRegistryName().getNamespace().equals(domain))
-            .forEach(b -> AntimatterModelManager.onBlockModelBuild(b, this));
+        AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onBlockModelBuild(b, this));
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {

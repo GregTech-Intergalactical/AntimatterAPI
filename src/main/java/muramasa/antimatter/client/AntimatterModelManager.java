@@ -26,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,10 +56,6 @@ public class AntimatterModelManager {
     private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
-    public static void setup() {
-        AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
-    }
-
     public static void registerStaticConfigMap(String staticMapId, Supplier<Int2ObjectOpenHashMap<IBakedModel[]>> configMapSupplier) {
         STATIC_CONFIG_MAPS.put(staticMapId, configMapSupplier);
     }
@@ -76,12 +73,14 @@ public class AntimatterModelManager {
     }
 
     public static void runProvidersDynamically() {
-        DataGenerator gen = new DummyDataGenerator();
         PROVIDERS.forEach((k, v) -> v.forEach(f -> {
-            IAntimatterProvider prov = f.apply(gen);
+            IAntimatterProvider prov = f.apply(Ref.DUMMY_GENERATOR);
+            LogManager.getLogger().info("Running Providers!");
             prov.run();
             if (prov instanceof AntimatterBlockStateProvider) {
-
+                LogManager.getLogger().info("Running BlockStateProviders!");
+                ((AntimatterBlockStateProvider) prov).models().generatedModels.forEach(DynamicResourcePack::addBlock);
+                ((AntimatterBlockStateProvider) prov).getRegisteredBlocks().forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
             } else if (prov instanceof AntimatterItemModelProvider) {
                 ((AntimatterItemModelProvider) prov).generatedModels.forEach(DynamicResourcePack::addItem);
             }

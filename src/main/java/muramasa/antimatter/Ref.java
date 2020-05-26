@@ -3,7 +3,9 @@ package muramasa.antimatter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
+import muramasa.antimatter.datagen.DummyDataGenerator;
 import muramasa.antimatter.util.XSTR;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +19,7 @@ public class Ref {
     public static File CONFIG = null;
     public static XSTR RNG = new XSTR();
     public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static DataGenerator DUMMY_GENERATOR = new DummyDataGenerator();
 
     /** Mod Data **/
     public static final String ID = "antimatter";
