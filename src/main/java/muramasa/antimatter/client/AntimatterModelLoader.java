@@ -23,6 +23,7 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
 
     public AntimatterModelLoader(ResourceLocation loc) {
         this.loc = loc;
+        AntimatterAPI.register(AntimatterModelLoader.class, getId(), this);
     }
 
     public ResourceLocation getLoc() {

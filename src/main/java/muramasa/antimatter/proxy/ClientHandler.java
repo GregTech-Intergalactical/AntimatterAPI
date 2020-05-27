@@ -2,6 +2,7 @@ package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
@@ -19,14 +20,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ClientHandler implements IProxyHandler {
 
-    public ClientHandler() { }
+    public ClientHandler() {
+        AntimatterModelManager.init();
+        AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
+    }
 
     public static void setup(FMLClientSetupEvent e) {
-        AntimatterModelManager.init();
         AntimatterAPI.runLaterClient(
                 () -> {
                     AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));

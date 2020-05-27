@@ -44,7 +44,7 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.runBackgroundProviders();
     }
 
-    //todo: datapack, resource pack, registration double check
+    //todo: datapack
     public Antimatter() {
         INSTANCE = this;
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
@@ -58,9 +58,9 @@ public class Antimatter implements IAntimatterRegistrar {
 
         Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
 
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_MAIN.getLoc(), AntimatterModelManager.LOADER_MAIN);
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_DYNAMIC.getLoc(), AntimatterModelManager.LOADER_DYNAMIC);
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_PIPE.getLoc(), AntimatterModelManager.LOADER_PIPE);
+        // ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_MAIN.getLoc(), AntimatterModelManager.LOADER_MAIN);
+        // ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_DYNAMIC.getLoc(), AntimatterModelManager.LOADER_DYNAMIC);
+        // ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_PIPE.getLoc(), AntimatterModelManager.LOADER_PIPE);
 
         eventBus.addListener(ClientHandler::onItemColorHandler);
         eventBus.addListener(ClientHandler::onBlockColorHandler);
