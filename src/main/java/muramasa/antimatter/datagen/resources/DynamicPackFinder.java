@@ -1,7 +1,10 @@
 package muramasa.antimatter.datagen.resources;
 
-import com.google.common.collect.Sets;
-import muramasa.antimatter.Antimatter;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.resources.IPackFinder;
 import net.minecraft.resources.PackCompatibility;
@@ -9,26 +12,26 @@ import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DynamicPackFinder implements IPackFinder {
 
     protected final String id, name, desc;
     protected final boolean hidden;
-    protected final Set<String> domains;
+    protected final ObjectSet<String> domains = new ObjectOpenHashSet<>();
 
-    public DynamicPackFinder(String id, String name, String desc, boolean hidden, String... domains) {
+    public DynamicPackFinder(String id, String name, String desc, boolean hidden) {
         this.id = id;
         this.name = name;
         this.desc = desc;
         this.hidden = hidden;
-        this.domains = Sets.newHashSet(domains);
     }
 
     @Override
     public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packs, ResourcePackInfo.IFactory<T> factory) {
         DynamicResourcePack dynamicPack = new DynamicResourcePack(name);
-        DynamicResourcePack.DOMAINS.addAll(domains);
+        DynamicResourcePack.DOMAINS.add(Ref.ID);
+        DynamicResourcePack.DOMAINS.addAll(AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
         ClientResourcePackInfo packInfo = new ClientResourcePackInfo(
             id,
             true,
@@ -43,4 +46,5 @@ public class DynamicPackFinder implements IPackFinder {
         );
         packs.put(packInfo.getName(), (T) packInfo);
     }
+
 }

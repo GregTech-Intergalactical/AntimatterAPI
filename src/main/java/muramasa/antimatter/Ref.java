@@ -19,7 +19,7 @@ public class Ref {
     public static final XSTR RNG = new XSTR();
     public static final DataGenerator DUMMY_GENERATOR = new DataGenerator(new File("").toPath(), Collections.emptySet());
     public static final BackgroundDataGenerator BACKGROUND_DATA_GENERATOR = new BackgroundDataGenerator();
-    public static final DynamicPackFinder PACK_FINDER = new DynamicPackFinder("antimatter_pack", "Antimatter - Dynamic Resources", "Dynamic Resource Pack", true, "gti", "antimatter"); // todo
+    public static final DynamicPackFinder PACK_FINDER = new DynamicPackFinder("antimatter_pack", "Antimatter - Dynamic Resources", "Dynamic Resource Pack", true);
 
     /** Mod Data **/
     public static final String ID = "antimatter";
