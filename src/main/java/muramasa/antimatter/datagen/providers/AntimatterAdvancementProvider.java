@@ -26,7 +26,7 @@ public class AntimatterAdvancementProvider implements IDataProvider {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator gen;
     private final List<Consumer<Consumer<Advancement>>> advancements;
-    private String providerDomain, providerName;
+    private final String providerDomain, providerName;
 
     @SafeVarargs
     public AntimatterAdvancementProvider(String providerDomain, String providerName, DataGenerator gen, Consumer<Consumer<Advancement>>... advancements) {

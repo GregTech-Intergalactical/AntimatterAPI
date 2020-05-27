@@ -11,11 +11,23 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.util.function.Function;
 
-public abstract class AntimatterBlockModelProvider extends BlockModelProvider {
+public class AntimatterBlockModelProvider extends BlockModelProvider {
 
-    public AntimatterBlockModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        super(generator, modid, existingFileHelper);
-        Function<ResourceLocation, BlockModelBuilder> factoryOverride = loc -> new AntimatterBlockModelBuilder(loc, existingFileHelper);
+    private final String name;
+
+    public AntimatterBlockModelProvider(DataGenerator generator, String modid, String name, ExistingFileHelper exFileHelper) {
+        super(generator, modid, exFileHelper);
+        this.name = name;
+        Function<ResourceLocation, BlockModelBuilder> factoryOverride = loc -> new AntimatterBlockModelBuilder(loc, exFileHelper);
         ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
     }
+
+    @Override
+    protected void registerModels() { }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
 }

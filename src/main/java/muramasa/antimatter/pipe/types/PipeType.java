@@ -35,12 +35,9 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain) || registry != ForgeRegistries.TILE_ENTITIES) return;
-        // Datafixer?
-        tileType = new TileEntityType<>(tileFunc.apply(this), getBlocks(), null).setRegistryName(domain, getId() + "_" + material.getId());
-        ((IForgeRegistry<TileEntityType<?>>) registry).register(tileType);
+        if (!this.domain.equals(domain)) return;
+        if (registry == null) tileType = new TileEntityType<>(tileFunc.apply(this), getBlocks(), null);
     }
 
     public abstract Set<Block> getBlocks();

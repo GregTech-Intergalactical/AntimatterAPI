@@ -10,6 +10,7 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.forge.ForgeDummyTagProviders;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -69,21 +70,21 @@ public final class AntimatterAPI {
 
     public static void register(Class<?> clazz, String id, IAntimatterObject o) {
         registerInternal(clazz, id, o);
-    }
-
-    public static void register(String id, IAntimatterObject o) {
-        registerInternal(o.getClass(), id, o);
+        if (o instanceof Block && isObjectFresh(Block.class, id)) registerInternal(Block.class, id, o);
+        else if (o instanceof Item && isObjectFresh(Item.class, id)) registerInternal(Item.class, id, o);
+        else if (o instanceof IRegistryEntryProvider && isObjectFresh(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o);
     }
 
     public static void register(Class<?> clazz, IAntimatterObject o) {
-        registerInternal(clazz, o.getId(), o);
+        register(clazz, o.getId(), o);
+    }
+
+    public static void register(String id, IAntimatterObject o) {
+        register(o.getClass(), id, o);
     }
 
     public static void register(IAntimatterObject o) {
-        registerInternal(o.getClass(), o.getId(), o);
-        if (o instanceof Block && isObjectFresh(Block.class, o.getId())) registerInternal(Block.class, o.getId(), o);
-        else if (o instanceof Item && isObjectFresh(Item.class, o.getId())) registerInternal(Item.class, o.getId(), o);
-        else if (o instanceof IRegistryEntryProvider && isObjectFresh(IRegistryEntryProvider.class, o.getId())) registerInternal(IRegistryEntryProvider.class, o.getId(), o);
+        register(o.getClass(), o.getId(), o);
     }
 
     private static boolean isObjectFresh(Class<?> c, String id) {
@@ -120,7 +121,8 @@ public final class AntimatterAPI {
         all(c).stream().filter(o -> ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
     }
 
-    /** Providers and Dynamic Resource Pack Section
+    /**
+     *  Providers and Dynamic Resource Pack Section
      *
      * TODO: Client/Server separate? Together? Common?
      */
@@ -133,7 +135,7 @@ public final class AntimatterAPI {
     }
 
     public static void runBackgroundProviders() {
-        Antimatter.LOGGER.info("We do not condone these practices.");
+        Antimatter.LOGGER.debug("We do not condone these practices.");
         Ref.BACKGROUND_DATA_GENERATOR.addProviders(ForgeDummyTagProviders.DUMMY_FORGE_PROVIDERS);
         try {
             Ref.BACKGROUND_DATA_GENERATOR.run();
@@ -144,11 +146,11 @@ public final class AntimatterAPI {
     }
 
     public static void runProvidersDynamically(ResourceMethod method) {
+        // Optimise by loading straight into DynamicResourcePack::add methods, instead of running -> looping through ran resources -> add to another map
         if (method != ResourceMethod.DYNAMIC_PACK) return;
-        Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
         PROVIDERS.forEach((k, v) -> v.forEach(f -> {
             IAntimatterProvider prov = f.apply(Ref.DUMMY_GENERATOR);
-            LogManager.getLogger().info("Running Providers!");
+            LogManager.getLogger().debug("Running " + prov.getName());
             prov.run();
             if (prov instanceof BlockStateProvider) {
                 BlockStateProvider stateProv = (BlockStateProvider) prov;
@@ -205,7 +207,7 @@ public final class AntimatterAPI {
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar == Antimatter.INSTANCE) INTERNAL_REGISTRAR = registrar;
         else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::beforeRegister);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::onRegister);
     }
 

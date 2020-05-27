@@ -11,9 +11,7 @@ public class CommonHandler implements IProxyHandler {
 
     public CommonHandler() { }
 
-    public static void setup(FMLCommonSetupEvent e) {
-
-    }
+    public static void setup(FMLCommonSetupEvent e) { }
 
     @Override
     public World getClientWorld() {

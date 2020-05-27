@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.resources;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
@@ -72,9 +73,7 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-        if (type == ResourcePackType.SERVER_DATA) return false;
-        LogManager.getLogger().info("RESOURCE EXISTS!");
-        return REGISTRY.containsKey(location);
+        return type != ResourcePackType.SERVER_DATA && REGISTRY.containsKey(location);
     }
 
     @Override
@@ -109,14 +108,14 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static ResourceLocation getBlockLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), "models/block/" + registryId.getPath() + ".json");
+        return new ResourceLocation(registryId.getNamespace(), "models/" + registryId.getPath() + ".json");
     }
 
     public static ResourceLocation getItemLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), "models/item/" + registryId.getPath() + ".json");
+        return new ResourceLocation(registryId.getNamespace(), "models/" + registryId.getPath() + ".json");
     }
 
     public static ResourceLocation getLangLoc(ResourceLocation langId) {
-        return new ResourceLocation(langId.getNamespace(), "/lang" + langId.getPath() + ".json");
+        return new ResourceLocation(langId.getNamespace(), "lang/" + langId.getPath() + ".json");
     }
 }

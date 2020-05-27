@@ -4,26 +4,29 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
+import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+
+import java.util.function.Function;
 
 public class AntimatterItemModelProvider extends ItemModelProvider implements IAntimatterProvider {
 
-    protected String providerDomain, providerName;
+    protected final String providerDomain, providerName;
 
     public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
         super(generator, providerDomain, exFileHelper);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
+        Function<ResourceLocation, ItemModelBuilder> factoryOverride = loc -> new AntimatterItemModelBuilder(loc, exFileHelper);
+        ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
     }
 
     public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
@@ -36,25 +39,20 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     }
 
     @Override
-    protected void registerModels() {
-        processItemModels(providerDomain);
-    }
-
-    @Override
     public void run() {
         registerModels();
     }
 
+    @Override
+    protected void registerModels() {
+        processItemModels(providerDomain);
+    }
+
     public void processItemModels(String domain) {
-        AntimatterAPI.all(Item.class)
-            .stream().filter(i -> i.getRegistryName().getNamespace().equals(domain))
-            .forEach(i -> AntimatterModelManager.onItemModelBuild(i, this));
-        AntimatterAPI.all(Block.class)
-            .stream().filter(b -> b.getRegistryName().getNamespace().equals(domain))
-            .forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
-        AntimatterAPI.all(IAntimatterTool.class)
-            .stream().filter(t -> t.getDomain().equals(domain))
-            .forEach(t -> tex(t.asItem(), "item/handheld", t.getTextures()));
+        AntimatterAPI.all(Item.class, domain).forEach(i -> AntimatterModelManager.onItemModelBuild(i, this));
+        AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
+        AntimatterAPI.all(IAntimatterTool.class, domain).forEach(t -> tex(t.asItem(), "item/handheld", t.getTextures()));
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> antimatterTex(f.getContainerItem(), "forge", "item/bucket").bucketProperties(f.getFluid()));
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {
@@ -67,7 +65,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
 
     public ItemModelBuilder tex(IItemProvider item, String parent, ResourceLocation... textures) {
         ItemModelBuilder builder = getBuilder(item);
-        builder.parent(new UncheckedModelFile(new ResourceLocation(parent)));
+        builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation(parent)));
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);
         }
@@ -85,4 +83,13 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     public ModelFile.ExistingModelFile existing(String domain, String path) {
         return getExistingFile(new ResourceLocation(domain, path));
     }
+
+    public AntimatterItemModelBuilder getAntimatterBuilder(IItemProvider item) {
+        return (AntimatterItemModelBuilder) getBuilder(item.asItem().getRegistryName().getPath());
+    }
+
+    public AntimatterItemModelBuilder antimatterTex(IItemProvider item, String namespace, String path) {
+        return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(namespace, path)));
+    }
+
 }

@@ -6,6 +6,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
@@ -16,22 +17,14 @@ import java.util.Map;
 
 public class AntimatterBlockStateProvider extends BlockStateProvider implements IAntimatterProvider {
 
-    protected String providerDomain, providerName;
-    protected AntimatterBlockModelProvider blockModelProvider;
+    protected final String providerDomain, providerName;
+    protected final AntimatterBlockModelProvider blockModelProvider;
 
     public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, ExistingFileHelper exFileHelper) {
         super(gen, providerDomain, exFileHelper);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
-        this.blockModelProvider = new AntimatterBlockModelProvider(gen, providerDomain, exFileHelper) {
-            @Override
-            protected void registerModels() { }
-
-            @Override
-            public String getName() {
-                return AntimatterBlockStateProvider.this.getName();
-            }
-        };
+        this.blockModelProvider = new AntimatterBlockModelProvider(gen, providerDomain, providerName, exFileHelper);
     }
 
     public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, String... excludedDomains) {
@@ -65,6 +58,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
 
     public void processBlocks(String domain) {
         AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onBlockModelBuild(b, this));
+        AntimatterAPI.all(AntimatterFluid.class,domain).forEach(f -> state(f.getFluidBlock(), getBuilder(f.getFluidBlock()).texture("particle", f.getFluid().getAttributes().getStillTexture())));
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {

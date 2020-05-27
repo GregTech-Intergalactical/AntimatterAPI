@@ -69,20 +69,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addData(data);
         this.domain = domain;
         this.id = id;
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(Machine.class, this);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
-        if (registry == ForgeRegistries.BLOCKS) {
-            Set<Block> machines = tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet());
-            tileType = new TileEntityType<>(tileFunc.apply(this), machines, null);
-        }
-        else if (registry == ForgeRegistries.TILE_ENTITIES) {
-            if (tileType == null) return;
-            ((IForgeRegistry<TileEntityType<?>>) registry).register(tileType.setRegistryName(domain, id));
-        }
+        if (!this.domain.equals(domain)) return;
+        if (registry == null) tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null);
     }
 
     protected void addData(Object... data) {

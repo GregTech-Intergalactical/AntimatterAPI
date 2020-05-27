@@ -29,7 +29,6 @@ public class DynamicPackFinder implements IPackFinder {
     public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packs, ResourcePackInfo.IFactory<T> factory) {
         DynamicResourcePack dynamicPack = new DynamicResourcePack(name);
         DynamicResourcePack.DOMAINS.addAll(domains);
-        DynamicResourcePack.DOMAINS.forEach(d -> Antimatter.LOGGER.info("Adding " + d + " to pack domains."));
         ClientResourcePackInfo packInfo = new ClientResourcePackInfo(
             id,
             true,

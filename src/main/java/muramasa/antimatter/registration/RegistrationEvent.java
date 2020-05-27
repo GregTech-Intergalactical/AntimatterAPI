@@ -8,4 +8,5 @@ public enum RegistrationEvent {
     READY, //When all data should be ready to use
     WORLDGEN_INIT, //When WorldGen objects need to initialize
     RECIPE
+
 }

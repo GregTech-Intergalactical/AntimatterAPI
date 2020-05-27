@@ -25,14 +25,14 @@ import java.util.function.Function;
 
 public class AntimatterBlockModelBuilder extends BlockModelBuilder {
 
-    protected static String SIMPLE = Ref.ID + ":block/preset/simple";
-    protected static String LAYERED = Ref.ID + ":block/preset/layered";
+    protected static final String SIMPLE = Ref.ID.concat(":block/preset/simple");
+    protected static final String LAYERED = Ref.ID.concat(":block/preset/layered");
 
-    protected ResourceLocation loader = null;
-    protected List<Consumer<JsonObject>> properties = new ObjectArrayList<>();
+    protected ResourceLocation loader;
+    protected final List<Consumer<JsonObject>> properties = new ObjectArrayList<>();
 
-    public AntimatterBlockModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
-        super(outputLocation, existingFileHelper);
+    public AntimatterBlockModelBuilder(ResourceLocation outputLocation, ExistingFileHelper exFileHelper) {
+        super(outputLocation, exFileHelper);
     }
 
     public AntimatterBlockModelBuilder property(String property, JsonElement element) {

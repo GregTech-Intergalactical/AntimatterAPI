@@ -155,7 +155,7 @@ public abstract class Cover implements INamedContainerProvider, IAntimatterObjec
     public void onRegister() {
         String id = getId();
         if (AntimatterAPI.get(Cover.class, id) == null)
-            AntimatterAPI.register(this);
+            AntimatterAPI.register(Cover.class, this);
     }
 
 

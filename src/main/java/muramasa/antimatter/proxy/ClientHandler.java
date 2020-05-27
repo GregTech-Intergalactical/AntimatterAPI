@@ -19,22 +19,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ClientHandler implements IProxyHandler {
 
     public ClientHandler() { }
 
-    public static void onModelRegisterEvent(ModelRegistryEvent e) {
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_MAIN.getLoc(), AntimatterModelManager.LOADER_MAIN);
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_DYNAMIC.getLoc(), AntimatterModelManager.LOADER_DYNAMIC);
-        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_PIPE.getLoc(), AntimatterModelManager.LOADER_PIPE);
-    }
-
     public static void setup(FMLClientSetupEvent e) {
-        // Minecraft.getInstance().getResourcePackList().addPackFinder(new DynamicPackFinder("antimatterTest", "AntimatterTest", "^_^", false));
         AntimatterModelManager.init();
         AntimatterAPI.runLaterClient(
                 () -> {

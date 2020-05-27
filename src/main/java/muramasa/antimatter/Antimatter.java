@@ -1,6 +1,8 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
@@ -12,7 +14,9 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -43,7 +47,6 @@ public class Antimatter implements IAntimatterRegistrar {
     //todo: datapack, resource pack, registration double check
     public Antimatter() {
         INSTANCE = this;
-
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -51,7 +54,14 @@ public class Antimatter implements IAntimatterRegistrar {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 
-        eventBus.addListener(ClientHandler::onModelRegisterEvent);
+        // ModLoadingContext.get().getActiveContainer().dispatchConfigEvent();
+
+        Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
+
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_MAIN.getLoc(), AntimatterModelManager.LOADER_MAIN);
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_DYNAMIC.getLoc(), AntimatterModelManager.LOADER_DYNAMIC);
+        ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_PIPE.getLoc(), AntimatterModelManager.LOADER_PIPE);
+
         eventBus.addListener(ClientHandler::onItemColorHandler);
         eventBus.addListener(ClientHandler::onBlockColorHandler);
 
@@ -61,6 +71,7 @@ public class Antimatter implements IAntimatterRegistrar {
         eventBus.addListener(EventPriority.LOWEST, this::dataSetup);
 
         AntimatterAPI.addRegistrar(INSTANCE);
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
     }
 

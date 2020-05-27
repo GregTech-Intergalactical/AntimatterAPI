@@ -1,5 +1,6 @@
 package muramasa.antimatter.fluid;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import net.minecraft.block.Block;
@@ -41,16 +42,20 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static FluidAttributes.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
-        FluidAttributes.Builder builder = getDefaultAttributesBuilder().color(material.getRGB()).translationKey("block." + domain + type.getId() + "." + material.getId());
-        int mass = material.getElement() == null ? 0 : material.getElement().getMass();
         if (type == MaterialType.GAS) {
-            return builder.viscosity(200).density(-100 - mass).gaseous().temperature(material.getGasTemperature());
+            return FluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
+                    .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
+                    .viscosity(200).density(-1000).gaseous().temperature(material.getGasTemperature());
         }
         else if (type == MaterialType.PLASMA) {
-            return builder.viscosity(10).density(55536 - mass).luminosity(15).gaseous().temperature(10000);
+            return FluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
+                    .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
+                    .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
         }
         else {
-            return builder.viscosity(1000).density(1000 + mass).temperature(material.getLiquidTemperature());
+            return getDefaultAttributesBuilder().color((155 << 24) | (material.getRGB() & 0x00ffffff))
+                    .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
+                    .viscosity(1000).density(1000).temperature(material.getLiquidTemperature());
         }
     }
 
