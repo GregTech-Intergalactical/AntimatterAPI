@@ -3,11 +3,9 @@ package muramasa.antimatter.datagen.resources;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -38,22 +36,19 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void addState(ResourceLocation loc, IGeneratedBlockstate state) {
-        DOMAINS.add(loc.getNamespace());
         REGISTRY.put(getStateLoc(loc), state.toJson().toString());
     }
 
     public static void addBlock(ResourceLocation loc, ModelBuilder<?> builder) {
-        DOMAINS.add(loc.getNamespace());
         REGISTRY.put(getBlockLoc(loc), builder.toJson().toString());
     }
 
     public static void addItem(ResourceLocation loc, ModelBuilder<?> builder) {
-        DOMAINS.add(loc.getNamespace());
         REGISTRY.put(getItemLoc(loc), builder.toJson().toString());
     }
 
-    public static void addLang(ResourceLocation loc, String key, String value) {
-        LANG.computeIfAbsent(getLangLoc(loc), k -> new JsonObject()).addProperty(key, value);
+    public static void addLoc(String domain, String locale, String key, String value) {
+        LANG.computeIfAbsent(getLangLoc(domain, locale), k -> new JsonObject()).addProperty(key, value);
     }
 
     @Override
@@ -61,6 +56,10 @@ public class DynamicResourcePack implements IResourcePack {
         if (type == ResourcePackType.SERVER_DATA) throw new UnsupportedOperationException("Dynamic Resource Pack only supports client resources");
         String str = REGISTRY.get(location);
         if (str == null) throw new FileNotFoundException("Can't find " + location + " " + getName());
+        JsonObject obj = LANG.get(location);
+        if (obj != null) {
+            return new ByteArrayInputStream(obj.toString().getBytes(StandardCharsets.UTF_8));
+        }
         else {
             return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
         }
@@ -73,7 +72,9 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-        return type != ResourcePackType.SERVER_DATA && REGISTRY.containsKey(location);
+        if (type != ResourcePackType.CLIENT_RESOURCES) return false;
+        if (!REGISTRY.containsKey(location)) return LANG.containsKey(location);
+        return true;
     }
 
     @Override
@@ -104,18 +105,19 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static ResourceLocation getStateLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), "blockstates/" + registryId.getPath() + ".json");
+        return new ResourceLocation(registryId.getNamespace(), String.join("", "blockstates/", registryId.getPath(), ".json"));
     }
 
     public static ResourceLocation getBlockLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), "models/" + registryId.getPath() + ".json");
+        return new ResourceLocation(registryId.getNamespace(), String.join("", "models/", registryId.getPath(), ".json"));
     }
 
     public static ResourceLocation getItemLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), "models/" + registryId.getPath() + ".json");
+        return new ResourceLocation(registryId.getNamespace(), String.join("", "models/", registryId.getPath(), ".json"));
     }
 
-    public static ResourceLocation getLangLoc(ResourceLocation langId) {
-        return new ResourceLocation(langId.getNamespace(), "lang/" + langId.getPath() + ".json");
+    public static ResourceLocation getLangLoc(String domain, String locale) {
+        return new ResourceLocation(domain, String.join("", "lang/", locale, ".json"));
     }
+
 }

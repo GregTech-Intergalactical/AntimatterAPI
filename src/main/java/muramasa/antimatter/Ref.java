@@ -1,5 +1,7 @@
 package muramasa.antimatter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.datagen.BackgroundDataGenerator;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
@@ -16,6 +18,7 @@ import java.util.Collections;
 public class Ref {
 
     /** Global Objects **/
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     public static final XSTR RNG = new XSTR();
     public static final DataGenerator DUMMY_GENERATOR = new DataGenerator(new File("").toPath(), Collections.emptySet());
     public static final BackgroundDataGenerator BACKGROUND_DATA_GENERATOR = new BackgroundDataGenerator();

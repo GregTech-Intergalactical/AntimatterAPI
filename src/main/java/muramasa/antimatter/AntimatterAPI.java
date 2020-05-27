@@ -149,7 +149,7 @@ public final class AntimatterAPI {
         PROVIDERS.forEach((k, v) -> v.forEach(f -> {
             IAntimatterProvider prov = f.apply(Ref.DUMMY_GENERATOR);
             LogManager.getLogger().debug("Running " + prov.getName());
-            prov.run();
+            prov.run(method);
             if (prov instanceof BlockStateProvider) {
                 BlockStateProvider stateProv = (BlockStateProvider) prov;
                 stateProv.models().generatedModels.forEach(DynamicResourcePack::addBlock);
