@@ -35,7 +35,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (stoneType.getId().equals("stone")) items.add(new ItemStack(this));
+        if (stoneType.getId().equals("stone_stone")) items.add(new ItemStack(this)); //todo move stonetype to antimatter
     }
 
     //    @Override

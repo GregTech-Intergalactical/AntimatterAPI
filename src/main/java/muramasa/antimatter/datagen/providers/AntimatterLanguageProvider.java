@@ -26,6 +26,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
 import java.io.BufferedWriter;
@@ -56,6 +57,11 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     public void run(ResourceMethod method) {
         this.method = method;
         addTranslations();
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.CLIENT;
     }
 
     @Override

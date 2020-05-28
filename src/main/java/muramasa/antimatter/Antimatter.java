@@ -1,11 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
-import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
-import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
+import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -17,7 +13,7 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -45,9 +41,9 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.runBackgroundProviders();
     }
 
-    //todo: datapack
     public Antimatter() {
         INSTANCE = this;
+        AntimatterAPI.addRegistrar(INSTANCE);
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -59,10 +55,6 @@ public class Antimatter implements IAntimatterRegistrar {
 
         Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
 
-        // ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_MAIN.getLoc(), AntimatterModelManager.LOADER_MAIN);
-        // ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_DYNAMIC.getLoc(), AntimatterModelManager.LOADER_DYNAMIC);
-        // ModelLoaderRegistry.registerLoader(AntimatterModelManager.LOADER_PIPE.getLoc(), AntimatterModelManager.LOADER_PIPE);
-
         eventBus.addListener(ClientHandler::onItemColorHandler);
         eventBus.addListener(ClientHandler::onBlockColorHandler);
 
@@ -71,10 +63,6 @@ public class Antimatter implements IAntimatterRegistrar {
         eventBus.addListener(this::serverSetup);
         eventBus.addListener(EventPriority.LOWEST, this::dataSetup);
 
-        AntimatterAPI.addRegistrar(INSTANCE);
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
@@ -83,8 +71,9 @@ public class Antimatter implements IAntimatterRegistrar {
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
-        AntimatterAPI.runProvidersDynamically(ResourceMethod.DYNAMIC_PACK); // in common as data will be setup later
         CommonHandler.setup(e);
+        AntimatterAPI.runProvidersDynamically(ResourceMethod.DYNAMIC_PACK, Dist.CLIENT);
+        AntimatterAPI.runProvidersDynamically(ResourceMethod.DYNAMIC_PACK, Dist.DEDICATED_SERVER);
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
         // AntimatterAPI.onRegistration(RegistrationEvent.RECIPE); Recipes should be part of the 'forge' registry
 
@@ -99,13 +88,14 @@ public class Antimatter implements IAntimatterRegistrar {
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup(e);
+        AntimatterAPI.runProvidersDynamically(ResourceMethod.DYNAMIC_PACK, Dist.DEDICATED_SERVER); // in common as data will be setup later
         AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
     public void dataSetup(GatherDataEvent e) {
         DataGenerator gen = e.getGenerator();
-        if (e.includeClient()) AntimatterAPI.onProviderInit(Ref.ID, gen);
-        if (e.includeServer()) gen.addProvider(new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, gen));
+        if (e.includeClient()) AntimatterAPI.onProviderInit(Ref.ID, gen, Dist.CLIENT);
+        if (e.includeServer()) AntimatterAPI.onProviderInit(Ref.ID, gen, Dist.DEDICATED_SERVER);
     }
 
     @Override
@@ -117,6 +107,11 @@ public class Antimatter implements IAntimatterRegistrar {
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
             case DATA_INIT:
+                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
+                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
+                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g));
+                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, g));
                 Data.init();
                 break;
 //            case DATA_READY:

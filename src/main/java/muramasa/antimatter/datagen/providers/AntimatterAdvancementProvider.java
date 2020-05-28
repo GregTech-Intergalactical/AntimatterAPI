@@ -3,6 +3,8 @@ package muramasa.antimatter.datagen.providers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.resources.ResourceMethod;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.data.DataGenerator;
@@ -11,6 +13,7 @@ import net.minecraft.data.IDataProvider;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,13 +23,14 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class AntimatterAdvancementProvider implements IDataProvider {
+public class AntimatterAdvancementProvider implements IDataProvider, IAntimatterProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator gen;
     private final List<Consumer<Consumer<Advancement>>> advancements;
     private final String providerDomain, providerName;
+    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     @SafeVarargs
     public AntimatterAdvancementProvider(String providerDomain, String providerName, DataGenerator gen, Consumer<Consumer<Advancement>>... advancements) {
@@ -35,6 +39,16 @@ public class AntimatterAdvancementProvider implements IDataProvider {
         this.gen = gen;
         if (advancements.length == 0) throw new IllegalArgumentException("AntimatterAdvancementProvider requires at least one Advancement class.");
         this.advancements = Arrays.asList(advancements);
+    }
+
+    @Override
+    public void run(ResourceMethod method) {
+
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.DEDICATED_SERVER;
     }
 
     @Override

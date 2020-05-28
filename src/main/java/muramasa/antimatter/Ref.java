@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.datagen.BackgroundDataGenerator;
+import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.datagen.resources.DynamicPackFinder;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.data.DataGenerator;
@@ -22,7 +23,8 @@ public class Ref {
     public static final XSTR RNG = new XSTR();
     public static final DataGenerator DUMMY_GENERATOR = new DataGenerator(new File("").toPath(), Collections.emptySet());
     public static final BackgroundDataGenerator BACKGROUND_DATA_GENERATOR = new BackgroundDataGenerator();
-    public static final DynamicPackFinder PACK_FINDER = new DynamicPackFinder("antimatter_pack", "Antimatter - Dynamic Resources", "Dynamic Resource Pack", true);
+    public static final DynamicPackFinder PACK_FINDER = new DynamicPackFinder("antimatter_pack", "Antimatter - Dynamic Assets", "Dynamic Resource Pack", true);
+    public static final DynamicDataPackFinder SERVER_PACK_FINDER = new DynamicDataPackFinder("antimatter_pack", "Antimatter - Dynamic Data");
 
     /** Mod Data **/
     public static final String ID = "antimatter";

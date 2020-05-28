@@ -3,12 +3,16 @@ package muramasa.antimatter.datagen.resources;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -27,7 +31,7 @@ public class DynamicResourcePack implements IResourcePack {
 
     protected static final ObjectOpenHashSet<String> DOMAINS = new ObjectOpenHashSet<>();
     protected static final Object2ObjectOpenHashMap<ResourceLocation, String> REGISTRY = new Object2ObjectOpenHashMap<>();
-    protected static final Object2ObjectOpenHashMap<ResourceLocation, JsonObject> LANG = new Object2ObjectOpenHashMap<>();
+    protected static final Object2ObjectOpenHashMap<ResourceLocation, JsonObject> OBJS = new Object2ObjectOpenHashMap<>();
 
     private final String name;
 
@@ -48,15 +52,30 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void addLoc(String domain, String locale, String key, String value) {
-        LANG.computeIfAbsent(getLangLoc(domain, locale), k -> new JsonObject()).addProperty(key, value);
+        OBJS.computeIfAbsent(getLangLoc(domain, locale), k -> new JsonObject()).addProperty(key, value);
+    }
+
+    public static void addBlockTag(ResourceLocation loc, JsonObject obj) {
+        OBJS.put(getBlockTagLoc(loc), obj);
+    }
+
+    public static void addItemTag(ResourceLocation loc, JsonObject obj) {
+        OBJS.put(getItemTagLoc(loc), obj);
     }
 
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
-        if (type == ResourcePackType.SERVER_DATA) throw new UnsupportedOperationException("Dynamic Resource Pack only supports client resources");
+        if (type == ResourcePackType.SERVER_DATA) {
+            // throw new UnsupportedOperationException("Dynamic Resource Pack only supports client resources");
+            JsonObject obj = OBJS.get(location);
+            if (obj != null) {
+                return new ByteArrayInputStream(obj.toString().getBytes(StandardCharsets.UTF_8));
+            }
+            else throw new FileNotFoundException("Can't find " + location + " " + getName());
+        }
         String str = REGISTRY.get(location);
         if (str == null) throw new FileNotFoundException("Can't find " + location + " " + getName());
-        JsonObject obj = LANG.get(location);
+        JsonObject obj = OBJS.get(location);
         if (obj != null) {
             return new ByteArrayInputStream(obj.toString().getBytes(StandardCharsets.UTF_8));
         }
@@ -72,20 +91,26 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-        if (type != ResourcePackType.CLIENT_RESOURCES) return false;
-        if (!REGISTRY.containsKey(location)) return LANG.containsKey(location);
+        if (type == ResourcePackType.SERVER_DATA) return OBJS.containsKey(location);
+        if (!REGISTRY.containsKey(location)) return OBJS.containsKey(location);
         return true;
     }
 
     @Override
     public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
-        if (type == ResourcePackType.SERVER_DATA) return Collections.emptyList();
+        if (type == ResourcePackType.SERVER_DATA) return OBJS.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
         return REGISTRY.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
     }
 
     @Override
     public Set<String> getResourceNamespaces(ResourcePackType type) {
-        return type == ResourcePackType.CLIENT_RESOURCES ? DOMAINS : Collections.emptySet();
+        if (type == ResourcePackType.SERVER_DATA) {
+            final ObjectOpenHashSet<String> SERVER_DOMAINS = DOMAINS;
+            SERVER_DOMAINS.add("forge");
+            SERVER_DOMAINS.add("minecraft");
+            return SERVER_DOMAINS;
+        }
+        return DOMAINS;
     }
 
     @Override
@@ -104,6 +129,7 @@ public class DynamicResourcePack implements IResourcePack {
         //NOOP
     }
 
+    //todo, pass string?
     public static ResourceLocation getStateLoc(ResourceLocation registryId) {
         return new ResourceLocation(registryId.getNamespace(), String.join("", "blockstates/", registryId.getPath(), ".json"));
     }
@@ -118,6 +144,14 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static ResourceLocation getLangLoc(String domain, String locale) {
         return new ResourceLocation(domain, String.join("", "lang/", locale, ".json"));
+    }
+
+    public static ResourceLocation getBlockTagLoc(ResourceLocation registryId) {
+        return new ResourceLocation(registryId.getNamespace(), String.join("", "tags/blocks/", registryId.getPath(), ".json"));
+    }
+
+    public static ResourceLocation getItemTagLoc(ResourceLocation registryId) {
+        return new ResourceLocation(registryId.getNamespace(), String.join("", "tags/items/", registryId.getPath(), ".json"));
     }
 
 }

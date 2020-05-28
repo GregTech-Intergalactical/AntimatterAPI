@@ -19,6 +19,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.TagsProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,10 +29,12 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -119,17 +122,13 @@ public final class AntimatterAPI {
         all(c).stream().filter(o -> ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
     }
 
-    /**
-     *  Providers and Dynamic Resource Pack Section
-     *
-     * TODO: Client/Server separate? Together? Common?
-     */
+    /** Providers and Dynamic Resource Pack Section **/
     public static void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
         PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
     }
 
-    public static void onProviderInit(String domain, DataGenerator gen) {
-        PROVIDERS.getOrDefault(domain, Collections.emptyList()).forEach(f -> gen.addProvider(f.apply(gen)));
+    public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
+        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen)).filter(p -> p.getSide().equals(side)).forEach(gen::addProvider);
     }
 
     public static void runBackgroundProviders() {
@@ -143,21 +142,25 @@ public final class AntimatterAPI {
         }
     }
 
-    public static void runProvidersDynamically(ResourceMethod method) {
+    public static void runProvidersDynamically(ResourceMethod method, Dist side) {
         // Optimise by loading straight into DynamicResourcePack::add methods, instead of running -> looping through ran resources -> add to another map
         if (method != ResourceMethod.DYNAMIC_PACK) return;
-        PROVIDERS.forEach((k, v) -> v.forEach(f -> {
-            IAntimatterProvider prov = f.apply(Ref.DUMMY_GENERATOR);
-            LogManager.getLogger().debug("Running " + prov.getName());
-            prov.run(method);
-            if (prov instanceof BlockStateProvider) {
-                BlockStateProvider stateProv = (BlockStateProvider) prov;
+        PROVIDERS.forEach((k, v) -> v.stream().map(f -> f.apply(Ref.DUMMY_GENERATOR)).filter(p -> p.getSide().equals(side)).forEach(p -> {
+            LogManager.getLogger().debug("Running " + p.getName());
+            StopWatch watch = new StopWatch();
+            watch.start();
+            p.run(method);
+            watch.stop();
+            LogManager.getLogger().debug(p.getName() + " took " + watch.getTime() + " to run!");
+            if (p instanceof BlockStateProvider) {
+                BlockStateProvider stateProv = (BlockStateProvider) p;
                 stateProv.models().generatedModels.forEach(DynamicResourcePack::addBlock);
-                if (prov instanceof AntimatterBlockStateProvider) {
+                if (p instanceof AntimatterBlockStateProvider) {
                     ((AntimatterBlockStateProvider) stateProv).getRegisteredBlocks().forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
                 }
-            } else if (prov instanceof ItemModelProvider) {
-                ((ItemModelProvider) prov).generatedModels.forEach(DynamicResourcePack::addItem);
+            }
+            else if (p instanceof ItemModelProvider) {
+                ((ItemModelProvider) p).generatedModels.forEach(DynamicResourcePack::addItem);
             }
         }));
     }

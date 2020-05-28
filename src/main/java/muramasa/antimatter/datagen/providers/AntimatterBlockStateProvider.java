@@ -11,6 +11,7 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.*;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
 
     protected final String providerDomain, providerName;
     protected final AntimatterBlockModelProvider blockModelProvider;
-    private ResourceMethod method;
+    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, ExistingFileHelper exFileHelper) {
         super(gen, providerDomain, exFileHelper);
@@ -48,6 +49,11 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     public void run(ResourceMethod method) {
         this.method = method;
         registerStatesAndModels();
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.CLIENT;
     }
 
     @Override

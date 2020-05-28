@@ -13,6 +13,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
@@ -44,6 +45,11 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     public void run(ResourceMethod method) {
         this.method = method;
         registerModels();
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.CLIENT;
     }
 
     @Override

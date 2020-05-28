@@ -3,7 +3,9 @@ package muramasa.antimatter.datagen.providers;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
+import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.util.Utils;
@@ -18,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 
@@ -33,14 +36,25 @@ import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
 import static muramasa.antimatter.material.MaterialType.*;
 import static muramasa.antimatter.util.Utils.getForgeItemTag;
 
-public class AntimatterRecipeProvider extends RecipeProvider {
+public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {
 
     private final String providerDomain, providerName;
+    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     public AntimatterRecipeProvider(String providerDomain, String providerName, DataGenerator gen) {
         super(gen);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
+    }
+
+    @Override
+    public void run(ResourceMethod method) {
+
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.DEDICATED_SERVER;
     }
 
     @Override

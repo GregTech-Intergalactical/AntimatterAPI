@@ -1,7 +1,5 @@
 package muramasa.antimatter.datagen.resources;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
@@ -18,7 +16,6 @@ public class DynamicPackFinder implements IPackFinder {
 
     protected final String id, name, desc;
     protected final boolean hidden;
-    protected final ObjectSet<String> domains = new ObjectOpenHashSet<>();
 
     public DynamicPackFinder(String id, String name, String desc, boolean hidden) {
         this.id = id;

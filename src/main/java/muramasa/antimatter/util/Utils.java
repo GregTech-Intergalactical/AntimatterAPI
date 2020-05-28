@@ -810,6 +810,7 @@ public class Utils {
 
     public static String getConventionalStoneType(StoneType type) {
         String string = type.getId();
+        string = string.replaceAll("stone_", "");
         int index = string.indexOf("_");
         if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));
         return string;

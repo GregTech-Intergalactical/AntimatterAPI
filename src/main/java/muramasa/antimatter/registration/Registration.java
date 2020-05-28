@@ -45,7 +45,6 @@ public class Registration {
     @SuppressWarnings("unchecked")
     public static void onRegister(final RegistryEvent.Register<?> e) {
         final String currentDomain = ModLoadingContext.get().getActiveNamespace();
-        AntimatterAPI.all(IRegistryEntryProvider.class, currentDomain, p -> p.onRegistryBuild(currentDomain, e.getRegistry()));
         if (e.getRegistry() == ForgeRegistries.BLOCKS) onBlockRegister((IForgeRegistry<Block>) e.getRegistry(), currentDomain);
         else if (e.getRegistry() == ForgeRegistries.ITEMS) onItemRegister((IForgeRegistry<Item>) e.getRegistry(), currentDomain);
         else if (e.getRegistry() == ForgeRegistries.TILE_ENTITIES) onTileEntityRegister((IForgeRegistry<TileEntityType<?>>) e.getRegistry(), currentDomain);
