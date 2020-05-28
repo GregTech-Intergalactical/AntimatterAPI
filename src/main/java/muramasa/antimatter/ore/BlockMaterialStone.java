@@ -8,6 +8,7 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -41,6 +42,7 @@ public abstract class BlockMaterialStone extends BlockBasic implements IAntimatt
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 1 && block != null ? ((BlockMaterialStone) block).getMaterial().getRGB() : -1;
+        return i == 1 && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof BlockMaterialStone ? getMaterial().getRGB() : -1;
     }
+
 }
