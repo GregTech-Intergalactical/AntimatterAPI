@@ -68,6 +68,10 @@ public class DynamicResourcePack implements IResourcePack {
         LANG.put(getLangLoc(domain, locale), obj);
     }
 
+    public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
+        DATA.put(getAdvancementLoc(loc), obj);
+    }
+
     // Must append 's' in the identifier
     public static void addTag(String identifier, ResourceLocation loc, JsonObject obj) {
         DATA.put(getTagLoc(identifier, loc), obj);
@@ -138,6 +142,10 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static ResourceLocation getLangLoc(String domain, String locale) {
         return new ResourceLocation(domain, String.join("", "lang/", locale, ".json"));
+    }
+
+    public static ResourceLocation getAdvancementLoc(ResourceLocation advancementId) {
+        return new ResourceLocation(advancementId.getNamespace(), String.join("", "advancements/", advancementId.getPath(), ".json"));
     }
 
     public static ResourceLocation getTagLoc(String identifier, ResourceLocation tagId) {
