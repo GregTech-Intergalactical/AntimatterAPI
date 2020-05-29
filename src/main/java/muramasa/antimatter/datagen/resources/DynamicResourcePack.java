@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.Ref;
+import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -55,17 +57,22 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void addBlock(ResourceLocation loc, ModelBuilder<?> builder) {
-        ASSETS.put(getBlockLoc(loc), builder.toJson().toString());
+        ASSETS.put(getModelLoc(loc), builder.toJson().toString());
     }
 
     public static void addItem(ResourceLocation loc, ModelBuilder<?> builder) {
-        ASSETS.put(getItemLoc(loc), builder.toJson().toString());
+        ASSETS.put(getModelLoc(loc), builder.toJson().toString());
     }
 
     public static void addLangLoc(String domain, String locale, String key, String value) {
         JsonObject obj = new JsonObject();
         obj.addProperty(key, value);
         LANG.put(getLangLoc(domain, locale), obj);
+    }
+
+    public static void addRecipe(IFinishedRecipe recipe) {
+        DATA.put(getRecipeLog(recipe.getID()), recipe.getRecipeJson());
+        if (recipe.getAdvancementJson() != null) DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementID())), recipe.getAdvancementJson());
     }
 
     public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
@@ -132,16 +139,16 @@ public class DynamicResourcePack implements IResourcePack {
         return new ResourceLocation(registryId.getNamespace(), String.join("", "blockstates/", registryId.getPath(), ".json"));
     }
 
-    public static ResourceLocation getBlockLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), String.join("", "models/", registryId.getPath(), ".json"));
-    }
-
-    public static ResourceLocation getItemLoc(ResourceLocation registryId) {
+    public static ResourceLocation getModelLoc(ResourceLocation registryId) {
         return new ResourceLocation(registryId.getNamespace(), String.join("", "models/", registryId.getPath(), ".json"));
     }
 
     public static ResourceLocation getLangLoc(String domain, String locale) {
         return new ResourceLocation(domain, String.join("", "lang/", locale, ".json"));
+    }
+
+    public static ResourceLocation getRecipeLog(ResourceLocation recipeId) {
+        return new ResourceLocation(recipeId.getNamespace(), String.join("", "recipes/", recipeId.getPath(), ".json"));
     }
 
     public static ResourceLocation getAdvancementLoc(ResourceLocation advancementId) {

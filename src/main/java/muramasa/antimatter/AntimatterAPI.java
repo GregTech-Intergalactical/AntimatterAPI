@@ -6,7 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.providers.forge.ForgeDummyTagProviders;
+import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -46,8 +46,10 @@ public final class AntimatterAPI {
     private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet.noneOf(RegistrationEvent.class);
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
-    private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
+
+    private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
+    private static boolean replacementsFound = false;
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
@@ -126,9 +128,10 @@ public final class AntimatterAPI {
 
     public static void runBackgroundProviders() {
         Antimatter.LOGGER.debug("We do not condone these practices.");
-        Ref.BACKGROUND_GEN.addProviders(ForgeDummyTagProviders.DUMMY_FORGE_PROVIDERS);
+        Ref.BACKGROUND_GEN.addProviders(DummyTagProviders.DUMMY_PROVIDERS);
         try {
             Ref.BACKGROUND_GEN.run();
+            replacementsFound = true;
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -220,12 +223,13 @@ public final class AntimatterAPI {
      */
     public static Item getReplacement(@Nullable Item originalItem, Tag<Item> tag, String... namespaces) {
         if (tag != null) {
-            if (REPLACEMENTS.containsKey(tag.hashCode())) return REPLACEMENTS.get(tag.hashCode());
+            if (REPLACEMENTS.containsKey(tag.getId().getPath().hashCode())) return REPLACEMENTS.get(tag.getId().getPath().hashCode());
+            if (replacementsFound) return originalItem;
             Set<String> checks = Sets.newHashSet(namespaces);
             if (checks.isEmpty()) checks.add("minecraft");
             return tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
                     .findAny().map(i -> {
-                        REPLACEMENTS.put(tag.hashCode(), i);
+                        REPLACEMENTS.put(tag.getId().getPath().hashCode(), i);
                         return i;
                     }).orElse(originalItem);
         }

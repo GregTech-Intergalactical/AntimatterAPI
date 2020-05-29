@@ -1,16 +1,10 @@
-package muramasa.antimatter.datagen.providers.forge;
+package muramasa.antimatter.datagen.providers.dummy;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import net.minecraft.block.Block;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.data.TagsProvider;
+import net.minecraft.data.*;
 import net.minecraft.item.Item;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 
@@ -18,13 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ForgeDummyTagProviders {
+public class DummyTagProviders {
 
-    public static final IDataProvider[] DUMMY_FORGE_PROVIDERS = { new ForgeItemTagProviderOverride(), new ForgeBlockTagProviderOverride() };
+    public static final IDataProvider[] DUMMY_PROVIDERS = { new ForgeItemTagsProviderOverride(), new ForgeBlockTagsProviderOverride() };
 
-    public static class ForgeItemTagProviderOverride extends ForgeItemTagsProvider {
+    public static class ForgeItemTagsProviderOverride extends ForgeItemTagsProvider {
 
-        public ForgeItemTagProviderOverride() {
+        public ForgeItemTagsProviderOverride() {
             super(Ref.BACKGROUND_GEN);
         }
 
@@ -39,9 +33,9 @@ public class ForgeDummyTagProviders {
 
     }
 
-    public static class ForgeBlockTagProviderOverride extends ForgeBlockTagsProvider {
+    public static class ForgeBlockTagsProviderOverride extends ForgeBlockTagsProvider {
 
-        public ForgeBlockTagProviderOverride() {
+        public ForgeBlockTagsProviderOverride() {
             super(Ref.BACKGROUND_GEN);
         }
 

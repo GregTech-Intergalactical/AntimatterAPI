@@ -28,7 +28,7 @@ import static net.minecraftforge.fluids.ForgeFlowingFluid.*;
  * TODO: generic getFluidContainer()
  * TODO: Cell Models
  */
-public class AntimatterFluid implements IAntimatterObject, IRegistryEntryProvider {
+public class AntimatterFluid implements IAntimatterObject {
 
     public static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation("block/water_overlay");
     public static final ResourceLocation LIQUID_STILL_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/still");
@@ -75,29 +75,6 @@ public class AntimatterFluid implements IAntimatterObject, IRegistryEntryProvide
 
     public AntimatterFluid(String domain, String id, Block.Properties properties) {
         this(domain, id, getDefaultAttributesBuilder(), properties);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void onRegistryBuild(String currentDomain, IForgeRegistry<?> registry) {
-        /*
-        if (registry == null) return;
-        if (currentDomain.equals(domain)) {
-            if (registry == ForgeRegistries.FLUIDS) {
-                this.source.setRegistryName(domain, id);
-                this.flowing.setRegistryName(domain, "flowing_" + id);
-                ((IForgeRegistry<Fluid>) registry).registerAll(this.source, this.flowing);
-            }
-            else if (registry == ForgeRegistries.BLOCKS) {
-                this.fluidBlock.setRegistryName(domain, id);
-                ((IForgeRegistry<Block>) registry).register(this.fluidBlock);
-            }
-            else if (registry == ForgeRegistries.ITEMS) {
-                this.containerItem.setRegistryName(domain, id + "_bucket");
-                ((IForgeRegistry<Item>) registry).register(this.containerItem);
-            }
-        }
-         */
     }
 
     public AntimatterFluid source(Source source) {
