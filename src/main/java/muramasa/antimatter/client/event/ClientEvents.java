@@ -44,7 +44,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.*;
 
-@Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEvents {
 
     private static final Minecraft MC = Minecraft.getInstance();

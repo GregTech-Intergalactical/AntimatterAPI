@@ -9,7 +9,7 @@ import net.minecraftforge.fml.config.ModConfig;
 
 import static net.minecraftforge.common.ForgeConfigSpec.*;
 
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class AntimatterConfig {
 
     //TODO add ResourceMethod enum values

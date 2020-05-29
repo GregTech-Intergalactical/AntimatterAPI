@@ -5,7 +5,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ServerHandler implements IProxyHandler {
 
     public ServerHandler() { }
@@ -21,4 +20,5 @@ public class ServerHandler implements IProxyHandler {
     public PlayerEntity getClientPlayer() {
         throw new IllegalStateException("Cannot call on server!");
     }
+
 }
