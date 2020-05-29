@@ -25,7 +25,7 @@ public class ForgeDummyTagProviders {
     public static class ForgeItemTagProviderOverride extends ForgeItemTagsProvider {
 
         public ForgeItemTagProviderOverride() {
-            super(Ref.BACKGROUND_DATA_GENERATOR);
+            super(Ref.BACKGROUND_GEN);
         }
 
         @Override
@@ -33,8 +33,7 @@ public class ForgeDummyTagProviders {
             this.tagToBuilder.clear();
             this.registerTags();
             TagCollection<Item> collection = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
-            Map<ResourceLocation, Tag.Builder<Item>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue));
-            collection.registerAll(map);
+            collection.registerAll(this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue)));
             this.setCollection(collection);
         }
 
@@ -43,7 +42,7 @@ public class ForgeDummyTagProviders {
     public static class ForgeBlockTagProviderOverride extends ForgeBlockTagsProvider {
 
         public ForgeBlockTagProviderOverride() {
-            super(Ref.BACKGROUND_DATA_GENERATOR);
+            super(Ref.BACKGROUND_GEN);
         }
 
         @Override
@@ -51,8 +50,7 @@ public class ForgeDummyTagProviders {
             this.tagToBuilder.clear();
             this.registerTags();
             TagCollection<Block> collection = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
-            Map<ResourceLocation, Tag.Builder<Block>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue));
-            collection.registerAll(map);
+            collection.registerAll(this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue)));
             this.setCollection(collection);
         }
 

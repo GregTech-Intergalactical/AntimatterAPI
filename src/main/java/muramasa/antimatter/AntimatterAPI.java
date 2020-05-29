@@ -6,10 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.forge.ForgeDummyTagProviders;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -19,7 +16,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.TagsProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,11 +26,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -133,35 +126,27 @@ public final class AntimatterAPI {
 
     public static void runBackgroundProviders() {
         Antimatter.LOGGER.debug("We do not condone these practices.");
-        Ref.BACKGROUND_DATA_GENERATOR.addProviders(ForgeDummyTagProviders.DUMMY_FORGE_PROVIDERS);
+        Ref.BACKGROUND_GEN.addProviders(ForgeDummyTagProviders.DUMMY_FORGE_PROVIDERS);
         try {
-            Ref.BACKGROUND_DATA_GENERATOR.run();
+            Ref.BACKGROUND_GEN.run();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void runProvidersDynamically(Dist side) {
-        // Optimise by loading straight into DynamicResourcePack::add methods, instead of running -> looping through ran resources -> add to another map
-        PROVIDERS.forEach((k, v) -> v.stream().map(f -> f.apply(Ref.DUMMY_GENERATOR)).filter(p -> p.getSide().equals(side)).forEach(p -> {
-            LogManager.getLogger().debug("Running " + p.getName());
-            StopWatch watch = new StopWatch();
-            watch.start();
-            p.run();
-            watch.stop();
-            LogManager.getLogger().debug(p.getName() + " took " + watch.getNanoTime() + "ns to run!");
-            if (p instanceof BlockStateProvider) {
-                BlockStateProvider stateProv = (BlockStateProvider) p;
-                stateProv.models().generatedModels.forEach(DynamicResourcePack::addBlock);
-                if (p instanceof AntimatterBlockStateProvider) {
-                    ((AntimatterBlockStateProvider) stateProv).getRegisteredBlocks().forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
-                }
-            }
-            else if (p instanceof ItemModelProvider) {
-                ((ItemModelProvider) p).generatedModels.forEach(DynamicResourcePack::addItem);
-            }
-        }));
+    // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
+    public static void runDataProvidersDynamically() {
+        PROVIDERS.forEach((k, v) -> v.stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER)).forEach(AntimatterAPI::runProvider));
+    }
+
+    public static void runAssetProvidersDynamically() {
+        PROVIDERS.forEach((k, v) -> v.parallelStream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT)).forEach(AntimatterAPI::runProvider));
+    }
+
+    private static void runProvider(IAntimatterProvider provider) {
+        LogManager.getLogger().debug("Running " + provider.getName());
+        provider.run();
     }
 
     /** DeferredWorkQueue Section **/

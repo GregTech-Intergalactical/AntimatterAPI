@@ -6,6 +6,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import net.minecraft.block.Block;
@@ -47,6 +48,8 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     @Override
     public void run() {
         registerStatesAndModels();
+        models().generatedModels.forEach(DynamicResourcePack::addBlock);
+        registeredBlocks.forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
     }
 
     @Override

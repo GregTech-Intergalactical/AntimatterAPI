@@ -72,8 +72,7 @@ public class Antimatter implements IAntimatterRegistrar {
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
-        AntimatterAPI.runProvidersDynamically(Dist.CLIENT);
-        AntimatterAPI.runProvidersDynamically(Dist.DEDICATED_SERVER);
+        AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
         // AntimatterAPI.onRegistration(RegistrationEvent.RECIPE); Recipes should be part of the 'forge' registry
 
@@ -88,7 +87,6 @@ public class Antimatter implements IAntimatterRegistrar {
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup(e);
-        AntimatterAPI.runProvidersDynamically(Dist.DEDICATED_SERVER); // in common as data will be setup later
         AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 

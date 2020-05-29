@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Ref.ID)
 public class DynamicDataPackFinder implements IPackFinder {
 
     protected final String id, name;
@@ -34,8 +34,10 @@ public class DynamicDataPackFinder implements IPackFinder {
 
     @SubscribeEvent
     public static void addPackFinder(FMLServerAboutToStartEvent e) {
+        AntimatterAPI.runDataProvidersDynamically();
         Antimatter.LOGGER.info("Adding Antimatter's Dynamic Datapack to the server...");
         e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
+        e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));
     }
 
 }

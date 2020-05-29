@@ -166,11 +166,13 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public AntimatterToolType setTag(AntimatterToolType toolType) {
         this.tag = toolType.getTag();
+        this.forgeTag = toolType.getForgeTag();
         return this;
     }
 
     public AntimatterToolType setTag(ResourceLocation loc) {
         this.tag = Utils.getItemTag(loc);
+        this.forgeTag = Utils.getForgeItemTag(loc.getNamespace());
         return this;
     }
 
