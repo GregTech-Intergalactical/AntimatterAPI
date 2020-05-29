@@ -12,12 +12,12 @@ import net.minecraft.util.text.StringTextComponent;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DynamicPackFinder implements IPackFinder {
+public class DynamicResourcePackFinder implements IPackFinder {
 
     protected final String id, name, desc;
     protected final boolean hidden;
 
-    public DynamicPackFinder(String id, String name, String desc, boolean hidden) {
+    public DynamicResourcePackFinder(String id, String name, String desc, boolean hidden) {
         this.id = id;
         this.name = name;
         this.desc = desc;
@@ -26,9 +26,7 @@ public class DynamicPackFinder implements IPackFinder {
 
     @Override
     public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packs, ResourcePackInfo.IFactory<T> factory) {
-        DynamicResourcePack dynamicPack = new DynamicResourcePack(name);
-        DynamicResourcePack.DOMAINS.add(Ref.ID);
-        DynamicResourcePack.DOMAINS.addAll(AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
+        DynamicResourcePack dynamicPack = new DynamicResourcePack(name, AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
         ClientResourcePackInfo packInfo = new ClientResourcePackInfo(
             id,
             true,

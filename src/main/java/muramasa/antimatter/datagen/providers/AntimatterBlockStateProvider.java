@@ -21,7 +21,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
 
     protected final String providerDomain, providerName;
     protected final AntimatterBlockModelProvider blockModelProvider;
-    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     public AntimatterBlockStateProvider(String providerDomain, String providerName, DataGenerator gen, ExistingFileHelper exFileHelper) {
         super(gen, providerDomain, exFileHelper);
@@ -46,8 +45,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     @Override
-    public void run(ResourceMethod method) {
-        this.method = method;
+    public void run() {
         registerStatesAndModels();
     }
 

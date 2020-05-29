@@ -142,16 +142,15 @@ public final class AntimatterAPI {
         }
     }
 
-    public static void runProvidersDynamically(ResourceMethod method, Dist side) {
+    public static void runProvidersDynamically(Dist side) {
         // Optimise by loading straight into DynamicResourcePack::add methods, instead of running -> looping through ran resources -> add to another map
-        if (method != ResourceMethod.DYNAMIC_PACK) return;
         PROVIDERS.forEach((k, v) -> v.stream().map(f -> f.apply(Ref.DUMMY_GENERATOR)).filter(p -> p.getSide().equals(side)).forEach(p -> {
             LogManager.getLogger().debug("Running " + p.getName());
             StopWatch watch = new StopWatch();
             watch.start();
-            p.run(method);
+            p.run();
             watch.stop();
-            LogManager.getLogger().debug(p.getName() + " took " + watch.getTime() + " to run!");
+            LogManager.getLogger().debug(p.getName() + " took " + watch.getNanoTime() + "ns to run!");
             if (p instanceof BlockStateProvider) {
                 BlockStateProvider stateProv = (BlockStateProvider) p;
                 stateProv.models().generatedModels.forEach(DynamicResourcePack::addBlock);

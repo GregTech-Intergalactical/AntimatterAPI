@@ -10,9 +10,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber
 public class DynamicDataPackFinder implements IPackFinder {
 
@@ -25,9 +27,7 @@ public class DynamicDataPackFinder implements IPackFinder {
 
     @Override
     public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> nameToPackMap, ResourcePackInfo.IFactory<T> packInfoFactory) {
-        DynamicResourcePack dynamicPack = new DynamicResourcePack(name);
-        DynamicResourcePack.DOMAINS.add(Ref.ID);
-        DynamicResourcePack.DOMAINS.addAll(AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
+        DynamicResourcePack dynamicPack = new DynamicResourcePack(name, AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
         T genericPackInfo = ResourcePackInfo.createResourcePack(id, true, () -> dynamicPack, packInfoFactory, ResourcePackInfo.Priority.TOP);
         nameToPackMap.put(id, genericPackInfo);
     }
@@ -36,7 +36,6 @@ public class DynamicDataPackFinder implements IPackFinder {
     public static void addPackFinder(FMLServerAboutToStartEvent e) {
         Antimatter.LOGGER.info("Adding Antimatter's Dynamic Datapack to the server...");
         e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
-        e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));
     }
 
 }

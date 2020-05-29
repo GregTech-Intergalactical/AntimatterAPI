@@ -6,7 +6,8 @@ import net.minecraftforge.api.distmarker.Dist;
 
 public interface IAntimatterProvider extends IDataProvider {
 
-    void run(ResourceMethod method);
+    // Only runs when dynamically generating assets/data
+    void run();
 
     /**
      * Return {@link Dist#CLIENT} for providers that should only run on clients

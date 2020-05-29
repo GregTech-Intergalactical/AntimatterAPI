@@ -5,7 +5,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.util.Utils;
@@ -39,7 +38,6 @@ import static muramasa.antimatter.util.Utils.getForgeItemTag;
 public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {
 
     private final String providerDomain, providerName;
-    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     public AntimatterRecipeProvider(String providerDomain, String providerName, DataGenerator gen) {
         super(gen);
@@ -48,9 +46,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     @Override
-    public void run(ResourceMethod method) {
-
-    }
+    public void run() { }
 
     @Override
     public Dist getSide() {

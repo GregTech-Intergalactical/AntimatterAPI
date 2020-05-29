@@ -22,7 +22,6 @@ import java.util.function.Function;
 public class AntimatterItemModelProvider extends ItemModelProvider implements IAntimatterProvider {
 
     protected final String providerDomain, providerName;
-    private ResourceMethod method;
 
     public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
         super(generator, providerDomain, exFileHelper);
@@ -42,8 +41,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     }
 
     @Override
-    public void run(ResourceMethod method) {
-        this.method = method;
+    public void run() {
         registerModels();
     }
 

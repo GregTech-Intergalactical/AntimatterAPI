@@ -30,7 +30,6 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     private final DataGenerator gen;
     private final List<Consumer<Consumer<Advancement>>> advancements;
     private final String providerDomain, providerName;
-    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     @SafeVarargs
     public AntimatterAdvancementProvider(String providerDomain, String providerName, DataGenerator gen, Consumer<Consumer<Advancement>>... advancements) {
@@ -42,9 +41,7 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     }
 
     @Override
-    public void run(ResourceMethod method) {
-
-    }
+    public void run() { }
 
     @Override
     public Dist getSide() {

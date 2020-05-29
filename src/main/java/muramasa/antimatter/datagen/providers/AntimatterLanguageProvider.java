@@ -14,6 +14,7 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -28,6 +29,7 @@ import net.minecraft.potion.Effect;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -44,7 +46,6 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     private final String providerDomain, providerName, locale;
     private final Object2ObjectMap<String, String> data = new Object2ObjectRBTreeMap<>();
     private final DataGenerator gen;
-    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     public AntimatterLanguageProvider(String providerDomain, String providerName, String locale, DataGenerator gen) {
         this.gen = gen;
@@ -54,9 +55,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     @Override
-    public void run(ResourceMethod method) {
-        this.method = method;
+    public void run() {
         addTranslations();
+        data.forEach((k, v) -> DynamicResourcePack.addLangLoc(providerDomain, locale, k, v));
     }
 
     @Override
@@ -92,26 +93,27 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
     protected void processTranslations(String domain, String locale) {
         if (!locale.startsWith("en")) return;
-        AntimatterAPI.all(ItemBasic.class, domain).forEach(item -> add(item, lowerUnderscoreToUpperSpaced(item.getId())));
-        AntimatterAPI.all(Material.class, domain).forEach(mat -> add("material.".concat(mat.getId()), getLocalizedType(mat)));
-        AntimatterAPI.all(StoneType.class, domain, s -> IMaterialTag.all(ORE, ORE_SMALL).forEach(m -> {
-            if (m.has(ORE)) add(ORE.get().get(m, s).asBlock(), String.join("", getLocalizedType(m), " ", getLocalizedType(s), " ", getLocalizedType(ORE)));
-            if (m.has(ORE_SMALL)) add(ORE_SMALL.get().get(m, s).asBlock(), String.join("", getLocalizedType(m), " ", getLocalizedType(s), " ", getLocalizedType(ORE_SMALL)));
-        }));
+        AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
+        AntimatterAPI.all(BlockOre.class, domain, o -> {
+            if (o.getOreType() == ORE) add(o, String.join("", getLocalizedType(o.getMaterial()), " ", getLocalizedType(o.getStoneType()), " Ore"));
+            else add(o, String.join("", "Small ", getLocalizedType(o.getMaterial()), " ", getLocalizedType(o.getStoneType()), " Ore"));
+        });
+
         AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s)));
         AntimatterAPI.all(BlockStorage.class, domain).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
         AntimatterAPI.all(MaterialItem.class, domain).forEach(item -> {
-                    MaterialType<?> type = item.getType();
-                    if (type == ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
-                    else if (type == CRUSHED) add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-                    else if (type == CRUSHED_PURIFIED) add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-                    else if (type == CRUSHED_CENTRIFUGED) add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-                    else {
-                        String[] split = getLocalizedMaterialType(type);
-                        if (split.length > 1) add(item, String.join(" ", split[0], getLocalizedType(item.getMaterial()), split[1]));
-                        else add(item, String.join(" ", getLocalizedType(item.getMaterial()), split[0]));
-                    }
-                });
+            MaterialType<?> type = item.getType();
+            if (type == ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
+            else if (type == CRUSHED) add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+            else if (type == CRUSHED_PURIFIED) add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+            else if (type == CRUSHED_CENTRIFUGED) add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+            else {
+                String[] split = getLocalizedMaterialType(type);
+                if (split.length > 1) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
+                else add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial())));
+            }
+        });
     }
 
     private void processAntimatterTranslations() {
@@ -192,8 +194,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(String key, String value) {
-        if (method == ResourceMethod.DYNAMIC_PACK) DynamicResourcePack.addLoc(providerDomain, locale, key, value);
-        else if (data.put(key, value) != null) throw new IllegalStateException("Duplicate translation key " + key);
+        if (data.put(key, value) != null) {
+            throw new IllegalStateException("Duplicate translation key " + key);
+        }
     }
 
 }

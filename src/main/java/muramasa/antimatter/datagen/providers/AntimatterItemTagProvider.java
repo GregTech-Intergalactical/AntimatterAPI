@@ -5,12 +5,9 @@ import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
-import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -21,7 +18,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +30,6 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
 
     private final String providerDomain, providerName;
     private final boolean replace;
-    private ResourceMethod method = ResourceMethod.PROVIDER_GEN;
 
     public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);
@@ -44,14 +39,13 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
     }
 
     @Override
-    public void run(ResourceMethod method) {
-        this.method = method;
+    public void run() {
         this.tagToBuilder.clear();
         registerTags();
         TagCollection<Item> tags = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
         Map<ResourceLocation, Tag.Builder<Item>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().getId(), Map.Entry::getValue));
         tags.registerAll(map);
-        tags.getTagMap().forEach((k, v) -> DynamicResourcePack.addItemTag(k, v.serialize(this.registry::getKey)));
+        tags.getTagMap().forEach((k, v) -> DynamicResourcePack.addTag("items", k, v.serialize(this.registry::getKey)));
         this.setCollection(tags);
     }
 
@@ -69,29 +63,37 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
         Tag<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
         this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
+        this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
         AntimatterAPI.all(BlockOre.class, o -> {
+            if (o.getOreType() == ORE_SMALL) return;
             String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
-            copy(getForgeBlockTag(name), getForgeItemTag(name));
+            this.copy(getForgeBlockTag(name), getForgeItemTag(name));
         });
         AntimatterAPI.all(BlockStone.class, domain, s -> {
             String id = "blocks/".concat(s.getId());
-            copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
+            this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
         });
+        // AntimatterAPI.all(BlockOreStone.class, domain, s -> {
+            // String id = s.getId().replaceAll("_stone_", "s/");
+            // this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
+        // });
         AntimatterAPI.all(BlockStorage.class, domain, storage -> {
-                    MaterialType<?> type = storage.getType();
-                    String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
-                    copy(getForgeBlockTag(name), getForgeItemTag(name));
-                });
+            MaterialType<?> type = storage.getType();
+            String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
+            this.copy(getForgeBlockTag(name), getForgeItemTag(name));
+        });
         AntimatterAPI.all(MaterialItem.class, domain, item -> {
-                    MaterialType<?> type = item.getType();
-                    getBuilder(type.getTag()).add(item);
-                    String name = String.join("", getConventionalMaterialType(type), "/", item.getMaterial().getId());
-                    getBuilder(getForgeItemTag(name)).add(item).replace(replace);
-                    if (type == INGOT || type == GEM) getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
-                });
-        AntimatterAPI.all(IAntimatterTool.class, domain, tool -> getBuilder(tool.getType().getTag()).add(tool.asItem()));
+            this.getBuilder(item.getType().getTag()).add(item);
+            String name = String.join("", getConventionalMaterialType(item.getType()), "/", item.getMaterial().getId());
+            this.getBuilder(getForgeItemTag(name)).add(item).replace(replace);
+            if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
+        });
+        AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
+            this.getBuilder(tool.getType().getTag()).add(tool.asItem());
+            this.getBuilder(tool.getType().getForgeTag()).add(tool.asItem());
+        });
     }
 
     @Override
