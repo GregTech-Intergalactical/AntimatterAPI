@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Ref.ID)
 public class DynamicDataPackFinder implements IPackFinder {
 
     protected final String id, name;
