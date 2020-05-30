@@ -51,10 +51,6 @@ public class Antimatter implements IAntimatterRegistrar {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 
-        // ModLoadingContext.get().getActiveContainer().dispatchConfigEvent();
-
-        Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
-
         eventBus.addListener(ClientHandler::onItemColorHandler);
         eventBus.addListener(ClientHandler::onBlockColorHandler);
 
@@ -67,12 +63,12 @@ public class Antimatter implements IAntimatterRegistrar {
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
+        AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
-        AntimatterAPI.runAssetProvidersDynamically();
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
         // AntimatterAPI.onRegistration(RegistrationEvent.RECIPE); Recipes should be part of the 'forge' registry
