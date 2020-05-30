@@ -1,12 +1,9 @@
 package muramasa.antimatter.datagen.providers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.data.DataGenerator;

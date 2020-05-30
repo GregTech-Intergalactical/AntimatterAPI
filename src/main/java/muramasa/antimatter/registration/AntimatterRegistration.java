@@ -1,10 +1,10 @@
 package muramasa.antimatter.registration;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
@@ -27,24 +27,33 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
 
-public class Registration {
+public final class AntimatterRegistration {
 
     private static final List<BlockItem> INTERNAL_ITEM_BLOCKS = new ObjectArrayList<>();
 
     public static void setup(final RegistryEvent.NewRegistry e) {
         final String currentDomain = ModLoadingContext.get().getActiveNamespace();
-        if (currentDomain.equals(Ref.ID)) AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+        if (currentDomain.equals(Ref.ID)) {
+            Antimatter.LOGGER.info("AntimatterAPI Data Initialization Stage...");
+            AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+        }
+        if (currentDomain.equals(Ref.ID)) {
+            Antimatter.LOGGER.info("AntimatterAPI Registry Objects Initialization Stage...");
+            AntimatterAPI.onRegistration(RegistrationEvent.REGISTRY_BUILD);
+        }
         AntimatterAPI.all(IRegistryEntryProvider.class, currentDomain, p -> p.onRegistryBuild(currentDomain, null));
-        if (currentDomain.equals(Ref.ID)) AntimatterAPI.onRegistration(RegistrationEvent.DATA_POST_INIT);
     }
 
     @SuppressWarnings("unchecked")
     public static void onRegister(final RegistryEvent.Register<?> e) {
         final String currentDomain = ModLoadingContext.get().getActiveNamespace();
+        if (currentDomain.equals(Ref.ID)) {
+            Antimatter.LOGGER.info("AntimatterAPI Data Post-Initialization Stage...");
+            AntimatterAPI.onRegistration(RegistrationEvent.DATA_POST_INIT);
+        }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) onBlockRegister((IForgeRegistry<Block>) e.getRegistry(), currentDomain);
         else if (e.getRegistry() == ForgeRegistries.ITEMS) onItemRegister((IForgeRegistry<Item>) e.getRegistry(), currentDomain);
         else if (e.getRegistry() == ForgeRegistries.TILE_ENTITIES) onTileEntityRegister((IForgeRegistry<TileEntityType<?>>) e.getRegistry(), currentDomain);
@@ -55,7 +64,7 @@ public class Registration {
         else if (e.getRegistry() == ForgeRegistries.RECIPE_SERIALIZERS) onCraftingSerializerRegister((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry(), currentDomain);
     }
 
-    public static void onBlockRegister(IForgeRegistry<Block> blocks, final String currentDomain) {
+    private static void onBlockRegister(IForgeRegistry<Block> blocks, final String currentDomain) {
         for (Block block : AntimatterAPI.all(Block.class, currentDomain)) {
             if (block instanceof IAntimatterObject) block.setRegistryName(currentDomain, ((IAntimatterObject) block).getId());
             INTERNAL_ITEM_BLOCKS.add(block instanceof IItemBlockProvider ? ((IItemBlockProvider) block).getItemBlock() : new AntimatterItemBlock(block));
@@ -66,11 +75,9 @@ public class Registration {
         }
     }
 
-    public static void onItemRegister(IForgeRegistry<Item> items, final String currentDomain) {
+    private static void onItemRegister(IForgeRegistry<Item> items, final String currentDomain) {
         for (Item item : INTERNAL_ITEM_BLOCKS) {
-            if (item.getRegistryName() != null && item.getRegistryName().getNamespace().equals(currentDomain)) {
-                items.register(item);
-            }
+            if (item.getRegistryName() != null && item.getRegistryName().getNamespace().equals(currentDomain)) items.register(item);
         }
         for (Item item : AntimatterAPI.all(Item.class, currentDomain)) {
             if (item instanceof IAntimatterObject) item.setRegistryName(currentDomain, ((IAntimatterObject) item).getId());
@@ -92,7 +99,7 @@ public class Registration {
         }
     }
 
-    public static void onTileEntityRegister(IForgeRegistry<TileEntityType<?>> tiles, final String currentDomain) {
+    private static void onTileEntityRegister(IForgeRegistry<TileEntityType<?>> tiles, final String currentDomain) {
         for (Machine<?> machine : AntimatterAPI.all(Machine.class, currentDomain)) {
             tiles.register(machine.getTileType().setRegistryName(currentDomain, machine.getId()));
         }
@@ -101,26 +108,26 @@ public class Registration {
         }
     }
 
-    public static void onFluidRegister(IForgeRegistry<Fluid> fluids, final String currentDomain) {
+    private static void onFluidRegister(IForgeRegistry<Fluid> fluids, final String currentDomain) {
         for (AntimatterFluid fluid : AntimatterAPI.all(AntimatterFluid.class, currentDomain)) {
             fluids.register(fluid.getFluid().setRegistryName(currentDomain, fluid.getId()));
             fluids.register(fluid.getFlowingFluid().setRegistryName(currentDomain, "flowing_".concat(fluid.getId())));
         }
     }
 
-    public static void onContainerRegister(IForgeRegistry<ContainerType<?>> containers, final String currentDomain) {
+    private static void onContainerRegister(IForgeRegistry<ContainerType<?>> containers, final String currentDomain) {
         AntimatterAPI.all(MenuHandlerMachine.class, currentDomain, h -> containers.register(h.getContainerType()));
         AntimatterAPI.all(MenuHandlerCover.class, currentDomain, h -> containers.register(h.getContainerType()));
     }
 
-    public static void onSoundRegister(IForgeRegistry<SoundEvent> sounds, final String currentDomain) {
+    private static void onSoundRegister(IForgeRegistry<SoundEvent> sounds, final String currentDomain) {
         if (!currentDomain.equals(Ref.ID)) return;
         sounds.registerAll(Ref.DRILL.setRegistryName(Ref.ID, "drill"), Ref.WRENCH.setRegistryName(Ref.ID, "wrench"));
     }
 
-    public static void onFeatureRegister(IForgeRegistry<Feature<?>> features, final String currentDomain) { }
+    private static void onFeatureRegister(IForgeRegistry<Feature<?>> features, final String currentDomain) { }
 
-    public static void onCraftingSerializerRegister(IForgeRegistry<IRecipeSerializer<?>> serializers, final String currentDomain) {
+    private static void onCraftingSerializerRegister(IForgeRegistry<IRecipeSerializer<?>> serializers, final String currentDomain) {
         if (!currentDomain.equals(Ref.ID)) return;
         CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
     }

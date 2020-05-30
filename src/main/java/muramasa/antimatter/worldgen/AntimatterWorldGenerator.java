@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen;
 
 import com.google.gson.JsonObject;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class AntimatterWorldGenerator {
 
     public static void init() {
+        Antimatter.LOGGER.info("AntimatterAPI WorldGen Initialization Stage...");
         AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
         if (!AntimatterConfig.WORLD.VANILLA_STONE_GEN) removeStoneFeatures();
         if (!AntimatterConfig.WORLD.VANILLA_ORE_GEN) removeOreFeatures();

@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAntimatterProvider {
 
-    private String providerDomain, providerName;
-    private boolean replace;
+    private final String providerDomain, providerName;
+    private final boolean replace;
 
     public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);
@@ -51,7 +51,7 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
     }
 
     protected void processTags(String domain) {
-        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> getBuilder(Utils.getForgeFluidTag(f.getId())).add(f.getFluid(), f.getFlowingFluid()));
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> getBuilder(Utils.getForgeFluidTag(f.getId())).add(f.getFluid(), f.getFlowingFluid()).replace(replace));
     }
 
     @Override

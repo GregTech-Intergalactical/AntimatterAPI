@@ -27,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 
@@ -127,11 +128,10 @@ public final class AntimatterAPI {
     }
 
     public static void runBackgroundProviders() {
-        Antimatter.LOGGER.debug("We do not condone these practices.");
+        Antimatter.LOGGER.info("Running DummyTagProviders...");
         Ref.BACKGROUND_GEN.addProviders(DummyTagProviders.DUMMY_PROVIDERS);
         try {
             Ref.BACKGROUND_GEN.run();
-            replacementsFound = true;
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -140,6 +140,7 @@ public final class AntimatterAPI {
 
     // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
     public static void runDataProvidersDynamically() {
+        replacementsFound = true;
         PROVIDERS.forEach((k, v) -> v.stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER)).forEach(AntimatterAPI::runProvider));
     }
 
@@ -181,8 +182,10 @@ public final class AntimatterAPI {
     /** Registrar Section **/
 
     public static void onRegistration(RegistrationEvent event) {
-        if (REGISTRATION_EVENTS_HANDLED.contains(event)) throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
-        REGISTRATION_EVENTS_HANDLED.add(event);
+        if (!REGISTRATION_EVENTS_HANDLED.add(event)) {
+            if (ModLoadingContext.get().getActiveNamespace().equals(Ref.ID)) return;
+            throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
+        }
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
@@ -195,8 +198,8 @@ public final class AntimatterAPI {
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar == Antimatter.INSTANCE) INTERNAL_REGISTRAR = registrar;
         else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(Registration::onRegister);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterRegistration::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterRegistration::onRegister);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {

@@ -1,5 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
+import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +12,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.util.function.Function;
 
+@MethodsReturnNonnullByDefault
 public class AntimatterBlockModelProvider extends BlockModelProvider {
 
     private final String name;

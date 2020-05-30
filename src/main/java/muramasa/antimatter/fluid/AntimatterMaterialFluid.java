@@ -1,6 +1,5 @@
 package muramasa.antimatter.fluid;
 
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import net.minecraft.block.Block;

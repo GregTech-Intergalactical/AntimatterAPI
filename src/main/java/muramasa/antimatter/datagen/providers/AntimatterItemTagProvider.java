@@ -85,14 +85,14 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
             this.copy(getForgeBlockTag(name), getForgeItemTag(name));
         });
         AntimatterAPI.all(MaterialItem.class, domain, item -> {
-            this.getBuilder(item.getType().getTag()).add(item);
+            this.getBuilder(item.getType().getTag()).add(item).replace(replace);
             String name = String.join("", getConventionalMaterialType(item.getType()), "/", item.getMaterial().getId());
-            this.getBuilder(getForgeItemTag(name)).add(item).replace(replace);
+            this.getBuilder(getForgeItemTag(name)).add(item).replace(replace).replace(replace);
             if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
         });
         AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
-            this.getBuilder(tool.getType().getTag()).add(tool.asItem());
-            this.getBuilder(tool.getType().getForgeTag()).add(tool.asItem());
+            this.getBuilder(tool.getType().getTag()).add(tool.asItem()).replace(replace);
+            this.getBuilder(tool.getType().getForgeTag()).add(tool.asItem()).replace(replace);
         });
     }
 

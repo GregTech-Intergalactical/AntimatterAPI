@@ -5,7 +5,6 @@ import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -26,8 +25,8 @@ import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implements IAntimatterProvider {
 
-    private String providerDomain, providerName;
-    private boolean replace;
+    private final String providerDomain, providerName;
+    private final boolean replace;
 
     public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);
@@ -59,12 +58,12 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
 
     protected void processTags(String domain) {
         AntimatterAPI.all(BlockOre.class, o -> {
-            this.getBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o);
+            this.getBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
             if (o.getOreType() == MaterialType.ORE) this.getBuilder(Tags.Blocks.ORES).add(o);
         });
         AntimatterAPI.all(BlockStone.class, domain, s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);
-            this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s);
+            this.getBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s).replace(replace);
         });
         AntimatterAPI.all(BlockOreStone.class, domain, s -> {
             // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
@@ -72,7 +71,7 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
             // this.getBuilder(getForgeBlockTag(id)).add(s);
         });
         AntimatterAPI.all(BlockStorage.class, domain, block -> {
-            this.getBuilder(block.getType().getTag()).add(block);
+            this.getBuilder(block.getType().getTag()).add(block).replace(replace);
             String name = String.join("", block.getType().getTag().getId().getPath(), "/", block.getMaterial().getId());
             this.getBuilder(getForgeBlockTag(name)).add(block);
             // if (block.getType() == FRAME) add climbable tag in 1.16

@@ -73,6 +73,7 @@ public class Antimatter implements IAntimatterRegistrar {
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
         AntimatterAPI.runAssetProvidersDynamically();
+        LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
         // AntimatterAPI.onRegistration(RegistrationEvent.RECIPE); Recipes should be part of the 'forge' registry
 
