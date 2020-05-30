@@ -1,11 +1,8 @@
 package muramasa.antimatter.gui;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.screen.ScreenCover;
-import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -19,8 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import org.lwjgl.system.NonnullDefault;
-
-import javax.annotation.Nullable;
 
 public abstract class MenuHandlerCover<M extends Container>  implements IAntimatterObject, IMenuHandler<M, ScreenCover> {
 
@@ -47,7 +42,7 @@ public abstract class MenuHandlerCover<M extends Container>  implements IAntimat
         TileEntity tile = Utils.getTileFromBuf(data);
         if (tile instanceof TileEntityMachine) {
             Direction dir = Direction.byIndex(data.readInt());
-            return getMenu(((TileEntityMachine)tile).coverHandler.get().getCover(dir),inv,windowId);
+            return getMenu(((TileEntityMachine)tile).coverHandler.get().getCoverInstance(dir),inv,windowId);
         }
         return null;
     }

@@ -4,10 +4,9 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.ModelConfig;
-import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -52,8 +51,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.COVER_NONE;
-import static muramasa.antimatter.Data.COVER_OUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
@@ -115,10 +112,15 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
-                Cover c = ((TileEntityMachine)tile).coverHandler.get().getCover(hit.getFace());
-                if (c != null && c.hasGui()) {
-                    //TODO: utils.getToolType?Gu
-                    c.onInteract(tile, player, hand, hit.getFace(), null);
+                //TODO: priority order, or call this inside InteractHandler?
+                //I am not sure if the cover interaction is supposed to be done from IInteractHandler.
+
+                //TODO: This runs twice when right clicking a machine!
+                LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, hit.getFace());
+                boolean consume = coverable.map(i -> {
+                     return i.onInteract(player,hand,hit.getFace(),Utils.getToolType(player));
+                }).orElse(false);
+                if (consume) {
                     return ActionResultType.SUCCESS;
                 }
                 if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
@@ -126,7 +128,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     return ActionResultType.SUCCESS;
                 }
                 LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
-                interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
+                    interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(),Utils.getInteractSide(hit), Utils.getToolType(player)));
                 }
             }
         return super.onBlockActivated(state, world, pos, player, hand, hit);

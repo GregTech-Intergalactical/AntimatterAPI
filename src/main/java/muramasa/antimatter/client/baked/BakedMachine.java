@@ -2,6 +2,7 @@ package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -32,7 +33,7 @@ public class BakedMachine extends AntimatterBakedModel {
         //int type = data.getData(MACHINE_TYPE).getInternalId();
         //int facing = data.getData(MACHINE_FACING).getIndex();
         //TextureData textureData = data.getData(MACHINE_TEXTURE);
-        Cover[] covers = data.getData(MACHINE_COVER);
+        CoverInstance[] covers = data.getData(MACHINE_COVER);
 
         if (covers != null) {
             for (int s = 0; s < 6; s++) {

@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.impl.CoverHandler;
 import muramasa.antimatter.capability.impl.PipeInteractHandler;
 import muramasa.antimatter.capability.impl.PipeCoverHandler;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
@@ -99,12 +100,12 @@ public class TileEntityPipe extends TileEntityTickable {
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
-    public Cover[] getAllCovers() {
-        return coverHandler.map(CoverHandler::getAll).orElse(new Cover[0]);
+    public CoverInstance[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new CoverInstance[0]);
     }
 
-    public Cover getCover(Direction side) {
-        return coverHandler.map(h -> h.getCover(side)).orElse(Data.COVER_NONE);
+    public CoverInstance getCover(Direction side) {
+        return coverHandler.map(h -> h.getCoverInstance(side)).orElse(Data.COVER_EMPTY);
     }
 
     @Nonnull
@@ -116,7 +117,7 @@ public class TileEntityPipe extends TileEntityTickable {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        return cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> h.getCover(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
+        return cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> !h.getCoverInstance(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
     }
 
     @Override

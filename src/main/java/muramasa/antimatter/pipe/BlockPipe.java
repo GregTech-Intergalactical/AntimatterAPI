@@ -189,7 +189,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         TileEntity tile = world.getTileEntity(pos);
         if (tile != null) {
             LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
-            interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player)));
+            interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getInteractSide(hit), Utils.getToolType(player)));
         }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }

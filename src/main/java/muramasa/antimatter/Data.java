@@ -3,6 +3,7 @@ package muramasa.antimatter;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.MenuHandlerCover;
@@ -72,9 +73,12 @@ public class Data {
 
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
-    public static Cover COVER_NONE = new CoverNone();
-    public static Cover COVER_OUTPUT = new CoverOutput();
+    //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
+    public static Cover COVERNONE = new CoverNone();
+    public static Cover COVEROUTPUT = new CoverOutput();
 
+    public static CoverInstance COVER_EMPTY = new CoverInstance(COVERNONE);
+    public static CoverInstance COVER_OUTPUT = new CoverInstance(COVEROUTPUT);
     public static MenuHandlerMachine<?> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
 
         @Nullable
@@ -94,7 +98,7 @@ public class Data {
 
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return new ContainerCover((Cover)tile,  playerInv, this, windowId);
+            return new ContainerCover((CoverInstance) tile,  playerInv, this, windowId);
         }
 
         @Override
