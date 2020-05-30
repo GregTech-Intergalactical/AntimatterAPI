@@ -158,13 +158,13 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public Item get(Material material) {
-        // if (!allowItemGen(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
+        if (!allowItemGen(material)) Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
         Item replacement = AntimatterAPI.getReplacement(this, material);
         return replacement == null ? AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId()) : replacement;
     }
 
     public ItemStack get(Material material, int count) {
-        if (count < 1) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + id + ") M(" + material.getId() + ")");
+        if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         Item item = get(material);
         return new ItemStack(item, count);
     }

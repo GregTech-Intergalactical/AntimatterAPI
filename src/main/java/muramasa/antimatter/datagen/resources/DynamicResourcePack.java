@@ -65,9 +65,7 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void addLangLoc(String domain, String locale, String key, String value) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty(key, value);
-        LANG.put(getLangLoc(domain, locale), obj);
+        LANG.computeIfAbsent(getLangLoc(domain, locale), j -> new JsonObject()).addProperty(key, value);
     }
 
     public static void addRecipe(IFinishedRecipe recipe) {
@@ -90,11 +88,11 @@ public class DynamicResourcePack implements IResourcePack {
             if (DATA.get(location) != null) return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
             else throw new FileNotFoundException("Can't find " + location + " " + getName());
         }
-        if (ASSETS.get(location) == null) {
-            if (DATA.get(location) != null) return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
-            throw new FileNotFoundException("Can't find " + location + " " + getName());
+        else {
+            if (LANG.get(location) != null) return new ByteArrayInputStream(LANG.get(location).toString().getBytes(StandardCharsets.UTF_8));
+            else if (ASSETS.get(location) != null) return new ByteArrayInputStream(ASSETS.get(location).getBytes(StandardCharsets.UTF_8));
+            else throw new FileNotFoundException("Can't find " + location + " " + getName());
         }
-        else return new ByteArrayInputStream(ASSETS.get(location).getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
@@ -104,13 +102,14 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-        return ASSETS.containsKey(location) ? ASSETS.containsKey(location) : DATA.containsKey(location);
+        return ASSETS.containsKey(location) ? ASSETS.containsKey(location) : DATA.containsKey(location) ? DATA.containsKey(location) : LANG.containsKey(location);
     }
 
     @Override
     public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
         if (type == ResourcePackType.SERVER_DATA) return DATA.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
-        return ASSETS.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
+        else if (type == ResourcePackType.CLIENT_RESOURCES) return ASSETS.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
+        return LANG.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
     }
 
     @Override
@@ -134,7 +133,6 @@ public class DynamicResourcePack implements IResourcePack {
         //NOOP
     }
 
-    //todo, pass string?
     public static ResourceLocation getStateLoc(ResourceLocation registryId) {
         return new ResourceLocation(registryId.getNamespace(), String.join("", "blockstates/", registryId.getPath(), ".json"));
     }

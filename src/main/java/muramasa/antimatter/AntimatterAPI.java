@@ -208,7 +208,6 @@ public final class AntimatterAPI {
     }
 
     public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
-        // Tag<Item> tag = ItemTags.getCollection().get(new ResourceLocation("forge", String.join("", getConventionalMaterialType(type), "/", material.getId())));
         Tag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
         return getReplacement(null, tag, namespaces);
     }
