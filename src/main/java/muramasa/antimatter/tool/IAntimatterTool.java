@@ -22,7 +22,6 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.enchantment.UnbreakingEnchantment;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -41,7 +40,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
@@ -51,30 +49,26 @@ import java.util.stream.Collectors;
 
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
-    @Nonnull
     AntimatterToolType getType();
 
-    @Nonnull
-    default Material getPrimaryMaterial(@Nonnull ItemStack stack) {
+    default Material getPrimaryMaterial(ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
     }
 
-    @Nonnull
-    default Material getSecondaryMaterial(@Nonnull ItemStack stack) {
+    default Material getSecondaryMaterial(ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
     }
 
-    @Nonnull
-    default Material[] getMaterials(@Nonnull ItemStack stack) {
+    default Material[] getMaterials(ItemStack stack) {
         CompoundNBT nbt = getDataTag(stack);
         return new Material[] { Material.get(nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
     }
 
-    @Nonnull default Set<ToolType> getToolTypes() {
+    default Set<ToolType> getToolTypes() {
         return getType().getToolTypes().stream().map(ToolType::get).collect(Collectors.toSet());
     }
 
-    default int getSubColour(@Nonnull ItemStack stack) {
+    default int getSubColour(ItemStack stack) {
         return getDataTag(stack).getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
     }
 
@@ -88,23 +82,20 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     Item asItem();
 
-    @Nonnull
-    ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary);
+    ItemStack asItemStack(Material primary, Material secondary);
 
-    @Nonnull
     default CompoundNBT getDataTag(ItemStack stack) {
         CompoundNBT dataTag = stack.getChildTag(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, Data.NULL, Data.NULL, 0, 10000);
     }
 
-    @Nonnull
-    default IItemTier getTier(@Nonnull ItemStack stack) {
+    default IItemTier getTier(ItemStack stack) {
         CompoundNBT dataTag = getDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
-    default ItemStack resolveStack(@Nonnull Material primary, @Nonnull Material secondary, long startingEnergy, long maxEnergy) {
+    default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
         ItemStack stack = new ItemStack(asItem());
         validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
         Map<Enchantment, Integer> mainEnchants = primary.getEnchantments(), handleEnchants = secondary.getEnchantments();
@@ -113,7 +104,6 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             return stack;
         }
         if (!handleEnchants.isEmpty()) handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
-        // if (handleEnchants != null) handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
         return stack;
     }
 
@@ -135,12 +125,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        if (flag.isAdvanced() && getType().isPowered()) {
-            tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
-        }
-        if (getType().getTooltip().size() != 0) {
-            tooltip.addAll(getType().getTooltip());
-        }
+        if (flag.isAdvanced() && getType().isPowered()) tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
+        if (getType().getTooltip().size() != 0) tooltip.addAll(getType().getTooltip());
     }
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
