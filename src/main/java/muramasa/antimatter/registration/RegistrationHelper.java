@@ -48,14 +48,14 @@ public class RegistrationHelper {
             AntimatterAPI.all(AntimatterToolType.class, domain, t -> {
                 if (t.isPowered()) {
                     for (IAntimatterTool i : t.instantiatePoweredTools(domain)) {
-                        i.asItem().setRegistryName(domain, i.getId());
-                        ((IForgeRegistry) e.getRegistry()).register(i.asItem());
+                        i.getItem().setRegistryName(domain, i.getId());
+                        ((IForgeRegistry) e.getRegistry()).register(i.getItem());
                     }
                 }
                 else {
                     IAntimatterTool i = t.instantiateTools(domain);
-                    i.asItem().setRegistryName(domain, i.getId());
-                    ((IForgeRegistry) e.getRegistry()).register(i.asItem());
+                    i.getItem().setRegistryName(domain, i.getId());
+                    ((IForgeRegistry) e.getRegistry()).register(i.getItem());
                 }
             });
         }

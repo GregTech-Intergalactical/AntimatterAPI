@@ -25,13 +25,11 @@ import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -39,6 +37,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.extensions.IForgeItem;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -47,7 +46,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
 
     AntimatterToolType getType();
 
@@ -80,8 +79,6 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return getDataTag(stack).getLong(Ref.KEY_TOOL_DATA_MAX_ENERGY);
     }
 
-    Item asItem();
-
     ItemStack asItemStack(Material primary, Material secondary);
 
     default CompoundNBT getDataTag(ItemStack stack) {
@@ -96,7 +93,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
-        ItemStack stack = new ItemStack(asItem());
+        ItemStack stack = new ItemStack(getItem());
         validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
         Map<Enchantment, Integer> mainEnchants = primary.getEnchantments(), handleEnchants = secondary.getEnchantments();
         if (!mainEnchants.isEmpty()) {
@@ -122,6 +119,16 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         AntimatterItemTier tier = AntimatterItemTier.getOrCreate(dataTag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL), dataTag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
         dataTag.putInt(Ref.KEY_TOOL_DATA_TIER, tier.hashCode());
         return tier;
+    }
+
+    default void onGenericFillItemGroup(ItemGroup group, NonNullList<ItemStack> list, long maxEnergy) {
+        if (group != Ref.TAB_TOOLS) return;
+        if (getType().isPowered()) {
+            ItemStack stack = asItemStack(Data.NULL, Data.NULL);
+            getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
+            list.add(stack);
+        }
+        else list.add(asItemStack(Data.NULL, Data.NULL));
     }
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
