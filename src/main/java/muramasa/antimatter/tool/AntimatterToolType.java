@@ -21,7 +21,6 @@ import net.minecraftforge.common.ToolType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -39,12 +38,13 @@ public class AntimatterToolType implements IAntimatterObject {
     private boolean powered, repairable, blockBreakability;
     private long baseMaxEnergy;
     private int[] energyTiers;
-    private int baseQuality, useDurability, attackDurability, craftingDurability, overlayLayers;
-    private float baseAttackDamage, baseAttackSpeed;
+    private final int useDurability, attackDurability, craftingDurability;
+    private int baseQuality, overlayLayers;
+    private final float baseAttackDamage, baseAttackSpeed;
     private ItemGroup itemGroup;
     private Tag<Item> tag; // Set?
-    @Nonnull private UseAction useAction;
-    @Nonnull private Class<? extends IAntimatterTool> toolClass;
+    private UseAction useAction;
+    private Class<? extends IAntimatterTool> toolClass;
     @Nullable private SoundEvent useSound;
     @Nullable private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
 
@@ -86,7 +86,11 @@ public class AntimatterToolType implements IAntimatterObject {
         AntimatterAPI.register(this);
     }
 
-    /** IAntimatterTool Instantiations **/
+    public AntimatterToolType(String domain, String id, AntimatterToolType inheritType) {
+        this(domain, id, inheritType.useDurability, inheritType.attackDurability, inheritType.craftingDurability, inheritType.baseAttackDamage, inheritType.baseAttackSpeed);
+    }
+
+    /* IAntimatterTool Instantiations */
 
     /**
      * Instantiates a MaterialTool with Reflection (only use this when you have done setToolClass when creating your AntimatterToolType)
@@ -156,7 +160,7 @@ public class AntimatterToolType implements IAntimatterObject {
         return properties;
     }
 
-    /** SETTERS **/
+    /* SETTERS */
 
     public AntimatterToolType setToolTip(ITextComponent... tooltip) {
         this.tooltip.addAll(Arrays.asList(tooltip));
@@ -251,12 +255,12 @@ public class AntimatterToolType implements IAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setItemGroup(@Nonnull ItemGroup itemGroup) {
+    public AntimatterToolType setItemGroup(ItemGroup itemGroup) {
         this.itemGroup = itemGroup;
         return this;
     }
 
-    public AntimatterToolType setUseAction(@Nonnull UseAction useAction) {
+    public AntimatterToolType setUseAction(UseAction useAction) {
         this.useAction = useAction;
         return this;
     }
@@ -273,9 +277,9 @@ public class AntimatterToolType implements IAntimatterObject {
         Arrays.stream(ids).forEach(behaviours::remove);
     }
 
-    /** GETTERS **/
+    /* GETTERS */
 
-    public ItemStack getToolStack(@Nonnull Material primary, @Nonnull Material secondary) {
+    public ItemStack getToolStack(Material primary, Material secondary) {
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, secondary);
     }
 
@@ -352,7 +356,6 @@ public class AntimatterToolType implements IAntimatterObject {
         return tag;
     }
 
-    @Nonnull 
     public UseAction getUseAction() {
         return useAction;
     }
@@ -383,4 +386,5 @@ public class AntimatterToolType implements IAntimatterObject {
     public Object2ObjectMap<String, IBehaviour<IAntimatterTool>> getBehaviours() {
         return behaviours;
     }
+    
 }
