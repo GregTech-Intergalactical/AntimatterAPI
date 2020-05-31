@@ -54,7 +54,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
             .forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
         AntimatterAPI.all(IAntimatterTool.class)
             .stream().filter(t -> t.getDomain().equals(domain))
-            .forEach(t -> tex(t.asItem(), "item/handheld", t.getTextures()));
+            .forEach(t -> tex(t.getItem(), "item/handheld", t.getTextures()));
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {
