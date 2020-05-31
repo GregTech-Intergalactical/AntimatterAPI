@@ -386,5 +386,5 @@ public class AntimatterToolType implements IAntimatterObject {
     public Object2ObjectMap<String, IBehaviour<IAntimatterTool>> getBehaviours() {
         return behaviours;
     }
-    
+
 }
