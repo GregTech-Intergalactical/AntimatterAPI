@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.impl;
 
+import muramasa.antimatter.item.IChargeable;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
 import tesseract.Tesseract;
@@ -12,6 +13,8 @@ public class MachineEnergyHandler extends EnergyHandler {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
+
+    final int LOSS_ITEM = 2;
 
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
@@ -29,6 +32,21 @@ public class MachineEnergyHandler extends EnergyHandler {
 
     public void onUpdate() {
         if (controller != null) controller.tick();
+        if (canExtract() || canInput()) {
+            tile.itemHandler.map(handler -> {
+                handler.getChargeableItems().forEach(item -> {
+                    if (item.getItem() instanceof IChargeable) {
+                        IChargeable ic = ((IChargeable)item.getItem());
+                        if (canExtract()) {
+                            if (ic.canInput() && ic.getInputVoltage() == this.getInputVoltage() && (ic.insert(item, getOutputVoltage(), true) == getOutputVoltage())) {
+                                energy -= (ic.insert(item, getOutputVoltage(), false) + LOSS_ITEM);
+                            }
+                        }
+                    }
+                });
+                return true;
+            });
+        }
     }
 
     /*public void onReset() {
@@ -37,6 +55,11 @@ public class MachineEnergyHandler extends EnergyHandler {
             TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
         }
     }*/
+
+    @Override
+    public boolean canExtract() {
+        return true;
+    }
 
     @Override
     public boolean connects(@Nonnull Dir direction) {

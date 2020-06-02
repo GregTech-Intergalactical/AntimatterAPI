@@ -2,6 +2,7 @@ package muramasa.antimatter.gui.container;
 
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.slot.SlotEnergy;
 import muramasa.antimatter.gui.slot.SlotInput;
 import muramasa.antimatter.gui.slot.SlotOutput;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -54,7 +55,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
 
     protected void addSlots(TileEntityMachine tile) {
         tile.itemHandler.ifPresent(h -> {
-            int inputIndex = 0, outputIndex = 0, cellIndex = 0;
+            int inputIndex = 0, outputIndex = 0, cellIndex = 0, chargeIndex = 0;
             List<SlotData> lst = tile.getMachineType().getGui().getSlots(tile.getMachineTier());
             for (SlotData slot : lst) {
                 switch (slot.type) {
@@ -69,6 +70,9 @@ public abstract class ContainerMachine extends AntimatterContainer {
                         break;
                     case CELL_OUT:
                         addSlot(new SlotOutput(h.getCellWrapper(), cellIndex++, slot.x, slot.y));
+                        break;
+                    case ENERGY:
+                        addSlot(new SlotEnergy(h.getChargeWrapper(), chargeIndex++, slot.x, slot.y));
                         break;
                 }
             }

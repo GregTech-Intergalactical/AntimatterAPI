@@ -75,7 +75,8 @@ public class CoverHandler implements ICoverHandler {
     public void onRemove() {
         for (int i = 0; i < covers.length; i++) {
             if (covers[i].isEmpty()) continue;
-            onPlace(Ref.DIRECTIONS[i], Data.COVERNONE);
+            covers[i].onRemove(Ref.DIRECTIONS[i]);
+            //onPlace(Ref.DIRECTIONS[i], Data.COVERNONE);
         }
     }
 

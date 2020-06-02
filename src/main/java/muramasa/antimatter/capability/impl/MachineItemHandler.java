@@ -28,7 +28,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
-    protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper;
+    protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
     public MachineItemHandler(TileEntityMachine tile) {
@@ -37,6 +37,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
+        }
+        if (tile.getMachineType().has(MachineFlag.ENERGY)) {
+            chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_CHANGED);
         }
         Tesseract.ITEM.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
@@ -67,6 +70,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     public IItemHandler getCellWrapper() {
         return cellWrapper;
+    }
+
+    public IItemHandler getChargeWrapper() {
+        return chargeWrapper;
     }
 
     public int getInputCount() {
@@ -106,6 +113,16 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < inputWrapper.getSlots(); i++) {
             if (!inputWrapper.getStackInSlot(i).isEmpty()) list.add(inputWrapper.getStackInSlot(i).copy());
+        }
+        return list;
+    }
+    /**
+     Returns a non copied list of chargeable items.
+     **/
+    public List<ItemStack> getChargeableItems() {
+        List<ItemStack> list = new ObjectArrayList<>();
+        for (int i = 0; i < chargeWrapper.getSlots(); i++) {
+            if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i));
         }
         return list;
     }

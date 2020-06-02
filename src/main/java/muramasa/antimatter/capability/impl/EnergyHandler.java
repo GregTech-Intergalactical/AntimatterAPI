@@ -75,7 +75,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canInput() {
-        return voltage_in > 0;
+        return voltage_in > 0 && energy != capacity;
     }
 
     @Override
@@ -85,7 +85,9 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canOutput() {
-        return voltage_out > 0;
+        //TODO: Only singular packets?
+        return voltage_out > 0 && energy >= voltage_out;
+       // return voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/
