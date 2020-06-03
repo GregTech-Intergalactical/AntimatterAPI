@@ -86,12 +86,12 @@ public final class AntimatterRegistration {
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class, currentDomain)) {
             if (type.isPowered()) {
                 for (IAntimatterTool i : type.instantiatePoweredTools(currentDomain)) {
-                    items.register(i.asItem().setRegistryName(currentDomain, i.getId()));
+                    items.register(i.getItem().setRegistryName(currentDomain, i.getId()));
                 }
             }
             else {
                 IAntimatterTool i = type.instantiateTools(currentDomain);
-                items.register(i.asItem().setRegistryName(currentDomain, i.getId()));
+                items.register(i.getItem().setRegistryName(currentDomain, i.getId()));
             }
         }
         for (AntimatterFluid fluid : AntimatterAPI.all(AntimatterFluid.class, currentDomain)) {
