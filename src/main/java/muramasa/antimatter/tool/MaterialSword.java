@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
@@ -92,28 +91,13 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Nonnull
     @Override
-    public Item asItem() { return this; }
-
-    @Nonnull
-    @Override
     public ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary) {
         return resolveStack(primary, secondary, 0, maxEnergy);
     }
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
-        if (group != Ref.TAB_TOOLS) return;
-        if (type.isPowered()) {
-            ItemStack stack = asItemStack(Data.NULL, Data.NULL);
-            getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
-            list.add(stack);
-        }
-        else list.add(asItemStack(Data.NULL, Data.NULL));
-    }
-
-    @Override
-    public void onCreated(ItemStack stack, World world, PlayerEntity player) {
-        // resolveTierTag(getDataTag(stack));
+        onGenericFillItemGroup(group, list, maxEnergy);
     }
 
     @Override

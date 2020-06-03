@@ -91,8 +91,8 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
             if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
         });
         AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
-            this.getBuilder(tool.getType().getTag()).add(tool.asItem()).replace(replace);
-            this.getBuilder(tool.getType().getForgeTag()).add(tool.asItem()).replace(replace);
+            this.getBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
+            this.getBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
     }
 

@@ -113,7 +113,7 @@ public class ClientEvents {
             if (!(stack.getItem() instanceof IAntimatterTool)) return;
             IAntimatterTool item = (IAntimatterTool) stack.getItem();
             if (item.getType().getUseAction() != UseAction.NONE && player.isSwingInProgress) {
-                item.asItem().onUsingTick(stack, player, stack.getCount());
+                item.getItem().onUsingTick(stack, player, stack.getCount());
                 player.swingProgress = player.prevSwingProgress;
             }
         }

@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
@@ -12,7 +11,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -32,7 +30,6 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -89,30 +86,13 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Nonnull
     @Override
-    public Item asItem() {
-        return this;
-    }
-
-    @Nonnull
-    @Override
     public ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary) {
         return resolveStack(primary, secondary, 0, maxEnergy);
     }
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
-        if (group != Ref.TAB_TOOLS) return;
-        if (type.isPowered()) {
-            ItemStack stack = asItemStack(Data.NULL, Data.NULL);
-            getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
-            list.add(stack);
-        }
-        else list.add(asItemStack(Data.NULL, Data.NULL));
-    }
-
-    @Override
-    public void onCreated(ItemStack stack, World world, PlayerEntity player) {
-        // resolveTierTag(getDataTag(stack));
+        onGenericFillItemGroup(group, list, maxEnergy);
     }
 
     /*
