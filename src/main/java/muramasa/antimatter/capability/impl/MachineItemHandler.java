@@ -2,9 +2,13 @@ package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -108,6 +112,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         return side == Direction.UP ? inputWrapper : outputWrapper;
     }
 
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+
+    }
+
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
@@ -118,11 +126,13 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
     /**
      Returns a non copied list of chargeable items.
+     //TODO: Should this instead return the actual ItemStacks? Usually chargeable items only need the IEnergyHandler.
      **/
-    public List<ItemStack> getChargeableItems() {
-        List<ItemStack> list = new ObjectArrayList<>();
+    public List<IEnergyHandler> getChargeableItems() {
+        List<IEnergyHandler> list = new ObjectArrayList<>();
         for (int i = 0; i < chargeWrapper.getSlots(); i++) {
-            if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i));
+            //orElse: null, should always be present.
+            if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i).getCapability(AntimatterCaps.ENERGY).orElse(null));
         }
         return list;
     }

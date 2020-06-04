@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
@@ -281,6 +282,24 @@ public class Utils {
                 transferFluids(first,second);
             });
         });
+    }
+    //Attempts to transfer 1 * FROM-voltage to the given handler, assuming they have both
+    //the same voltage.
+    public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
+        long voltageIn = from.getInputVoltage();
+        long voltageOut = from.getOutputVoltage();
+        if (voltageIn != voltageOut) {
+            return 0;
+        }
+        if (from.canOutput() && to.canInput()) {
+            long simulated = from.extract(from.getOutputVoltage(), true);
+            if (simulated <= 0) {
+                return simulated;
+            }
+            long inputted = to.insert(simulated, false);
+            return from.extract(inputted, false);
+        }
+        return 0;
     }
 
     public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
