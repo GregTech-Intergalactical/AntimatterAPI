@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.slot;
 
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.item.IChargeable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,8 +16,9 @@ public class SlotEnergy extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return stack.getItem() instanceof IChargeable;
+        return stack.getCapability(AntimatterCaps.ENERGY).isPresent();
     }
+
 
     @Override
     public boolean canTakeStack(PlayerEntity playerIn) {

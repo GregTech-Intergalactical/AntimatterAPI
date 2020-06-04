@@ -103,6 +103,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        itemHandler.ifPresent(h -> h.onMachineEvent(event,data));
         markDirty();
     }
 

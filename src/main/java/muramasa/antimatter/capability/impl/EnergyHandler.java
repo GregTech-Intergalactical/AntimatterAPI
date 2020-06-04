@@ -11,7 +11,8 @@ import javax.annotation.Nullable;
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected long energy, capacity;
-    private int voltage_in, voltage_out, amperage_in, amperage_out;
+    //Change to protected since amperage for buffers are dynamic.
+    protected int voltage_in, voltage_out, amperage_in, amperage_out;
 
     public EnergyHandler(long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         this.energy = energy;

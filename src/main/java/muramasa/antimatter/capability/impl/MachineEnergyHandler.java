@@ -1,7 +1,10 @@
 package muramasa.antimatter.capability.impl;
 
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.item.IChargeable;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
@@ -33,20 +36,21 @@ public class MachineEnergyHandler extends EnergyHandler {
     public void onUpdate() {
         if (controller != null) controller.tick();
         if (canExtract() || canInput()) {
-            tile.itemHandler.map(handler -> {
+            tile.itemHandler.ifPresent(handler -> {
+                //TODO: Consume amperage.
                 handler.getChargeableItems().forEach(item -> {
-                    if (item.getItem() instanceof IChargeable) {
-                        IChargeable ic = ((IChargeable)item.getItem());
-                        if (canExtract()) {
-                            if (ic.canInput() && ic.getInputVoltage() == this.getInputVoltage() && (ic.insert(item, getOutputVoltage(), true) == getOutputVoltage())) {
-                                energy -= (ic.insert(item, getOutputVoltage(), false) + LOSS_ITEM);
-                            }
-                        }
-                    }
+                    Utils.transferEnergy(this, item);
                 });
-                return true;
             });
         }
+    }
+
+    public void setOutputAmperage(int amp) {
+        amperage_out = amp;
+    }
+
+    public void setInputAmperage(int amp) {
+        amperage_in = amp;
     }
 
     /*public void onReset() {
