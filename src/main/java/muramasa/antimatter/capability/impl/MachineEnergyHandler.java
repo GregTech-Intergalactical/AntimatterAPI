@@ -1,8 +1,5 @@
 package muramasa.antimatter.capability.impl;
 
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.item.IChargeable;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,7 +9,7 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 
-public class MachineEnergyHandler extends EnergyHandler {
+public class  MachineEnergyHandler extends EnergyHandler {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;

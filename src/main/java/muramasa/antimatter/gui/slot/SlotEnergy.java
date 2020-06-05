@@ -1,7 +1,6 @@
 package muramasa.antimatter.gui.slot;
 
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.item.IChargeable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
