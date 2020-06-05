@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.impl.ItemEnergyHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -17,13 +18,18 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -274,4 +280,14 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         return super.showDurabilityBar(stack);
     }
 
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+        if (type.isPowered()) {
+            ItemEnergyHandler.initNBT(nbt);
+            //TODO: not lv
+            return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack), type.getBaseMaxEnergy(), 32,32,1,1,true);
+        }
+        return null;
+    }
 }
