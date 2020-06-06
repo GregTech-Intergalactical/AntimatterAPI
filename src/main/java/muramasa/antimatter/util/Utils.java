@@ -286,7 +286,7 @@ public class Utils {
     //Attempts to transfer 1 * FROM-voltage to the given handler, assuming they have both
     //the same voltage.
     public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        long voltageIn = from.getInputVoltage();
+        long voltageIn = to.getInputVoltage();
         long voltageOut = from.getOutputVoltage();
         if (voltageIn != voltageOut) {
             return 0;
