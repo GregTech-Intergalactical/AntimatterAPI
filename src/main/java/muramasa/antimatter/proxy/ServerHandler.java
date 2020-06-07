@@ -9,6 +9,7 @@ public class ServerHandler implements IProxyHandler {
 
     public ServerHandler() { }
 
+    @SuppressWarnings("unused")
     public static void setup(FMLDedicatedServerSetupEvent e) { }
 
     @Override

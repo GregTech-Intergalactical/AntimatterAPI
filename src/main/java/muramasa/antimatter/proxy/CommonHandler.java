@@ -1,5 +1,7 @@
 package muramasa.antimatter.proxy;
 
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -11,7 +13,11 @@ public class CommonHandler implements IProxyHandler {
 
     public CommonHandler() { }
 
-    public static void setup(FMLCommonSetupEvent e) { }
+    @SuppressWarnings("unused")
+    public static void setup(FMLCommonSetupEvent e) {
+        AntimatterWorldGenerator.init();
+        AntimatterCaps.register();
+    }
 
     @Override
     public World getClientWorld() {

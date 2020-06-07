@@ -1,8 +1,6 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.datagen.providers.*;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
@@ -10,8 +8,6 @@ import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -72,9 +68,6 @@ public class Antimatter implements IAntimatterRegistrar {
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.onRegistration(RegistrationEvent.READY);
         // AntimatterAPI.onRegistration(RegistrationEvent.RECIPE); Recipes should be part of the 'forge' registry
-
-        AntimatterWorldGenerator.init();
-        AntimatterCaps.register();
 
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
 
