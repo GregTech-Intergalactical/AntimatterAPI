@@ -286,18 +286,24 @@ public class Utils {
     //Attempts to transfer 1 * FROM-voltage to the given handler, assuming they have both
     //the same voltage.
     public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
+        return transferEnergyWithLoss(from,to,0);
+    }
+
+    //Attempts to transfer 1 * FROM-voltage to the given handler, assuming they have both
+    //the same voltage.
+    public static long transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, long loss) {
         long voltageIn = to.getInputVoltage();
         long voltageOut = from.getOutputVoltage();
         if (voltageIn != voltageOut) {
             return 0;
         }
         if (from.canOutput() && to.canInput()) {
-            long simulated = from.extract(from.getOutputVoltage(), true);
-            if (simulated <= 0) {
-                return simulated;
+            long simulated = from.extract(voltageOut+loss, true);
+            if (simulated <= loss) {
+                return 0;
             }
-            long inputted = to.insert(simulated, false);
-            return from.extract(inputted, false);
+            long inputted = to.insert(simulated-loss, false);
+            return from.extract(inputted+loss, false);
         }
         return 0;
     }

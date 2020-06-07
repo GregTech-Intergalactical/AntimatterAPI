@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.impl.MachineEnergyHandler;
 import muramasa.antimatter.capability.impl.MachineItemHandler;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.util.Utils;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
@@ -45,8 +46,8 @@ public class TileEntityStorage extends TileEntityMachine {
     private void calculateAmperage() {
         itemHandler.ifPresent(handler -> {
             energyHandler.ifPresent(ehandler -> {
-                int out = handler.getChargeableItems().stream().mapToInt(IElectricNode::getOutputAmperage).sum();
-                int in = handler.getChargeableItems().stream().mapToInt(IElectricNode::getInputAmperage).sum();
+                int out = handler.getChargeableItems().stream().mapToInt(IEnergyHandler::getOutputAmperage).sum();
+                int in = handler.getChargeableItems().stream().mapToInt(IEnergyHandler::getInputAmperage).sum();
                 ehandler.setInputAmperage(in);
                 ehandler.setOutputAmperage(out);
             });
@@ -55,7 +56,6 @@ public class TileEntityStorage extends TileEntityMachine {
 
     @Override
     public void onServerUpdate() {
-        energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
         super.onServerUpdate();
     }
 }

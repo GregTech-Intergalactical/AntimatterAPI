@@ -1,18 +1,25 @@
 package muramasa.antimatter.capability.impl;
 
+import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
+import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
-public class  MachineEnergyHandler extends EnergyHandler {
+public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
+    //Cached charge items from the energy handler. Updated on machine event as to not always extract caps.
+    private List<IEnergyHandler> cachedItems;
 
     final int LOSS_ITEM = 2;
 
@@ -24,20 +31,50 @@ public class  MachineEnergyHandler extends EnergyHandler {
 
     public MachineEnergyHandler(TileEntityMachine tile) {
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
+        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+    }
+
+
+    @Override
+    public boolean canInput() {
+        //TODO: Somehow cache this as it might be slow
+        boolean canInput = super.canInput();
+        return canInput || cachedItems.stream().anyMatch(IEnergyHandler::canInput);
     }
 
     public void onRemove() {
         Tesseract.ELECTRIC.remove(tile.getDimention(), tile.getPos().toLong());
     }
-
+    //Transfers energy from internal buffer between items.
     public void onUpdate() {
         if (controller != null) controller.tick();
-        if (canExtract() || canInput()) {
+        if (cachedItems != null && cachedItems.size() > 0) {
             tile.itemHandler.ifPresent(handler -> {
                 //TODO: Consume amperage.
-                handler.getChargeableItems().forEach(item -> {
-                    Utils.transferEnergy(this, item);
-                });
+                if (canInput()) {
+                    int amps = 0;
+                    for (IEnergyHandler ihandler : cachedItems) {
+                        if (amps == amperage_in) {
+                            break;
+                        }
+                        long energy = Utils.transferEnergy(ihandler,this);
+                        if (energy > 0) {
+                            amps++;
+                        }
+                    }
+                }
+                if (canExtract()) {
+                    int amps = 0;
+                    for (IEnergyHandler ihandler : cachedItems) {
+                        if (amps == amperage_out) {
+                            break;
+                        }
+                        long energy = Utils.transferEnergyWithLoss(this,ihandler,LOSS_ITEM);
+                        if (energy > 0) {
+                            amps++;
+                        }
+                    }
+                }
             });
         }
     }
@@ -56,11 +93,6 @@ public class  MachineEnergyHandler extends EnergyHandler {
             TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
         }
     }*/
-
-    @Override
-    public boolean canExtract() {
-        return true;
-    }
 
     @Override
     public boolean connects(@Nonnull Dir direction) {
@@ -88,5 +120,11 @@ public class  MachineEnergyHandler extends EnergyHandler {
 
     public void deserialize(CompoundNBT tag) {
         energy = tag.getLong("Energy");
+    }
+
+    @Override
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+        //TODO: Check if item event
+        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
     }
 }
