@@ -11,25 +11,54 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
+ * It wraps an item and provides the ability to charge it & remove it, depending on if the item supports it.
+ */
 public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvider {
     protected ItemStack stack;
 
     public static String TAG_CHARGE = "c";
+    public static String TAG_MODE = "tm";
 
-    public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out, boolean canInput) {
+    public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.stack = stack;
-        if (!canInput) {
-            this.voltage_in = 0;
-        }
     }
 
     public static CompoundNBT initNBT(CompoundNBT nbt) {
         if (nbt == null) {
             nbt = new CompoundNBT();
         }
-        nbt.putLong(TAG_CHARGE,0);
+        if (!nbt.contains(TAG_CHARGE)) {
+            nbt.putLong(TAG_CHARGE,0);
+        }
         return nbt;
+    }
+
+    //Override the following methods to use getTagEnergy instead
+    @Override
+    public boolean canInput() {
+        return voltage_in > 0 && getTagEnergy() != capacity;
+    }
+
+    @Override
+    public boolean canOutput() {
+        return !canModeBlock() && voltage_out > 0 && getTagEnergy() >= voltage_out;
+    }
+
+    /**
+     * Returns whether the item can block output.
+     * @return false as default non-blocking, true on block discharge.
+     */
+    private boolean canModeBlock() {
+        CompoundNBT nbt = stack.getTag();
+        return nbt != null && nbt.getBoolean(TAG_MODE);
+    }
+
+    @Override
+    public long getEnergy() {
+        return getTagEnergy();
     }
 
     private void setTagEnergy(long energy) {
@@ -41,6 +70,12 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
         return getEnergyFromStack(stack);
     }
 
+    /**
+     * Sets the energy value of an item.
+     * @param stack the stack to set the energy of.
+     * @param energy the fix energy value.
+     * @return energy parameter
+     */
     public static long setStackEnergy(ItemStack stack, long energy) {
         CompoundNBT nbt = stack.getOrCreateTag();
         nbt.putLong(TAG_CHARGE, energy);
@@ -54,27 +89,23 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        if (energy == 0) {
-            energy = getTagEnergy();
-        }
+        long energy = getTagEnergy();
         long toInsert =  Math.max(Math.min(capacity-energy, maxReceive),0);
         if (simulate) {
             return toInsert;
         }
-        setTagEnergy(toInsert + getTagEnergy());
+        setTagEnergy(toInsert + energy);
         return toInsert;
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        if (energy == 0) {
-            energy = getTagEnergy();
-        }
+        long energy = getTagEnergy();
         long toExtract = Math.max(Math.min(energy, maxExtract),0);
         if (simulate) {
             return toExtract;
         }
-        setStackEnergy(stack, getTagEnergy()-toExtract);
+        setStackEnergy(stack, energy-toExtract);
         return toExtract;
     }
 
@@ -84,6 +115,6 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
         if (cap == AntimatterCaps.ENERGY) {
             return LazyOptional.of(() -> this).cast();
         }
-        return null;
+        return LazyOptional.empty();
     }
 }

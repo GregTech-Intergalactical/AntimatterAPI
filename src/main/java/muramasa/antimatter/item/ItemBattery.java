@@ -1,23 +1,19 @@
 package muramasa.antimatter.item;
 
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.CapabilityWrapper;
 import muramasa.antimatter.capability.impl.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -38,15 +34,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         stack.setTag(ItemEnergyHandler.initNBT(nbt));
-        return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack),cap,tier.getVoltage(),tier.getVoltage(),1,1,reusable);
-    }
-
-    @Override
-    public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
-        CompoundNBT nbt = new CompoundNBT();
-        nbt.putLong(ItemEnergyHandler.TAG_CHARGE,0);
-        stack.setTag(nbt);
-        super.onCreated(stack, worldIn, playerIn);
+        return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack),cap,reusable ? tier.getVoltage() : 0,tier.getVoltage(),reusable ? 1 : 0,1);
     }
 
     @Override
@@ -69,10 +57,35 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     }
 
     @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if (playerIn.isShiftKeyDown()) {
+            boolean newMode = chargeModeSwitch(playerIn.getActiveItemStack());
+            playerIn.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"));
+            return ActionResult.resultSuccess(playerIn.getActiveItemStack());
+        } else {
+            return super.onItemRightClick(worldIn, playerIn, handIn);
+        }
+    }
+
+
+    /** Switches the discharge mode for an item.
+     *  False does nothing, true disables discharge.
+     * @param stack the stack to switch.
+     */
+    private boolean chargeModeSwitch(ItemStack stack) {
+        boolean mode = !stack.getTag().getBoolean(ItemEnergyHandler.TAG_MODE);
+        stack.getOrCreateTag().putBoolean(ItemEnergyHandler.TAG_MODE,mode);
+        return mode;
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         //TODO: Translateable
-        tooltip.add(new StringTextComponent("Charge: " + ItemEnergyHandler.getEnergyFromStack(stack)+ "/" + cap + " (" + this.tier.getId() + ")"));
-        tooltip.add(new StringTextComponent("Amperage out: " + 1));
+        if (reusable) {
+            tooltip.add(new TranslationTextComponent("item.reusable"));
+        }
+        long energy = ItemEnergyHandler.getEnergyFromStack(stack);
+        tooltip.add(new TranslationTextComponent("item.charge").appendText(": ").appendSibling(new StringTextComponent( energy + "/" + cap).applyTextStyle(energy == 0 ? TextFormatting.RED :  TextFormatting.GREEN)).appendText(" (" + tier.getId().toUpperCase() + ")"));
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 }
