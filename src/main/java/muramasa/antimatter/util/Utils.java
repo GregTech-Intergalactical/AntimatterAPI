@@ -547,7 +547,7 @@ public class Utils {
 
     public static Direction getInteractSide(BlockRayTraceResult res) {
         Vec3d vec = res.getHitVec();
-        return getInteractSide(res.getFace(), (float)vec.x, (float)vec.y, (float)vec.z);
+        return getInteractSide(res.getFace(), (float)vec.x - res.getPos().getX(), (float)vec.y - res.getPos().getY(), (float)vec.z - res.getPos().getZ());
     }
 
     public static Direction getInteractSide(Direction side, float x, float y, float z) {
