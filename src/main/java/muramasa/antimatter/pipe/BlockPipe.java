@@ -21,6 +21,7 @@ import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -159,7 +160,8 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (tile != null) {
             for (Direction side : Ref.DIRECTIONS) {
                 // Looking for the side where is a neighbor was
-                if (pos.offset(side).equals(neighbor)) {
+                // Check if the block is actually air or there was another reason for change.
+                if (pos.offset(side).equals(neighbor) && world.getBlockState(neighbor) == Blocks.AIR.getDefaultState()) {
                     tile.clearConnection(side);
                     return;
                 }

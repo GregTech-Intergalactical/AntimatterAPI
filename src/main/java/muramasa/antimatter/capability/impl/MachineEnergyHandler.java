@@ -18,7 +18,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
-    //Cached charge items from the energy handler. Updated on machine event as to not always extract caps.
+    //Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     private List<IEnergyHandler> cachedItems;
 
     final int LOSS_ITEM = 2;
@@ -27,19 +27,11 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
         Tesseract.ELECTRIC.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
+        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
-        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
-    }
-
-
-    @Override
-    public boolean canInput() {
-        //TODO: Somehow cache this as it might be slow
-        boolean canInput = super.canInput();
-        return canInput || cachedItems.stream().anyMatch(IEnergyHandler::canInput);
     }
 
     public void onRemove() {
@@ -50,28 +42,53 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         if (controller != null) controller.tick();
         if (cachedItems != null && cachedItems.size() > 0) {
             tile.itemHandler.ifPresent(handler -> {
-                //TODO: Consume amperage.
-                if (canInput()) {
-                    int amps = 0;
+                /*
+                Charge internal buffer from slots.
+                 */
+                //TODO: Separate Amperage counter for items? To review
+
+                //TODO: Review this. Avoid a problem with a charge loop, e.g. item charges machine & machine charges item.
+                int consumedAmps = 0;
+
+                if (canChargeFromItem()) {
                     for (IEnergyHandler ihandler : cachedItems) {
-                        if (amps == amperage_in) {
+                        if (consumedAmps >= amperage_in) {
                             break;
                         }
-                        long energy = Utils.transferEnergy(ihandler,this);
-                        if (energy > 0) {
-                            amps++;
+                        long energy = -1;
+                        long itemAmps = 0;
+                        long itemCapAmps = ihandler.getOutputAmperage();
+                        //Try to charge a given item until it can no longer consume amps. Then move on to the next one.
+                        while (energy != 0 && consumedAmps < amperage_in && itemAmps < itemCapAmps) {
+                            energy = Utils.transferEnergy(ihandler,this);
+                            if (energy > 0) {
+                                consumedAmps++;
+                                itemAmps++;
+                            }
                         }
                     }
                 }
-                if (canExtract()) {
-                    int amps = 0;
+                /*
+                Charges items from internal buffer. Regular machines cannot do this and charge straight
+                from the ENet.
+                 */
+                //TODO: Else if? Do either but not both.
+                if (canChargeItem() && consumedAmps == 0) {
+                    consumedAmps = 0;
                     for (IEnergyHandler ihandler : cachedItems) {
-                        if (amps == amperage_out) {
+                        if (consumedAmps >= amperage_out) {
                             break;
                         }
-                        long energy = Utils.transferEnergyWithLoss(this,ihandler,LOSS_ITEM);
-                        if (energy > 0) {
-                            amps++;
+                        long energy = -1;
+                        long itemAmps = 0;
+                        long itemCapAmps = ihandler.getInputAmperage();
+                        //Try to charge a given item until it can no longer consume amps. Then move on to the next one.
+                        while (energy != 0 && consumedAmps < amperage_out && itemAmps < itemCapAmps) {
+                            energy = Utils.transferEnergyWithLoss(this,ihandler,LOSS_ITEM);
+                            if (energy > 0) {
+                                consumedAmps++;
+                                itemAmps++;
+                            }
                         }
                     }
                 }
@@ -93,6 +110,14 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
             TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
         }
     }*/
+
+    public boolean canChargeItem() {
+        return false;
+    }
+
+    public boolean canChargeFromItem() {
+        return true;
+    }
 
     @Override
     public boolean connects(@Nonnull Dir direction) {

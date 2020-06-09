@@ -58,10 +58,11 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if (playerIn.isShiftKeyDown()) {
-            boolean newMode = chargeModeSwitch(playerIn.getActiveItemStack());
+        if (playerIn.isShiftKeyDown() && !worldIn.isRemote()) {
+            ItemStack stack = playerIn.getHeldItem(handIn);
+            boolean newMode = chargeModeSwitch(stack);
             playerIn.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"));
-            return ActionResult.resultSuccess(playerIn.getActiveItemStack());
+            return ActionResult.resultSuccess(stack);
         } else {
             return super.onItemRightClick(worldIn, playerIn, handIn);
         }
@@ -70,10 +71,10 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     /** Switches the discharge mode for an item.
      *  False does nothing, true disables discharge.
-     * @param stack the stack to switch.
+     *  @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        boolean mode = !stack.getTag().getBoolean(ItemEnergyHandler.TAG_MODE);
+        boolean mode = !stack.getOrCreateTag().getBoolean(ItemEnergyHandler.TAG_MODE);
         stack.getOrCreateTag().putBoolean(ItemEnergyHandler.TAG_MODE,mode);
         return mode;
     }
