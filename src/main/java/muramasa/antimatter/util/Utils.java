@@ -283,27 +283,44 @@ public class Utils {
             });
         });
     }
-    //Attempts to transfer 1 * FROM-voltage to the given handler, assuming they have both
-    //the same voltage.
-    public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        return transferEnergyWithLoss(from,to,0);
+
+    /**
+     * Transfers up to maxAmps between energy handlers, without loss.
+     * @param from the handler to extract from
+     * @param to the handler to insert
+     * @return the number of amps inserted.
+     */
+    public static int transferEnergy(IEnergyHandler from, IEnergyHandler to, int maxAmps) {
+        return transferEnergyWithLoss(from,to,0, maxAmps);
     }
 
-    //Attempts to transfer 1 * FROM-voltage to the given handler, assuming they have both
-    //the same voltage.
-    public static long transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, long loss) {
-        long voltageIn = to.getInputVoltage();
-        long voltageOut = from.getOutputVoltage();
-        if (voltageIn != voltageOut) {
-            return 0;
-        }
+    /**
+     * Transfer energy with loss.
+     * @param from energy handler to extract from
+     * @param to energy handler to insert from
+     * @param loss energy loss
+     * @param maxAmps max amperage to insert
+     * @return number of amps
+     */
+    public static int transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss, int maxAmps) {
         if (from.canOutput() && to.canInput()) {
-            long simulated = from.extract(voltageOut+loss, true);
-            if (simulated <= loss) {
+            long voltageIn = to.getInputVoltage();
+            long voltageOut = from.getOutputVoltage();
+            if (voltageIn != voltageOut) {
                 return 0;
             }
-            long inputted = to.insert(simulated-loss, false);
-            return from.extract(inputted+loss, false);
+            //The maximum possible amperage to output.
+            int outputAmperage = (int) Math.min(Math.min(from.getEnergy()/voltageOut, from.getOutputAmperage()),maxAmps);
+            int inputAmps = (int) Math.min(((to.getCapacity() - to.getEnergy())) / (voltageIn - loss), to.getInputAmperage());
+
+            int amps = Math.min(outputAmperage, inputAmps);
+            if (amps == 0) {
+                return 0;
+            }
+            //No need to simulate, calculations already done.
+            from.extract(voltageOut*amps, false);
+            to.insert((voltageOut-loss)*amps, false);
+            return amps;
         }
         return 0;
     }

@@ -26,7 +26,7 @@ public class TileEntityStorage extends TileEntityMachine {
 
     @Override
     public void onLoad() {
-        if (!energyHandler.isPresent() && isServerSide() && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
+        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
             @Override
             public boolean canOutput(@Nonnull Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();

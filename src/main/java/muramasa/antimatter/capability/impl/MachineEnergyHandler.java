@@ -8,7 +8,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
-import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -20,8 +19,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     protected ITickingController controller;
     //Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     private List<IEnergyHandler> cachedItems;
-
-    final int LOSS_ITEM = 2;
 
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
@@ -42,54 +39,14 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         if (controller != null) controller.tick();
         if (cachedItems != null && cachedItems.size() > 0) {
             tile.itemHandler.ifPresent(handler -> {
-                /*
-                Charge internal buffer from slots.
-                 */
-                //TODO: Separate Amperage counter for items? To review
-
-                //TODO: Review this. Avoid a problem with a charge loop, e.g. item charges machine & machine charges item.
-                int consumedAmps = 0;
-
-                if (canChargeFromItem()) {
-                    for (IEnergyHandler ihandler : cachedItems) {
-                        if (consumedAmps >= amperage_in) {
-                            break;
-                        }
-                        long energy = -1;
-                        long itemAmps = 0;
-                        long itemCapAmps = ihandler.getOutputAmperage();
-                        //Try to charge a given item until it can no longer consume amps. Then move on to the next one.
-                        while (energy != 0 && consumedAmps < amperage_in && itemAmps < itemCapAmps) {
-                            energy = Utils.transferEnergy(ihandler,this);
-                            if (energy > 0) {
-                                consumedAmps++;
-                                itemAmps++;
-                            }
-                        }
-                    }
-                }
-                /*
-                Charges items from internal buffer. Regular machines cannot do this and charge straight
-                from the ENet.
-                 */
-                //TODO: Else if? Do either but not both.
-                if (canChargeItem() && consumedAmps == 0) {
-                    consumedAmps = 0;
-                    for (IEnergyHandler ihandler : cachedItems) {
-                        if (consumedAmps >= amperage_out) {
-                            break;
-                        }
-                        long energy = -1;
-                        long itemAmps = 0;
-                        long itemCapAmps = ihandler.getInputAmperage();
-                        //Try to charge a given item until it can no longer consume amps. Then move on to the next one.
-                        while (energy != 0 && consumedAmps < amperage_out && itemAmps < itemCapAmps) {
-                            energy = Utils.transferEnergyWithLoss(this,ihandler,LOSS_ITEM);
-                            if (energy > 0) {
-                                consumedAmps++;
-                                itemAmps++;
-                            }
-                        }
+                //TODO: Have different amperages for items.
+                int ampsIn = amperage_in, ampsOut = amperage_out;
+                for (IEnergyHandler ihandler : cachedItems) {
+                    if (ampsOut > 0 && canChargeItem() && ihandler.canInput()) {
+                        //Try to transfer as many amps as possible.
+                        ampsOut -= Utils.transferEnergy(this,ihandler, ampsOut);
+                    } else if (ampsIn > 0 && canChargeFromItem() && ihandler.canOutput()) {
+                        ampsIn -= Utils.transferEnergy(ihandler,this, ampsIn);
                     }
                 }
             });
@@ -111,12 +68,36 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         }
     }*/
 
+    /**
+     *
+     * @return whether or not this handler can charge items in charge slots.
+     */
     public boolean canChargeItem() {
+        return true;
+    }
+
+    /**
+     *
+     * @return whether or not this handler change charge from items in charge slots.
+     */
+    public boolean canChargeFromItem() {
         return false;
     }
 
-    public boolean canChargeFromItem() {
-        return true;
+    @Override
+    public long extract(long maxExtract, boolean simulate) {
+        long extract = super.extract(maxExtract, simulate);
+        //TODO: extract < maxExtract, but that would imply not an entire packet.
+        if (extract == 0) {
+            //In the case of a recipe trying to get energy, try to check the charge slot.
+            for (IEnergyHandler handler : cachedItems) {
+                long iExtract = handler.extract(maxExtract, true);
+                if (iExtract == maxExtract) {
+                    return handler.extract(maxExtract,false);
+                }
+            }
+        }
+        return extract;
     }
 
     @Override
