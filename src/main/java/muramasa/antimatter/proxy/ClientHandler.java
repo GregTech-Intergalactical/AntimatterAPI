@@ -28,9 +28,11 @@ public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings("ConstantConditions")
     public ClientHandler() {
-        if (Minecraft.getInstance() != null) Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
-        AntimatterModelManager.init();
-        AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
+        if (Minecraft.getInstance() != null) { //Null with runData
+            Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
+            AntimatterModelManager.init();
+            AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
+        }
     }
 
     @SuppressWarnings({"unchecked", "unused", "NullableProblems"})
