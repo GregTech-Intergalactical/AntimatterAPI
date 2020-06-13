@@ -20,7 +20,7 @@ public abstract class MenuHandlerMachine<T extends Container> implements IAntima
 
     public MenuHandlerMachine(String domain, String id) {
         this.registryName = new ResourceLocation(domain, id);
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(MenuHandlerMachine.class, this);
     }
 
     @Override

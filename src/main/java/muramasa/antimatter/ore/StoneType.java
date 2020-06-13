@@ -10,14 +10,10 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.apache.logging.log4j.LogManager;
 
-import java.util.List;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.List;
 
 public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
 
@@ -37,7 +33,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         this.texture = texture;
         this.soundType = soundType;
         this.generateBlock = generateBlock;
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(StoneType.class, this);
     }
 
     @Override

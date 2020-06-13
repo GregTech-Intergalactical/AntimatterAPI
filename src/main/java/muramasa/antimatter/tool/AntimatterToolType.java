@@ -84,7 +84,7 @@ public class AntimatterToolType implements IAntimatterObject {
         this.toolClass = MaterialTool.class;
         this.TOOL_TYPE = ToolType.get(id);
         this.TOOL_TYPES.add(id);
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(AntimatterToolType.class, this);
     }
 
     public AntimatterToolType(String domain, String id, AntimatterToolType inheritType) {

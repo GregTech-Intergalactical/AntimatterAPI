@@ -37,7 +37,7 @@ public class Tier implements IAntimatterObject {
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture(domain, "block/machine/base/" + id);
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(Tier.class, this);
     }
 
     @Override

@@ -76,14 +76,6 @@ public final class AntimatterAPI {
         register(clazz, o.getId(), o);
     }
 
-    public static void register(String id, IAntimatterObject o) {
-        register(o.getClass(), id, o);
-    }
-
-    public static void register(IAntimatterObject o) {
-        register(o.getClass(), o.getId(), o);
-    }
-
     private static boolean isObjectFresh(Class<?> c, String id) {
         Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
         return map == null || !map.containsKey(id);

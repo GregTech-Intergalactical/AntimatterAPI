@@ -11,7 +11,7 @@ public class RecipeTag implements IAntimatterObject {
 
     public RecipeTag(String id) {
         this.id = id;
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(RecipeTag.class, this);
     }
 
     @Override

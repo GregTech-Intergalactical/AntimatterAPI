@@ -15,7 +15,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import org.lwjgl.system.NonnullDefault;
 
 public abstract class MenuHandlerCover<M extends Container>  implements IAntimatterObject, IMenuHandler<M, ScreenCover> {
 
@@ -24,7 +23,7 @@ public abstract class MenuHandlerCover<M extends Container>  implements IAntimat
 
     public MenuHandlerCover(String domain, String id) {
         this.registryName = new ResourceLocation(domain, id);
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(MenuHandlerCover.class, this);
     }
 
     @Override

@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
@@ -72,7 +71,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
-        AntimatterAPI.register(this);
+        AntimatterAPI.register(Material.class, this);
     }
 
     public Material(String domain, String id, int rgb, TextureSet set, Element element) {
