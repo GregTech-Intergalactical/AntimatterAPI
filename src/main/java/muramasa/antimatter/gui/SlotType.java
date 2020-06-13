@@ -7,5 +7,6 @@ public enum SlotType {
     FL_IN,
     FL_OUT,
     CELL_IN,
-    CELL_OUT
+    CELL_OUT,
+    ENERGY,
 }

@@ -37,22 +37,22 @@ public class PipeInteractHandler extends InteractHandler {
         if (type == getTool() && hand == Hand.MAIN_HAND) {
             boolean isTarget = false;
             TileEntityPipe tile = (TileEntityPipe) getTile();
-            TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
+            TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(parsedSide));
             if (target instanceof TileEntityPipe) {
-                ((TileEntityPipe) target).toggleConnection(side.getOpposite());
+                ((TileEntityPipe) target).toggleConnection(parsedSide.getOpposite());
             } else {
                 isTarget = tile.isServerSide() && Utils.isForeignTile(target); // Check that entity is not GT one
             }
-            tile.toggleConnection(side);
+            tile.toggleConnection(parsedSide);
 
             // If some target in front of, then create wrapper
             if (isTarget) {
-                if (tile.canConnect(side.getIndex())) {
-                    connection = Connectivity.set(connection, side.getIndex());
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
+                if (tile.canConnect(parsedSide.getIndex())) {
+                    connection = Connectivity.set(connection, parsedSide.getIndex());
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), parsedSide, target, tile.getCover(parsedSide).getCover());
                 } else {
-                    connection = Connectivity.clear(connection, side.getIndex());
-                    PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
+                    connection = Connectivity.clear(connection, parsedSide.getIndex());
+                    PipeCache.remove(tile.getPipeType(), tile.getWorld(), parsedSide, target);
                 }
             }
             return true;

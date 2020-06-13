@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
@@ -283,6 +284,47 @@ public class Utils {
         });
     }
 
+    /**
+     * Transfers up to maxAmps between energy handlers, without loss.
+     * @param from the handler to extract from
+     * @param to the handler to insert
+     * @return the number of amps inserted.
+     */
+    public static int transferEnergy(IEnergyHandler from, IEnergyHandler to, int maxAmps) {
+        return transferEnergyWithLoss(from,to,0, maxAmps);
+    }
+
+    /**
+     * Transfer energy with loss.
+     * @param from energy handler to extract from
+     * @param to energy handler to insert from
+     * @param loss energy loss
+     * @param maxAmps max amperage to insert
+     * @return number of amps
+     */
+    public static int transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss, int maxAmps) {
+        if (from.canOutput() && to.canInput()) {
+            long voltageIn = to.getInputVoltage();
+            long voltageOut = from.getOutputVoltage();
+            if (voltageIn != voltageOut) {
+                return 0;
+            }
+            //The maximum possible amperage to output.
+            int outputAmperage = (int) Math.min(Math.min(from.getEnergy()/voltageOut, from.getOutputAmperage()),maxAmps);
+            int inputAmps = (int) Math.min(((to.getCapacity() - to.getEnergy())) / (voltageIn - loss), to.getInputAmperage());
+
+            int amps = Math.min(outputAmperage, inputAmps);
+            if (amps == 0) {
+                return 0;
+            }
+            //No need to simulate, calculations already done.
+            from.extract(voltageOut*amps, false);
+            to.insert((voltageOut-loss)*amps, false);
+            return amps;
+        }
+        return 0;
+    }
+
     public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         for (int i = 0; i < to.getTanks(); i++) {
             if (i >= from.getTanks()) break;
@@ -522,7 +564,7 @@ public class Utils {
 
     public static Direction getInteractSide(BlockRayTraceResult res) {
         Vec3d vec = res.getHitVec();
-        return getInteractSide(res.getFace(), (float)vec.x, (float)vec.y, (float)vec.z);
+        return getInteractSide(res.getFace(), (float)vec.x - res.getPos().getX(), (float)vec.y - res.getPos().getY(), (float)vec.z - res.getPos().getZ());
     }
 
     public static Direction getInteractSide(Direction side, float x, float y, float z) {

@@ -1,5 +1,6 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -7,6 +8,7 @@ import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.block.BlockDynamic;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ModelConfig;
@@ -21,6 +23,7 @@ import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -143,12 +146,19 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public void onBlockPlacedTo(World world, BlockPos pos, Direction face) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
-            TileEntityPipe neighbor = getTilePipe(world, pos.offset(face.getOpposite()));
-            if (neighbor != null) {
+            TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
+            if (neighbor instanceof TileEntityPipe) {
+                TileEntityPipe nPipe = (TileEntityPipe) neighbor;
                 tile.setConnection(face.getOpposite());
-                if (!neighbor.canConnect(face.getIndex())) {
-                     neighbor.setConnection(face);
+                if (!nPipe.canConnect(face.getIndex())) {
+                    nPipe.setConnection(face);
                 }
+            } else if (neighbor != null) {
+                neighbor.getCapability(AntimatterCaps.ENERGY).ifPresent(cap -> {
+                    if (cap.canInput() || cap.canOutput()) {
+                        tile.setConnection(face.getOpposite());
+                    }
+                });
             }
         }
     }
@@ -159,7 +169,8 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (tile != null) {
             for (Direction side : Ref.DIRECTIONS) {
                 // Looking for the side where is a neighbor was
-                if (pos.offset(side).equals(neighbor)) {
+                // Check if the block is actually air or there was another reason for change.
+                if (pos.offset(side).equals(neighbor) && isAir(world.getBlockState(neighbor), world, pos)) {
                     tile.clearConnection(side);
                     return;
                 }

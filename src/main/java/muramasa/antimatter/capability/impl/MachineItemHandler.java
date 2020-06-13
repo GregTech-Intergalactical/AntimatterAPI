@@ -2,9 +2,13 @@ package muramasa.antimatter.capability.impl;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -28,7 +32,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
-    protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper;
+    protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
     public MachineItemHandler(TileEntityMachine tile) {
@@ -37,6 +41,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
         if (tile.getMachineType().has(MachineFlag.FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
+        }
+        if (tile.getMachineType().has(MachineFlag.ENERGY)) {
+            chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_CHANGED);
         }
         Tesseract.ITEM.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
     }
@@ -67,6 +74,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     public IItemHandler getCellWrapper() {
         return cellWrapper;
+    }
+
+    public IItemHandler getChargeWrapper() {
+        return chargeWrapper;
     }
 
     public int getInputCount() {
@@ -101,11 +112,27 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         return side == Direction.UP ? inputWrapper : outputWrapper;
     }
 
+    public void onMachineEvent(IMachineEvent event, Object... data) {
+
+    }
+
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < inputWrapper.getSlots(); i++) {
             if (!inputWrapper.getStackInSlot(i).isEmpty()) list.add(inputWrapper.getStackInSlot(i).copy());
+        }
+        return list;
+    }
+    /**
+     Returns a non copied list of chargeable items.
+     //TODO: Should this instead return the actual ItemStacks? Usually chargeable items only need the IEnergyHandler.
+     **/
+    public List<IEnergyHandler> getChargeableItems() {
+        List<IEnergyHandler> list = new ObjectArrayList<>();
+        for (int i = 0; i < chargeWrapper.getSlots(); i++) {
+            //orElse: null, should always be present.
+            if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i).getCapability(AntimatterCaps.ENERGY).orElse(null));
         }
         return list;
     }
