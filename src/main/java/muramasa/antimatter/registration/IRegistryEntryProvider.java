@@ -7,5 +7,4 @@ import javax.annotation.Nullable;
 public interface IRegistryEntryProvider extends IAntimatterObject {
 
     void onRegistryBuild(String currentDomain, @Nullable IForgeRegistry<?> registry);
-
 }

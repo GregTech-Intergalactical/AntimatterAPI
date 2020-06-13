@@ -6,8 +6,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.gui.MenuHandlerCover;
-import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
@@ -116,8 +114,8 @@ public final class AntimatterRegistration {
     }
 
     private static void onContainerRegister(IForgeRegistry<ContainerType<?>> containers, final String currentDomain) {
-        AntimatterAPI.all(MenuHandlerMachine.class, currentDomain, h -> containers.register(h.getContainerType()));
-        AntimatterAPI.all(MenuHandlerCover.class, currentDomain, h -> containers.register(h.getContainerType()));
+        //AntimatterAPI.all(MenuHandlerMachine.class, currentDomain, h -> containers.register(h.getContainerType()));
+        //AntimatterAPI.all(MenuHandlerCover.class, currentDomain, h -> containers.register(h.getContainerType()));
     }
 
     private static void onSoundRegister(IForgeRegistry<SoundEvent> sounds, final String currentDomain) {

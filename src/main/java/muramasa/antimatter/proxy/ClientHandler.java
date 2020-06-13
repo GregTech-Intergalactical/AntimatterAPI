@@ -37,10 +37,11 @@ public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings({"unchecked", "unused", "NullableProblems"})
     public static void setup(FMLClientSetupEvent e) {
+        AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
+        AntimatterAPI.all(MenuHandlerCover.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
         AntimatterAPI.runLaterClient(
                 () -> {
-                    AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
-                    AntimatterAPI.all(MenuHandlerCover.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
+
                 },
                 () -> {
                     AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
