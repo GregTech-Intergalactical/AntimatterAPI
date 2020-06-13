@@ -42,7 +42,7 @@ public class AntimatterItemTier implements IItemTier {
     }
 
     public static AntimatterItemTier getOrCreate(Material primary, Material secondary) {
-        return TIERS_LOOKUP.computeIfAbsent(Objects.hash(primary.getHash(), secondary.getHash()), m -> new AntimatterItemTier(primary, secondary));
+        return TIERS_LOOKUP.computeIfAbsent(Objects.hash(primary.hashCode(), secondary.hashCode()), m -> new AntimatterItemTier(primary, secondary));
     }
 
     @Override
@@ -104,7 +104,7 @@ public class AntimatterItemTier implements IItemTier {
 
     @Override
     public int hashCode() {
-       return Objects.hash(primary.getHash(), secondary.getHash());
+       return Objects.hash(primary.hashCode(), secondary.hashCode());
     }
 
 }

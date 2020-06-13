@@ -14,6 +14,7 @@ import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -38,14 +39,15 @@ import static net.minecraft.block.material.Material.*;
 
 public class Data {
 
+    public static final Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F);
+
     static {
         StructureBuilder.addGlobalElement("A", StructureElement.AIR);
         StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
+        NULL.remove(MaterialType.ROD);
     }
 
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
-
-    public static final Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F);
 
     public static final AntimatterToolType SWORD = new AntimatterToolType(Ref.ID, "sword", 2, 1, 10, 3.0F, -2.4F).setToolClass(MaterialSword.class);
     public static final AntimatterToolType PICKAXE = new AntimatterToolType(Ref.ID, "pickaxe", 1, 2, 10, 1.0F, -2.8F).addEffectiveMaterials(PACKED_ICE, IRON, ROCK, ANVIL, PISTON);
@@ -69,7 +71,7 @@ public class Data {
     public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(ROCK, EARTH, SAND, ORGANIC);
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
 
-    public static Machine<?> MACHINE_INVALID = new Machine(Ref.ID, "invalid");
+    public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
     //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static Cover COVERNONE = new CoverNone();
@@ -78,7 +80,6 @@ public class Data {
     public static CoverInstance COVER_EMPTY = new CoverInstance(COVERNONE);
     public static CoverInstance COVER_OUTPUT = new CoverInstance(COVEROUTPUT);
     public static MenuHandlerMachine<?> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
-
 
         @Nullable
         @Override
@@ -90,6 +91,7 @@ public class Data {
         public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
             return new ScreenBasicMachine(container, inv, name);
         }
+
     };
 
     public static MenuHandlerCover COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {

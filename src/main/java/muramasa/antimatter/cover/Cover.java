@@ -122,7 +122,7 @@ public abstract class Cover implements IAntimatterObject {
     public void onRegister() {
         String id = getId();
         if (AntimatterAPI.get(Cover.class, id) == null)
-            AntimatterAPI.register(Cover.class, id, this);
+            AntimatterAPI.register(Cover.class, this);
     }
 
     public Item getItem() {

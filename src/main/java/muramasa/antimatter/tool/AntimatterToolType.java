@@ -42,7 +42,7 @@ public class AntimatterToolType implements IAntimatterObject {
     private int baseQuality, overlayLayers;
     private final float baseAttackDamage, baseAttackSpeed;
     private ItemGroup itemGroup;
-    private Tag<Item> tag; // Set?
+    private Tag<Item> tag, forgeTag; // Set?
     private UseAction useAction;
     private Class<? extends IAntimatterTool> toolClass;
     @Nullable private SoundEvent useSound;
@@ -79,6 +79,7 @@ public class AntimatterToolType implements IAntimatterObject {
         this.overlayLayers = 1;
         this.itemGroup = Ref.TAB_TOOLS;
         this.tag = Utils.getItemTag(new ResourceLocation(Ref.ID, id));
+        this.forgeTag = Utils.getForgeItemTag("tools/".concat(id));
         this.useAction = UseAction.NONE;
         this.toolClass = MaterialTool.class;
         this.TOOL_TYPE = ToolType.get(id);
@@ -169,11 +170,13 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public AntimatterToolType setTag(AntimatterToolType toolType) {
         this.tag = toolType.getTag();
+        this.forgeTag = toolType.getForgeTag();
         return this;
     }
 
     public AntimatterToolType setTag(ResourceLocation loc) {
         this.tag = Utils.getItemTag(loc);
+        this.forgeTag = Utils.getForgeItemTag(loc.getNamespace());
         return this;
     }
 
@@ -354,6 +357,10 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public Tag<Item> getTag() {
         return tag;
+    }
+
+    public Tag<Item> getForgeTag() {
+        return forgeTag;
     }
 
     public UseAction getUseAction() {

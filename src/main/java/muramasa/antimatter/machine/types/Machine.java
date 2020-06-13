@@ -21,6 +21,7 @@ import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -33,6 +34,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -51,7 +53,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
-    protected GuiData guiData;
+    protected GuiData<?> guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
@@ -67,14 +69,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addData(data);
         this.domain = domain;
         this.id = id;
-        AntimatterAPI.register(Machine.class, id, this);
+        AntimatterAPI.register(Machine.class, this);
     }
 
     @Override
     public void onRegistryBuild(String domain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain) || registry != ForgeRegistries.BLOCKS) return;
-        tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
-        AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
+        if (!this.domain.equals(domain)) return;
+        if (registry == null) tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null);
     }
 
     protected void addData(Object... data) {

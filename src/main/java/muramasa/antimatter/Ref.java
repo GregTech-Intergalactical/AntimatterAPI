@@ -3,20 +3,27 @@ package muramasa.antimatter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
+import muramasa.antimatter.datagen.BackgroundDataGenerator;
+import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
+import muramasa.antimatter.datagen.resources.DynamicResourcePackFinder;
 import muramasa.antimatter.util.XSTR;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
 import java.io.File;
+import java.util.Collections;
 
 public class Ref {
 
     /** Global Objects **/
-    public static File CONFIG = null;
-    public static XSTR RNG = new XSTR();
-    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    public static final XSTR RNG = new XSTR();
+    public static final BackgroundDataGenerator BACKGROUND_GEN = new BackgroundDataGenerator();
+    public static final DynamicResourcePackFinder PACK_FINDER = new DynamicResourcePackFinder("antimatter_pack", "Antimatter - Dynamic Assets", "Dynamic Resource Pack", true);
+    public static final DynamicDataPackFinder SERVER_PACK_FINDER = new DynamicDataPackFinder("antimatter_pack", "Antimatter - Dynamic Data");
 
     /** Mod Data **/
     public static final String ID = "antimatter";
@@ -32,8 +39,8 @@ public class Ref {
     public static final AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
 
     /** Sound Events **/
-    public static final SoundEvent DRILL = new SoundEvent(new ResourceLocation(ID, "drill")).setRegistryName(ID, "drill");
-    public static final SoundEvent WRENCH = new SoundEvent(new ResourceLocation(ID, "wrench")).setRegistryName(ID, "wrench");
+    public static final SoundEvent DRILL = new SoundEvent(new ResourceLocation(ID, "drill"));
+    public static final SoundEvent WRENCH = new SoundEvent(new ResourceLocation(ID, "wrench"));
 
     /** Global Data **/
     public static final int U = 3628800, U2 = U/2, U3 = U/3, U4 = U/4, U5 = U/5, U6 = U/6, U7 = U/7, U8 = U/8, U9 = U/9, U10 = U/10, U11 = U/11, U12 = U/12, U13 = U/13, U14 = U/14, U15 = U/15, U16 = U/16, U17 = U/17, U18 = U/18, U20 = U/20, U24 = U/24, U25 = U/25, U32 = U/32, U36 = U/36, U40 = U/40, U48 = U/48, U50 = U/50, U64 = U/64, U72 = U/72, U80 = U/80, U96 = U/96, U100 = U/100, U128 = U/128, U144 = U/144, U192 = U/192, U200 = U/200, U240 = U/240, U256 = U/256, U288 = U/288, U480 = U/480, U500 = U/500, U512 = U/512, U1000 = U/1000, U1440 = U/1440;
@@ -41,14 +48,9 @@ public class Ref {
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX", "", "", "", "", "", ""}; //TODO: Schedule to change? ZPM rename? Tier decisions?
     public static final Direction[] DIRECTIONS = Direction.values();
 
-    /** Internal Options **/
-    public static boolean INJECT_RESOURCES = true; //Attach and inject data with a custom resource pack
-    public static boolean GENERATE_RESOURCES = false; //Generate resources with providers
-
     /** Debug Options **/
-    public static boolean GENERAL_DEBUG = System.getenv("devEnvironment") != null;
     public static boolean SHOW_ITEM_TAGS = true;
-    public static boolean DATA_EXCEPTIONS = false; //TODO re-enable
+    public static boolean DATA_EXCEPTIONS = false; //TODO re-enable + config option
 
     //TODO maybe use these later
     public static boolean debugWorldGen = false;

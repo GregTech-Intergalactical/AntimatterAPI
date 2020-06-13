@@ -16,9 +16,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
+
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getForgeItemTag;
 
 public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
@@ -69,17 +74,17 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     static {
         ROCK.get((m, s) -> {
             if (m == null || s == null || !MaterialType.ROCK.allowBlockGen(m)) return getEmptyAndLog(ROCK, m, s);
-            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
+            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
         ORE.get((m, s) -> {
             if (m == null || s == null || !MaterialType.ORE.allowBlockGen(m)) return getEmptyAndLog(ORE, m, s);
-            BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE.getId() + "_" + m.getId() + "_" + s.getId());
+            BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_SMALL.get((m, s) -> {
             if (m == null || s == null || !MaterialType.ORE_SMALL.allowBlockGen(m)) return getEmptyAndLog(ORE_SMALL, m, s);
-            BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE_SMALL.getId() + "_" + m.getId() + "_" + s.getId());
+            BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE_SMALL.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_STONE.get(m -> {
@@ -153,20 +158,17 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public Item get(Material material) {
-        ItemStack replacement = AntimatterAPI.getReplacement(this, material);
-        if (!replacement.isEmpty()) return replacement.getItem();
-        MaterialItem item = AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
-        if (!allowItemGen(material)) Utils.onInvalidData("GET ERROR - DOES NOT GENERATE: T(" + id + ") M(" + material.getId() + ")");
-        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
-        return item;
+        Item replacement = AntimatterAPI.getReplacement(this, material);
+        if (replacement == null) {
+            if (!allowItemGen(material)) Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
+            else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
+        }
+        return replacement;
     }
 
     public ItemStack get(Material material, int count) {
-        Item item = get(material);
-        if (item == null) Utils.onInvalidData("GET ERROR - MAT ITEM NULL: T(" + id + ") M(" + material.getId() + ")");
-        ItemStack stack = new ItemStack(item, count);
-        if (stack.isEmpty()) Utils.onInvalidData("GET ERROR - MAT STACK EMPTY: T(" + id + ") M(" + material.getId() + ")");
-        return stack;
+        if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
+        return new ItemStack(get(material), count);
     }
 
     @Override
@@ -179,7 +181,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public boolean allowItemGen(Material material) {
-        return generating && !blockType && materials.contains(material) && AntimatterAPI.getReplacement(this, material).isEmpty();
+        return generating && !blockType && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
     }
 
     public boolean allowBlockGen(Material material) {

@@ -1,6 +1,7 @@
 package muramasa.antimatter.fluid;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
@@ -17,17 +18,21 @@ import static net.minecraftforge.fluids.ForgeFlowingFluid.*;
 /**
  * AntimatterFluid is an object that includes all essential information of what a normal fluid would compose of in Minecraft
  * Source + Flowing fluid instances, with a FlowingFluidBlock that handles the in-world block form of them.
- * Item instance is also provided, usually BucketItem or its derivatives. But is generified to an Item instance: {@link net.minecraftforge.fluids.ForgeFlowingFluid#getFilledBucket}
+ * Item instance is also provided, usually BucketItem or its derivatives.
+ * But is generified to an Item instance: {@link net.minecraftforge.fluids.ForgeFlowingFluid#getFilledBucket}
  *
- * TODO: BlockState jsons?...
- * TODO: See through fluids:
- * @see muramasa.antimatter.proxy.ClientHandler#setup
- * TODO: Make BucketItem default models: (will need something similar when we get cells)
- * @see net.minecraftforge.client.model.DynamicBucketModel
+ * TODO: generic getFluidContainer()
+ * TODO: Cell Models
  */
 public class AntimatterFluid implements IAntimatterObject {
 
-    protected static final ResourceLocation OVERLAY = new ResourceLocation("block/water_overlay");
+    public static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation("block/water_overlay");
+    public static final ResourceLocation LIQUID_STILL_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/still");
+    public static final ResourceLocation LIQUID_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/flow");
+    public static final ResourceLocation GAS_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/gas");
+    public static final ResourceLocation GAS_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/gas"); // _flow
+    public static final ResourceLocation PLASMA_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/plasma");
+    public static final ResourceLocation PLASMA_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/plasma"); // _flow
 
     private final String domain, id;
 
@@ -48,12 +53,8 @@ public class AntimatterFluid implements IAntimatterObject {
         this.blockProperties = blockProperties;
         this.attributes = builder.translationKey("block." + domain + ".liquid." + id).build(this.source);
         this.fluidBlock = new FlowingFluidBlock(this::getFluid, blockProperties);
-        this.fluidBlock.setRegistryName(domain, id);
-        this.source.setRegistryName(domain, id);
-        this.flowing.setRegistryName(domain, "flowing_" + id);
         this.containerItem = new BucketItem(this::getFluid, new Item.Properties().maxStackSize(1).containerItem(Items.BUCKET).group(ItemGroup.MISC));
-        this.containerItem.setRegistryName(domain, id + "_bucket");
-        AntimatterAPI.register(AntimatterFluid.class, getId(), this);
+        AntimatterAPI.register(AntimatterFluid.class, this);
     }
 
     public AntimatterFluid(String domain, String id) {
@@ -134,8 +135,7 @@ public class AntimatterFluid implements IAntimatterObject {
     }
 
     protected static FluidAttributes.Builder getDefaultAttributesBuilder() {
-        // return FluidAttributes.builder(new ResourceLocation(Ref.ID, "block/liquid/still"), new ResourceLocation(Ref.ID, "block/liquid/flow")).overlay(OVERLAY);
-        return FluidAttributes.builder(new ResourceLocation("block/water_still"), new ResourceLocation("block/water_flow")).overlay(OVERLAY);
+        return FluidAttributes.builder(LIQUID_STILL_TEXTURE, LIQUID_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
     }
 
 }

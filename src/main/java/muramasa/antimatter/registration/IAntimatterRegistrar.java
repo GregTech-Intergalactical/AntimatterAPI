@@ -1,14 +1,20 @@
 package muramasa.antimatter.registration;
 
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 
-public interface IAntimatterRegistrar {
+public interface IAntimatterRegistrar extends IAntimatterObject {
 
-    String getId();
+    default String getId() {
+        return ModLoadingContext.get().getActiveNamespace();
+    }
+
+    default String getDomain() { return getId(); }
 
     default boolean isEnabled() {
-        return ModList.get().isLoaded(getId());
+        return !getId().equals("minecraft");
     }
 
     void onRegistrationEvent(RegistrationEvent event);
+
 }

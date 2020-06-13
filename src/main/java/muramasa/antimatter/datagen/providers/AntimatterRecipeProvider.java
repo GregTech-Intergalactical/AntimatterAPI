@@ -1,14 +1,19 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
+import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -18,11 +23,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,9 +39,9 @@ import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
 import static muramasa.antimatter.material.MaterialType.*;
-import static muramasa.antimatter.util.Utils.getForgeItemTag;
+import static muramasa.antimatter.util.Utils.*;
 
-public class AntimatterRecipeProvider extends RecipeProvider {
+public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {
 
     private final String providerDomain, providerName;
 
@@ -44,13 +52,36 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     @Override
+    public void run() {
+        Set<ResourceLocation> set = Sets.newHashSet();
+        this.registerRecipes(recipe -> {
+            if (!set.add(recipe.getID())) throw new IllegalStateException("Duplicate recipe " + recipe.getID());
+            else DynamicResourcePack.addRecipe(recipe);
+        });
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.DEDICATED_SERVER;
+    }
+
+    @Override
     protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
         registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
     }
 
     protected void registerMaterialRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
-
+        AntimatterAPI.all(BlockOre.class, providerDomain, o -> {
+            if (o.getOreType() != ORE) return;
+            if (!o.getMaterial().has(INGOT)) return;
+            Item ingot = INGOT.get(o.getMaterial());
+            Tag<Item> oreTag = Utils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
+            Tag<Item> ingotTag = Utils.getForgeItemTag("ingots/".concat(o.getMaterial().getId()));
+            CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(oreTag), ingot, 2.0F, 200)
+                    .addCriterion("has_material_" + o.getMaterial().getId(), this.hasItem(ingotTag))
+                    .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
+        });
         //        RegistrationHelper.getMaterialsForDomain(Ref.ID).stream().filter(m -> m.has(DUST)).forEach(mat -> {
 //            Item dust = DUST.get(mat);
 //            if (mat.has(ROCK)) {
@@ -85,14 +116,12 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         List<Material> mainMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(TOOLS))).collect(Collectors.toList());
         List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.isHandle())).collect(Collectors.toList());
 
-        handleMats.forEach(handle -> {
-            AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
-                Tag<Item> plateTag = getForgeItemTag("plates/" + rubber.getId()), rodTag = getForgeItemTag("rods/" + handle.getId());
-                addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
-                        "has_material_" + rubber.getId(), this.hasItem(plateTag), PLUNGER.getToolStack(handle, rubber),
-                        of('W', WIRE_CUTTER.getTag(), 'P', plateTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WPS", " RP", "R F");
-            });
-        });
+        handleMats.forEach(handle -> AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
+            Tag<Item> ingotTag = getForgeItemTag("ingots/" + rubber.getId()), rodTag = getForgeItemTag("rods/" + handle.getId());
+            addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
+                    "has_material_" + rubber.getId(), this.hasItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
+                    of('W', WIRE_CUTTER.getTag(), 'I', ingotTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WIS", " RI", "R F");
+        }));
 
         mainMats.forEach(main -> {
             if (!main.has(INGOT)) return; // TODO: For time being
@@ -100,7 +129,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             final InventoryChangeTrigger.Instance ingotTrigger = this.hasItem(ingotTag), plateTrigger = this.hasItem(plateTag), rodTrigger = this.hasItem(mainRodTag);
 
             addStackRecipe(consumer, Ref.ID, WRENCH.getId() + "_" + main.getId(), "antimatter_wrenches",
-                    "has_material_" + main.getId(), ingotTrigger, WRENCH.getToolStack(main, NULL), of('I', ingotTag, 'H', HAMMER.getTag()), "IHI", "III", " I "); // CHANGED
+                    "has_material_" + main.getId(), ingotTrigger, WRENCH.getToolStack(main, NULL), of('I', ingotTag, 'H', HAMMER.getTag()), "IHI", "III", " I ");
 
             addStackRecipe(consumer, Ref.ID, MORTAR.getId() + "_" + main.getId(), "antimatter_mortars",
                     "has_material_" + main.getId(), ingotTrigger, MORTAR.getToolStack(main, NULL), of('I', ingotTag, 'S', Tags.Items.STONE), " I ", "SIS", "SSS");
@@ -114,17 +143,17 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             }
 
             for (Material handle : handleMats) {
-                String handleId = handle.getId() == "wood" ? "wooden" : handle.getId();
+                String handleId = handle.getId().equals("wood") ? "wooden" : handle.getId();
                 final Tag<Item> rodTag = getForgeItemTag("rods/" + handleId);
 
                 addStackRecipe(consumer, Ref.ID, PICKAXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_pickaxes",
                         "has_material_" + main.getId(), ingotTrigger, PICKAXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "III", " R ", " R ");
 
                 addStackRecipe(consumer, Ref.ID, AXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_axes",
-                        "has_material_" + main.getId(), ingotTrigger, AXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IR ", " R "); // CHANGED
+                        "has_material_" + main.getId(), ingotTrigger, AXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IR ", " R ");
 
                 addStackRecipe(consumer, Ref.ID, HOE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_hoes",
-                        "has_material_" + main.getId(), ingotTrigger, HOE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", " R ", " R "); // CHANGED
+                        "has_material_" + main.getId(), ingotTrigger, HOE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", " R ", " R ");
 
                 addStackRecipe(consumer, Ref.ID, SHOVEL.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_shovels",
                         "has_material_" + main.getId(), ingotTrigger, SHOVEL.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "I", "R", "R");
@@ -133,7 +162,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
                         "has_material_" + main.getId(), ingotTrigger, SWORD.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "I", "I", "R");
 
                 addStackRecipe(consumer, Ref.ID, HAMMER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_hammers",
-                        "has_material_" + main.getId(), ingotTrigger, HAMMER.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IIR", "II "); // CHANGED
+                        "has_material_" + main.getId(), ingotTrigger, HAMMER.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IIR", "II ");
 
                 addStackRecipe(consumer, Ref.ID, SAW.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_saws",
                         "has_material_" + main.getId(), plateTrigger, SAW.getToolStack(main, handle), of('P', plateTag, 'R', rodTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PPR", "FH ");
@@ -170,9 +199,9 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         if (inputPattern.length < 1 || inputPattern.length > 3) Utils.onInvalidData("Input pattern must have between 1 and 3 rows!");
         AntimatterShapedRecipeBuilder recipeBuilder = AntimatterShapedRecipeBuilder.shapedRecipe(output);
         recipeBuilder = resolveKeys(recipeBuilder, inputs);
-        for (int i = 0; i < inputPattern.length; i++) {
-            if (inputPattern[i].length() > 3) Utils.onInvalidData("Input pattern rows must have between 0 and 3 characters!");
-            recipeBuilder = recipeBuilder.patternLine(inputPattern[i]);
+        for (String s : inputPattern) {
+            if (s.length() > 3) Utils.onInvalidData("Input pattern rows must have between 0 and 3 characters!");
+            recipeBuilder = recipeBuilder.patternLine(s);
         }
         recipeBuilder = recipeBuilder.setGroup(groupName);
         recipeBuilder = recipeBuilder.addCriterion(criterionName, criterion);
@@ -200,6 +229,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected AntimatterShapedRecipeBuilder resolveKeys(AntimatterShapedRecipeBuilder incompleteBuilder, ImmutableMap<Character, Object> inputs) {
         for (Map.Entry<Character, Object> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof IItemProvider) {

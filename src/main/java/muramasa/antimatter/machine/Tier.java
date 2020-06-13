@@ -7,9 +7,6 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Tier implements IAntimatterObject {
 
-    //TODO refactor the concept of this class
-    //TODO Have MachineTier and VoltageTier
-
     //TODO move Tiers to GT?
 
     /** Electricity Tiers **/
@@ -40,7 +37,7 @@ public class Tier implements IAntimatterObject {
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = new Texture(domain, "block/machine/base/" + id);
-        AntimatterAPI.register(Tier.class, getId(), this);
+        AntimatterAPI.register(this);
     }
 
     @Override

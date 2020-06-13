@@ -1,15 +1,26 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.FluidTagsProvider;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagCollection;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 
-public class AntimatterFluidTagProvider extends FluidTagsProvider {
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-    private String providerDomain, providerName;
-    private boolean replace;
+public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAntimatterProvider {
+
+    private final String providerDomain, providerName;
+    private final boolean replace;
 
     public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);
@@ -19,14 +30,28 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider {
     }
 
     @Override
+    public void run() {
+        this.tagToBuilder.clear();
+        registerTags();
+        TagCollection<Fluid> tags = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
+        Map<ResourceLocation, Tag.Builder<Fluid>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().getId(), Map.Entry::getValue));
+        tags.registerAll(map);
+        tags.getTagMap().forEach((k, v) -> DynamicResourcePack.addTag("fluids", k, v.serialize(this.registry::getKey)));
+        this.setCollection(tags);
+    }
+
+    @Override
+    public Dist getSide() {
+        return Dist.DEDICATED_SERVER;
+    }
+
+    @Override
     protected void registerTags() {
         processTags(providerDomain);
     }
 
     protected void processTags(String domain) {
-        AntimatterAPI.all(AntimatterFluid.class).stream().filter(f -> f.getDomain().equals(domain)).forEach(f -> {
-            this.getBuilder(Utils.getForgeFluidTag(f.getId())).add(f.getFluid(), f.getFlowingFluid());
-        });
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> getBuilder(Utils.getForgeFluidTag(f.getId())).add(f.getFluid(), f.getFlowingFluid()).replace(replace));
     }
 
     @Override

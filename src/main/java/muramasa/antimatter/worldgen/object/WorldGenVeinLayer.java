@@ -39,7 +39,6 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     private Material[] materials;
     private String primary, secondary, between, sporadic;
     private int minY, maxY, weight, density, size;
-    private int primaryHash;
 
     public WorldGenVeinLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, int... dimensions) {
         super(id, WorldGenVeinLayer.class, dimensions);
@@ -91,7 +90,6 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
 
         TOTAL_WEIGHT += weight;
-        primaryHash = materials[0].getHash(); //TODO remove
 
         return this;
     }
@@ -162,7 +160,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                         if (tRandomWeight <= 0) {
                             // Adjust the seed so that this vein has a series of unique random numbers.  Otherwise multiple attempts at this same oreseed will get the same offset and X/Z values. If an orevein failed, any orevein with the
                             // same minimum heights would fail as well.  This prevents that, giving each orevein a unique height each pass through here.
-                            VeinLayerResult placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
+                            VeinLayerResult placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primary.hashCode()), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
                             switch (placementResult) {
                                 case ORE_PLACED:
                                     if (Ref.debugOreVein)
@@ -205,7 +203,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             if (Ref.debugOreVein)
                 Antimatter.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
             WorldGenVeinLayer vein = VALID_VEINS.get(oreVeinSeed);
-            oreVeinRNG.setSeed(oreVeinSeed ^ vein.primaryHash/*vein.material[0].getInternalId()*/);  // Reset RNG to only be based on oreseed X/Z and type of vein
+            oreVeinRNG.setSeed(oreVeinSeed ^ vein.primary.hashCode());  // Reset RNG to only be based on oreseed X/Z and type of vein
             VeinLayerResult placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
             switch (placementResult) {
                 case NO_ORE_IN_BOTTOM_LAYER:

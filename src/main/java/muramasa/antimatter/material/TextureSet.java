@@ -14,7 +14,7 @@ public class TextureSet implements IAntimatterObject {
     public TextureSet(String domain, String id) {
         this.domain = domain;
         this.id = id;
-        AntimatterAPI.register(TextureSet.class, id, this);
+        AntimatterAPI.register(this);
     }
 
     @Override

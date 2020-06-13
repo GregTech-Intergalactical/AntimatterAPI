@@ -10,7 +10,6 @@ import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -144,7 +143,6 @@ public class ClientEvents {
             Collection<ResourceLocation> tags = ItemTags.getCollection().getOwningTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
                 List<ITextComponent> list = e.getToolTip();
-                list.add(new StringTextComponent(""));
                 list.add(new StringTextComponent("Tags:").applyTextStyle(TextFormatting.DARK_GRAY));
                 for (ResourceLocation loc : tags) {
                     list.add(new StringTextComponent(loc.toString()).applyTextStyle(TextFormatting.DARK_GRAY));

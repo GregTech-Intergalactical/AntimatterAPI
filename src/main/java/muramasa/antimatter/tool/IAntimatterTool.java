@@ -106,7 +106,6 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default CompoundNBT validateTag(ItemStack stack, Material primary, Material secondary, long startingEnergy, long maxEnergy) {
         CompoundNBT dataTag = stack.getOrCreateChildTag(Ref.TAG_TOOL_DATA);
-        // if (!dataTag.isEmpty()) return dataTag;
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
         if (!getType().isPowered()) return dataTag;
@@ -142,6 +141,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return true;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default boolean onGenericBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
@@ -160,6 +160,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return returnValue;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default ActionResultType onGenericItemUse(ItemUseContext ctx) {
         ActionResultType result = ActionResultType.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
@@ -171,15 +172,14 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return result;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default ActionResultType onGenericHighlight(PlayerEntity player, DrawHighlightEvent ev) {
         ActionResultType result = ActionResultType.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemHighlight)) continue;
-            else {
-                ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player,ev);
-                if (result != ActionResultType.SUCCESS) result = type;
-            }
+            ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player,ev);
+            if (result != ActionResultType.SUCCESS) result = type;
         }
         return result;
     }

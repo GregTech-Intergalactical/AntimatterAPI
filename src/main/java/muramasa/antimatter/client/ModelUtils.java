@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.Item;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -58,13 +59,11 @@ public class ModelUtils {
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
-        //TODO
-        //return Minecraft.getInstance().getTextureMap().getSprite(loc);
-        return null;
+        return Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(loc);
     }
 
     public static Material getBlockMaterial(ResourceLocation loc) {
-        return new Material(AtlasTexture.LOCATION_BLOCKS_TEXTURE, loc);
+        return new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, loc);
     }
 
     public static List<BakedQuad> trans(List<BakedQuad> quads, Vector3f rotationL, Vector3f rotationR) {

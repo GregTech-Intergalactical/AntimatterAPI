@@ -4,41 +4,35 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.client.model.DynamicModel;
-import muramasa.antimatter.datagen.DummyDataGenerator;
-import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.datagen.resources.ResourceMethod;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class AntimatterModelManager {
 
-    public static final ResourceMethod RESOURCE_METHOD = ResourceMethod.DYNAMIC_PACK;
+    private static final Object2ObjectOpenHashMap<String, Supplier<Int2ObjectOpenHashMap<IBakedModel[]>>> STATIC_CONFIG_MAPS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<ResourceLocation, IItemProviderOverride> ITEM_OVERRIDES = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
 
-    public static AntimatterModelLoader LOADER_MAIN = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "main"));
-    public static DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
-    public static DynamicModelLoader LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
+    public static final AntimatterModelLoader LOADER_MAIN = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "main"));
+    public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
+    public static final DynamicModelLoader LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
         @Override
         public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel((DynamicModel) super.read(context, json)) {
@@ -49,13 +43,8 @@ public class AntimatterModelManager {
             };
         }
     };
-    
-    private static final Object2ObjectOpenHashMap<String, Supplier<Int2ObjectOpenHashMap<IBakedModel[]>>> STATIC_CONFIG_MAPS = new Object2ObjectOpenHashMap<>();
-    private static final Object2ObjectOpenHashMap<ResourceLocation, IItemProviderOverride> ITEM_OVERRIDES = new Object2ObjectOpenHashMap<>();
-    private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
-    private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
-    public static void setup() {
+    public static void init() {
         AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
     }
 
@@ -65,27 +54,6 @@ public class AntimatterModelManager {
 
     public static Int2ObjectOpenHashMap<IBakedModel[]> getStaticConfigMap(String staticMapId) {
         return STATIC_CONFIG_MAPS.getOrDefault(staticMapId, Int2ObjectOpenHashMap::new).get();
-    }
-
-    public static void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
-        PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
-    }
-
-    public static void onProviderInit(String domain, DataGenerator gen) {
-        PROVIDERS.getOrDefault(domain, Collections.emptyList()).forEach(f -> gen.addProvider(f.apply(gen)));
-    }
-
-    public static void runProvidersDynamically() {
-        DataGenerator gen = new DummyDataGenerator();
-        PROVIDERS.forEach((k, v) -> v.forEach(f -> {
-            IAntimatterProvider prov = f.apply(gen);
-            prov.run();
-            if (prov instanceof AntimatterBlockStateProvider) {
-
-            } else if (prov instanceof AntimatterItemModelProvider) {
-                ((AntimatterItemModelProvider) prov).generatedModels.forEach(DynamicResourcePack::addItem);
-            }
-        }));
     }
 
     public static void put(Item item, IItemProviderOverride override) {

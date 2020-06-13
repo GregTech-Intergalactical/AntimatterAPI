@@ -856,6 +856,7 @@ public class Utils {
 
     public static String getConventionalStoneType(StoneType type) {
         String string = type.getId();
+        string = string.replaceAll("stone_", "");
         int index = string.indexOf("_");
         if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));
         return string;
@@ -950,7 +951,7 @@ public class Utils {
             String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
             return lowerUnderscoreToUpperSpaced(joined).split(" ");
         }
-        return new String[]{ lowerUnderscoreToUpperSpaced(id).replace('_', ' ') };
+        return new String[] { lowerUnderscoreToUpperSpaced(id).replace('_', ' ') };
     }
 
     public static String getLocalizedType(IAntimatterObject type) {
