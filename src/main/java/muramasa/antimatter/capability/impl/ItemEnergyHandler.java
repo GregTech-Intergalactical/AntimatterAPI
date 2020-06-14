@@ -39,7 +39,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     //Override the following methods to use getTagEnergy instead
     @Override
     public boolean canInput() {
-        return voltage_in > 0 /*&& getTagEnergy() != capacity*/ && !canModeBlock();
+        return voltage_in > 0 /*&& getTagEnergy() != capacity*/;
     }
 
     @Override
