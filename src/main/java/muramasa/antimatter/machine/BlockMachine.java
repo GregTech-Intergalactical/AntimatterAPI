@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -25,15 +26,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IItemProvider;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -54,6 +54,9 @@ import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+    static int OFFSET_ACTIVE = 5;
 
     protected Machine<?> type;
     protected Tier tier;
@@ -74,7 +77,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.HORIZONTAL_FACING);
+        builder.add(FACING);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
     }
 
     @Override
@@ -83,6 +92,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         //return (oldState.getBlock() != newState.getBlock());
         super.onReplaced(state, world, pos, newState, isMoving);
     }
+
 
     @Nullable
     @Override
@@ -118,7 +128,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 //TODO: This runs twice when right clicking a machine!
                 LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, hit.getFace());
                 boolean consume = coverable.map(i -> {
-                     return i.onInteract(player,hand,hit.getFace(),Utils.getToolType(player));
+                    return i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player));
                 }).orElse(false);
                 if (consume) {
                     return ActionResultType.SUCCESS;
@@ -128,9 +138,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     return ActionResultType.SUCCESS;
                 }
                 LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
-                    interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(),Utils.getInteractSide(hit), Utils.getToolType(player)));
-                }
+                interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getInteractSide(hit), Utils.getToolType(player)));
             }
+        }
         return super.onBlockActivated(state, world, pos, player, hand, hit);
     }
 
@@ -185,7 +195,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 //        world.setBlockToAir(pos);
 //    }
 
-    /** TileEntity Drops End **/
+    /**
+     * TileEntity Drops End
+     **/
 
 //    @Override
 //    public void breakBlock(World world, BlockPos pos, BlockState state) {
@@ -198,7 +210,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 //            });
 //        }
 //    }
-
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         return getType().getDisplayName(getTier());
@@ -226,7 +237,19 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
-        return config.set(new int[]{0});
+        Direction dir = state.get(BlockStateProperties.HORIZONTAL_FACING);
+        MachineState mst = ((TileEntityMachine)world.getTileEntity(pos)).getMachineState();
+        int offset = mst == MachineState.ACTIVE ? OFFSET_ACTIVE : 0;
+        switch (dir) {
+            case WEST:
+                return config.set(new int[]{1+offset});
+            case EAST:
+                return config.set(new int[]{2+offset});
+            case SOUTH:
+                return config.set(new int[]{3+offset});
+            default:
+                return config.set(new int[]{offset});
+        }
     }
 
     @Override
@@ -238,16 +261,81 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         }
     }
 
+    //registers textures for a given machine state
+    private void registerForState(AntimatterBlockModelBuilder builder, MachineState state, int offset) {
+        Texture[] overlays = type.getOverlayTextures(state);
+        ResourceLocation zero = type.getOverlayModel(Ref.DIRECTIONS[0]);
+        ResourceLocation one = type.getOverlayModel(Ref.DIRECTIONS[1]);
+        ResourceLocation two = type.getOverlayModel(Ref.DIRECTIONS[2]);
+        ResourceLocation three = type.getOverlayModel(Ref.DIRECTIONS[3]);
+        ResourceLocation four = type.getOverlayModel(Ref.DIRECTIONS[4]);
+        ResourceLocation five = type.getOverlayModel(Ref.DIRECTIONS[5]);
+        
+        Texture base = tier.getBaseTexture();
+
+        builder.config(offset, (b, l) -> l.add(
+                b.of(zero).tex(of("base", base, "overlay", overlays[0])),
+                b.of(one).tex(of("base", base, "overlay", overlays[1])),
+                b.of(two).tex(of("base", base, "overlay", overlays[2])),
+                b.of(three).tex(of("base", base, "overlay", overlays[3])),
+                b.of(four).tex(of("base", base, "overlay", overlays[4])),
+                b.of(five).tex(of("base", base, "overlay", overlays[5]))
+        ));
+
+        builder.config(offset + 1, (b, l) -> l.add(
+                b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, 90, 0),
+                b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, 90, 0),
+                b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, 90, 0),
+                b.of(three).tex(of("base", base, "overlay", overlays[3])).rot(0, 90, 0),
+                b.of(four).tex(of("base", base, "overlay", overlays[4])).rot(0, 90, 0),
+                b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, 90, 0)
+        ));
+
+        builder.config(offset + 2, (b, l) -> l.add(
+                b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, -90, 0),
+                b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, -90, 0),
+                b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, -90, 0),
+                b.of(three).tex(of("base", base, "overlay", overlays[3])).rot(0, -90, 0),
+                b.of(four).tex(of("base", base, "overlay", overlays[4])).rot(0, -90, 0),
+                b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, -90, 0)
+        ));
+
+        builder.config(offset + 3, (b, l) -> l.add(
+                b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, 180, 0),
+                b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, 180, 0),
+                b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, 180, 0),
+                b.of(three).tex(of("base", base, "overlay", overlays[3])).rot(0, 180, 0),
+                b.of(four).tex(of("base", base, "overlay", overlays[4])).rot(0, 180, 0),
+                b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, 180, 0)
+        ));
+    }
+
+    /*@Override
+    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
+        AntimatterBlockModelBuilder builder = prov.getBuilder(block);
+        registerForState(builder, MachineState.ACTIVE);
+        registerForState(builder, MachineState.IDLE);
+
+        prov.state(block, builder);
+    }*/
+
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        Texture[] overlays = type.getOverlayTextures(MachineState.IDLE);
+        /*Texture[] overlays = type.getOverlayTextures(MachineState.IDLE);
         prov.state(block, prov.getBuilder(block).config(0, (b, l) -> l.add(
-            b.of(type.getOverlayModel(Ref.DIRECTIONS[0])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[0])),
-            b.of(type.getOverlayModel(Ref.DIRECTIONS[1])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[1])),
-            b.of(type.getOverlayModel(Ref.DIRECTIONS[2])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[2])),
-            b.of(type.getOverlayModel(Ref.DIRECTIONS[3])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[3])),
-            b.of(type.getOverlayModel(Ref.DIRECTIONS[4])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[4])),
-            b.of(type.getOverlayModel(Ref.DIRECTIONS[5])).tex(of("base", tier.getBaseTexture(), "overlay", overlays[5]))
-        )));
+                b.of(zero).tex(of("base", base, "overlay", overlays[0])),
+                b.of(one).tex(of("base", base, "overlay", overlays[1])),
+                b.of(second).tex(of("base", base, "overlay", overlays[2])),
+                b.of(three).tex(of("base", base, "overlay", overlays[3])),
+                b.of(four).tex(of("base", base, "overlay", overlays[4])),
+                b.of(five).tex(of("base", base, "overlay", overlays[5]))
+        )));*/
+
+        AntimatterBlockModelBuilder builder = prov.getBuilder(block);
+
+        registerForState(builder, MachineState.IDLE,0);
+        registerForState(builder, MachineState.ACTIVE, OFFSET_ACTIVE);
+
+        prov.state(block, builder);
     }
 }
