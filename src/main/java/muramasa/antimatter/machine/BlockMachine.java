@@ -227,6 +227,17 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(TextFormatting.BLUE + "" + (getTier().getVoltage() * 64)));
         }
     }
+    //return id given dir & state
+    private int getModelId(Direction dir, MachineState state) {
+        switch (dir) {
+            case NORTH:
+            case UP:
+            case DOWN:
+                return state.ordinal();
+            default:
+                return (dir.getIndex()*100) + (state.ordinal());
+        }
+    }
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
@@ -239,17 +250,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         Direction dir = state.get(BlockStateProperties.HORIZONTAL_FACING);
         MachineState mst = ((TileEntityMachine)world.getTileEntity(pos)).getMachineState();
-        int offset = mst == MachineState.ACTIVE ? OFFSET_ACTIVE : 0;
-        switch (dir) {
-            case WEST:
-                return config.set(new int[]{1+offset});
-            case EAST:
-                return config.set(new int[]{2+offset});
-            case SOUTH:
-                return config.set(new int[]{3+offset});
-            default:
-                return config.set(new int[]{offset});
-        }
+        return config.set(new int[]{getModelId(dir, mst)});
     }
 
     @Override
@@ -270,10 +271,10 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         ResourceLocation three = type.getOverlayModel(Ref.DIRECTIONS[3]);
         ResourceLocation four = type.getOverlayModel(Ref.DIRECTIONS[4]);
         ResourceLocation five = type.getOverlayModel(Ref.DIRECTIONS[5]);
-        
         Texture base = tier.getBaseTexture();
 
-        builder.config(offset, (b, l) -> l.add(
+        //Default.
+        builder.config(getModelId(Direction.NORTH,state), (b, l) -> l.add(
                 b.of(zero).tex(of("base", base, "overlay", overlays[0])),
                 b.of(one).tex(of("base", base, "overlay", overlays[1])),
                 b.of(two).tex(of("base", base, "overlay", overlays[2])),
@@ -282,7 +283,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 b.of(five).tex(of("base", base, "overlay", overlays[5]))
         ));
 
-        builder.config(offset + 1, (b, l) -> l.add(
+        builder.config(getModelId(Direction.WEST, state), (b, l) -> l.add(
                 b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, 90, 0),
                 b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, 90, 0),
                 b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, 90, 0),
@@ -291,7 +292,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, 90, 0)
         ));
 
-        builder.config(offset + 2, (b, l) -> l.add(
+        builder.config(getModelId(Direction.EAST,state), (b, l) -> l.add(
                 b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, -90, 0),
                 b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, -90, 0),
                 b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, -90, 0),
@@ -300,7 +301,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, -90, 0)
         ));
 
-        builder.config(offset + 3, (b, l) -> l.add(
+        builder.config(getModelId(Direction.SOUTH, state), (b, l) -> l.add(
                 b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, 180, 0),
                 b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, 180, 0),
                 b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, 180, 0),
