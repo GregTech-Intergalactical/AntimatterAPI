@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
@@ -14,16 +15,16 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 
-import java.util.*;
-
-import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
-import static muramasa.antimatter.util.Utils.getForgeItemTag;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
@@ -33,7 +34,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public static MaterialType<?> DUST_TINY = new MaterialType<>("dust_tiny", 2, true, Ref.U9);
     public static MaterialType<?> DUST_IMPURE = new MaterialType<>("dust_impure", 2, true, Ref.U);
     public static MaterialType<?> DUST_PURE = new MaterialType<>("dust_pure", 2, true, Ref.U);
-    public static MaterialType<IRockGetter> ROCK = new MaterialType<>("rock", 2, false, Ref.U9);
+    public static MaterialType<IOreGetter> ROCK = new MaterialType<>("rock", 2, false, Ref.U9);
     public static MaterialType<?> CRUSHED = new MaterialType<>("crushed", 2, true, Ref.U);
     public static MaterialType<?> CRUSHED_CENTRIFUGED = new MaterialType<>("crushed_centrifuged", 2, true, Ref.U);
     public static MaterialType<?> CRUSHED_PURIFIED = new MaterialType<>("crushed_purified", 2, true, Ref.U);
@@ -61,47 +62,70 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     //Block Types
     public static MaterialType<IOreGetter> ORE = new MaterialType<>("ore", 1, true, -1);
     public static MaterialType<IOreGetter> ORE_SMALL = new MaterialType<>("ore_small", 1, false, -1);
-    public static MaterialType<IOreStoneGetter> ORE_STONE = new MaterialType<>("ore_stone", 1, true, -1);
-    public static MaterialType<IStorageGetter> BLOCK = new MaterialType<>("block", 1, false, -1);
-    public static MaterialType<IStorageGetter> FRAME = new MaterialType<>("frame", 1, true, -1);
+    public static MaterialType<IGetter> ORE_STONE = new MaterialType<>("ore_stone", 1, true, -1);
+    public static MaterialType<IGetter> BLOCK = new MaterialType<>("block", 1, false, -1);
+    public static MaterialType<IGetter> FRAME = new MaterialType<>("frame", 1, true, -1);
+
+    //Fluid Types
+    public static MaterialType<IFluidGetter> LIQUID = new MaterialType<>("liquid", 1, true, -1);
+    public static MaterialType<IFluidGetter> GAS = new MaterialType<>("gas", 1, true, -1);
+    public static MaterialType<IFluidGetter> PLASMA = new MaterialType<>("plasma", 1, true, -1);
 
     //Dummy Types
     public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
-    public static MaterialType<?> LIQUID = new MaterialType<>("liquid", 1, true, -1).nonGen();
-    public static MaterialType<?> GAS = new MaterialType<>("gas", 1, true, -1).nonGen();
-    public static MaterialType<?> PLASMA = new MaterialType<>("plasma", 1, true, -1).nonGen();
 
     static {
-        ROCK.get((m, s) -> {
-            if (m == null || s == null || !MaterialType.ROCK.allowBlockGen(m)) return getEmptyAndLog(ROCK, m, s);
+        ROCK.set((m, s) -> {
+            if (m == null || s == null || !MaterialType.ROCK.allowGen(m)) return getEmptyAndLog(ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
-        ORE.get((m, s) -> {
-            if (m == null || s == null || !MaterialType.ORE.allowBlockGen(m)) return getEmptyAndLog(ORE, m, s);
+        ORE.set((m, s) -> {
+            if (m == null || s == null || !MaterialType.ORE.allowGen(m)) return getEmptyAndLog(ORE, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
-        ORE_SMALL.get((m, s) -> {
-            if (m == null || s == null || !MaterialType.ORE_SMALL.allowBlockGen(m)) return getEmptyAndLog(ORE_SMALL, m, s);
+        ORE_SMALL.set((m, s) -> {
+            if (m == null || s == null || !MaterialType.ORE_SMALL.allowGen(m)) return getEmptyAndLog(ORE_SMALL, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, MaterialType.ORE_SMALL.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
-        ORE_STONE.get(m -> {
-            if (m == null || !MaterialType.ORE_STONE.allowBlockGen(m)) return getEmptyAndLog(ORE_STONE, m);
+        ORE_STONE.set(m -> {
+            if (m == null || !MaterialType.ORE_STONE.allowGen(m)) return getEmptyAndLog(ORE_STONE, m);
             BlockOreStone block = AntimatterAPI.get(BlockOreStone.class, MaterialType.ORE_STONE.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
-        BLOCK.get(m -> {
-            if (m == null || !MaterialType.BLOCK.allowBlockGen(m)) return getEmptyAndLog(BLOCK, m);
+        BLOCK.set(m -> {
+            if (m == null || !MaterialType.BLOCK.allowGen(m)) return getEmptyAndLog(BLOCK, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, MaterialType.BLOCK.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
-        FRAME.get(m -> {
-            if (m == null || !MaterialType.FRAME.allowBlockGen(m)) return getEmptyAndLog(FRAME, m);
+        FRAME.set(m -> {
+            if (m == null || !MaterialType.FRAME.allowGen(m)) return getEmptyAndLog(FRAME, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, MaterialType.FRAME.getId() + "_" + m.getId());
             return new Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
+
+        LIQUID.set((m, i) -> {
+            if (m == null || !MaterialType.LIQUID.allowGen(m)) return getEmptyFluidAndLog(LIQUID, m);
+            if (m.getId().equals("water")) return new FluidStack(Fluids.WATER, i);
+            else if (m.getId().equals("lava")) return new FluidStack(Fluids.LAVA, i);
+            AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, LIQUID.getId() + "_" + m.getId());
+            if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
+            return new FluidStack(fluid.getFluid(), i);
+        });
+        GAS.set((m, i) -> {
+            if (m == null || !MaterialType.GAS.allowGen(m)) return getEmptyFluidAndLog(GAS, m);
+            AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, GAS.getId() + "_" + m.getId());
+            if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
+            return new FluidStack(fluid.getFluid(), i);
+        });
+        PLASMA.set((m, i) -> {
+            if (m == null || !MaterialType.PLASMA.allowGen(m)) return getEmptyFluidAndLog(PLASMA, m);
+            AntimatterFluid fluid = AntimatterAPI.get(AntimatterFluid.class, PLASMA.getId() + "_" + m.getId());
+            if (fluid == null) throw new IllegalStateException("Tried to get null fluid");
+            return new FluidStack(fluid.getFluid(), i);
+        });
     }
 
     protected String id;
@@ -148,7 +172,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         return (Tag<T>) tagMap.get(this);
     }
 
-    public MaterialType<T> get(T getter) {
+    public MaterialType<T> set(T getter) {
         this.getter = getter;
         return this;
     }
@@ -181,10 +205,10 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public boolean allowItemGen(Material material) {
-        return generating && !blockType && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
+        return allowGen(material) && !blockType && AntimatterAPI.getReplacement(this, material) == null;
     }
 
-    public boolean allowBlockGen(Material material) {
+    public boolean allowGen(Material material) {
         return generating && materials.contains(material);
     }
 
@@ -198,20 +222,21 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         return new Container(Blocks.AIR.getDefaultState());
     }
 
-    public interface IRockGetter {
-        Container get(Material m, StoneType s);
+    public static FluidStack getEmptyFluidAndLog(MaterialType<?> type, IAntimatterObject... objects) {
+        Utils.onInvalidData("Tried to create " + type.getId() + " for objects: " + Arrays.toString(Arrays.stream(objects).map(IAntimatterObject::getId).toArray(String[]::new)));
+        return new FluidStack(Fluids.WATER, 1);
+    }
+
+    public interface IGetter {
+        Container get(Material m);
     }
 
     public interface IOreGetter {
         Container get(Material m, StoneType s);
     }
 
-    public interface IOreStoneGetter {
-        Container get(Material m);
-    }
-
-    public interface IStorageGetter {
-        Container get(Material m);
+    public interface IFluidGetter {
+        FluidStack get(Material m, int amount);
     }
 
     public static class Container {

@@ -29,6 +29,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
 public final class AntimatterAPI {
 
-    private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, IAntimatterObject>> OBJECTS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, Object>> OBJECTS = new Object2ObjectOpenHashMap<>();
     private static final EnumMap<RegistrationEvent, List<Runnable>> CALLBACKS = new EnumMap<>(RegistrationEvent.class);
     private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet.noneOf(RegistrationEvent.class);
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
@@ -56,50 +57,48 @@ public final class AntimatterAPI {
 
     /** Internal Registry Section **/
 
-    private static void registerInternal(Class<?> c, String id, IAntimatterObject o) {
+    private static void registerInternal(Class<?> c, String id, Object o) {
         OBJECTS.putIfAbsent(c, new Object2ObjectLinkedOpenHashMap<>());
-        IAntimatterObject key = OBJECTS.get(c).get(id);
-        if (key != null) {
-            throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", key.getId()));
-        }
+        Object key = OBJECTS.get(c).get(id);
+        if (key != null) throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", key.toString()));
         OBJECTS.get(c).put(id, o);
     }
 
-    public static void register(Class<?> clazz, String id, IAntimatterObject o) {
-        registerInternal(clazz, id, o);
-        if (o instanceof Block && isObjectFresh(Block.class, id)) registerInternal(Block.class, id, o);
-        else if (o instanceof Item && isObjectFresh(Item.class, id)) registerInternal(Item.class, id, o);
-        else if (o instanceof IRegistryEntryProvider && isObjectFresh(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o);
+    public static void register(Class<?> c, String id, Object o) {
+        registerInternal(c, id, o);
+        if (o instanceof Block && notRegistered(Block.class, id)) registerInternal(Block.class, id, o);
+        else if (o instanceof Item && notRegistered(Item.class, id)) registerInternal(Item.class, id, o);
+        else if (o instanceof IRegistryEntryProvider && notRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o);
     }
 
-    public static void register(Class<?> clazz, IAntimatterObject o) {
-        register(clazz, o.getId(), o);
+    public static void register(Class<?> c, IAntimatterObject o) {
+        register(c, o.getId(), o);
     }
 
-    private static boolean isObjectFresh(Class<?> c, String id) {
-        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
+    private static boolean notRegistered(Class<?> c, String id) {
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map == null || !map.containsKey(id);
     }
 
     @Nullable
     public static <T> T get(Class<T> c, String id) {
-        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null ? c.cast(map.get(id)) : null;
     }
 
     public static <T> boolean has(Class<T> c, String id) {
-        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null && map.containsKey(id);
     }
 
     public static <T> List<T> all(Class<T> c) {
-        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     public static <T> List<T> all(Class<T> c, String domain) {
-        Object2ObjectMap<String, IAntimatterObject> map = OBJECTS.get(c);
-        return map != null ? map.values().stream().filter(o -> o.getDomain().equals(domain)).map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
+        return all(c).stream().filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain) ||
+            o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain)).collect(Collectors.toList());
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
@@ -107,7 +106,7 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        all(c).stream().filter(o -> ((IAntimatterObject) o).getDomain().equals(domain)).forEach(consumer);
+        all(c, domain).forEach(consumer);
     }
 
     /** Providers and Dynamic Resource Pack Section **/
@@ -190,7 +189,6 @@ public final class AntimatterAPI {
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar == Antimatter.INSTANCE) INTERNAL_REGISTRAR = registrar;
         else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterRegistration::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterRegistration::onRegister);
     }
 
@@ -216,22 +214,20 @@ public final class AntimatterAPI {
      * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
      */
     public static Item getReplacement(@Nullable Item originalItem, Tag<Item> tag, String... namespaces) {
-        if (tag != null) {
-            if (REPLACEMENTS.containsKey(tag.getId().getPath().hashCode())) return REPLACEMENTS.get(tag.getId().getPath().hashCode());
-            if (replacementsFound) return originalItem;
-            Set<String> checks = Sets.newHashSet(namespaces);
-            if (checks.isEmpty()) checks.add("minecraft");
-            return tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
-                    .findAny().map(i -> {
-                        REPLACEMENTS.put(tag.getId().getPath().hashCode(), i);
-                        return i;
-                    }).orElse(originalItem);
-        }
-        else throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
+        if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
+        if (REPLACEMENTS.containsKey(tag.getId().getPath().hashCode())) return REPLACEMENTS.get(tag.getId().getPath().hashCode());
+        if (replacementsFound) return originalItem;
+        Set<String> checks = Sets.newHashSet(namespaces);
+        if (checks.isEmpty()) checks.add("minecraft");
+        return tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
+            .findAny().map(i -> {
+                REPLACEMENTS.put(tag.getId().getPath().hashCode(), i);
+                return i;
+            }).orElse(originalItem);
     }
 
     /** JEI Registry Section **/
-    public static void registerJEICategory(RecipeMap map, GuiData gui) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData<?> gui) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
             //AntimatterJEIPlugin.registerCategory(map, gui);
         }

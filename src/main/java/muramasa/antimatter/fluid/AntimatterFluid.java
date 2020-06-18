@@ -3,6 +3,7 @@ package muramasa.antimatter.fluid;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
@@ -12,6 +13,8 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import static net.minecraftforge.fluids.ForgeFlowingFluid.*;
 
@@ -24,7 +27,7 @@ import static net.minecraftforge.fluids.ForgeFlowingFluid.*;
  * TODO: generic getFluidContainer()
  * TODO: Cell Models
  */
-public class AntimatterFluid implements IAntimatterObject {
+public class AntimatterFluid implements IAntimatterObject, IRegistryEntryProvider {
 
     public static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation("block/water_overlay");
     public static final ResourceLocation LIQUID_STILL_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/still");
@@ -42,18 +45,14 @@ public class AntimatterFluid implements IAntimatterObject {
     protected Block.Properties blockProperties;
     protected FluidAttributes attributes;
     protected FlowingFluidBlock fluidBlock;
-    protected Item containerItem;
+    protected Item containerItem = Items.AIR;
 
     public AntimatterFluid(String domain, String id, FluidAttributes.Builder builder, Block.Properties blockProperties) {
         this.domain = domain;
         this.id = id;
         this.fluidProperties = new Properties(this::getFluid, this::getFlowingFluid, builder).bucket(this::getContainerItem).block(this::getFluidBlock);
-        this.source = new Source(this.fluidProperties);
-        this.flowing = new Flowing(this.fluidProperties);
         this.blockProperties = blockProperties;
         this.attributes = builder.translationKey("block." + domain + ".liquid." + id).build(this.source);
-        this.fluidBlock = new FlowingFluidBlock(this::getFluid, blockProperties);
-        this.containerItem = new BucketItem(this::getFluid, new Item.Properties().maxStackSize(1).containerItem(Items.BUCKET).group(ItemGroup.MISC));
         AntimatterAPI.register(AntimatterFluid.class, this);
     }
 
@@ -71,6 +70,22 @@ public class AntimatterFluid implements IAntimatterObject {
 
     public AntimatterFluid(String domain, String id, Block.Properties properties) {
         this(domain, id, getDefaultAttributesBuilder(), properties);
+    }
+
+    @Override
+    public void onRegistryBuild(IForgeRegistry<?> registry) {
+        if (registry == ForgeRegistries.ITEMS) {
+            AntimatterAPI.register(Item.class, getId() + "_bucket", containerItem = new BucketItem(this::getFluid, new Item.Properties().maxStackSize(1).containerItem(Items.BUCKET).group(ItemGroup.MISC)).setRegistryName(domain, getId() + "_bucket"));
+        } else if (registry == ForgeRegistries.BLOCKS) {
+            this.fluidBlock = new FlowingFluidBlock(this::getFluid, blockProperties);
+            this.fluidBlock.setRegistryName(domain, "block_fluid_".concat(getId()));
+            AntimatterAPI.register(Block.class, "block_fluid_".concat(getId()), fluidBlock);
+        } else if (registry == ForgeRegistries.FLUIDS) {
+            this.source = new Source(this.fluidProperties);
+            this.flowing = new Flowing(this.fluidProperties);
+            this.source.setRegistryName(domain, getId());
+            this.flowing.setRegistryName(domain, "flowing_".concat(getId()));
+        }
     }
 
     public AntimatterFluid source(Source source) {
@@ -137,5 +152,4 @@ public class AntimatterFluid implements IAntimatterObject {
     protected static FluidAttributes.Builder getDefaultAttributesBuilder() {
         return FluidAttributes.builder(LIQUID_STILL_TEXTURE, LIQUID_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
     }
-
 }

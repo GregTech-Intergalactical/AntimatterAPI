@@ -17,13 +17,13 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     protected MaterialType<?> type;
 
     public AntimatterMaterialFluid(String domain, Material material, MaterialType<?> type, FluidAttributes.Builder builder, Block.Properties blockProperties) {
-        super(domain, type == MaterialType.LIQUID ? material.getId() : type.getId() + "_" + material.getId(), builder, blockProperties);
+        super(domain, type.getId() + "_" + material.getId(), builder, blockProperties);
         this.material = material;
         this.type = type;
     }
 
     public AntimatterMaterialFluid(String domain, Material material, MaterialType<?> type, ResourceLocation stillLoc, ResourceLocation flowLoc) {
-        super(domain, type == MaterialType.LIQUID ? material.getId() : type.getId() + "_" + material.getId(), stillLoc, flowLoc);
+        super(domain, type.getId() + "_" + material.getId(), stillLoc, flowLoc);
         this.material = material;
         this.type = type;
     }
@@ -61,5 +61,4 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     private static Block.Properties prepareProperties(MaterialType<?> type) {
         return getDefaultBlockProperties().lightValue(type == MaterialType.PLASMA ? 15 : 0);
     }
-
 }

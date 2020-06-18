@@ -7,6 +7,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
+import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
@@ -18,9 +19,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,7 +50,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private boolean transparent;
 
     /** Fluid/Gas/Plasma Members **/
-    private Fluid liquid, gas, plasma;
     private int fuelPower, liquidTemperature, gasTemperature;
     
     /** Tool Members **/
@@ -80,10 +81,10 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     @Override
-    public void onRegistryBuild(String domain, @Nullable IForgeRegistry<?> registry) {
-        if (!this.domain.equals(domain)) return;
-        if (registry == null) {
+    public void onRegistryBuild(IForgeRegistry<?> registry) {
+        if (registry == ForgeRegistries.ITEMS) {
             AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> new MaterialItem(domain, t, this));
+        } else if (registry == ForgeRegistries.BLOCKS) {
             if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
             if (has(FRAME)) new BlockStorage(domain, this, FRAME);
             if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(domain, this, s));
@@ -268,18 +269,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 
-    public void setLiquid(Fluid fluid) {
-        liquid = fluid;
-    }
-
-    public void setGas(Fluid fluid) {
-        gas = fluid;
-    }
-
-    public void setPlasma(Fluid fluid) {
-        plasma = fluid;
-    }
-
     /** Basic Getters**/
     public ITextComponent getDisplayName() {
         return displayName == null ? displayName = new TranslationTextComponent("material." + getId()) : displayName;
@@ -382,15 +371,27 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     /** Fluid/Gas/Plasma Getters **/
     public Fluid getLiquid() {
-        return liquid;
+        return LIQUID.get().get(this, 1).getFluid();
     }
 
     public Fluid getGas() {
-        return gas;
+        return GAS.get().get(this, 1).getFluid();
     }
 
     public Fluid getPlasma() {
-        return plasma;
+        return PLASMA.get().get(this, 1).getFluid();
+    }
+
+    public FluidStack getLiquid(int amount) {
+        return LIQUID.get().get(this, amount);
+    }
+
+    public FluidStack getGas(int amount) {
+        return GAS.get().get(this, amount);
+    }
+
+    public FluidStack getPlasma(int amount) {
+        return PLASMA.get().get(this, amount);
     }
     
     public int getLiquidTemperature() {
@@ -499,9 +500,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addByProduct(Material... mats) {
-        for (Material mat : mats) {
-            byProducts.add(mat);
-        }
+        byProducts.addAll(Arrays.asList(mats));
         return this;
     }
 
@@ -520,21 +519,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return ItemStack.EMPTY;
     }
 
-    public FluidStack getLiquid(int amount) {
-        if (liquid == null) throw new NullPointerException(id + ": Liquid is null");
-        return new FluidStack(liquid, amount);
-    }
-
-    public FluidStack getGas(int amount) {
-        if (gas == null) throw new NullPointerException(id + ": Gas is null");
-        return new FluidStack(gas, amount);
-    }
-
-    public FluidStack getPlasma(int amount) {
-        if (plasma == null) throw new NullPointerException(id + ": Plasma is null");
-        return new FluidStack(plasma, amount);
-    }
-
     public static Material get(String id) {
         Material material = AntimatterAPI.get(Material.class, id);
         return material == null ? Data.NULL : material;
@@ -544,5 +528,4 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public int hashCode() {
         return id.hashCode();
     }
-
 }

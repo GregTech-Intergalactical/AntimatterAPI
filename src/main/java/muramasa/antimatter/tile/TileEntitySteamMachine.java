@@ -3,15 +3,17 @@ package muramasa.antimatter.tile;
 import muramasa.antimatter.capability.impl.FluidResourceMachineRecipeHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
+//TODO move to GT
 public class TileEntitySteamMachine extends TileEntityMachine {
 
-    protected static FluidStack STEAM = Material.get("steam").getGas(1);
+    private static FluidStack STEAM;
 
     public TileEntitySteamMachine(Machine<?> type) {
         super(type);
@@ -21,5 +23,9 @@ public class TileEntitySteamMachine extends TileEntityMachine {
     public void onLoad() {
         if (isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new FluidResourceMachineRecipeHandler<>(this, STEAM));
         super.onLoad();
+    }
+
+    public FluidStack getSteam() {
+        return STEAM != null ? STEAM : (STEAM = MaterialType.GAS.get().get(Material.get("steam"), 1));
     }
 }

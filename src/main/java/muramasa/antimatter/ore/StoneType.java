@@ -10,6 +10,7 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Collection;
@@ -37,9 +38,8 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     @Override
-    public void onRegistryBuild(String currentDomain, IForgeRegistry<?> registry) {
-        if (!this.domain.equals(currentDomain) || !generateBlock || registry != null) return;
-        this.setState(new BlockStone(this));
+    public void onRegistryBuild(IForgeRegistry<?> registry) {
+        if (generateBlock && registry == ForgeRegistries.BLOCKS) setState(new BlockStone(this));
     }
 
     public String getDomain() {

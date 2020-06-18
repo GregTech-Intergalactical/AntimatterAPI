@@ -66,8 +66,7 @@ public class Antimatter implements IAntimatterRegistrar {
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
-        AntimatterAPI.onRegistration(RegistrationEvent.READY);
-        // AntimatterAPI.onRegistration(RegistrationEvent.RECIPE); Recipes should be part of the 'forge' registry
+        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
 
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
 

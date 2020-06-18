@@ -2,14 +2,12 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.block.BlockCoil;
-import muramasa.antimatter.block.BlockDynamic;
-import muramasa.antimatter.block.BlockStone;
-import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.*;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -39,8 +37,8 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
             tooltip.add(new StringTextComponent("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
-            tooltip.add(new StringTextComponent("Pipes: " + /*GregTechAPI.all(BlockPipe.class).size()*/ "TODO"));
-            tooltip.add(new StringTextComponent("Casings: " + /*GregTechAPI.all(BlockCasing.class).size()*/ "TODO"));
+            tooltip.add(new StringTextComponent("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
+            tooltip.add(new StringTextComponent("Casings: " + AntimatterAPI.all(BlockCasing.class).size()));
             tooltip.add(new StringTextComponent("Coils: " + AntimatterAPI.all(BlockCoil.class).size()));
             tooltip.add(new StringTextComponent("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
             tooltip.add(new StringTextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));

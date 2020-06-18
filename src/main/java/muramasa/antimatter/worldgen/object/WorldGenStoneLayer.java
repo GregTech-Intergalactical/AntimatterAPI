@@ -23,6 +23,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     protected WorldGenStoneLayer(BlockState state, int... dims) {
         super("world_gen_stone_layer", WorldGenStoneLayer.class, dims);
+        if (state == null) throw new IllegalStateException("WorldGenStoneLayer has been passed a null stone block state!");
         this.stoneState = state;
     }
 

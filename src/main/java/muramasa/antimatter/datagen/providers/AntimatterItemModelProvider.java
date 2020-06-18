@@ -99,5 +99,4 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     public AntimatterItemModelBuilder antimatterTex(IItemProvider item, String namespace, String path) {
         return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(namespace, path)));
     }
-
 }
