@@ -151,8 +151,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (placer != null) {
-            Direction dir = Direction.getFacingFromVector((float) placer.getLookVec().x, (float) placer.getLookVec().y, (float) placer.getLookVec().z).getOpposite();
-            if (dir.getAxis().isVertical()) dir = Direction.NORTH; //TODO fix
+            //Y = 0 , reduce to xz plane
+            Direction dir = Direction.getFacingFromVector((float) placer.getLookVec().x, (float) 0, (float) placer.getLookVec().z).getOpposite();
             world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
         }
     }
