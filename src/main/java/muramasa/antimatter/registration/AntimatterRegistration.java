@@ -43,9 +43,6 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(TileEntityType.class, domain, t -> ((IForgeRegistry) e.getRegistry()).register(t));
         } else if (e.getRegistry() == ForgeRegistries.FLUIDS) {
             AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
-                if (f.getFluid() == null || f.getFlowingFluid() == null) {
-                    System.out.println("null");
-                }
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {

@@ -29,7 +29,6 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -54,7 +53,6 @@ import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     static int OFFSET_ACTIVE = 5;
 
@@ -77,13 +75,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
     }
 
     @Override
@@ -99,17 +97,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return getType().getTileType().create();
     }
-
-//    @Nullable
-//    @Override
-//    public TileEntity createTileEntity(World world) {
-//        try {
-//            return (TileEntityMachine) type.getTileClass().newInstance();
-//        } catch (IllegalAccessException | InstantiationException e) {
-//            e.printStackTrace();
-//            throw new IllegalArgumentException("Was not able to instantiate a TileEntity class for: " + type);
-//        }
-//    }
 
     @Override
     public boolean hasTileEntity(BlockState state) {
@@ -176,29 +163,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return Data.WRENCH.getToolType();
     }
 
-    /** TileEntity Drops Start **/
-//    @Override
-//    public void getDrops(NonNullList<ItemStack> drops, IBlockReader world, BlockPos pos, BlockState state, int fortune) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityMachine) drops.add(new MachineStack(((TileEntityMachine) tile).type, ((TileEntityMachine) tile).tier).asItemStack());
-//    }
-//
-//    @Override
-//    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest) {
-//        if (willHarvest) return true;
-//        return super.removedByPlayer(state, world, pos, player, willHarvest);
-//    }
-//
-//    @Override
-//    public void harvestBlock(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity tile, ItemStack stack) {
-//        super.harvestBlock(world, player, pos, state, tile, stack);
-//        world.setBlockToAir(pos);
-//    }
-
-    /**
-     * TileEntity Drops End
-     **/
-
 //    @Override
 //    public void breakBlock(World world, BlockPos pos, BlockState state) {
 //        TileEntity tile = Utils.getTile(world, pos);
@@ -210,6 +174,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 //            });
 //        }
 //    }
+
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         return getType().getDisplayName(getTier());
@@ -227,6 +192,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(TextFormatting.BLUE + "" + (getTier().getVoltage() * 64)));
         }
     }
+
     //return id given dir & state
     private int getModelId(Direction dir, MachineState state) {
         switch (dir) {
@@ -249,8 +215,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         Direction dir = state.get(BlockStateProperties.HORIZONTAL_FACING);
-        MachineState mst = ((TileEntityMachine)world.getTileEntity(pos)).getMachineState();
-        return config.set(new int[]{getModelId(dir, mst)});
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEntityMachine) {
+            MachineState machineState = ((TileEntityMachine) tile).getMachineState();
+            return config.set(new int[]{getModelId(dir, machineState)});
+        }
+        return config.set(new int[]{0});
     }
 
     @Override
@@ -311,32 +281,11 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         ));
     }
 
-    /*@Override
-    public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        AntimatterBlockModelBuilder builder = prov.getBuilder(block);
-        registerForState(builder, MachineState.ACTIVE);
-        registerForState(builder, MachineState.IDLE);
-
-        prov.state(block, builder);
-    }*/
-
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        /*Texture[] overlays = type.getOverlayTextures(MachineState.IDLE);
-        prov.state(block, prov.getBuilder(block).config(0, (b, l) -> l.add(
-                b.of(zero).tex(of("base", base, "overlay", overlays[0])),
-                b.of(one).tex(of("base", base, "overlay", overlays[1])),
-                b.of(second).tex(of("base", base, "overlay", overlays[2])),
-                b.of(three).tex(of("base", base, "overlay", overlays[3])),
-                b.of(four).tex(of("base", base, "overlay", overlays[4])),
-                b.of(five).tex(of("base", base, "overlay", overlays[5]))
-        )));*/
-
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
-
         registerForState(builder, MachineState.IDLE,0);
         registerForState(builder, MachineState.ACTIVE, OFFSET_ACTIVE);
-
         prov.state(block, builder);
     }
 }
