@@ -1,7 +1,6 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.cover.CoverNone;
@@ -9,7 +8,10 @@ import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.container.*;
-import muramasa.antimatter.gui.screen.*;
+import muramasa.antimatter.gui.screen.ScreenBasicMachine;
+import muramasa.antimatter.gui.screen.ScreenCover;
+import muramasa.antimatter.gui.screen.ScreenHatch;
+import muramasa.antimatter.gui.screen.ScreenMultiMachine;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
@@ -33,6 +35,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
@@ -79,8 +82,8 @@ public class Data {
 
     public static CoverInstance COVER_EMPTY = new CoverInstance(COVERNONE);
     public static CoverInstance COVER_OUTPUT = new CoverInstance(COVEROUTPUT);
-    public static MenuHandlerMachine<?> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
 
+    public static MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>>(Ref.ID, "container_basic") {
         @Nullable
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
@@ -88,48 +91,48 @@ public class Data {
         }
 
         @Override
-        public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenBasicMachine(container, inv, name);
+        @ParametersAreNonnullByDefault
+        public ScreenBasicMachine<ContainerMachine> create(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenBasicMachine<>(container, inv, name);
         }
-
     };
 
-    public static MenuHandlerCover COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
-
+    public static MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return new ContainerCover((CoverInstance) tile,  playerInv, this, windowId);
         }
 
         @Override
-        public ScreenCover getScreen(ContainerCover container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenCover(container,inv,name);
+        @ParametersAreNonnullByDefault
+        public ScreenCover<ContainerCover> create(ContainerCover container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenCover<>(container,inv,name);
         }
     };
 
-    public static MenuHandlerMachine MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_multi") {
+    public static MenuHandlerMachine<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>> MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>(Ref.ID, "container_multi") {
         @Override
-        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+        public ContainerMultiMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine) tile, playerInv, this, windowId) : null;
-
         }
 
-        @Nullable
         @Override
-        public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenMultiMachine(container, inv, name);
+        @ParametersAreNonnullByDefault
+        public ScreenMultiMachine<ContainerMultiMachine> create(ContainerMultiMachine container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenMultiMachine<>(container, inv, name);
         }
     };
 
-    public static MenuHandlerMachine HATCH_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_hatch") {
+    public static MenuHandlerMachine<ContainerHatch, ScreenHatch<ContainerHatch>> HATCH_MENU_HANDLER = new MenuHandlerMachine<ContainerHatch, ScreenHatch<ContainerHatch>>(Ref.ID, "container_hatch") {
         @Override
-        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return tile instanceof TileEntityHatch ? new ContainerHatchMachine((TileEntityHatch) tile, playerInv, this, windowId) : null;
+        public ContainerHatch getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+            return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch) tile, playerInv, this, windowId) : null;
         }
 
         @Override
-        public ScreenMachine getScreen(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenHatchMachine((ContainerMachine)container, inv, name);
+        @ParametersAreNonnullByDefault
+        public ScreenHatch<ContainerHatch> create(ContainerHatch container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenHatch<>(container, inv, name);
         }
     };
 

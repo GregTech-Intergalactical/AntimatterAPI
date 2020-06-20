@@ -7,8 +7,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.IMenuHandler;
-import muramasa.antimatter.gui.MenuHandlerMachine;
+import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -170,8 +169,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
     }
 
-    public void setGUI(MenuHandlerMachine<?> menuHandler) {
-        guiData = new GuiData(this, (IMenuHandler)menuHandler);
+    public void setGUI(MenuHandler<?, ?> menuHandler) {
+        guiData = new GuiData<>(this, menuHandler);
         addFlags(MachineFlag.GUI);
     }
 
@@ -201,7 +200,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tiers.get(0);
     }
 
-    public GuiData getGui() {
+    public GuiData<?> getGui() {
         return guiData;
     }
 

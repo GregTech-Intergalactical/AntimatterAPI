@@ -4,8 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.gui.MenuHandlerCover;
-import muramasa.antimatter.gui.MenuHandlerMachine;
+import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -46,8 +45,7 @@ public final class AntimatterRegistration {
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
-            AntimatterAPI.all(MenuHandlerMachine.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h.getContainerType()));
-            AntimatterAPI.all(MenuHandlerCover.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h.getContainerType()));
+            AntimatterAPI.all(MenuHandler.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h.getContainerType()));
         } else if (e.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) ((IForgeRegistry) e.getRegistry()).registerAll(Ref.DRILL, Ref.WRENCH);

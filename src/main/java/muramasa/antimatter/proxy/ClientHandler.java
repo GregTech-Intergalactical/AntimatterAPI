@@ -6,8 +6,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.gui.MenuHandlerCover;
-import muramasa.antimatter.gui.MenuHandlerMachine;
+import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
@@ -35,24 +34,18 @@ public class ClientHandler implements IProxyHandler {
         }
     }
 
-    @SuppressWarnings({"unchecked", "unused", "NullableProblems"})
+    @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
-        AntimatterAPI.all(MenuHandlerMachine.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
-        AntimatterAPI.all(MenuHandlerCover.class, h -> ScreenManager.registerFactory(h.getContainerType(),  h::getScreen));
-        AntimatterAPI.runLaterClient(
-                () -> {
-
-                },
-                () -> {
-                    AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-                    AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-                    AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-                    AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
-                        RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
-                        RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
-                    });
-                }
-        );
+        AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), h));
+        AntimatterAPI.runLaterClient(() -> {
+            AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
+                RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
+                RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
+            });
+        });
     }
 
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {

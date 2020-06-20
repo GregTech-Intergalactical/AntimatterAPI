@@ -11,9 +11,9 @@ import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
 
-public class ScreenHatchMachine extends ScreenMachine {
+public class ScreenHatch<T extends ContainerMachine> extends ScreenMachine<T> {
 
-    public ScreenHatchMachine(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+    public ScreenHatch(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         gui = new ResourceLocation(Ref.ID, "textures/gui/machine/hatch.png");
     }

@@ -5,9 +5,9 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
-public class ScreenBasicMachine extends ScreenMachine {
+public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachine<T> {
 
-    public ScreenBasicMachine(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+    public ScreenBasicMachine(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
     }
 

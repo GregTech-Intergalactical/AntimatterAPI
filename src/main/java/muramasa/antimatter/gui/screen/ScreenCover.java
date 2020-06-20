@@ -9,13 +9,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 //A screen showing the GUI for the cover.
-public class ScreenCover extends AntimatterContainerScreen<ContainerCover> implements IHasContainer<ContainerCover> {
+public class ScreenCover<T extends ContainerCover> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
 
     protected ContainerCover container;
     protected String name;
     protected ResourceLocation gui;
 
-    public ScreenCover(ContainerCover container, PlayerInventory inv, ITextComponent name) {
+    public ScreenCover(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
         if (container.getCover().getCover() instanceof CoverTiered) {

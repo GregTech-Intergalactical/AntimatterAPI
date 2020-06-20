@@ -1,14 +1,14 @@
 package muramasa.antimatter.gui.screen;
 
-import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.container.ContainerMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
-public class ScreenMultiMachine extends ScreenMachine {
+public class ScreenMultiMachine<T extends ContainerMultiMachine> extends ScreenMachine<T> {
 
-    public ScreenMultiMachine(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+    public ScreenMultiMachine(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
     }
 

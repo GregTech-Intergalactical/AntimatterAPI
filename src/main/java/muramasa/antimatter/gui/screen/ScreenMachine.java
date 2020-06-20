@@ -3,22 +3,23 @@ package muramasa.antimatter.gui.screen;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.ModList;
 
-public class ScreenMachine extends AntimatterContainerScreen<ContainerMachine> {
+public class ScreenMachine<T extends ContainerMachine> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
 
-    protected ContainerMachine container;
+    protected T container;
     protected String name;
     protected ResourceLocation gui;
 
-    public ScreenMachine(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+    public ScreenMachine(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
-        gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(),"machine");
+        gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {

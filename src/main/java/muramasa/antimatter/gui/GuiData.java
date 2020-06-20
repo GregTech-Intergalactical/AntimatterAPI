@@ -24,7 +24,7 @@ public class GuiData<T extends IAntimatterObject> {
     private static final String ANY = "any";
 
     protected ResourceLocation loc;
-    protected IMenuHandler menuHandler;
+    protected MenuHandler<?, ?> menuHandler;
 
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
@@ -40,17 +40,17 @@ public class GuiData<T extends IAntimatterObject> {
         this.loc = new ResourceLocation(domain, id);
     }
 
-    public GuiData(String domain, String id, IMenuHandler menuHandler) {
+    public GuiData(String domain, String id, MenuHandler<?, ?> menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
     }
 
-    public GuiData(T type, IMenuHandler menuHandler) {
+    public GuiData(T type, MenuHandler<?, ?> menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
     }
 
-    public IMenuHandler getMenuHandler() {
+    public MenuHandler<?, ?> getMenuHandler() {
         return this.menuHandler;
     }
 
@@ -88,17 +88,17 @@ public class GuiData<T extends IAntimatterObject> {
         this.enablePlayerSlots = enablePlayerSlots;
     }
 
-    public GuiData setArea(int x, int y, int z, int w) {
+    public GuiData<?> setArea(int x, int y, int z, int w) {
         area.set(x, y, z, w);
         return this;
     }
 
-    public GuiData setPadding(int x, int y, int z, int w) {
+    public GuiData<?> setPadding(int x, int y, int z, int w) {
         padding.set(x, y, z, w);
         return this;
     }
 
-    public GuiData setDir(BarDir side) {
+    public GuiData<?> setDir(BarDir side) {
         this.side = side;
         return this;
     }
@@ -107,23 +107,23 @@ public class GuiData<T extends IAntimatterObject> {
         return infoRenderer;
     }
 
-    public GuiData setInfoRenderer(IInfoRenderer infoRenderer) {
+    public GuiData<?> setInfoRenderer(IInfoRenderer infoRenderer) {
         this.infoRenderer = infoRenderer;
         return this;
     }
 
     /** Adds a slot for ANY **/
-    public GuiData add(SlotType type, int x, int y) {
+    public GuiData<?> add(SlotType type, int x, int y) {
         return add(ANY, new SlotData(type, x, y));
     }
 
     /** Adds a slot for the given Tier **/
-    public GuiData add(Tier tier, SlotType type, int x, int y) {
+    public GuiData<?> add(Tier tier, SlotType type, int x, int y) {
         return add(tier.getId(), new SlotData(type, x, y));
     }
 
     /** Copies ALL slots from an existing GuiData **/
-    public GuiData add(GuiData data) {
+    public GuiData<?> add(GuiData<?> data) {
         List<SlotData> list = data.getAnySlots();
         for (SlotData slot : list) {
             add(ANY, slot);
@@ -132,7 +132,7 @@ public class GuiData<T extends IAntimatterObject> {
     }
 
     /** Copies ALL slots from an existing Machine **/
-    public GuiData add(Machine type) {
+    public GuiData<?> add(Machine<?> type) {
         List<SlotData> list = type.getGui().getAnySlots();
         for (SlotData slot : list) {
             add(ANY, slot);
@@ -141,7 +141,7 @@ public class GuiData<T extends IAntimatterObject> {
     }
 
     /** Copies ALL slots from type into toTier slots **/
-    public GuiData add(Tier toTier, Machine type) {
+    public GuiData<?> add(Tier toTier, Machine<?> type) {
         List<SlotData> list = type.getGui().getAnySlots();
         for (SlotData slot : list) {
             add(toTier.getId(), slot);
@@ -150,7 +150,7 @@ public class GuiData<T extends IAntimatterObject> {
     }
 
     /** Copies fromTier slots from type into toTier slots **/
-    public GuiData add(Tier toTier, Machine type, Tier fromTier) {
+    public GuiData<?> add(Tier toTier, Machine<?> type, Tier fromTier) {
         List<SlotData> list = type.getGui().getSlots(fromTier);
         for (SlotData slot : list) {
             add(toTier.getId(), slot);
@@ -158,7 +158,7 @@ public class GuiData<T extends IAntimatterObject> {
         return this;
     }
 
-    public GuiData add(String key, SlotData slot) {
+    public GuiData<?> add(String key, SlotData slot) {
         //TODO figure out better way to do this
         Tier tier = AntimatterAPI.get(Tier.class, key);
         if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
