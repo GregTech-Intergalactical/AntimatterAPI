@@ -9,13 +9,23 @@ import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockModelProvider;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
+import net.minecraftforge.client.model.generators.ModelFile;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
 
 public class AntimatterBlockStateProvider extends BlockStateProvider implements IAntimatterProvider {
 
@@ -89,10 +99,26 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
             simpleBlock(block, getLayeredModel(block, textures[0], textures[1]));
         }
         else if (textures.length == 6){
-            simpleBlock(block, getSixSidedSimpleModel(block, textures));
+            horizontalBlock(block, getSixSidedSimpleModel(block, textures));
         } else if (textures.length == 12){
-            simpleBlock(block, getSixSidedSimpleModel(block, textures));
+            horizontalBlock(block, getSixSidedSimpleModel(block, textures), getSixSidedSimpleModel(block, Arrays.copyOfRange(textures, 6, 12)));
         }
+    }
+
+    public void horizontalBlock(Block block, ModelFile model, ModelFile modelActive) {
+        horizontalBlock(block, $ -> model, $ -> modelActive);
+    }
+
+    public void horizontalBlock(Block block, Function<BlockState, ModelFile> modelFunc, Function<BlockState, ModelFile> modelFuncActive) {
+        getVariantBuilder(block)
+                .forAllStates(state -> ConfiguredModel.builder()
+                        .modelFile(modelFunc.apply(state))
+                        .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle()) % 360)
+                        .nextModel()
+                        .modelFile(modelFuncActive.apply(state))
+                        .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle()) % 360)
+                        .build()
+                );
     }
 
     public BlockModelBuilder getSimpleModel(Block block, ResourceLocation texture) {
