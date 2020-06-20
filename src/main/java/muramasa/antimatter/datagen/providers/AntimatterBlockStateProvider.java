@@ -114,9 +114,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
                 .forAllStates(state -> ConfiguredModel.builder()
                         .modelFile(modelFunc.apply(state))
                         .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle()) % 360)
-                        .nextModel()
-                        .modelFile(modelFuncActive.apply(state))
-                        .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle()) % 360)
                         .build()
                 );
     }
