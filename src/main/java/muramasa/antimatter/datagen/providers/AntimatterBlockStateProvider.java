@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -112,7 +113,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     public void horizontalBlock(Block block, Function<BlockState, ModelFile> modelFunc, Function<BlockState, ModelFile> modelFuncActive) {
         getVariantBuilder(block)
                 .forAllStates(state -> ConfiguredModel.builder()
-                        .modelFile(modelFunc.apply(state))
+                        .modelFile(state.get(BlockBasic.ACTIVE) ? modelFuncActive.apply(state) : modelFunc.apply(state))
                         .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle()) % 360)
                         .build()
                 );
