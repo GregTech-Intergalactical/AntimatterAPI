@@ -8,11 +8,13 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
+import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
@@ -504,19 +506,19 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
-    public ItemStack getCell(int amount) {
-    	//return Utils.ca(amount, Data.CellTin.fill(getLiquid()));
-        return ItemStack.EMPTY;
+    public ItemStack getCell(int amount, ItemFluidCell cell) {
+    	return Utils.ca(amount, cell.fill(getLiquid()));
+       // return ItemStack.EMPTY;
     }
 
-    public ItemStack getCellGas(int amount) {
-        //return Utils.ca(amount, Data.CellTin.fill(getGas()));
-        return ItemStack.EMPTY;
+    public ItemStack getCellGas(int amount, ItemFluidCell cell) {
+        return Utils.ca(amount, cell.fill(getGas()));
+        //return ItemStack.EMPTY;
     }
 
-    public ItemStack getCellPlasma(int amount) {
-        //return Utils.ca(amount, Data.CellTin.fill(getPlasma()));
-        return ItemStack.EMPTY;
+    public ItemStack getCellPlasma(int amount, ItemFluidCell cell) {
+        return Utils.ca(amount, cell.fill(getPlasma()));
+        //return ItemStack.EMPTY;
     }
 
     public static Material get(String id) {

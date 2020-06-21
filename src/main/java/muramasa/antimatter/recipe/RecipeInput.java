@@ -49,14 +49,24 @@ public class RecipeInput {
         if (!(obj instanceof RecipeInput)) return false;
         RecipeInput other = (RecipeInput) obj;
         if (items != null) {
-            for (int i = 0; i < items.length; i++) {
-                if (!other.items[other.itemMap.get(items[i].hashCode())].equals(items[i])) return false;
+            if (other.items == null) {
+                return false;
             }
+            for (ItemWrapper item : items) {
+                if (!other.items[other.itemMap.get(item.hashCode())].equals(item)) return false;
+            }
+        } else if (other.items != null) {
+            return false;
         }
         if (fluids != null) {
-            for (int i = 0; i < fluids.length; i++) {
-                if (!other.fluids[other.fluidMap.get(fluids[i].hashCode())].equals(fluids[i])) return false;
+            if (other.fluids == null) {
+                return false;
             }
+            for (FluidWrapper fluid : fluids) {
+                if (!other.fluids[other.fluidMap.get(fluid.hashCode())].equals(fluid)) return false;
+            }
+        } else if (other.fluids != null) {
+            return false;
         }
         return true;
     }

@@ -1,7 +1,9 @@
 package muramasa.antimatter.capability.impl;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -18,7 +20,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected T tile;
     protected Recipe activeRecipe;
     protected int curProgress, maxProgress;
-    protected float clientProgress;
+    protected int overclock;
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
@@ -26,7 +28,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public void onUpdate() {
         if (tile.isClientSide()) return;
-        if (tile.getMachineState() == ACTIVE) tickMachineLoop();
+        if (tile.getMachineState() != IDLE) tickMachineLoop();
     }
 
     protected void tickMachineLoop() {
@@ -44,13 +46,29 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 tile.setMachineState(tickRecipe());
                 break;
             case NO_POWER:
-                checkRecipe();
+                noPowerCheck();
                 break;
         }
     }
 
     public Recipe findRecipe() {
         return tile.getMachineType().getRecipeMap().find(tile.itemHandler.orElse(null), tile.fluidHandler.orElse(null));
+    }
+    //called when a new recipe is found, to process overclocking
+    public void activateRecipe() {
+        //if (canOverclock)
+        curProgress = 0;
+        overclock = 0;
+        if (this.tile.getMachineTier().getVoltage() > activeRecipe.getPower()) {
+            int tempoverclock =(this.tile.getMachineTier().getVoltage() / Ref.V[Utils.getVoltageTier(activeRecipe.getPower())]);
+            while(tempoverclock > 1) {
+                tempoverclock >>= 2;
+                overclock++;
+            }
+        }
+        maxProgress = Math.max(1,activeRecipe.getDuration() / (1 << overclock));
+        tile.setMachineState(ACTIVE);
+        onRecipeFound();
     }
 
     public void checkRecipe() {
@@ -59,13 +77,19 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (!tile.hadFirstTick()) return; //TODO fixme
             if ((activeRecipe = findRecipe()) != null) {
                 if (activeRecipe.getPower() > tile.getMaxInputVoltage()) {
+                    return;
                     //TODO machine tier cannot process recipe
                 }
-                curProgress = 0;
-                maxProgress = activeRecipe.getDuration();
-                tile.setMachineState(ACTIVE);
-                onRecipeFound();
+                activateRecipe();
             }
+        }
+    }
+
+    public void noPowerCheck() {
+        if (activeRecipe != null) {
+            tickRecipe();
+        } else {
+            checkRecipe();
         }
     }
 
@@ -76,7 +100,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (!canOutput()) return OUTPUT_FULL; //Return and loop until outputs can be added
             curProgress = 0;
             addOutputs(); //Add outputs and reset to process next recipe cycle
-            return !canRecipeContinue() ? IDLE : ACTIVE; //Check if has enough stack count for next recipe cycle
+            if (!canRecipeContinue()) {
+                resetRecipe();
+                return IDLE;
+            } else {
+                return ACTIVE;
+            }
         } else {
             //Calculate per recipe tick so user has risk of losing items
             if (!consumeResourceForRecipe()) return curProgress == 0 ? NO_POWER : POWER_LOSS;
@@ -113,8 +142,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public boolean consumeResourceForRecipe() {
         if (tile.energyHandler.isPresent()) {
-            if (tile.energyHandler.get().extract(activeRecipe.getPower(), true) == activeRecipe.getPower()) {
-                tile.energyHandler.get().extract(activeRecipe.getPower(), false);
+            if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), true) == activeRecipe.getPower()*(1 << overclock)) {
+                tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), false);
                 return true;
             }
         }
@@ -123,6 +152,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public void resetRecipe() {
         activeRecipe = null;
+        overclock = 0;
     }
 
     /** Events **/
@@ -151,11 +181,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
     }
 
-    /** Getters **/
-    public float getClientProgress() {
-        return clientProgress;
-    }
-
     public int getCurProgress() {
         return curProgress;
     }
@@ -164,10 +189,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return maxProgress;
     }
 
-    /** Setters **/
-    public void setClientProgress(float progress) {
-        clientProgress = progress;
-    }
 
     /** NBT **/
     // TODO: Finish

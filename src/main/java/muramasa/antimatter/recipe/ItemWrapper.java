@@ -29,11 +29,8 @@ public class ItemWrapper {
     public boolean equals(Object obj) {
         if (!(obj instanceof ItemWrapper)) return false;
         ItemWrapper other = (ItemWrapper) obj;
-        if ((count && other.item.getCount() < item.getCount()) ||
-            (nbt && !ItemStack.areItemStackTagsEqual(other.item, item))) {
-            return false;
-        }
-        return true;
+        boolean ret = (!count || other.item.getCount() > item.getCount()) && (ItemStack.areItemsEqual(item, other.item) && (!nbt || ItemStack.areItemStackTagsEqual(item, other.item)));
+        return ret;
     }
 
     @Override
