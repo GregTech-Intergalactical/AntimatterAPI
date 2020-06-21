@@ -123,7 +123,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     public BlockModelBuilder getSixSidedSimpleModel(Block block, ResourceLocation... texture) {
-        return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/six_sided_simple"))).texture("down", texture[0]).texture("up", texture[1]).texture("north", texture[2]).texture("south", texture[3]).texture("west", texture[4]).texture("east", texture[5]);
+        return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/simple"))).texture("down", texture[0]).texture("up", texture[1]).texture("north", texture[2]).texture("south", texture[3]).texture("west", texture[4]).texture("east", texture[5]);
     }
 
     public BlockModelBuilder getLayeredModel(Block block, ResourceLocation base, ResourceLocation overlay) {
