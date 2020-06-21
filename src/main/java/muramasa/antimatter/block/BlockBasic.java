@@ -8,11 +8,8 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.state.BooleanProperty;
 
 public class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
-    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-
     protected String domain, id;
 
     public BlockBasic(String domain, String id, Block.Properties properties) {

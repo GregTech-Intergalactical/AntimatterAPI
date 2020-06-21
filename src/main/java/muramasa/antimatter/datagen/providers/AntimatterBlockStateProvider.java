@@ -2,7 +2,6 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -25,7 +24,6 @@ import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelFile;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -106,23 +104,8 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
         } else if (textures.length == 6){
             horizontalBlock(block, getSixSidedSimpleModel(block, false, textures));
         } else if (textures.length == 12){
-            horizontalBlock(block, getSixSidedSimpleModel(block, false, textures), getSixSidedSimpleModel(block, true, Arrays.copyOfRange(textures, 6, 12)));
-        } else if (textures.length == 24){
-            horizontalBlock(block, getSixSidedLayeredModel(block, false, textures), getSixSidedLayeredModel(block, true, Arrays.copyOfRange(textures, 12, 24)));
+            horizontalBlock(block, getSixSidedLayeredModel(block, false, textures));
         }
-    }
-
-    public void horizontalBlock(Block block, ModelFile model, ModelFile modelActive) {
-        horizontalBlock(block, $ -> model, $ -> modelActive);
-    }
-
-    public void horizontalBlock(Block block, Function<BlockState, ModelFile> modelFunc, Function<BlockState, ModelFile> modelFuncActive) {
-        getVariantBuilder(block)
-                .forAllStates(state -> ConfiguredModel.builder()
-                        .modelFile(state.has(BlockBasic.ACTIVE) && state.get(BlockBasic.ACTIVE) ? modelFuncActive.apply(state) : modelFunc.apply(state))
-                        .rotationY((state.has(BlockStateProperties.HORIZONTAL_FACING) ? (int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle() : (int) Direction.SOUTH.getHorizontalAngle()) % 360)
-                        .build()
-                );
     }
 
     @Override
