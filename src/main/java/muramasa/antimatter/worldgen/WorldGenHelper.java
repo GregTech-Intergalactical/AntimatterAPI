@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -71,7 +72,7 @@ public class WorldGenHelper {
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
         StoneType stone = STONE_MAP.get(existing);
         if (stone == null) return false;
-        BlockState oreState = type == MaterialType.ORE ? MaterialType.ORE.get().get(material, stone).asState() : MaterialType.ORE_SMALL.get().get(material, stone).asState();
+        BlockState oreState = type == Data.ORE ? Data.ORE.get().get(material, stone).asState() : Data.ORE_SMALL.get().get(material, stone).asState();
         return setOre(world, pos, existing, oreState);
     }
 

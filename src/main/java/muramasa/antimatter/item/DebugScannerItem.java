@@ -2,10 +2,10 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.block.*;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -44,8 +44,8 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
             tooltip.add(new StringTextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
             tooltip.add(new StringTextComponent("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
             tooltip.add(new StringTextComponent("Data:"));
-            tooltip.add(new StringTextComponent("Ore Materials: " + MaterialType.ORE.all().size()));
-            tooltip.add(new StringTextComponent("Small Ore Materials: " + MaterialType.ORE_SMALL.all().size()));
+            tooltip.add(new StringTextComponent("Ore Materials: " + Data.ORE.all().size()));
+            tooltip.add(new StringTextComponent("Small Ore Materials: " + Data.ORE_SMALL.all().size()));
         }
     }
 

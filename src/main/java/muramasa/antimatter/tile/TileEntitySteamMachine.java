@@ -1,9 +1,9 @@
 package muramasa.antimatter.tile;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.impl.FluidResourceMachineRecipeHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Optional;
@@ -26,6 +26,6 @@ public class TileEntitySteamMachine extends TileEntityMachine {
     }
 
     public FluidStack getSteam() {
-        return STEAM != null ? STEAM : (STEAM = MaterialType.GAS.get().get(Material.get("steam"), 1));
+        return STEAM != null ? STEAM : (STEAM = Data.GAS.get().get(Material.get("steam"), 1));
     }
 }

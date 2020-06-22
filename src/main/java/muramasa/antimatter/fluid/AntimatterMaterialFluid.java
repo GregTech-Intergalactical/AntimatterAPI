@@ -1,5 +1,6 @@
 package muramasa.antimatter.fluid;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import net.minecraft.block.Block;
@@ -41,12 +42,12 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static FluidAttributes.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
-        if (type == MaterialType.GAS) {
+        if (type == Data.GAS) {
             return FluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(200).density(-1000).gaseous().temperature(material.getGasTemperature());
         }
-        else if (type == MaterialType.PLASMA) {
+        else if (type == Data.PLASMA) {
             return FluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
@@ -59,6 +60,6 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static Block.Properties prepareProperties(MaterialType<?> type) {
-        return getDefaultBlockProperties().lightValue(type == MaterialType.PLASMA ? 15 : 0);
+        return getDefaultBlockProperties().lightValue(type == Data.PLASMA ? 15 : 0);
     }
 }

@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenOreSmall;
@@ -54,7 +54,7 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
             for (int i = 0; i < amount; i++) {
                 mut.setPos(pos.getX() + rand.nextInt(16), ore.getMinY() + rand.nextInt(Math.max(1, ore.getMaxY() - ore.getMinY())), pos.getZ() + rand.nextInt(16));
                 existing = world.getBlockState(mut);
-                WorldGenHelper.setOre(world, mut, existing, ore.getMaterial(), MaterialType.ORE_SMALL);
+                WorldGenHelper.setOre(world, mut, existing, ore.getMaterial(), Data.ORE_SMALL);
             }
         }
         return true;

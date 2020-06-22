@@ -1,8 +1,8 @@
 package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 
 public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
 
@@ -36,7 +36,7 @@ public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
         if (material == null) {
             throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": material does not exist / is null");
         }
-        if (!material.has(MaterialType.ORE_SMALL)) {
+        if (!material.has(Data.ORE_SMALL)) {
             throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + material.getId() + " doesn't have the ORE_SMALL tag");
         }
         return this;

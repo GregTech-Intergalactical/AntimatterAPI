@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.crafting.Ingredient;
@@ -70,13 +69,13 @@ public class AntimatterItemTier implements IItemTier {
 
     @Override
     public Ingredient getRepairMaterial() {
-        if (primary.has(MaterialType.GEM)) {
+        if (primary.has(Data.GEM)) {
             return Ingredient.fromTag(Utils.getForgeItemTag("gems/".concat(primary.getId())));
         }
-        else if (primary.has(MaterialType.INGOT)) {
+        else if (primary.has(Data.INGOT)) {
             return Ingredient.fromTag(Utils.getForgeItemTag("ingots/".concat(primary.getId())));
         }
-        else if (primary.has(MaterialType.DUST)) {
+        else if (primary.has(Data.DUST)) {
             return Ingredient.fromTag(Utils.getForgeItemTag("dusts/".concat(primary.getId())));
         }
         else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {

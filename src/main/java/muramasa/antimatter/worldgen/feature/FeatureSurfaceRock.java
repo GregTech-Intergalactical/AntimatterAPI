@@ -2,8 +2,8 @@ package muramasa.antimatter.worldgen.feature;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.block.BlockState;
@@ -57,7 +57,7 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
         for (Tuple<BlockPos, Material> r : rocks) {
             stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().down()));
             if (stoneType == null) stoneType = StoneType.get("stone"); //TODO change to direct ref when vanilla types are in AM
-            BlockState rockState = MaterialType.ROCK.get().get(r.getB(), stoneType).asState();
+            BlockState rockState = Data.ROCK.get().get(r.getB(), stoneType).asState();
             if (world.getBlockState(r.getA()) == WorldGenHelper.WATER_STATE) rockState = WorldGenHelper.waterLogState(rockState);
             WorldGenHelper.setState(world, r.getA(), rockState);
         }

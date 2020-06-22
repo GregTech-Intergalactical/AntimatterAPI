@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.material.MaterialType.*;
+import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements IAntimatterProvider {

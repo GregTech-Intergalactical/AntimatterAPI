@@ -1,8 +1,8 @@
 package muramasa.antimatter.worldgen;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -24,8 +24,8 @@ public class StoneLayerOre {
     }
 
     public StoneLayerOre setStatesByStoneType(StoneType stoneType) {
-        this.oreState = MaterialType.ORE.get().get(material, stoneType).asState();
-        this.oreSmallState = MaterialType.ORE_SMALL.get().get(material, stoneType).asState();
+        this.oreState = Data.ORE.get().get(material, stoneType).asState();
+        this.oreSmallState = Data.ORE_SMALL.get().get(material, stoneType).asState();
         this.stoneType = stoneType;
         return this;
     }

@@ -2,8 +2,8 @@ package muramasa.antimatter.worldgen.feature;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -51,7 +51,7 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
         List<Triple<BlockPos, Material, Boolean>> ores = ORES.remove(world.getChunk(pos).getPos());
         if (ores == null) return false;
         for (Triple<BlockPos, Material, Boolean> o : ores) {
-            WorldGenHelper.setOre(world, o.getLeft(), world.getBlockState(o.getLeft()), o.getMiddle(), o.getRight() ? MaterialType.ORE : MaterialType.ORE_SMALL);
+            WorldGenHelper.setOre(world, o.getLeft(), world.getBlockState(o.getLeft()), o.getMiddle(), o.getRight() ? Data.ORE : Data.ORE_SMALL);
         }
         return true;
     }

@@ -1,11 +1,11 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import net.minecraft.block.Block;
@@ -59,7 +59,7 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
     protected void processTags(String domain) {
         AntimatterAPI.all(BlockOre.class, o -> {
             this.getBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
-            if (o.getOreType() == MaterialType.ORE) this.getBuilder(Tags.Blocks.ORES).add(o);
+            if (o.getOreType() == Data.ORE) this.getBuilder(Tags.Blocks.ORES).add(o);
         });
         AntimatterAPI.all(BlockStone.class, domain, s -> {
             this.getBuilder(Tags.Blocks.STONE).add(s);

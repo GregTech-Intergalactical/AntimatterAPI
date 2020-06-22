@@ -34,7 +34,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static muramasa.antimatter.material.MaterialType.*;
+import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterLanguageProvider implements IDataProvider, IAntimatterProvider {

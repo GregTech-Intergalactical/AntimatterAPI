@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IColorHandler;
@@ -47,7 +48,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 BlockPos actualPos = ctx.getPos().offset(ctx.getFace().getOpposite());
                 Block currentBlock = ctx.getWorld().getBlockState(actualPos).getBlock();
                 // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
-                if (!currentBlock.isIn(MaterialType.FRAME.getTag())) return ctx;
+                if (!currentBlock.isIn(Data.FRAME.getTag())) return ctx;
                 BlockPos.Mutable mutablePos = new BlockPos.Mutable(actualPos);
                 while (ctx.getWorld().getMaxHeight() > mutablePos.getY()) {
                     if (ctx.getWorld().getBlockState(mutablePos.move(Direction.UP)).isReplaceable(ctx)) {
@@ -68,7 +69,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         if (!(entity instanceof LivingEntity)) return;
-        if (type == MaterialType.BLOCK) return;
+        if (type == Data.BLOCK) return;
         entity.setMotion(MathHelper.clamp(entity.getMotion().x, -0.15, 0.15), entity.getMotion().y, MathHelper.clamp(entity.getMotion().z, -0.15, 0.15));
         entity.fallDistance = 0.0F;
         if (entity.isCrouching() && entity instanceof PlayerEntity) {
@@ -81,7 +82,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         if (context != ISelectionContext.dummy()) return super.getShape(state, world, pos, context);
-        return type == MaterialType.FRAME ? FRAME_SHAPE : super.getShape(state, world, pos, context);
+        return type == Data.FRAME ? FRAME_SHAPE : super.getShape(state, world, pos, context);
     }
 
     // @Override
@@ -112,17 +113,17 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
 
     @Override
     public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity) {
-        return type == MaterialType.FRAME;
+        return type == Data.FRAME;
     }
 
     @Override
     public PushReaction getPushReaction(BlockState state) {
-        return type == MaterialType.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
+        return type == Data.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
     }
 
     @Override
     public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) {
-        return type == MaterialType.BLOCK;
+        return type == Data.BLOCK;
     }
 
     //    @Override

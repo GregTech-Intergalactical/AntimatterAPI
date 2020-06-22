@@ -7,7 +7,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
-import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -29,8 +28,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.METAL;
-import static muramasa.antimatter.material.MaterialType.*;
 
 public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
@@ -85,7 +84,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.ITEMS) {
-            AntimatterAPI.all(MaterialType.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> new MaterialItem(domain, t, this));
+            AntimatterAPI.all(MaterialTypeItem.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> new MaterialItem(domain, t, this));
         } else if (registry == ForgeRegistries.BLOCKS) {
             if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
             if (has(FRAME)) new BlockStorage(domain, this, FRAME);

@@ -1,6 +1,7 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
@@ -8,7 +9,6 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
@@ -40,7 +40,7 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.runLaterClient(() -> {
             AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == MaterialType.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
                 RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
                 RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());

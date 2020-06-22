@@ -1,5 +1,6 @@
 package muramasa.antimatter.material;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -67,7 +68,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
                 tooltip.add(new StringTextComponent("Hold Shift to show formula").applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC));
             }
         }
-        if (type == MaterialType.ROCK) {
+        if (type == Data.ROCK) {
             tooltip.add(new TranslationTextComponent("gti.tooltip.occurrence").appendSibling(material.getDisplayName().applyTextStyle(TextFormatting.YELLOW)));
         }
     }
@@ -80,11 +81,11 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
         BlockPos pos = context.getPos();
         ItemStack stack = player.getHeldItem(context.getHand());
         BlockState state = world.getBlockState(pos);
-        if (type == MaterialType.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
+        if (type == Data.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
             int level = state.get(CauldronBlock.LEVEL);
             if (level > 0) {
                 MaterialItem item = (MaterialItem) stack.getItem();
-                player.setHeldItem(context.getHand(), MaterialType.DUST_IMPURE.get(item.getMaterial(), stack.getCount()));
+                player.setHeldItem(context.getHand(), Data.DUST_IMPURE.get(item.getMaterial(), stack.getCount()));
                 world.setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
                 world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 return ActionResultType.SUCCESS;
@@ -112,7 +113,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return hasType(stack, MaterialType.PLATE);
+        return hasType(stack, Data.PLATE);
     }
 
     @Override
