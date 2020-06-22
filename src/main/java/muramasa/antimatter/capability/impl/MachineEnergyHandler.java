@@ -86,6 +86,8 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
+        //Uncomment for debug energy
+        //return maxExtract;
         long extract = super.extract(maxExtract, simulate);
         //TODO: extract < maxExtract, but that would imply not an entire packet.
         if (extract == 0) {

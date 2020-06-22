@@ -5,53 +5,62 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.slot.SlotEnergy;
 import muramasa.antimatter.gui.slot.SlotInput;
 import muramasa.antimatter.gui.slot.SlotOutput;
+import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.event.GuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.util.IntReferenceHolder;
 
 import java.util.List;
 
 public abstract class ContainerMachine extends AntimatterContainer {
 
     protected TileEntityMachine tile;
-    private int lastState = -1;
 
     public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
         addSlots(tile);
+        tile.setClientProgress(0);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
+        //TODO: Generic over classes.
         this.tile = tile;
+
+        trackIntArray(getMachineData());
     }
 
     public TileEntityMachine getTile() {
         return tile;
     }
 
-//    @Override
-//    public void detectAndSendChanges() {
-//        super.detectAndSendChanges();
-//        int curState = tile.getMachineState().ordinal();
-//        if (Math.abs(curState - lastState) >= GuiEvent.MACHINE_STATE.getUpdateThreshold()) {
-//            listeners.forEach(l -> l.sendWindowProperty(this, GuiEvent.MACHINE_STATE.ordinal(), curState));
-//            lastState = curState;
-//        }
-//        tile.fluidHandler.ifPresent(h -> {
-//            if ((h.getInputWrapper() != null && h.getInputWrapper().dirty) || (h.getOutputWrapper() != null && h.getOutputWrapper().dirty)) {
-//                if (h.getInputWrapper() != null) h.getInputWrapper().dirty = false;
-//                if (h.getOutputWrapper() != null) h.getOutputWrapper().dirty = false;
-//                GregTechNetwork.syncMachineTanks(tile);
-//            }
-//        });
-//    }
-//
-//    @Override
-//    public void updateProgressBar(int id, int data) {
-//        super.updateProgressBar(id, data);
-//        if (id == GuiEvent.MACHINE_STATE.ordinal()) {
-//            tile.setMachineState(MachineState.VALUES[data]);
-//        }
-//    }
+    protected IIntArray getMachineData() {
+        return tile.getContainerData();
+    }
+
+
+
+    /*@Override
+    public void detectAndSendChanges() {
+        //int curState = tile.getMachineState().ordinal();
+        super.detectAndSendChanges();
+        tile.fluidHandler.ifPresent(h -> {
+            if ((h.getInputWrapper() != null && h.getInputWrapper().dirty) || (h.getOutputWrapper() != null && h.getOutputWrapper().dirty)) {
+                if (h.getInputWrapper() != null) h.getInputWrapper().dirty = false;
+                if (h.getOutputWrapper() != null) h.getOutputWrapper().dirty = false;
+                GregTechNetwork.syncMachineTanks(tile);
+            }
+        });
+    }*/
+
+  /*  @Override
+    public void updateProgressBar(int id, int data) {
+        super.updateProgressBar(id, data);
+        if (id == GuiEvent.MACHINE_STATE.ordinal()) {
+            tile.setMachineState(MachineState.VALUES[data]);
+        }
+    }*/
 
     protected void addSlots(TileEntityMachine tile) {
         tile.itemHandler.ifPresent(h -> {

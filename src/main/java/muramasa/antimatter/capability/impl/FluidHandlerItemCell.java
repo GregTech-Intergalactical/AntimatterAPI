@@ -17,6 +17,7 @@ public class FluidHandlerItemCell extends FluidHandlerItemStackSimple {
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        return fluid.getFluid().getAttributes().getTemperature() <= maxTemp;
+        //TODO: this bugs out, probably as recipe builder expects it to work
+        return true;//return fluid.getFluid().getAttributes().getTemperature() <= maxTemp;
     }
 }

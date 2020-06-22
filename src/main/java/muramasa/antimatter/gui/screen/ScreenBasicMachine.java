@@ -27,6 +27,6 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     @Override
     protected void init() {
         super.init();
-        addButton(new Button(guiLeft, guiTop, 16, 16, "X", b -> System.out.println("Clicked X")));
+        addButton(new Button(guiLeft, guiTop, 16, 16, "X", b -> this.minecraft.player.closeScreen()));
     }
 }

@@ -155,6 +155,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
                 }
             }
         }
+        tile.markDirty();
     }
 
     public void addOutputs(ItemStack... outputs) {
@@ -165,6 +166,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
                 if (result.isEmpty()) break;
             }
         }
+        tile.markDirty();
     }
 
     /** Helpers **/
@@ -313,6 +315,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (!inserted.isEmpty()) {
             count -= inserted.getCount() ;
         }
+        if (!simulate) tile.markDirty();
 
         return count;
     }
@@ -321,6 +324,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     @Override
     public ItemData extract(int slot, int amount, boolean simulate) {
         ItemStack stack = outputWrapper.extractItem(slot, amount, simulate);
+        if (!simulate) tile.markDirty();
         return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
     }
 

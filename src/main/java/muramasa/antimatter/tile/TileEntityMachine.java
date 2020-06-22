@@ -20,10 +20,17 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -47,6 +54,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     /** Client Data **/
     protected float clientProgress = 0; //TODO look into receiveClientEvent
+    protected float maxProgress = 0; //TODO look into receiveClientEvent
 
     /** Capabilities **/
     public Optional<MachineItemHandler> itemHandler = Optional.empty();
@@ -55,6 +63,34 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public Optional<MachineEnergyHandler> energyHandler = Optional.empty();
     public Optional<MachineCoverHandler> coverHandler = Optional.empty();
     public Optional<MachineInteractHandler> interactHandler = Optional.empty();
+
+    protected final IIntArray machineData = new IIntArray() {
+        @Override
+        public int get(int index) {
+            switch (index) {
+                case 0:
+                    return Float.floatToRawIntBits(TileEntityMachine.this.recipeHandler.map(recipe -> (float)recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0.0f));
+            }
+            return -1;
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0:
+                    float v = Float.intBitsToFloat(value);
+                    clientProgress = v;
+                    break;
+            }
+        }
+
+        @Override
+        public int size() {
+            return 1;
+        }
+    };
+
+    public IIntArray getContainerData() { return machineData;};
 
     public TileEntityMachine(TileEntityType<?> tileType) {
         super(tileType);
@@ -76,6 +112,28 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         //Allow energyHandler on client? this should fix capabilities.
         if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
         if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
+    }
+
+    private void markUpdate() {
+        World world = getWorld();
+        BlockPos pos = getPos();
+        if (isServerSide()) {
+            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+        } else {
+            ModelDataManager.requestModelDataRefresh(this);
+        }
+    }
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.pos, 3, this.getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        super.onDataPacket(net, pkt);
+        handleUpdateTag(pkt.getNbtCompound());
     }
 
     @Override
@@ -108,7 +166,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         itemHandler.ifPresent(h -> h.onMachineEvent(event,data));
         energyHandler.ifPresent(h -> h.onMachineEvent(event,data));
         //TODO: Put this in the actual handlers when a change occurs.
-        markDirty();
     }
 
     /** Getters **/
@@ -167,11 +224,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public void setMachineState(MachineState newState) {
-        if (machineState.getOverlayId() != newState.getOverlayId() && newState.allowRenderUpdate()) {
+        /*if (machineState.getOverlayId() != newState.getOverlayId() && newState.allowRenderUpdate()) {
             markForRenderUpdate();
             System.out.println("RENDER UPDATE");
+        }*/
+        if (machineState != newState) {
+            markUpdate();
+            if (isServerSide()) markDirty();
         }
-        markDirty();
         machineState = newState;
     }
 
@@ -188,7 +248,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public float getClientProgress() {
-        return clientProgress;
+            return clientProgress;
+    }
+
+    public void setClientProgress(float prog) {
+        clientProgress = prog;
     }
 
     public TileEntityMachine asMachine() {
@@ -238,7 +302,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
-        if (tag.contains(Ref.KEY_MACHINE_TILE_STATE)) machineState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_TILE_STATE)];//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
+        if (tag.contains(Ref.KEY_MACHINE_TILE_STATE)) setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_TILE_STATE)]);//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
         if (tag.contains(Ref.KEY_MACHINE_TILE_ITEMS)) itemHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_FLUIDS)));
         if (tag.contains(Ref.KEY_MACHINE_TILE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ENERGY)));

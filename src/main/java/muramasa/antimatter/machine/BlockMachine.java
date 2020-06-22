@@ -195,6 +195,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     //return id given dir & state
     private int getModelId(Direction dir, MachineState state) {
+        //Map to only ACTIVE/IDLE.
+        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE;
         switch (dir) {
             case NORTH:
             case UP:
