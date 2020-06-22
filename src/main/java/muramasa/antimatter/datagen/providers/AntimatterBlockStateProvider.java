@@ -12,7 +12,12 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockModelProvider;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
+import net.minecraftforge.client.model.generators.ModelFile;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -87,11 +92,23 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
             simpleBlock(block, getSimpleModel(block, textures[0]));
         } else if (textures.length == 2) {
             simpleBlock(block, getLayeredModel(block, textures[0], textures[1]));
+        } else if (textures.length == 6){
+            horizontalBlock(block, getSimpleModel(block, textures));
+        } else if (textures.length == 12){
+            horizontalBlock(block, getLayeredModel(block, textures));
         }
     }
 
     public BlockModelBuilder getSimpleModel(Block block, ResourceLocation texture) {
         return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/simple"))).texture("all", texture);
+    }
+
+    public BlockModelBuilder getSimpleModel(Block block, ResourceLocation... texture) {
+        return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/simple"))).texture("down", texture[0]).texture("up", texture[1]).texture("south", texture[2]).texture("north", texture[3]).texture("west", texture[4]).texture("east", texture[5]).texture("particle", texture[1]);
+    }
+
+    public BlockModelBuilder getLayeredModel(Block block, ResourceLocation... texture) {
+        return getBuilder(block).parent(models().getExistingFile(loc(Ref.ID, "block/preset/layered"))).texture("basedown", texture[0]).texture("baseup", texture[1]).texture("basesouth", texture[2]).texture("basenorth", texture[3]).texture("basewest", texture[4]).texture("baseeast", texture[5]).texture("overlaydown", texture[6]).texture("overlayup", texture[7]).texture("overlaysouth", texture[8]).texture("overlaynorth", texture[9]).texture("overlaywest", texture[10]).texture("overlayeast", texture[11]).texture("particle", texture[1]);
     }
 
     public BlockModelBuilder getLayeredModel(Block block, ResourceLocation base, ResourceLocation overlay) {

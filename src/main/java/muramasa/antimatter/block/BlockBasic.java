@@ -10,7 +10,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 
 public class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
-
     protected String domain, id;
 
     public BlockBasic(String domain, String id, Block.Properties properties) {
