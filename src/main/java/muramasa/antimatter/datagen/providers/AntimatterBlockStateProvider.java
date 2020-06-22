@@ -79,10 +79,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
         return (AntimatterBlockModelBuilder) models().getBuilder(block.getRegistryName().getPath());
     }
 
-    public AntimatterBlockModelBuilder getActiveBuilder(Block block) {
-        return (AntimatterBlockModelBuilder) models().getBuilder(block.getRegistryName().getPath() + "_active");
-    }
-
     public BlockModelBuilder cubeAll(Block block, ResourceLocation texture) {
         return models().cubeAll(block.getRegistryName().toString(), texture);
     }
