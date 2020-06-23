@@ -38,8 +38,6 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
             tooltip.add(new StringTextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
             tooltip.add(new StringTextComponent("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
             tooltip.add(new StringTextComponent("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
-            tooltip.add(new StringTextComponent("Casings: " + AntimatterAPI.all(BlockCasing.class).size()));
-            tooltip.add(new StringTextComponent("Coils: " + AntimatterAPI.all(BlockCoil.class).size()));
             tooltip.add(new StringTextComponent("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
             tooltip.add(new StringTextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
             tooltip.add(new StringTextComponent("Stones: " + AntimatterAPI.all(BlockStone.class).size()));

@@ -34,7 +34,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         stack.setTag(ItemEnergyHandler.initNBT(nbt));
-        return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack),cap,reusable ? tier.getVoltage() : 0,tier.getVoltage(),reusable ? 1 : 0,1);
+        return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack), cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 1 : 0, 1);
     }
 
     @Override
@@ -53,18 +53,18 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (nbt == null) {
             return 1D;
         }
-        return 1D - (double)ItemEnergyHandler.getEnergyFromStack(stack) / (double)cap;
+        return 1D - (double)ItemEnergyHandler.getEnergyFromStack(stack) / (double) cap;
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if (playerIn.isShiftKeyDown() && !worldIn.isRemote()) {
-            ItemStack stack = playerIn.getHeldItem(handIn);
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        if (player.isShiftKeyDown() && !world.isRemote()) {
+            ItemStack stack = player.getHeldItem(hand);
             boolean newMode = chargeModeSwitch(stack);
-            playerIn.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"));
+            player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"));
             return ActionResult.resultSuccess(stack);
         } else {
-            return super.onItemRightClick(worldIn, playerIn, handIn);
+            return super.onItemRightClick(world, player, hand);
         }
     }
 
@@ -80,13 +80,13 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flag) {
         //TODO: Translateable
         if (reusable) {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
         long energy = ItemEnergyHandler.getEnergyFromStack(stack);
         tooltip.add(new TranslationTextComponent("item.charge").appendText(": ").appendSibling(new StringTextComponent( energy + "/" + cap).applyTextStyle(energy == 0 ? TextFormatting.RED :  TextFormatting.GREEN)).appendText(" (" + tier.getId().toUpperCase() + ")"));
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.addInformation(stack, worldIn, tooltip, flag);
     }
 }
