@@ -47,7 +47,5 @@ public class DummyTagProviders {
             collection.registerAll(this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue)));
             this.setCollection(collection);
         }
-
     }
-
 }

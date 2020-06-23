@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.*;
+import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.ore.BlockOre;

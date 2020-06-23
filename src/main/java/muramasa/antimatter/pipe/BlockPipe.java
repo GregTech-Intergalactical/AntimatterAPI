@@ -1,17 +1,15 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.block.BlockDynamic;
+import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -23,7 +21,6 @@ import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

@@ -1,9 +1,8 @@
-package muramasa.antimatter.client.baked;
+package muramasa.antimatter.dynamic;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.block.BlockDynamic;
-import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.client.baked.AntimatterBakedModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;

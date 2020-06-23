@@ -1,10 +1,10 @@
-package muramasa.antimatter.client.model;
+package muramasa.antimatter.dynamic;
 
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.client.baked.DynamicBakedModel;
+import muramasa.antimatter.client.model.AntimatterModel;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;

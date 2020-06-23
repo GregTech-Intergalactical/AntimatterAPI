@@ -1,8 +1,9 @@
-package muramasa.antimatter.block;
+package muramasa.antimatter.dynamic;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.block.BlockBasic;
+import muramasa.antimatter.block.IInfoProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

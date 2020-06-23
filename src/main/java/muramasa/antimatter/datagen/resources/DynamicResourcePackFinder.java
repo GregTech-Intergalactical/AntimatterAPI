@@ -29,5 +29,4 @@ public class DynamicResourcePackFinder implements IPackFinder {
         ClientResourcePackInfo packInfo = new ClientResourcePackInfo(id, true, () -> dynamicPack, new StringTextComponent(name), new StringTextComponent("Dynamic Resources"), PackCompatibility.COMPATIBLE, ResourcePackInfo.Priority.TOP, false, null, hidden);
         packs.put(packInfo.getName(), (T) packInfo);
     }
-
 }

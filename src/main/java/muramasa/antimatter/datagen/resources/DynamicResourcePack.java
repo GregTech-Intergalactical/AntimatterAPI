@@ -156,5 +156,4 @@ public class DynamicResourcePack implements IResourcePack {
     public static ResourceLocation getTagLoc(String identifier, ResourceLocation tagId) {
         return new ResourceLocation(tagId.getNamespace(), String.join("", "tags/", identifier, "/", tagId.getPath(), ".json"));
     }
-
 }

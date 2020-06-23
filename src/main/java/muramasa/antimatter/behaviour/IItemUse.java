@@ -11,5 +11,4 @@ public interface IItemUse<T> extends IBehaviour<T> {
     }
 
     ActionResultType onItemUse(T instance, ItemUseContext c);
-
 }

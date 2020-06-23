@@ -1,7 +1,6 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.client.ModelConfig;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.pipe.PipeSize;

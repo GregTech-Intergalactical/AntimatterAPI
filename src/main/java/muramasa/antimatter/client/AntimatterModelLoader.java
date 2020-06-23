@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.model.AntimatterModel;
-import muramasa.antimatter.client.model.DynamicModel;
+import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;

@@ -8,7 +8,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
-import muramasa.antimatter.client.model.DynamicModel;
+import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;

@@ -14,5 +14,4 @@ public interface IBlockDestroyed<T> extends IBehaviour<T> {
     }
 
     boolean onBlockDestroyed(T instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity);
-
 }

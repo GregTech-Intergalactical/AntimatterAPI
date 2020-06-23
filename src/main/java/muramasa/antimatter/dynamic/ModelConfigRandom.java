@@ -1,4 +1,4 @@
-package muramasa.antimatter.client;
+package muramasa.antimatter.dynamic;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;

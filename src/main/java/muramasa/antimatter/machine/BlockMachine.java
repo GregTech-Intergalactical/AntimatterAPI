@@ -2,11 +2,11 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockDynamic;
+import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IInteractHandler;
-import muramasa.antimatter.client.ModelConfig;
+import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
