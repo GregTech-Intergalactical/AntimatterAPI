@@ -6,11 +6,7 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.RegistrationEvent;
-import net.minecraft.data.DataGenerator;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
@@ -20,13 +16,12 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(Ref.ID)
-public class Antimatter implements IAntimatterRegistrar {
+public class Antimatter extends AntimatterMod {
 
     public static Antimatter INSTANCE;
     public static final AntimatterNetwork NETWORK = new AntimatterNetwork();
@@ -38,8 +33,9 @@ public class Antimatter implements IAntimatterRegistrar {
     }
 
     public Antimatter() {
+        super();
         INSTANCE = this;
-        AntimatterAPI.addRegistrar(INSTANCE);
+
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -53,8 +49,12 @@ public class Antimatter implements IAntimatterRegistrar {
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
-        eventBus.addListener(EventPriority.LOWEST, this::dataSetup);
 
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g));
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, g));
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
@@ -79,26 +79,10 @@ public class Antimatter implements IAntimatterRegistrar {
         AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
-    public void dataSetup(GatherDataEvent e) {
-        DataGenerator gen = e.getGenerator();
-        if (e.includeClient()) AntimatterAPI.onProviderInit(Ref.ID, gen, Dist.CLIENT);
-        if (e.includeServer()) AntimatterAPI.onProviderInit(Ref.ID, gen, Dist.DEDICATED_SERVER);
-    }
-
-    @Override
-    public String getId() {
-        return Ref.ID;
-    }
-
     @Override
     public void onRegistrationEvent(RegistrationEvent event) {
         switch (event) {
             case DATA_INIT:
-                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
-                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
-                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g));
-                AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, g));
                 Data.init();
                 break;
 //            case DATA_READY:
