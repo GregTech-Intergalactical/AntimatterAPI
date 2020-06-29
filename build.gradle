@@ -12,6 +12,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
+antimatter_version= '0.0.1'
 
 libsDirName = "libs/muramasa/antimatter/antimatter/${antimatter_version}"
 version = "${antimatter_version}"
