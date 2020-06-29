@@ -21,15 +21,15 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public void onLoad() {
-        if (isServerSide()) Tesseract.FLUID.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        if (isServerSide()) Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
         super.onLoad();
     }
 
     @Override
     public void refreshConnection() {
         if (isServerSide()) {
-            Tesseract.FLUID.remove(getDimention(), pos.toLong());
-            Tesseract.FLUID.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+            Tesseract.FLUID.remove(getDimension(), pos.toLong());
+            Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
         } else {
             super.refreshConnection();
         }
@@ -37,7 +37,7 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.FLUID.remove(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.FLUID.remove(getDimension(), pos.toLong());
     }
 
     @Override

@@ -3,6 +3,7 @@ package muramasa.antimatter.machine;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.impl.CoverHandler;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -44,10 +45,12 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
+import static net.minecraft.util.Direction.*;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
@@ -137,7 +140,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (placer != null) {
             //Y = 0 , reduce to xz plane
-            Direction dir = Direction.getFacingFromVector((float) placer.getLookVec().x, (float) 0, (float) placer.getLookVec().z).getOpposite();
+            Direction dir = getFacingFromVector((float) placer.getLookVec().x, (float) 0, (float) placer.getLookVec().z).getOpposite();
             world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
         }
     }
@@ -178,20 +181,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         }
     }
 
-    //return id given dir & state
-    private int getModelId(Direction dir, MachineState state) {
-        //Map to only ACTIVE/IDLE.
-        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE;
-        switch (dir) {
-            case NORTH:
-            case UP:
-            case DOWN:
-                return state.ordinal();
-            default:
-                return (dir.getIndex()*100) + (state.ordinal());
-        }
-    }
-
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockMachine) && world == null || pos == null) return -1;
@@ -201,13 +190,37 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
-        Direction dir = state.get(BlockStateProperties.HORIZONTAL_FACING);
+        Direction facing = state.get(BlockStateProperties.HORIZONTAL_FACING);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMachine) {
             MachineState machineState = ((TileEntityMachine) tile).getMachineState();
-            return config.set(new int[]{getModelId(dir, machineState)});
+            if (((TileEntityMachine) tile).coverHandler.isPresent()) {
+                CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.get();
+                return config.set(new int[] {
+                    h.get(UP).isEmpty() ? getModelId(facing, UP, machineState) : 0,
+                    h.get(DOWN).isEmpty() ? getModelId(facing, DOWN, machineState) : 0,
+                    h.get(NORTH).isEmpty() ? getModelId(facing, NORTH, machineState) : 0,
+                    h.get(SOUTH).isEmpty() ? getModelId(facing, SOUTH, machineState) : 0,
+                    h.get(WEST).isEmpty() ? getModelId(facing, WEST, machineState) : 0,
+                    h.get(EAST).isEmpty() ? getModelId(facing, EAST, machineState) : 0
+                });
+            } else {
+                return config.set(new int[] {
+                    getModelId(facing, UP, machineState),
+                    getModelId(facing, DOWN, machineState),
+                    getModelId(facing, NORTH, machineState),
+                    getModelId(facing, SOUTH, machineState),
+                    getModelId(facing, WEST, machineState),
+                    getModelId(facing, EAST, machineState)
+                });
+            }
         }
         return config.set(new int[]{0});
+    }
+
+    private int getModelId(Direction facing, Direction overlay, MachineState state) {
+        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
+        return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + (overlay.getIndex() + 1);
     }
 
     @Override
@@ -215,64 +228,24 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier));
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
         for (int s = 0; s < 6; s++) {
-            b.texture("overlay" + Ref.DIRECTIONS[s].getName(), overlays[s]);
+            b.texture("overlay" + Ref.DIRS[s].getName(), overlays[s]);
         }
-    }
-
-    //registers textures for a given machine state
-    private void registerForState(AntimatterBlockModelBuilder builder, MachineState state, int offset) {
-        Texture[] overlays = type.getOverlayTextures(state);
-        ResourceLocation zero = type.getOverlayModel(Ref.DIRECTIONS[0]);
-        ResourceLocation one = type.getOverlayModel(Ref.DIRECTIONS[1]);
-        ResourceLocation two = type.getOverlayModel(Ref.DIRECTIONS[2]);
-        ResourceLocation three = type.getOverlayModel(Ref.DIRECTIONS[3]);
-        ResourceLocation four = type.getOverlayModel(Ref.DIRECTIONS[4]);
-        ResourceLocation five = type.getOverlayModel(Ref.DIRECTIONS[5]);
-        Texture base = tier.getBaseTexture();
-
-        //Default.
-        builder.config(getModelId(Direction.NORTH,state), (b, l) -> l.add(
-                b.of(zero).tex(of("base", base, "overlay", overlays[0])),
-                b.of(one).tex(of("base", base, "overlay", overlays[1])),
-                b.of(two).tex(of("base", base, "overlay", overlays[2])),
-                b.of(three).tex(of("base", base, "overlay", overlays[3])),
-                b.of(four).tex(of("base", base, "overlay", overlays[4])),
-                b.of(five).tex(of("base", base, "overlay", overlays[5]))
-        ));
-
-        builder.config(getModelId(Direction.WEST, state), (b, l) -> l.add(
-                b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, 90, 0),
-                b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, 90, 0),
-                b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, 90, 0),
-                b.of(three).tex(of("base", base, "overlay", overlays[3])).rot(0, 90, 0),
-                b.of(four).tex(of("base", base, "overlay", overlays[4])).rot(0, 90, 0),
-                b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, 90, 0)
-        ));
-
-        builder.config(getModelId(Direction.EAST,state), (b, l) -> l.add(
-                b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, -90, 0),
-                b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, -90, 0),
-                b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, -90, 0),
-                b.of(three).tex(of("base", base, "overlay", overlays[3])).rot(0, -90, 0),
-                b.of(four).tex(of("base", base, "overlay", overlays[4])).rot(0, -90, 0),
-                b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, -90, 0)
-        ));
-
-        builder.config(getModelId(Direction.SOUTH, state), (b, l) -> l.add(
-                b.of(zero).tex(of("base", base, "overlay", overlays[0])).rot(0, 180, 0),
-                b.of(one).tex(of("base", base, "overlay", overlays[1])).rot(0, 180, 0),
-                b.of(two).tex(of("base", base, "overlay", overlays[2])).rot(0, 180, 0),
-                b.of(three).tex(of("base", base, "overlay", overlays[3])).rot(0, 180, 0),
-                b.of(four).tex(of("base", base, "overlay", overlays[4])).rot(0, 180, 0),
-                b.of(five).tex(of("base", base, "overlay", overlays[5])).rot(0, 180, 0)
-        ));
     }
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
-        registerForState(builder, MachineState.IDLE,0);
-        registerForState(builder, MachineState.ACTIVE, OFFSET_ACTIVE);
+        buildModelsForState(builder, MachineState.IDLE);
+        buildModelsForState(builder, MachineState.ACTIVE);
         prov.state(block, builder);
+    }
+
+    private void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
+        Texture[] overlays = type.getOverlayTextures(state);
+        for (Direction f : Arrays.asList(NORTH, WEST, SOUTH, EAST)) {
+            for (Direction o : Ref.DIRS) {
+                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", tier.getBaseTexture(), "overlay", overlays[o.getIndex()])).rot(f)));
+            }
+        }
     }
 }

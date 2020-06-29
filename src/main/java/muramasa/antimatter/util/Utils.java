@@ -45,6 +45,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
@@ -501,7 +502,15 @@ public class Utils {
     /** Sends block update to clients **/
     public static void markTileForRenderUpdate(TileEntity tile) {
         BlockState state = tile.getWorld().getBlockState(tile.getPos());
-        tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
+        if (!tile.getWorld().isRemote) {
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+            tile.markDirty();
+        } else {
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
+            ModelDataManager.requestModelDataRefresh(tile);
+            tile.markDirty();
+        }
     }
 
     //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
@@ -673,7 +682,7 @@ public class Utils {
     public static void createFireAround(@Nullable World world, BlockPos pos) {
         if (world != null) {
             boolean fired = false;
-            for (Direction side : Ref.DIRECTIONS) {
+            for (Direction side : Ref.DIRS) {
                 BlockPos offset = pos.offset(side);
                 if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
                     world.setBlockState(offset, Blocks.FIRE.getDefaultState());

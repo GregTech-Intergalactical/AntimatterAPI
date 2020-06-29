@@ -126,7 +126,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         TileEntityPipe tile = getTilePipe(worldIn, pos);
         if (tile != null) {
-            for (Direction side : Ref.DIRECTIONS) {
+            for (Direction side : Ref.DIRS) {
                 TileEntityPipe neighbor = getTilePipe(worldIn, pos.offset(side));
                 if (neighbor != null) {
                     if (neighbor.canConnect(side.getOpposite().getIndex())) {
@@ -162,7 +162,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
-            for (Direction side : Ref.DIRECTIONS) {
+            for (Direction side : Ref.DIRS) {
                 // Looking for the side where is a neighbor was
                 // Check if the block is actually air or there was another reason for change.
                 if (pos.offset(side).equals(neighbor) && isAir(world.getBlockState(neighbor), world, pos)) {
@@ -177,7 +177,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos from, boolean isMoving) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
-            for (Direction side : Ref.DIRECTIONS) {
+            for (Direction side : Ref.DIRS) {
                 // Looking for the side where is a neighbor changed
                 if (pos.offset(side).equals(from)) {
                     if (tile.canConnect(side.getIndex())) {

@@ -14,6 +14,7 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -25,10 +26,7 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -110,16 +108,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         //Allow energyHandler on client? this should fix capabilities.
         if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
         if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
-    }
-
-    private void markUpdate() {
-        World world = getWorld();
-        BlockPos pos = getPos();
-        if (isServerSide()) {
-            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
-        } else {
-            ModelDataManager.requestModelDataRefresh(this);
-        }
     }
 
     @Nullable
@@ -227,7 +215,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             System.out.println("RENDER UPDATE");
         }*/
         if (machineState != newState) {
-            markUpdate();
+            Utils.markTileForRenderUpdate(this);
             if (isServerSide()) markDirty();
         }
         machineState = newState;
@@ -342,7 +330,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergyStored() + " / " + h.getMaxEnergyStored()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
-            for (Direction side : Ref.DIRECTIONS) {
+            for (Direction side : Ref.DIRS) {
                 builder.append(h.get(side).getId()).append(" ");
             }
             info.add(builder.toString());

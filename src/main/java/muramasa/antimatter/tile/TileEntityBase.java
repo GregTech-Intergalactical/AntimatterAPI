@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
@@ -35,18 +34,8 @@ public abstract class TileEntityBase extends TileEntity {
         return !world.isRemote;
     }
 
-    public int getDimention() {
+    public int getDimension() {
         return world.getDimension().getType().getId();
-    }
-
-    /** Syncs NBT between Client & Server **/
-    public void markForNBTSync() {
-        Utils.markTileForNBTSync(this);
-    }
-
-    /** Sends block update to clients **/
-    public void markForRenderUpdate() {
-        Utils.markTileForRenderUpdate(this);
     }
 
     //TODO pass constant StringBuilder

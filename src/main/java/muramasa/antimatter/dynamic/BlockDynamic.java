@@ -38,7 +38,7 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     /** Connection Logic **/
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[1];
-        for (Direction side : Ref.DIRECTIONS) {
+        for (Direction side : Ref.DIRS) {
             mut.setPos(pos.offset(side));
             BlockState adjState = world.getBlockState(mut);
             TileEntity adjTile = world.getTileEntity(mut);

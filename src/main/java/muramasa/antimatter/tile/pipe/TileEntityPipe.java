@@ -12,6 +12,7 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -88,7 +89,7 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     public void refreshConnection() {
-        markForRenderUpdate();
+        Utils.markTileForRenderUpdate(this);
     }
 
     public boolean canConnect(int side) {

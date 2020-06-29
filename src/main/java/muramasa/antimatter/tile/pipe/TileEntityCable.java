@@ -16,15 +16,15 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public void onLoad() {
-        if (isServerSide()) Tesseract.ELECTRIC.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+        if (isServerSide()) Tesseract.ELECTRIC.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
         super.onLoad();
     }
 
     @Override
     public void refreshConnection() {
         if (isServerSide()) {
-            Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
-            Tesseract.ELECTRIC.registerConnector(getDimention(), pos.toLong(), this); // this is connector class
+            Tesseract.ELECTRIC.remove(getDimension(), pos.toLong());
+            Tesseract.ELECTRIC.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
         } else {
             super.refreshConnection();
         }
@@ -32,7 +32,7 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.ELECTRIC.remove(getDimention(), pos.toLong());
+        if (isServerSide()) Tesseract.ELECTRIC.remove(getDimension(), pos.toLong());
     }
 
     @Override

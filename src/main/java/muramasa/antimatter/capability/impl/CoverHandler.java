@@ -35,7 +35,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         this.tile = tile;
         this.validCovers.add(Data.COVERNONE.getId());
         Arrays.stream(validCovers).forEach(c -> this.validCovers.add(c.getId()));
-        Arrays.stream(Ref.DIRECTIONS).forEach(d -> covers.put(d, new CoverInstance<>(Data.COVERNONE, tile)));
+        Arrays.stream(Ref.DIRS).forEach(d -> covers.put(d, new CoverInstance<>(Data.COVERNONE, tile)));
     }
 
     @Override
@@ -131,12 +131,12 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     public void deserialize(CompoundNBT compound) {
         byte sides = compound.getByte("side");
-        for (int i = 0; i < Ref.DIRECTIONS.length; i++) {
+        for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i))> 0) {
                 CompoundNBT nbt = compound.getCompound("cover-".concat(Integer.toString(i)));
-                covers.put(Ref.DIRECTIONS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString("id")), tile)).deserialize(nbt);
+                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString("id")), tile)).deserialize(nbt);
             } else {
-                covers.put(Ref.DIRECTIONS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
+                covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }
         }
     }

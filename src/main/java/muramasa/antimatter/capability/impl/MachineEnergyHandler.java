@@ -23,7 +23,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        Tesseract.ELECTRIC.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
+        Tesseract.ELECTRIC.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
         tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
     }
 
@@ -32,7 +32,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     }
 
     public void onRemove() {
-        Tesseract.ELECTRIC.remove(tile.getDimention(), tile.getPos().toLong());
+        Tesseract.ELECTRIC.remove(tile.getDimension(), tile.getPos().toLong());
     }
     //Transfers energy from internal buffer between items.
     public void onUpdate() {

@@ -8,7 +8,6 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -45,7 +44,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.getMachineType().has(MachineFlag.ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_CHANGED);
         }
-        Tesseract.ITEM.registerNode(tile.getDimention(), tile.getPos().toLong(), this);
+        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
@@ -53,7 +52,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void onRemove() {
-        Tesseract.ITEM.remove(tile.getDimention(), tile.getPos().toLong());
+        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     /*public void onReset() {

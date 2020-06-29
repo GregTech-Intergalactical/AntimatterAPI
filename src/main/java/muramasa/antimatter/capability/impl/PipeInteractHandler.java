@@ -63,7 +63,7 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
         TileEntityPipe tile = getTile();
         CoverInstance[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
-        for (Direction side : Ref.DIRECTIONS) {
+        for (Direction side : Ref.DIRS) {
             if (Connectivity.has(connection, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
@@ -89,7 +89,7 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
 
     public void onRemove() {
         TileEntityPipe tile = getTile();
-        for (Direction side : Ref.DIRECTIONS) {
+        for (Direction side : Ref.DIRS) {
             if (Connectivity.has(connection, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one

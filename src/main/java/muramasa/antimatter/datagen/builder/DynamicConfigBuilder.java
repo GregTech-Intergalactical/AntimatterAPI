@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.builder;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.texture.Texture;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Function;
@@ -54,6 +55,24 @@ public class DynamicConfigBuilder {
 
     public DynamicConfigBuilder rot(int x, int y, int z) {
         this.rotations = new int[]{x, y, z};
+        return this;
+    }
+
+    public DynamicConfigBuilder rot(Direction dir) {
+        switch (dir) {
+            case NORTH:
+                this.rotations = new int[]{0, 0, 0};
+                break;
+            case WEST:
+                this.rotations = new int[]{0, 90, 0};
+                break;
+            case SOUTH:
+                this.rotations = new int[]{0, 180, 0};
+                break;
+            case EAST:
+                this.rotations = new int[]{0, 270, 0};
+                break;
+        }
         return this;
     }
 
