@@ -17,9 +17,6 @@ public abstract class MenuHandlerMachine<T extends ContainerMachine, U extends S
     @Override
     public T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data) {
         TileEntity tile = Utils.getTileFromBuf(data);
-        if (tile instanceof TileEntityMachine) {
-            return getMenu(tile, inv, windowId);
-        }
-        return null;
+        return tile instanceof TileEntityMachine ? getMenu(tile, inv, windowId) : null;
     }
 }

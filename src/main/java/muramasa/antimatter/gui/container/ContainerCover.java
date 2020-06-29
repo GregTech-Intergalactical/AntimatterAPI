@@ -13,6 +13,7 @@ public class ContainerCover extends AntimatterContainer {
     protected TileEntity onEntity;
     private CoverInstance c;
     private MenuHandlerCover m;
+
     public ContainerCover(CoverInstance on, PlayerInventory playerInv, MenuHandlerCover menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
         this.c =  on;

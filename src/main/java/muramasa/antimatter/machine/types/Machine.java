@@ -50,7 +50,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
-    protected GuiData<?> guiData;
+    protected GuiData guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
@@ -170,7 +170,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public void setGUI(MenuHandler<?, ?> menuHandler) {
-        guiData = new GuiData<>(this, menuHandler);
+        guiData = new GuiData(this, menuHandler);
         addFlags(MachineFlag.GUI);
     }
 
@@ -200,7 +200,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tiers.get(0);
     }
 
-    public GuiData<?> getGui() {
+    public GuiData getGui() {
         return guiData;
     }
 

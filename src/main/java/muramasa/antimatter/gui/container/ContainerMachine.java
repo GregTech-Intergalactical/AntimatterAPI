@@ -1,26 +1,23 @@
 package muramasa.antimatter.gui.container;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
-import muramasa.antimatter.gui.slot.SlotEnergy;
-import muramasa.antimatter.gui.slot.SlotInput;
-import muramasa.antimatter.gui.slot.SlotOutput;
-import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.event.GuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.IntReferenceHolder;
+import net.minecraftforge.items.SlotItemHandler;
 
-import java.util.List;
+import java.util.Optional;
 
 public abstract class ContainerMachine extends AntimatterContainer {
 
     protected TileEntityMachine tile;
 
-    public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine menuHandler, int windowId) {
+    public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine<?, ?> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
         addSlots(tile);
         tile.setClientProgress(0);
@@ -38,8 +35,6 @@ public abstract class ContainerMachine extends AntimatterContainer {
     protected IIntArray getMachineData() {
         return tile.getContainerData();
     }
-
-
 
     /*@Override
     public void detectAndSendChanges() {
@@ -63,29 +58,15 @@ public abstract class ContainerMachine extends AntimatterContainer {
     }*/
 
     protected void addSlots(TileEntityMachine tile) {
-        tile.itemHandler.ifPresent(h -> {
-            int inputIndex = 0, outputIndex = 0, cellIndex = 0, chargeIndex = 0;
-            List<SlotData> lst = tile.getMachineType().getGui().getSlots(tile.getMachineTier());
-            for (SlotData slot : lst) {
-                switch (slot.type) {
-                    case IT_IN:
-                        addSlot(new SlotInput(h.getInputWrapper(), inputIndex++, slot.x, slot.y));
-                        break;
-                    case IT_OUT:
-                        addSlot(new SlotOutput(h.getOutputWrapper(), outputIndex++, slot.x, slot.y));
-                        break;
-                    case CELL_IN:
-                        addSlot(new SlotInput(h.getCellWrapper(), cellIndex++, slot.x, slot.y));
-                        break;
-                    case CELL_OUT:
-                        addSlot(new SlotOutput(h.getCellWrapper(), cellIndex++, slot.x, slot.y));
-                        break;
-                    case ENERGY:
-                        addSlot(new SlotEnergy(h.getChargeWrapper(), chargeIndex++, slot.x, slot.y));
-                        break;
-                }
+        Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
+        for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
+            slotIndexMap.computeIntIfAbsent(slot.type.getId(), k -> 0);
+            Optional<SlotItemHandler> supplier = slot.type.getSlotSupplier().get(tile, slotIndexMap.getInt(slot.type.getId()), slot);
+            if (supplier.isPresent()) {
+                addSlot(supplier.get());
+                slotIndexMap.compute(slot.type.getId(), (k, v) -> v++);
             }
-        });
+        }
     }
 
     @Override
