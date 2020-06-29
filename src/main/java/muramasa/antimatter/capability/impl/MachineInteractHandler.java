@@ -1,49 +1,46 @@
 package muramasa.antimatter.capability.impl;
 
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
-import static muramasa.antimatter.Data.WRENCH;
-import static muramasa.antimatter.Data.HAMMER;
+import static muramasa.antimatter.Data.*;
 
-public class MachineInteractHandler extends InteractHandler {
+public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
 
     public MachineInteractHandler(TileEntityMachine tile) {
         super(tile);
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull Direction parsedSide, AntimatterToolType type) {
-        TileEntityMachine tile = (TileEntityMachine) getTile();
-        //TODO: this is lefti n BlockMachine.java for higher priority
-        /*
-        LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, side);
-        LazyOptional<Object> consume = coverable.map(i -> {
-            boolean ok = i.onInteract(player,hand, parsedSide,Utils.getToolType(player));
-            return ok ? ok : null;
-        });
-        if (consume.isPresent()) {
-            return true;
-        }*/
-        if (type == WRENCH || type == ELECTRIC_WRENCH) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+        TileEntityMachine tile = getTile();
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemCover) {
+            return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
+        } else if (type == WRENCH || type == ELECTRIC_WRENCH) {
             return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
         } else if (type == HAMMER) {
             tile.toggleMachine();
             player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
             return true;
-        }
-        return false;
+        } else if (type == CROWBAR) {
+            return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.removeCover(player, side)).orElse(false);
+        } else if (type == SCREWDRIVER) {
+            CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.get(side)).orElse(COVER_EMPTY);
+            return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
+        } else return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
     }
 }

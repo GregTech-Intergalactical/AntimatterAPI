@@ -4,15 +4,14 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.dynamic.BlockDynamic;
+import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
@@ -39,7 +38,6 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -196,10 +194,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile != null) {
-            LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
-            interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getInteractSide(hit), Utils.getToolType(player)));
+            if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
         }
-        return super.onBlockActivated(state, world, pos, player, hand, hit);
+        return ActionResultType.PASS;
     }
 
     @Override

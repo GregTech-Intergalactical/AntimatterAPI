@@ -1,15 +1,13 @@
 package muramasa.antimatter.machine;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.dynamic.BlockDynamic;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.capability.IInteractHandler;
-import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.dynamic.BlockDynamic;
+import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
@@ -42,7 +40,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -109,26 +106,14 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
-                //TODO: priority order, or call this inside InteractHandler?
-                //I am not sure if the cover interaction is supposed to be done from IInteractHandler.
-
-                //TODO: This runs twice when right clicking a machine!
-                LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE, hit.getFace());
-                boolean consume = coverable.map(i -> {
-                    return i.onInteract(player, hand, hit.getFace(), Utils.getToolType(player));
-                }).orElse(false);
-                if (consume) {
-                    return ActionResultType.SUCCESS;
-                }
-                if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider) {
+                if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
+                if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider && hand == Hand.MAIN_HAND) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                     return ActionResultType.SUCCESS;
                 }
-                LazyOptional<IInteractHandler> interaction = tile.getCapability(AntimatterCaps.INTERACTABLE);
-                interaction.ifPresent(i -> i.onInteract(player, hand, hit.getFace(), Utils.getInteractSide(hit), Utils.getToolType(player)));
             }
         }
-        return super.onBlockActivated(state, world, pos, player, hand, hit);
+        return ActionResultType.PASS;
     }
 
 //    @Override

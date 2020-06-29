@@ -8,6 +8,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ControllerInteractHandler extends MachineInteractHandler {
 
@@ -16,7 +17,7 @@ public class ControllerInteractHandler extends MachineInteractHandler {
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull Direction parsedSide, AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         if (type == Data.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
             if (!machine.isStructureValid()) {
@@ -24,6 +25,6 @@ public class ControllerInteractHandler extends MachineInteractHandler {
                 return true;
             }
         }
-        return super.onInteract(player, hand, side,  parsedSide, type);
+        return super.onInteract(player, hand, side, type);
     }
 }

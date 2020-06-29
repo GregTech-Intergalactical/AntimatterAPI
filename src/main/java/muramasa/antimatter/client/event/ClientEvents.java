@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
@@ -22,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
@@ -127,13 +129,17 @@ public class ClientEvents {
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof IInfoProvider) {
             e.getLeft().add("");
-            e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Server]");
+            e.getLeft().add(TextFormatting.AQUA + "[Antimatter Debug Server]");
             e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ObjectArrayList<>(), world, state, pos));
+        }
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEntityBase) {
+            e.getLeft().addAll(((TileEntityBase) tile).getInfo());
         }
         if (MC.player.isCrouching()) {
             //TODO
             e.getLeft().add("");
-            e.getLeft().add(TextFormatting.AQUA + "[GregTech Debug Client]");
+            e.getLeft().add(TextFormatting.AQUA + "[Antimatter Debug Client]");
         }
     }
 

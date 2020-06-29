@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
-import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
 import muramasa.antimatter.gui.GuiData;
@@ -18,7 +18,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -227,49 +226,17 @@ public final class AntimatterAPI {
     }
 
     /** JEI Registry Section **/
-    public static void registerJEICategory(RecipeMap<?> map, GuiData<?> gui) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
             //AntimatterJEIPlugin.registerCategory(map, gui);
         }
     }
 
     /** Attempts to do smart interaction with a compatible Tile/Block **/
-    public static boolean interact(TileEntity tile, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
-//        Direction targetSide = Utils.getInteractSide(side, hitX, hitY, hitZ);
-//        if (GregTechAPI.placeCover(tile, player, player.getHeldItem(hand), targetSide, hitX, hitY, hitZ)) return true;
-//        if (tile.hasCapability(GTCapabilities.COVERABLE, targetSide)) {
-//            ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, targetSide);
-//            if (coverHandler != null && coverHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
-//        }
-//        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, targetSide)) {
-//            IInteractHandler interactHandler = tile.getCapability(GTCapabilities.CONFIGURABLE, targetSide);
-//            if (interactHandler != null && interactHandler.onInteract(player, hand, targetSide, ToolType.get(player.getHeldItem(hand)))) return true;
-//        }
-        return false;
-    }
-
-    /** Attempts to place a cover on a tile at a given side **/
-    public static boolean placeCover(TileEntity tile, PlayerEntity player, ItemStack stack, Direction side, float hitX, float hitY, float hitZ) {
-//        if (stack.isEmpty()) return false;
-//        ICoverHandler coverHandler = tile.getCapability(GTCapabilities.COVERABLE, side);
-//        if (coverHandler == null) return false;
-//        Cover cover = GregTechAPI.getCoverFromCatalyst(stack);
-//        if (cover == null) return false;
-//        if (coverHandler.set(Utils.getInteractSide(side, hitX, hitY, hitZ), cover.onNewInstance(Utils.ca(1, stack)))) {
-//            if (!player.isCreative()) stack.shrink(1);
-//            return true;
-//        }
-        return false;
-    }
-
-    /** Attempts to remove a cover at a given side **/
-    public static boolean removeCover(PlayerEntity player, ICoverHandler coverHandler, Direction side) {
-        ItemStack toDrop = coverHandler.getCoverInstance(side).getCover().getDroppedStack();
-        if (coverHandler.onPlace(side, Data.COVERNONE)) {
-            if (!player.isCreative()) player.dropItem(toDrop, false);
-            return true;
-        }
-        return false;
+    public static boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side) {
+        boolean result = tile.getCapability(AntimatterCaps.COVERABLE, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+        result = tile.getCapability(AntimatterCaps.INTERACTABLE, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+        return result;
     }
 
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {
@@ -288,6 +255,5 @@ public final class AntimatterAPI {
     public interface IBlockUpdateEvent {
 
         void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState);
-
     }
 }

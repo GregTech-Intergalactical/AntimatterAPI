@@ -2,7 +2,6 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.impl.*;
@@ -23,7 +22,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
@@ -235,16 +233,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         machineState = newState;
     }
 
-    public Cover[] getValidCovers() {
+    public Cover[] getValidCovers() { //TODO fix me
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
-    public CoverInstance[] getAllCovers() {
-        return coverHandler.map(CoverHandler::getAll).orElse(new CoverInstance[0]);
-    }
-
-    public CoverInstance getCover(Direction side) {
-        return coverHandler.map(h -> h.getCoverInstance(side)).orElse(Data.COVER_EMPTY);
+    public CoverInstance<?> getCover(Direction side) {
+        return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 
     public float getClientProgress() {
@@ -253,10 +247,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public void setClientProgress(float prog) {
         clientProgress = prog;
-    }
-
-    public TileEntityMachine asMachine() {
-        return this;
     }
 
     @Nonnull
@@ -353,7 +343,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (Direction side : Ref.DIRECTIONS) {
-                builder.append(h.getCoverInstance(side).getId()).append(" ");
+                builder.append(h.get(side).getId()).append(" ");
             }
             info.add(builder.toString());
         });

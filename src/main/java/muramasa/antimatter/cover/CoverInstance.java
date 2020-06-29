@@ -1,11 +1,9 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -14,26 +12,25 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.Optional;
 
-public class CoverInstance implements INamedContainerProvider {
+public class CoverInstance<T extends TileEntity> implements INamedContainerProvider {
+
     private Cover cover;
     private CompoundNBT nbt;
-    private TileEntity tile;
+    private T tile;
 
-    public CoverInstance(Cover cover, TileEntity tile) {
+    public CoverInstance(Cover cover, T tile) {
         this.cover = Objects.requireNonNull(cover);
         this.tile = tile;
         this.nbt = new CompoundNBT();
     }
+
     //This allows you to instantiate a non-stateful cover, like COVER_EMPTY.
     //Using state with this is a runtime error.
     public CoverInstance(Cover cover) {
@@ -42,20 +39,45 @@ public class CoverInstance implements INamedContainerProvider {
     }
 
     //Automatically calls onPlace.
-    public CoverInstance(Cover cover, TileEntity tile, Direction side) {
-        this(cover,tile);
-        onPlace(side);
+    public CoverInstance(Cover cover, T tile, Direction side) {
+        this(cover, tile);
+    }
+
+    /** Events **/
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+        return cover.onInteract(this, player, hand, side, type);
+    }
+
+    public void onPlace(Direction side) {
+        cover.onPlace(this, side);
+    }
+
+    public void onRemove(Direction side) {
+        cover.onRemove(this, side);
+    }
+
+    //Called on update of the world.
+    public void onUpdate(Direction side) {
+        cover.onUpdate(this, side);
+    }
+
+    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
+        cover.onMachineEvent(this, tile, event);
+    }
+
+    public boolean openGui(PlayerEntity player, Direction side) {
+        return cover.openGui(this, player, side);
     }
 
     public void serialize(CompoundNBT nbt) {
-        nbt.putString("ID",cover.getId());
+        nbt.putString("id", cover.getId());
     }
 
     public boolean isEqual(Cover cover) {
         return this.cover.getId().equals(cover.getId());
     }
 
-    public boolean isEqual(CoverInstance cover) {
+    public boolean isEqual(CoverInstance<T> cover) {
         return this.cover.getId().equals(cover.cover.getId());
     }
 
@@ -73,37 +95,8 @@ public class CoverInstance implements INamedContainerProvider {
         return cover;
     }
 
-    public TileEntity getTile() {
+    public T getTile() {
         return tile;
-    }
-
-    public Optional<TileEntityMachine> getMachine() {
-        if (tile instanceof TileEntityMachine) {
-            return Optional.of((TileEntityMachine)tile);
-        }
-        return Optional.empty();
-    }
-
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-        return cover.onInteract(this,player,hand,side,type);
-    }
-
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
-        this.cover.onMachineEvent(this,tile,event);
-    }
-
-
-    public void onPlace(Direction side) {
-        cover.onPlace(this, side);
-    }
-
-    public void onRemove(Direction side) {
-        cover.onRemove(this, side);
-    }
-
-
-    public void onUpdate(Direction side) {
-        cover.onUpdate(this, side);
     }
 
     @Override
@@ -114,7 +107,7 @@ public class CoverInstance implements INamedContainerProvider {
     @Nullable
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
-        return cover.gui.getMenuHandler().getMenu(this, inv, windowId);
+        return cover.gui != null && cover.gui.getMenuHandler() != null ? cover.gui.getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
     public CompoundNBT serialize() {

@@ -12,7 +12,7 @@ public abstract class CoverTiered extends Cover {
     public CoverTiered() {
         Arrays.stream(Tier.getStandard()).forEach(t -> {
             CoverTiered tier = getTiered(t);
-            AntimatterAPI.register(Cover.class,tier.getId() ,tier);
+            AntimatterAPI.register(Cover.class, tier.getId(), tier);
         });
     }
 

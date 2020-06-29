@@ -14,7 +14,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import tesseract.graph.Connectivity;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -22,7 +21,7 @@ import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
 
 @ParametersAreNonnullByDefault
-public class PipeInteractHandler extends InteractHandler {
+public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
 
     private byte connection; // for wrappers around the tile
 
@@ -33,26 +32,26 @@ public class PipeInteractHandler extends InteractHandler {
     // TODO: Block if covers are exist
     //TODO: use parsedSide when working properl
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nonnull Direction parsedSide, @Nullable AntimatterToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         if (type == getTool() && hand == Hand.MAIN_HAND) {
             boolean isTarget = false;
-            TileEntityPipe tile = (TileEntityPipe) getTile();
-            TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(parsedSide));
+            TileEntityPipe tile = getTile();
+            TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
             if (target instanceof TileEntityPipe) {
-                ((TileEntityPipe) target).toggleConnection(parsedSide.getOpposite());
+                ((TileEntityPipe) target).toggleConnection(side.getOpposite());
             } else {
                 isTarget = tile.isServerSide() && Utils.isForeignTile(target); // Check that entity is not GT one
             }
-            tile.toggleConnection(parsedSide);
+            tile.toggleConnection(side);
 
             // If some target in front of, then create wrapper
             if (isTarget) {
-                if (tile.canConnect(parsedSide.getIndex())) {
-                    connection = Connectivity.set(connection, parsedSide.getIndex());
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), parsedSide, target, tile.getCover(parsedSide).getCover());
+                if (tile.canConnect(side.getIndex())) {
+                    connection = Connectivity.set(connection, side.getIndex());
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
                 } else {
-                    connection = Connectivity.clear(connection, parsedSide.getIndex());
-                    PipeCache.remove(tile.getPipeType(), tile.getWorld(), parsedSide, target);
+                    connection = Connectivity.clear(connection, side.getIndex());
+                    PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
                 }
             }
             return true;
@@ -61,7 +60,7 @@ public class PipeInteractHandler extends InteractHandler {
     }
 
     private void onInit() {
-        TileEntityPipe tile = (TileEntityPipe) getTile();
+        TileEntityPipe tile = getTile();
         CoverInstance[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRECTIONS) {
@@ -78,7 +77,7 @@ public class PipeInteractHandler extends InteractHandler {
 
     /** Called when neighbor was placed near */
     public void onChange(Direction side) {
-        TileEntityPipe tile = (TileEntityPipe) getTile();
+        TileEntityPipe tile = getTile();
         TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
         if (Utils.isForeignTile(neighbor)) {
             connection = Connectivity.set(connection, side.getIndex());
@@ -89,7 +88,7 @@ public class PipeInteractHandler extends InteractHandler {
     }
 
     public void onRemove() {
-        TileEntityPipe tile = (TileEntityPipe) getTile();
+        TileEntityPipe tile = getTile();
         for (Direction side : Ref.DIRECTIONS) {
             if (Connectivity.has(connection, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
@@ -103,12 +102,12 @@ public class PipeInteractHandler extends InteractHandler {
     /** NBT **/
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putByte("Connection", connection);
+        tag.putByte("connection", connection);
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
-        connection = tag.getByte("Connection");
+        connection = tag.getByte("connection");
         onInit();
     }
 

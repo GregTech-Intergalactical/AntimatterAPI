@@ -16,17 +16,17 @@ import muramasa.antimatter.gui.screen.ScreenCover;
 import muramasa.antimatter.gui.screen.ScreenHatch;
 import muramasa.antimatter.gui.screen.ScreenMultiMachine;
 import muramasa.antimatter.item.DebugScannerItem;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.tile.pipe.TileEntityCable;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.behaviour.*;
@@ -181,12 +181,11 @@ public class Data {
 
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
-    //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
-    public static Cover COVERNONE = new CoverNone();
+    public static Cover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static Cover COVEROUTPUT = new CoverOutput();
 
-    public static CoverInstance COVER_EMPTY = new CoverInstance(COVERNONE);
-    public static CoverInstance COVER_OUTPUT = new CoverInstance(COVEROUTPUT);
+    public static CoverInstance<?> COVER_EMPTY = new CoverInstance<>(COVERNONE);
+    public static CoverInstance<?> COVER_OUTPUT = new CoverInstance<>(COVEROUTPUT);
 
     public static MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>>(Ref.ID, "container_basic") {
         @Nullable
@@ -205,7 +204,7 @@ public class Data {
     public static MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return new ContainerCover((CoverInstance) tile,  playerInv, this, windowId);
+            return new ContainerCover((CoverInstance<?>) tile,  playerInv, this, windowId);
         }
 
         @Override
@@ -246,11 +245,11 @@ public class Data {
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
-        WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE);
-        WRENCH.addBehaviour(new BehaviourConnection(tile -> tile instanceof TileEntityMachine || tile instanceof TileEntityFluidPipe));
-        ELECTRIC_WRENCH.addBehaviour(new BehaviourConnection(tile -> tile instanceof TileEntityMachine || tile instanceof TileEntityFluidPipe));
+        WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE, new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
+        CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
-        WIRE_CUTTER.addBehaviour(new BehaviourConnection(tile -> (tile instanceof TileEntityCable)));
+        WIRE_CUTTER.addBehaviour(new BehaviourConnection(b -> b instanceof BlockPipe));
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
             if (type.getToolTypes().contains("shovel")) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
