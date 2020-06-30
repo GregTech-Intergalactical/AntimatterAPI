@@ -1,5 +1,6 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 

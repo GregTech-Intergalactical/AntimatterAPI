@@ -5,7 +5,7 @@ import com.google.common.collect.Multimap;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.impl.ItemEnergyHandler;
+import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;

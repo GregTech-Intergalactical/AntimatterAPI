@@ -1,6 +1,7 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.MachineState;

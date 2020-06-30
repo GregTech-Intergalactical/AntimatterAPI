@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.item;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -14,6 +14,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+//TODO rework this class
 public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
 
     // TODO: Add black/white lister filter mode

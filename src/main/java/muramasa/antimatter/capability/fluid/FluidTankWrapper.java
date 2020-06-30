@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.fluid;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
+//TODO rework this class
 public class FluidTankWrapper implements IFluidHandler {
 
     // TODO: Add black/white lister filter mode

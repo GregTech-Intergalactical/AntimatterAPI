@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability;
 
 import muramasa.antimatter.capability.IEnergyHandler;
 import net.minecraftforge.energy.IEnergyStorage;

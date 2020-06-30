@@ -1,8 +1,8 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;

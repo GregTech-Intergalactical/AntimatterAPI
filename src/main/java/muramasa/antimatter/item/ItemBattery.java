@@ -1,6 +1,6 @@
 package muramasa.antimatter.item;
 
-import muramasa.antimatter.capability.impl.ItemEnergyHandler;
+import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;

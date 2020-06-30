@@ -1,5 +1,6 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.pipe;
 
+import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 
 public class PipeCoverHandler extends CoverHandler<TileEntityPipe> {

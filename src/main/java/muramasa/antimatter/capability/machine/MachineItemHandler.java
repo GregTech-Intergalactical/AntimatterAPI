@@ -1,9 +1,10 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.capability.item.ItemStackWrapper;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;

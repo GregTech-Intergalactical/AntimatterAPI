@@ -1,6 +1,5 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability;
 
-import muramasa.antimatter.capability.IInteractHandler;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;

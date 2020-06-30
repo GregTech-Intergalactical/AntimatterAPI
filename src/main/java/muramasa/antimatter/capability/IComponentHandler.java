@@ -1,9 +1,9 @@
 package muramasa.antimatter.capability;
 
 import mcp.MethodsReturnNonnullByDefault;
-import muramasa.antimatter.capability.impl.MachineEnergyHandler;
-import muramasa.antimatter.capability.impl.MachineFluidHandler;
-import muramasa.antimatter.capability.impl.MachineItemHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 

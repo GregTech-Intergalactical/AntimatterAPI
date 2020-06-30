@@ -3,7 +3,7 @@ package muramasa.antimatter.machine;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.impl.CoverHandler;
+import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -54,8 +54,6 @@ import static net.minecraft.util.Direction.*;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
 
-    static int OFFSET_ACTIVE = 5;
-
     protected Machine<?> type;
     protected Tier tier;
 
@@ -84,14 +82,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
     }
 
-    @Override
-    public void onReplaced(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        //TODO determine if shouldRefresh func needs to be added back in
-        //return (oldState.getBlock() != newState.getBlock());
-        super.onReplaced(state, world, pos, newState, isMoving);
-    }
-
-
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
@@ -119,27 +109,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return ActionResultType.PASS;
     }
 
-//    @Override
-//    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile != null && GregTechAPI.interact(tile, player, hand, side, hitX, hitY, hitZ)) return true;
-//        if (tile instanceof TileEntityMachine) {
-//            TileEntityMachine machine = (TileEntityMachine) tile;
-//            //TODO machine gui member -> Optional<GuiData>?
-//            //TODO possibly drop flags for optionals?
-//            if (machine.getMachineType().hasFlag(GUI)) {
-//                GuiData gui = machine.getMachineType().getGui();
-//                player.openGui(gui.getInstance(), gui.getGuiId(), world, pos.getX(), pos.getY(), pos.getZ());
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (placer != null) {
-            //Y = 0 , reduce to xz plane
+        if (placer != null) { //Y = 0 , reduce to xz plane
             Direction dir = getFacingFromVector((float) placer.getLookVec().x, (float) 0, (float) placer.getLookVec().z).getOpposite();
             world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
         }

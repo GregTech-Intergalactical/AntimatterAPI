@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IMachineHandler;

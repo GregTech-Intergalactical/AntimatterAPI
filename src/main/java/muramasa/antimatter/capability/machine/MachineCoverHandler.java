@@ -1,7 +1,8 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.RotatableCoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.machine.event.IMachineEvent;

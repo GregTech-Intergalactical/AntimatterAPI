@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability;
 
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;

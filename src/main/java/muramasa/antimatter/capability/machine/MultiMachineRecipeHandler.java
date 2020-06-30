@@ -1,4 +1,4 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.recipe.Recipe;

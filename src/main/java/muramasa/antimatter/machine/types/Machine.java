@@ -17,6 +17,7 @@ import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.structure.Structure;
+import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -174,12 +175,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addFlags(MachineFlag.GUI);
     }
 
-    public void setStructure(Structure structure) {
-        getTiers().forEach(t -> setStructure(t, structure));
+    public void setStructure(Function<StructureBuilder, Structure> func) {
+        getTiers().forEach(t -> setStructure(t, func));
     }
 
-    public void setStructure(Tier tier, Structure structure) {
-        structures.put(tier, structure);
+    public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
+        structures.put(tier, func.apply(new StructureBuilder()));
     }
 
     public boolean has(MachineFlag flag) {

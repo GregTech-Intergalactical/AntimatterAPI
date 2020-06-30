@@ -1,6 +1,7 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.tile.pipe.TileEntityCable;

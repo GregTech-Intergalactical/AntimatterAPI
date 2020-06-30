@@ -1,6 +1,7 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability.energy;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.EnergyHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

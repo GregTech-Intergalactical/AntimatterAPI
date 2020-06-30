@@ -1,6 +1,8 @@
-package muramasa.antimatter.capability.impl;
+package muramasa.antimatter.capability;
 
-import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;

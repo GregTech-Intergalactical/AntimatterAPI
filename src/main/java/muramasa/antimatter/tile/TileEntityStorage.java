@@ -1,19 +1,14 @@
 package muramasa.antimatter.tile;
 
 import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.capability.impl.MachineEnergyHandler;
-import muramasa.antimatter.capability.impl.MachineItemHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.util.Utils;
-import net.minecraftforge.items.IItemHandler;
-import tesseract.api.electric.IElectricNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.LongStream;
 
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 import static muramasa.antimatter.machine.MachineFlag.ITEM;
