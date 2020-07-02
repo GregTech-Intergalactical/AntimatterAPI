@@ -85,7 +85,6 @@ repositories {
         name 'JEI Fallback'
         url 'https://modmaven.k-4u.nl'
     }
-    mavenLocal()
 }
 
 dependencies {
@@ -96,6 +95,18 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 }
+
+def getVersionAppendage() {
+    if (System.env.TRAVIS) {
+        return System.env.TRAVIS_BUILD_NUMBER
+    }
+
+    def proc = 'git rev-parse --short HEAD'.execute()
+    proc.waitFor()
+    return 'dev-' + proc.exitValue() ? 'unknown' : proc.text.trim()
+}
+
+version = antimatter_version + '.' + getVersionAppendage()
 
 task sourcesJar(type: Jar) {
     classifier 'sources'
