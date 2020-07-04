@@ -1,2 +1,3 @@
-include ":tesseractapi"
-project(":tesseractapi").projectDir = file("../TesseractAPI")
+rootProject.name = 'antimatter'
+
+include ':tesseract'

@@ -12,11 +12,8 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
-antimatter_version= '0.0.1'
 
-libsDirName = "libs/muramasa/antimatter/antimatter/${antimatter_version}"
-version = "${antimatter_version}"
-group = 'muramasa.antimatter'
+group = 'org.muramasa.gti'
 archivesBaseName = 'antimatter'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -81,35 +78,41 @@ minecraft {
 
 repositories {
     maven {
-        name "JEI"
-        url "http://dvs1.progwml6.com/files/maven"
+        name 'JEI'
+        url 'http://dvs1.progwml6.com/files/maven'
     }
     maven {
-        name "JEI Fallback"
-        url "https://modmaven.k-4u.nl"
+        name 'JEI Fallback'
+        url 'https://modmaven.k-4u.nl'
     }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    if (local_dev_dependancies.toBoolean()) {
-        compile project(":tesseractapi")
-        compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-        runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-    }
-    else {
-        compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-        runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-    }
+
+    implementation project(':tesseract')
+
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 }
 
+def getVersionAppendage() {
+    if (System.env.TRAVIS) {
+        return System.env.TRAVIS_BUILD_NUMBER
+    }
+
+    def proc = 'git rev-parse --short HEAD'.execute()
+    proc.waitFor()
+    return 'dev-' + proc.exitValue() ? 'unknown' : proc.text.trim()
+}
+
+version = antimatter_version + '.' + getVersionAppendage()
+
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    classifier 'sources'
     from sourceSets.main.allSource
 }
 
 artifacts {
     sourcesJar
 }
-
-classes.dependsOn sourcesJar
