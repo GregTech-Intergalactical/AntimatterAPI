@@ -119,4 +119,9 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
     public void deserialize(CompoundNBT nbt) {
         cover.deserialize(nbt);
     }
+
+    public CompoundNBT getNbt() {
+        if (this.nbt == null) this.nbt = new CompoundNBT();
+        return this.nbt;
+    }
 }

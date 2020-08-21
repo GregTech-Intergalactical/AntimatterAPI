@@ -20,4 +20,5 @@ public class SlotInput extends SlotItemHandler {
     public boolean canTakeStack(PlayerEntity player) {
         return true;
     }
+
 }

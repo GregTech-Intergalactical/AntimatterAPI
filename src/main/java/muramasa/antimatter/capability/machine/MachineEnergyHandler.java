@@ -3,7 +3,9 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,6 +14,7 @@ import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler {
@@ -24,8 +27,19 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        Tesseract.ELECTRIC.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (this.tile.isServerSide()) {
+            Tesseract.ELECTRIC.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
         tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+    }
+
+    @Override
+    public long insert(long maxReceive, boolean simulate) {
+        long inserted = super.insert(maxReceive, simulate);
+        if (inserted != 0 && !simulate) {
+            this.tile.onMachineEvent(ContentEvent.ENERGY_CHANGED, inserted);
+        }
+        return inserted;
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
@@ -33,11 +47,11 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     }
 
     public void onRemove() {
-        Tesseract.ELECTRIC.remove(tile.getDimension(), tile.getPos().toLong());
+        if (tile.isServerSide()) Tesseract.ELECTRIC.remove(tile.getDimension(), tile.getPos().toLong());
     }
     //Transfers energy from internal buffer between items.
     public void onUpdate() {
-        if (controller != null) controller.tick();
+        if (controller != null && tile.isServerSide()) controller.tick();
         if (cachedItems != null && cachedItems.size() > 0) {
             tile.itemHandler.ifPresent(handler -> {
                 //TODO: Have different amperages for items.
@@ -89,16 +103,31 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public long extract(long maxExtract, boolean simulate) {
         //Uncomment for debug energy
         //return maxExtract;
+
+        //TODO: This is the network handler, so it checks canOutput(), but that is false in this case, so perfomr extraction here.
         long extract = super.extract(maxExtract, simulate);
         //TODO: extract < maxExtract, but that would imply not an entire packet.
-        if (extract == 0) {
-            //In the case of a recipe trying to get energy, try to check the charge slot.
-            for (IEnergyHandler handler : cachedItems) {
-                long iExtract = handler.extract(maxExtract, true);
-                if (iExtract == maxExtract) {
-                    return handler.extract(maxExtract,false);
+
+        //This runs if it cannot output, i.e. for internal energy consumption such as recipes.
+        if (extract == 0 && !canOutput()) {
+            //TODO: Itemss like batteries.
+            /*if (this.getEnergyStored() < maxExtract) {
+                for (IEnergyHandler handler : cachedItems) {
+                    long iExtract = handler.extract(maxExtract, true);
+                    if (iExtract == maxExtract) {
+                        if (!simulate) {
+                            return handler.extract(maxExtract,false);
+                        } else {
+                            return iExtract;
+                        }
+                    }
                 }
-            }
+                return 0;
+            }*/
+            //TODO: this allows weird quantities to be removed. Should it allow non-complete packets?
+            long extracted = Math.min(energy, maxExtract);
+            if (!simulate) energy -= extracted;
+            return extracted;
         }
         return extract;
     }
@@ -134,6 +163,10 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         //TODO: Check if item event
-        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+        if (event instanceof MachineEvent) {
+            if ((event == MachineEvent.ITEMS_OUTPUTTED || event == MachineEvent.ITEMS_INPUTTED)) {
+                tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+            }
+        }
     }
 }

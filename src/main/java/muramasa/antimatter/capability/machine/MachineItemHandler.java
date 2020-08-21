@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.AntimatterCaps;
@@ -45,15 +46,17 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.getMachineType().has(MachineFlag.ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_CHANGED);
         }
-        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
-        if (controller != null) controller.tick();
+        if (controller != null && tile.isServerSide()) controller.tick();
     }
 
     public void onRemove() {
-        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+        if (tile.isServerSide()) {
+            Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+        }
     }
 
     /*public void onReset() {
@@ -130,9 +133,12 @@ public class MachineItemHandler implements IItemNode, ITickHost {
      **/
     public List<IEnergyHandler> getChargeableItems() {
         List<IEnergyHandler> list = new ObjectArrayList<>();
-        for (int i = 0; i < chargeWrapper.getSlots(); i++) {
-            //orElse: null, should always be present.
-            if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i).getCapability(AntimatterCaps.ENERGY).orElse(null));
+        //TODO: On both or not?
+        if (tile.isServerSide()) {
+            for (int i = 0; i < chargeWrapper.getSlots(); i++) {
+                //orElse: null, should always be present.
+                if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i).getCapability(AntimatterCaps.ENERGY).orElse(null));
+            }
         }
         return list;
     }
@@ -331,7 +337,8 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     @Nonnull
     @Override
     public IntList getAvailableSlots(@Nonnull Dir direction) {
-        return outputWrapper.getAvailableSlots(direction.getIndex());
+        if (canOutput(direction)) return outputWrapper.getAvailableSlots(direction.getIndex());
+        return new IntArrayList();
     }
 
     @Override
