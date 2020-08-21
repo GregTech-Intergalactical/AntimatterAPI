@@ -21,7 +21,7 @@ public class MachineCoverHandler extends RotatableCoverHandler<TileEntityMachine
 
     public MachineCoverHandler(TileEntityMachine tile) {
         super(tile, tile.getValidCovers());
-        covers.put(Direction.SOUTH, new CoverInstance<>(Data.COVEROUTPUT, tile));
+        covers.put(tile.getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, tile));
     }
 
     public Direction getOutputFacing() {

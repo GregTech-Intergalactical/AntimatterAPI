@@ -89,6 +89,10 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
         return cover == Data.COVERNONE;
     }
 
+    public boolean shouldRender() {
+        return isEmpty() || cover == Data.COVEROUTPUT;
+    }
+
     //Gets the backing cover.
     //Because getCover().getCover() looks stupid
     public Cover getCover() {
