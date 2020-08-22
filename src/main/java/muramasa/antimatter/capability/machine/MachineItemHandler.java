@@ -44,7 +44,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
         if (tile.getMachineType().has(MachineFlag.ENERGY)) {
-            chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_CHANGED);
+            chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
         if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
@@ -112,7 +112,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public IItemHandler getHandlerForSide(Direction side) {
-        return side == Direction.UP ? inputWrapper : outputWrapper;
+        return side != tile.getOutputFacing() ? inputWrapper : outputWrapper;
     }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {

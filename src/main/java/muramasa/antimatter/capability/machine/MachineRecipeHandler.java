@@ -183,15 +183,27 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 case ITEM_OUTPUT_CHANGED:
                     if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
                     break;
-                case ENERGY_CHANGED:
-                    //If energy increased.
-                    if (data.length > 0 && data[0] instanceof Long && ((Long) data[0]) > 0) {
-                        if (this.tile.getMachineState() == IDLE)
-                            this.tile.setMachineState(NO_POWER);
-                    }
-                    break;
+                case ENERGY_SLOT_CHANGED:
+                    //Battery added, try to continue.
+                    if (this.tile.getMachineState() == IDLE)
+                        this.tile.setMachineState(NO_POWER);
+                    if (this.tile.getMachineState() == POWER_LOSS)
+                        this.tile.setMachineState(ACTIVE);
             }
             tile.markDirty(); //TODO determine if needed
+        }
+        if (event instanceof MachineEvent) {
+            switch ((MachineEvent)event) {
+                case ENERGY_INPUTTED:
+                    if (this.tile.getMachineState() == IDLE)
+                        //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
+                        this.tile.setMachineState(NO_POWER);
+                    if (this.tile.getMachineState() == POWER_LOSS)
+                        this.tile.setMachineState(ACTIVE);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

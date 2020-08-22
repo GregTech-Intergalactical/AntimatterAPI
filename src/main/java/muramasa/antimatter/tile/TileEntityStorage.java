@@ -3,6 +3,7 @@ package muramasa.antimatter.tile;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import tesseract.util.Dir;
@@ -31,7 +32,7 @@ public class TileEntityStorage extends TileEntityMachine {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 //TODO: onItemEvent
-                calculateAmperage();
+                if (event == ContentEvent.ENERGY_SLOT_CHANGED) calculateAmperage();
                 super.onMachineEvent(event, data);
             }
         });

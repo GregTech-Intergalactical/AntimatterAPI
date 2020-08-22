@@ -14,7 +14,6 @@ import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler {
@@ -36,8 +35,8 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     @Override
     public long insert(long maxReceive, boolean simulate) {
         long inserted = super.insert(maxReceive, simulate);
-        if (inserted != 0 && !simulate) {
-            this.tile.onMachineEvent(ContentEvent.ENERGY_CHANGED, inserted);
+        if (!simulate) {
+            this.tile.onMachineEvent(inserted > 0 ? MachineEvent.ENERGY_INPUTTED : MachineEvent.ENERGY_DRAINED, inserted);
         }
         return inserted;
     }
@@ -104,14 +103,13 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         //Uncomment for debug energy
         //return maxExtract;
 
-        //TODO: This is the network handler, so it checks canOutput(), but that is false in this case, so perfomr extraction here.
         long extract = super.extract(maxExtract, simulate);
-        //TODO: extract < maxExtract, but that would imply not an entire packet.
 
         //This runs if it cannot output, i.e. for internal energy consumption such as recipes.
         if (extract == 0 && !canOutput()) {
-            //TODO: Itemss like batteries.
-            /*if (this.getEnergyStored() < maxExtract) {
+            long extracted = energy > maxExtract ? maxExtract : 0;
+
+            if (extracted == 0) {
                 for (IEnergyHandler handler : cachedItems) {
                     long iExtract = handler.extract(maxExtract, true);
                     if (iExtract == maxExtract) {
@@ -123,9 +121,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
                     }
                 }
                 return 0;
-            }*/
-            //TODO: this allows weird quantities to be removed. Should it allow non-complete packets?
-            long extracted = Math.min(energy, maxExtract);
+            }
             if (!simulate) energy -= extracted;
             return extracted;
         }
@@ -162,11 +158,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        //TODO: Check if item event
-        if (event instanceof MachineEvent) {
-            if ((event == MachineEvent.ITEMS_OUTPUTTED || event == MachineEvent.ITEMS_INPUTTED)) {
-                tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
-            }
-        }
+        if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
     }
 }

@@ -29,6 +29,11 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         if (!canInput()) return 0;
 
         long inserted = Math.min(capacity - energy, maxReceive);
+
+        //TODO: Don't allow less than one packet.
+        if (inserted < maxReceive) {
+            return 0;
+        }
         if (!simulate) energy += inserted;
 
         return inserted;
@@ -39,6 +44,10 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         if (!canOutput()) return 0;
 
         long extracted = Math.min(energy, maxExtract);
+        //TODO: Don't allow less than one packet.
+        if (extracted < maxExtract) {
+            return 0;
+        }
         if (!simulate) energy -= extracted;
 
         return extracted;
