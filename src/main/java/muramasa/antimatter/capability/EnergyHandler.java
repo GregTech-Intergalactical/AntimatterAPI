@@ -85,18 +85,18 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canInput() {
-        return amperage_in > 0 && voltage_in > 0;
+        return /*amperage_in > 0 &&*/ voltage_in > 0;
     }
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return false;
+        return canOutput();
     }
 
     @Override
     public boolean canOutput() {
         //TODO: Only singular packets?
-        return amperage_out > 0 && voltage_out > 0;
+        return /*amperage_out > 0 &&*/ voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/

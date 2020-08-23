@@ -191,7 +191,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
 
     private int getModelId(Direction facing, Direction overlay, MachineState state) {
-        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
+        state = (state == MachineState.ACTIVE || state == MachineState.POWER_LOSS) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
         return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + (overlay.getIndex() + 1);
     }
 
