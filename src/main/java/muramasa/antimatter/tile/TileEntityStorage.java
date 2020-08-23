@@ -25,7 +25,7 @@ public class TileEntityStorage extends TileEntityMachine {
 
     @Override
     public void onLoad() {
-        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
+        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
             @Override
             public boolean canOutput(@Nonnull Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();
@@ -57,7 +57,7 @@ public class TileEntityStorage extends TileEntityMachine {
                 int in = handler.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == ehandler.getInputVoltage())).mapToInt(IEnergyHandler::getInputAmperage).sum();
                 //2 amps per battery input.
                 ehandler.setInputAmperage(2*in);
-                ehandler.setOutputAmperage(out);
+                    ehandler.setOutputAmperage(out);
             });
         });
     }
