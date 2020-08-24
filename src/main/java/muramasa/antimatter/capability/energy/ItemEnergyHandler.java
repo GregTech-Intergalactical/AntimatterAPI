@@ -90,23 +90,25 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        long energy = getTagEnergy();
-        long toInsert =  Math.max(Math.min(capacity-energy, maxReceive),0);
+        this.energy = getTagEnergy();
+        long toInsert = Math.max(Math.min(capacity-energy, maxReceive),0);
         if (simulate) {
             return toInsert;
         }
-        setTagEnergy(toInsert + energy);
+        this.energy += toInsert;
+        setTagEnergy(this.energy);
         return toInsert;
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        long energy = getTagEnergy();
+        this.energy = getTagEnergy();
         long toExtract = Math.max(Math.min(energy, maxExtract),0);
         if (simulate) {
             return toExtract;
         }
-        setStackEnergy(stack, energy-toExtract);
+        this.energy -= toExtract;
+        setStackEnergy(stack, energy);
         return toExtract;
     }
 
