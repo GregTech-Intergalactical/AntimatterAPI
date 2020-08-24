@@ -21,6 +21,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,13 +112,19 @@ public class TileEntityPipe extends TileEntityTickable {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        return cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent() ? LazyOptional.of(() -> interactHandler.get()).cast() : super.getCapability(cap);
+        return getCapability(cap, /*allow null here?*/null);
     }
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        return cap == AntimatterCaps.COVERABLE && coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == AntimatterCaps.COVERABLE) {
+            return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
+        }
+        if (cap == AntimatterCaps.INTERACTABLE) {
+            return interactHandler.isPresent() ? LazyOptional.of(() -> interactHandler.get()).cast() : super.getCapability(cap);
+        }
+        return LazyOptional.empty();
     }
 
     @Override

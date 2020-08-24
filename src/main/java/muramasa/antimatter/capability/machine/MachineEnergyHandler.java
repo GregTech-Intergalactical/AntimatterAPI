@@ -3,7 +3,9 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,6 +14,7 @@ import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler {
@@ -19,13 +22,43 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     protected TileEntityMachine tile;
     protected ITickingController controller;
     //Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
-    private List<IEnergyHandler> cachedItems;
+    protected List<IEnergyHandler> cachedItems;
 
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        Tesseract.ELECTRIC.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (this.tile.isServerSide()) {
+            Tesseract.ELECTRIC.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
         tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+        if (cachedItems == null) {
+            cachedItems = new ArrayList<>();
+        }
+    }
+
+    @Override
+    public long insert(long maxReceive, boolean simulate) {
+        long inserted = super.insert(maxReceive, simulate);
+
+        if (inserted != maxReceive) {
+            if (cachedItems != null && cachedItems.size() > 0) {
+                tile.itemHandler.ifPresent(handler -> {
+                    //TODO: Have different amperages for items.
+                    int ampsIn = amperage_in, ampsOut = amperage_out;
+                    for (IEnergyHandler ihandler : cachedItems) {
+                        long itemInsert = ihandler.insert(maxReceive, true);
+                        if (itemInsert == maxReceive) {
+                            if (!simulate) ihandler.insert(maxReceive, false);
+                            break;
+                        }
+                    }
+                });
+        }
+        }
+        if (!simulate) {
+            this.tile.onMachineEvent(inserted > 0 ? MachineEvent.ENERGY_INPUTTED : MachineEvent.ENERGY_DRAINED, inserted);
+        }
+        return inserted;
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
@@ -33,25 +66,11 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     }
 
     public void onRemove() {
-        Tesseract.ELECTRIC.remove(tile.getDimension(), tile.getPos().toLong());
+        if (tile.isServerSide()) Tesseract.ELECTRIC.remove(tile.getDimension(), tile.getPos().toLong());
     }
     //Transfers energy from internal buffer between items.
     public void onUpdate() {
-        if (controller != null) controller.tick();
-        if (cachedItems != null && cachedItems.size() > 0) {
-            tile.itemHandler.ifPresent(handler -> {
-                //TODO: Have different amperages for items.
-                int ampsIn = amperage_in, ampsOut = amperage_out;
-                for (IEnergyHandler ihandler : cachedItems) {
-                    if (ampsOut > 0 && canChargeItem() && ihandler.canInput()) {
-                        //Try to transfer as many amps as possible.
-                        ampsOut -= Utils.transferEnergy(this,ihandler, ampsOut);
-                    } else if (ampsIn > 0 && canChargeFromItem() && ihandler.canOutput()) {
-                        ampsIn -= Utils.transferEnergy(ihandler,this, ampsIn);
-                    }
-                }
-            });
-        }
+        if (controller != null && tile.isServerSide()) controller.tick();
     }
 
     public void setOutputAmperage(int amp) {
@@ -89,16 +108,28 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public long extract(long maxExtract, boolean simulate) {
         //Uncomment for debug energy
         //return maxExtract;
+
         long extract = super.extract(maxExtract, simulate);
-        //TODO: extract < maxExtract, but that would imply not an entire packet.
-        if (extract == 0) {
-            //In the case of a recipe trying to get energy, try to check the charge slot.
-            for (IEnergyHandler handler : cachedItems) {
-                long iExtract = handler.extract(maxExtract, true);
-                if (iExtract == maxExtract) {
-                    return handler.extract(maxExtract,false);
+
+        //This runs if it cannot output, i.e. for internal energy consumption such as recipes.
+        if (extract == 0 ) {
+            long extracted = energy > maxExtract ? maxExtract : 0;
+
+            if (extracted == 0) {
+                for (IEnergyHandler handler : cachedItems) {
+                    long iExtract = handler.extract(maxExtract, true);
+                    if (iExtract == maxExtract) {
+                        if (!simulate) {
+                            return handler.extract(maxExtract,false);
+                        } else {
+                            return iExtract;
+                        }
+                    }
                 }
+                return 0;
             }
+            if (!simulate) energy -= extracted;
+            return extracted;
         }
         return extract;
     }
@@ -133,7 +164,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        //TODO: Check if item event
-        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+        if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
     }
 }

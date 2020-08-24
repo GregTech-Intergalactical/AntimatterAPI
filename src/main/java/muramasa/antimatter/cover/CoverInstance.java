@@ -89,6 +89,10 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
         return cover == Data.COVERNONE;
     }
 
+    public boolean shouldRender() {
+        return isEmpty() || cover == Data.COVEROUTPUT;
+    }
+
     //Gets the backing cover.
     //Because getCover().getCover() looks stupid
     public Cover getCover() {
@@ -118,5 +122,10 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
 
     public void deserialize(CompoundNBT nbt) {
         cover.deserialize(nbt);
+    }
+
+    public CompoundNBT getNbt() {
+        if (this.nbt == null) this.nbt = new CompoundNBT();
+        return this.nbt;
     }
 }
