@@ -41,7 +41,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        if (!canOutput()) return 0;
+        //if (!canOutput()) return 0;
 
         long extracted = Math.min(energy, maxExtract);
         //TODO: Don't allow less than one packet.

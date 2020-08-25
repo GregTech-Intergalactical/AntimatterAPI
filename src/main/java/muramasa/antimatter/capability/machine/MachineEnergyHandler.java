@@ -40,25 +40,24 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public long insert(long maxReceive, boolean simulate) {
         long inserted = super.insert(maxReceive, simulate);
 
-        if (inserted != maxReceive) {
-            if (cachedItems != null && cachedItems.size() > 0) {
-                tile.itemHandler.ifPresent(handler -> {
-                    //TODO: Have different amperages for items.
-                    int ampsIn = amperage_in, ampsOut = amperage_out;
-                    for (IEnergyHandler ihandler : cachedItems) {
-                        long itemInsert = ihandler.insert(maxReceive, true);
-                        if (itemInsert == maxReceive) {
-                            if (!simulate) ihandler.insert(maxReceive, false);
-                            break;
-                        }
-                    }
-                });
-        }
+        if (inserted == 0 && canChargeItem()) {
+            inserted = insertIntoItems(maxReceive,simulate);
         }
         if (!simulate) {
-            this.tile.onMachineEvent(inserted > 0 ? MachineEvent.ENERGY_INPUTTED : MachineEvent.ENERGY_DRAINED, inserted);
+            this.tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
         }
         return inserted;
+    }
+
+    protected long insertIntoItems(long maxReceive, boolean simulate) {
+        for (IEnergyHandler ihandler : cachedItems) {
+            long itemInsert = ihandler.insert(maxReceive, true);
+            if (itemInsert == maxReceive) {
+                if (!simulate) ihandler.insert(maxReceive, false);
+                return itemInsert;
+            }
+        }
+        return 0;
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
@@ -81,13 +80,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         amperage_in = amp;
     }
 
-    /*public void onReset() {
-        if (tile.isServerSide()) {
-            TesseractAPI.removeElectric(tile.getDimention(), tile.getPos().toLong());
-            TesseractAPI.registerElectricNode(tile.getDimention(), tile.getPos().toLong(), this);
-        }
-    }*/
-
     /**
      *
      * @return whether or not this handler can charge items in charge slots.
@@ -109,29 +101,29 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         //Uncomment for debug energy
         //return maxExtract;
 
-        long extract = super.extract(maxExtract, simulate);
+        long extracted = super.extract(maxExtract, simulate);
 
-        //This runs if it cannot output, i.e. for internal energy consumption such as recipes.
-        if (extract == 0 ) {
-            long extracted = energy > maxExtract ? maxExtract : 0;
-
-            if (extracted == 0) {
-                for (IEnergyHandler handler : cachedItems) {
-                    long iExtract = handler.extract(maxExtract, true);
-                    if (iExtract == maxExtract) {
-                        if (!simulate) {
-                            return handler.extract(maxExtract,false);
-                        } else {
-                            return iExtract;
-                        }
-                    }
-                }
-                return 0;
-            }
-            if (!simulate) energy -= extracted;
-            return extracted;
+        if (extracted == 0) {
+            extracted = extractFromItems(maxExtract,simulate);
         }
-        return extract;
+        if (!simulate) {
+            this.tile.onMachineEvent(MachineEvent.ENERGY_DRAINED, extracted);
+        }
+        return extracted;
+    }
+
+    protected long extractFromItems(long maxExtract, boolean simulate) {
+        for (IEnergyHandler handler : cachedItems) {
+            long iExtract = handler.extract(maxExtract, true);
+            if (iExtract == maxExtract) {
+                if (!simulate) {
+                    return handler.extract(maxExtract,false);
+                } else {
+                    return iExtract;
+                }
+            }
+        }
+        return 0;
     }
 
     @Override
