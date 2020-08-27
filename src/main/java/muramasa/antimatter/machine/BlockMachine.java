@@ -169,12 +169,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             if (((TileEntityMachine) tile).coverHandler.isPresent()) {
                 CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.get();
                 return config.set(new int[] {
-                    h.get(UP).isEmpty() ? getModelId(facing, UP, machineState) : 0,
-                    h.get(DOWN).isEmpty() ? getModelId(facing, DOWN, machineState) : 0,
-                    h.get(NORTH).isEmpty() ? getModelId(facing, NORTH, machineState) : 0,
-                    h.get(SOUTH).isEmpty() ? getModelId(facing, SOUTH, machineState) : 0,
-                    h.get(WEST).isEmpty() ? getModelId(facing, WEST, machineState) : 0,
-                    h.get(EAST).isEmpty() ? getModelId(facing, EAST, machineState) : 0
+                    h.get(UP).shouldRender() ? getModelId(facing, UP, machineState) : 0,
+                    h.get(DOWN).shouldRender() ? getModelId(facing, DOWN, machineState) : 0,
+                    h.get(NORTH).shouldRender() ? getModelId(facing, NORTH, machineState) : 0,
+                    h.get(SOUTH).shouldRender() ? getModelId(facing, SOUTH, machineState) : 0,
+                    h.get(WEST).shouldRender() ? getModelId(facing, WEST, machineState) : 0,
+                    h.get(EAST).shouldRender() ? getModelId(facing, EAST, machineState) : 0
                 });
             } else {
                 return config.set(new int[] {
@@ -191,7 +191,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
 
     private int getModelId(Direction facing, Direction overlay, MachineState state) {
-        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
+        state = (state == MachineState.ACTIVE || state == MachineState.POWER_LOSS) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
         return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + (overlay.getIndex() + 1);
     }
 

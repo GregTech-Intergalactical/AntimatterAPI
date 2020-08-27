@@ -11,6 +11,7 @@ import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public abstract class ContainerMachine extends AntimatterContainer {
@@ -22,7 +23,6 @@ public abstract class ContainerMachine extends AntimatterContainer {
         addSlots(tile);
         tile.setClientProgress(0);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
-        //TODO: Generic over classes.
         this.tile = tile;
 
         trackIntArray(getMachineData());
@@ -64,7 +64,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
             Optional<SlotItemHandler> supplier = slot.type.getSlotSupplier().get(tile, slotIndexMap.getInt(slot.type.getId()), slot);
             if (supplier.isPresent()) {
                 addSlot(supplier.get());
-                slotIndexMap.compute(slot.type.getId(), (k, v) -> v++);
+                slotIndexMap.compute(slot.type.getId(), (k, v) -> v + 1);
             }
         }
     }

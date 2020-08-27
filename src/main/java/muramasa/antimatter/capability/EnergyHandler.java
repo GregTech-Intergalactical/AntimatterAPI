@@ -29,6 +29,11 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         if (!canInput()) return 0;
 
         long inserted = Math.min(capacity - energy, maxReceive);
+
+        //TODO: Don't allow less than one packet.
+        if (inserted < maxReceive) {
+            return 0;
+        }
         if (!simulate) energy += inserted;
 
         return inserted;
@@ -36,9 +41,13 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        if (!canOutput()) return 0;
+        //if (!canOutput()) return 0;
 
         long extracted = Math.min(energy, maxExtract);
+        //TODO: Don't allow less than one packet.
+        if (extracted < maxExtract) {
+            return 0;
+        }
         if (!simulate) energy -= extracted;
 
         return extracted;
@@ -76,18 +85,18 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canInput() {
-        return amperage_in > 0 && voltage_in > 0;
+        return /*amperage_in > 0 &&*/ voltage_in > 0;
     }
 
     @Override
     public boolean canOutput(@Nonnull Dir direction) {
-        return false;
+        return canOutput();
     }
 
     @Override
     public boolean canOutput() {
         //TODO: Only singular packets?
-        return amperage_out > 0 && voltage_out > 0;
+        return /*amperage_out > 0 &&*/ voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/

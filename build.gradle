@@ -12,6 +12,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
+libsDirName = "libs/muramasa/antimatter/antimatter/${antimatter_version}"
 
 group = 'org.muramasa.gti'
 archivesBaseName = 'antimatter'
@@ -90,7 +91,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation project(':tesseract')
+    compile project('tesseract')
 
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
@@ -103,10 +104,11 @@ def getVersionAppendage() {
 
     def proc = 'git rev-parse --short HEAD'.execute()
     proc.waitFor()
-    return 'dev-' + proc.exitValue() ? 'unknown' : proc.text.trim()
+    return ''
+   // return 'dev-' + proc.exitValue() ? 'unknown' : proc.text.trim()
 }
 
-version = antimatter_version + '.' + getVersionAppendage()
+version = antimatter_version// + '.' + getVersionAppendage()
 
 task sourcesJar(type: Jar) {
     classifier 'sources'
