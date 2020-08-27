@@ -3,6 +3,16 @@ plugins {
     id 'maven-publish'
 }
 
+evaluationDependsOn(':version')
+
+if (System.env.USE_SUBMODULES) {
+    afterEvaluate {
+        def tesseract = tasks.create('buildTesseractDependency')
+        tesseract.dependsOn(gradle.includedBuild('tesseract').task(':forge:publishToMavenLocal'))
+        tasks.findByPath(':compileJava').dependsOn(tesseract)
+    }
+}
+
 group = 'com.github.gregtech-intergalactical'
 archivesBaseName = 'antimatter'
 
@@ -67,8 +77,12 @@ minecraft {
 }
 
 repositories {
-    mavenLocal()
-    maven { url 'https://files.axelandre42.ovh/maven' }
+    if (System.env.USE_SUBMODULES) {
+        mavenLocal()
+    } else {
+        maven { url 'https://files.axelandre42.ovh/maven' }
+    }
+
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     maven { url 'https://modmaven.k-4u.nl' }
 }
@@ -76,7 +90,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation 'com.github.gregtech-intergalactical:tesseract-forge:0.0.+:dev'
+    implementation 'com.github.gregtech-intergalactical:tesseract-forge:0.0.+:dev' changing true
 
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
@@ -85,4 +99,32 @@ dependencies {
 task sourcesJar(type: Jar) {
     classifier 'sources'
     from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        fat(MavenPublication) {
+            artifact jar
+            artifact deobfJar
+        }
+    }
+
+    repositories {
+        if (System.env.MAVEN_URL) {
+            maven {
+                url = System.env.MAVEN_URL
+
+                if (System.env.MAVEN_USERNAME && System.env.MAVEN_PASSWORD) {
+                    authentication {
+                        basic(BasicAuthentication)
+                    }
+
+                    credentials {
+                        username = System.env.USERNAME
+                        password = System.env.PASSWORD
+                    }
+                }
+            }
+        }
+    }
 }
