@@ -103,9 +103,8 @@ task sourcesJar(type: Jar) {
 
 publishing {
     publications {
-        fat(MavenPublication) {
+        java(MavenPublication) {
             artifact jar
-            artifact deobfJar
         }
     }
 
