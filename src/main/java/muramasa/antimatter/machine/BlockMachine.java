@@ -216,7 +216,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         Texture[] overlays = type.getOverlayTextures(state);
         for (Direction f : Arrays.asList(NORTH, WEST, SOUTH, EAST)) {
             for (Direction o : Ref.DIRS) {
-                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", tier.getBaseTexture(), "overlay", overlays[o.getIndex()])).rot(f)));
+                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier), "overlay", overlays[o.getIndex()])).rot(f)));
             }
         }
     }
