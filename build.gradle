@@ -1,16 +1,24 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'net.minecraftforge.gradle.userdev' version '3.1.1'
     id 'maven-publish'
 }
 
 evaluationDependsOn(':version')
 
-if (System.env.USE_SUBMODULES) {
-    afterEvaluate {
-        def tesseract = tasks.create('buildTesseractDependency')
-        tesseract.dependsOn(gradle.includedBuild('tesseract').task(':forge:publishToMavenLocal'))
-        tasks.findByPath(':compileJava').dependsOn(tesseract)
-    }
+//if (!System.env.USE_SUBMODULES) {
+  //  afterEvaluate {
+ //       def tesseract = tasks.create('buildTesseractDependency')
+ //       tesseract.dependsOn(gradle.includedBuild('tesseract').task(':forge:publishToMavenLocal'))
+  //      tasks.findByPath(':compileJava').dependsOn(tesseract)
+  //  }
+//}
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+task deobfJar(type: ShadowJar) {
+    from sourceSets.main.output
+    configurations = [project.configurations.deobf]
+    classifier "dev"
 }
 
 group = 'com.github.gregtech-intergalactical'
@@ -77,7 +85,7 @@ minecraft {
 }
 
 repositories {
-    if (System.env.USE_SUBMODULES) {
+    if (!System.env.RELEASE) {
         mavenLocal()
     } else {
         maven { url 'https://files.axelandre42.ovh/maven' }
@@ -85,6 +93,7 @@ repositories {
 
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     maven { url 'https://modmaven.k-4u.nl' }
+    maven {url = 'https://files.minecraftforge.net/maven'}
 }
 
 dependencies {
@@ -101,29 +110,37 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-publishing {
-    publications {
-        java(MavenPublication) {
-            artifact jar
+if (!System.env.RELEASE) {
+    build.dependsOn 'publishToMavenLocal'
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            fat(MavenPublication) {
+                artifact jar
+                artifact deobfJar
+            }
         }
-    }
 
-    repositories {
-        if (System.env.MAVEN_URL) {
-            maven {
-                url = System.env.MAVEN_URL
+        repositories {
+            if (System.env.MAVEN_URL) {
+                maven {
+                    url = System.env.MAVEN_URL
 
-                if (System.env.MAVEN_USERNAME && System.env.MAVEN_PASSWORD) {
-                    authentication {
-                        basic(BasicAuthentication)
-                    }
+                    if (System.env.MAVEN_USERNAME && System.env.MAVEN_PASSWORD) {
+                        authentication {
+                            basic(BasicAuthentication)
+                        }
 
-                    credentials {
-                        username = System.env.USERNAME
-                        password = System.env.PASSWORD
+                        credentials {
+                            username = System.env.USERNAME
+                            password = System.env.PASSWORD
+                        }
                     }
                 }
             }
         }
     }
+
 }
