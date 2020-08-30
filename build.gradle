@@ -159,3 +159,7 @@ publishing {
         }
     }
 }
+
+jar {
+    zip64 true
+}
