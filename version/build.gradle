@@ -41,7 +41,7 @@ def getVersion() {
     def minor = versionProperties.getProperty('version.minor', '0')
     def revision = versionProperties.getProperty('version.revision', '0')
 
-    return major + '.' + minor + '.' + revision + getVersionAppendage()
+    return major + '.' + minor + '.' + revision// + getVersionAppendage()
 }
 
 def printVersion() {
