@@ -81,14 +81,14 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
     @Nullable
     @Override
-    public FluidData extract(int tank, int amount, boolean simulate) {
+    public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
         FluidStack fluid = handler.getFluidInTank(tank);
         if (fluid.getAmount() > amount) {
             fluid = fluid.copy();
             fluid.setAmount(amount);
         }
         FluidStack stack = handler.drain(fluid, simulate ? SIMULATE : EXECUTE);
-        return stack.isEmpty() ? null : new FluidData(stack, stack.getFluid(), stack.getAmount(), stack.getFluid().getAttributes().getTemperature(), stack.getFluid().getAttributes().isGaseous());
+        return stack.isEmpty() ? null : new FluidData<>(stack, stack.getAmount(), stack.getFluid().getAttributes().getTemperature(), stack.getFluid().getAttributes().isGaseous());
     }
 
     @Override

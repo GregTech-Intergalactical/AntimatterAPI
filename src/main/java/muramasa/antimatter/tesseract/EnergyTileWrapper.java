@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.Tesseract;
-import tesseract.api.electric.IElectricNode;
+import tesseract.api.energygt.IElectricNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;

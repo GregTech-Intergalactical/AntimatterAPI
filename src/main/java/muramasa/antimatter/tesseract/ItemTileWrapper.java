@@ -22,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
 @ParametersAreNonnullByDefault
-public class ItemTileWrapper implements IItemNode, ITileWrapper {
+public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
 
     private TileEntity tile;
     private boolean removed;
@@ -92,9 +92,9 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
     @Nullable
     @Override
-    public ItemData extract(int slot, int amount, boolean simulate) {
+    public ItemData<ItemStack> extract(int slot, int amount, boolean simulate) {
         ItemStack stack = handler.extractItem(slot, amount, simulate);
-        return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
+        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
     }
 
     @Nonnull

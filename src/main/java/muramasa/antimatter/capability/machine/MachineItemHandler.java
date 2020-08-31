@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode, ITickHost {
+public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -153,10 +153,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     public void consumeInputs(ItemStack... inputs) {
-        for (int i = 0; i < inputs.length; i++) {
+        for (ItemStack input : inputs) {
             for (int j = 0; j < inputWrapper.getSlots(); j++) {
-                if (Utils.equals(inputs[i], inputWrapper.getStackInSlot(j)) && !Utils.hasNoConsumeTag(inputs[i])) {
-                    inputWrapper.getStackInSlot(j).shrink(inputs[i].getCount());
+                if (Utils.equals(input, inputWrapper.getStackInSlot(j)) && !Utils.hasNoConsumeTag(input)) {
+                    inputWrapper.getStackInSlot(j).shrink(input.getCount());
                     break;
                 }
             }
@@ -166,9 +166,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     public void addOutputs(ItemStack... outputs) {
         if (outputWrapper == null || outputs == null || outputs.length == 0) return;
-        for (int i = 0; i < outputs.length; i++) {
+        for (ItemStack output : outputs) {
             for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                ItemStack result = outputWrapper.insertItem(j, outputs[i].copy(), false);
+                ItemStack result = outputWrapper.insertItem(j, output.copy(), false);
                 if (result.isEmpty()) break;
             }
         }
@@ -182,9 +182,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
-        for (int i = 0; i < a.length; i++) {
+        for (ItemStack stack : a) {
             for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                if (outputWrapper.getStackInSlot(j).isEmpty() || (Utils.equals(a[i], outputWrapper.getStackInSlot(j)) && outputWrapper.getStackInSlot(j).getCount() + a[i].getCount() <= outputWrapper.getStackInSlot(j).getMaxStackSize())) {
+                if (outputWrapper.getStackInSlot(j).isEmpty() || (Utils.equals(stack, outputWrapper.getStackInSlot(j)) && outputWrapper.getStackInSlot(j).getCount() + stack.getCount() <= outputWrapper.getStackInSlot(j).getMaxStackSize())) {
                     matchCount++;
                     break;
                 }
@@ -196,16 +196,16 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
         List<ItemStack> notConsumed = new ObjectArrayList<>();
         ItemStack result;
-        for (int i = 0; i < inputs.length; i++) {
+        for (ItemStack input : inputs) {
             for (int j = 0; j < inputWrapper.getSlots(); j++) {
-                if (Utils.equals(inputs[i], inputWrapper.getStackInSlot(j))) {
-                    result = inputWrapper.extractItem(j, inputs[i].getCount(), false);
+                if (Utils.equals(input, inputWrapper.getStackInSlot(j))) {
+                    result = inputWrapper.extractItem(j, input.getCount(), false);
                     if (!result.isEmpty()) {
-                        if (result.getCount() == inputs[i].getCount()) break;
-                        else notConsumed.add(Utils.ca(inputs[i].getCount() - result.getCount(), inputs[i]));
+                        if (result.getCount() == input.getCount()) break;
+                        else notConsumed.add(Utils.ca(input.getCount() - result.getCount(), input));
                     }
                 } else if (j == inputWrapper.getSlots() - 1) {
-                    notConsumed.add(inputs[i]);
+                    notConsumed.add(input);
                 }
             }
         }
@@ -328,10 +328,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Nullable
     @Override
-    public ItemData extract(int slot, int amount, boolean simulate) {
+    public ItemData<ItemStack> extract(int slot, int amount, boolean simulate) {
         ItemStack stack = outputWrapper.extractItem(slot, amount, simulate);
         if (!simulate) tile.markDirty();
-        return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
+        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
     }
 
     @Nonnull
