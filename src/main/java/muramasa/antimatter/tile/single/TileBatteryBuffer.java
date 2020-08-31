@@ -1,4 +1,4 @@
-package muramasa.gti.tile.single;
+package muramasa.antimatter.tile.single;
 
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
