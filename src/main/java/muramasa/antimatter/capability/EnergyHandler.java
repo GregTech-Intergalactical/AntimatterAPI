@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.capability.IEnergyHandler;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
@@ -25,28 +24,20 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     public long insert(long maxReceive, boolean simulate) {
         if (!canInput()) return 0;
 
-        long inserted = Math.min(capacity - energy, maxReceive);
-        //TODO: Don't allow less than one packet.
-        if (inserted < maxReceive) {
-            return 0;
-        }
+        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
+        if (!simulate) energy += toInsert;
 
-        if (!simulate) energy += inserted;
-        return inserted;
+        return toInsert;
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        //if (!canOutput()) return 0;
+        if (!canOutput()) return 0;
 
-        long extracted = Math.min(energy, maxExtract);
-        //TODO: Don't allow less than one packet.
-        if (extracted < maxExtract) {
-            return 0;
-        }
+        long toExtract = Math.max(Math.min(energy, maxExtract), 0);
+        if (!simulate) energy -= toExtract;
 
-        if (!simulate) energy -= extracted;
-        return extracted;
+        return toExtract;
     }
 
     @Override

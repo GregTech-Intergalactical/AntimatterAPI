@@ -115,16 +115,10 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         amperage_in = amp;
     }
 
-    /**
-     * @return Whether or not this handler can charge items in charge slots.
-     */
     public boolean canChargeItem() {
         return true;
     }
 
-    /**
-     * @return Whether or not this handler change charge from items in charge slots.
-     */
     public boolean canChargeFromItem() {
         return false;
     }

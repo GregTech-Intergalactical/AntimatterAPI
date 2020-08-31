@@ -25,9 +25,14 @@ public class TileBatteryBufferCreative extends TileEntityStorage {
                 return maxExtract;
             }
 
+            @Override
             public boolean canOutput(Dir direction) {
-                //TODO: For debugging, set to always true for simplicity.
                 return tile.getFacing().getIndex() == direction.getIndex();
+            }
+
+            @Override
+            public boolean connects(Dir direction) {
+                return true;
             }
         });
         super.onLoad();
