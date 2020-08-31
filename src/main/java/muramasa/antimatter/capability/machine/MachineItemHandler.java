@@ -154,9 +154,9 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
 
     public void consumeInputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
-            for (int j = 0; j < inputWrapper.getSlots(); j++) {
-                if (Utils.equals(input, inputWrapper.getStackInSlot(j)) && !Utils.hasNoConsumeTag(input)) {
-                    inputWrapper.getStackInSlot(j).shrink(input.getCount());
+            for (int i = 0; i < inputWrapper.getSlots(); i++) {
+                if (Utils.equals(input, inputWrapper.getStackInSlot(i)) && !Utils.hasNoConsumeTag(input)) {
+                    inputWrapper.getStackInSlot(i).shrink(input.getCount());
                     break;
                 }
             }
@@ -167,8 +167,8 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     public void addOutputs(ItemStack... outputs) {
         if (outputWrapper == null || outputs == null || outputs.length == 0) return;
         for (ItemStack output : outputs) {
-            for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                ItemStack result = outputWrapper.insertItem(j, output.copy(), false);
+            for (int i = 0; i < outputWrapper.getSlots(); i++) {
+                ItemStack result = outputWrapper.insertItem(i, output.copy(), false);
                 if (result.isEmpty()) break;
             }
         }
@@ -183,8 +183,8 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
         for (ItemStack stack : a) {
-            for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                if (outputWrapper.getStackInSlot(j).isEmpty() || (Utils.equals(stack, outputWrapper.getStackInSlot(j)) && outputWrapper.getStackInSlot(j).getCount() + stack.getCount() <= outputWrapper.getStackInSlot(j).getMaxStackSize())) {
+            for (int i = 0; i < outputWrapper.getSlots(); i++) {
+                if (outputWrapper.getStackInSlot(i).isEmpty() || (Utils.equals(stack, outputWrapper.getStackInSlot(i)) && outputWrapper.getStackInSlot(i).getCount() + stack.getCount() <= outputWrapper.getStackInSlot(i).getMaxStackSize())) {
                     matchCount++;
                     break;
                 }
@@ -197,14 +197,14 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
         List<ItemStack> notConsumed = new ObjectArrayList<>();
         ItemStack result;
         for (ItemStack input : inputs) {
-            for (int j = 0; j < inputWrapper.getSlots(); j++) {
-                if (Utils.equals(input, inputWrapper.getStackInSlot(j))) {
-                    result = inputWrapper.extractItem(j, input.getCount(), false);
+            for (int i = 0; i < inputWrapper.getSlots(); i++) {
+                if (Utils.equals(input, inputWrapper.getStackInSlot(i))) {
+                    result = inputWrapper.extractItem(i, input.getCount(), false);
                     if (!result.isEmpty()) {
                         if (result.getCount() == input.getCount()) break;
                         else notConsumed.add(Utils.ca(input.getCount() - result.getCount(), input));
                     }
-                } else if (j == inputWrapper.getSlots() - 1) {
+                } else if (i == inputWrapper.getSlots() - 1) {
                     notConsumed.add(input);
                 }
             }
