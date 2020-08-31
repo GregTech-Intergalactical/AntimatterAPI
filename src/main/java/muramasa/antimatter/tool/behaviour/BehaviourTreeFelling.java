@@ -2,9 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -13,9 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import static muramasa.antimatter.Data.AXE;
-import static muramasa.antimatter.Data.CHAINSAW;
 
 public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
 

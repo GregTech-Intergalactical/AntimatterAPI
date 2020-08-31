@@ -5,9 +5,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected long energy, capacity;
@@ -23,19 +20,18 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         this.amperage_out = amperage_out;
     }
 
-    /** Tesseract IElectricNode Implementations **/
+    /** Tesseract IGTNode Implementations **/
     @Override
     public long insert(long maxReceive, boolean simulate) {
         if (!canInput()) return 0;
 
         long inserted = Math.min(capacity - energy, maxReceive);
-
         //TODO: Don't allow less than one packet.
         if (inserted < maxReceive) {
             return 0;
         }
-        if (!simulate) energy += inserted;
 
+        if (!simulate) energy += inserted;
         return inserted;
     }
 
@@ -48,8 +44,8 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         if (extracted < maxExtract) {
             return 0;
         }
-        if (!simulate) energy -= extracted;
 
+        if (!simulate) energy -= extracted;
         return extracted;
     }
 
@@ -89,13 +85,12 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
+    public boolean canOutput(Dir direction) {
         return canOutput();
     }
 
     @Override
     public boolean canOutput() {
-        //TODO: Only singular packets?
         return /*amperage_out > 0 &&*/ voltage_out > 0;
     }
 
@@ -131,11 +126,11 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return true;
     }
 
     @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+    public void reset(ITickingController oldController, ITickingController newController) {
     }
 }

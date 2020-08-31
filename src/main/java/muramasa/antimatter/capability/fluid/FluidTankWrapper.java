@@ -96,13 +96,13 @@ public class FluidTankWrapper implements IFluidHandler {
         return dirty;
     }
 
-    public boolean isFluidAvailable(@Nonnull Object fluid, int dir) {
+    public boolean isFluidAvailable(Object fluid, int dir) {
         Set<?> filtered = filter[dir];
         return filtered.isEmpty() || filtered.contains(fluid);
     }
 
     // Fast way to find available tank for fluid
-    public int getFirstValidTank(@Nonnull Object fluid) {
+    public int getFirstValidTank(Object fluid) {
         int tank = -1;
         for (int i = 0; i < getTanks(); i++) {
             FluidStack stack = getFluidInTank(i);

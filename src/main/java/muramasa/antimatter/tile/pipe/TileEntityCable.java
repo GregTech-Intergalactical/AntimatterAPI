@@ -3,12 +3,10 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import tesseract.Tesseract;
-import tesseract.api.energygt.IElectricCable;
+import tesseract.api.gt.IGTCable;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
-
-public class TileEntityCable extends TileEntityPipe implements IElectricCable {
+public class TileEntityCable extends TileEntityPipe implements IGTCable {
 
     public TileEntityCable(PipeType<?> type) {
         super(type);
@@ -16,15 +14,15 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public void onLoad() {
-        if (isServerSide()) Tesseract.ELECTRIC.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+        if (isServerSide()) Tesseract.GT_ENERGY.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
         super.onLoad();
     }
 
     @Override
     public void refreshConnection() {
         if (isServerSide()) {
-            Tesseract.ELECTRIC.remove(getDimension(), pos.toLong());
-            Tesseract.ELECTRIC.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+            Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
+            Tesseract.GT_ENERGY.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
         } else {
             super.refreshConnection();
         }
@@ -32,7 +30,7 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.ELECTRIC.remove(getDimension(), pos.toLong());
+        if (isServerSide()) Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
     }
 
     @Override
@@ -51,7 +49,7 @@ public class TileEntityCable extends TileEntityPipe implements IElectricCable {
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return canConnect(direction.getIndex());
     }
 }

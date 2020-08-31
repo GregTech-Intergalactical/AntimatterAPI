@@ -8,9 +8,6 @@ import tesseract.api.ITickingController;
 import tesseract.api.item.IItemPipe;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITickHost {
 
     private ITickingController controller;
@@ -51,12 +48,12 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return canConnect(direction.getIndex());
     }
 
     @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+    public void reset(ITickingController oldController, ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
     }

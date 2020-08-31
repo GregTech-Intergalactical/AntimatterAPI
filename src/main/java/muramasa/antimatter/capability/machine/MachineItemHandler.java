@@ -309,7 +309,7 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(@Nonnull ItemData data, boolean simulate) {
+    public int insert(ItemData data, boolean simulate) {
         ItemStack stack = (ItemStack) data.getStack();
         int slot = inputWrapper.getFirstValidSlot(stack.getItem());
         if (slot == -1) {
@@ -336,18 +336,18 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
 
     @Nonnull
     @Override
-    public IntList getAvailableSlots(@Nonnull Dir direction) {
+    public IntList getAvailableSlots(Dir direction) {
         if (canOutput(direction)) return outputWrapper.getAvailableSlots(direction.getIndex());
         return new IntArrayList();
     }
 
     @Override
-    public int getOutputAmount(@Nonnull Dir direction) {
+    public int getOutputAmount(Dir direction) {
         return 4;
     }
 
     @Override
-    public int getPriority(@Nonnull Dir direction) {
+    public int getPriority(Dir direction) {
         return priority[direction.getIndex()];
     }
 
@@ -367,24 +367,24 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
+    public boolean canOutput(Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
     @Override
-    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
+    public boolean canInput(Object item, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return inputWrapper.isItemAvailable(item, direction.getIndex()) && inputWrapper.getFirstValidSlot(item) != -1;
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
     }
 
     @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+    public void reset(ITickingController oldController, ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
     }

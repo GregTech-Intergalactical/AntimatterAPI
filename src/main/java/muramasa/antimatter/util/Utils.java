@@ -311,7 +311,7 @@ public class Utils {
                 return 0;
             }
             //The maximum possible amperage to output.
-            int outputAmperage = (int) Math.min(Math.min(from.getEnergy()/voltageOut, from.getOutputAmperage()),maxAmps);
+            int outputAmperage = (int) Math.min(Math.min(from.getEnergy() / voltageOut, from.getOutputAmperage()), maxAmps);
             int inputAmps = (int) Math.min(((to.getCapacity() - to.getEnergy())) / (voltageIn - loss), to.getInputAmperage());
 
             int amps = Math.min(outputAmperage, inputAmps);
@@ -319,8 +319,8 @@ public class Utils {
                 return 0;
             }
             //No need to simulate, calculations already done.
-            from.extract(voltageOut*amps, false);
-            to.insert((voltageOut-loss)*amps, false);
+            from.extract(voltageOut * amps, false);
+            to.insert((voltageOut - loss) * amps, false);
             return amps;
         }
         return 0;

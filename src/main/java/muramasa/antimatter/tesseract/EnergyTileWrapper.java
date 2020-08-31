@@ -8,14 +8,14 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.Tesseract;
-import tesseract.api.energygt.IElectricNode;
+import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
+public class EnergyTileWrapper implements IGTNode, ITileWrapper {
 
     private TileEntity tile;
     private boolean removed;
@@ -32,7 +32,7 @@ public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
         if (capability.isPresent()) {
             EnergyTileWrapper node = new EnergyTileWrapper(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
-            Tesseract.ELECTRIC.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
             return node;
         }
         return null;
@@ -42,7 +42,7 @@ public class EnergyTileWrapper implements IElectricNode, ITileWrapper {
     public void onRemove(@Nullable Direction side) {
         if (side == null) {
             if (tile.isRemoved()) {
-                Tesseract.ELECTRIC.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+                Tesseract.GT_ENERGY.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
                 removed = true;
             } else {
                 // What if tile is recreate cap ?
