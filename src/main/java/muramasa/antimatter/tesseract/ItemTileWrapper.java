@@ -94,7 +94,7 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     @Override
     public ItemData extract(int slot, int amount, boolean simulate) {
         ItemStack stack = handler.extractItem(slot, amount, simulate);
-        return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
+        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
     }
 
     @Nonnull

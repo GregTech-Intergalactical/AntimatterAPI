@@ -3,7 +3,7 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import tesseract.Tesseract;
-import tesseract.api.electric.IElectricCable;
+import tesseract.api.electricity.IElectricCable;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;

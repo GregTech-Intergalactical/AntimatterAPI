@@ -328,10 +328,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Nullable
     @Override
-    public ItemData extract(int slot, int amount, boolean simulate) {
+    public ItemData<?> extract(int slot, int amount, boolean simulate) {
         ItemStack stack = outputWrapper.extractItem(slot, amount, simulate);
         if (!simulate) tile.markDirty();
-        return stack.isEmpty() ? null : new ItemData(slot, stack, stack.getItem());
+        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
     }
 
     @Nonnull

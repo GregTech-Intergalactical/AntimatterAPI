@@ -291,7 +291,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     @Nullable
     @Override
-    public FluidData extract(int tank, int amount, boolean simulate) {
+    public FluidData<?> extract(int tank, int amount, boolean simulate) {
         FluidStack fluid = outputWrapper.getFluidInTank(tank);
         if (fluid.getAmount() > amount) {
             fluid = fluid.copy();
@@ -299,7 +299,7 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
         }
 
         FluidStack stack = outputWrapper.drain(fluid, simulate ? SIMULATE : EXECUTE);
-        return stack.isEmpty() ? null : new FluidData(stack, stack.getFluid(), stack.getAmount(), stack.getFluid().getAttributes().getTemperature(), stack.getFluid().getAttributes().isGaseous());
+        return stack.isEmpty() ? null : new FluidData<>(stack, stack.getAmount(), stack.getFluid().getAttributes().getTemperature(), stack.getFluid().getAttributes().isGaseous());
     }
 
     @Override
