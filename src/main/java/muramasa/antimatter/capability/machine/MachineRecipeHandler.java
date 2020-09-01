@@ -73,7 +73,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         onRecipeFound();
     }
 
-
     public boolean checkRecipe() {
         if (tile.getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
             System.out.println("check recipe");
@@ -137,9 +136,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public boolean canRecipeContinue() {
-        if (tile.itemHandler.isPresent() && activeRecipe.hasInputItems() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
+        if (tile.itemHandler.isPresent() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
             return false;
-        if (tile.fluidHandler.isPresent() && activeRecipe.hasInputFluids() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
+        if (tile.fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
             return false;
         return true;
     }
@@ -192,16 +191,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             tile.markDirty(); //TODO determine if needed
         }
         if (event instanceof MachineEvent) {
-            switch ((MachineEvent)event) {
-                case ENERGY_INPUTTED:
-                    if (this.tile.getMachineState() == IDLE)
-                        //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
-                        this.tile.setMachineState(NO_POWER);
-                    if (this.tile.getMachineState() == POWER_LOSS)
-                        this.tile.setMachineState(ACTIVE);
-                    break;
-                default:
-                    break;
+            if (event == MachineEvent.ENERGY_INPUTTED) {
+                if (this.tile.getMachineState() == IDLE)
+                    //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
+                    this.tile.setMachineState(NO_POWER);
+                if (this.tile.getMachineState() == POWER_LOSS)
+                    this.tile.setMachineState(ACTIVE);
             }
         }
     }

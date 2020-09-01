@@ -32,7 +32,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
             nbt = new CompoundNBT();
         }
         if (!nbt.contains(TAG_CHARGE)) {
-            nbt.putLong(TAG_CHARGE,0);
+            nbt.putLong(TAG_CHARGE, 0);
         }
         return nbt;
     }

@@ -57,7 +57,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     protected long insertIntoItems(long maxReceive, boolean simulate) {
         for (IEnergyHandler handler : cachedItems) {
             long inserted = handler.insert(maxReceive, true);
-            if (inserted == maxReceive) {
+            if (inserted > 0) {
                 if (!simulate) handler.insert(maxReceive, false);
                 return inserted;
             }
@@ -80,9 +80,9 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     protected long extractFromItems(long maxExtract, boolean simulate) {
         for (IEnergyHandler handler : cachedItems) {
             long extracted = handler.extract(maxExtract, true);
-            if (extracted == maxExtract) {
+            if (extracted > 0) {
                 if (!simulate) {
-                    return handler.extract(maxExtract,false);
+                    return handler.extract(maxExtract, false);
                 } else {
                     return extracted;
                 }

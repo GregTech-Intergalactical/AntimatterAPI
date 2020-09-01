@@ -137,7 +137,8 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
         if (tile.isServerSide()) {
             for (int i = 0; i < chargeWrapper.getSlots(); i++) {
                 //orElse: null, should always be present.
-                if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i).getCapability(AntimatterCaps.ENERGY).orElse(null));
+                ItemStack item = chargeWrapper.getStackInSlot(i);
+                if (!item.isEmpty()) list.add(item.getCapability(AntimatterCaps.ENERGY).orElse(null));
             }
         }
         return list;
@@ -147,7 +148,8 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     public List<ItemStack> getOutputList() {
         List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < outputWrapper.getSlots(); i++) {
-            if (!outputWrapper.getStackInSlot(i).isEmpty()) list.add(outputWrapper.getStackInSlot(i).copy());
+            ItemStack item = outputWrapper.getStackInSlot(i);
+            if (!item.isEmpty()) list.add(item.copy());
         }
         return list;
     }
@@ -155,8 +157,9 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     public void consumeInputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
             for (int i = 0; i < inputWrapper.getSlots(); i++) {
-                if (Utils.equals(input, inputWrapper.getStackInSlot(i)) && !Utils.hasNoConsumeTag(input)) {
-                    inputWrapper.getStackInSlot(i).shrink(input.getCount());
+                ItemStack item = inputWrapper.getStackInSlot(i);
+                if (Utils.equals(input, item) && !Utils.hasNoConsumeTag(input)) {
+                    item.shrink(input.getCount());
                     break;
                 }
             }
@@ -184,7 +187,8 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
         int matchCount = 0;
         for (ItemStack stack : a) {
             for (int i = 0; i < outputWrapper.getSlots(); i++) {
-                if (outputWrapper.getStackInSlot(i).isEmpty() || (Utils.equals(stack, outputWrapper.getStackInSlot(i)) && outputWrapper.getStackInSlot(i).getCount() + stack.getCount() <= outputWrapper.getStackInSlot(i).getMaxStackSize())) {
+                ItemStack item = outputWrapper.getStackInSlot(i);
+                if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= item.getMaxStackSize())) {
                     matchCount++;
                     break;
                 }
