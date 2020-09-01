@@ -1,14 +1,11 @@
 package muramasa.antimatter.tile.single;
 
-import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityStorage;
-
 import tesseract.util.Dir;
 
-import java.util.List;
 import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
@@ -50,14 +47,5 @@ public class TileBatteryBuffer extends TileEntityStorage {
             }
         });
         super.onLoad();
-    }
-
-    @Override
-    public List<String> getInfo() {
-        List<String> info = super.getInfo();
-
-        info.add("Amperage in: " + energyHandler.map(EnergyHandler::getInputAmperage).orElse(0));
-        info.add("Amperage out: " + energyHandler.map(EnergyHandler::getOutputAmperage).orElse(0));
-        return info;
     }
 }

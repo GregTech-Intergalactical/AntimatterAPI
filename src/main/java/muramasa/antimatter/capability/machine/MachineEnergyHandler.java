@@ -42,6 +42,13 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         if (controller != null && tile.isServerSide()) controller.tick();
     }
 
+    public void onReset() {
+        if (tile.isServerSide()) {
+            Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+            Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this); // this is connector class
+        }
+    }
+
     @Override
     public long insert(long maxReceive, boolean simulate) {
         long inserted = super.insert(maxReceive, simulate);
@@ -105,14 +112,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     @Override
     public boolean canOutput(Dir direction) {
         return false;
-    }
-
-    public void setOutputAmperage(int amp) {
-        amperage_out = amp;
-    }
-
-    public void setInputAmperage(int amp) {
-        amperage_in = amp;
     }
 
     public boolean canChargeItem() {

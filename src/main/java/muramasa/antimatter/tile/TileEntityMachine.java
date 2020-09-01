@@ -132,11 +132,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     // Should be called on the rotation or cover changes to update connections
-    //public void onReset() {
-    //    energyHandler.ifPresent(MachineEnergyHandler::onReset);
-    //    fluidHandler.ifPresent(MachineFluidHandler::onReset);
-    //    itemHandler.ifPresent(MachineItemHandler::onReset);
-    //}
+    /*public void onReset() {
+        energyHandler.ifPresent(MachineEnergyHandler::onReset);
+        fluidHandler.ifPresent(MachineFluidHandler::onReset);
+        itemHandler.ifPresent(MachineItemHandler::onReset);
+    }*/
 
     @Override
     public void onServerUpdate() {
