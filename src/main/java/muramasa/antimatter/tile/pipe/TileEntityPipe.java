@@ -52,11 +52,17 @@ public class TileEntityPipe extends TileEntityTickable {
         if (!interactHandler.isPresent()) interactHandler = Optional.of(new PipeInteractHandler(this));
     }
 
-    /*@Override
-    public void onRemove() {
+    @Override
+    public void onClientRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
         interactHandler.ifPresent(PipeInteractHandler::onRemove);
-    }*/
+    }
+
+    @Override
+    public void onServerRemove() {
+        coverHandler.ifPresent(PipeCoverHandler::onRemove);
+        interactHandler.ifPresent(PipeInteractHandler::onRemove);
+    }
 
     public PipeType<?> getPipeType() {
         return type != null ? type : (type = ((BlockPipe<?>) getBlockState().getBlock()).getType());

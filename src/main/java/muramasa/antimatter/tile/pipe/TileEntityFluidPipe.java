@@ -32,11 +32,11 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
         }
     }
 
-    /*@Override
-    public void onRemove() {
-        if (isServerSide()) Tesseract.FLUID.remove(getDimension(), pos.toLong());
-        super.onRemove();
-    }*/
+    @Override
+    public void onServerRemove() {
+        Tesseract.FLUID.remove(getDimension(), pos.toLong());
+        super.onServerRemove();
+    }
 
     @Override
     public void onServerUpdate() {

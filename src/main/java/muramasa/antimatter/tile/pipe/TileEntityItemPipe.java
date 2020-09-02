@@ -32,11 +32,11 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
         }
     }
 
-    /*@Override
-    public void onRemove() {
-        if (isServerSide()) Tesseract.ITEM.remove(getDimension(), pos.toLong());
-        super.onRemove();
-    }*/
+    @Override
+    public void onServerRemove() {
+        Tesseract.ITEM.remove(getDimension(), pos.toLong());
+        super.onServerRemove();
+    }
 
     @Override
     public void onServerUpdate() {

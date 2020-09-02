@@ -28,11 +28,11 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         }
     }
 
-    /*@Override
-    public void onRemove() {
-        if (isServerSide()) Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
-        super.onRemove();
-    }*/
+    @Override
+    public void onServerRemove() {
+        Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
+        super.onServerRemove();
+    }
 
     @Override
     public int getVoltage() {
