@@ -172,7 +172,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public void setGUI(MenuHandler<?, ?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
-        addFlags(MachineFlag.GUI);
+        //addFlags(MachineFlag.GUI);
     }
 
     public void setStructure(Function<StructureBuilder, Structure> func) {

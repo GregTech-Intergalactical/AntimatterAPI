@@ -9,6 +9,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.StringTextComponent;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -56,6 +57,7 @@ public class TileTransformer extends TileEntityStorage {
                         handler.setOutputVoltage(handler.getInputVoltage());
                         handler.setInputVoltage(temp);
                         handler.onReset();
+                        player.sendMessage(new StringTextComponent( (getMachineState() == MachineState.ACTIVE ? "Step Down, In: " : "Step Up, In") + handler.getInputVoltage() + "V@" + handler.getInputAmperage() + "Amp, Out: " + handler.getOutputVoltage() + "V@" + handler.getOutputAmperage() + "Amp"));
                     });
                     return true;
                 }

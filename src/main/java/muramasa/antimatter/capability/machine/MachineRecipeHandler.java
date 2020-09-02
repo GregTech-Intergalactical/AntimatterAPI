@@ -145,6 +145,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public boolean consumeResourceForRecipe() {
         if (tile.energyHandler.isPresent()) {
+            // TODO: Make nicer
             if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), true) >= activeRecipe.getPower() * (1 << overclock)) {
                 tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), false);
                 return true;

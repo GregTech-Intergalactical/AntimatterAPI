@@ -15,7 +15,7 @@ public class CoverOutput extends Cover {
     //TODO: Store output state in Cover or Machine?
     static String KEY_OUTPUT = "out";
 
-    public  CoverOutput() {
+    public CoverOutput() {
         super();
         AntimatterAPI.register(Cover.class, getId(), this);
     }

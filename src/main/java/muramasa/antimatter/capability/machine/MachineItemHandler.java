@@ -155,6 +155,7 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     }
 
     public void consumeInputs(ItemStack... inputs) {
+        if (inputs == null || inputs.length == 0) return;
         for (ItemStack input : inputs) {
             for (int i = 0; i < inputWrapper.getSlots(); i++) {
                 ItemStack item = inputWrapper.getStackInSlot(i);
