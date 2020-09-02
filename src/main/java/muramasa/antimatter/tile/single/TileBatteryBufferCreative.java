@@ -31,7 +31,7 @@ public class TileBatteryBufferCreative extends TileEntityStorage {
     }
 
     @Override
-    public void onLoad() {
+    public void onFirstTick() {
         //Anonymous inherited classes are annoying since you have to rewrite code. probably move the energy handlers to an actual class.
         if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage() * 64L, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
@@ -64,6 +64,6 @@ public class TileBatteryBufferCreative extends TileEntityStorage {
                 return super.onInteract(player, hand, side, type);
             }
         });
-        super.onLoad();
+        super.onFirstTick();
     }
 }

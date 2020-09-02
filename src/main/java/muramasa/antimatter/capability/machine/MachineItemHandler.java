@@ -54,9 +54,7 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     }
 
     public void onRemove() {
-        if (tile.isServerSide()) {
-            Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
-        }
+        if (tile.isServerSide()) Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     /*public void onReset() {

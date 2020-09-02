@@ -21,6 +21,7 @@ public class MachineCoverHandler extends RotatableCoverHandler<TileEntityMachine
 
     public MachineCoverHandler(TileEntityMachine tile) {
         super(tile, tile.getValidCovers());
+        //TODO: World not load
         covers.put(tile.getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, tile));
     }
 
