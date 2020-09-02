@@ -191,12 +191,16 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             tile.markDirty(); //TODO determine if needed
         }
         if (event instanceof MachineEvent) {
-            if (event == MachineEvent.ENERGY_INPUTTED) {
-                if (this.tile.getMachineState() == IDLE)
-                    //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
-                    this.tile.setMachineState(NO_POWER);
-                if (this.tile.getMachineState() == POWER_LOSS)
-                    this.tile.setMachineState(ACTIVE);
+            switch ((MachineEvent)event) {
+                case ENERGY_INPUTTED:
+                    if (this.tile.getMachineState() == IDLE)
+                        //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
+                        this.tile.setMachineState(NO_POWER);
+                    if (this.tile.getMachineState() == POWER_LOSS)
+                        this.tile.setMachineState(ACTIVE);
+                    break;
+                default:
+                    break;
             }
         }
     }
