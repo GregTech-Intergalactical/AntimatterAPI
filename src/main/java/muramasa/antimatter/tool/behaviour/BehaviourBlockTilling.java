@@ -5,18 +5,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
 

@@ -1,6 +1,5 @@
 package muramasa.antimatter.registration;
 
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 
 public interface IAntimatterRegistrar extends IAntimatterObject {

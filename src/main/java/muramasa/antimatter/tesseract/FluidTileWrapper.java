@@ -81,7 +81,7 @@ public class FluidTileWrapper implements IFluidNode, ITileWrapper {
 
     @Nullable
     @Override
-    public FluidData<?> extract(int tank, int amount, boolean simulate) {
+    public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
         FluidStack fluid = handler.getFluidInTank(tank);
         if (fluid.getAmount() > amount) {
             fluid = fluid.copy();

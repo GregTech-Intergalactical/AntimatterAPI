@@ -122,11 +122,11 @@ public class Utils {
     /** Merges B into A, ignoring maxStackSize **/
     public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
         int position, size = b.size();
-        for (int i = 0; i < size; i++) {
-            if (b.get(i).isEmpty()) continue;
-            position = contains(a, b.get(i));
-            if (position == -1) a.add(b.get(i));
-            else a.get(position).grow(b.get(i).getCount());
+        for (ItemStack stack : b) {
+            if (stack.isEmpty()) continue;
+            position = contains(a, stack);
+            if (position == -1) a.add(stack);
+            else a.get(position).grow(stack.getCount());
         }
         return a;
     }
@@ -134,11 +134,11 @@ public class Utils {
     /** Merges two Lists of FluidStacks, ignoring max amount **/
     public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
         int position, size = b.size();
-        for (int i = 0; i < size; i++) {
-            if (b.get(i) == null) continue;
-            position = contains(a, b.get(i));
-            if (position == -1) a.add(b.get(i));
-            else a.get(position).grow(b.get(i).getAmount());
+        for (FluidStack stack : b) {
+            if (stack == null) continue;
+            position = contains(a, stack);
+            if (position == -1) a.add(stack);
+            else a.get(position).grow(stack.getAmount());
         }
         return a;
     }
@@ -201,39 +201,40 @@ public class Utils {
 
     public static boolean areItemsValid(ItemStack... items) {
         if (items == null || items.length == 0) return false;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].isEmpty()) return false;
+        for (ItemStack item : items) {
+            if (item.isEmpty()) return false;
         }
         return true;
     }
 
     public static boolean areItemsValid(ItemStack[]... itemArrays) {
-        for (int i = 0; i < itemArrays.length; i++) {
-            if (!areItemsValid(itemArrays[i])) return false;
+        for (ItemStack[] itemArray : itemArrays) {
+            if (!areItemsValid(itemArray)) return false;
         }
         return true;
     }
 
     public static boolean areFluidsValid(FluidStack... fluids) {
         if (fluids == null || fluids.length == 0) return false;
-        for (int i = 0; i < fluids.length; i++) {
-            if (fluids[i].getRawFluid() == Fluids.EMPTY) return false;
+        for (FluidStack fluid : fluids) {
+            if (fluid.getRawFluid() == Fluids.EMPTY) return false;
         }
         return true;
     }
 
     public static boolean areFluidsValid(FluidStack[]... fluidArrays) {
-        for (int i = 0; i < fluidArrays.length; i++) {
-            if (!areFluidsValid(fluidArrays[i])) return false;
+        for (FluidStack[] fluidArray : fluidArrays) {
+            if (!areFluidsValid(fluidArray)) return false;
         }
         return true;
     }
 
     public static boolean doItemsMatchAndSizeValid(ItemStack[] a, ItemStack[] b) {
+        if (a == null || b == null) return false;
         int matchCount = 0;
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                if (contains(b[j], a[i])) {
+        for (ItemStack stack : a) {
+            for (ItemStack itemStack : b) {
+                if (contains(itemStack, stack)) {
                     matchCount++;
                     break;
                 }
@@ -243,10 +244,11 @@ public class Utils {
     }
 
     public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
+        if (a == null || b == null) return false;
         int matchCount = 0;
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                if (contains(b[j], a[i])) {
+        for (FluidStack fluidStack : a) {
+            for (FluidStack stack : b) {
+                if (contains(stack, fluidStack)) {
                     matchCount++;
                     break;
                 }
@@ -311,7 +313,7 @@ public class Utils {
                 return 0;
             }
             //The maximum possible amperage to output.
-            int outputAmperage = (int) Math.min(Math.min(from.getEnergy()/voltageOut, from.getOutputAmperage()),maxAmps);
+            int outputAmperage = (int) Math.min(Math.min(from.getEnergy() / voltageOut, from.getOutputAmperage()), maxAmps);
             int inputAmps = (int) Math.min(((to.getCapacity() - to.getEnergy())) / (voltageIn - loss), to.getInputAmperage());
 
             int amps = Math.min(outputAmperage, inputAmps);
@@ -319,8 +321,8 @@ public class Utils {
                 return 0;
             }
             //No need to simulate, calculations already done.
-            from.extract(voltageOut*amps, false);
-            to.insert((voltageOut-loss)*amps, false);
+            from.extract(voltageOut * amps, false);
+            to.insert((voltageOut - loss) * amps, false);
             return amps;
         }
         return 0;

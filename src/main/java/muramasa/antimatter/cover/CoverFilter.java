@@ -1,7 +1,6 @@
 package muramasa.antimatter.cover;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.machine.Tier;
 
 import java.util.Collection;
 import java.util.Set;

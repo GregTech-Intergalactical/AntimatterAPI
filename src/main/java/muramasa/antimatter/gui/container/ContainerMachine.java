@@ -11,7 +11,6 @@ import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public abstract class ContainerMachine extends AntimatterContainer {

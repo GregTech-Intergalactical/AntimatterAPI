@@ -32,7 +32,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
             nbt = new CompoundNBT();
         }
         if (!nbt.contains(TAG_CHARGE)) {
-            nbt.putLong(TAG_CHARGE,0);
+            nbt.putLong(TAG_CHARGE, 0);
         }
         return nbt;
     }
@@ -91,7 +91,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     @Override
     public long insert(long maxReceive, boolean simulate) {
         this.energy = getTagEnergy();
-        long toInsert = Math.max(Math.min(capacity-energy, maxReceive),0);
+        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
         if (simulate) {
             return toInsert;
         }
@@ -103,7 +103,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     @Override
     public long extract(long maxExtract, boolean simulate) {
         this.energy = getTagEnergy();
-        long toExtract = Math.max(Math.min(energy, maxExtract),0);
+        long toExtract = Math.max(Math.min(energy, maxExtract), 0);
         if (simulate) {
             return toExtract;
         }

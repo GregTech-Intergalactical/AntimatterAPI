@@ -68,7 +68,6 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         }
     }
 
-
     /** Switches the discharge mode for an item.
      *  False does nothing, true disables discharge.
      *  @param stack the stack to switch.

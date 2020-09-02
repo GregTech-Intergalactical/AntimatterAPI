@@ -2,7 +2,6 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;

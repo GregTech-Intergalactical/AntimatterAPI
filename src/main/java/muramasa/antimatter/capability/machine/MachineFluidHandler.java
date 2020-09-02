@@ -18,7 +18,6 @@ import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler implements IFluidNode, ITickHost {
+public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
 
     protected static int DEFAULT_CAPACITY = 99999;
     protected static int DEFAULT_PRESSURE = 99999;
@@ -284,14 +283,14 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
 
     /** Tesseract IFluidNode Implementations **/
     @Override
-    public int insert(@Nonnull FluidData data, boolean simulate) {
+    public int insert(FluidData data, boolean simulate) {
         FluidStack stack = (FluidStack) data.getStack();
         return inputWrapper.getFirstValidTank(stack.getFluid()) != -1 ? inputWrapper.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
     }
 
     @Nullable
     @Override
-    public FluidData<?> extract(int tank, int amount, boolean simulate) {
+    public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
         FluidStack fluid = outputWrapper.getFluidInTank(tank);
         if (fluid.getAmount() > amount) {
             fluid = fluid.copy();
@@ -303,17 +302,17 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     }
 
     @Override
-    public int getAvailableTank(@Nonnull Dir direction) {
+    public int getAvailableTank(Dir direction) {
         return outputWrapper.getAvailableTank(direction.getIndex());
     }
 
     @Override
-    public int getOutputAmount(@Nonnull Dir direction) {
+    public int getOutputAmount(Dir direction) {
         return pressure;
     }
 
     @Override
-    public int getPriority(@Nonnull Dir direction) {
+    public int getPriority(Dir direction) {
         return priority[direction.getIndex()];
     }
 
@@ -328,24 +327,24 @@ public class MachineFluidHandler implements IFluidNode, ITickHost {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
+    public boolean canOutput(Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
     @Override
-    public boolean canInput(@Nonnull Object fluid, @Nonnull Dir direction) {
+    public boolean canInput(Object fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && inputWrapper.getFirstValidTank(fluid) != -1;
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
     }
 
     @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+    public void reset(ITickingController oldController, ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
     }

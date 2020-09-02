@@ -1,4 +1,4 @@
-package muramasa.gti.tile.single;
+package muramasa.antimatter.tile.single;
 
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
@@ -8,7 +8,6 @@ import muramasa.antimatter.tile.TileEntityStorage;
 
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +21,17 @@ public class TileBatteryBuffer extends TileEntityStorage {
 
     @Override
     public void onLoad() {
-        //Anonymous inherited classes are annoying since you have to rewrite code. probably move the energy handlers to an actual class.
-           if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, 0, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
-            public boolean canOutput(@Nonnull Dir direction) {
-                //TODO: For debugging, set to always true for simplicity.
+        // Anonymous inherited classes are annoying since you have to rewrite code. probably move the energy handlers to an actual class.
+        if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, 0, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
+
+            @Override
+            public boolean canOutput(Dir direction) {
                return tile.getFacing().getIndex() == direction.getIndex();
+            }
+
+            @Override
+            public boolean connects(Dir direction) {
+                return true;
             }
 
             @Override

@@ -1,6 +1,5 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 

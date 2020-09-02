@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
-import static muramasa.antimatter.material.MaterialType.*;
 import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {

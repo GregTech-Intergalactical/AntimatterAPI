@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode, ITickHost {
+public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -137,7 +137,8 @@ public class MachineItemHandler implements IItemNode, ITickHost {
         if (tile.isServerSide()) {
             for (int i = 0; i < chargeWrapper.getSlots(); i++) {
                 //orElse: null, should always be present.
-                if (!chargeWrapper.getStackInSlot(i).isEmpty()) list.add(chargeWrapper.getStackInSlot(i).getCapability(AntimatterCaps.ENERGY).orElse(null));
+                ItemStack item = chargeWrapper.getStackInSlot(i);
+                if (!item.isEmpty()) list.add(item.getCapability(AntimatterCaps.ENERGY).orElse(null));
             }
         }
         return list;
@@ -147,16 +148,18 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     public List<ItemStack> getOutputList() {
         List<ItemStack> list = new ObjectArrayList<>();
         for (int i = 0; i < outputWrapper.getSlots(); i++) {
-            if (!outputWrapper.getStackInSlot(i).isEmpty()) list.add(outputWrapper.getStackInSlot(i).copy());
+            ItemStack item = outputWrapper.getStackInSlot(i);
+            if (!item.isEmpty()) list.add(item.copy());
         }
         return list;
     }
 
     public void consumeInputs(ItemStack... inputs) {
-        for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputWrapper.getSlots(); j++) {
-                if (Utils.equals(inputs[i], inputWrapper.getStackInSlot(j)) && !Utils.hasNoConsumeTag(inputs[i])) {
-                    inputWrapper.getStackInSlot(j).shrink(inputs[i].getCount());
+        for (ItemStack input : inputs) {
+            for (int i = 0; i < inputWrapper.getSlots(); i++) {
+                ItemStack item = inputWrapper.getStackInSlot(i);
+                if (Utils.equals(input, item) && !Utils.hasNoConsumeTag(input)) {
+                    item.shrink(input.getCount());
                     break;
                 }
             }
@@ -166,9 +169,9 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     public void addOutputs(ItemStack... outputs) {
         if (outputWrapper == null || outputs == null || outputs.length == 0) return;
-        for (int i = 0; i < outputs.length; i++) {
-            for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                ItemStack result = outputWrapper.insertItem(j, outputs[i].copy(), false);
+        for (ItemStack output : outputs) {
+            for (int i = 0; i < outputWrapper.getSlots(); i++) {
+                ItemStack result = outputWrapper.insertItem(i, output.copy(), false);
                 if (result.isEmpty()) break;
             }
         }
@@ -182,9 +185,10 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                if (outputWrapper.getStackInSlot(j).isEmpty() || (Utils.equals(a[i], outputWrapper.getStackInSlot(j)) && outputWrapper.getStackInSlot(j).getCount() + a[i].getCount() <= outputWrapper.getStackInSlot(j).getMaxStackSize())) {
+        for (ItemStack stack : a) {
+            for (int i = 0; i < outputWrapper.getSlots(); i++) {
+                ItemStack item = outputWrapper.getStackInSlot(i);
+                if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= item.getMaxStackSize())) {
                     matchCount++;
                     break;
                 }
@@ -196,16 +200,16 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
         List<ItemStack> notConsumed = new ObjectArrayList<>();
         ItemStack result;
-        for (int i = 0; i < inputs.length; i++) {
-            for (int j = 0; j < inputWrapper.getSlots(); j++) {
-                if (Utils.equals(inputs[i], inputWrapper.getStackInSlot(j))) {
-                    result = inputWrapper.extractItem(j, inputs[i].getCount(), false);
+        for (ItemStack input : inputs) {
+            for (int i = 0; i < inputWrapper.getSlots(); i++) {
+                if (Utils.equals(input, inputWrapper.getStackInSlot(i))) {
+                    result = inputWrapper.extractItem(i, input.getCount(), false);
                     if (!result.isEmpty()) {
-                        if (result.getCount() == inputs[i].getCount()) break;
-                        else notConsumed.add(Utils.ca(inputs[i].getCount() - result.getCount(), inputs[i]));
+                        if (result.getCount() == input.getCount()) break;
+                        else notConsumed.add(Utils.ca(input.getCount() - result.getCount(), input));
                     }
-                } else if (j == inputWrapper.getSlots() - 1) {
-                    notConsumed.add(inputs[i]);
+                } else if (i == inputWrapper.getSlots() - 1) {
+                    notConsumed.add(input);
                 }
             }
         }
@@ -309,7 +313,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(@Nonnull ItemData data, boolean simulate) {
+    public int insert(ItemData data, boolean simulate) {
         ItemStack stack = (ItemStack) data.getStack();
         int slot = inputWrapper.getFirstValidSlot(stack.getItem());
         if (slot == -1) {
@@ -328,7 +332,7 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Nullable
     @Override
-    public ItemData<?> extract(int slot, int amount, boolean simulate) {
+    public ItemData<ItemStack> extract(int slot, int amount, boolean simulate) {
         ItemStack stack = outputWrapper.extractItem(slot, amount, simulate);
         if (!simulate) tile.markDirty();
         return stack.isEmpty() ? null : new ItemData<>(slot, stack);
@@ -336,18 +340,18 @@ public class MachineItemHandler implements IItemNode, ITickHost {
 
     @Nonnull
     @Override
-    public IntList getAvailableSlots(@Nonnull Dir direction) {
+    public IntList getAvailableSlots(Dir direction) {
         if (canOutput(direction)) return outputWrapper.getAvailableSlots(direction.getIndex());
         return new IntArrayList();
     }
 
     @Override
-    public int getOutputAmount(@Nonnull Dir direction) {
+    public int getOutputAmount(Dir direction) {
         return 4;
     }
 
     @Override
-    public int getPriority(@Nonnull Dir direction) {
+    public int getPriority(Dir direction) {
         return priority[direction.getIndex()];
     }
 
@@ -367,24 +371,24 @@ public class MachineItemHandler implements IItemNode, ITickHost {
     }
 
     @Override
-    public boolean canOutput(@Nonnull Dir direction) {
+    public boolean canOutput(Dir direction) {
         return tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
     @Override
-    public boolean canInput(@Nonnull Object item, @Nonnull Dir direction) {
+    public boolean canInput(Object item, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return inputWrapper.isItemAvailable(item, direction.getIndex()) && inputWrapper.getFirstValidSlot(item) != -1;
     }
 
     @Override
-    public boolean connects(@Nonnull Dir direction) {
+    public boolean connects(Dir direction) {
         return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
     }
 
     @Override
-    public void reset(@Nullable ITickingController oldController, @Nullable ITickingController newController) {
+    public void reset(ITickingController oldController, ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
     }

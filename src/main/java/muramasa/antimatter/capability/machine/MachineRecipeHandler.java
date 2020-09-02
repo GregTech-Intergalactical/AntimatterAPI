@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -74,7 +73,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         onRecipeFound();
     }
 
-
     public boolean checkRecipe() {
         if (tile.getMachineState().allowRecipeCheck()) { //No active recipes, see of contents match one
             System.out.println("check recipe");
@@ -138,9 +136,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public boolean canRecipeContinue() {
-        if (tile.itemHandler.isPresent() && activeRecipe.hasInputItems() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
+        if (tile.itemHandler.isPresent() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
             return false;
-        if (tile.fluidHandler.isPresent() && activeRecipe.hasInputFluids() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
+        if (tile.fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
             return false;
         return true;
     }
