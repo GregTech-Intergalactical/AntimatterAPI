@@ -43,11 +43,14 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
-        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public MachineFluidHandler(TileEntityMachine tile) {
         this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
+    }
+
+    public void onLoad() {
+        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
@@ -58,12 +61,10 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
         Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
-    /*public void onReset() {
-        if (tile.isServerSide()) {
-            TesseractAPI.removeFluid(tile.getDimention(), tile.getPos().toLong());
-            TesseractAPI.registerFluidNode(tile.getDimention(), tile.getPos().toLong(), this);
-        }
-    }*/
+    public void onReset() {
+        Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    }
 
     public FluidTankWrapper getInputWrapper() {
         return inputWrapper;

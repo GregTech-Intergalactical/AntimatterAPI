@@ -30,7 +30,7 @@ public class TileTransformer extends TileEntityStorage {
     }
 
     @Override
-    public void onFirstTick() {
+    public void onInit() {
         // Anonymous inherited classes are annoying since you have to rewrite code. probably move the energy handlers to an actual class.
         if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, 512L + getMachineTier().getVoltage() * 2L, getMachineTier().getVoltage(), getMachineTier().getVoltage() / 4, amps,amps * 4) {
 
@@ -64,6 +64,6 @@ public class TileTransformer extends TileEntityStorage {
                 return super.onInteract(player, hand, side, type);
             }
         });
-        super.onFirstTick();
+        super.onInit();
     }
 }

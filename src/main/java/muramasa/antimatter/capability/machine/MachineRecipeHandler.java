@@ -26,7 +26,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void onUpdate() {
-        if (tile.isClientSide()) return;
         if (tile.getMachineState() != IDLE) tickMachineLoop();
     }
 

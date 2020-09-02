@@ -20,33 +20,32 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     protected TileEntityMachine tile;
     protected ITickingController controller;
     // Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
-    protected List<IEnergyHandler> cachedItems;
+    protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        if (this.tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
-        tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
-        if (cachedItems == null) cachedItems = new ObjectArrayList<>();
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
     }
 
-    public void onRemove() {
-        if (tile.isServerSide()) Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+    public void onLoad() {
+        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
-        if (controller != null && tile.isServerSide()) controller.tick();
+        if (controller != null) controller.tick();
+    }
+
+    public void onRemove() {
+       Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     public void onReset() {
-        if (tile.isServerSide()) {
-            Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
-            Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
-        }
+        Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     @Override

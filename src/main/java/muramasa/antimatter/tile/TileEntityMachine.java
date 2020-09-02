@@ -100,7 +100,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onFirstTick() {
+    public void onInit() {
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
         if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
         //TODO: what are implications of this? just makes life easier
@@ -124,28 +124,45 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onRemove() {
+    public void onServerLoad() {
+        energyHandler.ifPresent(MachineEnergyHandler::onLoad);
+        fluidHandler.ifPresent(MachineFluidHandler::onLoad);
+        itemHandler.ifPresent(MachineItemHandler::onLoad);
+    }
+
+    @Override
+    public void onServerRemove() {
+        coverHandler.ifPresent(MachineCoverHandler::onRemove);
         energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
+    }
+
+    @Override
+    public void onServerUpdate() {
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
+        fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
+        itemHandler.ifPresent(MachineItemHandler::onUpdate);
+        energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
+        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
+    }
+
+    @Override
+    public void onClientRemove() {
         coverHandler.ifPresent(MachineCoverHandler::onRemove);
     }
 
-    // Should be called on the rotation or cover changes to update connections
-    /*public void onReset() {
+    @Override
+    public void onClientUpdate() {
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
+    }
+
+    /*
+    public void onReset() {
         energyHandler.ifPresent(MachineEnergyHandler::onReset);
         fluidHandler.ifPresent(MachineFluidHandler::onReset);
         itemHandler.ifPresent(MachineItemHandler::onReset);
     }*/
-
-    @Override
-    public void onServerUpdate() {
-        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
-        fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
-        itemHandler.ifPresent(MachineItemHandler::onUpdate);
-        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
-        energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
-    }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));

@@ -46,7 +46,10 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
         if (tile.getMachineType().has(MachineFlag.ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
-        if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    }
+
+    public void onLoad() {
+        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
@@ -54,15 +57,13 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     }
 
     public void onRemove() {
-        if (tile.isServerSide()) Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
-    /*public void onReset() {
-        if (tile.isServerSide()) {
-            TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
-            TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
-        }
-    }*/
+    public void onReset() {
+        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    }
 
     /** Handler Access **/
     public IItemHandler getInputWrapper() {

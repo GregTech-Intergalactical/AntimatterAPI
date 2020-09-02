@@ -25,7 +25,7 @@ public class TileEntityStorage extends TileEntityMachine {
     private boolean checkAmps = false;
 
     @Override
-    public void onFirstTick() {
+    public void onInit() {
         if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
             @Override
             public boolean  canOutput(Dir direction) {
@@ -45,7 +45,7 @@ public class TileEntityStorage extends TileEntityMachine {
                 super.onMachineEvent(event, data);
             }
         });
-        super.onFirstTick();
+        super.onInit();
     }
     //Schedules a check for amperage next tick.
     //TODO: This is not good but otherwise items are not available for checking. Check into onContentsChanged for container

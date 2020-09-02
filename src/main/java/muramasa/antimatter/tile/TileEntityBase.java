@@ -14,11 +14,13 @@ public abstract class TileEntityBase extends TileEntity {
 
     @Override
     public void remove() {
-        onRemove();
+        if (isServerSide()) {
+            onServerRemove();
+        }
+        else {
+            onClientRemove();
+        }
         super.remove();
-    }
-
-    public void onRemove() {
     }
 
     public boolean isClientSide() {
@@ -38,5 +40,13 @@ public abstract class TileEntityBase extends TileEntity {
         List<String> info = new ObjectArrayList<>();
         info.add("Tile: " + getClass().getName());
         return info;
+    }
+
+    public void onClientRemove() {
+        //NOOP
+    }
+
+    public void onServerRemove() {
+        //NOOP
     }
 }
