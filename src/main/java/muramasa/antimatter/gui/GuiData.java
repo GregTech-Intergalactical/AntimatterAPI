@@ -214,7 +214,7 @@ public class GuiData {
     }
 
     public boolean hasAnyItem(Tier tier) {
-        return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0;
+        return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0 || getSlots(SlotType.CELL_IN,tier).size() > 0 || getSlots(SlotType.CELL_OUT,tier).size() > 0;
     }
 
     public boolean hasAnyFluid(Tier tier) {
