@@ -45,7 +45,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public void onReset() {
         if (tile.isServerSide()) {
             Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
-            Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this); // this is connector class
+            Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
         }
     }
 
