@@ -21,8 +21,7 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
             case 1:
                 if (isServerSide()) {
                     onServerLoad();
-                }
-                else {
+                } else {
                     onClientLoad();
                 }
                 state++;
@@ -30,8 +29,7 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
             default:
                 if (isServerSide()) {
                     onServerUpdate();
-                }
-                else {
+                } else {
                     onClientUpdate();
                 }
                 break;

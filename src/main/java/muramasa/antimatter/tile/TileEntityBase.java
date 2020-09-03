@@ -16,8 +16,7 @@ public abstract class TileEntityBase extends TileEntity {
     public void remove() {
         if (isServerSide()) {
             onServerRemove();
-        }
-        else {
+        } else {
             onClientRemove();
         }
         super.remove();
