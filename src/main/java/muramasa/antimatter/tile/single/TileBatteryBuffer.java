@@ -17,7 +17,7 @@ public class TileBatteryBuffer extends TileEntityStorage {
     }
 
     @Override
-    public void onInit() {
+    public void onFirstTick() {
         // Anonymous inherited classes are annoying since you have to rewrite code. probably move the energy handlers to an actual class.
         if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, 0, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
 
@@ -46,6 +46,6 @@ public class TileBatteryBuffer extends TileEntityStorage {
                 return super.getEnergy() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getEnergy).sum() : 0);
             }
         });
-        super.onInit();
+        super.onFirstTick();
     }
 }

@@ -27,10 +27,10 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
-    public void onInit() {
+    public void onFirstTick() {
         componentHandler = Optional.of(new HatchComponentHandler(this));
         if (isServerSide() && has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, 1000));
-        super.onInit();
+        super.onFirstTick();
     }
 
     @Override

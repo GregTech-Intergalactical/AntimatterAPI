@@ -100,7 +100,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onInit() {
+    public void onFirstTick() {
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
         if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
         //TODO: what are implications of this? just makes life easier
@@ -124,14 +124,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onServerLoad() {
-        energyHandler.ifPresent(MachineEnergyHandler::onLoad);
-        fluidHandler.ifPresent(MachineFluidHandler::onLoad);
-        itemHandler.ifPresent(MachineItemHandler::onLoad);
-    }
-
-    @Override
-    public void onServerRemove() {
+    public void onRemove() {
         coverHandler.ifPresent(MachineCoverHandler::onRemove);
         energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
@@ -146,23 +139,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
     }
-
-    @Override
-    public void onClientRemove() {
-        coverHandler.ifPresent(MachineCoverHandler::onRemove);
-    }
-
-    @Override
-    public void onClientUpdate() {
-        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
-    }
-
-    /*
-    public void onReset() {
-        energyHandler.ifPresent(MachineEnergyHandler::onReset);
-        fluidHandler.ifPresent(MachineFluidHandler::onReset);
-        itemHandler.ifPresent(MachineItemHandler::onReset);
-    }*/
 
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));

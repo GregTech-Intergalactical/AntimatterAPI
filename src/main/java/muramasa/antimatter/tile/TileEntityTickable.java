@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntityType;
 
 public class TileEntityTickable extends TileEntityBase implements ITickableTileEntity {
 
-    private byte state;
+    private boolean hadFirstTick;
 
     public TileEntityTickable(TileEntityType<?> type) {
         super(type);
@@ -13,43 +13,22 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
 
     @Override
     public void tick() {
-        switch (state) {
-            case 0:
-                onInit();
-                state++;
-                break;
-            case 1:
-                if (isServerSide()) {
-                    onServerLoad();
-                } else {
-                    onClientLoad();
-                }
-                state++;
-                break;
-            default:
-                if (isServerSide()) {
-                    onServerUpdate();
-                } else {
-                    onClientUpdate();
-                }
-                break;
+        if (!hadFirstTick) {
+            onFirstTick();
+            hadFirstTick = true;
+        } else if (isServerSide()) {
+            onServerUpdate();
+        } else {
+            onClientUpdate();
         }
         requestModelDataUpdate();
     }
 
     public boolean hadFirstTick() {
-        return state != 0;
+        return hadFirstTick;
     }
 
-    public void onInit() {
-        //NOOP
-    }
-
-    public void onClientLoad() {
-        //NOOP
-    }
-
-    public void onServerLoad() {
+    public void onFirstTick() {
         //NOOP
     }
 

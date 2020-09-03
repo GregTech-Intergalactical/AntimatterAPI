@@ -60,7 +60,7 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
         return false;
     }
 
-    private void onInit() {
+    private void onFirstTick() {
         TileEntityPipe tile = getTile();
         CoverInstance[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
@@ -109,7 +109,7 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
 
     public void deserialize(CompoundNBT tag) {
         connection = tag.getByte("connection");
-        onInit();
+        onFirstTick();
     }
 
     private AntimatterToolType getTool() {

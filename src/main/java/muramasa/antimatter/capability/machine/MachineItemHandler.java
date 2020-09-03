@@ -46,23 +46,22 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
         if (tile.getMachineType().has(MachineFlag.ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
-    }
-
-    public void onLoad() {
-        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
-        if (controller != null && tile.isServerSide()) controller.tick();
+        if (controller != null) controller.tick();
     }
 
     public void onRemove() {
-        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+        if (tile.isServerSide()) Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     public void onReset() {
-        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
-        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (tile.isServerSide()) {
+            Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+            Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
     }
 
     /** Handler Access **/

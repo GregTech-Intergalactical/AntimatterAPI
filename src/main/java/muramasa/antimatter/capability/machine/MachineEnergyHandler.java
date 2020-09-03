@@ -25,14 +25,11 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
+        if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public MachineEnergyHandler(TileEntityMachine tile) {
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
-    }
-
-    public void onLoad() {
-        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
@@ -40,12 +37,14 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     }
 
     public void onRemove() {
-       Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+        if (tile.isServerSide()) Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     public void onReset() {
-        Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
-        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (tile.isServerSide()) {
+            Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+            Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
     }
 
     @Override

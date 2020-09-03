@@ -47,19 +47,13 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
-    public void onInit() {
+    public void onFirstTick() {
         if (!coverHandler.isPresent()) coverHandler = Optional.of(new PipeCoverHandler(this));
         if (!interactHandler.isPresent()) interactHandler = Optional.of(new PipeInteractHandler(this));
     }
 
     @Override
-    public void onClientRemove() {
-        coverHandler.ifPresent(PipeCoverHandler::onRemove);
-        interactHandler.ifPresent(PipeInteractHandler::onRemove);
-    }
-
-    @Override
-    public void onServerRemove() {
+    public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
         interactHandler.ifPresent(PipeInteractHandler::onRemove);
     }
