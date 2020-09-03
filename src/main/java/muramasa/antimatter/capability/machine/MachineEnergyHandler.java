@@ -74,14 +74,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
         }
 
-    public void onRemove() {
-        if (tile.isServerSide()) Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
-    }
-    //Transfers energy from internal buffer between items.
-    public void onUpdate() {
-        if (controller != null && tile.isServerSide()) controller.tick();
-    }
-
     public void setOutputAmperage(int amp) {
         amperage_out = amp;
     }
