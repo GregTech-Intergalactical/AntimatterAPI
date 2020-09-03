@@ -7,10 +7,11 @@ import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerInteractHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.capability.machine.MultiMachineRecipeHandler;
+import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.event.GuiEvent;
-import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.IComponent;
@@ -30,7 +31,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
+public class TileEntityMultiMachine extends TileEntityMachine implements IComponent, IGuiHandler {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
@@ -42,7 +43,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         super(tileType);
     }
 
-    public TileEntityMultiMachine(Machine type) {
+    public TileEntityMultiMachine(Machine<?> type) {
         super(type);
     }
 
@@ -117,7 +118,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     @Override
-    public void onMachineEvent(IMachineEvent event, Object... data) {
+    public void onGuiEvent(IGuiEvent event, int... data) {
         if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
             recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);

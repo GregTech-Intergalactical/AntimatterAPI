@@ -1,7 +1,8 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.machine.event.GuiEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,21 +19,24 @@ public class GuiEventPacket {
     private final GuiEvent event;
     private final BlockPos pos;
     private final int dimension;
+    private final int[] data;
 
-    public GuiEventPacket(GuiEvent event, BlockPos pos, int dimension) {
+    public GuiEventPacket(GuiEvent event, BlockPos pos, int dimension, int... data) {
         this.event = event;
         this.pos = pos;
         this.dimension = dimension;
+        this.data = data;
     }
 
     public static void encode(GuiEventPacket msg, PacketBuffer buf) {
         buf.writeEnumValue(msg.event);
         buf.writeBlockPos(msg.pos);
         buf.writeVarInt(msg.dimension);
+        buf.writeVarIntArray(msg.data);
     }
 
     public static GuiEventPacket decode(PacketBuffer buf) {
-        return new GuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readVarInt());
+        return new GuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readVarInt(), buf.readVarIntArray());
     }
 
     public static void handle(final GuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -41,8 +45,8 @@ public class GuiEventPacket {
             if (dimensionType != null) {
                 World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimensionType);
                 TileEntity tile = Utils.getTile(world, msg.pos);
-                if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine) tile).onMachineEvent(msg.event);
+                if (tile instanceof IGuiHandler) {
+                    ((IGuiHandler) tile).onGuiEvent(msg.event, msg.data);
                 }
             }
         });

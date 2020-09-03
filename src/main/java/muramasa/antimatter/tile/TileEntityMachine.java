@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -43,7 +44,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -140,6 +141,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
+    @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));

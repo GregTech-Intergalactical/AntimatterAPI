@@ -122,7 +122,7 @@ public class TileEntityPipe extends TileEntityTickable {
             return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
         }
         if (cap == AntimatterCaps.INTERACTABLE) {
-            return interactHandler.isPresent() ? LazyOptional.of(() -> interactHandler.get()).cast() : super.getCapability(cap);
+            return interactHandler.<LazyOptional<T>>map(h -> LazyOptional.of(() -> h).cast()).orElseGet(() -> super.getCapability(cap));
         }
         return LazyOptional.empty();
     }

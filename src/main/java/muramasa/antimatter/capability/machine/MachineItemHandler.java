@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -29,7 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
+public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMachineHandler {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -111,10 +112,6 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
 
     public IItemHandler getHandlerForSide(Direction side) {
         return side != tile.getOutputFacing() ? inputWrapper : outputWrapper;
-    }
-
-    public void onMachineEvent(IMachineEvent event, Object... data) {
-
     }
 
     /** Gets a list of non empty input Items **/
