@@ -133,11 +133,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onServerUpdate() {
-        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
+        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
-        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
     public void onMachineEvent(IMachineEvent event, Object... data) {
