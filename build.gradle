@@ -10,6 +10,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
 repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
 }
@@ -19,7 +23,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '0.0.1'
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'antimatter'
 
@@ -104,6 +108,32 @@ minecraft {
     }
 }
 
+assemble.dependsOn shadowJar
+
+configurations {
+    deobf
+    embed
+    implementation.extendsFrom(embed)
+}
+
+shadowJar {
+    configurations = [project.configurations.embed]
+}
+
+// Deobfuscated jar; development purposes.
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+task deobfJar(type: ShadowJar, dependsOn: 'classes') {
+    from sourceSets.main.output
+    configurations = [project.configurations.embed]
+    classifier "dev"
+}
+
+// Sources jar; development purposes.
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier "sources"
+}
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -162,4 +192,8 @@ publishing {
 
 jar {
     zip64 true
+}
+
+artifacts {
+    deobf deobfJar
 }
