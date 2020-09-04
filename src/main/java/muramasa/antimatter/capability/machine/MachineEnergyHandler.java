@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -70,6 +72,37 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         return 0;
     }
 
+    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
+        /*
+        Here the default check is performed for the case of a generator, might be moved at a later point.
+         */
+        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
+        }
+
+    public void setOutputAmperage(int amp) {
+        amperage_out = amp;
+    }
+
+    public void setInputAmperage(int amp) {
+        amperage_in = amp;
+    }
+
+    /**
+     *
+     * @return whether or not this handler can charge items in charge slots.
+     */
+    public boolean canChargeItem() {
+        return true;
+    }
+
+    /**
+     *
+     * @return whether or not this handler change charge from items in charge slots.
+     */
+    public boolean canChargeFromItem() {
+        return false;
+    }
+
     @Override
     public long extract(long maxExtract, boolean simulate) {
         long extracted = super.extract(maxExtract, simulate);
@@ -105,19 +138,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public void reset(ITickingController oldController, ITickingController newController) {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
             controller = newController;
-    }
-
-    @Override
-    public boolean canOutput(Dir direction) {
-        return false;
-    }
-
-    public boolean canChargeItem() {
-        return true;
-    }
-
-    public boolean canChargeFromItem() {
-        return false;
     }
 
     /** NBT **/
