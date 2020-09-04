@@ -108,7 +108,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (!itemHandler.isPresent() /*&& isServerSide()*/ && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
         if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this));
         //Allow energyHandler on client? this should fix capabilities.
-        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, has(GENERATOR)));
         if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
     }
 
@@ -147,6 +147,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
         itemHandler.ifPresent(h -> h.onMachineEvent(event,data));
         energyHandler.ifPresent(h -> h.onMachineEvent(event,data));
+        fluidHandler.ifPresent(h -> h.onMachineEvent(event,data));
+
         //TODO: Put this in the actual handlers when a change occurs.
     }
 
@@ -271,8 +273,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
         else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
         else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        //TODO: Not sure what the COVERABLE should mean. Does it mean EMPTY? because .isEmpty() is bad.
-        else if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()/*coverHandler.map(h -> true/*h.getCover(side).isEmpty()).orElse(false)*/) return LazyOptional.of(() -> coverHandler.get()).cast();
+        else if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()/*coverHandler.map(h -> true/*h.getCover(side).isEmpty()).orElse(false)*/) {
+            return LazyOptional.of(() -> coverHandler.get()).cast();
+        }
         else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap, side);
     }

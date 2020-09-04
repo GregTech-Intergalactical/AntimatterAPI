@@ -238,7 +238,7 @@ public class GuiData {
     }
 
     public boolean hasAnyItem(Tier tier) {
-        return !getSlots(SlotType.IT_IN, tier).isEmpty() || !getSlots(SlotType.IT_OUT, tier).isEmpty();
+        return !getSlots(SlotType.IT_IN, tier).isEmpty() || !getSlots(SlotType.IT_OUT, tier).isEmpty() || !getSlots(SlotType.CELL_IN,tier).isEmpty() || !getSlots(SlotType.CELL_OUT,tier).isEmpty();
     }
 
     public boolean hasAnyFluid(Tier tier) {

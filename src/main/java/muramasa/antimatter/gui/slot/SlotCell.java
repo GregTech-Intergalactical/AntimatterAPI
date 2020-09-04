@@ -1,12 +1,14 @@
 package muramasa.antimatter.gui.slot;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-//TODO use
+//Slotcell actually allows any fluid container!
 public class SlotCell extends SlotItemHandler {
 
     public SlotCell(IItemHandler stackHandler, int index, int x, int y) {
@@ -15,7 +17,6 @@ public class SlotCell extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        //TODO return ItemType.EmptyCell.isEqual(stack) || MaterialItem.hasType(stack, Prefix.Cell);
-        return false;
+        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
     }
 }

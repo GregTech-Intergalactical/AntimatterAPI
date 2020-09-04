@@ -3,14 +3,22 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTankWrapper;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
@@ -52,6 +60,68 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
 
     public void onUpdate() {
         if (controller != null) controller.tick();
+    }
+
+
+    //TODO IN THIS METHOD: Slot 0 is hardcoded for output, refactor this.
+    protected void insertFromCell(int slot) {
+        MachineItemHandler handler = tile.itemHandler.get();
+        ItemStack stack = handler.getCellWrapper().getStackInSlot(slot);
+        //One at a time.
+        for (int i = 0; i < stack.getCount(); i++) {
+            //Fluid caps.
+            LazyOptional<IFluidHandlerItem> fhandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+            //First, validate that an empty item can be
+            ItemStack changedBucket = fhandler.map(ihandler -> {
+                FluidStack fluid = ihandler.getFluidInTank(0);
+                if (!checkValidFluid(fluid)) {
+                    //I know it is not supposed to be null but i dont know how to do it otherwise, dont want a lazyoptional return, like Empty.
+                    return null;
+                }
+                //tempHandler - essentially simulate draining a copy and see if it fits in output, otherwise dont drain it.
+                LazyOptional<IFluidHandlerItem> tempHandler = ihandler.getContainer().copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+                if (tempHandler.map(temp -> {
+                    temp.drain(this.inputWrapper.fill(fluid, SIMULATE), EXECUTE);
+                    if (handler.getOutputWrapper().insertItem(0,temp.getContainer(), true) != ItemStack.EMPTY) return false;
+                    return true;
+                }).orElse(false)) {
+                    ihandler.drain(this.inputWrapper.fill(fluid, EXECUTE), EXECUTE);
+                    return ihandler.getContainer();
+                }
+                return null;
+            }).orElse(null);
+            //changedBucket - a changed bucket.
+            if (changedBucket != null) {
+                changedBucket.copy();
+                changedBucket.setCount(1);
+                handler.getCellWrapper().extractItem(slot,1,false);
+                handler.getOutputWrapper().insertItem(0, changedBucket, false);
+            } else {
+                break;
+            }
+        }
+    }
+
+    protected boolean checkValidFluid(FluidStack fluid) {
+        if (tile.has(MachineFlag.GENERATOR)) {
+            Recipe recipe = tile.getMachineType().getRecipeMap().find(null, new FluidStack[]{fluid});
+            if (recipe != null) {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    public void onMachineEvent(IMachineEvent event, Object ...data) {
+        if (event instanceof ContentEvent) {
+            switch ((ContentEvent)event) {
+                case ITEM_CELL_CHANGED:
+                    if (tile.itemHandler.get().getCellCount() > 0 && data[0] instanceof Integer) {
+                        insertFromCell((Integer) data[0]);
+                    }
+                    break;
+            }
+        }
     }
 
     public void onRemove() {
