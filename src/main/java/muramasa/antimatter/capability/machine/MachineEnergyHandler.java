@@ -77,7 +77,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         Here the default check is performed for the case of a generator, might be moved at a later point.
          */
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
-        }
+    }
 
     public void setOutputAmperage(int amp) {
         amperage_out = amp;
@@ -86,19 +86,19 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public void setInputAmperage(int amp) {
         amperage_in = amp;
     }
+    
+    public void setOutputVoltage(int voltage) {
+        voltage_out = voltage;
+    }
 
-    /**
-     *
-     * @return whether or not this handler can charge items in charge slots.
-     */
+    public void setInputVoltage(int voltage) {
+        voltage_in = voltage;
+    }
+
     public boolean canChargeItem() {
         return true;
     }
 
-    /**
-     *
-     * @return whether or not this handler change charge from items in charge slots.
-     */
     public boolean canChargeFromItem() {
         return false;
     }
