@@ -230,11 +230,11 @@ public class GuiData {
     }
 
     public boolean hasAnyItem(Tier tier) {
-        return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0 || getSlots(SlotType.CELL_IN,tier).size() > 0 || getSlots(SlotType.CELL_OUT,tier).size() > 0;
+        return !getSlots(SlotType.IT_IN, tier).isEmpty() || !getSlots(SlotType.IT_OUT, tier).isEmpty() || !getSlots(SlotType.CELL_IN,tier).isEmpty() || !getSlots(SlotType.CELL_OUT,tier).isEmpty();
     }
 
     public boolean hasAnyFluid(Tier tier) {
-        return getSlots(SlotType.FL_IN, tier).size() > 0 || getSlots(SlotType.FL_OUT, tier).size() > 0;
+        return !getSlots(SlotType.FL_IN, tier).isEmpty() || !getSlots(SlotType.FL_OUT, tier).isEmpty();
     }
 
     //TODO broken
