@@ -34,6 +34,10 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
     }
 
+    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
+        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
+    }
+
     public void onUpdate() {
         if (controller != null) controller.tick();
     }
@@ -72,13 +76,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         return 0;
     }
 
-    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
-        /*
-        Here the default check is performed for the case of a generator, might be moved at a later point.
-         */
-        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
-    }
-
     public void setOutputAmperage(int amp) {
         amperage_out = amp;
     }
@@ -86,7 +83,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public void setInputAmperage(int amp) {
         amperage_in = amp;
     }
-    
+
     public void setOutputVoltage(int voltage) {
         voltage_out = voltage;
     }
