@@ -29,6 +29,7 @@ public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         TileEntityMachine tile = getTile();
         ItemStack stack = player.getHeldItem(hand);
+
         if (stack.getItem() instanceof ItemCover) {
             return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
         } else if (type == WRENCH || type == ELECTRIC_WRENCH) {
@@ -39,7 +40,7 @@ public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
             return true;
         } else if (type == CROWBAR) {
             return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.removeCover(player, side)).orElse(false);
-        } else if (type == SCREWDRIVER) {
+        } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER  ) {
             CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.get(side)).orElse(COVER_EMPTY);
             return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
         } else return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);

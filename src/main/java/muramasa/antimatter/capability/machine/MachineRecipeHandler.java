@@ -10,7 +10,12 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import java.util.Objects;
+
+import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 import static muramasa.antimatter.machine.MachineState.*;
 
@@ -20,6 +25,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected Recipe activeRecipe;
     protected int curProgress, maxProgress;
     protected int overclock;
+
+    //Consuming resources can call into the recipe handler, causing a loop.
+    //For instance, consuming fluid in the fluid handlers calls back into the MachineRecipeHandler, deadlocking.
+    //So just 'lock' during recipe ticking.
+    private boolean tickingRecipe = false;
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
@@ -31,17 +41,16 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     protected void tickMachineLoop() {
-        //        if (getMachineState() == ACTIVE || getMachineState() == OUTPUT_FULL) {
-//            setMachineState(tickRecipe());
-//        } else if (getMachineState() == NO_POWER) {
-//            setMachineState(IDLE);
-//            checkRecipe();
-//        }
+
+        //To avoid a feedback loop caused by events firing from inside the recipe handler
+        //(such as consuming resources for a recipe and/or generator check so we dont overflow tick recipes.
+        if (tickingRecipe) return;
         switch (tile.getMachineState()) {
             case ACTIVE:
             case OUTPUT_FULL:
                 tile.setMachineState(tickRecipe());
                 break;
+            case POWER_LOSS:
             case NO_POWER:
                 MachineState state = tickRecipe();
                 if (state != ACTIVE) {
@@ -51,6 +60,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 }
                 break;
         }
+        tickingRecipe = false;
     }
 
     public Recipe findRecipe() {
@@ -82,6 +92,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     return false;
                     //TODO machine tier cannot process recipe
                 }
+                if (tile.has(GENERATOR) && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
+                    return false;
+                }
                 activateRecipe();
                 //TODO: Rename NO_POWER? Default to no_power for now.
                 tile.setMachineState(NO_POWER);
@@ -92,6 +105,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public MachineState tickRecipe() {
+        tickingRecipe = true;
         onRecipeTick();
         if (activeRecipe == null)
             return IDLE; //TODO this null check added if saved state triggers tickMachineLoop, but there is no recipe to process
@@ -108,7 +122,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         } else {
             //Calculate per recipe tick so user has risk of losing items
             if (!consumeResourceForRecipe()) return curProgress == 0 ? IDLE : POWER_LOSS;
-            if (curProgress == 0) consumeInputs(); //Consume recipe inputs on first recipe tick
+            if (curProgress == 0 && !tile.has(GENERATOR)) consumeInputs(); //Consume recipe inputs on first recipe tick
             curProgress++;
             return ACTIVE;
         }
@@ -145,10 +159,38 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public boolean consumeResourceForRecipe() {
         if (tile.energyHandler.isPresent()) {
-            if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), true) >= activeRecipe.getPower() * (1 << overclock)) {
-                tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), false);
+            if (!tile.has(GENERATOR)) {
+                if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), true) >= activeRecipe.getPower() * (1 << overclock)) {
+                    tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), false);
+                    return true;
+                }
+            } else {
+               return consumeGeneratorResources();
+            }
+        }
+        return false;
+    }
+
+    protected boolean consumeGeneratorResources() {
+        if (!activeRecipe.hasInputFluids()) {
+            throw new RuntimeException("Missing fuel in active generator recipe!");
+        }
+        boolean shouldRun = tile.energyHandler.map(handler -> handler.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()),true) > 0).orElse(false);
+        if (!shouldRun) return false;
+        long toConsume = (long) ((double)tile.getMachineTier().getVoltage() /(double)(activeRecipe.getPower() /(double) Objects.requireNonNull(activeRecipe.getInputFluids())[0].getAmount()));
+        if (tile.fluidHandler.map(h -> {
+            int amount = h.inputWrapper.drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            if (amount == toConsume) {
+                h.inputWrapper.drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.EXECUTE);
                 return true;
             }
+            return false;
+        }).orElse(false)) {
+            //Input energy
+            tile.energyHandler.ifPresent(handler -> {
+                handler.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()), false);
+            });
+            return true;
         }
         return false;
     }
@@ -174,10 +216,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (event instanceof ContentEvent) {
             //TODO seems to fire before the inventory has actually changed?
             switch ((ContentEvent) event) {
+                case FLUID_INPUT_CHANGED:
                 case ITEM_INPUT_CHANGED:
                     if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
                     if (tile.getMachineType().has(RECIPE)) checkRecipe();
                     break;
+                case FLUID_OUTPUT_CHANGED:
                 case ITEM_OUTPUT_CHANGED:
                     if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
                     break;
