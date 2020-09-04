@@ -17,6 +17,7 @@ public enum MachineFlag {
     ENERGY(), //Needs power
     RECIPE(), //Has a recipe map
     GUI(),
+    GENERATOR(), //Has a recipe map and converts applicable recipes to power.
     COVERABLE(),
     CONFIGURABLE();
 

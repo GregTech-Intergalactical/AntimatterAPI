@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile;
 
-import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -21,7 +20,7 @@ public class TileEntityStorage extends TileEntityMachine {
         super(type);
     }
 
-    //If, during next tick, amperage amount should be rechecked.
+    // If, during next tick, amperage amount should be rechecked.
     private boolean checkAmps = false;
 
     @Override
@@ -47,23 +46,23 @@ public class TileEntityStorage extends TileEntityMachine {
         });
         super.onFirstTick();
     }
-    //Schedules a check for amperage next tick.
+    // Schedules a check for amperage next tick.
     //TODO: This is not good but otherwise items are not available for checking. Check into onContentsChanged for container
-    //so we can calculate amperage during the event ENERGY_SLOT_CHANGED!
+    // So we can calculate amperage during the event ENERGY_SLOT_CHANGED!
     private void scheduleAmperageCheck() {
         checkAmps = true;
     }
 
-    //calculateAmperage checks batteries and calculates the total available input/output amperage.
+    // calculateAmperage checks batteries and calculates the total available input/output amperage.
     private void calculateAmperage() {
-        itemHandler.ifPresent(handler -> {
-            energyHandler.ifPresent(ehandler -> {
+        itemHandler.ifPresent(h -> {
+            energyHandler.ifPresent(e -> {
                 //Check all items that match the given voltage, and allow either input/output.
-                int out = handler.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == ehandler.getOutputVoltage())).mapToInt(IEnergyHandler::getOutputAmperage).sum();
-                int in = handler.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == ehandler.getInputVoltage())).mapToInt(IEnergyHandler::getInputAmperage).sum();
+                int out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToInt(IEnergyHandler::getOutputAmperage).sum();
+                int in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToInt(IEnergyHandler::getInputAmperage).sum();
                 //2 amps per battery input.
-                ehandler.setInputAmperage(2 * in);
-                ehandler.setOutputAmperage(out);
+                e.setInputAmperage(2 * in);
+                e.setOutputAmperage(out);
             });
         });
     }
@@ -80,9 +79,10 @@ public class TileEntityStorage extends TileEntityMachine {
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
-
-        info.add("Amperage in: " + energyHandler.map(EnergyHandler::getInputAmperage).orElse(0));
-        info.add("Amperage out: " + energyHandler.map(EnergyHandler::getOutputAmperage).orElse(0));
+        energyHandler.ifPresent(h -> {
+            info.add("Amperage In: " + h.getInputAmperage());
+            info.add("Amperage Out: " + h.getOutputAmperage());
+        });
         return info;
     }
 }

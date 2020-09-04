@@ -2,16 +2,13 @@ package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 //GuiData with a type parameter T representing a GUI-able type,
 //e.g. machine o r cover.
@@ -31,7 +28,6 @@ public class GuiData {
 
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     protected BarDir side = BarDir.LEFT;
-    protected IInfoRenderer infoRenderer;
 
     protected Object2ObjectMap<String, List<SlotData>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
@@ -104,17 +100,13 @@ public class GuiData {
         return this;
     }
 
-    public IInfoRenderer getInfoRenderer() {
-        return infoRenderer;
-    }
-
-    public GuiData setInfoRenderer(IInfoRenderer infoRenderer) {
-        this.infoRenderer = infoRenderer;
+    public GuiData addButton(int x, int y, int w, int h, String text) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, text));
         return this;
     }
 
-    public GuiData addButton(int x, int y, int w, int h, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, text));
+    public GuiData addButton(int x, int y, int w, int h, ButtonType type) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, type));
         return this;
     }
 
@@ -238,11 +230,11 @@ public class GuiData {
     }
 
     public boolean hasAnyItem(Tier tier) {
-        return !getSlots(SlotType.IT_IN, tier).isEmpty() || !getSlots(SlotType.IT_OUT, tier).isEmpty();
+        return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0 || getSlots(SlotType.CELL_IN,tier).size() > 0 || getSlots(SlotType.CELL_OUT,tier).size() > 0;
     }
 
     public boolean hasAnyFluid(Tier tier) {
-        return !getSlots(SlotType.FL_IN, tier).isEmpty() || !getSlots(SlotType.FL_OUT, tier).isEmpty();
+        return getSlots(SlotType.FL_IN, tier).size() > 0 || getSlots(SlotType.FL_OUT, tier).size() > 0;
     }
 
     //TODO broken

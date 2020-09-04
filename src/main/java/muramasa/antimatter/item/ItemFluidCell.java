@@ -16,10 +16,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
@@ -71,8 +73,8 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     public ItemStack fill(Fluid fluid) {
         ItemStack stack = new ItemStack(this);
-        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).ifPresent(handler -> {
-            handler.fill(new FluidStack(fluid, handler.getTankCapacity(0)), IFluidHandler.FluidAction.EXECUTE);
+        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).ifPresent(h -> {
+            h.fill(new FluidStack(fluid, h.getTankCapacity(0)), EXECUTE);
         });
         return stack;
     }
@@ -80,21 +82,16 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
     @Override
     public ActionResultType onItemUse(ItemUseContext ctxt) {
         //TODO reenable
-//        if (world.isRemote) return EnumActionResult.PASS;
+//      if (world.isRemote) return EnumActionResult.PASS;
 
         TileEntity tile = Utils.getTile(ctxt.getWorld(), ctxt.getPos());
         if (tile != null) {
             tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(fluidHandler -> {
-                System.out.println("has cap");
-
                 ctxt.getPlayer().getHeldItem(ctxt.getHand()).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cellHandler -> {
-                    int countFilled = fluidHandler.fill(cellHandler.getFluidInTank(0), IFluidHandler.FluidAction.SIMULATE);
-                    System.out.println("fill tile: " + countFilled);
+                    int countFilled = fluidHandler.fill(cellHandler.getFluidInTank(0), SIMULATE);
                     if (countFilled == 1000) {
-
-                        fluidHandler.fill(cellHandler.getFluidInTank(0), IFluidHandler.FluidAction.EXECUTE);
-
-                        cellHandler.drain(1000, IFluidHandler.FluidAction.EXECUTE);
+                        fluidHandler.fill(cellHandler.getFluidInTank(0), EXECUTE);
+                        cellHandler.drain(1000, EXECUTE);
                     }
                 });
             });

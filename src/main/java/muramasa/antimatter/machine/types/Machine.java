@@ -61,6 +61,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /** Multi Members **/
     protected Object2ObjectMap<Tier, Structure> structures = new Object2ObjectOpenHashMap<>();
 
+    /** Energy data **/
+    protected float efficiency = 1;
+
     //TODO get valid covers
 
     public Machine(String domain, String id, Object... data) {
@@ -118,6 +121,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return new TranslationTextComponent("machine." + id + "." + tier.getId());
     }
 
+    public double getMachineEfficiency() {
+        return efficiency;
+    }
+
     public List<Texture> getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         for (Tier tier : getTiers()) {
@@ -172,7 +179,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public void setGUI(MenuHandler<?, ?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
-        //addFlags(MachineFlag.GUI);
+        //if (hasRenderer) guiData.setInfoRenderer(getInfoRenderer());
     }
 
     public void setStructure(Function<StructureBuilder, Structure> func) {

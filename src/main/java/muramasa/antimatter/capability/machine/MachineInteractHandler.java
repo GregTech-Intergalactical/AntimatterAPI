@@ -29,6 +29,7 @@ public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
     public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         TileEntityMachine tile = getTile();
         ItemStack stack = player.getHeldItem(hand);
+
         if (stack.getItem() instanceof ItemCover) {
             return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
         } else if (hand == Hand.MAIN_HAND) {

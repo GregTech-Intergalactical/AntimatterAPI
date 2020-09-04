@@ -5,11 +5,13 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -17,6 +19,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -44,7 +47,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler, IGuiHandler, IInfoRenderer {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -88,7 +91,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
     };
 
-    public IIntArray getContainerData() { return machineData;};
+    public IIntArray getContainerData() { return machineData; };
 
     public TileEntityMachine(TileEntityType<?> tileType) {
         super(tileType);
@@ -108,7 +111,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (!itemHandler.isPresent() /*&& isServerSide()*/ && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
         if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this));
         //Allow energyHandler on client? this should fix capabilities.
-        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this));
+        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, has(GENERATOR)));
         if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
     }
 
@@ -147,6 +150,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
         itemHandler.ifPresent(h -> h.onMachineEvent(event,data));
         energyHandler.ifPresent(h -> h.onMachineEvent(event,data));
+        fluidHandler.ifPresent(h -> h.onMachineEvent(event,data));
+
         //TODO: Put this in the actual handlers when a change occurs.
     }
 
@@ -189,6 +194,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return MachineState.IDLE;
     }
 
+    public boolean isDefaultMachineState() {
+        return getMachineState() == getDefaultMachineState();
+    }
+
     public int getMaxInputVoltage() {
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
@@ -202,11 +211,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void toggleMachine() {
         //setMachineState(getDefaultMachineState());
         //recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
-        toggleState(MachineState.DISABLED);
-    }
-
-    public void toggleState(MachineState state) {
-        setMachineState(machineState == state ? MachineState.IDLE : state);
+        setMachineState(getMachineState() == MachineState.DISABLED ? getDefaultMachineState() : MachineState.DISABLED);
     }
 
     public void setMachineState(MachineState newState) {
@@ -214,7 +219,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             markForRenderUpdate();
             System.out.println("RENDER UPDATE");
         }*/
-        if (machineState != newState) {
+        if (getMachineState() != newState) {
             Utils.markTileForRenderUpdate(this);
             if (isServerSide()) markDirty();
         }
@@ -271,8 +276,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
         else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
         else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        //TODO: Not sure what the COVERABLE should mean. Does it mean EMPTY? because .isEmpty() is bad.
-        else if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()/*coverHandler.map(h -> true/*h.getCover(side).isEmpty()).orElse(false)*/) return LazyOptional.of(() -> coverHandler.get()).cast();
+        else if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()/*coverHandler.map(h -> true/*h.getCover(side).isEmpty()).orElse(false)*/) {
+            return LazyOptional.of(() -> coverHandler.get()).cast();
+        }
         else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap, side);
     }
@@ -299,7 +305,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
-        if (machineState != null) tag.putInt(Ref.KEY_MACHINE_TILE_STATE, machineState.ordinal());
+        if (getMachineState() != null) tag.putInt(Ref.KEY_MACHINE_TILE_STATE, getMachineState().ordinal());
         itemHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_ITEMS, h.serialize()));
         fluidHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_FLUIDS, h.serialize()));
         energyHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_ENERGY, h.serialize()));

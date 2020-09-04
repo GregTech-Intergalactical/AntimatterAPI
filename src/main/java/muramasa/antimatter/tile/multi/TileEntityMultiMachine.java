@@ -31,7 +31,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine extends TileEntityMachine implements IComponent, IGuiHandler {
+public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
