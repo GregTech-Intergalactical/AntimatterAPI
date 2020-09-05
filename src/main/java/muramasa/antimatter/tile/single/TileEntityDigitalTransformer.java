@@ -100,11 +100,11 @@ public class TileEntityDigitalTransformer extends TileEntityTransformer {
     }
 
     @Override
-    public void drawInfo(FontRenderer renderer) {
-        renderer.drawString("Digital Trans", 56, 24, 16448255);
-        renderer.drawString("VOLT: " + voltage, 56, 40, 16448255);
-        renderer.drawString("TIER: " + Tier.getTier(voltage < 0 ? -voltage : voltage).getId().toUpperCase(), 56, 48, 16448255);
-        renderer.drawString("AMP: " + amperage, 56, 56, 16448255);
-        renderer.drawString("SUM: " + (long)(amperage * voltage), 56, 64, 16448255);
+    public void drawInfo(FontRenderer renderer, int left, int top) {
+        renderer.drawString("Digital Trans", left + 56, top + 24, 16448255);
+        renderer.drawString("VOLT: " + voltage, left + 56, top + 40, 16448255);
+        renderer.drawString("TIER: " + Tier.getTier(voltage < 0 ? -voltage : voltage).getId().toUpperCase(), left +56, top + 48, 16448255);
+        renderer.drawString("AMP: " + amperage, left +56, top + 56, 16448255);
+        renderer.drawString("SUM: " + (long)(amperage * voltage), left + 56, top + 64, 16448255);
     }
 }

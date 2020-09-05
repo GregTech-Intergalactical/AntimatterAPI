@@ -15,7 +15,6 @@ import java.util.List;
 public class GuiData {
 
     //TODO This whole class needs rethought
-
     //TODO make sure addons can redirect gui opening now that Mod instance isn't used
 
     private static final String ANY = "any";
@@ -25,6 +24,7 @@ public class GuiData {
 
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
+    protected ResourceLocation buttonLocation;
 
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     protected BarDir side = BarDir.LEFT;
@@ -100,13 +100,9 @@ public class GuiData {
         return this;
     }
 
-    public GuiData addButton(int x, int y, int w, int h, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, text));
-        return this;
-    }
-
-    public GuiData addButton(int x, int y, int w, int h, ButtonType type) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, type));
+    public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
+        if (buttonLocation == null) buttonLocation = new ResourceLocation(loc.getNamespace(), "textures/gui/button/gui_buttons.png");
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, buttonLocation, body, overlay));
         return this;
     }
 
@@ -116,6 +112,10 @@ public class GuiData {
 
     public boolean hasButtons() {
         return !BUTTON_LIST.isEmpty();
+    }
+
+    public ResourceLocation getButtonLocation() {
+        return buttonLocation;
     }
 
     /** Adds a slot for ANY **/
@@ -169,7 +169,7 @@ public class GuiData {
         Tier tier = AntimatterAPI.get(Tier.class, key);
         if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
 
-        COUNT_LOOKUP.addTo(slot.type, 1);
+        COUNT_LOOKUP.addTo(slot.getType(), 1);
         if (SLOT_LOOKUP.containsKey(key)) {
             SLOT_LOOKUP.get(key).add(slot);
         } else {
@@ -210,7 +210,7 @@ public class GuiData {
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
         for (SlotData slot : slots) {
-            if (slot.type == type) types.add(slot);
+            if (slot.getType() == type) types.add(slot);
         }
         return types;
     }
@@ -220,7 +220,7 @@ public class GuiData {
         List<SlotData> slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
         for (SlotData slot : slots) {
-            if (slot.type == type) types.add(slot);
+            if (slot.getType() == type) types.add(slot);
         }
         return types;
     }

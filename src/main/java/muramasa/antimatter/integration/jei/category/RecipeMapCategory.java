@@ -126,7 +126,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 ItemStack[] stacks = recipe.getInputItems();
                 slotCount = Math.min(slotCount, stacks.length);
                 for (int s = 0; s < slotCount; s++) {
-                    itemGroup.init(groupIndex, true, slots.get(s).x - offsetX, slots.get(s).y - offsetY);
+                    itemGroup.init(groupIndex, true, slots.get(s).getX() - offsetX, slots.get(s).getY() - offsetY);
                     itemGroup.set(groupIndex++, stacks[s]);
                     inputItems++;
                 }
@@ -139,7 +139,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 ItemStack[] stacks = recipe.getOutputItems();
                 slotCount = Math.min(slotCount, stacks.length);
                 for (int s = 0; s < slotCount; s++) {
-                    itemGroup.init(groupIndex, false, slots.get(s).x - offsetX, slots.get(s).y - offsetY);
+                    itemGroup.init(groupIndex, false, slots.get(s).getX() - offsetX, slots.get(s).getY() - offsetY);
                     itemGroup.set(groupIndex++, stacks[s]);
                 }
             }
@@ -153,7 +153,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 FluidStack[] fluids = recipe.getInputFluids();
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
-                    fluidGroup.init(groupIndex, true, slots.get(s).x - (offsetX - 1), slots.get(s).y - (offsetY - 1), 16, 16, 0, false, null);
+                    fluidGroup.init(groupIndex, true, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, 0, false, null);
                     fluidGroup.set(groupIndex++, fluids[s]);
                     inputFluids++;
                 }
@@ -166,7 +166,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 FluidStack[] fluids = recipe.getOutputFluids();
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
-                    fluidGroup.init(groupIndex, false, slots.get(s).x - (offsetX - 1), slots.get(s).y - (offsetY - 1), 16, 16, 0, false, null);
+                    fluidGroup.init(groupIndex, false, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, 0, false, null);
                     fluidGroup.set(groupIndex++, fluids[s]);
                 }
             }

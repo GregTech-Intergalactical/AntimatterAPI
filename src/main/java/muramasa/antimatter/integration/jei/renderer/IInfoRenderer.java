@@ -4,7 +4,7 @@ import net.minecraft.client.gui.FontRenderer;
 
 public interface IInfoRenderer {
 
-    default void drawInfo(FontRenderer renderer) {
+    default void drawInfo(FontRenderer renderer, int left, int top) {
         //NOOP
     }
 }
