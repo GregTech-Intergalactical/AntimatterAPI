@@ -5,5 +5,5 @@ include 'version'
 include ":tesseract"
 project(":tesseract").projectDir = file("tesseract")
 
-include ":forge"
-project(":forge").projectDir = file("tesseract/forge")
+include ":tesseract:forge"
+project(":tesseract:forge").projectDir = file("tesseract/forge")
