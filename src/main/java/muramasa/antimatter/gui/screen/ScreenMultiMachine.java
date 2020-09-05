@@ -18,7 +18,7 @@ public class ScreenMultiMachine<T extends ContainerMultiMachine> extends ScreenM
     protected void init() {
         super.init();
 
-        addButton(new ButtonWidget(guiLeft, guiTop, 8, 8, container.getTile().getMachineType().getGui().getButtonLocation(), BLUE, "X", b -> {
+        addButton(new ButtonWidget(guiLeft, guiTop, 8, 8, container.getTile().getMachineType().getGui().getButtonLocation(), BLUE, "x", b -> {
             if (container.getTile().getMachineState() == MachineState.INVALID_STRUCTURE) {
                 //TODO
                 //GregTechNetwork.sendGuiEvent(GuiEvent.MULTI_ACTIVATE, tile);
