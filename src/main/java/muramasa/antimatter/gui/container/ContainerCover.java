@@ -11,10 +11,10 @@ import java.util.Objects;
 
 public class ContainerCover extends AntimatterContainer {
     protected TileEntity onEntity;
-    private CoverInstance c;
-    private MenuHandlerCover m;
+    private CoverInstance<?> c;
+    private MenuHandlerCover<?, ?> m;
 
-    public ContainerCover(CoverInstance on, PlayerInventory playerInv, MenuHandlerCover menuHandler, int windowId) {
+    public ContainerCover(CoverInstance<?> on, PlayerInventory playerInv, MenuHandlerCover<?, ?> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
         this.c =  on;
         this.m = menuHandler;
@@ -22,7 +22,7 @@ public class ContainerCover extends AntimatterContainer {
         this.onEntity = Objects.requireNonNull(c.getTile());
     }
 
-    public CoverInstance getCover() {
+    public CoverInstance<?> getCover() {
         return c;
     }
 

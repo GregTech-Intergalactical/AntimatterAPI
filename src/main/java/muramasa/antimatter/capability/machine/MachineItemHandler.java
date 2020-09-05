@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -29,7 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
+public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMachineHandler {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -50,21 +51,19 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     }
 
     public void onUpdate() {
-        if (controller != null && tile.isServerSide()) controller.tick();
+        if (controller != null) controller.tick();
     }
 
     public void onRemove() {
-        if (tile.isServerSide()) {
-            Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
-        }
+        if (tile.isServerSide()) Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
-    /*public void onReset() {
+    public void onReset() {
         if (tile.isServerSide()) {
-            TesseractAPI.removeItem(tile.getDimention(), tile.getPos().toLong());
-            TesseractAPI.registerItemNode(tile.getDimention(), tile.getPos().toLong(), this);
+            Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
+            Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
         }
-    }*/
+    }
 
     /** Handler Access **/
     public IItemHandler getInputWrapper() {
@@ -115,10 +114,6 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
         return side != tile.getOutputFacing() ? inputWrapper : outputWrapper;
     }
 
-    public void onMachineEvent(IMachineEvent event, Object... data) {
-
-    }
-
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
@@ -155,6 +150,7 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost {
     }
 
     public void consumeInputs(ItemStack... inputs) {
+        if (inputs == null || inputs.length == 0) return;
         for (ItemStack input : inputs) {
             for (int i = 0; i < inputWrapper.getSlots(); i++) {
                 ItemStack item = inputWrapper.getStackInSlot(i);

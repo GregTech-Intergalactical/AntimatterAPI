@@ -16,10 +16,10 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
         if (!hadFirstTick) {
             onFirstTick();
             hadFirstTick = true;
-        } else if (isClientSide()) {
-            onClientUpdate();
         } else if (isServerSide()) {
             onServerUpdate();
+        } else {
+            onClientUpdate();
         }
         requestModelDataUpdate();
     }

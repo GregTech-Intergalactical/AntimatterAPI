@@ -13,6 +13,6 @@ public class HatchMachine extends Machine<HatchMachine> {
         setTile(() -> new TileEntityHatch(this));
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, CONFIGURABLE, COVERABLE);
-        if (has(GUI)) setGUI(Data.HATCH_MENU_HANDLER);
+        setGUI(Data.HATCH_MENU_HANDLER);
     }
 }

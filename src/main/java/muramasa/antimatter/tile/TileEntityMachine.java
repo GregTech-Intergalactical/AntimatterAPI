@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -43,7 +44,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -100,7 +101,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onLoad() {
+    public void onFirstTick() {
         if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
         if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
         //TODO: what are implications of this? just makes life easier
@@ -125,28 +126,22 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onRemove() {
+        coverHandler.ifPresent(MachineCoverHandler::onRemove);
         energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
-        coverHandler.ifPresent(MachineCoverHandler::onRemove);
     }
-
-    // Should be called on the rotation or cover changes to update connections
-    //public void onReset() {
-    //    energyHandler.ifPresent(MachineEnergyHandler::onReset);
-    //    fluidHandler.ifPresent(MachineFluidHandler::onReset);
-    //    itemHandler.ifPresent(MachineItemHandler::onReset);
-    //}
 
     @Override
     public void onServerUpdate() {
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
-        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
+    @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
@@ -209,7 +204,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void toggleMachine() {
         //setMachineState(getDefaultMachineState());
         //recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
-        setMachineState(machineState == MachineState.DISABLED ? MachineState.IDLE : MachineState.DISABLED);
+        toggleState(MachineState.DISABLED);
+    }
+
+    public void toggleState(MachineState state) {
+        setMachineState(machineState == state ? MachineState.IDLE : state);
     }
 
     public void setMachineState(MachineState newState) {

@@ -47,7 +47,7 @@ public class MachineCoverHandler extends RotatableCoverHandler<TileEntityMachine
     }
 
     @Override
-    public boolean  onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
         return super.onInteract(player, hand, side, type);
     }
 

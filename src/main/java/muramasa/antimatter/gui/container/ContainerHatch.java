@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerInventory;
 
 public class ContainerHatch extends ContainerMachine {
 
-    public ContainerHatch(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine menuHandler, int windowId) {
+    public ContainerHatch(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine<?, ?> menuHandler, int windowId) {
         super(tile, playerInv, menuHandler, windowId);
     }
 }

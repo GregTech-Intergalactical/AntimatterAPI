@@ -1,7 +1,6 @@
 package muramasa.antimatter.gui;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.Tier;
@@ -12,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 //GuiData with a type parameter T representing a GUI-able type,
 //e.g. machine o r cover.
@@ -33,8 +33,9 @@ public class GuiData {
     protected BarDir side = BarDir.LEFT;
     protected IInfoRenderer infoRenderer;
 
-    protected LinkedHashMap<String, List<SlotData>> SLOT_LOOKUP = new LinkedHashMap<>();
+    protected Object2ObjectMap<String, List<SlotData>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
+    protected List<ButtonData> BUTTON_LIST = new ObjectArrayList<>();
 
     public GuiData(String domain, String id) {
         this.loc = new ResourceLocation(domain, id);
@@ -112,6 +113,19 @@ public class GuiData {
         return this;
     }
 
+    public GuiData addButton(int x, int y, int w, int h, String text) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, text));
+        return this;
+    }
+
+    public List<ButtonData> getButtons() {
+        return BUTTON_LIST;
+    }
+
+    public boolean hasButtons() {
+        return !BUTTON_LIST.isEmpty();
+    }
+
     /** Adds a slot for ANY **/
     public GuiData add(SlotType type, int x, int y) {
         return add(ANY, new SlotData(type, x, y));
@@ -176,12 +190,12 @@ public class GuiData {
 
     public boolean hasSlots() {
         List<SlotData> slots = SLOT_LOOKUP.get(ANY);
-        return slots != null && slots.size() > 0;
+        return slots != null && !slots.isEmpty();
     }
 
     public boolean hasSlots(Tier tier) {
         List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
-        return slots != null && slots.size() > 0;
+        return slots != null && !slots.isEmpty();
     }
 
     public List<SlotData> getAnySlots() {
@@ -209,20 +223,30 @@ public class GuiData {
         return types;
     }
 
+    public List<SlotData> getSlots(SlotType type) {
+        List<SlotData> types = new ObjectArrayList<>();
+        List<SlotData> slots = SLOT_LOOKUP.get(ANY);
+        if (slots == null) return types; //No slots found
+        for (SlotData slot : slots) {
+            if (slot.type == type) types.add(slot);
+        }
+        return types;
+    }
+
     public boolean hasType(SlotType type) {
         return getCount(type) > 0;
     }
 
     public boolean hasAnyItem(Tier tier) {
-        return getSlots(SlotType.IT_IN, tier).size() > 0 || getSlots(SlotType.IT_OUT, tier).size() > 0 || getSlots(SlotType.CELL_IN,tier).size() > 0 || getSlots(SlotType.CELL_OUT,tier).size() > 0;
+        return !getSlots(SlotType.IT_IN, tier).isEmpty() || !getSlots(SlotType.IT_OUT, tier).isEmpty() || !getSlots(SlotType.CELL_IN,tier).isEmpty() || !getSlots(SlotType.CELL_OUT,tier).isEmpty();
     }
 
     public boolean hasAnyFluid(Tier tier) {
-        return getSlots(SlotType.FL_IN, tier).size() > 0 || getSlots(SlotType.FL_OUT, tier).size() > 0;
+        return !getSlots(SlotType.FL_IN, tier).isEmpty() || !getSlots(SlotType.FL_OUT, tier).isEmpty();
     }
 
     //TODO broken
     public int getCount(SlotType type) {
-        return COUNT_LOOKUP.get(type);
+        return COUNT_LOOKUP.getInt(type);
     }
 }

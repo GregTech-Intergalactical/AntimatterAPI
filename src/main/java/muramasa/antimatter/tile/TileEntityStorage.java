@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -8,6 +9,7 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import tesseract.util.Dir;
 
+import java.util.List;
 import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
@@ -23,11 +25,16 @@ public class TileEntityStorage extends TileEntityMachine {
     private boolean checkAmps = false;
 
     @Override
-    public void onLoad() {
+    public void onFirstTick() {
         if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
             @Override
             public boolean  canOutput(Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();
+            }
+
+            @Override
+            public boolean connects(Dir direction) {
+                return true;
             }
         });
         if (!itemHandler.isPresent() && has(ITEM)) itemHandler = Optional.of(new MachineItemHandler(this) {
@@ -38,7 +45,7 @@ public class TileEntityStorage extends TileEntityMachine {
                 super.onMachineEvent(event, data);
             }
         });
-        super.onLoad();
+        super.onFirstTick();
     }
     //Schedules a check for amperage next tick.
     //TODO: This is not good but otherwise items are not available for checking. Check into onContentsChanged for container
@@ -68,5 +75,14 @@ public class TileEntityStorage extends TileEntityMachine {
             checkAmps = false;
         }
         super.onServerUpdate();
+    }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> info = super.getInfo();
+
+        info.add("Amperage in: " + energyHandler.map(EnergyHandler::getInputAmperage).orElse(0));
+        info.add("Amperage out: " + energyHandler.map(EnergyHandler::getOutputAmperage).orElse(0));
+        return info;
     }
 }

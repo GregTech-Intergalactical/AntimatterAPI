@@ -124,4 +124,21 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
     }
+
+    /* Voltage is static in Tesseract, then to update it, also recreate the node */
+    public void setOutputAmperage(int amp) {
+        amperage_out = amp;
+    }
+
+    public void setInputAmperage(int amp) {
+        amperage_in = amp;
+    }
+
+    public void setOutputVoltage(int voltage) {
+        voltage_out = voltage;
+    }
+
+    public void setInputVoltage(int voltage) {
+        voltage_in = voltage;
+    }
 }

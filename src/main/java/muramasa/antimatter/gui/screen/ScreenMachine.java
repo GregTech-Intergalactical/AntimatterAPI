@@ -1,9 +1,14 @@
 package muramasa.antimatter.gui.screen;
 
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.gui.ButtonData;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -24,6 +29,16 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
 
     protected void drawTitle(int mouseX, int mouseY) {
         Minecraft.getInstance().fontRenderer.drawString(name, getCenteredStringX(name), 4, 0x404040);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
+            addButton(new Button(guiLeft + button.x, guiTop + button.y, button.w, button.h, button.text, b -> {
+                Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.BUTTON_ACTION, container.getTile().getPos(), container.getTile().getWorld().getDimension().getType().getId(), button.id));
+            }));
+        }
     }
 
     @Override

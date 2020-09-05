@@ -32,17 +32,21 @@ public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
 
         if (stack.getItem() instanceof ItemCover) {
             return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
-        } else if (type == WRENCH || type == ELECTRIC_WRENCH) {
-            return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
-        } else if (type == HAMMER) {
-            tile.toggleMachine();
-            player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
-            return true;
-        } else if (type == CROWBAR) {
-            return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.removeCover(player, side)).orElse(false);
-        } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER  ) {
-            CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.get(side)).orElse(COVER_EMPTY);
-            return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
-        } else return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+        } else if (hand == Hand.MAIN_HAND) {
+            if (type == WRENCH || type == ELECTRIC_WRENCH) {
+                return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
+            } else if (type == HAMMER) {
+                tile.toggleMachine();
+                player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
+                return true;
+            } else if (type == CROWBAR) {
+                return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.removeCover(player, side)).orElse(false);
+            } else if (type == SCREWDRIVER) {
+                CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.get(side)).orElse(COVER_EMPTY);
+                return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
+            }
+            return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+        }
+        return true;
     }
 }

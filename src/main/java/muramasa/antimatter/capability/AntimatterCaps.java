@@ -29,17 +29,13 @@ public class AntimatterCaps {
         CapabilityManager.INSTANCE.register(IEnergyHandler.class, new Capability.IStorage<IEnergyHandler>() {
             @Override
             public INBT writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side) {
-                return LongNBT.valueOf(instance.getEnergy());
+                return null;
             }
 
             @Override
             public void readNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side, INBT nbt) {
-                if (!(instance instanceof MachineEnergyHandler)) {
-                    throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
-                }
-                instance.insert(((LongNBT)nbt).getLong(), false);
             }
-        }, () -> new EnergyHandler(0, 1000, 0, 0, 0, 0));
+        }, () -> new EnergyHandler(0, 0, 0, 0, 0, 0));
 
         CapabilityManager.INSTANCE.register(IInteractHandler.class, new Capability.IStorage<IInteractHandler>() {
             @Nullable
