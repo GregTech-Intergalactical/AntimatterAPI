@@ -1,39 +1,24 @@
 package muramasa.antimatter.gui;
 
-public class ButtonBody {
-    public static ButtonBody GREY = new ButtonBody("grey", 0, 0, 16, 0 );
-    public static ButtonBody BLUE = new ButtonBody("blue", 32, 0, 48, 0);
-    public static ButtonBody NO_HOVER = new ButtonBody("no_hover", 64, 0, 0, 0);
+public class ButtonBody extends ButtonOverlay {
 
-    protected String id;
-    protected int xTexStart, yTexStart;
-    protected int xDiffText, yDiffText;
+    public static ButtonBody GREY = new ButtonBody("grey", 0, 0, 32, 0, 32, 32);
+    public static ButtonBody BLUE = new ButtonBody("blue", 64, 0, 96, 0, 32, 32);
+    public static ButtonBody NO_HOVER = new ButtonBody("no_hover", 128, 0, 0, 0, 32, 32);
 
-    public ButtonBody(String id, int xTexStart, int yTexStart, int xDiffText, int yDiffText) {
-        this.id = id;
-        this.xTexStart = xTexStart;
-        this.yTexStart = yTexStart;
-        this.xDiffText = xDiffText;
-        this.yDiffText = yDiffText;
+    protected int x2, y2;
+
+    public ButtonBody(String id, int x, int y, int x2, int y2, int w, int h) {
+        super(id, x, y, w, h);
+        this.x2 = x2;
+        this.y2 = y2;
     }
 
-    public String getId() {
-        return id;
+    public int getX2() {
+        return x2;
     }
 
-    public int getTexX() {
-        return xTexStart;
-    }
-
-    public int getTexY() {
-        return yTexStart;
-    }
-
-    public int getDiffX() {
-        return xDiffText;
-    }
-
-    public int getDiffY() {
-        return yDiffText;
+    public int getY2() {
+        return y2;
     }
 }

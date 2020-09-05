@@ -24,7 +24,7 @@ public class GuiData {
 
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
-    protected ResourceLocation buttonLocation;
+    protected ResourceLocation buttonLoc;
 
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     protected BarDir side = BarDir.LEFT;
@@ -101,8 +101,7 @@ public class GuiData {
     }
 
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
-        if (buttonLocation == null) buttonLocation = new ResourceLocation(loc.getNamespace(), "textures/gui/button/gui_buttons.png");
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, buttonLocation, body, overlay));
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, getButtonLocation(), body, overlay));
         return this;
     }
 
@@ -115,7 +114,8 @@ public class GuiData {
     }
 
     public ResourceLocation getButtonLocation() {
-        return buttonLocation;
+        if (buttonLoc == null) buttonLoc = new ResourceLocation(loc.getNamespace(), "textures/gui/button/gui_buttons.png");
+        return buttonLoc;
     }
 
     /** Adds a slot for ANY **/

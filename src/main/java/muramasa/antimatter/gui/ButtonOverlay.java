@@ -1,41 +1,53 @@
 package muramasa.antimatter.gui;
 
 public class ButtonOverlay {
-    public static ButtonOverlay STOP = new ButtonOverlay("stop", 0, 16);
-    public static ButtonOverlay TORCH_OFF = new ButtonOverlay("torch_off", 16, 16);
-    public static ButtonOverlay TORCH_ON = new ButtonOverlay("torch_on", 32, 16);
-    public static ButtonOverlay ACCEPT = new ButtonOverlay("accept", 48, 16);
-    public static ButtonOverlay EXIT = new ButtonOverlay("exit", 64, 16);
-    public static ButtonOverlay WHITELIST = new ButtonOverlay("whitelist", 80, 16);
-    public static ButtonOverlay BLACKLIST = new ButtonOverlay("blacklist", 96, 16);
-    public static ButtonOverlay PERCENTAGE = new ButtonOverlay("percentage", 112, 16);
-    public static ButtonOverlay OUT_GREEN = new ButtonOverlay("out_green", 0, 32);
-    public static ButtonOverlay IN_BLUE = new ButtonOverlay("in_blue", 16, 32);
-    public static ButtonOverlay IN_GREEN = new ButtonOverlay("in_green", 32, 32);
-    public static ButtonOverlay IN_RED = new ButtonOverlay("in_red", 48, 32);
-    public static ButtonOverlay MINUS = new ButtonOverlay("minus", 64, 32);
-    public static ButtonOverlay DIV = new ButtonOverlay("div", 80, 32);
-    public static ButtonOverlay PLUS = new ButtonOverlay("plus", 96, 32);
-    public static ButtonOverlay MULT = new ButtonOverlay("mult", 112, 32);
+
+    public static ButtonOverlay STOP = new ButtonOverlay("stop", 0, 32, 32, 32);
+    public static ButtonOverlay TORCH_OFF = new ButtonOverlay("torch_off", 32, 32, 32, 32);
+    public static ButtonOverlay TORCH_ON = new ButtonOverlay("torch_on", 64, 32, 32, 32);
+    public static ButtonOverlay ACCEPT = new ButtonOverlay("accept", 96, 32, 32, 32);
+    public static ButtonOverlay EXIT = new ButtonOverlay("exit", 128, 32, 32, 32);
+    public static ButtonOverlay WHITELIST = new ButtonOverlay("whitelist", 160, 32, 32, 32);
+    public static ButtonOverlay BLACKLIST = new ButtonOverlay("blacklist", 192, 32, 32, 32);
+    public static ButtonOverlay PERCENTAGE = new ButtonOverlay("percentage", 224, 32, 32, 32);
+    public static ButtonOverlay OUT_GREEN = new ButtonOverlay("out_green", 0, 64, 32, 32);
+    public static ButtonOverlay IN_BLUE = new ButtonOverlay("in_blue", 32, 64, 32, 32);
+    public static ButtonOverlay IN_GREEN = new ButtonOverlay("in_green", 64, 64, 32, 32);
+    public static ButtonOverlay IN_RED = new ButtonOverlay("in_red", 96, 64, 32, 32);
+    public static ButtonOverlay MINUS = new ButtonOverlay("minus", 128, 64, 32, 32);
+    public static ButtonOverlay DIV = new ButtonOverlay("div", 160, 64, 32, 32);
+    public static ButtonOverlay PLUS = new ButtonOverlay("plus", 192, 64, 32, 32);
+    public static ButtonOverlay MULT = new ButtonOverlay("mult", 224, 64, 32, 32);
 
     protected String id;
-    protected int xTexStart, yTexStart;
+    protected int x, y, w, h;
 
-    public ButtonOverlay(String id, int xTexStart, int yTexStart) {
-        this.xTexStart = xTexStart;
-        this.yTexStart = yTexStart;
+    public ButtonOverlay(String id, int x, int y, int w, int h) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
     }
 
     public String getId() {
         return id;
     }
 
-    public int getTexX() {
-        return xTexStart;
+    public int getX() {
+        return x;
     }
 
-    public int getTexY() {
-        return yTexStart;
+    public int getY() {
+        return y;
+    }
+
+    public int getW() {
+        return w;
+    }
+
+    public int getH() {
+        return h;
     }
 }
 

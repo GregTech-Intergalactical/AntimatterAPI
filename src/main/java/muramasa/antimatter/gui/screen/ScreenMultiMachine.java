@@ -1,8 +1,12 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerMultiMachine;
+import muramasa.antimatter.gui.widget.ButtonWidget;
+import muramasa.antimatter.machine.MachineState;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
+
+import static muramasa.antimatter.gui.ButtonBody.BLUE;
 
 public class ScreenMultiMachine<T extends ContainerMultiMachine> extends ScreenMachine<T> {
 
@@ -13,6 +17,13 @@ public class ScreenMultiMachine<T extends ContainerMultiMachine> extends ScreenM
     @Override
     protected void init() {
         super.init();
+
+        addButton(new ButtonWidget(guiLeft, guiTop, 8, 8, container.getTile().getMachineType().getGui().getButtonLocation(), BLUE, "X", b -> {
+            if (container.getTile().getMachineState() == MachineState.INVALID_STRUCTURE) {
+                //TODO
+                //GregTechNetwork.sendGuiEvent(GuiEvent.MULTI_ACTIVATE, tile);
+            }
+        }));
     }
 
     @Override
