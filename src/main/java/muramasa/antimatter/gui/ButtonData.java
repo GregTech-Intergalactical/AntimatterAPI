@@ -1,7 +1,5 @@
 package muramasa.antimatter.gui;
 
-import net.minecraft.util.ResourceLocation;
-
 public class ButtonData {
 
     private int id;
