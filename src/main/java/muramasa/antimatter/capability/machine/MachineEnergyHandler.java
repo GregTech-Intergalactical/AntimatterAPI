@@ -4,8 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -30,12 +28,8 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
-    public MachineEnergyHandler(TileEntityMachine tile) {
-        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
-    }
-
     public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
-        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
+        this(tile, 0, tile.getMachineTier().getVoltage() * 40L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
     }
 
     public void onUpdate() {
@@ -142,11 +136,19 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.putLong("Energy", energy);
+        tag.putLong("Voltage-In", voltage_in);
+        tag.putLong("Voltage-Out", voltage_out);
+        tag.putLong("Amperage-In", amperage_in);
+        tag.putLong("Amperage-Out", amperage_out);
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
         energy = tag.getLong("Energy");
+        voltage_in = tag.getInt("Voltage-In");
+        voltage_out = tag.getInt("Voltage-Out");
+        amperage_in = tag.getInt("Amperage-In");
+        amperage_out = tag.getInt("Amperage-Out");
     }
 
     @Override

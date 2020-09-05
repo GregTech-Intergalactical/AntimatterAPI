@@ -18,7 +18,6 @@ public class SlotEnergy extends SlotItemHandler {
         return stack.getCapability(AntimatterCaps.ENERGY).isPresent();
     }
 
-
     @Override
     public boolean canTakeStack(PlayerEntity playerIn) {
         return true;

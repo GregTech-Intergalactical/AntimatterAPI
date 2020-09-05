@@ -31,7 +31,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        if (!canOutput()) return 0;
+        //if (!canOutput()) return 0;
 
         long toExtract = Math.max(Math.min(energy, maxExtract), 0);
         if (!simulate) energy -= toExtract;

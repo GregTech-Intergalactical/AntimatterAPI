@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTankWrapper;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.recipe.Recipe;
@@ -30,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
@@ -103,7 +103,7 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
     }
 
     protected boolean checkValidFluid(FluidStack fluid) {
-        if (tile.has(MachineFlag.GENERATOR)) {
+        if (tile.has(GENERATOR)) {
             Recipe recipe = tile.getMachineType().getRecipeMap().find(null, new FluidStack[]{fluid});
             if (recipe != null) {
                 return true;
