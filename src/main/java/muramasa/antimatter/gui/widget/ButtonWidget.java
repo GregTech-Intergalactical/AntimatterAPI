@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
+import muramasa.antimatter.gui.container.AntimatterContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.Widget;
@@ -16,19 +17,19 @@ public class ButtonWidget extends Button {
     private ButtonBody body;
     private ButtonOverlay overlay;
 
-    public ButtonWidget(int x, int y, int w, int h, ResourceLocation res, ButtonBody body, ButtonOverlay overlay, String text, Button.IPressable onPress) {
+    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, String text, Button.IPressable onPress) {
         super(x, y, w, h, text, onPress);
         this.res = res;
         this.body = body;
         this.overlay = overlay;
     }
 
-    public ButtonWidget(int x, int y, int w, int h, ResourceLocation res, ButtonBody body, String text, Button.IPressable onPress) {
-        this(x, y, w, h, res, body, null, text, onPress);
+    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, String text, Button.IPressable onPress) {
+        this(res, x, y, w, h, body, null, text, onPress);
     }
 
-    public ButtonWidget(int x, int y, int w, int h, ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
-        this(x, y, w, h, res, body, overlay, "", onPress);
+    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
+        this(res, x, y, w, h, body, overlay, "", onPress);
     }
 
     @Override

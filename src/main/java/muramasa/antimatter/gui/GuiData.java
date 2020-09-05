@@ -101,7 +101,7 @@ public class GuiData {
     }
 
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, getButtonLocation(), body, overlay));
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body, overlay));
         return this;
     }
 
