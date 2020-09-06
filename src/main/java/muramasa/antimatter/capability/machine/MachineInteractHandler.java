@@ -37,6 +37,7 @@ public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
                 return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
             } else if (type == HAMMER) {
                 tile.toggleMachine();
+                // TODO: Replace by new TranslationTextComponent()
                 player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
                 return true;
             } else if (type == CROWBAR) {

@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -56,6 +57,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                         int amps = h.getOutputAmperage();
                         amps = (amps + 1) % maxAmps;
                         h.setOutputAmperage(amps);
+                        // TODO: Replace by new TranslationTextComponent()
                         player.sendMessage(new StringTextComponent(h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
                     });
                     return true;
