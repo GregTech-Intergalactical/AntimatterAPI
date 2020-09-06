@@ -1,10 +1,15 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 //Reminder: A simplified version of a HashMap get
@@ -12,14 +17,18 @@ import java.util.Set;
 public class RecipeInput {
 
     protected ItemWrapper[] items;
+    public ItemStack[] rootItems;
     protected Int2IntOpenHashMap itemMap = new Int2IntOpenHashMap();
 
+    public FluidStack[] rootFluids;
     protected FluidWrapper[] fluids;
     protected Int2IntOpenHashMap fluidMap = new Int2IntOpenHashMap();
 
     protected int hash;
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
+        rootFluids = fluids;
+        rootItems = items;
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
         if (items != null && items.length > 0) {
             this.items = new ItemWrapper[items.length];
@@ -42,6 +51,42 @@ public class RecipeInput {
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
         this(items, fluids, Collections.emptySet());
+    }
+
+    public List<ItemWrapper> trimAllTags() {
+        List<ItemWrapper> withTag = new ArrayList<>();
+        List<ItemWrapper> withoutTag = new ArrayList<>();
+        for (ItemWrapper wrapper : items) {
+            if (!wrapper.item.getItem().getTags().isEmpty()) {
+                withTag.add(wrapper);
+            } else {
+                withoutTag.add(wrapper);
+            }
+        }
+        this.items = withoutTag.toArray(new ItemWrapper[0]);
+        itemMap.clear();
+        for (int i = 0; i < items.length; i++) {
+            itemMap.put(this.items[i].hashCode(), i);
+        }
+        rehash();
+        return withTag;
+    }
+
+    private void rehash() {
+        long tempHash = 1; //long hash used to handle many inputs with nbt hashes
+        if (items != null && items.length > 0) {
+            for (int i = 0; i < items.length; i++) {
+                tempHash += this.items[i].hashCode();
+            }
+        }
+        if (fluids != null && fluids.length > 0) {
+            for (int i = 0; i < fluids.length; i++) {
+                tempHash += this.fluids[i].hashCode();
+            }
+        }
+        hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
+
+        if (items.length == 0) items = null;
     }
 
     @Override

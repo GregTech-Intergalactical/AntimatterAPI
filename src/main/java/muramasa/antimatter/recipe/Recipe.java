@@ -3,7 +3,9 @@ package muramasa.antimatter.recipe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -11,8 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Recipe {
-
     private ItemStack[] itemsInput, itemsOutput;
+    private TagInput[] tagInputs;
+
     private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, special;
     private long power;
@@ -28,6 +31,26 @@ public class Recipe {
         this.special = special;
         this.fluidsInput = fluidsInput;
         this.fluidsOutput = fluidsOutput;
+    }
+    //TODO(merge these)
+    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, TagInput[] inputTags, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
+        this.itemsInput = stacksInput;
+        this.itemsOutput = stacksOutput;
+        this.duration = duration;
+        this.power = power;
+        this.special = special;
+        this.fluidsInput = fluidsInput;
+        this.fluidsOutput = fluidsOutput;
+
+        this.tagInputs = inputTags;
+    }
+
+    public boolean hasTags() {
+        return tagInputs != null;
+    }
+
+    public TagInput[] getTagInputs() {
+        return tagInputs;
     }
 
     public void addChances(int[] chances) {
