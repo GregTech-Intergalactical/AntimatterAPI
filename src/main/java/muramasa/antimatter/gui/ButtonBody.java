@@ -5,10 +5,10 @@ public class ButtonBody extends ButtonOverlay {
     public static ButtonBody GREY = new ButtonBody("grey", 0, 0, 16, 0, 16, 16);
     public static ButtonBody BLUE = new ButtonBody("blue", 32, 0, 16, 0, 16, 16);
     public static ButtonBody NO_HOVER = new ButtonBody("no_hover", 64, 0, 0, 0, 16, 16);
-    public static ButtonBody APAD_LEFT = new ButtonBody("apad_left", 0, 48, 0, 16, 16, 16);
-    public static ButtonBody PAD_LEFT = new ButtonBody("pad_left", 16, 48, 0, 16, 16, 16);
-    public static ButtonBody PAD_RIGHT = new ButtonBody("pad_right", 32, 48, 0, 16, 16, 16);
-    public static ButtonBody APAD_RIGHT = new ButtonBody("apad_right", 48, 48, 0, 16, 16, 16);
+    public static ButtonBody APAD_LEFT = new ButtonBody("apad_left", 1, 49, 0, 16, 14, 14);
+    public static ButtonBody PAD_LEFT = new ButtonBody("pad_left", 17, 49, 0, 16, 14, 14);
+    public static ButtonBody PAD_RIGHT = new ButtonBody("pad_right", 33, 49, 0, 16, 14, 14);
+    public static ButtonBody APAD_RIGHT = new ButtonBody("apad_right", 49, 49, 0, 16, 14, 14);
 
     protected int x2, y2; // Difference
 
