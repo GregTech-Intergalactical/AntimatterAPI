@@ -119,10 +119,10 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     @Override
     public void onGuiEvent(IGuiEvent event, int... data) {
-        if (event == GuiEvent.MULTI_ACTIVATE) {
+        /*if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
             recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
-        }
+        }*/
     }
 
     /** Returns list of items across all input hatches. Merges equal filters empty **/

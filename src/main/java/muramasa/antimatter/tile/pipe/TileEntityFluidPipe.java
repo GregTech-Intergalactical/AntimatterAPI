@@ -70,7 +70,8 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
+        }
     }
 }

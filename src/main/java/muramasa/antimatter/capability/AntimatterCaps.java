@@ -1,8 +1,6 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.LongNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;

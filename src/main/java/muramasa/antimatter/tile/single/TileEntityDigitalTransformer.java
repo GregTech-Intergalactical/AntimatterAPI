@@ -26,7 +26,7 @@ public class TileEntityDigitalTransformer extends TileEntityTransformer {
 
     @Override
     public void onGuiEvent(IGuiEvent event, int... data) {
-        if (event == GuiEvent.BUTTON_ACTION) {
+        if (event == GuiEvent.BUTTON_PRESSED) {
             energyHandler.ifPresent(h -> {
                 boolean shiftHold = data[1] != 0;
                 switch (data[0]) {

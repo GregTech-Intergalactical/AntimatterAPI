@@ -39,13 +39,12 @@ public class TileEntityStorage extends TileEntityMachine {
         if (!itemHandler.isPresent() && has(ITEM)) itemHandler = Optional.of(new MachineItemHandler(this) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
-                //TODO: onItemEvent
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
-                super.onMachineEvent(event, data);
             }
         });
         super.onFirstTick();
     }
+
     // Schedules a check for amperage next tick.
     //TODO: This is not good but otherwise items are not available for checking. Check into onContentsChanged for container
     // So we can calculate amperage during the event ENERGY_SLOT_CHANGED!
@@ -57,10 +56,11 @@ public class TileEntityStorage extends TileEntityMachine {
     private void calculateAmperage() {
         itemHandler.ifPresent(h -> {
             energyHandler.ifPresent(e -> {
-                //Check all items that match the given voltage, and allow either input/output.
+                // Check all items that match the given voltage, and allow either input/output.
                 int out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToInt(IEnergyHandler::getOutputAmperage).sum();
                 int in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToInt(IEnergyHandler::getInputAmperage).sum();
-                //2 amps per battery input.
+
+                // 2 amps per battery input.
                 e.setInputAmperage(2 * in);
                 e.setOutputAmperage(out);
             });

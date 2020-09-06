@@ -119,8 +119,4 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     public boolean connects(Dir direction) {
         return true;
     }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-    }
 }

@@ -9,13 +9,15 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 import tesseract.Tesseract;
+import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import java.util.List;
-
-public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler {
+public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -122,13 +124,15 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     @Override
     public boolean connects(Dir direction) {
+        // TODO: Finish connections when covers will be ready
         return tile.getFacing().getIndex() != direction.getIndex()/* && tile.getCover(Ref.DIRECTIONS[direction.getIndex()]).isEqual(Data.COVER_EMPTY)*/;
     }
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
+        }
     }
 
     /** NBT **/
@@ -153,6 +157,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+        if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
     }
 }

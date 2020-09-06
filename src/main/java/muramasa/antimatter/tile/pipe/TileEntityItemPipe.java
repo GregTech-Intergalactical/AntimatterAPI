@@ -55,7 +55,8 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
+        }
     }
 }

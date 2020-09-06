@@ -415,7 +415,8 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
+        }
     }
 }
