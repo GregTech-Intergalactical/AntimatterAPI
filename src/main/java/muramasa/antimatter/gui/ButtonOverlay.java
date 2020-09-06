@@ -2,22 +2,26 @@ package muramasa.antimatter.gui;
 
 public class ButtonOverlay {
 
-    public static ButtonOverlay STOP = new ButtonOverlay("stop", 0, 32, 32, 32);
-    public static ButtonOverlay TORCH_OFF = new ButtonOverlay("torch_off", 32, 32, 32, 32);
-    public static ButtonOverlay TORCH_ON = new ButtonOverlay("torch_on", 64, 32, 32, 32);
-    public static ButtonOverlay ACCEPT = new ButtonOverlay("accept", 96, 32, 32, 32);
-    public static ButtonOverlay EXIT = new ButtonOverlay("exit", 128, 32, 32, 32);
-    public static ButtonOverlay WHITELIST = new ButtonOverlay("whitelist", 160, 32, 32, 32);
-    public static ButtonOverlay BLACKLIST = new ButtonOverlay("blacklist", 192, 32, 32, 32);
-    public static ButtonOverlay PERCENTAGE = new ButtonOverlay("percentage", 224, 32, 32, 32);
-    public static ButtonOverlay OUT_GREEN = new ButtonOverlay("out_green", 0, 64, 32, 32);
-    public static ButtonOverlay IN_BLUE = new ButtonOverlay("in_blue", 32, 64, 32, 32);
-    public static ButtonOverlay IN_GREEN = new ButtonOverlay("in_green", 64, 64, 32, 32);
-    public static ButtonOverlay IN_RED = new ButtonOverlay("in_red", 96, 64, 32, 32);
-    public static ButtonOverlay MINUS = new ButtonOverlay("minus", 128, 64, 32, 32);
-    public static ButtonOverlay DIV = new ButtonOverlay("div", 160, 64, 32, 32);
-    public static ButtonOverlay PLUS = new ButtonOverlay("plus", 192, 64, 32, 32);
-    public static ButtonOverlay MULT = new ButtonOverlay("mult", 224, 64, 32, 32);
+    public static ButtonOverlay STOP = new ButtonOverlay("stop", 0, 16, 16, 16);
+    public static ButtonOverlay TORCH_OFF = new ButtonOverlay("torch_off", 16, 16, 16, 16);
+    public static ButtonOverlay TORCH_ON = new ButtonOverlay("torch_on", 32, 16, 16, 16);
+    public static ButtonOverlay EXPORT = new ButtonOverlay("export", 48, 16, 16, 16);
+    public static ButtonOverlay IMPORT = new ButtonOverlay("import", 64, 16, 16, 16);
+    public static ButtonOverlay INPUT_OFF = new ButtonOverlay("input_off", 80, 16, 16, 16);
+    public static ButtonOverlay LESS = new ButtonOverlay("less", 96, 16, 16, 16);
+    public static ButtonOverlay EQUAL = new ButtonOverlay("equal", 112, 16, 16, 16);
+    public static ButtonOverlay MORE = new ButtonOverlay("more", 128, 16, 16, 16);
+    public static ButtonOverlay WHITELIST = new ButtonOverlay("whitelist", 144, 16, 16, 16);
+    public static ButtonOverlay BLACKLIST = new ButtonOverlay("blacklist", 160, 16, 16, 16);
+    public static ButtonOverlay MINUS = new ButtonOverlay("minus", 176, 16, 16, 16);
+    public static ButtonOverlay PLUS = new ButtonOverlay("plus", 192, 16, 16, 16);
+    public static ButtonOverlay DIVISION = new ButtonOverlay("division", 208, 16, 16, 16);
+    public static ButtonOverlay MULT = new ButtonOverlay("mult", 224, 16, 16, 16);
+    public static ButtonOverlay PERCENT = new ButtonOverlay("percent", 240, 16, 16, 16);
+    public static ButtonOverlay ARROW_LEFT = new ButtonOverlay("arrow_left", 0, 32, 16, 16);
+    public static ButtonOverlay A_LEFT = new ButtonOverlay("a_left", 16, 32, 16, 16);
+    public static ButtonOverlay A_RIGHT = new ButtonOverlay("a_right", 32, 32, 16, 16);
+    public static ButtonOverlay ARROW_RIGHT = new ButtonOverlay("arrow_right", 48, 32, 16, 16);
 
     protected String id;
     protected int x, y, w, h;

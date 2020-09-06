@@ -9,14 +9,24 @@ public class ButtonData {
     private int h;
     private ButtonBody body;
     private ButtonOverlay overlay;
+    private String text = "";
 
-    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
+    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.body = body;
+    }
+
+    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body, String text) {
+        this(id, x, y, w, h, body);
+        this.text = text;
+    }
+
+    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
+        this(id, x, y, w, h, body);
         this.overlay = overlay;
     }
 
@@ -46,5 +56,9 @@ public class ButtonData {
 
     public ButtonOverlay getOverlay() {
         return overlay;
+    }
+
+    public String getText() {
+        return text;
     }
 }

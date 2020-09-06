@@ -100,6 +100,16 @@ public class GuiData {
         return this;
     }
 
+    public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body));
+        return this;
+    }
+
+    public GuiData addButton(int x, int y, int w, int h, ButtonBody body, String text) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body, text));
+        return this;
+    }
+
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body, overlay));
         return this;

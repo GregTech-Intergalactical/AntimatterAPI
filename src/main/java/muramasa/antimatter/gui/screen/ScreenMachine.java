@@ -36,7 +36,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         super.init();
         ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
         for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
-            addButton(new ButtonWidget(loc, guiLeft + button.getX(), guiTop + button.getY(), button.getW(), button.getH(), button.getBody(), button.getOverlay(), b -> {
+            addButton(new ButtonWidget(loc, guiLeft + button.getX(), guiTop + button.getY(), button.getW(), button.getH(), button.getBody(), button.getOverlay(), button.getText(), b -> {
                 int shiftHold = playerInventory.player.isShiftKeyDown() ? 1 : 0;
                 container.getTile().onGuiEvent(GuiEvent.BUTTON_ACTION, button.getId(), shiftHold);
                 Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.BUTTON_ACTION, container.getTile().getPos(), container.getTile().getDimension(), button.getId(), shiftHold));

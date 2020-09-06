@@ -1,11 +1,8 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.widget.ButtonWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
-
-import static muramasa.antimatter.gui.ButtonBody.BLUE;
 
 public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachine<T> {
 
@@ -23,11 +20,5 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         drawProgress(partialTicks, mouseX, mouseY);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        addButton(new ButtonWidget(container.getTile().getMachineType().getGui().getButtonLocation(), guiLeft, guiTop, 8, 8, BLUE,"x", b -> this.minecraft.player.closeScreen()));
     }
 }
