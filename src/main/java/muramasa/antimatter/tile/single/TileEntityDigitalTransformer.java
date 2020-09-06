@@ -31,28 +31,28 @@ public class TileEntityDigitalTransformer extends TileEntityTransformer {
                 boolean shiftHold = data[1] != 0;
                 switch (data[0]) {
                     case 0:
-                        voltage -= shiftHold ? 512 : 64;
-                        break;
-                    case 1:
                         voltage /= shiftHold ? 512 : 64;
                         break;
-                    case 2:
-                        amperage -= shiftHold ? 512 : 64;
+                    case 1:
+                        voltage -= shiftHold ? 512 : 64;
                         break;
-                    case 3:
+                    case 2:
                         amperage /= shiftHold ? 512 : 64;
                         break;
-                    case 4:
-                        voltage -= shiftHold ? 16 : 1;
+                    case 3:
+                        amperage -= shiftHold ? 512 : 64;
                         break;
-                    case 5:
+                    case 4:
                         voltage /= shiftHold ? 16 : 2;
                         break;
+                    case 5:
+                        voltage -= shiftHold ? 16 : 1;
+                        break;
                     case 6:
-                        amperage -= shiftHold ? 16 : 1;
+                        amperage /= shiftHold ? 16 : 2;
                         break;
                     case 7:
-                        amperage /= shiftHold ? 16 : 2;
+                        amperage -= shiftHold ? 16 : 1;
                         break;
                     case 8:
                         voltage += shiftHold ? 512 : 64;
