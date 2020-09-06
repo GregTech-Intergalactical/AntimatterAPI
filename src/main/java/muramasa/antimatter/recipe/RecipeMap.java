@@ -5,7 +5,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.machine.Tier;
@@ -156,6 +158,18 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             Utils.onInvalidData("Duplicate recipe detected!: " + recipe);
             return;
         }
+        ItemStack[] mergedInput;
+        if (recipe.hasTags()) {
+            List<ItemStack> stack = Arrays.stream(recipe.getTagInputs()).map(t -> new ItemStack(t.tag.getRandomElement(Ref.RNG),1)).collect(Collectors.toList());
+            if (recipe.getInputItems() != null) stack.addAll(Arrays.asList(recipe.getInputItems()));
+            mergedInput = stack.toArray(new ItemStack[0]);
+        } else {
+            mergedInput = recipe.getInputItems();
+        }
+        if (LOOKUP_TAG.find(new RecipeInputFlat(mergedInput, recipe.getInputFluids())) != null) {
+            Utils.onInvalidData("Duplicate recipe detected via TAGS!: " + recipe);
+            return;
+        }
         if (recipe.hasTags()) {
             LOOKUP_TAG.add(recipe);
         } else LOOKUP.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags()), recipe);
@@ -168,11 +182,17 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
+        //See time to lookup.
+        //long currentTime = System.currentTimeMillis();
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
 
         Recipe r = LOOKUP.get(new RecipeInput(items, fluids));
 
-        return r == null ? LOOKUP_TAG.find(new RecipeInput(items,fluids)) : r;
+        if (r == null) {
+            r = LOOKUP_TAG.find(new RecipeInput(items,fluids));
+        }
+      //  Antimatter.LOGGER.info("Time to lookup: " + (System.currentTimeMillis()-currentTime));
+        return r;
     }
 
     public Recipe find(long tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {

@@ -123,6 +123,7 @@ public class RecipeBuilder {
     public void clear() {
         itemsInput = itemsOutput = null;
         fluidsInput = fluidsOutput = null;
+        tagInputs = null;
         chances = null;
         duration = special = 0;
         power = 0;

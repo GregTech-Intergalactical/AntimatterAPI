@@ -46,7 +46,7 @@ public class Recipe {
     }
 
     public boolean hasTags() {
-        return tagInputs != null;
+        return tagInputs != null && tagInputs.length > 0;
     }
 
     public TagInput[] getTagInputs() {
