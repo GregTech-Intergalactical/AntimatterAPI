@@ -18,7 +18,7 @@ public class FluidResourceMachineRecipeHandler<T extends TileEntityMachine> exte
     @Override
     public void consumeInputs() {
         //Only consume items here, consume STEAM on consumeResourceForRecipe
-        tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputItems()));
+        tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe,false));
     }
 
     @Override

@@ -56,11 +56,13 @@ public class RecipeInput {
     public List<ItemWrapper> trimAllTags() {
         List<ItemWrapper> withTag = new ArrayList<>();
         List<ItemWrapper> withoutTag = new ArrayList<>();
-        for (ItemWrapper wrapper : items) {
-            if (!wrapper.item.getItem().getTags().isEmpty()) {
-                withTag.add(wrapper);
-            } else {
-                withoutTag.add(wrapper);
+        if (items != null) {
+            for (ItemWrapper wrapper : items) {
+                if (!wrapper.item.getItem().getTags().isEmpty()) {
+                    withTag.add(wrapper);
+                } else {
+                    withoutTag.add(wrapper);
+                }
             }
         }
         this.items = withoutTag.toArray(new ItemWrapper[0]);

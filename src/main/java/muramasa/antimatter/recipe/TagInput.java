@@ -4,8 +4,8 @@ import net.minecraft.item.Item;
 import net.minecraft.tags.Tag;
 
 public class TagInput {
-    Tag<Item> tag;
-    int count;
+    public final Tag<Item> tag;
+    public final int count;
 
     public TagInput(Tag<Item> tag, int count) {
         this.tag = tag;
