@@ -43,6 +43,7 @@ public class TileEntityStorage extends TileEntityMachine {
             }
         });
         super.onFirstTick();
+        calculateAmperage();
     }
 
     // Schedules a check for amperage next tick.
