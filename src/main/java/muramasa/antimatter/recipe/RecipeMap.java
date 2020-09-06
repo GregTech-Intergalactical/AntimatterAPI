@@ -1,10 +1,10 @@
 package muramasa.antimatter.recipe;
 
-import it.unimi.dsi.fastutil.Function;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -28,21 +28,18 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     protected static class RecipeTagMap {
         //First, match the non-tagged items.
-        private Object2ObjectMap<RecipeInput, Int2ObjectMap<Recipe>> LOOKUP_TAG;
-
+        private final Object2ObjectMap<RecipeInput, Int2ObjectMap<Recipe>> LOOKUP_TAG;
+        //Tags present, others are ignored.
+        private final Set<ResourceLocation> tagsPresent = new ObjectOpenHashSet<>();
         public RecipeTagMap() {
             this.LOOKUP_TAG = new Object2ObjectLinkedOpenHashMap<>();
         }
 
         public Recipe find(RecipeInput input) {
-            List<ItemWrapper> tagged = input.trimAllTags();
+            List<ItemWrapper> tagged = input.trimAllTags(Optional.of(tagsPresent));
             Int2ObjectMap<Recipe> possibleResults = LOOKUP_TAG.get(input);
             if (possibleResults != null) {
-               return recursiveHash(input,tagged.stream().map(t ->{
-                   //Set<ResourceLocation> rl = new HashSet<>();
-                   //rl.add(new ResourceLocation("acacia_logs"));
-                   return t.item.getItem().getTags();
-               }).collect(Collectors.toList()), 0,0,0,(k, v) -> {
+               return recursiveHash(input,tagged.stream().map(t -> t.item.getItem().getTags()).collect(Collectors.toList()), 0,0,0,(k, v) -> {
                    int hash = (int)(v ^ (v >>> 32));
                    Recipe r = possibleResults.get(hash);
                    return r;
@@ -52,27 +49,39 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             return null;
         }
 
+        /**
+         * Recursively finds a recipe.
+         * @param input the input recipe.
+         * @param arrayList all the items tags.
+         * @param element current element in the list.
+         * @param acc accumulated hash.
+         * @param whichNonTagged bitmap of items to ignore tags at current level.
+         * @param func a function to apply at the end, to callback into recipe map.
+         * @return a found recipe.
+         */
         Recipe recursiveHash(RecipeInput input, java.util.List<Set<ResourceLocation>> arrayList, int element, long acc, long whichNonTagged, BiFunction<List<Set<ResourceLocation>>,Long, Recipe> func) {
             if (element > arrayList.size()) {
                 return null;
             }
-            Recipe ok = recursiveHash(input,arrayList, element + 1, acc, whichNonTagged | element, func);
-            if (ok != null) {
-                return ok;
-            }
             for (int i = element; i < arrayList.size(); i++) {
                 Set<ResourceLocation> tags = arrayList.get(i);
                 for (ResourceLocation r : tags) {
-                    ok = recursiveHash(input,arrayList, element + 1, acc + r.hashCode(),whichNonTagged, func);
+                    if (!this.tagsPresent.contains(r)) {
+                        continue;
+                    }
+                    Recipe ok = recursiveHash(input,arrayList, element + 1, acc + r.hashCode(),whichNonTagged, func);
                     if (ok != null) {
                         return ok;
                     }
                 }
             }
+            Recipe ok = recursiveHash(input,arrayList, element + 1, acc, whichNonTagged | element, func);
+            if (ok != null) {
+                return ok;
+            }
             if (element >= arrayList.size() - 1) {
                 return func.apply(arrayList,acc);
             } else {
-                whichNonTagged = 1;
                 ItemStack[] wraps = new ItemStack[Long.bitCount(whichNonTagged)];
                 int count = 0;
                 for (int i = 0; (whichNonTagged & (1 << i)) != 0; i++) {
@@ -92,9 +101,23 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
         public void add(Recipe recipe) {
             RecipeInput input = new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags());
+            /*
+            Sanity check, no input item can match the tag inputs, or it is undefined behaviour. Tags.length > 0 here.
+             */
+            if (recipe.getInputItems() != null) {
+                for (ItemWrapper inputItem : input.items) {
+                    for (TagInput tag : recipe.getTagInputs()) {
+                        if (tag.tag.contains(inputItem.item.getItem())) {
+                            Utils.onInvalidData("INVALID RECIPE! Item added that is also a part of the tags of the recipe.");
+                            return;
+                        }
+                    }
+                }
+            }
             long code = 0;
             for (TagInput wr : recipe.getTagInputs()) {
                 code += wr.tag.getId().hashCode();
+                tagsPresent.add(wr.tag.getId());
             }
             code = code ^ (code >>> 32);
             int finalCode = (int)code;
@@ -103,7 +126,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     v = new Int2ObjectOpenHashMap<>();
                 }
                 Recipe error = v.put(finalCode, recipe);
-                if (error !=null) {
+                if (error != null) {
                     throw new RuntimeException("duplicate recipe");
                 }
                 return v;
@@ -183,7 +206,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
         //See time to lookup.
-        //long currentTime = System.currentTimeMillis();
+        long currentTime = System.nanoTime();
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
 
         Recipe r = LOOKUP.get(new RecipeInput(items, fluids));
@@ -191,7 +214,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (r == null) {
             r = LOOKUP_TAG.find(new RecipeInput(items,fluids));
         }
-      //  Antimatter.LOGGER.info("Time to lookup: " + (System.currentTimeMillis()-currentTime));
+        Antimatter.LOGGER.info("Time to lookup: " + (System.nanoTime()-currentTime));
         return r;
     }
 
