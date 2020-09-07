@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -20,7 +21,7 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 import static muramasa.antimatter.machine.MachineState.*;
 
-public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler {
+public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler, ICapabilityHandler {
 
     protected T tile;
     protected Recipe activeRecipe;

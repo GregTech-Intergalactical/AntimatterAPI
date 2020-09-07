@@ -1,8 +1,11 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.ICapabilityHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTankWrapper;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.recipe.Recipe;
@@ -29,39 +32,53 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
+public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ICapabilityHandler, ITickHost {
 
     protected static int DEFAULT_CAPACITY = 99999;
     protected static int DEFAULT_PRESSURE = 99999;
 
-    protected TileEntityMachine tile;
+    protected T tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     protected int pressure;
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure) {
+    public MachineFluidHandler(T tile, int capacity, int pressure) {
         this.tile = tile;
         this.pressure = pressure;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
-        if (tile.isServerSide()) Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile) {
+    public MachineFluidHandler(T tile) {
         this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
+    }
+
+    public void onInit() {
+        if (tile.isServerSide()) Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
         if (controller != null) controller.tick();
     }
 
+    public void onRemove() {
+        if (tile.isServerSide()) Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+    }
+
+    public void onReset() {
+        if (tile.isServerSide()) {
+            Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+            Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
+    }
 
     //TODO IN THIS METHOD: Slot 0 is hardcoded for output, refactor this.
     protected void insertFromCell(int slot) {
@@ -112,6 +129,7 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
         return true;
     }
 
+    @Override
     public void onMachineEvent(IMachineEvent event, Object ...data) {
         if (event instanceof ContentEvent) {
             switch ((ContentEvent)event) {
@@ -121,17 +139,6 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
                     }
                     break;
             }
-        }
-    }
-
-    public void onRemove() {
-        if (tile.isServerSide()) Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
-    }
-
-    public void onReset() {
-        if (tile.isServerSide()) {
-            Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
-            Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
         }
     }
 

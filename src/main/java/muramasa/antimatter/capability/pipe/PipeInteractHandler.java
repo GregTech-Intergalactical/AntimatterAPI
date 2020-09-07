@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.PipeCache;
@@ -22,7 +23,7 @@ import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
 
 @ParametersAreNonnullByDefault
-public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
+public class PipeInteractHandler extends InteractHandler<TileEntityPipe> implements ICapabilityHandler {
 
     private byte connection; // for wrappers around the tile
 

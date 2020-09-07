@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
 
@@ -9,6 +10,10 @@ public class MultiMachineRecipeHandler<T extends TileEntityMultiMachine> extends
 
     public MultiMachineRecipeHandler(T tile) {
         super(tile);
+    }
+
+    public MultiMachineRecipeHandler(TileEntityMachine tile) {
+        this((T) tile);
     }
 
     @Override

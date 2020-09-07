@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.single;
 
-import muramasa.antimatter.capability.machine.MachineInteractHandler;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineState;
@@ -8,20 +7,13 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.client.gui.FontRenderer;
 
-import java.util.Optional;
-
-import static muramasa.antimatter.machine.MachineFlag.CONFIGURABLE;
-
 public class TileEntityDigitalTransformer extends TileEntityTransformer {
+
+    protected int voltage, amperage;
 
     public TileEntityDigitalTransformer(Machine<?> type) {
         super(type, 1, (v) -> (8192L + v * 64L));
-    }
-
-    @Override
-    public void onFirstTick() {
-        if (has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
-        super.onFirstTick();
+        //TODO: Update voltage
     }
 
     @Override

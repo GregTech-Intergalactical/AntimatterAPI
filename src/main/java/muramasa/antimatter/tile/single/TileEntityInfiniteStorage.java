@@ -24,16 +24,10 @@ import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 
 public class TileEntityInfiniteStorage extends TileEntityMachine {
 
-    private int maxAmps;
-
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
-        this.maxAmps = maxAmps + 1;
-    }
-
-    @Override
-    public void onFirstTick() {
-        if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
+        int amperage = maxAmps + 1;
+        energyHandler.init((tile) -> new MachineEnergyHandler(tile, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;
@@ -49,13 +43,13 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return true;
             }
         });
-        if (has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this) {
+        interactHandler.init((tile) -> new MachineInteractHandler(tile) {
             @Override
             public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
                 if ((type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && hand == Hand.MAIN_HAND) {
                     energyHandler.ifPresent(h -> {
                         int amps = h.getOutputAmperage();
-                        amps = (amps + 1) % maxAmps;
+                        amps = (amps + 1) % amperage;
                         h.setOutputAmperage(amps);
                         // TODO: Replace by new TranslationTextComponent()
                         player.sendMessage(new StringTextComponent(h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
@@ -65,7 +59,6 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return super.onInteract(player, hand, side, type);
             }
         });
-        super.onFirstTick();
     }
 
     @Override

@@ -18,14 +18,13 @@ public class TileEntityStorage extends TileEntityMachine {
 
     public TileEntityStorage(Machine<?> type) {
         super(type);
-    }
-
-    // If, during next tick, amperage amount should be rechecked.
-    private boolean checkAmps = false;
-
-    @Override
-    public void onFirstTick() {
-        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1){
+        itemHandler.init((tile) -> new MachineItemHandler(tile) {
+            @Override
+            public void onMachineEvent(IMachineEvent event, Object... data) {
+                if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
+            }
+        });
+        energyHandler.init((tile) -> new MachineEnergyHandler(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean  canOutput(Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();
@@ -36,12 +35,13 @@ public class TileEntityStorage extends TileEntityMachine {
                 return true;
             }
         });
-        if (!itemHandler.isPresent() && has(ITEM)) itemHandler = Optional.of(new MachineItemHandler(this) {
-            @Override
-            public void onMachineEvent(IMachineEvent event, Object... data) {
-                if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
-            }
-        });
+    }
+
+    // If, during next tick, amperage amount should be rechecked.
+    private boolean checkAmps = false;
+
+    @Override
+    public void onFirstTick() {
         super.onFirstTick();
         calculateAmperage();
     }

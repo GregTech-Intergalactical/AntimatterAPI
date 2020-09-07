@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,7 +13,7 @@ import javax.annotation.Nullable;
 
 public class ControllerInteractHandler extends MachineInteractHandler {
 
-    public ControllerInteractHandler(TileEntityMultiMachine tile) {
+    public ControllerInteractHandler(TileEntityMachine tile) {
         super(tile);
     }
 

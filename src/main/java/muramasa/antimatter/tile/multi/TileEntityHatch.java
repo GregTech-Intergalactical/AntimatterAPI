@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -14,27 +15,21 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
 
-import static muramasa.antimatter.machine.MachineFlag.*;
+import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    protected Optional<HatchComponentHandler> componentHandler = Optional.empty();
+    protected MachineCapabilityHolder<HatchComponentHandler> componentHandler = new MachineCapabilityHolder<>(this, null, SERVER_AND_CLIENT);
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
+        componentHandler.init(HatchComponentHandler::new);
+        fluidHandler.init((tile) -> new MachineFluidHandler(tile, 8000, 1000));
     }
 
     @Override
-    public void onFirstTick() {
-        componentHandler = Optional.of(new HatchComponentHandler(this));
-        if (isServerSide() && has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, 1000));
-        super.onFirstTick();
-    }
-
-    @Override
-    public Optional<HatchComponentHandler> getComponentHandler() {
+    public MachineCapabilityHolder<HatchComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 

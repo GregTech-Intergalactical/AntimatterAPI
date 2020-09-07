@@ -3,10 +3,7 @@ package muramasa.antimatter.tile;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -19,7 +16,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -43,8 +39,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
+import static muramasa.antimatter.capability.CapabilitySide.SERVER;
+import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler, IGuiHandler, IInfoRenderer {
@@ -58,12 +55,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected float maxProgress = 0; //TODO look into receiveClientEvent
 
     /** Capabilities **/
-    public Optional<MachineItemHandler> itemHandler = Optional.empty();
-    public Optional<MachineFluidHandler> fluidHandler = Optional.empty();
-    public Optional<MachineRecipeHandler<?>> recipeHandler = Optional.empty();
-    public Optional<MachineEnergyHandler> energyHandler = Optional.empty();
-    public Optional<MachineCoverHandler> coverHandler = Optional.empty();
-    public Optional<MachineInteractHandler> interactHandler = Optional.empty();
+    public MachineCapabilityHolder<MachineItemHandler<?>> itemHandler = new MachineCapabilityHolder<>(this, ITEM, SERVER_AND_CLIENT);
+    public MachineCapabilityHolder<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHolder<>(this, FLUID, SERVER);
+    public MachineCapabilityHolder<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHolder<>(this, RECIPE, SERVER);
+    public MachineCapabilityHolder<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHolder<>(this, ENERGY, SERVER_AND_CLIENT);
+    public MachineCapabilityHolder<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHolder<>(this, COVERABLE, SERVER_AND_CLIENT);
+    public MachineCapabilityHolder<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHolder<>(this, CONFIGURABLE, SERVER_AND_CLIENT);
 
     protected final IIntArray machineData = new IIntArray() {
         @Override
@@ -101,18 +98,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public TileEntityMachine(Machine<?> type) {
         this(type.getTileType());
         this.type = type;
+        coverHandler.init(MachineCoverHandler::new);
+        interactHandler.init(MachineInteractHandler::new);
+        itemHandler.init(MachineItemHandler::new);
+        fluidHandler.init(MachineFluidHandler::new);
+        recipeHandler.init(MachineRecipeHandler::new);
+        energyHandler.init(MachineEnergyHandler::new);
     }
 
     @Override
     public void onFirstTick() {
-        if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
-        //TODO: what are implications of this? just makes life easier
-        if (!itemHandler.isPresent() /*&& isServerSide()*/ && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
-        if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this));
-        //Allow energyHandler on client? this should fix capabilities.
-        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, has(GENERATOR)));
-        if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
+        energyHandler.ifPresent(MachineEnergyHandler::onInit);
+        fluidHandler.ifPresent(MachineFluidHandler::onInit);
+        itemHandler.ifPresent(MachineItemHandler::onInit);
     }
 
     @Nullable

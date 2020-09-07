@@ -19,9 +19,9 @@ import javax.annotation.Nullable;
 
 import static muramasa.antimatter.Data.*;
 
-public class MachineInteractHandler extends InteractHandler<TileEntityMachine> {
+public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> {
 
-    public MachineInteractHandler(TileEntityMachine tile) {
+    public MachineInteractHandler(T tile) {
         super(tile);
     }
 

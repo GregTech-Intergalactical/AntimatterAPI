@@ -1,10 +1,12 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.RotatableCoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -15,11 +17,13 @@ import net.minecraft.util.Hand;
 
 import javax.annotation.Nonnull;
 
-public class MachineCoverHandler extends RotatableCoverHandler<TileEntityMachine> implements IMachineHandler {
+import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
+
+public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableCoverHandler<T> implements IMachineHandler, ICapabilityHandler {
 
     protected Direction output = Direction.SOUTH;
 
-    public MachineCoverHandler(TileEntityMachine tile) {
+    public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         covers.put(tile.getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, tile));
     }

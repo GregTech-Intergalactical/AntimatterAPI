@@ -3,7 +3,10 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CapabilityHolder;
+import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
 import muramasa.antimatter.capability.CoverHandler;
+import muramasa.antimatter.capability.machine.PipeCapabilityHolder;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeInteractHandler;
 import muramasa.antimatter.cover.Cover;
@@ -23,7 +26,8 @@ import tesseract.graph.Connectivity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
+
+import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
 
 public class TileEntityPipe extends TileEntityTickable {
 
@@ -32,8 +36,8 @@ public class TileEntityPipe extends TileEntityTickable {
     protected PipeSize size;
 
     /** Capabilities **/
-    public Optional<PipeCoverHandler> coverHandler = Optional.empty();
-    public Optional<PipeInteractHandler> interactHandler = Optional.empty();
+    public PipeCapabilityHolder<PipeCoverHandler> coverHandler = new PipeCapabilityHolder<>(this, SERVER_AND_CLIENT);
+    public PipeCapabilityHolder<PipeInteractHandler> interactHandler = new PipeCapabilityHolder<>(this, SERVER_AND_CLIENT);
 
     protected byte connection;
 
@@ -44,12 +48,8 @@ public class TileEntityPipe extends TileEntityTickable {
     public TileEntityPipe(PipeType<?> type) {
         this(type.getTileType());
         this.type = type;
-    }
-
-    @Override
-    public void onFirstTick() {
-        if (!coverHandler.isPresent()) coverHandler = Optional.of(new PipeCoverHandler(this));
-        if (!interactHandler.isPresent()) interactHandler = Optional.of(new PipeInteractHandler(this));
+        coverHandler.init(PipeCoverHandler::new);
+        interactHandler.init(PipeInteractHandler::new);
     }
 
     @Override

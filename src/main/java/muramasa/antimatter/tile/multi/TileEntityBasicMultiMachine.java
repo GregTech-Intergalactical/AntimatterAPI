@@ -14,11 +14,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
     public TileEntityBasicMultiMachine(Machine<?> type) {
         super(type);
-    }
-
-    @Override
-    public void onFirstTick() {
-        if (isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MultiMachineRecipeHandler<TileEntityMultiMachine>(this) {
+        recipeHandler.init((tile) -> new MultiMachineRecipeHandler(tile) {
             @Override
             public Recipe findRecipe() { //TODO support fluids?
                 return getMachineType().getRecipeMap().find(itemHandler.get(), null);
@@ -49,6 +45,5 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
                 return true;
             }
         });
-        super.onFirstTick();
     }
 }

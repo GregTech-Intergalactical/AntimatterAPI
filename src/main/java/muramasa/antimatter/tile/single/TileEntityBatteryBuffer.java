@@ -14,15 +14,10 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-    }
-
-    @Override
-    public void onFirstTick() {
-        if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, 0, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
-
+        energyHandler.init((tile) -> new MachineEnergyHandler(tile, 0, 0, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 0,0) {
             @Override
             public boolean canOutput(Dir direction) {
-               return tile.getFacing().getIndex() == direction.getIndex();
+                return tile.getFacing().getIndex() == direction.getIndex();
             }
 
             @Override
@@ -45,6 +40,5 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
                 return super.getEnergy() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getEnergy).sum() : 0);
             }
         });
-        super.onFirstTick();
     }
 }

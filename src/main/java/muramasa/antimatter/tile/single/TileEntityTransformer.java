@@ -23,24 +23,13 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityTransformer extends TileEntityMachine {
 
-    protected int voltage, amperage;
-    private IntToLongFunction capFunc = (v) -> (512L + v * 2L);
-
     public TileEntityTransformer(Machine<?> type, int amps) {
-        super(type);
-        this.amperage = amps;
+        this(type, amps, (v) -> (512L + v * 2L));
     }
 
     public TileEntityTransformer(Machine<?> type, int amps, IntToLongFunction capFunc) {
-        this(type, amps);
-        this.capFunc = capFunc;
-    }
-
-    @Override
-    public void onFirstTick() {
-        voltage = getMachineTier().getVoltage();
-
-        if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, capFunc.applyAsLong(voltage), voltage, voltage / 4, amperage,amperage * 4) {
+        super(type);
+        energyHandler.init((tile) -> new MachineEnergyHandler(tile, 0, capFunc.applyAsLong(tile.getMachineTier().getVoltage()), tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage() / 4, amps,amps * 4) {
             @Override
             public boolean canOutput(Dir direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() == direction.getIndex());
@@ -51,7 +40,7 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return true;
             }
         });
-        if (has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this) {
+        interactHandler.init((tile) -> new MachineInteractHandler(tile) {
             @Override
             public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
                 if (type == HAMMER && hand == Hand.MAIN_HAND) {
@@ -71,7 +60,6 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return super.onInteract(player, hand, side, type);
             }
         });
-        super.onFirstTick();
     }
 
     @Override

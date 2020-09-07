@@ -2,36 +2,51 @@ package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import java.util.List;
-public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler, ITickHost {
 
-    protected TileEntityMachine tile;
+import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
+
+public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler, ICapabilityHandler, ITickHost {
+
+    protected T tile;
     protected ITickingController controller;
     // Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
-    public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
+    public MachineEnergyHandler(T tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
-    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
-        this(tile, 0, tile.getMachineTier().getVoltage() * 40L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
+    public MachineEnergyHandler(T tile) {
+        this(tile, 0, 0, 0, 0, 0, 0);
+        if (tile.getMachineType().has(GENERATOR)) {
+            capacity = tile.getMachineTier().getVoltage() * 40L;
+            voltage_out = tile.getMachineTier().getVoltage();
+            amperage_out = 1;
+        } else {
+            capacity = tile.getMachineTier().getVoltage() * 66L;
+            voltage_in = tile.getMachineTier().getVoltage();
+            amperage_out = 0;
+        }
+    }
+
+    public void onInit() {
+        if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     public void onUpdate() {
