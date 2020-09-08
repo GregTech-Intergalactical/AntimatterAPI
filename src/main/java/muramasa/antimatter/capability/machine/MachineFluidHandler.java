@@ -46,15 +46,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
-    protected int pressure;
+    protected int capacity, pressure;
 
     public MachineFluidHandler(T tile, int capacity, int pressure) {
         this.tile = tile;
         this.pressure = pressure;
-        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
-        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
-        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
-        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
+        this.capacity = capacity;
     }
 
     public MachineFluidHandler(T tile) {
@@ -62,6 +59,10 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public void onInit() {
+        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
+        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
+        if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
+        if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
         if (tile.isServerSide()) Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 

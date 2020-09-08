@@ -24,6 +24,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     protected T tile;
     protected ITickingController controller;
+    protected boolean isDefault;
     // Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
@@ -34,13 +35,14 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     public MachineEnergyHandler(T tile) {
         this(tile, 0, 0, 0, 0, 0, 0);
+        int voltage = tile.getMachineTier().getVoltage();
         if (tile.getMachineType().has(GENERATOR)) {
-            capacity = tile.getMachineTier().getVoltage() * 40L;
-            voltage_out = tile.getMachineTier().getVoltage();
+            capacity = voltage * 40L;
+            voltage_out = voltage;
             amperage_out = 1;
         } else {
-            capacity = tile.getMachineTier().getVoltage() * 66L;
-            voltage_in = tile.getMachineTier().getVoltage();
+            capacity = voltage * 66L;
+            voltage_in = voltage;
             amperage_out = 0;
         }
     }

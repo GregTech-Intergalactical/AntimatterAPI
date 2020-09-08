@@ -42,6 +42,9 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
+    }
+
+    public void onInit() {
         inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
         outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
         if (tile.getMachineType().has(FLUID)) {
@@ -50,9 +53,6 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         if (tile.getMachineType().has(ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
-    }
-
-    public void onInit() {
         if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
