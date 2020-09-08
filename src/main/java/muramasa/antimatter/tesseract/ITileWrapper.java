@@ -6,7 +6,6 @@ import net.minecraft.util.Direction;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
 public interface ITileWrapper {
 
     void onRemove(@Nullable Direction side);

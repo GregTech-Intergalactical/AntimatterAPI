@@ -5,6 +5,7 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
 
 public class MultiMachineRecipeHandler<T extends TileEntityMultiMachine> extends MachineRecipeHandler<T> {
 
@@ -12,8 +13,8 @@ public class MultiMachineRecipeHandler<T extends TileEntityMultiMachine> extends
         super(tile);
     }
 
-    public MultiMachineRecipeHandler(TileEntityMachine tile) {
-        this((T) tile);
+    public MultiMachineRecipeHandler(TileEntityMachine tile, CompoundNBT tag) {
+        super((T) tile, tag);
     }
 
     @Override

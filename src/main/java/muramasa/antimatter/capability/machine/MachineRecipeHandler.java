@@ -33,8 +33,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
 
-    public MachineRecipeHandler(T tile) {
+    public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
+        deserialize(tag);
     }
 
     public void onUpdate() {
@@ -273,6 +274,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return tag;
     }
 
-    public void deserialize(CompoundNBT compound) {
+    public void deserialize(CompoundNBT tag) {
+        if (tag == null) return;
     }
 }

@@ -1,24 +1,48 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.tile.TileEntityBase;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHandler> {
 
-    protected H handler;
     protected T tile;
+    protected H handler;
+    protected CompoundNBT tag;
+    protected BiFunction<T, CompoundNBT, H> capability = (tile, tag) -> null;
+    protected Dist side; // when null, works on both sides
 
     public CapabilityHolder(T tile) {
         this.tile = tile;
     }
 
-    public void init(Function<T, H> capFunc) {
-        handler = capFunc.apply(tile);
+    public CapabilityHolder(T tile, Dist side) {
+        this.tile = tile;
+        this.side = side;
+    }
+
+    public void setup(BiFunction<T, CompoundNBT, H> capFunc) {
+        capability = capFunc;
+    }
+
+    public void init() {
+        if (canInit()) {
+            if (capability == null) {
+                throw new NoSuchElementException("No Capability setup");
+            }
+            handler = capability.apply(tile, tag);
+        }
+    }
+
+    public void read(CompoundNBT tag) {
+        this.tag = tag;
     }
 
     public boolean isPresent() {
@@ -34,26 +58,32 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
     public H get() {
         if (handler == null) {
             throw new NoSuchElementException("No Handler initialized");
-        } else {
-            return handler;
         }
+        return handler;
     }
 
     public <U> Optional<U> map(Function<? super H, ? extends U> mapper) {
-        return Optional.ofNullable(mapper.apply(handler));
+        return handler != null ? Optional.of(mapper.apply(handler)) : Optional.empty();
     }
 
     public <U> Optional<U> flatMap(Function<? super H, ? extends Optional<? extends U>> mapper) {
-        Objects.requireNonNull(mapper);
-        if (handler == null) {
-            return Optional.empty();
-        } else {
+        if (handler != null) {
             Optional<U> r = (Optional)mapper.apply(handler);
             return Objects.requireNonNull(r);
         }
+        return Optional.empty();
     }
 
     public H orElse(H other) {
         return handler != null ? handler : other;
+    }
+
+    public boolean canInit() {
+        if (side == null) return true;
+        switch (side) {
+            case CLIENT: return tile.isClientSide();
+            case DEDICATED_SERVER: return tile.isServerSide();
+            default: return true;
+        }
     }
 }

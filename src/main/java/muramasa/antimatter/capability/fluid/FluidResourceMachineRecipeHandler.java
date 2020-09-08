@@ -4,14 +4,15 @@ import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidResourceMachineRecipeHandler<T extends TileEntityMachine> extends MachineRecipeHandler<T> {
 
     protected FluidStack[] resource;
 
-    public FluidResourceMachineRecipeHandler(T tile, FluidStack resource) {
-        super(tile);
+    public FluidResourceMachineRecipeHandler(T tile, CompoundNBT tag, FluidStack resource) {
+        super(tile, tag);
         this.resource = new FluidStack[]{resource};
     }
 

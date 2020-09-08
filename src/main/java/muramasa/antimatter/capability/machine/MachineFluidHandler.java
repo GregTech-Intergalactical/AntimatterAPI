@@ -39,31 +39,22 @@ import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIM
 
 public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ICapabilityHandler, ITickHost {
 
-    protected static int DEFAULT_CAPACITY = 99999;
-    protected static int DEFAULT_PRESSURE = 99999;
-
     protected T tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     protected int capacity, pressure;
 
-    public MachineFluidHandler(T tile, int capacity, int pressure) {
+    public MachineFluidHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
-        this.pressure = pressure;
-        this.capacity = capacity;
-    }
-
-    public MachineFluidHandler(T tile) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
-    }
-
-    public void onInit() {
+        this.capacity = 8000 * (1 + tile.getMachineTier().getIntegerId());
+        this.pressure = 1000 * (250 + tile.getMachineTier().getIntegerId());
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
         if (tile.isServerSide()) Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        deserialize(tag);
     }
 
     public void onUpdate() {
@@ -311,6 +302,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public void deserialize(CompoundNBT tag) {
+        if (tag == null) return;
         if (inputWrapper != null) {
             ListNBT list = tag.getList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {

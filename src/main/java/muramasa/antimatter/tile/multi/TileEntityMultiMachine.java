@@ -41,9 +41,9 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-        componentHandler.init(ControllerComponentHandler::new);
-        interactHandler.init(ControllerInteractHandler::new);
-        recipeHandler.init(MultiMachineRecipeHandler::new);
+        componentHandler.setup(ControllerComponentHandler::new);
+        interactHandler.setup(ControllerInteractHandler::new);
+        recipeHandler.setup(MultiMachineRecipeHandler::new);
     }
 
     public boolean checkStructure() {

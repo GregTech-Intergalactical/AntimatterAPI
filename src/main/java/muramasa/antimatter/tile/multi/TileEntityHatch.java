@@ -22,8 +22,8 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
-        componentHandler.init(HatchComponentHandler::new);
-        fluidHandler.init((tile) -> new MachineFluidHandler<>(tile, 8000, 1000));
+        componentHandler.setup(HatchComponentHandler::new);
+        fluidHandler.setup((tile, tag) -> new MachineFluidHandler<>(tile, tag, , 1000));
     }
 
     @Override

@@ -7,15 +7,12 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
 import tesseract.util.Dir;
 
-import java.util.Optional;
-
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-
 public class TileEntityBatteryBuffer extends TileEntityStorage {
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-        energyHandler.init((tile) -> new MachineEnergyHandler<TileEntityMachine>(tile, 0, 0, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 0,0) {
+        int voltage = getMachineTier().getVoltage();
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, 0L, voltage, voltage, 0, 0) {
             @Override
             public boolean canOutput(Dir direction) {
                 return tile.getFacing().getIndex() == direction.getIndex();

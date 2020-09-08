@@ -24,31 +24,22 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     protected T tile;
     protected ITickingController controller;
-    protected boolean isDefault;
     // Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
-    public MachineEnergyHandler(T tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
+    public MachineEnergyHandler(T tile, CompoundNBT tag, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-    }
-
-    public MachineEnergyHandler(T tile) {
-        this(tile, 0, 0, 0, 0, 0, 0);
-        int voltage = tile.getMachineTier().getVoltage();
-        if (tile.getMachineType().has(GENERATOR)) {
-            capacity = voltage * 40L;
-            voltage_out = voltage;
-            amperage_out = 1;
-        } else {
-            capacity = voltage * 66L;
-            voltage_in = voltage;
-            amperage_out = 0;
-        }
-    }
-
-    public void onInit() {
+        deserialize(tag);
         if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    }
+
+    public MachineEnergyHandler(T tile, CompoundNBT tag) {
+        this(tile, tag, 0L, tile.getMachineTier().getVoltage() * (tile.getMachineType().has(GENERATOR) ? 40L : 66L),
+            tile.getMachineType().has(GENERATOR) ? 0 : tile.getMachineTier().getVoltage(),
+            tile.getMachineType().has(GENERATOR) ? tile.getMachineTier().getVoltage() : 0,
+            tile.getMachineType().has(GENERATOR) ? 0 : 1,
+            tile.getMachineType().has(GENERATOR) ? 1 : 0);
     }
 
     public void onUpdate() {
@@ -87,22 +78,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
             }
         }
         return 0;
-    }
-
-    public void setOutputAmperage(int amp) {
-        amperage_out = amp;
-    }
-
-    public void setInputAmperage(int amp) {
-        amperage_in = amp;
-    }
-
-    public void setOutputVoltage(int voltage) {
-        voltage_out = voltage;
-    }
-
-    public void setInputVoltage(int voltage) {
-        voltage_in = voltage;
     }
 
     public boolean canChargeItem() {
@@ -153,10 +128,10 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     /** NBT **/
-    // TODO: Finish
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.putLong("Energy", energy);
+        tag.putLong("Capacity", capacity);
         tag.putLong("Voltage-In", voltage_in);
         tag.putLong("Voltage-Out", voltage_out);
         tag.putLong("Amperage-In", amperage_in);
@@ -165,7 +140,9 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     public void deserialize(CompoundNBT tag) {
+        if (tag == null) return;
         energy = tag.getLong("Energy");
+        capacity = tag.getLong("Capacity");
         voltage_in = tag.getInt("Voltage-In");
         voltage_out = tag.getInt("Voltage-Out");
         amperage_in = tag.getInt("Amperage-In");
@@ -175,5 +152,29 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
+    }
+
+    public void setEnergy(long energy) {
+        this.energy = energy;
+    }
+
+    public void setCapacity(long capacity) {
+        this.capacity = capacity;
+    }
+
+    public void setOutputAmperage(int amperage_out) {
+        this.amperage_out = amperage_out;
+    }
+
+    public void setInputAmperage(int amperage_in) {
+        this.amperage_in = amperage_in;
+    }
+
+    public void setOutputVoltage(int voltage_out) {
+        this.voltage_out = voltage_out;
+    }
+
+    public void setInputVoltage(int voltage_in) {
+        this.voltage_in = voltage_in;
     }
 }

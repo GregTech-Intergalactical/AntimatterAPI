@@ -14,7 +14,6 @@ import tesseract.util.Dir;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
 public class EnergyTileWrapper implements IGTNode, ITileWrapper {
 
     private TileEntity tile;

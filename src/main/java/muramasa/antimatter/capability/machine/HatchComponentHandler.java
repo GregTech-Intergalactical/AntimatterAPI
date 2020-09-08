@@ -6,12 +6,13 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nonnull;
 
 public class HatchComponentHandler extends ComponentHandler implements ICapabilityHandler {
 
-    public HatchComponentHandler(TileEntityMachine componentTile) {
+    public HatchComponentHandler(TileEntityMachine componentTile, CompoundNBT tag) {
         super(componentTile.getMachineType().getId(), componentTile);
     }
 

@@ -12,6 +12,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
@@ -23,14 +24,10 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
 
     protected Direction output = Direction.SOUTH;
 
-    public MachineCoverHandler(T tile) {
+    public MachineCoverHandler(T tile, CompoundNBT tag) {
         super(tile, tile.getValidCovers());
-    }
-
-    public void onInit() {
-        if (covers.isEmpty()) {
-            covers.put(getTile().getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, getTile()));
-        }
+        covers.put(getTile().getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, getTile()));
+        deserialize(tag);
     }
 
     public Direction getOutputFacing() {

@@ -120,20 +120,21 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             if (!c.isEmpty()) { //Don't store EMPTY covers unnecessarily
                 sides[0] |= (1 << s.getIndex());
                 CompoundNBT nbt = c.serialize();
-                nbt.putString("id", c.getId());
-                tag.put("cover-".concat(Integer.toString(s.getIndex())), nbt);
+                nbt.putString("Id", c.getId());
+                tag.put("Cover-".concat(Integer.toString(s.getIndex())), nbt);
             }
         });
-        tag.putByte("side", sides[0]);
+        tag.putByte("Side", sides[0]);
         return tag;
     }
 
-    public void deserialize(CompoundNBT compound) {
-        byte sides = compound.getByte("side");
+    public void deserialize(CompoundNBT tag) {
+        if (tag == null) return;
+        byte sides = tag.getByte("Side");
         for (int i = 0; i < Ref.DIRS.length; i++) {
-            if ((sides & (1 << i))> 0) {
-                CompoundNBT nbt = compound.getCompound("cover-".concat(Integer.toString(i)));
-                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString("id")), tile)).deserialize(nbt);
+            if ((sides & (1 << i)) > 0) {
+                CompoundNBT nbt = tag.getCompound("Cover-".concat(Integer.toString(i)));
+                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString("Id")), tile)).deserialize(nbt);
             } else {
                 covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }

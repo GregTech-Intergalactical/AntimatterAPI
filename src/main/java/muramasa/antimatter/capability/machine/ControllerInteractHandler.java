@@ -5,16 +5,17 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ControllerInteractHandler extends MachineInteractHandler {
+public class ControllerInteractHandler extends MachineInteractHandler<TileEntityMachine> {
 
-    public ControllerInteractHandler(TileEntityMachine tile) {
-        super(tile);
+    public ControllerInteractHandler(TileEntityMachine tile, CompoundNBT tag) {
+        super(tile, tag);
     }
 
     @Override

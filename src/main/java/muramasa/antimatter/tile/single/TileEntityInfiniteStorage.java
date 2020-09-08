@@ -9,25 +9,21 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 import static muramasa.antimatter.Data.ELECTRIC_SCREWDRIVER;
 import static muramasa.antimatter.Data.SCREWDRIVER;
-import static muramasa.antimatter.machine.MachineFlag.CONFIGURABLE;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 
 public class TileEntityInfiniteStorage extends TileEntityMachine {
 
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
         int amperage = maxAmps + 1;
-        energyHandler.init((tile) -> new MachineEnergyHandler<TileEntityMachine>(tile, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;
@@ -43,7 +39,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return true;
             }
         });
-        interactHandler.init((tile) -> new MachineInteractHandler<TileEntityMachine>(tile) {
+        interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
                 if ((type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && hand == Hand.MAIN_HAND) {

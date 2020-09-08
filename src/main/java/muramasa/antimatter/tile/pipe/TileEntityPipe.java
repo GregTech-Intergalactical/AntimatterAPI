@@ -44,8 +44,14 @@ public class TileEntityPipe extends TileEntityTickable {
     public TileEntityPipe(PipeType<?> type) {
         this(type.getTileType());
         this.type = type;
-        coverHandler.init(PipeCoverHandler::new);
-        interactHandler.init(PipeInteractHandler::new);
+        coverHandler.setup(PipeCoverHandler::new);
+        interactHandler.setup(PipeInteractHandler::new);
+    }
+
+    @Override
+    public void onFirstTick() {
+        coverHandler.init();
+        interactHandler.init();
     }
 
     @Override
@@ -127,8 +133,8 @@ public class TileEntityPipe extends TileEntityTickable {
     public void read(CompoundNBT tag) {
         super.read(tag);
         if (tag.contains(Ref.KEY_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.KEY_PIPE_TILE_CONNECTIVITY);
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
-        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER));
+        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG));
         //TODO refreshConnection(); causes crash as the world object has not yet been assigned
     }
 

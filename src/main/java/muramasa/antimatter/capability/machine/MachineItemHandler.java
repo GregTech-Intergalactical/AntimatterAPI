@@ -40,11 +40,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
-    public MachineItemHandler(T tile) {
+    public MachineItemHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
-    }
-
-    public void onInit() {
         inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
         outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
         if (tile.getMachineType().has(FLUID)) {
@@ -53,6 +50,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         if (tile.getMachineType().has(ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
+        deserialize(tag);
         if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
@@ -287,6 +285,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     public void deserialize(CompoundNBT tag) {
+        if (tag == null) return;
         if (inputWrapper != null) {
             inputWrapper.setSize(tag.contains("Input-Size", Constants.NBT.TAG_INT) ? tag.getInt("Input-Size") : inputWrapper.getSlots());
             ListNBT inputTagList = tag.getList("Input-Items", Constants.NBT.TAG_COMPOUND);

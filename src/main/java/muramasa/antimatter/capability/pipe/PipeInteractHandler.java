@@ -22,17 +22,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
 
-@ParametersAreNonnullByDefault
 public class PipeInteractHandler extends InteractHandler<TileEntityPipe> implements ICapabilityHandler {
 
     private byte connection; // for wrappers around the tile
 
-    public PipeInteractHandler(TileEntityPipe tile) {
+    public PipeInteractHandler(TileEntityPipe tile, CompoundNBT tag) {
         super(tile);
+        deserialize(tag);
     }
 
     // TODO: Block if covers are exist
-    //TODO: use parsedSide when working properl
+    // TODO: use parsedSide when working properl
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         if (type == getTool() && hand == Hand.MAIN_HAND) {
@@ -61,7 +61,7 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
         return false;
     }
 
-    private void onFirstTick() {
+    private void onLoad() {
         TileEntityPipe tile = getTile();
         CoverInstance[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
@@ -104,13 +104,14 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
     /** NBT **/
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putByte("connection", connection);
+        tag.putByte("Connection", connection);
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
-        connection = tag.getByte("connection");
-        onFirstTick();
+        if (tag == null) return;
+        connection = tag.getByte("Connection");
+        onLoad();
     }
 
     private AntimatterToolType getTool() {

@@ -10,6 +10,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
@@ -21,7 +22,7 @@ import static muramasa.antimatter.Data.*;
 
 public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> {
 
-    public MachineInteractHandler(T tile) {
+    public MachineInteractHandler(T tile, CompoundNBT tag) {
         super(tile);
     }
 

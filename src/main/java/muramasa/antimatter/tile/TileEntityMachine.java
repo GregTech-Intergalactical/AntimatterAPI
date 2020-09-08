@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
+import static net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER;
 
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler, IGuiHandler, IInfoRenderer {
 
@@ -54,8 +55,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     /** Capabilities **/
     public MachineCapabilityHolder<MachineItemHandler<?>> itemHandler = new MachineCapabilityHolder<>(this, ITEM);
-    public MachineCapabilityHolder<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHolder<>(this, FLUID);
-    public MachineCapabilityHolder<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHolder<>(this, RECIPE);
+    public MachineCapabilityHolder<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHolder<>(this, FLUID, DEDICATED_SERVER);
+    public MachineCapabilityHolder<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHolder<>(this, RECIPE, DEDICATED_SERVER);
     public MachineCapabilityHolder<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHolder<>(this, ENERGY);
     public MachineCapabilityHolder<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHolder<>(this, COVERABLE);
     public MachineCapabilityHolder<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHolder<>(this, CONFIGURABLE);
@@ -65,7 +66,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         public int get(int index) {
             switch (index) {
                 case 0:
-                    return Float.floatToRawIntBits(TileEntityMachine.this.recipeHandler.map(recipe -> (float)recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0.0f));
+                    return Float.floatToRawIntBits(recipeHandler.map(recipe -> (float)recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0.0f));
             }
             return -1;
         }
@@ -74,8 +75,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         public void set(int index, int value) {
             switch (index) {
                 case 0:
-                    float v = Float.intBitsToFloat(value);
-                    clientProgress = v;
+                    clientProgress = Float.intBitsToFloat(value);
                     break;
             }
         }
@@ -96,24 +96,22 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public TileEntityMachine(Machine<?> type) {
         this(type.getTileType());
         this.type = type;
-    }
-
-    @Override
-    public void onLoad() {
-        coverHandler.init(MachineCoverHandler::new);
-        interactHandler.init(MachineInteractHandler::new);
-        itemHandler.init(MachineItemHandler::new);
-        fluidHandler.init(MachineFluidHandler::new);
-        recipeHandler.init(MachineRecipeHandler::new);
-        energyHandler.init(MachineEnergyHandler::new);
+        coverHandler.setup(MachineCoverHandler::new);
+        interactHandler.setup(MachineInteractHandler::new);
+        itemHandler.setup(MachineItemHandler::new);
+        fluidHandler.setup(MachineFluidHandler::new);
+        recipeHandler.setup(MachineRecipeHandler::new);
+        energyHandler.setup(MachineEnergyHandler::new);
     }
 
     @Override
     public void onFirstTick() {
-        coverHandler.ifPresent(MachineCoverHandler::onInit);
-        itemHandler.ifPresent(MachineItemHandler::onInit);
-        fluidHandler.ifPresent(MachineFluidHandler::onInit);
-        energyHandler.ifPresent(MachineEnergyHandler::onInit);
+        coverHandler.init();
+        interactHandler.init();
+        itemHandler.init();
+        fluidHandler.init();
+        recipeHandler.init();
+        energyHandler.init();
     }
 
     @Nullable
@@ -284,15 +282,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return super.getCapability(cap, side);
     }
 
+    // Runs earlier then onFirstTick
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
         if (tag.contains(Ref.KEY_MACHINE_TILE_STATE)) setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_TILE_STATE)]);//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
-        if (tag.contains(Ref.KEY_MACHINE_TILE_ITEMS)) itemHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ITEMS)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_FLUIDS)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ENERGY)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_RECIPE)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
+        if (tag.contains(Ref.KEY_MACHINE_TILE_ITEMS)) itemHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_ITEMS));
+        if (tag.contains(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_FLUIDS));
+        if (tag.contains(Ref.KEY_MACHINE_TILE_ENERGY)) energyHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_ENERGY));
+        if (tag.contains(Ref.KEY_MACHINE_TILE_RECIPE)) recipeHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_RECIPE));
+        if (tag.contains(Ref.KEY_MACHINE_TILE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER));
     }
 
     @Override

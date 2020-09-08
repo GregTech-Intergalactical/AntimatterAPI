@@ -9,11 +9,8 @@ import net.minecraft.client.gui.FontRenderer;
 
 public class TileEntityDigitalTransformer extends TileEntityTransformer {
 
-    protected int voltage, amperage;
-
     public TileEntityDigitalTransformer(Machine<?> type) {
-        super(type, 1, (v) -> (8192L + v * 64L));
-        //TODO: Update voltage
+        super(type, 0, (v) -> (8192L + v * 64L));
     }
 
     @Override

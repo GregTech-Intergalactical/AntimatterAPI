@@ -15,13 +15,14 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.IntToLongFunction;
 
 import static muramasa.antimatter.Data.HAMMER;
-import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityTransformer extends TileEntityMachine {
+
+    protected int voltage, amperage;
+    protected IntToLongFunction capFunc;
 
     public TileEntityTransformer(Machine<?> type, int amps) {
         this(type, amps, (v) -> (512L + v * 2L));
@@ -29,7 +30,10 @@ public class TileEntityTransformer extends TileEntityMachine {
 
     public TileEntityTransformer(Machine<?> type, int amps, IntToLongFunction capFunc) {
         super(type);
-        energyHandler.init((tile) -> new MachineEnergyHandler(tile, 0, capFunc.applyAsLong(tile.getMachineTier().getVoltage()), tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage() / 4, amps,amps * 4) {
+        this.voltage = getMachineTier().getVoltage();
+        this.amperage = amps;
+        this.capFunc = capFunc;
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, capFunc.applyAsLong(voltage), voltage, voltage / 4, amperage, amperage * 4)  {
             @Override
             public boolean canOutput(Dir direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() == direction.getIndex());
@@ -40,7 +44,7 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return true;
             }
         });
-        interactHandler.init((tile) -> new MachineInteractHandler(tile) {
+        interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
                 if (type == HAMMER && hand == Hand.MAIN_HAND) {

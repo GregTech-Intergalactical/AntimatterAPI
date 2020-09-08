@@ -9,22 +9,22 @@ import muramasa.antimatter.machine.types.Machine;
 import tesseract.util.Dir;
 
 import java.util.List;
-import java.util.Optional;
 
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-import static muramasa.antimatter.machine.MachineFlag.ITEM;
+public abstract class TileEntityStorage extends TileEntityMachine {
 
-public class TileEntityStorage extends TileEntityMachine {
+    // If, during next tick, amperage amount should be rechecked.
+    private boolean checkAmps = false;
 
     public TileEntityStorage(Machine<?> type) {
         super(type);
-        itemHandler.init((tile) -> new MachineItemHandler<TileEntityMachine>(tile) {
+        itemHandler.setup((tile, tag) -> new MachineItemHandler<TileEntityMachine>(tile, tag) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
             }
         });
-        energyHandler.init((tile) -> new MachineEnergyHandler<TileEntityMachine>(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 1, 1) {
+        int voltage = getMachineTier().getVoltage();
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, voltage * 64L, voltage, voltage, 1, 1) {
             @Override
             public boolean  canOutput(Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();
@@ -36,9 +36,6 @@ public class TileEntityStorage extends TileEntityMachine {
             }
         });
     }
-
-    // If, during next tick, amperage amount should be rechecked.
-    private boolean checkAmps = false;
 
     @Override
     public void onFirstTick() {
