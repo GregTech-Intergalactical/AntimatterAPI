@@ -16,16 +16,14 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 
-import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
-
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    protected MachineCapabilityHolder<HatchComponentHandler> componentHandler = new MachineCapabilityHolder<>(this, null, SERVER_AND_CLIENT);
+    protected MachineCapabilityHolder<HatchComponentHandler> componentHandler = new MachineCapabilityHolder<>(this);
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
         componentHandler.init(HatchComponentHandler::new);
-        fluidHandler.init((tile) -> new MachineFluidHandler(tile, 8000, 1000));
+        fluidHandler.init((tile) -> new MachineFluidHandler<>(tile, 8000, 1000));
     }
 
     @Override

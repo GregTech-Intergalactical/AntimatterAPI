@@ -18,13 +18,13 @@ public class TileEntityStorage extends TileEntityMachine {
 
     public TileEntityStorage(Machine<?> type) {
         super(type);
-        itemHandler.init((tile) -> new MachineItemHandler(tile) {
+        itemHandler.init((tile) -> new MachineItemHandler<TileEntityMachine>(tile) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
             }
         });
-        energyHandler.init((tile) -> new MachineEnergyHandler(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 1, 1) {
+        energyHandler.init((tile) -> new MachineEnergyHandler<TileEntityMachine>(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean  canOutput(Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();

@@ -27,13 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
-
 public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected MachineCapabilityHolder<ControllerComponentHandler> componentHandler = new MachineCapabilityHolder<>(this, null, SERVER_AND_CLIENT);
+    protected MachineCapabilityHolder<ControllerComponentHandler> componentHandler = new MachineCapabilityHolder<>(this);
 
     protected Optional<StructureResult> result = Optional.empty();
 

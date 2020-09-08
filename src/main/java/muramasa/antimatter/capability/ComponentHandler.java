@@ -14,8 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
-
 public class ComponentHandler implements IComponentHandler {
 
     protected String componentId;
@@ -41,19 +39,19 @@ public class ComponentHandler implements IComponentHandler {
     @Nonnull
     @Override
     public MachineCapabilityHolder<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : new MachineCapabilityHolder<>(null, null, SERVER_AND_CLIENT);
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : new MachineCapabilityHolder<>(null);
     }
 
     @Nonnull
     @Override
     public MachineCapabilityHolder<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : new MachineCapabilityHolder<>(null, null, SERVER_AND_CLIENT);
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : new MachineCapabilityHolder<>(null);
     }
 
     @Nonnull
     @Override
     public MachineCapabilityHolder<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : new MachineCapabilityHolder<>(null, null, SERVER_AND_CLIENT);
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : new MachineCapabilityHolder<>(null);
     }
 
     @Override

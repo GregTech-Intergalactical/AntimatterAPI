@@ -3,10 +3,8 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.CapabilityHolder;
-import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
 import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.capability.machine.PipeCapabilityHolder;
+import muramasa.antimatter.capability.pipe.PipeCapabilityHolder;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeInteractHandler;
 import muramasa.antimatter.cover.Cover;
@@ -27,8 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
-
 public class TileEntityPipe extends TileEntityTickable {
 
     /** Pipe Data **/
@@ -36,8 +32,8 @@ public class TileEntityPipe extends TileEntityTickable {
     protected PipeSize size;
 
     /** Capabilities **/
-    public PipeCapabilityHolder<PipeCoverHandler> coverHandler = new PipeCapabilityHolder<>(this, SERVER_AND_CLIENT);
-    public PipeCapabilityHolder<PipeInteractHandler> interactHandler = new PipeCapabilityHolder<>(this, SERVER_AND_CLIENT);
+    public PipeCapabilityHolder<PipeCoverHandler> coverHandler = new PipeCapabilityHolder<>(this);
+    public PipeCapabilityHolder<PipeInteractHandler> interactHandler = new PipeCapabilityHolder<>(this);
 
     protected byte connection;
 

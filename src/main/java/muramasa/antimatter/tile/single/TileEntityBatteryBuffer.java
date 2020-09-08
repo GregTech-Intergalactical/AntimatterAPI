@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.single;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
 import tesseract.util.Dir;
 
@@ -14,7 +15,7 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-        energyHandler.init((tile) -> new MachineEnergyHandler(tile, 0, 0, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 0,0) {
+        energyHandler.init((tile) -> new MachineEnergyHandler<TileEntityMachine>(tile, 0, 0, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 0,0) {
             @Override
             public boolean canOutput(Dir direction) {
                 return tile.getFacing().getIndex() == direction.getIndex();

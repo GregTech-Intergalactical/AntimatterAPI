@@ -40,8 +40,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static muramasa.antimatter.capability.CapabilitySide.SERVER;
-import static muramasa.antimatter.capability.CapabilitySide.SERVER_AND_CLIENT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler, IGuiHandler, IInfoRenderer {
@@ -55,12 +53,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected float maxProgress = 0; //TODO look into receiveClientEvent
 
     /** Capabilities **/
-    public MachineCapabilityHolder<MachineItemHandler<?>> itemHandler = new MachineCapabilityHolder<>(this, ITEM, SERVER_AND_CLIENT);
-    public MachineCapabilityHolder<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHolder<>(this, FLUID, SERVER);
-    public MachineCapabilityHolder<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHolder<>(this, RECIPE, SERVER);
-    public MachineCapabilityHolder<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHolder<>(this, ENERGY, SERVER_AND_CLIENT);
-    public MachineCapabilityHolder<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHolder<>(this, COVERABLE, SERVER_AND_CLIENT);
-    public MachineCapabilityHolder<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHolder<>(this, CONFIGURABLE, SERVER_AND_CLIENT);
+    public MachineCapabilityHolder<MachineItemHandler<?>> itemHandler = new MachineCapabilityHolder<>(this, ITEM);
+    public MachineCapabilityHolder<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHolder<>(this, FLUID);
+    public MachineCapabilityHolder<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHolder<>(this, RECIPE);
+    public MachineCapabilityHolder<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHolder<>(this, ENERGY);
+    public MachineCapabilityHolder<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHolder<>(this, COVERABLE);
+    public MachineCapabilityHolder<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHolder<>(this, CONFIGURABLE);
 
     protected final IIntArray machineData = new IIntArray() {
         @Override

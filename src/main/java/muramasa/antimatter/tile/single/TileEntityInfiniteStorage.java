@@ -27,7 +27,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
         int amperage = maxAmps + 1;
-        energyHandler.init((tile) -> new MachineEnergyHandler(tile, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
+        energyHandler.init((tile) -> new MachineEnergyHandler<TileEntityMachine>(tile, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;
@@ -43,7 +43,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return true;
             }
         });
-        interactHandler.init((tile) -> new MachineInteractHandler(tile) {
+        interactHandler.init((tile) -> new MachineInteractHandler<TileEntityMachine>(tile) {
             @Override
             public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
                 if ((type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && hand == Hand.MAIN_HAND) {

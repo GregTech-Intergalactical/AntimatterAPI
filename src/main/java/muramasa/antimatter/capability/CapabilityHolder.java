@@ -12,17 +12,13 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
 
     protected H handler;
     protected T tile;
-    protected boolean canInit;
 
-    public CapabilityHolder(T tile, CapabilitySide side) {
+    public CapabilityHolder(T tile) {
         this.tile = tile;
-        this.canInit = isValid(side);
     }
 
     public void init(Function<T, H> capFunc) {
-        if (canInit) {
-            handler = capFunc.apply(tile);
-        }
+        handler = capFunc.apply(tile);
     }
 
     public boolean isPresent() {
@@ -30,7 +26,7 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
     }
 
     public void ifPresent(Consumer<? super H> action) {
-        if (isPresent()) {
+        if (handler != null) {
             action.accept(handler);
         }
     }
@@ -49,7 +45,7 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
 
     public <U> Optional<U> flatMap(Function<? super H, ? extends Optional<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (!isPresent()) {
+        if (handler == null) {
             return Optional.empty();
         } else {
             Optional<U> r = (Optional)mapper.apply(handler);
@@ -58,14 +54,6 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
     }
 
     public H orElse(H other) {
-        return isPresent() ? handler : other;
-    }
-
-    private boolean isValid(CapabilitySide side) {
-        switch (side) {
-            case CLIENT: return tile.isClientSide();
-            case SERVER: return tile.isServerSide();
-            default: return true;
-        }
+        return handler != null ? handler : other;
     }
 }
