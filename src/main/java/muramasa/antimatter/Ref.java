@@ -55,28 +55,52 @@ public class Ref {
     public static boolean debugStones = false;
 
     /** NBT Tags & Keys **/
-    public static final String KEY_STACK_NO_CONSUME = "noconsume";
+    public static final String KEY_STACK_NO_CONSUME = "nc";
 
-    public static final String KEY_MACHINE_TILE_STATE = "ms";
+    public static final String TAG_MACHINE_TILE_STATE = "ms";
     public static final String KEY_MACHINE_TILE_TINT = "mc";
     public static final String KEY_MACHINE_TILE_TEXTURE = "mt";
-    public static final String KEY_MACHINE_TILE_ITEMS = "mit";
-    public static final String KEY_MACHINE_TILE_FLUIDS = "mfl";
-    public static final String KEY_MACHINE_TILE_ENERGY = "men";
-    public static final String KEY_MACHINE_TILE_RECIPE = "mre";
-    public static final String KEY_MACHINE_TILE_COVER = "mco";
+    public static final String KEY_MACHINE_TILE_ITEMS = "it";
+    public static final String KEY_MACHINE_TILE_FLUIDS = "fl";
+    public static final String KEY_MACHINE_TILE_ENERGY = "en";
+    public static final String KEY_MACHINE_TILE_RECIPE = "re";
+    public static final String KEY_MACHINE_TILE_COVER = "co";
+    public static final String TAG_MACHINE_ENERGY = "me";
+    public static final String TAG_MACHINE_CAPACITY = "cp";
+    public static final String TAG_MACHINE_VOLTAGE_IN = "vi";
+    public static final String TAG_MACHINE_VOLTAGE_OUT = "vo";
+    public static final String TAG_MACHINE_AMPERAGE_IN = "ai";
+    public static final String TAG_MACHINE_AMPERAGE_OUT = "ao";
+    public static final String TAG_MACHINE_INPUT_FLUID = "if";
+    public static final String TAG_MACHINE_OUTPUT_FLUID = "of";
+    public static final String TAG_MACHINE_SLOT_SIZE = "sz";
+    public static final String TAG_MACHINE_INPUT_ITEM = "ii";
+    public static final String TAG_MACHINE_INPUT_SIZE = "is";
+    public static final String TAG_MACHINE_OUTPUT_ITEM = "oi";
+    public static final String TAG_MACHINE_OUTPUT_SIZE = "os";
+    public static final String TAG_MACHINE_CELL_ITEM = "ci";
+    public static final String TAG_MACHINE_CELL_SIZE = "cs";
+    public static final String TAG_MACHINE_CHARGE_ITEM = "cg";
+    public static final String TAG_MACHINE_CHARGE_SIZE = "gs";
+    public static final String TAG_MACHINE_COVER_ID = "cv";
+    public static final String TAG_MACHINE_COVER_NAME = "cn";
+    public static final String TAG_MACHINE_COVER_SIDE = "vs";
 
-    public static final String KEY_PIPE_TILE_CONNECTIVITY = "pc";
-    public static final String KEY_PIPE_TILE_COVER = "pco";
-    public static final String KEY_PIPE_TILE_CONFIG = "pcf";
+    public static final String TAG_PIPE_TILE_CONNECTIVITY = "c";
+    public static final String TAG_PIPE_TILE_INTERACT = "i";
+    public static final String KEY_PIPE_TILE_COVER = "v";
+    public static final String KEY_PIPE_TILE_CONFIG = "f";
 
-    public static final String TAG_TOOL_DATA = "tooldata";
+    public static final String TAG_TOOL_DATA = "td";
     public static final String KEY_TOOL_DATA_PRIMARY_MATERIAL = "m";
     public static final String KEY_TOOL_DATA_SECONDARY_MATERIAL = "sm";
     public static final String KEY_TOOL_DATA_SECONDARY_COLOUR = "sc";
     public static final String KEY_TOOL_DATA_TIER = "t";
     public static final String KEY_TOOL_DATA_ENERGY = "e";
     public static final String KEY_TOOL_DATA_MAX_ENERGY = "me";
+
+    public static final String TAG_ITEM_CHARGE = "c";
+    public static final String TAG_ITEM_MODE = "m";
 
     /** Model Cache IDs **/
     public static final int CACHE_ID_MACHINE = 1;

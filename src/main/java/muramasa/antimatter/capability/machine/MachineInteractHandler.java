@@ -27,12 +27,12 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         TileEntityMachine tile = getTile();
         ItemStack stack = player.getHeldItem(hand);
 
         if (stack.getItem() instanceof ItemCover) {
-            return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
+            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
         } else if (hand == Hand.MAIN_HAND) {
             if (type == WRENCH || type == ELECTRIC_WRENCH) {
                 return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
@@ -42,12 +42,12 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
                 player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
                 return true;
             } else if (type == CROWBAR) {
-                return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.removeCover(player, side)).orElse(false);
+                return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, side)).orElse(false);
             } else if (type == SCREWDRIVER) {
-                CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.get(side)).orElse(COVER_EMPTY);
+                CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(side)).orElse(COVER_EMPTY);
                 return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
             }
-            return tile.getCapability(AntimatterCaps.COVERABLE).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
         }
         return true;
     }

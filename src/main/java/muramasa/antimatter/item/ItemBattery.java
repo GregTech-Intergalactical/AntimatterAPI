@@ -1,5 +1,6 @@
 package muramasa.antimatter.item;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.util.ITooltipFlag;
@@ -32,8 +33,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        stack.setTag(ItemEnergyHandler.initNBT(nbt));
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
+        stack.setTag(ItemEnergyHandler.initNBT(tag));
         return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack), cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 1 : 0, 1);
     }
 
@@ -49,8 +50,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
-        CompoundNBT nbt = stack.getTag();
-        if (nbt == null) {
+        CompoundNBT tag = stack.getTag();
+        if (tag == null) {
             return 1D;
         }
         return 1D - (double)ItemEnergyHandler.getEnergyFromStack(stack) / (double) cap;
@@ -73,8 +74,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
      *  @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        boolean mode = !stack.getOrCreateTag().getBoolean(ItemEnergyHandler.TAG_MODE);
-        stack.getOrCreateTag().putBoolean(ItemEnergyHandler.TAG_MODE,mode);
+        boolean mode = !stack.getOrCreateTag().getBoolean(Ref.TAG_ITEM_MODE);
+        stack.getOrCreateTag().putBoolean(Ref.TAG_ITEM_MODE, mode);
         return mode;
     }
 

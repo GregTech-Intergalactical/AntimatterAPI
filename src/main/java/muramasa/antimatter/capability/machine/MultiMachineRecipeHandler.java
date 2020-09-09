@@ -9,10 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 
 public class MultiMachineRecipeHandler<T extends TileEntityMultiMachine> extends MachineRecipeHandler<T> {
 
-    public MultiMachineRecipeHandler(T tile) {
-        super(tile);
-    }
-
     public MultiMachineRecipeHandler(TileEntityMachine tile, CompoundNBT tag) {
         super((T) tile, tag);
     }

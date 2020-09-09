@@ -1,17 +1,16 @@
 package muramasa.antimatter.network;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.network.packets.FluidStackPacket;
-import muramasa.antimatter.network.packets.GuiEventPacket;
-import muramasa.antimatter.network.packets.SoundPacket;
+import muramasa.antimatter.network.packets.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class AntimatterNetwork {
 
@@ -35,6 +34,8 @@ public class AntimatterNetwork {
         handler.registerMessage(currMessageId++, SoundPacket.class, SoundPacket::encode, SoundPacket::decode, SoundPacket::handle);
         handler.registerMessage(currMessageId++, GuiEventPacket.class, GuiEventPacket::encode, GuiEventPacket::decode, GuiEventPacket::handle);
         handler.registerMessage(currMessageId++, FluidStackPacket.class, FluidStackPacket::encode, FluidStackPacket::decode, FluidStackPacket::handle);
+        handler.registerMessage(currMessageId++, CapabilityPacket.class, CapabilityPacket::encode, CapabilityPacket::decode, CapabilityPacket::handle);
+        handler.registerMessage(currMessageId++, CompoundPacket.class, CompoundPacket::encode, CompoundPacket::decode, CompoundPacket::handle);
     }
 
     public void sendToServer(Object msg) {
@@ -45,7 +46,13 @@ public class AntimatterNetwork {
         if (!(player instanceof FakePlayer)) handler.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
-    public void sendToAllAround(Object msg, World world, AxisAlignedBB alignedBB) {
+    public void sendToAll(Object msg) {
+        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            sendTo(msg, player);
+        }
+    }
+
+    public void sendToAllAround(Object msg, ServerWorld world, AxisAlignedBB alignedBB) {
         for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, alignedBB)) {
             sendTo(msg, player);
         }

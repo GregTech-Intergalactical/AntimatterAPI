@@ -1,8 +1,13 @@
 package muramasa.antimatter.capability;
 
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.network.packets.CapabilityPacket;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -37,7 +42,18 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
             if (capability == null) {
                 throw new NoSuchElementException("No Capability setup");
             }
+
             handler = capability.apply(tile, tag);
+
+            if (handler == null) {
+                throw new NoSuchElementException("No Handler initialized");
+            }
+
+            // For the capabilities which exist on the both side, we should send the initialization tag which was extracted from the server.
+            // That tag will provide correct data for the initialization of capability on the client side.
+            if (side == null && tile.isClientSide()) {
+                Antimatter.NETWORK.sendToServer(new CapabilityPacket(handler.getCapability().getName(), tile.getPos(), tile.getDimension()));
+            }
         }
     }
 

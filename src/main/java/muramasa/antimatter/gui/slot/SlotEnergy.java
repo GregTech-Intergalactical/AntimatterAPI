@@ -15,7 +15,7 @@ public class SlotEnergy extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return stack.getCapability(AntimatterCaps.ENERGY).isPresent();
+        return stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override

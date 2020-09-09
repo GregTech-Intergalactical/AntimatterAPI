@@ -26,8 +26,8 @@ public class WorldGenStone extends WorldGenBase<WorldGenStone> {
     public BlockState stone;
     public LongOpenHashSet CHECKED_SEEDS;
 
-    public WorldGenStone(String id, StoneType type, int amount, int size, int probability, int minY, int maxY, int... dimensions) {
-        super(id, WorldGenStone.class, dimensions);
+    public WorldGenStone(String id, StoneType type, int amount, int size, int probability, int minY, int maxY, int... dims) {
+        super(id, WorldGenStone.class, dims);
         this.type = type.getId();
         this.amount = amount;
         this.size = size;

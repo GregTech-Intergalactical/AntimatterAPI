@@ -11,8 +11,7 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-        int voltage = getMachineTier().getVoltage();
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, 0L, voltage, voltage, 0, 0) {
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, 0L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 0, 0) {
             @Override
             public boolean canOutput(Dir direction) {
                 return tile.getFacing().getIndex() == direction.getIndex();

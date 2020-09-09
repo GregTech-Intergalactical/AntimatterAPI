@@ -19,7 +19,7 @@ public class ControllerInteractHandler extends MachineInteractHandler<TileEntity
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         if (type == Data.HAMMER) {
             TileEntityMultiMachine machine = (TileEntityMultiMachine) getTile();
             if (!machine.isStructureValid()) {

@@ -23,7 +23,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     public long insert(long maxReceive, boolean simulate) {
         if (!canInput()) return 0;
 
-        long toInsert = Math.max(Math.min(getCapacity() - getEnergy(), maxReceive), 0);
+        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
         if (!simulate) energy += toInsert;
 
         return toInsert;
@@ -33,7 +33,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     public long extract(long maxExtract, boolean simulate) {
         //if (!canOutput()) return 0;
 
-        long toExtract = Math.max(Math.min(getEnergy(), maxExtract), 0);
+        long toExtract = Math.max(Math.min(energy, maxExtract), 0);
         if (!simulate) energy -= toExtract;
 
         return toExtract;
@@ -71,7 +71,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canInput() {
-        return getInputVoltage() > 0;
+        return voltage_in > 0;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canOutput() {
-        return getOutputVoltage() > 0;
+        return voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/

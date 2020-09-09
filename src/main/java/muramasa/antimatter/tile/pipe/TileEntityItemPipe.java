@@ -27,9 +27,8 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
         if (isServerSide()) {
             Tesseract.ITEM.remove(getDimension(), pos.toLong());
             Tesseract.ITEM.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
-        } else {
-            super.refreshConnection();
         }
+        super.refreshConnection();
     }
 
     @Override

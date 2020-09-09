@@ -1,8 +1,11 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.ICapabilityHandler;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.List;
 

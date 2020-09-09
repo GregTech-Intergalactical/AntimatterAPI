@@ -53,7 +53,7 @@ public class ItemCover extends ItemBasic<ItemCover> {
 
     private boolean itemPlaceCover(PlayerEntity player, Hand hand, TileEntity tile,Direction dir) {
         if (tile != null) {
-            LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE,dir);
+            LazyOptional<ICoverHandler> coverable = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,dir);
             //since we are holding an ItemCover it will try to place it
             return coverable.map(i -> i.onInteract(player,hand,dir,null)).orElse(false);
         }

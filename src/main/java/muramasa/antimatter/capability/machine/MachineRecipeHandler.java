@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
@@ -11,6 +12,7 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -35,7 +37,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
-        deserialize(tag);
+        if (tag != null) deserialize(tag);
     }
 
     public void onUpdate() {
@@ -275,6 +277,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void deserialize(CompoundNBT tag) {
-        if (tag == null) return;
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
     }
 }

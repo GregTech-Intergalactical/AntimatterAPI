@@ -18,20 +18,20 @@ public class GuiEventPacket {
 
     private final GuiEvent event;
     private final BlockPos pos;
-    private final int dimension;
+    private final int dim;
     private final int[] data;
 
-    public GuiEventPacket(GuiEvent event, BlockPos pos, int dimension, int... data) {
+    public GuiEventPacket(GuiEvent event, BlockPos pos, int dim, int... data) {
         this.event = event;
         this.pos = pos;
-        this.dimension = dimension;
+        this.dim = dim;
         this.data = data;
     }
 
     public static void encode(GuiEventPacket msg, PacketBuffer buf) {
         buf.writeEnumValue(msg.event);
         buf.writeBlockPos(msg.pos);
-        buf.writeVarInt(msg.dimension);
+        buf.writeVarInt(msg.dim);
         buf.writeVarIntArray(msg.data);
     }
 
@@ -41,7 +41,7 @@ public class GuiEventPacket {
 
     public static void handle(final GuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            DimensionType dimensionType = DimensionType.getById(msg.dimension);
+            DimensionType dimensionType = DimensionType.getById(msg.dim);
             if (dimensionType != null) {
                 World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimensionType);
                 TileEntity tile = Utils.getTile(world, msg.pos);

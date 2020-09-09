@@ -59,8 +59,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default Material[] getMaterials(ItemStack stack) {
-        CompoundNBT nbt = getDataTag(stack);
-        return new Material[] { Material.get(nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
+        CompoundNBT tag = getDataTag(stack);
+        return new Material[] { Material.get(tag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(tag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
     }
 
     default Set<ToolType> getToolTypes() {

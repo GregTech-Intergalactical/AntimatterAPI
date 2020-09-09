@@ -81,7 +81,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         return false;
     }
 
@@ -120,21 +120,20 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             if (!c.isEmpty()) { //Don't store EMPTY covers unnecessarily
                 sides[0] |= (1 << s.getIndex());
                 CompoundNBT nbt = c.serialize();
-                nbt.putString("Id", c.getId());
-                tag.put("Cover-".concat(Integer.toString(s.getIndex())), nbt);
+                nbt.putString(Ref.TAG_MACHINE_COVER_ID, c.getId());
+                tag.put(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(s.getIndex())), nbt);
             }
         });
-        tag.putByte("Side", sides[0]);
+        tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
-        if (tag == null) return;
-        byte sides = tag.getByte("Side");
+        byte sides = tag.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
-                CompoundNBT nbt = tag.getCompound("Cover-".concat(Integer.toString(i)));
-                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString("Id")), tile)).deserialize(nbt);
+                CompoundNBT nbt = tag.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
+                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(nbt);
             } else {
                 covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }

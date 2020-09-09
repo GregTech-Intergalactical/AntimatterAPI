@@ -1,16 +1,14 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.ICapabilityHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.capabilities.Capability;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
@@ -30,7 +28,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     public MachineEnergyHandler(T tile, CompoundNBT tag, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
-        deserialize(tag);
+        if (tag != null) deserialize(tag);
         if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
@@ -130,23 +128,22 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     /** NBT **/
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putLong("Energy", energy);
-        tag.putLong("Capacity", capacity);
-        tag.putLong("Voltage-In", voltage_in);
-        tag.putLong("Voltage-Out", voltage_out);
-        tag.putLong("Amperage-In", amperage_in);
-        tag.putLong("Amperage-Out", amperage_out);
+        tag.putLong(Ref.TAG_MACHINE_ENERGY, energy);
+        tag.putLong(Ref.TAG_MACHINE_CAPACITY, capacity);
+        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_IN, voltage_in);
+        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_OUT, voltage_out);
+        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_IN, amperage_in);
+        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_OUT, amperage_out);
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
-        if (tag == null) return;
-        energy = tag.getLong("Energy");
-        capacity = tag.getLong("Capacity");
-        voltage_in = tag.getInt("Voltage-In");
-        voltage_out = tag.getInt("Voltage-Out");
-        amperage_in = tag.getInt("Amperage-In");
-        amperage_out = tag.getInt("Amperage-Out");
+        energy = tag.getLong(Ref.TAG_MACHINE_ENERGY);
+        capacity = tag.getLong(Ref.TAG_MACHINE_CAPACITY);
+        voltage_in = tag.getInt(Ref.TAG_MACHINE_VOLTAGE_IN);
+        voltage_out = tag.getInt(Ref.TAG_MACHINE_VOLTAGE_OUT);
+        amperage_in = tag.getInt(Ref.TAG_MACHINE_AMPERAGE_IN);
+        amperage_out = tag.getInt(Ref.TAG_MACHINE_AMPERAGE_OUT);
     }
 
     @Override
@@ -176,5 +173,10 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     public void setInputVoltage(int voltage_in) {
         this.voltage_in = voltage_in;
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.ENERGY_HANDLER_CAPABILITY;
     }
 }

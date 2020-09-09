@@ -23,7 +23,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     public TileEntityHatch(Machine<?> type) {
         super(type);
         componentHandler.setup(HatchComponentHandler::new);
-        fluidHandler.setup((tile, tag) -> new MachineFluidHandler<>(tile, tag, , 1000));
+        fluidHandler.setup(MachineFluidHandler::new);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
         return super.getCapability(cap, side);
     }
 }

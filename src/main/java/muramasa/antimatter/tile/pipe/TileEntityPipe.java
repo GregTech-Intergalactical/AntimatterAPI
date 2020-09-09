@@ -52,6 +52,7 @@ public class TileEntityPipe extends TileEntityTickable {
     public void onFirstTick() {
         coverHandler.init();
         interactHandler.init();
+        refreshConnection();
     }
 
     @Override
@@ -120,32 +121,36 @@ public class TileEntityPipe extends TileEntityTickable {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == AntimatterCaps.COVERABLE) {
-            return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
-        }
-        if (cap == AntimatterCaps.INTERACTABLE) {
-            return interactHandler.<LazyOptional<T>>map(h -> LazyOptional.of(() -> h).cast()).orElseGet(() -> super.getCapability(cap));
-        }
+        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY) return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? LazyOptional.of(() -> coverHandler.get()).cast() : super.getCapability(cap, side);
+        else if (cap == AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY) return interactHandler.<LazyOptional<T>>map(h -> LazyOptional.of(() -> h).cast()).orElseGet(() -> super.getCapability(cap));
         return LazyOptional.empty();
     }
 
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
-        if (tag.contains(Ref.KEY_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.KEY_PIPE_TILE_CONNECTIVITY);
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER));
+        if (tag.contains(Ref.TAG_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_COVER));
         if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG));
-        //TODO refreshConnection(); causes crash as the world object has not yet been assigned
     }
 
     @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
-        tag.putByte(Ref.KEY_PIPE_TILE_CONNECTIVITY, connection);
+        tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize()));
         interactHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_CONFIG, h.serialize()));
         return tag;
+    }
+
+    @Override
+    public void reread(CompoundNBT tag) {
+        super.reread(tag);
+        if (tag.contains(Ref.TAG_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
+        refreshConnection();
     }
 
     @Override

@@ -11,16 +11,19 @@ import javax.annotation.Nullable;
 public class AntimatterCaps {
 
     @CapabilityInject(IEnergyHandler.class)
-    public static Capability<IEnergyHandler> ENERGY;
+    public static Capability<IEnergyHandler> ENERGY_HANDLER_CAPABILITY;
 
     @CapabilityInject(IInteractHandler.class)
-    public static Capability<IInteractHandler> INTERACTABLE;
+    public static Capability<IInteractHandler> INTERACTABLE_HANDLER_CAPABILITY;
 
     @CapabilityInject(ICoverHandler.class)
-    public static Capability<ICoverHandler> COVERABLE;
+    public static Capability<ICoverHandler> COVERABLE_HANDLER_CAPABILITY;
 
     @CapabilityInject(IComponentHandler.class)
-    public static Capability<IComponentHandler> COMPONENT;
+    public static Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY;
+
+    /** Dummy cap **/
+    public static Capability<?> RECIPE_HANDLER_CAPABILITY;
 
     public static void register() {
 

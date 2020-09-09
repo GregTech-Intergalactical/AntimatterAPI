@@ -41,7 +41,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
         });
         interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
-            public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+            public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
                 if ((type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && hand == Hand.MAIN_HAND) {
                     energyHandler.ifPresent(h -> {
                         int amps = h.getOutputAmperage();

@@ -23,10 +23,9 @@ public abstract class TileEntityStorage extends TileEntityMachine {
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
             }
         });
-        int voltage = getMachineTier().getVoltage();
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, voltage * 64L, voltage, voltage, 1, 1) {
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 1, 1) {
             @Override
-            public boolean  canOutput(Dir direction) {
+            public boolean canOutput(Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();
             }
 

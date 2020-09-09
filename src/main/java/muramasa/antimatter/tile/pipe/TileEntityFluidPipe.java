@@ -27,9 +27,8 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
         if (isServerSide()) {
             Tesseract.FLUID.remove(getDimension(), pos.toLong());
             Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
-        } else {
-            super.refreshConnection();
         }
+        super.refreshConnection();
     }
 
     @Override
