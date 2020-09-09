@@ -7,7 +7,6 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.RotatableCoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -19,8 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
-
-import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableCoverHandler<T> implements IMachineHandler, ICapabilityHandler {
 

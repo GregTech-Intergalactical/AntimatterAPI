@@ -1,7 +1,7 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
+import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    protected MachineCapabilityHolder<HatchComponentHandler> componentHandler = new MachineCapabilityHolder<>(this);
+    protected MachineCapabilityHandler<HatchComponentHandler> componentHandler = new MachineCapabilityHandler<>(this);
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
@@ -27,7 +27,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
-    public MachineCapabilityHolder<HatchComponentHandler> getComponentHandler() {
+    public MachineCapabilityHandler<HatchComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 

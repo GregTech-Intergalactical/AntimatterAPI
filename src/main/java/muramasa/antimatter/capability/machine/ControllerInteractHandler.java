@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ControllerInteractHandler extends MachineInteractHandler<TileEntityMachine> {

@@ -18,7 +18,6 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
 public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {

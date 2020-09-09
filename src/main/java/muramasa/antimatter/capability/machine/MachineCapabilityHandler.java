@@ -1,29 +1,26 @@
 package muramasa.antimatter.capability.machine;
 
-import muramasa.antimatter.capability.CapabilityHolder;
+import muramasa.antimatter.capability.CapabilityHandler;
 import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 
-import java.util.function.Function;
-
-public class MachineCapabilityHolder<T extends ICapabilityHandler> extends CapabilityHolder<TileEntityMachine, T> {
+public class MachineCapabilityHandler<T extends ICapabilityHandler> extends CapabilityHandler<TileEntityMachine, T> {
 
     private MachineFlag flag;
 
-    public MachineCapabilityHolder(TileEntityMachine tile, MachineFlag flag, Dist side) {
+    public MachineCapabilityHandler(TileEntityMachine tile, MachineFlag flag, Dist side) {
         super(tile, side);
         this.flag = flag;
     }
 
-    public MachineCapabilityHolder(TileEntityMachine tile, MachineFlag flag) {
+    public MachineCapabilityHandler(TileEntityMachine tile, MachineFlag flag) {
         super(tile);
         this.flag = flag;
     }
 
-    public MachineCapabilityHolder(TileEntityMachine tile) {
+    public MachineCapabilityHandler(TileEntityMachine tile) {
         this(tile, null);
     }
 

@@ -3,14 +3,10 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import tesseract.Tesseract;
-import tesseract.api.ITickHost;
-import tesseract.api.ITickingController;
 import tesseract.api.item.IItemPipe;
 import tesseract.util.Dir;
 
-public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITickHost {
-
-    private ITickingController controller;
+public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
 
     public TileEntityItemPipe(PipeType<?> type) {
         super(type);
@@ -38,11 +34,6 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
     }
 
     @Override
-    public void onServerUpdate() {
-        if (controller != null) controller.tick();
-    }
-
-    @Override
     public int getCapacity() {
         return ((ItemPipe<?>)getPipeType()).getCapacity(getPipeSize());
     }
@@ -50,12 +41,5 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe, ITi
     @Override
     public boolean connects(Dir direction) {
         return canConnect(direction.getIndex());
-    }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
-            controller = newController;
-        }
     }
 }

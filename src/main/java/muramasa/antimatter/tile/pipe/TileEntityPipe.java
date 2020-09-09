@@ -4,8 +4,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.capability.IHandlerProvider;
-import muramasa.antimatter.capability.pipe.PipeCapabilityHolder;
+import muramasa.antimatter.capability.ICapabilityHost;
+import muramasa.antimatter.capability.pipe.PipeCapabilityHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeInteractHandler;
 import muramasa.antimatter.cover.Cover;
@@ -20,21 +20,25 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.graph.Connectivity;
+import tesseract.api.ITickHost;
+import tesseract.api.ITickingController;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityPipe extends TileEntityTickable implements IHandlerProvider {
+public class TileEntityPipe extends TileEntityTickable implements ICapabilityHost, ITickHost {
 
     /** Pipe Data **/
     protected PipeType<?> type;
     protected PipeSize size;
 
     /** Capabilities **/
-    public PipeCapabilityHolder<PipeCoverHandler> coverHandler = new PipeCapabilityHolder<>(this);
-    public PipeCapabilityHolder<PipeInteractHandler> interactHandler = new PipeCapabilityHolder<>(this);
+    public PipeCapabilityHandler<PipeCoverHandler<?>> coverHandler = new PipeCapabilityHandler<>(this);
+    public PipeCapabilityHandler<PipeInteractHandler<?>> interactHandler = new PipeCapabilityHandler<>(this);
+
+    /** Tesseract **/
+    private ITickingController controller;
 
     public TileEntityPipe(TileEntityType<?> tileType) {
         super(tileType);
@@ -51,7 +55,11 @@ public class TileEntityPipe extends TileEntityTickable implements IHandlerProvid
     public void onFirstTick() {
         coverHandler.init();
         interactHandler.init();
-        refreshConnection();
+    }
+
+    @Override
+    public void onServerUpdate() {
+        if (controller != null) controller.tick();
     }
 
     @Override
@@ -157,5 +165,12 @@ public class TileEntityPipe extends TileEntityTickable implements IHandlerProvid
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;
+    }
+
+    @Override
+    public void reset(ITickingController oldController, ITickingController newController) {
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
+            controller = newController;
+        }
     }
 }

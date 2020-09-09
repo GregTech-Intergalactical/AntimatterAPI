@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability;
 
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {

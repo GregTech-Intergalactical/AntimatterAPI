@@ -18,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static muramasa.antimatter.Data.*;
@@ -59,7 +58,7 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        if (getTile().getMachineState() != null)  tag.putInt(Ref.TAG_MACHINE_STATE, getTile().getMachineState().ordinal());
+        if (getTile().getMachineState() != null) tag.putInt(Ref.TAG_MACHINE_STATE, getTile().getMachineState().ordinal());
         return tag;
     }
 

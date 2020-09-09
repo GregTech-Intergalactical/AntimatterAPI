@@ -2,7 +2,7 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
+import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerInteractHandler;
@@ -31,7 +31,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected MachineCapabilityHolder<ControllerComponentHandler> componentHandler = new MachineCapabilityHolder<>(this);
+    protected MachineCapabilityHandler<ControllerComponentHandler> componentHandler = new MachineCapabilityHandler<>(this);
 
     protected Optional<StructureResult> result = Optional.empty();
 
@@ -237,7 +237,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     @Override
-    public MachineCapabilityHolder<ControllerComponentHandler> getComponentHandler() {
+    public MachineCapabilityHandler<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 

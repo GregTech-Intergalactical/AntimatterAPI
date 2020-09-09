@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
+import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -38,20 +38,20 @@ public class ComponentHandler implements IComponentHandler {
 
     @Nonnull
     @Override
-    public MachineCapabilityHolder<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : new MachineCapabilityHolder<>(null);
+    public MachineCapabilityHandler<MachineItemHandler<?>> getItemHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : new MachineCapabilityHandler<>(null);
     }
 
     @Nonnull
     @Override
-    public MachineCapabilityHolder<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : new MachineCapabilityHolder<>(null);
+    public MachineCapabilityHandler<MachineFluidHandler<?>> getFluidHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : new MachineCapabilityHandler<>(null);
     }
 
     @Nonnull
     @Override
-    public MachineCapabilityHolder<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : new MachineCapabilityHolder<>(null);
+    public MachineCapabilityHandler<MachineEnergyHandler<?>> getEnergyHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : new MachineCapabilityHandler<>(null);
     }
 
     @Override

@@ -44,7 +44,7 @@ import static net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IHandlerProvider, IMachineHandler, IGuiHandler, IInfoRenderer {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, ICapabilityHost, IInfoRenderer, IMachineHandler, IGuiHandler {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -55,12 +55,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected float maxProgress = 0; //TODO look into receiveClientEvent
 
     /** Capabilities **/
-    public MachineCapabilityHolder<MachineItemHandler<?>> itemHandler = new MachineCapabilityHolder<>(this, ITEM);
-    public MachineCapabilityHolder<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHolder<>(this, FLUID, DEDICATED_SERVER);
-    public MachineCapabilityHolder<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHolder<>(this, RECIPE, DEDICATED_SERVER);
-    public MachineCapabilityHolder<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHolder<>(this, ENERGY);
-    public MachineCapabilityHolder<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHolder<>(this, COVERABLE);
-    public MachineCapabilityHolder<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHolder<>(this, CONFIGURABLE);
+    public MachineCapabilityHandler<MachineItemHandler<?>> itemHandler = new MachineCapabilityHandler<>(this, ITEM);
+    public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, DEDICATED_SERVER);
+    public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, DEDICATED_SERVER);
+    public MachineCapabilityHandler<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHandler<>(this, ENERGY);
+    public MachineCapabilityHandler<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHandler<>(this, COVERABLE);
+    public MachineCapabilityHandler<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHandler<>(this, CONFIGURABLE);
 
     protected final IIntArray machineData = new IIntArray() {
         @Override
@@ -304,36 +304,36 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
+        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.read(tag.getCompound(Ref.KEY_MACHINE_INTERACT));
         if (tag.contains(Ref.KEY_MACHINE_ITEMS)) itemHandler.read(tag.getCompound(Ref.KEY_MACHINE_ITEMS));
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.read(tag.getCompound(Ref.KEY_MACHINE_FLUIDS));
+        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_COVER));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.read(tag.getCompound(Ref.KEY_MACHINE_ENERGY));
         if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.read(tag.getCompound(Ref.KEY_MACHINE_RECIPE));
-        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_COVER));
-        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.read(tag.getCompound(Ref.KEY_MACHINE_INTERACT));
     }
 
     @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
+        interactHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_INTERACT, h.serialize()));
         itemHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_ITEMS, h.serialize()));
         fluidHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_FLUIDS, h.serialize()));
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_COVER, h.serialize()));
         energyHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_ENERGY, h.serialize()));
         recipeHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_RECIPE, h.serialize()));
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_COVER, h.serialize()));
-        interactHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_INTERACT, h.serialize()));
         return tag;
     }
 
     @Override
     public void update(CompoundNBT tag) {
         //super.update(tag);
+        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_INTERACT)));
         if (tag.contains(Ref.KEY_MACHINE_ITEMS)) itemHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
-        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_COVER)));
-        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_INTERACT)));
     }
 
     //TODO move toString to capabilities

@@ -12,7 +12,6 @@ import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 public class EnergyTileWrapper implements IGTNode, ITileWrapper {
 

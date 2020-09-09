@@ -15,7 +15,6 @@ import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;

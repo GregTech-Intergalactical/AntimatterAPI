@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability;
 
 import mcp.MethodsReturnNonnullByDefault;
-import muramasa.antimatter.capability.machine.MachineCapabilityHolder;
+import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -19,11 +19,11 @@ public interface IComponentHandler {
 
     TileEntity getTile();
 
-    MachineCapabilityHolder<MachineItemHandler<?>> getItemHandler();
+    MachineCapabilityHandler<MachineItemHandler<?>> getItemHandler();
 
-    MachineCapabilityHolder<MachineFluidHandler<?>> getFluidHandler();
+    MachineCapabilityHandler<MachineFluidHandler<?>> getFluidHandler();
 
-    MachineCapabilityHolder<MachineEnergyHandler<?>> getEnergyHandler();
+    MachineCapabilityHandler<MachineEnergyHandler<?>> getEnergyHandler();
 
     void onStructureFormed(TileEntityMultiMachine tile);
 

@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHandler> {
+public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHandler> {
 
     protected T tile;
     protected H handler;
@@ -21,11 +21,11 @@ public class CapabilityHolder<T extends TileEntityBase, H extends ICapabilityHan
     protected BiFunction<T, CompoundNBT, H> capability = (tile, tag) -> null;
     protected Dist side; // when null, works on both sides
 
-    public CapabilityHolder(T tile) {
+    public CapabilityHandler(T tile) {
         this.tile = tile;
     }
 
-    public CapabilityHolder(T tile, Dist side) {
+    public CapabilityHandler(T tile, Dist side) {
         this.tile = tile;
         this.side = side;
     }

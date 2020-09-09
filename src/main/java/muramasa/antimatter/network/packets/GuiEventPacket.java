@@ -2,7 +2,6 @@ package muramasa.antimatter.network.packets;
 
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;

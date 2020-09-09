@@ -11,7 +11,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 

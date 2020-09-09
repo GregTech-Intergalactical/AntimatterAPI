@@ -23,11 +23,11 @@ import javax.annotation.Nullable;
 import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
 
-public class PipeInteractHandler extends InteractHandler<TileEntityPipe> implements ICapabilityHandler {
+public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandler<T> implements ICapabilityHandler {
 
-    private byte connection, interact;
+    private byte connection, interaction;
 
-    public PipeInteractHandler(TileEntityPipe tile, CompoundNBT tag) {
+    public PipeInteractHandler(T tile, CompoundNBT tag) {
         super(tile);
         if (tag != null) deserialize(tag);
     }
@@ -38,7 +38,7 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         if (type == getTool() && hand == Hand.MAIN_HAND) {
             boolean isTarget = false;
-            TileEntityPipe tile = getTile();
+            T tile = getTile();
             TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
             if (target instanceof TileEntityPipe) {
                 ((TileEntityPipe) target).toggleConnection(side.getOpposite());
@@ -50,10 +50,10 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
             // If some target in front of, then create wrapper
             if (isTarget) {
                 if (tile.canConnect(side.getIndex())) {
-                    interact = Connectivity.set(interact, side.getIndex());
+                    interaction = Connectivity.set(interaction, side.getIndex());
                     PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
                 } else {
-                    interact = Connectivity.clear(interact, side.getIndex());
+                    interaction = Connectivity.clear(interaction, side.getIndex());
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
                 }
             }
@@ -63,16 +63,16 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
     }
 
     private void onLoad() {
-        TileEntityPipe tile = getTile();
-        CoverInstance[] covers = tile.getAllCovers();
+        T tile = getTile();
+        CoverInstance<?>[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
-            if (Connectivity.has(interact, side.getIndex())) {
+            if (Connectivity.has(interaction, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
                     PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()].getCover());
                 } else {
-                    interact = Connectivity.clear(interact, side.getIndex());
+                    interaction = Connectivity.clear(interaction, side.getIndex());
                 }
             }
         }
@@ -80,30 +80,26 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
 
     /** Called when neighbor was placed near */
     public void onChange(Direction side) {
-        TileEntityPipe tile = getTile();
+        T tile = getTile();
         TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
         if (Utils.isForeignTile(neighbor)) {
-            interact = Connectivity.set(interact, side.getIndex());
+            interaction = Connectivity.set(interaction, side.getIndex());
             PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side).getCover());
         } else {
-            interact = Connectivity.clear(interact, side.getIndex());
+            interaction = Connectivity.clear(interaction, side.getIndex());
         }
     }
 
     public void onRemove() {
-        TileEntityPipe tile = getTile();
+        T tile = getTile();
         for (Direction side : Ref.DIRS) {
-            if (Connectivity.has(interact, side.getIndex())) {
+            if (Connectivity.has(interaction, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, neighbor);
                 }
             }
         }
-    }
-
-    public byte getConnection() {
-        return connection;
     }
 
     public void setConnection(Direction side) {
@@ -126,14 +122,14 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interact);
+        tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interaction);
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
     }
 
     @Override
     public void deserialize(CompoundNBT tag) {
-        interact = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
+        interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
         connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         onLoad();
     }
