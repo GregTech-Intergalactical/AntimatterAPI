@@ -10,15 +10,14 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 
-public class TileBatteryBuffer extends TileEntityStorage {
+public class TileEntityBatteryBuffer extends TileEntityStorage {
 
-    public TileBatteryBuffer(Machine<?> type) {
+    public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
     }
 
     @Override
     public void onFirstTick() {
-        // Anonymous inherited classes are annoying since you have to rewrite code. probably move the energy handlers to an actual class.
         if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, 0, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
 
             @Override

@@ -97,4 +97,12 @@ public class Tier implements IAntimatterObject {
         return textures;
     }
 
+    public static Tier getTier(int voltage) {
+        for (Tier tier : getAllElectric()) {
+            if (voltage <= tier.getVoltage()) {
+                return tier;
+            }
+        }
+        return ULV;
+    }
 }

@@ -7,7 +7,6 @@ import tesseract.util.Dir;
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected long energy, capacity;
-    //Change to protected since amperage for buffers are dynamic.
     protected int voltage_in, voltage_out, amperage_in, amperage_out;
 
     public EnergyHandler(long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
@@ -32,7 +31,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-       // if (!canOutput()) return 0;
+        //if (!canOutput()) return 0;
 
         long toExtract = Math.max(Math.min(energy, maxExtract), 0);
         if (!simulate) energy -= toExtract;
@@ -119,26 +118,5 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     @Override
     public boolean connects(Dir direction) {
         return true;
-    }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-    }
-
-    /* Voltage is static in Tesseract, then to update it, also recreate the node */
-    public void setOutputAmperage(int amp) {
-        amperage_out = amp;
-    }
-
-    public void setInputAmperage(int amp) {
-        amperage_in = amp;
-    }
-
-    public void setOutputVoltage(int voltage) {
-        voltage_out = voltage;
-    }
-
-    public void setInputVoltage(int voltage) {
-        voltage_in = voltage;
     }
 }

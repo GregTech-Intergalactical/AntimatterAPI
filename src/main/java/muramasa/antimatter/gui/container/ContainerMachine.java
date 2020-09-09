@@ -59,11 +59,11 @@ public abstract class ContainerMachine extends AntimatterContainer {
     protected void addSlots(TileEntityMachine tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
         for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
-            slotIndexMap.computeIntIfAbsent(slot.type.getId(), k -> 0);
-            Optional<SlotItemHandler> supplier = slot.type.getSlotSupplier().get(tile, slotIndexMap.getInt(slot.type.getId()), slot);
+            slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
+            Optional<SlotItemHandler> supplier = slot.getType().getSlotSupplier().get(tile, slotIndexMap.getInt(slot.getType().getId()), slot);
             if (supplier.isPresent()) {
                 addSlot(supplier.get());
-                slotIndexMap.compute(slot.type.getId(), (k, v) -> v + 1);
+                slotIndexMap.compute(slot.getType().getId(), (k, v) -> v + 1);
             }
         }
     }

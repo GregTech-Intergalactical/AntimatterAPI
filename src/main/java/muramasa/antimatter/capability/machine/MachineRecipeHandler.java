@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
@@ -127,6 +128,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
     }
 
+    @Nullable
+    public Recipe getActiveRecipe() {
+        return activeRecipe;
+    }
+
     public void consumeInputs() {
         tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputItems()));
         tile.fluidHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputFluids()));
@@ -174,7 +180,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (!activeRecipe.hasInputFluids()) {
             throw new RuntimeException("Missing fuel in active generator recipe!");
         }
-        boolean shouldRun = tile.energyHandler.map(handler -> handler.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()),true) > 0).orElse(false);
+        boolean shouldRun = tile.energyHandler.map(h -> h.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()),true) > 0).orElse(false);
         if (!shouldRun) return false;
         long toConsume = (long) ((double)tile.getMachineTier().getVoltage() /(double)(activeRecipe.getPower() /(double) Objects.requireNonNull(activeRecipe.getInputFluids())[0].getAmount()));
         if (tile.fluidHandler.map(h -> {

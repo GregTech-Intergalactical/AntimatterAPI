@@ -23,10 +23,10 @@ public class ScreenHatch<T extends ContainerMachine> extends ScreenMachine<T> {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         List<SlotData> list = container.getTile().getMachineType().getGui().getSlots(container.getTile().getMachineTier());
         for (SlotData slot : list) {
-            if (slot.type == SlotType.IT_IN || slot.type == SlotType.IT_OUT) {
-                drawTexture(gui, guiLeft + slot.x - 1, guiTop + slot.y - 1, xSize, 0, 18, 18);
-            } else if (slot.type == SlotType.FL_IN || slot.type == SlotType.FL_OUT) {
-                drawTexture(gui, guiLeft + slot.x - 1, guiTop + slot.y - 1, xSize, 18, 18, 18);
+            if (slot.getType() == SlotType.IT_IN || slot.getType() == SlotType.IT_OUT) {
+                drawTexture(gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 0, 18, 18);
+            } else if (slot.getType() == SlotType.FL_IN || slot.getType() == SlotType.FL_OUT) {
+                drawTexture(gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 18, 18, 18);
             }
         }
         if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {

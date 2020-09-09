@@ -4,20 +4,20 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 import tesseract.Tesseract;
+import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import java.util.List;
-
-public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler {
+public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler, ITickHost {
 
     protected TileEntityMachine tile;
     protected ITickingController controller;
@@ -30,8 +30,8 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
-    public MachineEnergyHandler(TileEntityMachine tile) {
-        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), 0, 1, 0);
+    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
+        this(tile, 0, tile.getMachineTier().getVoltage() * 40L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
     }
 
     public void onUpdate() {
@@ -72,13 +72,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         return 0;
     }
 
-    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
-        /*
-        Here the default check is performed for the case of a generator, might be moved at a later point.
-         */
-        this(tile, 0, tile.getMachineTier().getVoltage() * 64L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
-        }
-
     public void setOutputAmperage(int amp) {
         amperage_out = amp;
     }
@@ -87,18 +80,18 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
         amperage_in = amp;
     }
 
-    /**
-     *
-     * @return whether or not this handler can charge items in charge slots.
-     */
+    public void setOutputVoltage(int voltage) {
+        voltage_out = voltage;
+    }
+
+    public void setInputVoltage(int voltage) {
+        voltage_in = voltage;
+    }
+
     public boolean canChargeItem() {
         return true;
     }
 
-    /**
-     *
-     * @return whether or not this handler change charge from items in charge slots.
-     */
     public boolean canChargeFromItem() {
         return false;
     }
@@ -131,13 +124,15 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
 
     @Override
     public boolean connects(Dir direction) {
+        // TODO: Finish connections when covers will be ready
         return tile.getFacing().getIndex() != direction.getIndex()/* && tile.getCover(Ref.DIRECTIONS[direction.getIndex()]).isEqual(Data.COVER_EMPTY)*/;
     }
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
+        }
     }
 
     /** NBT **/
@@ -145,15 +140,23 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.putLong("Energy", energy);
+        tag.putLong("Voltage-In", voltage_in);
+        tag.putLong("Voltage-Out", voltage_out);
+        tag.putLong("Amperage-In", amperage_in);
+        tag.putLong("Amperage-Out", amperage_out);
         return tag;
     }
 
     public void deserialize(CompoundNBT tag) {
         energy = tag.getLong("Energy");
+        voltage_in = tag.getInt("Voltage-In");
+        voltage_out = tag.getInt("Voltage-Out");
+        amperage_in = tag.getInt("Amperage-In");
+        amperage_out = tag.getInt("Amperage-Out");
     }
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(handler -> cachedItems = handler.getChargeableItems());
+        if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
     }
 }

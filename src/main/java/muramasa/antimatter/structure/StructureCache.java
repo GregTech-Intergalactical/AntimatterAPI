@@ -32,27 +32,31 @@ public class StructureCache {
     }
 
     public static boolean has(World world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
+        DimensionEntry entry = LOOKUP.get(getDimId(world));
         return entry != null && entry.get(pos) != null;
     }
 
     @Nullable
     public static BlockPos get(World world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
+        DimensionEntry entry = LOOKUP.get(getDimId(world));
         return entry != null ? entry.get(pos) : null;
     }
 
     public static void add(World world, BlockPos pos, LongList structure) {
-        DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimension().getType().getId(), e -> new DimensionEntry());
+        DimensionEntry entry = LOOKUP.computeIfAbsent(getDimId(world), e -> new DimensionEntry());
         entry.add(pos, structure);
         Antimatter.LOGGER.info("Added Structure to Store!");
     }
 
     public static void remove(IWorld world, BlockPos pos) {
-        DimensionEntry entry = LOOKUP.get(world.getDimension().getType().getId());
+        DimensionEntry entry = LOOKUP.get(getDimId(world));
         if (entry == null) return;
         entry.remove(pos);
         Antimatter.LOGGER.info("Removed Structure to Store!");
+    }
+
+    private static int getDimId(IWorld world) {
+        return world.getDimension().getType().getId();
     }
 
     private static void invalidateController(IWorld world, BlockPos pos) {

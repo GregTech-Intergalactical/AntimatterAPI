@@ -8,9 +8,8 @@ import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -20,10 +19,10 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
-import tesseract.api.item.IItemNode;
-import tesseract.api.item.ItemData;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
+import tesseract.api.item.IItemNode;
+import tesseract.api.item.ItemData;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -122,16 +121,12 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
         }
         return list;
     }
-    /**
-     Returns a non copied list of chargeable items.
-     //TODO: Should this instead return the actual ItemStacks? Usually chargeable items only need the IEnergyHandler.
-     **/
+
+    /** Returns a non copied list of chargeable items. **/
     public List<IEnergyHandler> getChargeableItems() {
         List<IEnergyHandler> list = new ObjectArrayList<>();
-        //TODO: On both or not?
         if (tile.isServerSide()) {
             for (int i = 0; i < chargeWrapper.getSlots(); i++) {
-                //orElse: null, should always be present.
                 ItemStack item = chargeWrapper.getStackInSlot(i);
                 if (!item.isEmpty()) list.add(item.getCapability(AntimatterCaps.ENERGY).orElse(null));
             }
@@ -268,6 +263,19 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
             tag.put("Cell-Items", list);
             tag.putInt("Cell-Size", cellWrapper.getSlots());
         }
+        if (chargeWrapper != null) {
+            ListNBT list = new ListNBT();
+            for (int i = 0; i < chargeWrapper.getSlots(); i++) {
+                if (!chargeWrapper.getStackInSlot(i).isEmpty()) {
+                    CompoundNBT itemTag = new CompoundNBT();
+                    itemTag.putInt("Slot", i);
+                    chargeWrapper.getStackInSlot(i).write(itemTag);
+                    list.add(itemTag);
+                }
+            }
+            tag.put("Charge-Items", list);
+            tag.putInt("Charge-Size", chargeWrapper.getSlots());
+        }
         return tag;
     }
 
@@ -304,6 +312,17 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
                    cellWrapper.setStackInSlot(slot, ItemStack.read(itemTags));
                }
            }
+        }
+        if (chargeWrapper != null) {
+            chargeWrapper.setSize(tag.contains("Charge-Size", Constants.NBT.TAG_INT) ? tag.getInt("Charge-Size") : cellWrapper.getSlots());
+            ListNBT chargeTagList = tag.getList("Charge-Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < chargeTagList.size(); i++) {
+                CompoundNBT itemTags = chargeTagList.getCompound(i);
+                int slot = itemTags.getInt("Slot");
+                if (slot >= 0 && slot < chargeWrapper.getSlots()) {
+                    chargeWrapper.setStackInSlot(slot, ItemStack.read(itemTags));
+                }
+            }
         }
     }
 
@@ -385,7 +404,8 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
 
     @Override
     public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController)
+        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
+        }
     }
 }

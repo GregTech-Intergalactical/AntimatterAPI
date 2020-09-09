@@ -1,9 +1,10 @@
 package muramasa.antimatter.integration.jei.renderer;
 
-import muramasa.antimatter.recipe.Recipe;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 
 public interface IInfoRenderer {
 
-    void drawInfo(Recipe recipe, Minecraft minecraft, int startY, int recipeWidth, int recipeHeight, int mouseX, int mouseY);
+    default void drawInfo(FontRenderer renderer, int left, int top) {
+        //NOOP
+    }
 }
