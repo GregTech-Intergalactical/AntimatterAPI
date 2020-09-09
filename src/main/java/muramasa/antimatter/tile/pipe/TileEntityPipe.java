@@ -39,6 +39,7 @@ public class TileEntityPipe extends TileEntityTickable implements ICapabilityHos
 
     /** Tesseract **/
     private ITickingController controller;
+    private Direction direction; // when cap not initialized yet, it will help to store preset direction
 
     public TileEntityPipe(TileEntityType<?> tileType) {
         super(tileType);
@@ -55,6 +56,13 @@ public class TileEntityPipe extends TileEntityTickable implements ICapabilityHos
     public void onFirstTick() {
         coverHandler.init();
         interactHandler.init();
+
+        // Work when direction was set before handler initialization
+        // setConnection() might be called from the BlockPipe when tick not called yet.
+        if (direction != null) {
+            interactHandler.ifPresent(h -> h.setConnection(direction));
+            direction = null;
+        }
     }
 
     @Override
@@ -77,22 +85,22 @@ public class TileEntityPipe extends TileEntityTickable implements ICapabilityHos
     }
 
     public void setConnection(Direction side) {
-        interactHandler.ifPresent(h -> h.setConnection(side));
+        interactHandler.ifPresentOrElse(h -> h.setConnection(side), () -> direction = side);
         refreshConnection();
     }
 
     public void toggleConnection(Direction side) {
-        interactHandler.ifPresent(h -> h.toggleConnection(side));
+        interactHandler.ifPresentOrElse(h -> h.toggleConnection(side), () -> direction = side);
         refreshConnection();
     }
 
     public void clearConnection(Direction side) {
-        interactHandler.ifPresent(h -> h.clearConnection(side));
+        interactHandler.ifPresentOrElse(h -> h.clearConnection(side), () -> direction = side);
         refreshConnection();
     }
 
     public void changeConnection(Direction side) {
-        interactHandler.ifPresent(h -> h.onChange(side));
+        interactHandler.ifPresentOrElse(h -> h.onChange(side), () -> direction = side);
     }
 
     public void refreshConnection() {

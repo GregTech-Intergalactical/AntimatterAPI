@@ -98,21 +98,21 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this(type.getTileType());
         this.type = type;
         coverHandler.setup(MachineCoverHandler::new);
-        interactHandler.setup(MachineInteractHandler::new);
         itemHandler.setup(MachineItemHandler::new);
         fluidHandler.setup(MachineFluidHandler::new);
-        recipeHandler.setup(MachineRecipeHandler::new);
         energyHandler.setup(MachineEnergyHandler::new);
+        recipeHandler.setup(MachineRecipeHandler::new);
+        interactHandler.setup(MachineInteractHandler::new);
     }
 
     @Override
     public void onFirstTick() {
         coverHandler.init();
-        interactHandler.init();
         itemHandler.init();
         fluidHandler.init();
-        recipeHandler.init();
         energyHandler.init();
+        recipeHandler.init();
+        interactHandler.init();
     }
 
     @Nullable

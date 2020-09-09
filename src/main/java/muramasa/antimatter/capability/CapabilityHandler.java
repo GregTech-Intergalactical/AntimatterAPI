@@ -68,6 +68,14 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
         }
     }
 
+    public void ifPresentOrElse(Consumer<? super H> action, Runnable other) {
+        if (handler != null) {
+            action.accept(handler);
+        } else {
+            other.run();
+        }
+    }
+
     public H get() {
         if (handler == null) {
             throw new NoSuchElementException("No Handler initialized");
