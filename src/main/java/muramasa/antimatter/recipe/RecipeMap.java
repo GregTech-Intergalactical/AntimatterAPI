@@ -21,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
@@ -39,7 +39,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             List<ItemWrapper> tagged = input.trimAllTags(Optional.of(tagsPresent));
             Int2ObjectMap<Recipe> possibleResults = LOOKUP_TAG.get(input);
             if (possibleResults != null) {
-               return recursiveHash(input,tagged.stream().map(t -> t.item.getItem().getTags()).collect(Collectors.toList()), 0,0,0,(k, v) -> {
+               return recursiveHash(input,tagged.stream().map(t -> t.item.getItem().getTags()).collect(Collectors.toList()), 0,0,0,v -> {
                    int hash = (int)(v ^ (v >>> 32));
                    Recipe r = possibleResults.get(hash);
                    return r;
@@ -59,7 +59,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
          * @param func a function to apply at the end, to callback into recipe map.
          * @return a found recipe.
          */
-        Recipe recursiveHash(RecipeInput input, java.util.List<Set<ResourceLocation>> arrayList, int element, long acc, long whichNonTagged, BiFunction<List<Set<ResourceLocation>>,Long, Recipe> func) {
+        Recipe recursiveHash(RecipeInput input, List<Set<ResourceLocation>> arrayList, int element, long acc, long whichNonTagged, Function<Long, Recipe> func) {
             if (element > arrayList.size()) {
                 return null;
             }
@@ -80,20 +80,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 return ok;
             }
             if (element >= arrayList.size() - 1) {
-                return func.apply(arrayList,acc);
+                return func.apply(acc);
             } else {
-                ItemStack[] wraps = new ItemStack[Long.bitCount(whichNonTagged)];
-                int count = 0;
-                for (int i = 0; (whichNonTagged & (1 << i)) != 0; i++) {
-                    wraps[count] = input.rootItems[i];
-                }
-                RecipeInput newInput = new RecipeInput(wraps, input.rootFluids);
-                Int2ObjectMap<Recipe> map = this.LOOKUP_TAG.get(newInput);
+                input.rehash(whichNonTagged);
+                Int2ObjectMap<Recipe> map = this.LOOKUP_TAG.get(input);
                 if (map != null) {
-                    Recipe r = map.get((int)acc);
-                    if (r != null) {
-                        return r;
-                    }
+                    return map.get((int)acc);
                 }
             }
             return null;
@@ -206,7 +198,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
         //See time to lookup.
-        long currentTime = System.nanoTime();
+      //  long currentTime = System.nanoTime();
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
 
         Recipe r = LOOKUP.get(new RecipeInput(items, fluids));
@@ -214,7 +206,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (r == null) {
             r = LOOKUP_TAG.find(new RecipeInput(items,fluids));
         }
-        Antimatter.LOGGER.info("Time to lookup: " + (System.nanoTime()-currentTime));
+     //   Antimatter.LOGGER.info("Time to lookup: (µs) " + ((System.nanoTime()-currentTime)));
         return r;
     }
 

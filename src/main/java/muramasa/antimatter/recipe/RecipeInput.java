@@ -19,7 +19,8 @@ public class RecipeInput {
     protected FluidWrapper[] fluids;
     protected Int2IntOpenHashMap fluidMap = new Int2IntOpenHashMap();
 
-    protected int hash;
+    protected int itemHash;
+    protected int fluidHash;
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
         rootFluids = fluids;
@@ -33,15 +34,15 @@ public class RecipeInput {
                 tempHash += this.items[i].hashCode();
             }
         }
+        itemHash = (int) (tempHash ^ (tempHash >>> 32));
         if (fluids != null && fluids.length > 0) {
             this.fluids = new FluidWrapper[fluids.length];
             for (int i = 0; i < fluids.length; i++) {
                 this.fluids[i] = new FluidWrapper(fluids[i], tags);
                 fluidMap.put(this.fluids[i].hashCode(), i);
-                tempHash += this.fluids[i].hashCode();
+                fluidHash += this.fluids[i].hashCode();
             }
         }
-        hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
     }
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
@@ -69,24 +70,24 @@ public class RecipeInput {
             for (int i = 0; i < items.length; i++) {
                 itemMap.put(this.items[i].hashCode(), i);
             }
-            rehash();
+            rehash(0);
         }
         return withTag;
     }
 
-    private void rehash() {
+    public void rehash(long bitFilter) {
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
-        if (items != null && items.length > 0) {
+        if (items != null && items.length > 0 && Long.bitCount(bitFilter) < items.length) {
             for (int i = 0; i < items.length; i++) {
-                tempHash += this.items[i].hashCode();
+                if ((bitFilter & (1 << i)) == 0) tempHash += this.items[i].hashCode();
             }
         }
-        if (fluids != null && fluids.length > 0) {
+       /*f (fluids != null && fluids.length > 0) {
             for (int i = 0; i < fluids.length; i++) {
                 tempHash += this.fluids[i].hashCode();
             }
-        }
-        hash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
+        }*/
+        itemHash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
 
         if (items != null && items.length == 0) items = null;
     }
@@ -120,6 +121,6 @@ public class RecipeInput {
 
     @Override
     public int hashCode() {
-        return hash;
+        return itemHash + fluidHash;
     }
 }
