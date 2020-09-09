@@ -229,6 +229,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
@@ -286,6 +287,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         if (inputWrapper != null) {
             inputWrapper.setSize(tag.contains(Ref.TAG_MACHINE_INPUT_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_INPUT_SIZE) : inputWrapper.getSlots());

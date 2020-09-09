@@ -271,11 +271,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
      * NBT
      **/
     // TODO: Finish
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
     }
 

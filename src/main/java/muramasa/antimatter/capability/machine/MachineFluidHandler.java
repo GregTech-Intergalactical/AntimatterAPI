@@ -288,6 +288,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
@@ -309,6 +310,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         if (inputWrapper != null) {
             ListNBT list = tag.getList(Ref.TAG_MACHINE_INPUT_FLUID, Constants.NBT.TAG_COMPOUND);

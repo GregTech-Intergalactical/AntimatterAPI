@@ -18,13 +18,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
+public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICapabilityHandler {
 
     private T tile;
     protected Object2ObjectMap<Direction, CoverInstance<T>> covers = new Object2ObjectOpenHashMap<>();
@@ -112,7 +113,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     /** NBT **/
-    //TODO: this is WIP
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         byte[] sides = new byte[1];
@@ -128,6 +129,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         byte sides = tag.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
@@ -138,5 +140,10 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
                 covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }
         }
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
     }
 }

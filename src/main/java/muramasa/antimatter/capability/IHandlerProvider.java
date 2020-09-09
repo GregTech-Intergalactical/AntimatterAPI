@@ -2,9 +2,9 @@ package muramasa.antimatter.capability;
 
 import net.minecraft.nbt.CompoundNBT;
 
-public interface ICapabilityHolder {
+public interface IHandlerProvider {
 
     void update(CompoundNBT tag);
 
-    ICapabilityHandler getCapability(String name);
+    CompoundNBT getCapabilityTag(String cap);
 }

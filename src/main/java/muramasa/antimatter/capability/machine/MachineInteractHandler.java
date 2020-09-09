@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.item.ItemCover;
@@ -14,16 +16,18 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static muramasa.antimatter.Data.*;
 
-public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> {
+public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> implements ICapabilityHandler {
 
     public MachineInteractHandler(T tile, CompoundNBT tag) {
         super(tile);
+        if (tag != null) deserialize(tag);
     }
 
     @Override
@@ -50,5 +54,22 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
             return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
         }
         return true;
+    }
+
+    @Override
+    public CompoundNBT serialize() {
+        CompoundNBT tag = new CompoundNBT();
+        if (getTile().getMachineState() != null)  tag.putInt(Ref.TAG_MACHINE_STATE, getTile().getMachineState().ordinal());
+        return tag;
+    }
+
+    @Override
+    public void deserialize(CompoundNBT tag) {
+        getTile().setMachineState(MachineState.VALUES[tag.getInt(Ref.TAG_MACHINE_STATE)]);// TODO saving state needed? if recipe is saved, serverUpdate should handle it.
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
     }
 }

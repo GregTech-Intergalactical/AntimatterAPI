@@ -25,7 +25,7 @@ import static muramasa.antimatter.Data.WRENCH;
 
 public class PipeInteractHandler extends InteractHandler<TileEntityPipe> implements ICapabilityHandler {
 
-    private byte interact;
+    private byte connection, interact;
 
     public PipeInteractHandler(TileEntityPipe tile, CompoundNBT tag) {
         super(tile);
@@ -102,15 +102,39 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> impleme
         }
     }
 
+    public byte getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Direction side) {
+        connection = Connectivity.set(connection, side.getIndex());
+    }
+
+    public void toggleConnection(Direction side) {
+        connection = Connectivity.toggle(connection, side.getIndex());
+    }
+
+    public void clearConnection(Direction side) {
+        connection = Connectivity.clear(connection, side.getIndex());
+    }
+
+    public boolean canConnect(int side) {
+        return Connectivity.has(connection, side);
+    }
+
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interact);
+        tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         interact = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
+        connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         onLoad();
     }
 

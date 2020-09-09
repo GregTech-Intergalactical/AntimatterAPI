@@ -1,7 +1,6 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.capability.ICapabilityHolder;
-import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.capability.IHandlerProvider;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -42,8 +41,8 @@ public class CompoundPacket {
             if (dimensionType != null) {
                 ClientWorld world = Minecraft.getInstance().world;
                 TileEntity tile = Utils.getTile(world, msg.pos);
-                if (tile instanceof ICapabilityHolder) {
-                    ((ICapabilityHolder) tile).update(msg.tag);
+                if (tile instanceof IHandlerProvider) {
+                    ((IHandlerProvider) tile).update(msg.tag);
                 }
             }
         });

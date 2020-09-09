@@ -2,6 +2,7 @@ package muramasa.antimatter.capability;
 
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -28,10 +29,5 @@ public class InteractHandler<T extends TileEntity> implements IInteractHandler<T
     public T getTile() {
         if (tile == null) throw new NullPointerException("InteractHandler cannot have a null tile");
         return tile;
-    }
-
-    @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
     }
 }

@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
+import muramasa.antimatter.capability.IHandlerProvider;
 import muramasa.antimatter.capability.pipe.PipeCapabilityHolder;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeInteractHandler;
@@ -25,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityPipe extends TileEntityTickable {
+public class TileEntityPipe extends TileEntityTickable implements IHandlerProvider {
 
     /** Pipe Data **/
     protected PipeType<?> type;
@@ -34,8 +35,6 @@ public class TileEntityPipe extends TileEntityTickable {
     /** Capabilities **/
     public PipeCapabilityHolder<PipeCoverHandler> coverHandler = new PipeCapabilityHolder<>(this);
     public PipeCapabilityHolder<PipeInteractHandler> interactHandler = new PipeCapabilityHolder<>(this);
-
-    protected byte connection;
 
     public TileEntityPipe(TileEntityType<?> tileType) {
         super(tileType);
@@ -69,22 +68,18 @@ public class TileEntityPipe extends TileEntityTickable {
         return size != null ? size : (size = ((BlockPipe<?>) getBlockState().getBlock()).getSize());
     }
 
-    public byte getConnection() {
-        return connection;
-    }
-
     public void setConnection(Direction side) {
-        connection = Connectivity.set(connection, side.getIndex());
+        interactHandler.ifPresent(h -> h.setConnection(side));
         refreshConnection();
     }
 
     public void toggleConnection(Direction side) {
-        connection = Connectivity.toggle(connection, side.getIndex());
+        interactHandler.ifPresent(h -> h.toggleConnection(side));
         refreshConnection();
     }
 
     public void clearConnection(Direction side) {
-        connection = Connectivity.clear(connection, side.getIndex());
+        interactHandler.ifPresent(h -> h.clearConnection(side));
         refreshConnection();
     }
 
@@ -97,7 +92,7 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     public boolean canConnect(int side) {
-        return Connectivity.has(connection, side);
+        return interactHandler.map(h -> h.canConnect(side)).orElse(false);
     }
 
     public Cover[] getValidCovers() {
@@ -127,9 +122,15 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
+    public CompoundNBT getCapabilityTag(String cap) {
+        if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_COVER);
+        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_CONFIG);
+        return new CompoundNBT();
+    }
+
+    @Override
     public void read(CompoundNBT tag) {
         super.read(tag);
-        if (tag.contains(Ref.TAG_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_COVER));
         if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG));
     }
@@ -138,16 +139,13 @@ public class TileEntityPipe extends TileEntityTickable {
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
-        tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize()));
         interactHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_CONFIG, h.serialize()));
         return tag;
     }
 
     @Override
-    public void reread(CompoundNBT tag) {
-        super.reread(tag);
-        if (tag.contains(Ref.TAG_PIPE_TILE_CONNECTIVITY)) connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
+    public void update(CompoundNBT tag) {
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
         refreshConnection();

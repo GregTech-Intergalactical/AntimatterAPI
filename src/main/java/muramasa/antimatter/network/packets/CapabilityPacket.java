@@ -1,7 +1,7 @@
 package muramasa.antimatter.network.packets;
 
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.capability.IHandlerProvider;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -41,8 +41,8 @@ public class CapabilityPacket {
             if (dimensionType != null) {
                 ServerWorld world = ServerLifecycleHooks.getCurrentServer().getWorld(dimensionType);
                 TileEntity tile = Utils.getTile(world, msg.pos);
-                if (tile instanceof TileEntityBase) {
-                    Antimatter.NETWORK.sendTo(new CompoundPacket(tile.getCapability(), msg.pos, msg.dim), ctx.get().getSender());
+                if (tile instanceof IHandlerProvider) {
+                    Antimatter.NETWORK.sendTo(new CompoundPacket(((IHandlerProvider) tile).getCapabilityTag(msg.cap), msg.pos, msg.dim), ctx.get().getSender());
                 }
             }
         });

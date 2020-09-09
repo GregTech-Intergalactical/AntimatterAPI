@@ -126,6 +126,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         tag.putLong(Ref.TAG_MACHINE_ENERGY, energy);
@@ -137,6 +138,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         energy = tag.getLong(Ref.TAG_MACHINE_ENERGY);
         capacity = tag.getLong(Ref.TAG_MACHINE_CAPACITY);

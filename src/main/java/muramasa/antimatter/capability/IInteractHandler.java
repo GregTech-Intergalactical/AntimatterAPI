@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-public interface IInteractHandler<T extends TileEntity> extends ICapabilityHandler {
+public interface IInteractHandler<T extends TileEntity> {
 
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
 
