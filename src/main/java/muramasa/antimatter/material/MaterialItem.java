@@ -8,15 +8,18 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
@@ -92,6 +95,10 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
             }
         }
         return ActionResultType.FAIL;
+    }
+
+    public Tag<Item> getTag() {
+        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
     }
 
     public static boolean hasType(ItemStack stack, MaterialType<?> type) {
