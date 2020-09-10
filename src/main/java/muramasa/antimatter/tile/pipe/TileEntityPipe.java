@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static muramasa.antimatter.capability.CapabilitySide.SYNC;
+
 public class TileEntityPipe extends TileEntityTickable implements ICapabilityHost, ITickHost {
 
     /** Pipe Data **/
@@ -34,8 +36,8 @@ public class TileEntityPipe extends TileEntityTickable implements ICapabilityHos
     protected PipeSize size;
 
     /** Capabilities **/
-    public PipeCapabilityHandler<PipeCoverHandler<?>> coverHandler = new PipeCapabilityHandler<>(this);
-    public PipeCapabilityHandler<PipeInteractHandler<?>> interactHandler = new PipeCapabilityHandler<>(this);
+    public PipeCapabilityHandler<PipeCoverHandler<?>> coverHandler = new PipeCapabilityHandler<>(this, SYNC);
+    public PipeCapabilityHandler<PipeInteractHandler<?>> interactHandler = new PipeCapabilityHandler<>(this, SYNC);
 
     /** Tesseract **/
     private ITickingController controller;

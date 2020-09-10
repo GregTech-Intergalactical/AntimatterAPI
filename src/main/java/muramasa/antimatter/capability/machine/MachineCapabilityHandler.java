@@ -6,6 +6,8 @@ import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
 
+import static muramasa.antimatter.capability.CapabilitySide.SERVER;
+
 public class MachineCapabilityHandler<T extends ICapabilityHandler> extends CapabilityHandler<TileEntityMachine, T> {
 
     private MachineFlag flag;
@@ -15,13 +17,8 @@ public class MachineCapabilityHandler<T extends ICapabilityHandler> extends Capa
         this.flag = flag;
     }
 
-    public MachineCapabilityHandler(TileEntityMachine tile, MachineFlag flag) {
-        super(tile);
-        this.flag = flag;
-    }
-
     public MachineCapabilityHandler(TileEntityMachine tile) {
-        this(tile, null);
+        this(tile, null, SERVER);
     }
 
     @Override

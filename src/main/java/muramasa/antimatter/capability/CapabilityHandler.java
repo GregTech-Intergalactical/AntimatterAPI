@@ -22,10 +22,6 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
     protected BiFunction<T, CompoundNBT, H> capability = (tile, tag) -> null;
     protected CapabilitySide side;
 
-    public CapabilityHandler(T tile) {
-        this(tile, BOTH);
-    }
-
     public CapabilityHandler(T tile, CapabilitySide side) {
         this.tile = tile;
         this.side = side;
@@ -49,7 +45,7 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
 
             // For the capabilities which exist on the both side, we should send the initialization tag which was used on the server.
             // That tag will provide correct data for the initialization of capability on the client side in the constructor.
-            if (side == BOTH && tile.isClientSide()) {
+            if (side == SYNC && tile.isClientSide()) {
                 Antimatter.NETWORK.sendToServer(new CapabilityPacket(handler.getCapability().getName(), tile.getPos()));
             }
         }
