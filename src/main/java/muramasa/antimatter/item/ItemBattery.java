@@ -1,14 +1,20 @@
 package muramasa.antimatter.item;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -31,11 +37,20 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         this.reusable = reusable;
     }
 
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        if (this.isInGroup(group)) {
+            ItemStack stack = new ItemStack(this);
+            ItemEnergyHandler.setStackEnergy(stack, this.cap);
+            items.add(new ItemStack(this));
+            items.add(stack);
+        }
+    }
+
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
-        stack.setTag(ItemEnergyHandler.initNBT(tag));
-        return new ItemEnergyHandler(stack, ItemEnergyHandler.getEnergyFromStack(stack), cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 1 : 0, 1);
+        return new ItemEnergyHandler(stack, 0, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 1 : 0, 1);
     }
 
     @Override
@@ -54,19 +69,18 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (tag == null) {
             return 1D;
         }
-        return 1D - (double)ItemEnergyHandler.getEnergyFromStack(stack) / (double) cap;
+        return 1D - ItemEnergyHandler.getEnergyFromStack(stack) / (double) cap;
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (player.isShiftKeyDown() && !world.isRemote()) {
-            ItemStack stack = player.getHeldItem(hand);
             boolean newMode = chargeModeSwitch(stack);
             player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"));
             return ActionResult.resultSuccess(stack);
-        } else {
-            return super.onItemRightClick(world, player, hand);
         }
+        return ActionResult.resultPass(stack);
     }
 
     /** Switches the discharge mode for an item.
@@ -74,8 +88,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
      *  @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        boolean mode = !stack.getOrCreateTag().getBoolean(Ref.TAG_ITEM_MODE);
-        stack.getOrCreateTag().putBoolean(Ref.TAG_ITEM_MODE, mode);
+        boolean mode = !stack.getOrCreateTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
+        stack.getOrCreateTag().putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, mode);
         return mode;
     }
 
@@ -86,7 +100,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
         long energy = ItemEnergyHandler.getEnergyFromStack(stack);
-        tooltip.add(new TranslationTextComponent("item.charge").appendText(": ").appendSibling(new StringTextComponent( energy + "/" + cap).applyTextStyle(energy == 0 ? TextFormatting.RED :  TextFormatting.GREEN)).appendText(" (" + tier.getId().toUpperCase() + ")"));
+        tooltip.add(new TranslationTextComponent("item.charge").appendText(": ").appendSibling(new StringTextComponent(energy + "/" + cap).applyTextStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendText(" (" + tier.getId().toUpperCase() + ")"));
         super.addInformation(stack, worldIn, tooltip, flag);
     }
 }

@@ -100,8 +100,8 @@ public class Ref {
     public static final String KEY_TOOL_DATA_ENERGY = "e";
     public static final String KEY_TOOL_DATA_MAX_ENERGY = "me";
 
-    public static final String TAG_ITEM_CHARGE = "c";
-    public static final String TAG_ITEM_MODE = "m";
+    public static final String KEY_ITEM_ENERGY = "ie";
+    public static final String KEY_ITEM_DISCHARGE_MODE = "idm";
 
     /** Model Cache IDs **/
     public static final int CACHE_ID_MACHINE = 1;

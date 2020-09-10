@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
@@ -17,22 +17,12 @@ import javax.annotation.Nullable;
  * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
  * It wraps an item and provides the ability to charge it & remove it, depending on if the item supports it.
  */
-public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvider {
+public class ItemEnergyHandler extends EnergyHandler implements ICapabilitySerializable<CompoundNBT> {
     protected ItemStack stack;
 
     public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.stack = stack;
-    }
-
-    public static CompoundNBT initNBT(CompoundNBT tag) {
-        if (tag == null) {
-            tag = new CompoundNBT();
-        }
-        if (!tag.contains(Ref.TAG_ITEM_CHARGE)) {
-            tag.putLong(Ref.TAG_ITEM_CHARGE, 0);
-        }
-        return tag;
     }
 
     //Override the following methods to use getTagEnergy instead
@@ -52,7 +42,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
      */
     private boolean canModeBlock() {
         CompoundNBT tag = stack.getTag();
-        return tag != null && tag.getBoolean(Ref.TAG_ITEM_MODE);
+        return tag != null && tag.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
     @Override
@@ -76,46 +66,48 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
      * @return energy parameter
      */
     public static long setStackEnergy(ItemStack stack, long energy) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        tag.putLong(Ref.TAG_ITEM_CHARGE, energy);
+        stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, energy);
         return energy;
     }
 
     public static long getEnergyFromStack(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
-        return tag.getLong(Ref.TAG_ITEM_CHARGE);
+        return stack.getOrCreateTag().getLong(Ref.KEY_ITEM_ENERGY);
     }
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        this.energy = getTagEnergy();
-        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
-        if (simulate) {
-            return toInsert;
+        long energy = super.insert(maxReceive, simulate);
+        if (!simulate) {
+            setStackEnergy(stack, this.energy);
         }
-        this.energy += toInsert;
-        setTagEnergy(this.energy);
-        return toInsert;
+        return energy;
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        this.energy = getTagEnergy();
-        long toExtract = Math.max(Math.min(energy, maxExtract), 0);
-        if (simulate) {
-            return toExtract;
+        long energy = super.extract(maxExtract, simulate);
+        if (!simulate) {
+            setStackEnergy(stack, this.energy);
         }
-        this.energy -= toExtract;
-        setStackEnergy(stack, energy);
-        return toExtract;
+        return energy;
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == AntimatterCaps.ENERGY_HANDLER_CAPABILITY) {
-            return LazyOptional.of(() -> this).cast();
-        }
-        return LazyOptional.empty();
+        return cap == AntimatterCaps.ENERGY_HANDLER_CAPABILITY ? LazyOptional.of(() -> this).cast() : LazyOptional.empty();
     }
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putLong(Ref.KEY_ITEM_ENERGY, this.energy);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        this.energy = nbt.getLong(Ref.KEY_ITEM_ENERGY);
+    }
+
 }
