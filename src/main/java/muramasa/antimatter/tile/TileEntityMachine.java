@@ -148,9 +148,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
-        itemHandler.ifPresent(h -> h.onMachineEvent(event,data));
-        energyHandler.ifPresent(h -> h.onMachineEvent(event,data));
-        fluidHandler.ifPresent(h -> h.onMachineEvent(event,data));
+        itemHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        energyHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        fluidHandler.ifPresent(h -> h.onMachineEvent(event, data));
 
         //TODO: Put this in the actual handlers when a change occurs.
     }

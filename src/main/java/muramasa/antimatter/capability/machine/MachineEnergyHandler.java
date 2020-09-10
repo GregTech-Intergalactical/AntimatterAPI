@@ -59,7 +59,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     public long insert(long maxReceive, boolean simulate) {
         long inserted = super.insert(maxReceive, simulate);
         if (inserted == 0 && canChargeItem()) {
-            inserted = insertIntoItems(maxReceive,simulate);
+            inserted = insertIntoItems(maxReceive, simulate);
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
