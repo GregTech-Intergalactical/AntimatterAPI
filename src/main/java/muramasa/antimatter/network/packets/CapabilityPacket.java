@@ -42,7 +42,7 @@ public class CapabilityPacket {
                 ServerWorld world = ServerLifecycleHooks.getCurrentServer().getWorld(dimensionType);
                 TileEntity tile = Utils.getTile(world, msg.pos);
                 if (tile instanceof ICapabilityHost) {
-                    Antimatter.NETWORK.sendTo(new CompoundPacket(((ICapabilityHost) tile).getCapabilityTag(msg.cap), msg.pos, msg.dim), ctx.get().getSender());
+                    Antimatter.NETWORK.sendTo(new CompoundPacket(((ICapabilityHost) tile).getCapabilityTag(msg.cap), msg.pos), ctx.get().getSender());
                 }
             }
         });

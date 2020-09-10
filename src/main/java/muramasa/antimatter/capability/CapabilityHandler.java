@@ -4,7 +4,6 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.network.packets.CapabilityPacket;
 import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -13,19 +12,21 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static muramasa.antimatter.capability.CapabilitySide.*;
+
 public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHandler> {
 
     protected T tile;
     protected H handler;
     protected CompoundNBT tag;
     protected BiFunction<T, CompoundNBT, H> capability = (tile, tag) -> null;
-    protected Dist side; // when null, works on both sides
+    protected CapabilitySide side;
 
     public CapabilityHandler(T tile) {
-        this.tile = tile;
+        this(tile, BOTH);
     }
 
-    public CapabilityHandler(T tile, Dist side) {
+    public CapabilityHandler(T tile, CapabilitySide side) {
         this.tile = tile;
         this.side = side;
     }
@@ -48,7 +49,7 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
 
             // For the capabilities which exist on the both side, we should send the initialization tag which was used on the server.
             // That tag will provide correct data for the initialization of capability on the client side in the constructor.
-            if (side == null && tile.isClientSide()) {
+            if (side == BOTH && tile.isClientSide()) {
                 Antimatter.NETWORK.sendToServer(new CapabilityPacket(handler.getCapability().getName(), tile.getPos(), tile.getDimension()));
             }
         }
@@ -100,10 +101,9 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
     }
 
     public boolean canInit() {
-        if (side == null) return true;
         switch (side) {
             case CLIENT: return tile.isClientSide();
-            case DEDICATED_SERVER: return tile.isServerSide();
+            case SERVER: return tile.isServerSide();
             default: return true;
         }
     }

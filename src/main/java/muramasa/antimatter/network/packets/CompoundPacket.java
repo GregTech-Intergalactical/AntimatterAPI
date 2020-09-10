@@ -17,33 +17,27 @@ public class CompoundPacket {
 
     private final CompoundNBT tag;
     private final BlockPos pos;
-    private final int dim;
 
-    public CompoundPacket(CompoundNBT tag, BlockPos pos, int dim) {
+    public CompoundPacket(CompoundNBT tag, BlockPos pos) {
         this.tag = tag;
         this.pos = pos;
-        this.dim = dim;
     }
 
     public static void encode(CompoundPacket msg, PacketBuffer buf) {
         buf.writeCompoundTag(msg.tag);
         buf.writeBlockPos(msg.pos);
-        buf.writeVarInt(msg.dim);
     }
 
     public static CompoundPacket decode(PacketBuffer buf) {
-        return new CompoundPacket(buf.readCompoundTag(), buf.readBlockPos(), buf.readVarInt());
+        return new CompoundPacket(buf.readCompoundTag(), buf.readBlockPos());
     }
 
     public static void handle(final CompoundPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            DimensionType dimensionType = DimensionType.getById(msg.dim);
-            if (dimensionType != null) {
-                ClientWorld world = Minecraft.getInstance().world;
-                TileEntity tile = Utils.getTile(world, msg.pos);
-                if (tile instanceof ICapabilityHost) {
-                    ((ICapabilityHost) tile).update(msg.tag);
-                }
+            ClientWorld world = Minecraft.getInstance().world;
+            TileEntity tile = Utils.getTile(world, msg.pos);
+            if (tile instanceof ICapabilityHost) {
+                ((ICapabilityHost) tile).update(msg.tag);
             }
         });
         ctx.get().setPacketHandled(true);

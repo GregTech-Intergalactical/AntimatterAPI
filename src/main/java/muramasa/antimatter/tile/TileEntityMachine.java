@@ -39,8 +39,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
+import static muramasa.antimatter.capability.CapabilitySide.SERVER;
 import static muramasa.antimatter.machine.MachineFlag.*;
-import static net.minecraftforge.api.distmarker.Dist.DEDICATED_SERVER;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
@@ -56,8 +56,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     /** Capabilities **/
     public MachineCapabilityHandler<MachineItemHandler<?>> itemHandler = new MachineCapabilityHandler<>(this, ITEM);
-    public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, DEDICATED_SERVER);
-    public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, DEDICATED_SERVER);
+    public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, SERVER);
+    public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, SERVER);
     public MachineCapabilityHandler<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHandler<>(this, ENERGY);
     public MachineCapabilityHandler<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHandler<>(this, COVERABLE);
     public MachineCapabilityHandler<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHandler<>(this, CONFIGURABLE);
