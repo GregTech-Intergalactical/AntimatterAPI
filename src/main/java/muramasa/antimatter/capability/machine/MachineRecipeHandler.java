@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -10,6 +12,7 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -20,7 +23,7 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 import static muramasa.antimatter.machine.MachineState.*;
 
-public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler {
+public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler, ICapabilityHandler {
 
     protected T tile;
     protected Recipe activeRecipe;
@@ -32,8 +35,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
 
-    public MachineRecipeHandler(T tile) {
+    public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
+        if (tag != null) deserialize(tag);
     }
 
     public void onUpdate() {
@@ -267,11 +271,18 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
      * NBT
      **/
     // TODO: Finish
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         return tag;
     }
 
-    public void deserialize(CompoundNBT compound) {
+    @Override
+    public void deserialize(CompoundNBT tag) {
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
     }
 }

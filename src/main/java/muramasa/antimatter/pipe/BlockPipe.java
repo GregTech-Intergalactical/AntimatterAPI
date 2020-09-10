@@ -143,13 +143,13 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (tile != null) {
             TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
             if (neighbor instanceof TileEntityPipe) {
-                TileEntityPipe nPipe = (TileEntityPipe) neighbor;
+                TileEntityPipe pipe = (TileEntityPipe) neighbor;
                 tile.setConnection(face.getOpposite());
-                if (!nPipe.canConnect(face.getIndex())) {
-                    nPipe.setConnection(face);
+                if (!pipe.canConnect(face.getIndex())) {
+                    pipe.setConnection(face);
                 }
             } else if (neighbor != null) {
-                neighbor.getCapability(AntimatterCaps.ENERGY).ifPresent(cap -> {
+                neighbor.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(cap -> {
                     if (cap.canInput() || cap.canOutput()) {
                         tile.setConnection(face.getOpposite());
                     }

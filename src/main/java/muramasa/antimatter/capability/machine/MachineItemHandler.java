@@ -3,12 +3,13 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -16,7 +17,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
@@ -29,23 +32,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMachineHandler {
+import static muramasa.antimatter.machine.MachineFlag.ENERGY;
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
 
-    protected TileEntityMachine tile;
+public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, ICapabilityHandler, ITickHost {
+
+    protected T tile;
     protected ITickingController controller;
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
-    public MachineItemHandler(TileEntityMachine tile) {
+    public MachineItemHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
         inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
         outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
-        if (tile.getMachineType().has(MachineFlag.FLUID)) {
+        if (tile.getMachineType().has(FLUID)) {
             cellWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED);
         }
-        if (tile.getMachineType().has(MachineFlag.ENERGY)) {
+        if (tile.getMachineType().has(ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
+        if (tag != null) deserialize(tag);
         if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
@@ -128,7 +135,7 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
         if (tile.isServerSide()) {
             for (int i = 0; i < chargeWrapper.getSlots(); i++) {
                 ItemStack item = chargeWrapper.getStackInSlot(i);
-                if (!item.isEmpty()) list.add(item.getCapability(AntimatterCaps.ENERGY).orElse(null));
+                if (!item.isEmpty()) list.add(item.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).orElse(null));
             }
         }
         return list;
@@ -222,6 +229,7 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
     }
 
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
@@ -229,96 +237,97 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
             for (int i = 0; i < inputWrapper.getSlots(); i++) {
                 if (!inputWrapper.getStackInSlot(i).isEmpty()) {
                     CompoundNBT itemTag = new CompoundNBT();
-                    itemTag.putInt("Slot", i);
+                    itemTag.putInt(Ref.TAG_MACHINE_SLOT_SIZE, i);
                     inputWrapper.getStackInSlot(i).write(itemTag);
                     list.add(itemTag);
                 }
             }
-            tag.put("Input-Items", list);
-            tag.putInt("Input-Size", inputWrapper.getSlots());
+            tag.put(Ref.TAG_MACHINE_INPUT_ITEM, list);
+            tag.putInt(Ref.TAG_MACHINE_INPUT_SIZE, inputWrapper.getSlots());
         }
         if (outputWrapper != null) {
             ListNBT list = new ListNBT();
             for (int i = 0; i < outputWrapper.getSlots(); i++) {
                 if (!outputWrapper.getStackInSlot(i).isEmpty()) {
                     CompoundNBT itemTag = new CompoundNBT();
-                    itemTag.putInt("Slot", i);
+                    itemTag.putInt(Ref.TAG_MACHINE_SLOT_SIZE, i);
                     outputWrapper.getStackInSlot(i).write(itemTag);
                     list.add(itemTag);
                 }
             }
-            tag.put("Output-Items", list);
-            tag.putInt("Output-Size", outputWrapper.getSlots());
+            tag.put(Ref.TAG_MACHINE_OUTPUT_ITEM, list);
+            tag.putInt(Ref.TAG_MACHINE_OUTPUT_SIZE, outputWrapper.getSlots());
         }
         if (cellWrapper != null) {
             ListNBT list = new ListNBT();
             for (int i = 0; i < cellWrapper.getSlots(); i++) {
                 if (!cellWrapper.getStackInSlot(i).isEmpty()) {
                     CompoundNBT itemTag = new CompoundNBT();
-                    itemTag.putInt("Slot", i);
+                    itemTag.putInt(Ref.TAG_MACHINE_SLOT_SIZE, i);
                     cellWrapper.getStackInSlot(i).write(itemTag);
                     list.add(itemTag);
                 }
             }
-            tag.put("Cell-Items", list);
-            tag.putInt("Cell-Size", cellWrapper.getSlots());
+            tag.put(Ref.TAG_MACHINE_CELL_ITEM, list);
+            tag.putInt(Ref.TAG_MACHINE_CELL_SIZE, cellWrapper.getSlots());
         }
         if (chargeWrapper != null) {
             ListNBT list = new ListNBT();
             for (int i = 0; i < chargeWrapper.getSlots(); i++) {
                 if (!chargeWrapper.getStackInSlot(i).isEmpty()) {
                     CompoundNBT itemTag = new CompoundNBT();
-                    itemTag.putInt("Slot", i);
+                    itemTag.putInt(Ref.TAG_MACHINE_SLOT_SIZE, i);
                     chargeWrapper.getStackInSlot(i).write(itemTag);
                     list.add(itemTag);
                 }
             }
-            tag.put("Charge-Items", list);
-            tag.putInt("Charge-Size", chargeWrapper.getSlots());
+            tag.put(Ref.TAG_MACHINE_CHARGE_ITEM, list);
+            tag.putInt(Ref.TAG_MACHINE_CHARGE_SIZE, chargeWrapper.getSlots());
         }
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         if (inputWrapper != null) {
-            inputWrapper.setSize(tag.contains("Input-Size", Constants.NBT.TAG_INT) ? tag.getInt("Input-Size") : inputWrapper.getSlots());
-            ListNBT inputTagList = tag.getList("Input-Items", Constants.NBT.TAG_COMPOUND);
+            inputWrapper.setSize(tag.contains(Ref.TAG_MACHINE_INPUT_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_INPUT_SIZE) : inputWrapper.getSlots());
+            ListNBT inputTagList = tag.getList(Ref.TAG_MACHINE_INPUT_ITEM, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < inputTagList.size(); i++) {
                 CompoundNBT itemTags = inputTagList.getCompound(i);
-                int slot = itemTags.getInt("Slot");
+                int slot = itemTags.getInt(Ref.TAG_MACHINE_SLOT_SIZE);
                 if (slot >= 0 && slot < inputWrapper.getSlots()) {
                     inputWrapper.setStackInSlot(slot, ItemStack.read(itemTags));
                 }
             }
         }
         if (outputWrapper != null) {
-            outputWrapper.setSize(tag.contains("Output-Size", Constants.NBT.TAG_INT) ? tag.getInt("Output-Size") : outputWrapper.getSlots());
-            ListNBT outputTagList = tag.getList("Output-Items", Constants.NBT.TAG_COMPOUND);
+            outputWrapper.setSize(tag.contains(Ref.TAG_MACHINE_OUTPUT_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_OUTPUT_SIZE) : outputWrapper.getSlots());
+            ListNBT outputTagList = tag.getList(Ref.TAG_MACHINE_OUTPUT_ITEM, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < outputTagList.size(); i++) {
                 CompoundNBT itemTags = outputTagList.getCompound(i);
-                int slot = itemTags.getInt("Slot");
+                int slot = itemTags.getInt(Ref.TAG_MACHINE_SLOT_SIZE);
                 if (slot >= 0 && slot < outputWrapper.getSlots()) {
                     outputWrapper.setStackInSlot(slot, ItemStack.read(itemTags));
                 }
             }
         }
         if (cellWrapper != null) {
-           cellWrapper.setSize(tag.contains("Cell-Size", Constants.NBT.TAG_INT) ? tag.getInt("Cell-Size") : cellWrapper.getSlots());
-           ListNBT cellTagList = tag.getList("Cell-Items", Constants.NBT.TAG_COMPOUND);
+           cellWrapper.setSize(tag.contains(Ref.TAG_MACHINE_CELL_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_CELL_SIZE) : cellWrapper.getSlots());
+           ListNBT cellTagList = tag.getList(Ref.TAG_MACHINE_CELL_ITEM, Constants.NBT.TAG_COMPOUND);
            for (int i = 0; i < cellTagList.size(); i++) {
                CompoundNBT itemTags = cellTagList.getCompound(i);
-               int slot = itemTags.getInt("Slot");
+               int slot = itemTags.getInt(Ref.TAG_MACHINE_SLOT_SIZE);
                if (slot >= 0 && slot < cellWrapper.getSlots()) {
                    cellWrapper.setStackInSlot(slot, ItemStack.read(itemTags));
                }
            }
         }
         if (chargeWrapper != null) {
-            chargeWrapper.setSize(tag.contains("Charge-Size", Constants.NBT.TAG_INT) ? tag.getInt("Charge-Size") : cellWrapper.getSlots());
-            ListNBT chargeTagList = tag.getList("Charge-Items", Constants.NBT.TAG_COMPOUND);
+            chargeWrapper.setSize(tag.contains(Ref.TAG_MACHINE_CHARGE_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_CHARGE_SIZE) : cellWrapper.getSlots());
+            ListNBT chargeTagList = tag.getList(Ref.TAG_MACHINE_CHARGE_ITEM, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < chargeTagList.size(); i++) {
                 CompoundNBT itemTags = chargeTagList.getCompound(i);
-                int slot = itemTags.getInt("Slot");
+                int slot = itemTags.getInt(Ref.TAG_MACHINE_SLOT_SIZE);
                 if (slot >= 0 && slot < chargeWrapper.getSlots()) {
                     chargeWrapper.setStackInSlot(slot, ItemStack.read(itemTags));
                 }
@@ -407,5 +416,10 @@ public class MachineItemHandler implements IItemNode<ItemStack>, ITickHost, IMac
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
         }
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
     }
 }

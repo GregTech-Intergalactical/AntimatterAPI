@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.PipeCache;
@@ -13,30 +15,30 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraftforge.common.capabilities.Capability;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
 
-@ParametersAreNonnullByDefault
-public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
+public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandler<T> implements ICapabilityHandler {
 
-    private byte connection; // for wrappers around the tile
+    private byte connection, interaction;
 
-    public PipeInteractHandler(TileEntityPipe tile) {
+    public PipeInteractHandler(T tile, CompoundNBT tag) {
         super(tile);
+        if (tag != null) deserialize(tag);
     }
 
     // TODO: Block if covers are exist
-    //TODO: use parsedSide when working properl
+    // TODO: use parsedSide when working properl
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         if (type == getTool() && hand == Hand.MAIN_HAND) {
             boolean isTarget = false;
-            TileEntityPipe tile = getTile();
+            T tile = getTile();
             TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
             if (target instanceof TileEntityPipe) {
                 ((TileEntityPipe) target).toggleConnection(side.getOpposite());
@@ -48,10 +50,10 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
             // If some target in front of, then create wrapper
             if (isTarget) {
                 if (tile.canConnect(side.getIndex())) {
-                    connection = Connectivity.set(connection, side.getIndex());
+                    interaction = Connectivity.set(interaction, side.getIndex());
                     PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
                 } else {
-                    connection = Connectivity.clear(connection, side.getIndex());
+                    interaction = Connectivity.clear(interaction, side.getIndex());
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
                 }
             }
@@ -60,17 +62,17 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
         return false;
     }
 
-    private void onFirstTick() {
-        TileEntityPipe tile = getTile();
-        CoverInstance[] covers = tile.getAllCovers();
+    private void onLoad() {
+        T tile = getTile();
+        CoverInstance<?>[] covers = tile.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
-            if (Connectivity.has(connection, side.getIndex())) {
+            if (Connectivity.has(interaction, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
                     PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()].getCover());
                 } else {
-                    connection = Connectivity.clear(connection, side.getIndex());
+                    interaction = Connectivity.clear(interaction, side.getIndex());
                 }
             }
         }
@@ -78,20 +80,20 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
 
     /** Called when neighbor was placed near */
     public void onChange(Direction side) {
-        TileEntityPipe tile = getTile();
+        T tile = getTile();
         TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
         if (Utils.isForeignTile(neighbor)) {
-            connection = Connectivity.set(connection, side.getIndex());
+            interaction = Connectivity.set(interaction, side.getIndex());
             PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side).getCover());
         } else {
-            connection = Connectivity.clear(connection, side.getIndex());
+            interaction = Connectivity.clear(interaction, side.getIndex());
         }
     }
 
     public void onRemove() {
-        TileEntityPipe tile = getTile();
+        T tile = getTile();
         for (Direction side : Ref.DIRS) {
-            if (Connectivity.has(connection, side.getIndex())) {
+            if (Connectivity.has(interaction, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, neighbor);
@@ -100,19 +102,44 @@ public class PipeInteractHandler extends InteractHandler<TileEntityPipe> {
         }
     }
 
+    public void setConnection(Direction side) {
+        connection = Connectivity.set(connection, side.getIndex());
+    }
+
+    public void toggleConnection(Direction side) {
+        connection = Connectivity.toggle(connection, side.getIndex());
+    }
+
+    public void clearConnection(Direction side) {
+        connection = Connectivity.clear(connection, side.getIndex());
+    }
+
+    public boolean canConnect(int side) {
+        return Connectivity.has(connection, side);
+    }
+
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putByte("connection", connection);
+        tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interaction);
+        tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
-        connection = tag.getByte("connection");
-        onFirstTick();
+        interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
+        connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
+        onLoad();
     }
 
     private AntimatterToolType getTool() {
         return getTile() instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
     }
 }

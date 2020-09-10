@@ -3,14 +3,10 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import tesseract.Tesseract;
-import tesseract.api.ITickHost;
-import tesseract.api.ITickingController;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.util.Dir;
 
-public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, ITickHost {
-
-    private ITickingController controller;
+public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
 
     public TileEntityFluidPipe(PipeType<?> type) {
         super(type);
@@ -27,20 +23,14 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
         if (isServerSide()) {
             Tesseract.FLUID.remove(getDimension(), pos.toLong());
             Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
-        } else {
-            super.refreshConnection();
         }
+        super.refreshConnection();
     }
 
     @Override
     public void onRemove() {
         if (isServerSide()) Tesseract.FLUID.remove(getDimension(), pos.toLong());
         super.onRemove();
-    }
-
-    @Override
-    public void onServerUpdate() {
-        if (controller != null) controller.tick();
     }
 
     @Override
@@ -66,12 +56,5 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe, I
     @Override
     public boolean connects(Dir direction) {
         return canConnect(direction.getIndex());
-    }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
-            controller = newController;
-        }
     }
 }

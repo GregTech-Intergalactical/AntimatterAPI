@@ -234,8 +234,8 @@ public final class AntimatterAPI {
 
     /** Attempts to do smart interaction with a compatible Tile/Block **/
     public static boolean onInteract(TileEntity tile, PlayerEntity player, Hand hand, Direction side) {
-        boolean result = tile.getCapability(AntimatterCaps.COVERABLE, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
-        result = tile.getCapability(AntimatterCaps.INTERACTABLE, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+        boolean result = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
+        result = tile.getCapability(AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
         return result;
     }
 

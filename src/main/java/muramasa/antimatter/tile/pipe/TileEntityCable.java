@@ -23,9 +23,8 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         if (isServerSide()) {
             Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
             Tesseract.GT_ENERGY.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
-        } else {
-            super.refreshConnection();
         }
+        super.refreshConnection();
     }
 
     @Override

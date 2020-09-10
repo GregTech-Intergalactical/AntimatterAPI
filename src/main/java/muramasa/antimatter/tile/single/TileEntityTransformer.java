@@ -12,38 +12,29 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import tesseract.util.Dir;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.IntToLongFunction;
 
 import static muramasa.antimatter.Data.HAMMER;
-import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityTransformer extends TileEntityMachine {
 
     protected int voltage, amperage;
-    private IntToLongFunction capFunc = (v) -> (512L + v * 2L);
+    protected IntToLongFunction capFunc;
 
     public TileEntityTransformer(Machine<?> type, int amps) {
-        super(type);
-        this.amperage = amps;
+        this(type, amps, (v) -> (512L + v * 2L));
     }
 
     public TileEntityTransformer(Machine<?> type, int amps, IntToLongFunction capFunc) {
-        this(type, amps);
+        super(type);
+        this.amperage = amps;
         this.capFunc = capFunc;
-    }
-
-    @Override
-    public void onFirstTick() {
-        voltage = getMachineTier().getVoltage();
-
-        if (has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, 0, capFunc.applyAsLong(voltage), voltage, voltage / 4, amperage,amperage * 4) {
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, capFunc.applyAsLong(tile.getMachineTier().getVoltage()), tile.getMachineTier().getVoltage() * 4, tile.getMachineTier().getVoltage(), amperage, amperage * 4)  {
             @Override
             public boolean canOutput(Dir direction) {
-                return isDefaultMachineState() == (tile.getFacing().getIndex() == direction.getIndex());
+                return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());
             }
 
             @Override
@@ -51,9 +42,9 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return true;
             }
         });
-        if (has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this) {
+        interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
-            public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+            public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
                 if (type == HAMMER && hand == Hand.MAIN_HAND) {
                     toggleMachine();
                     energyHandler.ifPresent(h -> {
@@ -71,7 +62,12 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return super.onInteract(player, hand, side, type);
             }
         });
+    }
+
+    @Override
+    public void onFirstTick() {
         super.onFirstTick();
+        this.voltage = getMachineTier().getVoltage();
     }
 
     @Override

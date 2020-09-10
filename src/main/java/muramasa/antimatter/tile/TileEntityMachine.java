@@ -3,10 +3,7 @@ package muramasa.antimatter.tile;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -19,7 +16,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -37,17 +33,18 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
+import static muramasa.antimatter.capability.AntimatterCaps.*;
+import static muramasa.antimatter.capability.CapabilitySide.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
+import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IMachineHandler, IGuiHandler, IInfoRenderer {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, ICapabilityHost, IInfoRenderer, IMachineHandler, IGuiHandler {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -58,19 +55,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected float maxProgress = 0; //TODO look into receiveClientEvent
 
     /** Capabilities **/
-    public Optional<MachineItemHandler> itemHandler = Optional.empty();
-    public Optional<MachineFluidHandler> fluidHandler = Optional.empty();
-    public Optional<MachineRecipeHandler<?>> recipeHandler = Optional.empty();
-    public Optional<MachineEnergyHandler> energyHandler = Optional.empty();
-    public Optional<MachineCoverHandler> coverHandler = Optional.empty();
-    public Optional<MachineInteractHandler> interactHandler = Optional.empty();
+    public MachineCapabilityHandler<MachineItemHandler<?>> itemHandler = new MachineCapabilityHandler<>(this, ITEM, BOTH);
+    public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, SERVER);
+    public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, SERVER);
+    public MachineCapabilityHandler<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHandler<>(this, ENERGY, BOTH);
+    public MachineCapabilityHandler<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHandler<>(this, COVERABLE, SYNC);
+    public MachineCapabilityHandler<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHandler<>(this, CONFIGURABLE, SYNC);
 
     protected final IIntArray machineData = new IIntArray() {
         @Override
         public int get(int index) {
             switch (index) {
                 case 0:
-                    return Float.floatToRawIntBits(TileEntityMachine.this.recipeHandler.map(recipe -> (float)recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0.0f));
+                    return Float.floatToRawIntBits(recipeHandler.map(recipe -> (float)recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0.0f));
             }
             return -1;
         }
@@ -79,8 +76,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         public void set(int index, int value) {
             switch (index) {
                 case 0:
-                    float v = Float.intBitsToFloat(value);
-                    clientProgress = v;
+                    clientProgress = Float.intBitsToFloat(value);
                     break;
             }
         }
@@ -101,18 +97,22 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public TileEntityMachine(Machine<?> type) {
         this(type.getTileType());
         this.type = type;
+        coverHandler.setup(MachineCoverHandler::new);
+        itemHandler.setup(MachineItemHandler::new);
+        fluidHandler.setup(MachineFluidHandler::new);
+        energyHandler.setup(MachineEnergyHandler::new);
+        recipeHandler.setup(MachineRecipeHandler::new);
+        interactHandler.setup(MachineInteractHandler::new);
     }
 
     @Override
     public void onFirstTick() {
-        if (!coverHandler.isPresent() && has(COVERABLE)) coverHandler = Optional.of(new MachineCoverHandler(this));
-        if (!interactHandler.isPresent() && has(CONFIGURABLE)) interactHandler = Optional.of(new MachineInteractHandler(this));
-        //TODO: what are implications of this? just makes life easier
-        if (!itemHandler.isPresent() /*&& isServerSide()*/ && has(ITEM) && getMachineType().getGui().hasAnyItem(getMachineTier())) itemHandler = Optional.of(new MachineItemHandler(this));
-        if (!fluidHandler.isPresent() && isServerSide() && has(FLUID) && getMachineType().getGui().hasAnyFluid(getMachineTier())) fluidHandler = Optional.of(new MachineFluidHandler(this));
-        //Allow energyHandler on client? this should fix capabilities.
-        if (!energyHandler.isPresent() /*&& isServerSide()*/ && has(ENERGY)) energyHandler = Optional.of(new MachineEnergyHandler(this, has(GENERATOR)));
-        if (!recipeHandler.isPresent() && isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MachineRecipeHandler<>(this));
+        coverHandler.init();
+        itemHandler.init();
+        fluidHandler.init();
+        energyHandler.init();
+        recipeHandler.init();
+        interactHandler.init();
     }
 
     @Nullable
@@ -148,9 +148,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onMachineEvent(IMachineEvent event, Object... data) {
         recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
-        itemHandler.ifPresent(h -> h.onMachineEvent(event,data));
-        energyHandler.ifPresent(h -> h.onMachineEvent(event,data));
-        fluidHandler.ifPresent(h -> h.onMachineEvent(event,data));
+        itemHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        energyHandler.ifPresent(h -> h.onMachineEvent(event, data));
+        fluidHandler.ifPresent(h -> h.onMachineEvent(event, data));
 
         //TODO: Put this in the actual handlers when a change occurs.
     }
@@ -265,53 +265,75 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
+        if ((cap == ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
+        else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap);
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
-        else if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
-        else if ((cap == AntimatterCaps.ENERGY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == AntimatterCaps.COVERABLE && coverHandler.isPresent()/*coverHandler.map(h -> true/*h.getCover(side).isEmpty()).orElse(false)*/) {
-            return LazyOptional.of(() -> coverHandler.get()).cast();
-        }
-        else if (cap == AntimatterCaps.INTERACTABLE && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
+        else if ((cap == ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
+        else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return LazyOptional.of(() -> coverHandler.get()).cast();
+        else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
         return super.getCapability(cap, side);
     }
 
     @Override
-    public void read(CompoundNBT tag) {
-        super.read(tag);
-        if (tag.contains(Ref.KEY_MACHINE_TILE_STATE)) setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_TILE_STATE)]);//TODO saving state needed? if recipe is saved, serverUpdate should handle it.
-        if (tag.contains(Ref.KEY_MACHINE_TILE_ITEMS)) itemHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ITEMS)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_FLUIDS)) fluidHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_FLUIDS)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_ENERGY)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_RECIPE)));
-        if (tag.contains(Ref.KEY_MACHINE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_TILE_COVER)));
+    public CompoundNBT getCapabilityTag(String cap) {
+        if (itemHandler.equals(cap)) return itemHandler.getOrCreateTag(Ref.KEY_MACHINE_ITEMS);
+        else if (fluidHandler.equals(cap)) return fluidHandler.getOrCreateTag(Ref.KEY_MACHINE_FLUIDS);
+        else if (recipeHandler.equals(cap)) return recipeHandler.getOrCreateTag(Ref.KEY_MACHINE_RECIPE);
+        else if (energyHandler.equals(cap)) return energyHandler.getOrCreateTag(Ref.KEY_MACHINE_ENERGY);
+        else if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_MACHINE_COVER);
+        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_MACHINE_INTERACT);
+        return new CompoundNBT();
     }
 
+    @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        CompoundNBT nbt = super.getUpdateTag();
-        this.write(nbt);
-        return nbt;
+        CompoundNBT tag = super.getUpdateTag();
+        this.write(tag);
+        return tag;
+    }
+
+    // Runs earlier then onFirstTick (server only)
+    @Override
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.read(tag.getCompound(Ref.KEY_MACHINE_INTERACT));
+        if (tag.contains(Ref.KEY_MACHINE_ITEMS)) itemHandler.read(tag.getCompound(Ref.KEY_MACHINE_ITEMS));
+        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.read(tag.getCompound(Ref.KEY_MACHINE_FLUIDS));
+        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_COVER));
+        if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.read(tag.getCompound(Ref.KEY_MACHINE_ENERGY));
+        if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.read(tag.getCompound(Ref.KEY_MACHINE_RECIPE));
     }
 
     @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag); //TODO get tile data tag
-        if (getMachineState() != null) tag.putInt(Ref.KEY_MACHINE_TILE_STATE, getMachineState().ordinal());
-        itemHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_ITEMS, h.serialize()));
-        fluidHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_FLUIDS, h.serialize()));
-        energyHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_ENERGY, h.serialize()));
-        recipeHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_RECIPE, h.serialize()));
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_TILE_COVER, h.serialize()));
+        interactHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_INTERACT, h.serialize()));
+        itemHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_ITEMS, h.serialize()));
+        fluidHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_FLUIDS, h.serialize()));
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_COVER, h.serialize()));
+        energyHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_ENERGY, h.serialize()));
+        recipeHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_RECIPE, h.serialize()));
         return tag;
+    }
+
+    @Override
+    public void update(CompoundNBT tag) {
+        //super.update(tag);
+        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_INTERACT)));
+        if (tag.contains(Ref.KEY_MACHINE_ITEMS)) itemHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
+        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_COVER)));
+        if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+        if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
     }
 
     //TODO move toString to capabilities

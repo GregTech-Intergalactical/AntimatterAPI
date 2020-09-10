@@ -15,14 +15,12 @@ import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-@ParametersAreNonnullByDefault
-public class FluidTileWrapper implements IFluidNode, ITileWrapper {
+public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
 
     private TileEntity tile;
     private boolean removed;

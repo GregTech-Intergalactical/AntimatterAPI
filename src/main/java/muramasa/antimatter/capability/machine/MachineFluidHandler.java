@@ -1,6 +1,9 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.ICapabilityHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTankWrapper;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -12,11 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
@@ -33,35 +36,44 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
+public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ICapabilityHandler, ITickHost {
 
-    protected static int DEFAULT_CAPACITY = 99999;
-    protected static int DEFAULT_PRESSURE = 99999;
-
-    protected TileEntityMachine tile;
+    protected T tile;
     protected ITickingController controller;
     protected FluidTankWrapper inputWrapper, outputWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
-    protected int pressure;
+    protected int capacity, pressure;
 
-    public MachineFluidHandler(TileEntityMachine tile, int capacity, int pressure) {
+    public MachineFluidHandler(T tile, CompoundNBT tag, int capacity, int pressure) {
         this.tile = tile;
+        this.capacity = capacity;
         this.pressure = pressure;
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) inputWrapper = new FluidTankWrapper(tile, inputCount, capacity, ContentEvent.FLUID_INPUT_CHANGED);
         if (outputCount > 0) outputWrapper = new FluidTankWrapper(tile, outputCount, capacity, ContentEvent.FLUID_OUTPUT_CHANGED);
         if (tile.isServerSide()) Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        if (tag != null) deserialize(tag);
     }
 
-    public MachineFluidHandler(TileEntityMachine tile) {
-        this(tile, DEFAULT_CAPACITY, DEFAULT_PRESSURE);
+    public MachineFluidHandler(T tile, CompoundNBT tag) {
+        this(tile, tag, 8000 * (1 + tile.getMachineTier().getIntegerId()), 1000 * (250 + tile.getMachineTier().getIntegerId()));
     }
 
     public void onUpdate() {
         if (controller != null) controller.tick();
     }
 
+    public void onRemove() {
+        if (tile.isServerSide()) Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+    }
+
+    public void onReset() {
+        if (tile.isServerSide()) {
+            Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+            Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
+    }
 
     //TODO IN THIS METHOD: Slot 0 is hardcoded for output, refactor this.
     protected void insertFromCell(int slot) {
@@ -112,6 +124,7 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
         return true;
     }
 
+    @Override
     public void onMachineEvent(IMachineEvent event, Object ...data) {
         if (event instanceof ContentEvent) {
             switch ((ContentEvent)event) {
@@ -121,17 +134,6 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
                     }
                     break;
             }
-        }
-    }
-
-    public void onRemove() {
-        if (tile.isServerSide()) Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
-    }
-
-    public void onReset() {
-        if (tile.isServerSide()) {
-            Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
-            Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
         }
     }
 
@@ -281,6 +283,7 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
     }
 
     /** NBT **/
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
@@ -289,7 +292,7 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
                 if (inputWrapper.getFluidInTank(i) == FluidStack.EMPTY) continue;
                 list.add(inputWrapper.writeToNBT(i, new CompoundNBT()));
             }
-            tag.put("Input-Fluids", list);
+            tag.put(Ref.TAG_MACHINE_INPUT_FLUID, list);
         }
         if (outputWrapper != null) {
             ListNBT list = new ListNBT();
@@ -297,14 +300,15 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
                 if (outputWrapper.getFluidInTank(i) == FluidStack.EMPTY) continue;
                 list.add(outputWrapper.writeToNBT(i, new CompoundNBT()));
             }
-            tag.put("Output-Fluids", list);
+            tag.put(Ref.TAG_MACHINE_OUTPUT_FLUID, list);
         }
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
         if (inputWrapper != null) {
-            ListNBT list = tag.getList("Input-Fluids", Constants.NBT.TAG_COMPOUND);
+            ListNBT list = tag.getList(Ref.TAG_MACHINE_INPUT_FLUID, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 if (i < inputWrapper.getTanks()) {
                     inputWrapper.setFluidToTank(i, FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
@@ -312,7 +316,7 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
             }
         }
         if (outputWrapper != null) {
-            ListNBT list = tag.getList("Output-Fluids", Constants.NBT.TAG_COMPOUND);
+            ListNBT list = tag.getList(Ref.TAG_MACHINE_OUTPUT_FLUID, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 if (i < outputWrapper.getTanks()) {
                     outputWrapper.setFluidToTank(i, FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
@@ -418,5 +422,10 @@ public class MachineFluidHandler implements IFluidNode<FluidStack>, ITickHost {
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
         }
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 }

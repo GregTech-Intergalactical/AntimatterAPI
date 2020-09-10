@@ -18,7 +18,7 @@ public class InteractHandler<T extends TileEntity> implements IInteractHandler<T
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         return false;
     }
 

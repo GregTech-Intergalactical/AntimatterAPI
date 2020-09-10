@@ -1,15 +1,19 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
-import muramasa.antimatter.tile.multi.TileEntityHatch;
+import muramasa.antimatter.capability.ICapabilityHandler;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 
-public class HatchComponentHandler extends ComponentHandler {
+public class HatchComponentHandler extends ComponentHandler implements ICapabilityHandler {
 
-    public HatchComponentHandler(TileEntityHatch componentTile) {
+    public HatchComponentHandler(TileEntityMachine componentTile, CompoundNBT tag) {
         super(componentTile.getMachineType().getId(), componentTile);
     }
 
@@ -25,5 +29,10 @@ public class HatchComponentHandler extends ComponentHandler {
         super.onStructureInvalidated(controllerTile);
         //((TileEntityHatch) getTile()).setTextureOverride(-1);
         Utils.markTileForRenderUpdate(getTile());
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.COMPONENT_HANDLER_CAPABILITY;
     }
 }

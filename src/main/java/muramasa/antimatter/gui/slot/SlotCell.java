@@ -1,7 +1,6 @@
 package muramasa.antimatter.gui.slot;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;

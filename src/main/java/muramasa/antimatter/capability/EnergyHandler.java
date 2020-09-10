@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability;
 
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
@@ -71,7 +70,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canInput() {
-        return /*amperage_in > 0 &&*/ voltage_in > 0;
+        return voltage_in > 0;
     }
 
     @Override
@@ -81,7 +80,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canOutput() {
-        return /*amperage_out > 0 &&*/ voltage_out > 0;
+        return voltage_out > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/

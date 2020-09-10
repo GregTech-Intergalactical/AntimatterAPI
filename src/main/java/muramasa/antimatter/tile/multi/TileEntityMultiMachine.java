@@ -2,16 +2,14 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerInteractHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.capability.machine.MultiMachineRecipeHandler;
 import muramasa.antimatter.gui.event.IGuiEvent;
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.IComponent;
@@ -29,13 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static muramasa.antimatter.machine.MachineFlag.*;
-
 public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected Optional<ControllerComponentHandler> componentHandler = Optional.empty();
+    protected MachineCapabilityHandler<ControllerComponentHandler> componentHandler = new MachineCapabilityHandler<>(this);
 
     protected Optional<StructureResult> result = Optional.empty();
 
@@ -45,14 +41,9 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-    }
-
-    @Override
-    public void onFirstTick() {
-        componentHandler = Optional.of(new ControllerComponentHandler(getMachineType(), this));
-        if (has(CONFIGURABLE)) interactHandler = Optional.of(new ControllerInteractHandler(this));
-        if (isServerSide() && has(RECIPE)) recipeHandler = Optional.of(new MultiMachineRecipeHandler<>(this));
-        super.onFirstTick();
+        componentHandler.setup(ControllerComponentHandler::new);
+        interactHandler.setup(ControllerInteractHandler::new);
+        recipeHandler.setup(MultiMachineRecipeHandler::new);
     }
 
     public boolean checkStructure() {
@@ -246,7 +237,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     @Override
-    public Optional<ControllerComponentHandler> getComponentHandler() {
+    public MachineCapabilityHandler<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 

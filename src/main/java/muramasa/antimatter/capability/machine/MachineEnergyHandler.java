@@ -1,37 +1,43 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.Capability;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import java.util.List;
-public class MachineEnergyHandler extends EnergyHandler implements IMachineHandler, ITickHost {
 
-    protected TileEntityMachine tile;
+import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
+
+public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler, ICapabilityHandler, ITickHost {
+
+    protected T tile;
     protected ITickingController controller;
     // Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
-    public MachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
+    public MachineEnergyHandler(T tile, CompoundNBT tag, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
         super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
         this.tile = tile;
+        if (tag != null) deserialize(tag);
         if (tile.isServerSide()) Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
-    public MachineEnergyHandler(TileEntityMachine tile, boolean generator) {
-        this(tile, 0, tile.getMachineTier().getVoltage() * 40L, tile.getMachineTier().getVoltage(), generator ? tile.getMachineTier().getVoltage() : 0, 1, generator ? 1 : 0);
+    public MachineEnergyHandler(T tile, CompoundNBT tag) {
+        this(tile, tag, 0L, tile.getMachineTier().getVoltage() * (tile.getMachineType().has(GENERATOR) ? 40L : 66L),
+            tile.getMachineType().has(GENERATOR) ? 0 : tile.getMachineTier().getVoltage(),
+            tile.getMachineType().has(GENERATOR) ? tile.getMachineTier().getVoltage() : 0,
+            tile.getMachineType().has(GENERATOR) ? 0 : 1,
+            tile.getMachineType().has(GENERATOR) ? 1 : 0);
     }
 
     public void onUpdate() {
@@ -53,7 +59,7 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     public long insert(long maxReceive, boolean simulate) {
         long inserted = super.insert(maxReceive, simulate);
         if (inserted == 0 && canChargeItem()) {
-            inserted = insertIntoItems(maxReceive,simulate);
+            inserted = insertIntoItems(maxReceive, simulate);
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
@@ -70,22 +76,6 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
             }
         }
         return 0;
-    }
-
-    public void setOutputAmperage(int amp) {
-        amperage_out = amp;
-    }
-
-    public void setInputAmperage(int amp) {
-        amperage_in = amp;
-    }
-
-    public void setOutputVoltage(int voltage) {
-        voltage_out = voltage;
-    }
-
-    public void setInputVoltage(int voltage) {
-        voltage_in = voltage;
     }
 
     public boolean canChargeItem() {
@@ -136,27 +126,59 @@ public class MachineEnergyHandler extends EnergyHandler implements IMachineHandl
     }
 
     /** NBT **/
-    // TODO: Finish
+    @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        tag.putLong("Energy", energy);
-        tag.putLong("Voltage-In", voltage_in);
-        tag.putLong("Voltage-Out", voltage_out);
-        tag.putLong("Amperage-In", amperage_in);
-        tag.putLong("Amperage-Out", amperage_out);
+        tag.putLong(Ref.TAG_MACHINE_ENERGY, energy);
+        tag.putLong(Ref.TAG_MACHINE_CAPACITY, capacity);
+        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_IN, voltage_in);
+        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_OUT, voltage_out);
+        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_IN, amperage_in);
+        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_OUT, amperage_out);
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundNBT tag) {
-        energy = tag.getLong("Energy");
-        voltage_in = tag.getInt("Voltage-In");
-        voltage_out = tag.getInt("Voltage-Out");
-        amperage_in = tag.getInt("Amperage-In");
-        amperage_out = tag.getInt("Amperage-Out");
+        energy = tag.getLong(Ref.TAG_MACHINE_ENERGY);
+        capacity = tag.getLong(Ref.TAG_MACHINE_CAPACITY);
+        voltage_in = tag.getInt(Ref.TAG_MACHINE_VOLTAGE_IN);
+        voltage_out = tag.getInt(Ref.TAG_MACHINE_VOLTAGE_OUT);
+        amperage_in = tag.getInt(Ref.TAG_MACHINE_AMPERAGE_IN);
+        amperage_out = tag.getInt(Ref.TAG_MACHINE_AMPERAGE_OUT);
     }
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
+    }
+
+    public void setEnergy(long energy) {
+        this.energy = energy;
+    }
+
+    public void setCapacity(long capacity) {
+        this.capacity = capacity;
+    }
+
+    public void setOutputAmperage(int amperage_out) {
+        this.amperage_out = amperage_out;
+    }
+
+    public void setInputAmperage(int amperage_in) {
+        this.amperage_in = amperage_in;
+    }
+
+    public void setOutputVoltage(int voltage_out) {
+        this.voltage_out = voltage_out;
+    }
+
+    public void setInputVoltage(int voltage_in) {
+        this.voltage_in = voltage_in;
+    }
+
+    @Override
+    public Capability<?> getCapability() {
+        return AntimatterCaps.ENERGY_HANDLER_CAPABILITY;
     }
 }

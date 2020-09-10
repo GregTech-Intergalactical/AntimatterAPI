@@ -44,7 +44,6 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
@@ -53,7 +52,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -350,12 +348,6 @@ public class Utils {
 
     public static void transferFluids(IFluidHandler from, IFluidHandler to) {
         transferFluids(from,to,-1);
-    }
-
-    public static Optional<World> getServerWorld(int dimension) {
-        DimensionType type = DimensionType.getById(dimension);
-        if (type == null) return Optional.empty();
-        return Optional.of(ServerLifecycleHooks.getCurrentServer().getWorld(type));
     }
 
     /**

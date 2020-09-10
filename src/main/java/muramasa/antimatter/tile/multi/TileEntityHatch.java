@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -14,27 +15,19 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
-
-import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    protected Optional<HatchComponentHandler> componentHandler = Optional.empty();
+    protected MachineCapabilityHandler<HatchComponentHandler> componentHandler = new MachineCapabilityHandler<>(this);
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
+        componentHandler.setup(HatchComponentHandler::new);
+        fluidHandler.setup(MachineFluidHandler::new);
     }
 
     @Override
-    public void onFirstTick() {
-        componentHandler = Optional.of(new HatchComponentHandler(this));
-        if (isServerSide() && has(FLUID)) fluidHandler = Optional.of(new MachineFluidHandler(this, 8000, 1000));
-        super.onFirstTick();
-    }
-
-    @Override
-    public Optional<HatchComponentHandler> getComponentHandler() {
+    public MachineCapabilityHandler<HatchComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 
@@ -62,7 +55,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
         return super.getCapability(cap, side);
     }
 }

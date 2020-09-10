@@ -6,15 +6,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
 public interface IInteractHandler<T extends TileEntity> {
 
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
 
-    @Nonnull
     T getTile();
 }

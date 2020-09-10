@@ -1,48 +1,45 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.gui.event.GuiEvent;
-import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.ICapabilityHost;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.function.Supplier;
 
-public class GuiEventPacket {
+public class CapabilityPacket {
 
-    private final GuiEvent event;
+    private String cap;
     private final BlockPos pos;
-    private final int[] data;
 
-    public GuiEventPacket(GuiEvent event, BlockPos pos, int... data) {
-        this.event = event;
+    public CapabilityPacket(String cap, BlockPos pos) {
+        this.cap = cap;
         this.pos = pos;
-        this.data = data;
     }
 
-    public static void encode(GuiEventPacket msg, PacketBuffer buf) {
-        buf.writeEnumValue(msg.event);
+    public static void encode(CapabilityPacket msg, PacketBuffer buf) {
+        buf.writeString(msg.cap);
         buf.writeBlockPos(msg.pos);
-        buf.writeVarIntArray(msg.data);
     }
 
-    public static GuiEventPacket decode(PacketBuffer buf) {
-        return new GuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readVarIntArray());
+    public static CapabilityPacket decode(PacketBuffer buf) {
+        return new CapabilityPacket(buf.readString(), buf.readBlockPos());
     }
 
-    public static void handle(final GuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(final CapabilityPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity sender =  ctx.get().getSender();
             if (sender != null) {
                 TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
-                if (tile instanceof IGuiHandler) {
-                    ((IGuiHandler) tile).onGuiEvent(msg.event, msg.data);
+                if (tile instanceof ICapabilityHost) {
+                    Antimatter.NETWORK.sendTo(new CompoundPacket(((ICapabilityHost) tile).getCapabilityTag(msg.cap), msg.pos), sender);
                 }
             }
         });
