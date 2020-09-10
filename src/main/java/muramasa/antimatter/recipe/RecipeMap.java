@@ -175,6 +175,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         ItemStack[] mergedInput;
         if (recipe.hasTags()) {
+            //Verify tags are non-empty.
+            boolean invalid = Arrays.stream(recipe.getTagInputs()).anyMatch(tag -> tag.tag.getEntries().isEmpty());
+            if (invalid) {
+                Utils.onInvalidData("Tag recipe provided with empty tag - not added (avoiding exception!)" + recipe);
+                return;
+            }
             List<ItemStack> stack = Arrays.stream(recipe.getTagInputs()).map(t -> new ItemStack(t.tag.getRandomElement(Ref.RNG),1)).collect(Collectors.toList());
             if (recipe.getInputItems() != null) stack.addAll(Arrays.asList(recipe.getInputItems()));
             mergedInput = stack.toArray(new ItemStack[0]);
