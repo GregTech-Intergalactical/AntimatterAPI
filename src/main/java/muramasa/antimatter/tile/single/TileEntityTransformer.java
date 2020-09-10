@@ -31,10 +31,10 @@ public class TileEntityTransformer extends TileEntityMachine {
         super(type);
         this.amperage = amps;
         this.capFunc = capFunc;
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, capFunc.applyAsLong(tile.getMachineTier().getVoltage()), tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage() / 4, amperage, amperage * 4)  {
+        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, capFunc.applyAsLong(tile.getMachineTier().getVoltage()), tile.getMachineTier().getVoltage() * 4, tile.getMachineTier().getVoltage(), amperage, amperage * 4)  {
             @Override
             public boolean canOutput(Dir direction) {
-                return isDefaultMachineState() == (tile.getFacing().getIndex() == direction.getIndex());
+                return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());
             }
 
             @Override
