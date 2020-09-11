@@ -75,7 +75,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void activateRecipe() {
         //if (canOverclock)
         curProgress = 0;
-        overclock = 1;
+        overclock = 0;
         if (this.tile.getMachineTier().getVoltage() > activeRecipe.getPower()) {
             int voltage = this.tile.getMachineTier().getVoltage();
             int tier = 0;
