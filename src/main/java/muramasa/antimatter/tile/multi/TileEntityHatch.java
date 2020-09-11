@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -15,26 +14,25 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
-    protected MachineCapabilityHandler<HatchComponentHandler> componentHandler = new MachineCapabilityHandler<>(this);
+    private final LazyOptional<HatchComponentHandler> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
-        componentHandler.setup(HatchComponentHandler::new);
-        fluidHandler.setup(MachineFluidHandler::new);
     }
 
     @Override
-    public MachineCapabilityHandler<HatchComponentHandler> getComponentHandler() {
+    public LazyOptional<HatchComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event instanceof ContentEvent) {
-            componentHandler.flatMap(ComponentHandler::getFirstController).ifPresent(controller -> {
+            componentHandler.map(ComponentHandler::getFirstController).orElse(Optional.empty()).ifPresent(controller -> {
                 switch ((ContentEvent) event) {
                     case ITEM_INPUT_CHANGED:
                         controller.onMachineEvent(event, data);
@@ -55,7 +53,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) return LazyOptional.of(() -> componentHandler.get()).cast();
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY) return componentHandler.cast();
         return super.getCapability(cap, side);
     }
 }

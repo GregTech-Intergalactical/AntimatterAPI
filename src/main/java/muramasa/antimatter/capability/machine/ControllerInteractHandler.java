@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 public class ControllerInteractHandler extends MachineInteractHandler<TileEntityMachine> {
 
-    public ControllerInteractHandler(TileEntityMachine tile, CompoundNBT tag) {
-        super(tile, tag);
+    public ControllerInteractHandler(TileEntityMachine tile) {
+        super(tile);
     }
 
     @Override

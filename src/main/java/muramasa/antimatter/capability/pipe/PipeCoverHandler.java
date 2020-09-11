@@ -6,8 +6,8 @@ import net.minecraft.nbt.CompoundNBT;
 
 public class PipeCoverHandler<T extends TileEntityPipe> extends CoverHandler<T> {
 
-    public PipeCoverHandler(T tile, CompoundNBT tag) {
+    public PipeCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
-        if (tag != null) deserialize(tag);
+        // if (tag != null) deserialize(tag);
     }
 }

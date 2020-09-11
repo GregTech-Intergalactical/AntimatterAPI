@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
@@ -18,8 +17,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
@@ -35,14 +35,16 @@ import java.util.List;
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 import static muramasa.antimatter.machine.MachineFlag.FLUID;
 
-public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, ICapabilityHandler, ITickHost {
+public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, ITickHost, ICapabilitySerializable<CompoundNBT> {
+
+    private final LazyOptional<MachineItemHandler<T>> handler = LazyOptional.of(() -> this);
 
     protected T tile;
     protected ITickingController controller;
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
-    public MachineItemHandler(T tile, CompoundNBT tag) {
+    public MachineItemHandler(T tile) {
         this.tile = tile;
         inputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED);
         outputWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size() + tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED);
@@ -52,7 +54,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         if (tile.getMachineType().has(ENERGY)) {
             chargeWrapper = new ItemStackWrapper(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED);
         }
-        if (tag != null) deserialize(tag);
+        // if (tag != null) deserialize(tag);
         if (tile.isServerSide()) Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
@@ -230,7 +232,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     /** NBT **/
     @Override
-    public CompoundNBT serialize() {
+    public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         if (inputWrapper != null) {
             ListNBT list = new ListNBT();
@@ -288,7 +290,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     @Override
-    public void deserialize(CompoundNBT tag) {
+    public void deserializeNBT(CompoundNBT tag) {
         if (inputWrapper != null) {
             inputWrapper.setSize(tag.contains(Ref.TAG_MACHINE_INPUT_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_INPUT_SIZE) : inputWrapper.getSlots());
             ListNBT inputTagList = tag.getList(Ref.TAG_MACHINE_INPUT_ITEM, Constants.NBT.TAG_COMPOUND);
@@ -418,8 +420,10 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         }
     }
 
+    @Nonnull
     @Override
-    public Capability<?> getCapability() {
-        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        return handler.cast();
     }
+
 }

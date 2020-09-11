@@ -2,7 +2,6 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -11,6 +10,7 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,7 +23,7 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 import static muramasa.antimatter.machine.MachineState.*;
 
-public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler, ICapabilityHandler {
+public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler {
 
     protected T tile;
     protected Recipe activeRecipe;
@@ -35,9 +35,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
 
-    public MachineRecipeHandler(T tile, CompoundNBT tag) {
+    public MachineRecipeHandler(T tile) {
         this.tile = tile;
-        if (tag != null) deserialize(tag);
+        // if (tag != null) deserialize(tag);
     }
 
     public void onUpdate() {
@@ -143,10 +143,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public boolean canOutput() {
-        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.get().canOutputsFit(activeRecipe.getOutputItems()))
+        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.map(ih -> ih.canOutputsFit(activeRecipe.getOutputItems())).orElse(false)) {
             return false;
-        if (tile.fluidHandler.isPresent() && activeRecipe.hasOutputFluids() && !tile.fluidHandler.get().canOutputsFit(activeRecipe.getOutputFluids()))
+        } else if (tile.fluidHandler.isPresent() && activeRecipe.hasOutputFluids() && !tile.fluidHandler.map(fh -> fh.canOutputsFit(activeRecipe.getOutputFluids())).orElse(false)) {
             return false;
+        }
         return true;
     }
 
@@ -159,20 +160,25 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public boolean canRecipeContinue() {
-        if (tile.itemHandler.isPresent() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
+        if (tile.itemHandler.isPresent() && !Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.map(MachineItemHandler::getInputs).orElse(new ItemStack[0]))) {
             return false;
-        if (tile.fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
+        } else if (tile.fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]))) {
             return false;
+        }
         return true;
     }
 
     public boolean consumeResourceForRecipe() {
         if (tile.energyHandler.isPresent()) {
             if (!tile.has(GENERATOR)) {
-                if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), true) >= activeRecipe.getPower() * (1 << overclock)) {
-                    tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), false);
-                    return true;
-                }
+                return tile.energyHandler.map(eh -> {
+                    long amount = activeRecipe.getPower() * (1 << overclock);
+                    if (eh.extract(amount, true) >= amount) {
+                        eh.extract(amount, false);
+                        return true;
+                    }
+                    return false;
+                }).orElse(false);
             } else {
                return consumeGeneratorResources();
             }
@@ -266,23 +272,4 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return maxProgress;
     }
 
-
-    /**
-     * NBT
-     **/
-    // TODO: Finish
-    @Override
-    public CompoundNBT serialize() {
-        CompoundNBT tag = new CompoundNBT();
-        return tag;
-    }
-
-    @Override
-    public void deserialize(CompoundNBT tag) {
-    }
-
-    @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
-    }
 }

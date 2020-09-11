@@ -2,7 +2,6 @@ package muramasa.antimatter.capability.pipe;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.PipeCache;
@@ -23,13 +22,13 @@ import javax.annotation.Nullable;
 import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
 
-public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandler<T> implements ICapabilityHandler {
+public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandler<T> {
 
     private byte connection, interaction;
 
-    public PipeInteractHandler(T tile, CompoundNBT tag) {
+    public PipeInteractHandler(T tile) {
         super(tile);
-        if (tag != null) deserialize(tag);
+        // if (tag != null) deserialize(tag);
     }
 
     // TODO: Block if covers are exist
@@ -118,7 +117,11 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
         return Connectivity.has(connection, side);
     }
 
-    /** NBT **/
+    private AntimatterToolType getTool() {
+        return getTile() instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
+    }
+
+    /*
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
@@ -134,12 +137,10 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
         onLoad();
     }
 
-    private AntimatterToolType getTool() {
-        return getTile() instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
-    }
-
     @Override
     public Capability<?> getCapability() {
         return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
     }
+
+     */
 }

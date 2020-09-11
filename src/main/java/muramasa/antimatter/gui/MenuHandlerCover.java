@@ -20,7 +20,7 @@ public abstract class MenuHandlerCover<T extends ContainerCover, U extends Scree
         TileEntity tile = Utils.getTileFromBuf(data);
         if (tile instanceof TileEntityMachine) {
             Direction dir = Direction.byIndex(data.readInt());
-            return getMenu(((TileEntityMachine)tile).coverHandler.get().get(dir), inv, windowId);
+            return getMenu(((TileEntityMachine)tile).coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }
         return null;
     }

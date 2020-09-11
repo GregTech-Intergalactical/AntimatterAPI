@@ -10,6 +10,8 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
     public TileEntityBasicMultiMachine(Machine<?> type) {
         super(type);
+        // TODO
+        /*
         recipeHandler.setup((tile, tag) -> new MultiMachineRecipeHandler<TileEntityMultiMachine>(tile, tag) {
             @Override
             public Recipe findRecipe() { //TODO support fluids?
@@ -41,5 +43,6 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
                 return true;
             }
         });
+         */
     }
 }

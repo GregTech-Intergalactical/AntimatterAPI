@@ -3,6 +3,7 @@ package muramasa.antimatter.machine.types;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -33,6 +34,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -46,6 +48,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
+    protected Set<MachineFlag> flags = new ObjectOpenHashSet<>();
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -82,7 +85,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     protected void addData(Object... data) {
         List<Tier> tiers = new ObjectArrayList<>();
-        List<MachineFlag> flags = new ObjectArrayList<>();
+        Set<MachineFlag> flags = new ObjectOpenHashSet<>();
         for (Object o : data) {
             if (o instanceof RecipeMap) {
                 recipeMap = (RecipeMap<?>) o;
@@ -96,6 +99,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
         addFlags(flags.toArray(new MachineFlag[0]));
+        this.flags = flags;
     }
 
     public T setTile(Function<Machine<?>, Supplier<? extends TileEntityMachine>> func) {
@@ -162,6 +166,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public RecipeBuilder getRecipeBuilder() {
         return recipeMap.RB();
+    }
+
+    public Set<MachineFlag> getFlags() {
+        return flags;
     }
 
     public void addFlags(MachineFlag... flags) {

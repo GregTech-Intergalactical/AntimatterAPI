@@ -167,7 +167,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         if (tile instanceof TileEntityMachine) {
             MachineState machineState = ((TileEntityMachine) tile).getMachineState();
             if (((TileEntityMachine) tile).coverHandler.isPresent()) {
-                CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.get();
+                CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.orElse(null);
                 return config.set(new int[] {
                     h.get(UP).shouldRender() ? getModelId(facing, UP, machineState) : 0,
                     h.get(DOWN).shouldRender() ? getModelId(facing, DOWN, machineState) : 0,

@@ -44,7 +44,7 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, ICapabilityHost, IInfoRenderer, IMachineHandler, IGuiHandler {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -55,12 +55,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected float maxProgress = 0; //TODO look into receiveClientEvent
 
     /** Capabilities **/
-    public MachineCapabilityHandler<MachineItemHandler<?>> itemHandler = new MachineCapabilityHandler<>(this, ITEM, BOTH);
-    public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, SERVER);
-    public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, SERVER);
-    public MachineCapabilityHandler<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHandler<>(this, ENERGY, BOTH);
-    public MachineCapabilityHandler<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHandler<>(this, COVERABLE, SYNC);
-    public MachineCapabilityHandler<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHandler<>(this, CONFIGURABLE, SYNC);
+    public LazyOptional<MachineItemHandler<?>> itemHandler;
+    public LazyOptional<MachineFluidHandler<?>> fluidHandler;
+    public LazyOptional<MachineRecipeHandler<?>> recipeHandler;
+    public LazyOptional<MachineEnergyHandler<?>> energyHandler;
+    public LazyOptional<MachineCoverHandler<?>> coverHandler;
+    public LazyOptional<MachineInteractHandler<?>> interactHandler;
+
+    // public MachineCapabilityHandler<MachineItemHandler<?>> itemHandler = new MachineCapabilityHandler<>(this, ITEM, BOTH);
+    // public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, SERVER);
+    // public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, SERVER);
+    // public MachineCapabilityHandler<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHandler<>(this, ENERGY, BOTH);
+    // public MachineCapabilityHandler<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHandler<>(this, COVERABLE, SYNC);
+    // public MachineCapabilityHandler<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHandler<>(this, CONFIGURABLE, SYNC);
 
     protected final IIntArray machineData = new IIntArray() {
         @Override
@@ -89,30 +96,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public IIntArray getContainerData() { return machineData; };
 
-    public TileEntityMachine(TileEntityType<?> tileType) {
-        super(tileType);
-        machineState = getDefaultMachineState();
-    }
-
     public TileEntityMachine(Machine<?> type) {
-        this(type.getTileType());
+        super(type.getTileType());
         this.type = type;
-        coverHandler.setup(MachineCoverHandler::new);
-        itemHandler.setup(MachineItemHandler::new);
-        fluidHandler.setup(MachineFluidHandler::new);
-        energyHandler.setup(MachineEnergyHandler::new);
-        recipeHandler.setup(MachineRecipeHandler::new);
-        interactHandler.setup(MachineInteractHandler::new);
-    }
-
-    @Override
-    public void onFirstTick() {
-        coverHandler.init();
-        itemHandler.init();
-        fluidHandler.init();
-        energyHandler.init();
-        recipeHandler.init();
-        interactHandler.init();
+        this.machineState = getDefaultMachineState();
+        this.itemHandler = type.getFlags().contains(ITEM) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
+        this.fluidHandler = type.getFlags().contains(FLUID)  ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
+        this.recipeHandler = type.getFlags().contains(RECIPE)  ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
+        this.energyHandler = type.getFlags().contains(ENERGY)  ? LazyOptional.of(() -> new MachineEnergyHandler<>(this)) : LazyOptional.empty();
+        this.coverHandler = type.getFlags().contains(COVERABLE)  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
+        this.interactHandler = LazyOptional.empty();/*type.getFlags().contains()  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();*/
     }
 
     @Nullable
@@ -130,9 +123,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public void onRemove() {
         coverHandler.ifPresent(MachineCoverHandler::onRemove);
-        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
+        if (isServerSide()) {
+            energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+        }
     }
 
     @Override
@@ -264,32 +259,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        if ((cap == ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
-        return super.getCapability(cap);
-    }
-
-    @Nonnull
-    @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return LazyOptional.of(() -> itemHandler.get().getHandlerForSide(side)).cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return LazyOptional.of(() -> fluidHandler.get().getWrapperForSide(side)).cast();
-        else if ((cap == ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && energyHandler.isPresent()) return LazyOptional.of(() -> energyHandler.get()).cast();
-        else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return LazyOptional.of(() -> coverHandler.get()).cast();
-        else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return LazyOptional.of(() -> interactHandler.get()).cast();
+        if (cap == ITEM_HANDLER_CAPABILITY) return itemHandler.map(ih -> ih.getHandlerForSide(side)).cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY) return fluidHandler.map(fh -> fh.getWrapperForSide(side)).cast();
+        else if ((cap == ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY)) return energyHandler.cast();
+        else if (cap == COVERABLE_HANDLER_CAPABILITY) return coverHandler.cast();
+        else if (cap == INTERACTABLE_HANDLER_CAPABILITY) return interactHandler.cast();
         return super.getCapability(cap, side);
-    }
-
-    @Override
-    public CompoundNBT getCapabilityTag(String cap) {
-        if (itemHandler.equals(cap)) return itemHandler.getOrCreateTag(Ref.KEY_MACHINE_ITEMS);
-        else if (fluidHandler.equals(cap)) return fluidHandler.getOrCreateTag(Ref.KEY_MACHINE_FLUIDS);
-        else if (recipeHandler.equals(cap)) return recipeHandler.getOrCreateTag(Ref.KEY_MACHINE_RECIPE);
-        else if (energyHandler.equals(cap)) return energyHandler.getOrCreateTag(Ref.KEY_MACHINE_ENERGY);
-        else if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_MACHINE_COVER);
-        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_MACHINE_INTERACT);
-        return new CompoundNBT();
     }
 
     @Nonnull
@@ -300,6 +276,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return tag;
     }
 
+    /*
     // Runs earlier then onFirstTick (server only)
     @Override
     public void read(CompoundNBT tag) {
@@ -335,6 +312,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
     }
+     */
 
     //TODO move toString to capabilities
     @Override

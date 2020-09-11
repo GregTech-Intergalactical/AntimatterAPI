@@ -19,13 +19,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICapabilityHandler {
+public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
+
+    private final LazyOptional<ICoverHandler<T>> handler = LazyOptional.of(() -> this);
 
     private T tile;
     protected Object2ObjectMap<Direction, CoverInstance<T>> covers = new Object2ObjectOpenHashMap<>();
@@ -112,9 +115,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
         return (get(side).isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
     }
 
-    /** NBT **/
     @Override
-    public CompoundNBT serialize() {
+    public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         byte[] sides = new byte[1];
         covers.forEach((s, c) -> {
@@ -130,20 +132,22 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
     }
 
     @Override
-    public void deserialize(CompoundNBT tag) {
-        byte sides = tag.getByte(Ref.TAG_MACHINE_COVER_SIDE);
+    public void deserializeNBT(CompoundNBT nbt) {
+        byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
-                CompoundNBT nbt = tag.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(nbt);
+                CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
+                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(cover);
             } else {
                 covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }
         }
     }
 
+    @Nonnull
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        return handler.cast();
     }
+
 }

@@ -2,7 +2,6 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.RotatableCoverHandler;
 import muramasa.antimatter.cover.Cover;
@@ -12,21 +11,20 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 
-public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableCoverHandler<T> implements IMachineHandler, ICapabilityHandler {
+public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableCoverHandler<T> implements IMachineHandler {
 
     protected Direction output = Direction.SOUTH;
 
-    public MachineCoverHandler(T tile, CompoundNBT tag) {
+    public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         covers.put(getTile().getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, getTile()));
-        if (tag != null) deserialize(tag);
+        // if (tag != null) deserialize(tag);
     }
 
     public Direction getOutputFacing() {
@@ -73,8 +71,4 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
         return getTile().getFacing();
     }
 
-    @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
-    }
 }

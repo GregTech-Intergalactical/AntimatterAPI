@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
@@ -31,7 +32,7 @@ public class TileEntityTransformer extends TileEntityMachine {
         super(type);
         this.amperage = amps;
         this.capFunc = capFunc;
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, capFunc.applyAsLong(tile.getMachineTier().getVoltage()), tile.getMachineTier().getVoltage() * 4, tile.getMachineTier().getVoltage(), amperage, amperage * 4)  {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4)  {
             @Override
             public boolean canOutput(Dir direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());
@@ -42,6 +43,8 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return true;
             }
         });
+        // FIXME
+        /*
         interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
@@ -62,6 +65,7 @@ public class TileEntityTransformer extends TileEntityMachine {
                 return super.onInteract(player, hand, side, type);
             }
         });
+         */
     }
 
     @Override

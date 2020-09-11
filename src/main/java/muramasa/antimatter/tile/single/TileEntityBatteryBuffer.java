@@ -5,13 +5,14 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;
 
 public class TileEntityBatteryBuffer extends TileEntityStorage {
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, 0L, 0L, tile.getMachineTier().getVoltage(), tile.getMachineTier().getVoltage(), 0, 0) {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, 0L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0, 0) {
             @Override
             public boolean canOutput(Dir direction) {
                 return tile.getFacing().getIndex() == direction.getIndex();
@@ -19,11 +20,6 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
 
             @Override
             public boolean connects(Dir direction) {
-                return true;
-            }
-
-            @Override
-            public boolean canChargeFromItem() {
                 return true;
             }
 

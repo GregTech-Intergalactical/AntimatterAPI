@@ -2,7 +2,6 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.item.ItemCover;
@@ -22,11 +21,11 @@ import javax.annotation.Nullable;
 
 import static muramasa.antimatter.Data.*;
 
-public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> implements ICapabilityHandler {
+public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> {
 
-    public MachineInteractHandler(T tile, CompoundNBT tag) {
+    public MachineInteractHandler(T tile) {
         super(tile);
-        if (tag != null) deserialize(tag);
+        // if (tag != null) deserialize(tag);
     }
 
     @Override
@@ -55,6 +54,7 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
         return true;
     }
 
+    /*
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
@@ -71,4 +71,5 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
     public Capability<?> getCapability() {
         return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
     }
+     */
 }

@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
@@ -22,7 +23,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
         int amperage = maxAmps + 1;
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;
@@ -38,6 +39,8 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return true;
             }
         });
+        // TODO
+        /*
         interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
@@ -54,6 +57,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return super.onInteract(player, hand, side, type);
             }
         });
+         */
     }
 
     @Override

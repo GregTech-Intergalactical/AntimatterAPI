@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.fluid;
 
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -10,8 +11,8 @@ public class FluidResourceMachineRecipeHandler<T extends TileEntityMachine> exte
 
     protected FluidStack[] resource;
 
-    public FluidResourceMachineRecipeHandler(T tile, CompoundNBT tag, FluidStack resource) {
-        super(tile, tag);
+    public FluidResourceMachineRecipeHandler(T tile, FluidStack resource) {
+        super(tile);
         this.resource = new FluidStack[]{resource};
     }
 
@@ -25,8 +26,8 @@ public class FluidResourceMachineRecipeHandler<T extends TileEntityMachine> exte
     public boolean consumeResourceForRecipe() {
         if (!tile.fluidHandler.isPresent()) return false;
         resource[0].setAmount(getConsumptionPerRecipe());
-        if (Utils.doFluidsMatchAndSizeValid(resource, tile.fluidHandler.get().getInputs())) {
-            tile.fluidHandler.get().consumeInputs(resource);
+        if (Utils.doFluidsMatchAndSizeValid(resource, tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]))) {
+            tile.fluidHandler.ifPresent(fh -> fh.consumeInputs(resource));
             return true;
         }
         return false;

@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -11,30 +12,39 @@ import javax.annotation.Nullable;
 public class AntimatterCaps {
 
     @CapabilityInject(IEnergyHandler.class)
-    public static Capability<IEnergyHandler> ENERGY_HANDLER_CAPABILITY;
+    public static final Capability<IEnergyHandler> ENERGY_HANDLER_CAPABILITY;
 
     @CapabilityInject(IInteractHandler.class)
-    public static Capability<IInteractHandler> INTERACTABLE_HANDLER_CAPABILITY;
+    public static final Capability<IInteractHandler> INTERACTABLE_HANDLER_CAPABILITY;
 
     @CapabilityInject(ICoverHandler.class)
-    public static Capability<ICoverHandler> COVERABLE_HANDLER_CAPABILITY;
+    public static final Capability<ICoverHandler> COVERABLE_HANDLER_CAPABILITY;
 
     @CapabilityInject(IComponentHandler.class)
-    public static Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY;
+    public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY;
 
     /** Dummy cap **/
-    public static Capability<?> RECIPE_HANDLER_CAPABILITY;
+    public static final Capability<?> RECIPE_HANDLER_CAPABILITY;
+
+    static {
+        ENERGY_HANDLER_CAPABILITY = null;
+        INTERACTABLE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
+        COVERABLE_HANDLER_CAPABILITY = null;
+        COMPONENT_HANDLER_CAPABILITY = null;
+        RECIPE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
+    }
 
     public static void register() {
 
         CapabilityManager.INSTANCE.register(IEnergyHandler.class, new Capability.IStorage<IEnergyHandler>() {
             @Override
             public INBT writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side) {
-                return null;
+                return instance.serializeNBT();
             }
 
             @Override
             public void readNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side, INBT nbt) {
+                instance.deserializeNBT((CompoundNBT) nbt);
             }
         }, () -> new EnergyHandler(0, 0, 0, 0, 0, 0));
 
@@ -55,14 +65,14 @@ public class AntimatterCaps {
             @Nullable
             @Override
             public INBT writeNBT(Capability<ICoverHandler> capability, ICoverHandler instance, Direction side) {
-                return null;
+                return instance.serializeNBT();
             }
 
             @Override
             public void readNBT(Capability<ICoverHandler> capability, ICoverHandler instance, Direction side, INBT nbt) {
-
+                instance.deserializeNBT(nbt);
             }
-        }, () -> new CoverHandler(null));
+        }, () -> new CoverHandler<>(null));
 
         CapabilityManager.INSTANCE.register(IComponentHandler.class, new Capability.IStorage<IComponentHandler>() {
             @Nullable

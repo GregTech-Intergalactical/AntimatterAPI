@@ -7,33 +7,30 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
  * It wraps an item and provides the ability to charge it & remove it, depending on if the item supports it.
  */
-public class ItemEnergyHandler extends EnergyHandler implements ICapabilitySerializable<CompoundNBT> {
-    protected ItemStack stack;
+public class ItemEnergyHandler extends EnergyHandler {
 
-    public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
-        super(energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
+    protected final ItemStack stack;
+
+    public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+        super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.stack = stack;
     }
 
     //Override the following methods to use getTagEnergy instead
     @Override
     public boolean canInput() {
-        return voltage_in > 0 /*&& getTagEnergy() != capacity*/;
+        return voltageIn > 0 /*&& getTagEnergy() != capacity*/;
     }
 
     @Override
     public boolean canOutput() {
-        return !canModeBlock() && voltage_out > 0 /*&& getTagEnergy() >= voltage_out*/;
+        return !canModeBlock() && voltageOut > 0 /*&& getTagEnergy() >= voltageOut*/;
     }
 
     /**
@@ -92,10 +89,9 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilitySeria
         return energy;
     }
 
-    @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == AntimatterCaps.ENERGY_HANDLER_CAPABILITY ? LazyOptional.of(() -> this).cast() : LazyOptional.empty();
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+        return AntimatterCaps.ENERGY_HANDLER_CAPABILITY.orEmpty(cap, this.handler);
     }
 
     @Override

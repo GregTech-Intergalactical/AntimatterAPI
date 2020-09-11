@@ -2,10 +2,11 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
+import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerInteractHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineRecipeHandler;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
@@ -21,8 +22,10 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,19 +34,13 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-    protected MachineCapabilityHandler<ControllerComponentHandler> componentHandler = new MachineCapabilityHandler<>(this);
+
+    protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
     protected Optional<StructureResult> result = Optional.empty();
 
-    public TileEntityMultiMachine(TileEntityType<?> tileType) {
-        super(tileType);
-    }
-
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-        componentHandler.setup(ControllerComponentHandler::new);
-        interactHandler.setup(ControllerInteractHandler::new);
-        recipeHandler.setup(MultiMachineRecipeHandler::new);
     }
 
     public boolean checkStructure() {
@@ -142,7 +139,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     public long getStoredEnergy() {
         long total = 0;
         for (IComponentHandler hatch : getComponents("hatch_energy")) {
-            if (hatch.getEnergyHandler().isPresent()) total += hatch.getEnergyHandler().get().getEnergyStored();
+            if (hatch.getEnergyHandler().isPresent()) total += hatch.getEnergyHandler().map(MachineEnergyHandler::getEnergyStored).orElse(0);
         }
         return total;
     }
@@ -152,11 +149,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         if (items == null) return;
         for (IComponentHandler hatch : getComponents("hatch_item_input")) {
             if (hatch.getItemHandler().isPresent()) {
-                items = hatch.getItemHandler().get().consumeAndReturnInputs(items.clone());
+                ItemStack[] finalItems = items;
+                items = hatch.getItemHandler().map(ih -> ih.consumeAndReturnInputs(finalItems.clone())).orElse(new ItemStack[0]);
                 if (items.length == 0) break;
             }
         }
-        if (items.length > 0) System.out.println("DID NOT CONSUME ALL: " + items.toString());
+        if (items.length > 0) System.out.println("DID NOT CONSUME ALL: " + Arrays.toString(items));
     }
 
     /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
@@ -164,11 +162,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         if (fluids == null) return;
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             if (hatch.getFluidHandler().isPresent()) {
-                fluids = hatch.getFluidHandler().get().consumeAndReturnInputs(fluids);
+                FluidStack[] finalFluids = fluids;
+                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids.clone())).orElse(new FluidStack[0]);
                 if (fluids.length == 0) break;
             }
         }
-        if (fluids.length > 0) System.out.println("DID NOT CONSUME ALL: " + fluids.toString());
+        if (fluids.length > 0) System.out.println("DID NOT CONSUME ALL: " + Arrays.toString(fluids));
     }
 
     /** Consumes energy from all energy hatches. Assumes enough energy is present in hatches **/
@@ -176,7 +175,8 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         if (energy <= 0) return;
         for (IComponentHandler hatch : getComponents("hatch_energy")) {
             if (hatch.getEnergyHandler().isPresent()) {
-                energy -= hatch.getEnergyHandler().get().extract(energy, false);
+                long finalEnergy = energy;
+                energy -= hatch.getEnergyHandler().map(eh -> eh.extract(finalEnergy, false)).orElse(0L);
                 if (energy == 0) break;
             }
         }
@@ -187,11 +187,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         if (items == null) return;
         for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getItemHandler().isPresent()) {
-                items = hatch.getItemHandler().get().exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
+                ItemStack[] finalItems = items;
+                items = hatch.getItemHandler().map(ih -> ih.exportAndReturnOutputs(finalItems.clone())).orElse(new ItemStack[0]); //WHY CLONE?!!?
                 if (items.length == 0) break;
             }
         }
-        if (items.length > 0) System.out.println("HATCH OVERFLOW: " + items.toString());
+        if (items.length > 0) System.out.println("HATCH OVERFLOW: " + Arrays.toString(items));
     }
 
     /** Export fluids to hatches regardless of space. Assumes canOutputsFit has been used **/
@@ -199,11 +200,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         if (fluids == null) return;
         for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getFluidHandler().isPresent()) {
-                fluids = hatch.getFluidHandler().get().exportAndReturnOutputs(fluids.clone());
+                FluidStack[] finalFluids = fluids;
+                fluids = hatch.getFluidHandler().map(fh -> fh.exportAndReturnOutputs(finalFluids.clone())).orElse(new FluidStack[0]);
                 if (fluids.length == 0) break;
             }
         }
-        if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + fluids.toString());
+        if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + Arrays.toString(fluids));
     }
 
     /** Tests if items can fit across all output hatches **/
@@ -212,7 +214,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         int matchCount = 0;
         for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getItemHandler().isPresent()) {
-                matchCount += hatch.getItemHandler().get().getSpaceForOutputs(items);
+                matchCount += hatch.getItemHandler().map(ih -> ih.getSpaceForOutputs(items)).orElse(0);
             }
         }
         return matchCount >= items.length;
@@ -224,7 +226,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         int matchCount = 0;
         for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
             if (hatch.getFluidHandler().isPresent()) {
-                matchCount += hatch.getFluidHandler().get().getSpaceForOutputs(fluids);
+                matchCount += hatch.getFluidHandler().map(fh -> fh.getSpaceForOutputs(fluids)).orElse(0);
             }
         }
         return matchCount >= fluids.length;
@@ -233,11 +235,11 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     @Override
     public int getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
-        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().isPresent() ? hatches.get(0).getEnergyHandler().get().getInputVoltage() : Ref.V[0] : Ref.V[0];
+        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().map(EnergyHandler::getInputVoltage).orElse(Ref.V[0]) : Ref.V[0];
     }
 
     @Override
-    public MachineCapabilityHandler<ControllerComponentHandler> getComponentHandler() {
+    public LazyOptional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
     }
 
