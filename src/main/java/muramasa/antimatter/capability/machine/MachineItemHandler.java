@@ -4,10 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.TagInput;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
@@ -18,11 +15,8 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
@@ -34,7 +28,6 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -449,7 +442,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.ITEM;
     }
 }

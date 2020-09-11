@@ -47,7 +47,9 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                         amps = (amps + 1) % amperage;
                         h.setOutputAmperage(amps);
                         // TODO: Replace by new TranslationTextComponent()
-                        player.sendMessage(new StringTextComponent(h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
+                        if (player.getEntityWorld().isRemote()) {
+                            player.sendMessage(new StringTextComponent(h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
+                        }
                     });
                     return true;
                 }

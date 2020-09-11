@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CapabilityType;
 import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
@@ -16,7 +17,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
@@ -42,7 +42,9 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
             } else if (type == HAMMER) {
                 tile.toggleMachine();
                 // TODO: Replace by new TranslationTextComponent()
-                player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
+                if (player.getEntityWorld().isRemote()) {
+                    player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")));
+                }
                 return true;
             } else if (type == CROWBAR) {
                 return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, side)).orElse(false);
@@ -68,7 +70,7 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.INTERACTABLE;
     }
 }

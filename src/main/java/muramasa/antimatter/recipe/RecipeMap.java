@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;

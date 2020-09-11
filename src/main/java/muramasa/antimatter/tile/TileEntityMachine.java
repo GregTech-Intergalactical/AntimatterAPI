@@ -101,8 +101,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         itemHandler.setup(MachineItemHandler::new);
         fluidHandler.setup(MachineFluidHandler::new);
         energyHandler.setup(MachineEnergyHandler::new);
-        recipeHandler.setup(MachineRecipeHandler::new);
         interactHandler.setup(MachineInteractHandler::new);
+        recipeHandler.setup(MachineRecipeHandler::new);
     }
 
     @Override
@@ -111,8 +111,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         itemHandler.init();
         fluidHandler.init();
         energyHandler.init();
-        recipeHandler.init();
         interactHandler.init();
+        recipeHandler.init();
     }
 
     @Nullable
@@ -209,16 +209,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public void toggleMachine() {
-        //setMachineState(getDefaultMachineState());
-        //recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
         setMachineState(getMachineState() == MachineState.DISABLED ? getDefaultMachineState() : MachineState.DISABLED);
+        recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
     }
 
     public void setMachineState(MachineState newState) {
-        /*if (machineState.getOverlayId() != newState.getOverlayId() && newState.allowRenderUpdate()) {
-            markForRenderUpdate();
-            System.out.println("RENDER UPDATE");
-        }*/
         if (getMachineState() != newState) {
             Utils.markTileForRenderUpdate(this);
             if (isServerSide()) markDirty();
@@ -282,13 +277,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public CompoundNBT getCapabilityTag(String cap) {
-        if (itemHandler.equals(cap)) return itemHandler.getOrCreateTag(Ref.KEY_MACHINE_ITEMS);
-        else if (fluidHandler.equals(cap)) return fluidHandler.getOrCreateTag(Ref.KEY_MACHINE_FLUIDS);
-        else if (recipeHandler.equals(cap)) return recipeHandler.getOrCreateTag(Ref.KEY_MACHINE_RECIPE);
-        else if (energyHandler.equals(cap)) return energyHandler.getOrCreateTag(Ref.KEY_MACHINE_ENERGY);
-        else if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_MACHINE_COVER);
-        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_MACHINE_INTERACT);
+    public CompoundNBT getCapabilityTag(CapabilityType type) {
+        if (itemHandler.equals(type)) return itemHandler.getOrCreateTag(Ref.KEY_MACHINE_ITEMS);
+        else if (fluidHandler.equals(type)) return fluidHandler.getOrCreateTag(Ref.KEY_MACHINE_FLUIDS);
+        else if (recipeHandler.equals(type)) return recipeHandler.getOrCreateTag(Ref.KEY_MACHINE_RECIPE);
+        else if (energyHandler.equals(type)) return energyHandler.getOrCreateTag(Ref.KEY_MACHINE_ENERGY);
+        else if (coverHandler.equals(type)) return coverHandler.getOrCreateTag(Ref.KEY_MACHINE_COVER);
+        else if (interactHandler.equals(type)) return interactHandler.getOrCreateTag(Ref.KEY_MACHINE_INTERACT);
         return new CompoundNBT();
     }
 

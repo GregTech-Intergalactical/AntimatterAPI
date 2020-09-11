@@ -1,18 +1,21 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CapabilityType;
 import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.network.packets.MachineStatePacket;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -38,6 +41,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
         if (tag != null) deserialize(tag);
+        checkRecipe();
     }
 
     public void onUpdate() {
@@ -52,15 +56,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         switch (tile.getMachineState()) {
             case ACTIVE:
             case OUTPUT_FULL:
-                tile.setMachineState(tickRecipe());
+                setMachineState(tickRecipe());
                 break;
             case POWER_LOSS:
             case NO_POWER:
                 MachineState state = tickRecipe();
                 if (state != ACTIVE) {
-                    tile.setMachineState(IDLE);
+                    setMachineState(IDLE);
                 } else {
-                    tile.setMachineState(state);
+                    setMachineState(state);
                 }
                 break;
         }
@@ -101,7 +105,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 }
                 activateRecipe();
                 //TODO: Rename NO_POWER? Default to no_power for now.
-                tile.setMachineState(NO_POWER);
+                setMachineState(NO_POWER);
                 return true;
             }
         }
@@ -236,21 +240,21 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     break;
                 case ENERGY_SLOT_CHANGED:
                     //Battery added, try to continue.
-                    if (this.tile.getMachineState() == IDLE)
-                        this.tile.setMachineState(NO_POWER);
-                    if (this.tile.getMachineState() == POWER_LOSS)
-                        this.tile.setMachineState(ACTIVE);
+                    if (tile.getMachineState() == IDLE)
+                        setMachineState(NO_POWER);
+                    if (tile.getMachineState() == POWER_LOSS)
+                        setMachineState(ACTIVE);
             }
             tile.markDirty(); //TODO determine if needed
         }
         if (event instanceof MachineEvent) {
             switch ((MachineEvent)event) {
                 case ENERGY_INPUTTED:
-                    if (this.tile.getMachineState() == IDLE)
+                    if (tile.getMachineState() == IDLE)
                         //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
-                        this.tile.setMachineState(NO_POWER);
-                    if (this.tile.getMachineState() == POWER_LOSS)
-                        this.tile.setMachineState(ACTIVE);
+                        setMachineState(NO_POWER);
+                    if (tile.getMachineState() == POWER_LOSS)
+                        setMachineState(ACTIVE);
                     break;
                 default:
                     break;
@@ -266,6 +270,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return maxProgress;
     }
 
+    public void setMachineState(MachineState newState) {
+        tile.setMachineState(newState);
+        ServerWorld world = (ServerWorld) tile.getWorld();
+        if (world != null) {
+            Antimatter.NETWORK.sendToAllAround(new MachineStatePacket(newState, tile.getPos()), world, new AxisAlignedBB(tile.getPos()).grow(50.0D, 50.0D, 50.00D));
+        }
+    }
 
     /**
      * NBT
@@ -282,7 +293,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.RECIPE;
     }
 }

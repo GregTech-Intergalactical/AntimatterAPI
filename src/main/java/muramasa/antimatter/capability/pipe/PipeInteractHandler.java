@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.pipe;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CapabilityType;
 import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraftforge.common.capabilities.Capability;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nullable;
@@ -139,7 +138,7 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.INTERACTABLE;
     }
 }
