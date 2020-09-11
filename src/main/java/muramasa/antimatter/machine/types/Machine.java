@@ -173,8 +173,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addFlags(flags);
     }
 
-    public void setTiers(Tier... tiers) {
+    public T setTiers(Tier... tiers) {
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
+        return (T) this;
     }
 
     public void setGUI(MenuHandler<?, ?> menuHandler) {

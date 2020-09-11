@@ -2,7 +2,9 @@ package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Set;
@@ -11,6 +13,7 @@ public class RecipeBuilder {
 
     private RecipeMap recipeMap;
     private ItemStack[] itemsInput, itemsOutput;
+    private TagInput[] tagInputs;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int[] chances;
     private int duration, special;
@@ -47,6 +50,7 @@ public class RecipeBuilder {
         Recipe recipe = new Recipe(
             itemsInput != null ? itemsInput.clone() : null,
             itemsOutput != null ? itemsOutput.clone() : null,
+            tagInputs,
             fluidsInput != null ? fluidsInput.clone() : null,
             fluidsOutput != null ? fluidsOutput.clone() : null,
             duration, power, special
@@ -54,6 +58,7 @@ public class RecipeBuilder {
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
+
         recipeMap.add(recipe);
 
         return recipe;
@@ -76,6 +81,11 @@ public class RecipeBuilder {
 
     public RecipeBuilder ii(ItemStack... stacks) {
         itemsInput = stacks;
+        return this;
+    }
+
+    public RecipeBuilder it(TagInput... stacks) {
+        tagInputs = stacks;
         return this;
     }
 
@@ -113,6 +123,7 @@ public class RecipeBuilder {
     public void clear() {
         itemsInput = itemsOutput = null;
         fluidsInput = fluidsOutput = null;
+        tagInputs = null;
         chances = null;
         duration = special = 0;
         power = 0;
