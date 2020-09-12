@@ -108,6 +108,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 if (tile.has(GENERATOR) && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
                     return false;
                 }
+                if (!canOutput()) return false;
                 activateRecipe();
                 //TODO: Rename NO_POWER? Default to no_power for now.
                 tile.setMachineState(NO_POWER);
@@ -236,12 +237,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             switch ((ContentEvent) event) {
                 case FLUID_INPUT_CHANGED:
                 case ITEM_INPUT_CHANGED:
-                    if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
-                    if (tile.getMachineType().has(RECIPE)) checkRecipe();
-                    break;
                 case FLUID_OUTPUT_CHANGED:
                 case ITEM_OUTPUT_CHANGED:
-                    if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
+                    if ((tile.getMachineState() == IDLE) && tile.getMachineType().has(RECIPE)) checkRecipe();
+                    if ((tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) && activeRecipe != null) tickMachineLoop();
                     break;
                 case ENERGY_SLOT_CHANGED:
                     //Battery added, try to continue.
@@ -255,10 +254,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (event instanceof MachineEvent) {
             switch ((MachineEvent)event) {
                 case ENERGY_INPUTTED:
-                    if (this.tile.getMachineState() == IDLE)
+                    if (this.tile.getMachineState() == IDLE && activeRecipe != null)
                         //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
                         this.tile.setMachineState(NO_POWER);
-                    if (this.tile.getMachineState() == POWER_LOSS)
+                    if (this.tile.getMachineState() == POWER_LOSS && activeRecipe != null)
                         this.tile.setMachineState(ACTIVE);
                     break;
                 default:
