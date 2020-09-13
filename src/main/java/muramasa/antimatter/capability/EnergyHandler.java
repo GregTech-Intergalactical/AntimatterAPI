@@ -20,7 +20,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     /** Tesseract IGTNode Implementations **/
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        if (!canInput()) return 0;
+       // if (!canInput()) return 0;
 
         long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
         if (!simulate) energy += toInsert;

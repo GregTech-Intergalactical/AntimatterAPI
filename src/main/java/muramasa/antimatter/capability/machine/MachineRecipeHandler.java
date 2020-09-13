@@ -101,11 +101,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             System.out.println("check recipe");
             if (!tile.hadFirstTick()) return false; //TODO fixme
             if ((activeRecipe = findRecipe()) != null) {
-                if (activeRecipe.getPower() > tile.getMaxInputVoltage()) {
+                boolean isGenerator = tile.has(GENERATOR);
+                if (activeRecipe.getPower() > tile.getMaxInputVoltage() && !isGenerator) {
                     return false;
                     //TODO machine tier cannot process recipe
                 }
-                if (tile.has(GENERATOR) && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
+                if (isGenerator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
                     return false;
                 }
                 if (!canOutput()) return false;
@@ -260,6 +261,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     if (this.tile.getMachineState() == POWER_LOSS && activeRecipe != null)
                         this.tile.setMachineState(ACTIVE);
                     break;
+                case ENERGY_DRAINED:
+                    if (activeRecipe == null) checkRecipe();
+                    if (tile.has(GENERATOR) && activeRecipe != null) this.tile.setMachineState(NO_POWER);
                 default:
                     break;
             }
