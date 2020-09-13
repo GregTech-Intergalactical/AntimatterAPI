@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
+import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -31,7 +32,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -209,6 +213,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
         buildModelsForState(builder, MachineState.IDLE);
         buildModelsForState(builder, MachineState.ACTIVE);
+        builder.loader(AntimatterModelManager.LOADER_MACHINE);
         prov.state(block, builder);
     }
 

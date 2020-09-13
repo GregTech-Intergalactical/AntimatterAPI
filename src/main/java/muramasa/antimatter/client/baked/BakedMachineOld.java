@@ -16,7 +16,7 @@ import java.util.Random;
 
 import static muramasa.antimatter.AntimatterProperties.*;
 
-public class BakedMachine extends AntimatterBakedModel {
+public class BakedMachineOld extends AntimatterBakedModel {
 
     public static IBakedModel BASE;
     public static IBakedModel[][] OVERLAYS;
