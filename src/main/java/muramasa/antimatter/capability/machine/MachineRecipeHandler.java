@@ -253,6 +253,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     if (this.tile.getMachineState() == POWER_LOSS)
                         this.tile.setMachineState(ACTIVE);
                     break;
+                case ENERGY_DRAINED:
+                    if (activeRecipe == null) checkRecipe();
+                    if (tile.has(GENERATOR) && activeRecipe != null) this.tile.setMachineState(NO_POWER);
                 default:
                     break;
             }
