@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.Tag;
 
 import java.util.Arrays;
 
@@ -22,6 +23,11 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
     public static Container getEmptyBlockAndLog(MaterialType<?> type, IAntimatterObject... objects) {
         Utils.onInvalidData("Tried to create " + type.getId() + " for objects: " + Arrays.toString(Arrays.stream(objects).map(IAntimatterObject::getId).toArray(String[]::new)));
         return new Container(Blocks.AIR.getDefaultState());
+    }
+
+
+    public Tag<Item> getMaterialTag(Material m) {
+        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public interface IBlockGetter {

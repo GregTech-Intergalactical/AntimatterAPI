@@ -165,7 +165,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
                 for (int i = 0; i < inputWrapper.getSlots(); i++) {
                     ItemStack item = inputWrapper.getStackInSlot(i);
                     if (Utils.equals(input, item) && !Utils.hasNoConsumeTag(input) && !skipSlots.contains(i)) {
-                        if (!simulate) item.shrink(input.getCount());
+                        inputWrapper.extractItem(i, input.getCount(), simulate);
                         skipSlots.add(i);
                         break;
                     }
@@ -181,7 +181,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
                 for (int i = 0; i < inputWrapper.getSlots(); i++) {
                     ItemStack item = inputWrapper.getStackInSlot(i);
                     if (input.tag.contains(item.getItem()) && !skipSlots.contains(i) /*&& !Utils.hasNoConsumeTag(input)*/) {
-                        if (!simulate) item.shrink(input.count);
+                        inputWrapper.extractItem(i, input.count, simulate);
                         skipSlots.add(i);
                         break;
                     }

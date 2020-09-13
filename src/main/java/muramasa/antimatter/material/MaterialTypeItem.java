@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.Tag;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
@@ -28,5 +29,9 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     public ItemStack get(Material material, int count) {
         if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return new ItemStack(get(material), count);
+    }
+
+    public Tag<Item> getMaterialTag(Material m) {
+        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 }
