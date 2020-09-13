@@ -62,6 +62,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
+            System.out.println("Insert " + maxReceive);
             // tile.markDirty();
         }
         return inserted;

@@ -4,7 +4,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityRecipeMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.IIntArray;
@@ -15,24 +17,21 @@ import java.util.Optional;
 
 public abstract class ContainerMachine extends AntimatterContainer {
 
-    protected TileEntityMachine tile;
+    protected final TileEntityMachine tile;
 
     public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine<?, ?> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
-        addSlots(tile);
-        tile.setClientProgress(0);
-        if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
         this.tile = tile;
-
-        trackIntArray(getMachineData());
+        addSlots(tile);
+        if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
+        // tile.setClientProgress(0);
+        if (tile.getMachineType().has(MachineFlag.RECIPE)) {
+            trackIntArray(((TileEntityRecipeMachine) tile).getProgressData());
+        }
     }
 
     public TileEntityMachine getTile() {
         return tile;
-    }
-
-    protected IIntArray getMachineData() {
-        return tile.getContainerData();
     }
 
     /*@Override
@@ -61,10 +60,10 @@ public abstract class ContainerMachine extends AntimatterContainer {
         for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
             Optional<SlotItemHandler> supplier = slot.getType().getSlotSupplier().get(tile, slotIndexMap.getInt(slot.getType().getId()), slot);
-            if (supplier.isPresent()) {
-                addSlot(supplier.get());
+            supplier.ifPresent(handler -> {
+                addSlot(handler);
                 slotIndexMap.compute(slot.getType().getId(), (k, v) -> v + 1);
-            }
+            });
         }
     }
 

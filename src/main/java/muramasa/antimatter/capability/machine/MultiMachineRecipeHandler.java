@@ -1,3 +1,4 @@
+/*
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.machine.MachineFlag;
@@ -50,12 +51,13 @@ public class MultiMachineRecipeHandler<T extends TileEntityMultiMachine> extends
 
     @Override
     public boolean consumeResourceForRecipe() {
-        //TODO breaks generators like combustion engine
-//        if (getStoredEnergy() >= activeRecipe.getPower()) {
-//            consumeEnergy(activeRecipe.getPower());
-//            return true;
-//        }
-//        return false;
+        TODO breaks generators like combustion engine
+       if (getStoredEnergy() >= activeRecipe.getPower()) {
+           consumeEnergy(activeRecipe.getPower());
+           return true;
+       }
+        return false;
         return true;
     }
 }
+ */

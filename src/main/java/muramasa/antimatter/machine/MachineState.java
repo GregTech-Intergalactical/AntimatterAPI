@@ -20,10 +20,10 @@ public enum MachineState implements IAntimatterObject {
     NO_POWER(2, "No Power", true, false, false), //no power
     POWER_LOSS(2, "Power Loss", false, false, false); //power loss while operating
 
-    public static MachineState[] VALUES;
+    public static final MachineState[] VALUES;
 
     static {
-        VALUES = values().clone();
+        VALUES = values();
     }
 
     private int overlayId;

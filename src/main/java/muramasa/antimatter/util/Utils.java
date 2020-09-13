@@ -47,6 +47,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -496,14 +497,9 @@ public class Utils {
     /** Sends block update to clients **/
     public static void markTileForRenderUpdate(TileEntity tile) {
         BlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (!tile.getWorld().isRemote) {
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
-            tile.markDirty();
-        } else {
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
+        if (tile.getWorld().isRemote) {
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, Constants.BlockFlags.RERENDER_MAIN_THREAD);
             ModelDataManager.requestModelDataRefresh(tile);
-            tile.markDirty();
         }
     }
 

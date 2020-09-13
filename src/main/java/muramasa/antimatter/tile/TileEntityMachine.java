@@ -47,7 +47,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     /** Machine Data **/
     protected Machine<?> type;
     protected Tier tier;
-    private MachineState machineState;
+    protected MachineState machineState;
 
     /** Client Data **/
     protected float clientProgress = 0; //TODO look into receiveClientEvent
@@ -56,37 +56,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     /** Capabilities **/
     public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
-    public LazyOptional<MachineRecipeHandler<?>> recipeHandler;
     public LazyOptional<MachineEnergyHandler<?>> energyHandler;
     public LazyOptional<MachineCoverHandler<?>> coverHandler;
     public LazyOptional<MachineInteractHandler<?>> interactHandler;
-
-    protected final IIntArray machineData = new IIntArray() {
-        @Override
-        public int get(int index) {
-            switch (index) {
-                case 0:
-                    return Float.floatToRawIntBits(recipeHandler.map(recipe -> (float) recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0F));
-            }
-            return -1;
-        }
-
-        @Override
-        public void set(int index, int value) {
-            switch (index) {
-                case 0:
-                    clientProgress = Float.intBitsToFloat(value);
-                    break;
-            }
-        }
-
-        @Override
-        public int size() {
-            return 1;
-        }
-    };
-
-    public IIntArray getContainerData() { return machineData; }
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -94,7 +66,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.machineState = getDefaultMachineState();
         this.itemHandler = type.has(ITEM) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
         this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
-        this.recipeHandler = type.has(RECIPE) ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
         this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyOptional.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
         this.interactHandler = LazyOptional.empty();/*type.getFlags().contains()  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();*/
@@ -102,8 +73,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onFirstTick() {
-        this.itemHandler.ifPresent(MachineItemHandler::init);
-        this.energyHandler.ifPresent(MachineEnergyHandler::init);
+        if (isServerSide()) {
+            this.itemHandler.ifPresent(MachineItemHandler::init);
+            this.energyHandler.ifPresent(MachineEnergyHandler::init);
+        }
     }
 
     @Nullable
@@ -130,14 +103,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onServerUpdate() {
         itemHandler.ifPresent(MachineItemHandler::onServerUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onServerUpdate);
-        recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        recipeHandler.ifPresent(h -> h.onMachineEvent(event, data));
         coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
         itemHandler.ifPresent(h -> h.onMachineEvent(event, data));
         energyHandler.ifPresent(h -> h.onMachineEvent(event, data));
@@ -196,7 +167,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     /** Helpers **/
     public void resetMachine() {
         setMachineState(getDefaultMachineState());
-        recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
     }
 
     public void toggleMachine() {
@@ -206,15 +176,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public void setMachineState(MachineState newState) {
-        /*if (machineState.getOverlayId() != newState.getOverlayId() && newState.allowRenderUpdate()) {
-            markForRenderUpdate();
-            System.out.println("RENDER UPDATE");
-        }*/
-        if (getMachineState() != newState) {
+        if (this.machineState != newState) {
             Utils.markTileForRenderUpdate(this);
-            if (isServerSide()) markDirty();
+            this.machineState = newState;
         }
-        machineState = newState;
     }
 
     public Cover[] getValidCovers() { //TODO fix me
@@ -277,6 +242,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         super.read(tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
         this.machineState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)];
+        System.out.println(this.machineState);
         itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
     }
@@ -329,7 +295,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
      */
 
-    //TODO move toString to capabilities
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
@@ -356,7 +321,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             }
             info.add(builder.toString());
         });
-        recipeHandler.ifPresent(h -> info.add("Recipe: " + h.getCurProgress() + " / " + h.getMaxProgress()));
         return info;
     }
 }

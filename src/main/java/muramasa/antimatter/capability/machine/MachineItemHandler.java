@@ -10,6 +10,7 @@ import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
@@ -28,7 +28,9 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -179,6 +181,51 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             }
         }
         return list;
+    }
+
+    // TODO
+    public boolean consumeInputs(Recipe recipe, boolean simulate) {
+        boolean success = true;
+        Set<Integer> skipSlots = new HashSet<>();
+        IItemHandler inputHandler = getInputHandler();
+        if (recipe.getInputItems() != null && recipe.getInputItems().length > 0) {
+            for (ItemStack input : recipe.getInputItems()) {
+                for (int i = 0; i < inputHandler.getSlots(); i++) {
+                    ItemStack item = inputHandler.getStackInSlot(i);
+                    if (Utils.equals(input, item) && !Utils.hasNoConsumeTag(input) && !skipSlots.contains(i)) {
+                        if (!simulate) item.shrink(input.getCount());
+                        skipSlots.add(i);
+                        break;
+                    }
+                    if (i == inputHandler.getSlots()-1) {
+                        success = false;
+                    }
+                }
+            }
+        }
+
+        /*
+        if (recipe.getTagInputs() != null && recipe.getTagInputs().length > 0) {
+            for (TagInput input : recipe.getTagInputs()) {
+                for (int i = 0; i < inputWrapper.getSlots(); i++) {
+                    ItemStack item = inputWrapper.getStackInSlot(i);
+                    if (input.tag.contains(item.getItem()) && !skipSlots.contains(i) /*&& !Utils.hasNoConsumeTag(input)) {
+                        if (!simulate) item.shrink(input.count);
+                        skipSlots.add(i);
+                        break;
+                    }
+                    if (i == inputWrapper.getSlots()-1) {
+                        success = false;
+                    }
+                }
+            }
+        }
+        */
+
+        if (!simulate) {
+            tile.markDirty();
+        }
+        return success;
     }
 
     public void consumeInputs(ItemStack... inputs) {
