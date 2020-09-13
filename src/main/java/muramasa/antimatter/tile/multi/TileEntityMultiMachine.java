@@ -46,6 +46,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         recipeHandler.setup(MultiMachineRecipeHandler::new);
     }
 
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        componentHandler.init();
+    }
+
     public boolean checkStructure() {
         if (!isServerSide()) return false;
         Structure structure = getMachineType().getStructure(getMachineTier());
