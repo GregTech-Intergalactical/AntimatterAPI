@@ -27,6 +27,12 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
     }
 
     @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        componentHandler.init();
+    }
+
+    @Override
     public MachineCapabilityHandler<HatchComponentHandler> getComponentHandler() {
         return componentHandler;
     }
