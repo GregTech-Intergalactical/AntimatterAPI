@@ -283,12 +283,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public CompoundNBT getCapabilityTag(String cap) {
-        if (itemHandler.equals(cap)) return itemHandler.getOrCreateTag(Ref.KEY_MACHINE_ITEMS);
-        else if (fluidHandler.equals(cap)) return fluidHandler.getOrCreateTag(Ref.KEY_MACHINE_FLUIDS);
-        else if (recipeHandler.equals(cap)) return recipeHandler.getOrCreateTag(Ref.KEY_MACHINE_RECIPE);
-        else if (energyHandler.equals(cap)) return energyHandler.getOrCreateTag(Ref.KEY_MACHINE_ENERGY);
-        else if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_MACHINE_COVER);
-        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_MACHINE_INTERACT);
+        if (itemHandler != null && itemHandler.equals(cap)) return itemHandler.getOrCreateTag(Ref.KEY_MACHINE_ITEMS);
+        else if (fluidHandler != null && fluidHandler.equals(cap)) return fluidHandler.getOrCreateTag(Ref.KEY_MACHINE_FLUIDS);
+        else if (recipeHandler != null && recipeHandler.equals(cap)) return recipeHandler.getOrCreateTag(Ref.KEY_MACHINE_RECIPE);
+        else if (energyHandler != null && energyHandler.equals(cap)) return energyHandler.getOrCreateTag(Ref.KEY_MACHINE_ENERGY);
+        else if (coverHandler != null && coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_MACHINE_COVER);
+        else if (interactHandler != null && interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_MACHINE_INTERACT);
         return new CompoundNBT();
     }
 

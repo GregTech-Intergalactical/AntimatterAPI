@@ -77,7 +77,16 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         curProgress = 0;
         overclock = 0;
         if (this.tile.getMachineTier().getVoltage() > activeRecipe.getPower()) {
-            int tempoverclock = (this.tile.getMachineTier().getVoltage() / Ref.V[Utils.getVoltageTier(activeRecipe.getPower())]);
+            int voltage = this.tile.getMachineTier().getVoltage();
+            int tier = 0;
+            //Dont use utils, because we allow overclocking from ulv.
+            for (int i = 0; i < Ref.V.length; i++) {
+                if (activeRecipe.getPower() <= Ref.V[i]) {
+                    tier = i;
+                    break;
+                }
+            }
+            int tempoverclock = (this.tile.getMachineTier().getVoltage() / Ref.V[tier]);
             while (tempoverclock > 1) {
                 tempoverclock >>= 2;
                 overclock++;
@@ -99,6 +108,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 if (tile.has(GENERATOR) && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
                     return false;
                 }
+                if (!canOutput()) return false;
                 activateRecipe();
                 //TODO: Rename NO_POWER? Default to no_power for now.
                 tile.setMachineState(NO_POWER);
@@ -227,12 +237,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             switch ((ContentEvent) event) {
                 case FLUID_INPUT_CHANGED:
                 case ITEM_INPUT_CHANGED:
-                    if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
-                    if (tile.getMachineType().has(RECIPE)) checkRecipe();
-                    break;
                 case FLUID_OUTPUT_CHANGED:
                 case ITEM_OUTPUT_CHANGED:
-                    if (tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) tickMachineLoop();
+                    if ((tile.getMachineState() == IDLE) && tile.getMachineType().has(RECIPE)) checkRecipe();
+                    if ((tile.getMachineState().allowLoopTick() || tile.getMachineState() == NO_POWER) && activeRecipe != null) tickMachineLoop();
                     break;
                 case ENERGY_SLOT_CHANGED:
                     //Battery added, try to continue.
@@ -246,10 +254,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (event instanceof MachineEvent) {
             switch ((MachineEvent)event) {
                 case ENERGY_INPUTTED:
-                    if (this.tile.getMachineState() == IDLE)
+                    if (this.tile.getMachineState() == IDLE && activeRecipe != null)
                         //NO_POWER is bad name i guess, by this i mean try to do a recipe check next tick.
                         this.tile.setMachineState(NO_POWER);
-                    if (this.tile.getMachineState() == POWER_LOSS)
+                    if (this.tile.getMachineState() == POWER_LOSS && activeRecipe != null)
                         this.tile.setMachineState(ACTIVE);
                     break;
                 default:
