@@ -22,8 +22,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
 
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
-        int amperage = maxAmps + 1;
-        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;

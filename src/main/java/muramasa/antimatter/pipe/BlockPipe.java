@@ -149,7 +149,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                     pipe.setConnection(face);
                 }
             } else if (neighbor != null) {
-                neighbor.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(cap -> {
+                AntimatterCaps.getCustomEnergyHandler(neighbor).ifPresent(cap -> {
                     if (cap.canInput() || cap.canOutput()) {
                         tile.setConnection(face.getOpposite());
                     }

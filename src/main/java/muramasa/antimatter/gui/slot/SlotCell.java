@@ -7,7 +7,6 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-//Slotcell actually allows any fluid container!
 public class SlotCell extends SlotItemHandler {
 
     public SlotCell(IItemHandler stackHandler, int index, int x, int y) {

@@ -3,6 +3,7 @@ package muramasa.antimatter.machine;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -99,6 +100,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         if (!world.isRemote) { //Only try opening containers server side
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
+                AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
                 if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
                 if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider && hand == Hand.MAIN_HAND) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());

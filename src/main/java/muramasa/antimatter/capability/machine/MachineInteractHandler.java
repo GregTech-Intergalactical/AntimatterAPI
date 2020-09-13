@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.InteractHandler;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.item.ItemCover;
@@ -37,7 +38,8 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
             return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.placeCover(player, side, stack, ((ItemCover) stack.getItem()).getCover())).orElse(false);
         } else if (hand == Hand.MAIN_HAND) {
             if (type == WRENCH || type == ELECTRIC_WRENCH) {
-                return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
+                return true;
+                // return player.isCrouching() ? tile.setFacing(side) : tile.setOutputFacing(side);
             } else if (type == HAMMER) {
                 tile.toggleMachine();
                 // TODO: Replace by new TranslationTextComponent()

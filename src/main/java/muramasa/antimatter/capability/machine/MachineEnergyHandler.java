@@ -16,42 +16,40 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
-// Server Only
 public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler, ITickHost {
 
     protected final T tile;
 
     protected ITickingController controller;
-
-    // Cached chargeable items from the energy handler. Updated on machine event as to not always extract caps.
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
     public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.tile = tile;
-        // if (tag != null) deserialize(tag);
+    }
+
+    public MachineEnergyHandler(T tile, boolean isGenerator) {
+        this(tile, 0L, tile.getMachineTier().getVoltage() * (isGenerator ? 40L : 66L), isGenerator ? 0 : tile.getMachineTier().getVoltage(), isGenerator ? tile.getMachineTier().getVoltage() : 0, isGenerator ? 0 : 1, isGenerator ? 1 : 0);
+    }
+
+    @Override
+    public void init() {
         Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
-    public MachineEnergyHandler(T tile) {
-        this(tile, 0L, tile.getMachineTier().getVoltage() * (tile.getMachineType().has(GENERATOR) ? 40L : 66L),
-            tile.getMachineType().has(GENERATOR) ? 0 : tile.getMachineTier().getVoltage(),
-            tile.getMachineType().has(GENERATOR) ? tile.getMachineTier().getVoltage() : 0,
-            tile.getMachineType().has(GENERATOR) ? 0 : 1,
-            tile.getMachineType().has(GENERATOR) ? 1 : 0);
-    }
-
-    public void onUpdate() {
+    public void onServerUpdate() {
         if (controller != null) {
             controller.tick();
         }
     }
 
     public void onRemove() {
-        Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+        if (tile.isServerSide()) {
+            Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+        }
     }
 
-    public void onReset() {
+    public void refresh() {
         Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
         Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
@@ -64,6 +62,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
+            // tile.markDirty();
         }
         return inserted;
     }
@@ -91,6 +90,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_DRAINED, extracted);
+            // tile.markDirty();
         }
         return extracted;
     }
@@ -127,26 +127,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
             tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
         }
-    }
-
-    public void setEnergy(long energy) {
-        this.energy = energy;
-    }
-
-    public void setOutputAmperage(int amperageOut) {
-        this.amperageOut = amperageOut;
-    }
-
-    public void setInputAmperage(int amperageIn) {
-        this.amperageIn = amperageIn;
-    }
-
-    public void setOutputVoltage(int voltageOut) {
-        this.voltageOut = voltageOut;
-    }
-
-    public void setInputVoltage(int voltageIn) {
-        this.voltageIn = voltageIn;
     }
 
 }

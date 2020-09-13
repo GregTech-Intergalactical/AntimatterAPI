@@ -24,7 +24,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.ITextComponent;
@@ -39,7 +38,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
-import static muramasa.antimatter.capability.CapabilitySide.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -48,6 +46,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     /** Machine Data **/
     protected Machine<?> type;
+    protected Tier tier;
     private MachineState machineState;
 
     /** Client Data **/
@@ -62,19 +61,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyOptional<MachineCoverHandler<?>> coverHandler;
     public LazyOptional<MachineInteractHandler<?>> interactHandler;
 
-    // public MachineCapabilityHandler<MachineItemHandler<?>> itemHandler = new MachineCapabilityHandler<>(this, ITEM, BOTH);
-    // public MachineCapabilityHandler<MachineFluidHandler<?>> fluidHandler = new MachineCapabilityHandler<>(this, FLUID, SERVER);
-    // public MachineCapabilityHandler<MachineRecipeHandler<?>> recipeHandler = new MachineCapabilityHandler<>(this, RECIPE, SERVER);
-    // public MachineCapabilityHandler<MachineEnergyHandler<?>> energyHandler = new MachineCapabilityHandler<>(this, ENERGY, BOTH);
-    // public MachineCapabilityHandler<MachineCoverHandler<?>> coverHandler = new MachineCapabilityHandler<>(this, COVERABLE, SYNC);
-    // public MachineCapabilityHandler<MachineInteractHandler<?>> interactHandler = new MachineCapabilityHandler<>(this, CONFIGURABLE, SYNC);
-
     protected final IIntArray machineData = new IIntArray() {
         @Override
         public int get(int index) {
             switch (index) {
                 case 0:
-                    return Float.floatToRawIntBits(recipeHandler.map(recipe -> (float)recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0.0f));
+                    return Float.floatToRawIntBits(recipeHandler.map(recipe -> (float) recipe.getCurProgress() / recipe.getMaxProgress()).orElse(0F));
             }
             return -1;
         }
@@ -94,18 +86,24 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
     };
 
-    public IIntArray getContainerData() { return machineData; };
+    public IIntArray getContainerData() { return machineData; }
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
         this.type = type;
         this.machineState = getDefaultMachineState();
-        this.itemHandler = type.getFlags().contains(ITEM) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
-        this.fluidHandler = type.getFlags().contains(FLUID)  ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
-        this.recipeHandler = type.getFlags().contains(RECIPE)  ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
-        this.energyHandler = type.getFlags().contains(ENERGY)  ? LazyOptional.of(() -> new MachineEnergyHandler<>(this)) : LazyOptional.empty();
-        this.coverHandler = type.getFlags().contains(COVERABLE)  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
+        this.itemHandler = type.has(ITEM) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
+        this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
+        this.recipeHandler = type.has(RECIPE) ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
+        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyOptional.empty();
+        this.coverHandler = type.has(COVERABLE) ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
         this.interactHandler = LazyOptional.empty();/*type.getFlags().contains()  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();*/
+    }
+
+    @Override
+    public void onFirstTick() {
+        this.itemHandler.ifPresent(MachineItemHandler::init);
+        this.energyHandler.ifPresent(MachineEnergyHandler::init);
     }
 
     @Nullable
@@ -125,17 +123,15 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(MachineCoverHandler::onRemove);
         fluidHandler.ifPresent(MachineFluidHandler::onRemove);
         itemHandler.ifPresent(MachineItemHandler::onRemove);
-        if (isServerSide()) {
-            energyHandler.ifPresent(MachineEnergyHandler::onRemove);
-        }
+        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
     }
 
     @Override
     public void onServerUpdate() {
+        itemHandler.ifPresent(MachineItemHandler::onServerUpdate);
+        energyHandler.ifPresent(MachineEnergyHandler::onServerUpdate);
         recipeHandler.ifPresent(MachineRecipeHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
-        itemHandler.ifPresent(MachineItemHandler::onUpdate);
-        energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
     }
 
@@ -156,7 +152,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public Tier getMachineTier() {
-        return ((BlockMachine) getBlockState().getBlock()).getTier();
+        return tier != null ? tier : ((BlockMachine) getBlockState().getBlock()).getTier();
     }
 
     public boolean has(MachineFlag flag) {
@@ -262,7 +258,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == ITEM_HANDLER_CAPABILITY) return itemHandler.map(ih -> ih.getHandlerForSide(side)).cast();
         else if (cap == FLUID_HANDLER_CAPABILITY) return fluidHandler.map(fh -> fh.getWrapperForSide(side)).cast();
-        else if ((cap == ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY)) return energyHandler.cast();
+        else if (cap == CapabilityEnergy.ENERGY) return energyHandler.cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY) return coverHandler.cast();
         else if (cap == INTERACTABLE_HANDLER_CAPABILITY) return interactHandler.cast();
         return super.getCapability(cap, side);
@@ -273,6 +269,25 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();
         this.write(tag);
+        return tag;
+    }
+
+    @Override
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
+        this.machineState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)];
+        itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
+        energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
+        tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
+        tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
+        itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
+        energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
         return tag;
     }
 

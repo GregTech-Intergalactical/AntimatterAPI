@@ -48,7 +48,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
-    protected Set<MachineFlag> flags = new ObjectOpenHashSet<>();
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -99,7 +98,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
         addFlags(flags.toArray(new MachineFlag[0]));
-        this.flags = flags;
     }
 
     public T setTile(Function<Machine<?>, Supplier<? extends TileEntityMachine>> func) {
@@ -168,16 +166,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return recipeMap.RB();
     }
 
-    public Set<MachineFlag> getFlags() {
-        return flags;
-    }
-
     public void addFlags(MachineFlag... flags) {
         Arrays.stream(flags).forEach(f -> f.add(this));
     }
 
     public void setFlags(MachineFlag... flags) {
-        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.getTypes().remove(this));
+        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.remove(this));
         addFlags(flags);
     }
 

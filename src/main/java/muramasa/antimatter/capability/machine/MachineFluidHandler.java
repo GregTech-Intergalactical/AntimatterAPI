@@ -82,7 +82,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     protected void insertFromCell(int slot) {
         // MachineItemHandler handler = tile.itemHandler;
         tile.itemHandler.ifPresent(handler -> {
-            ItemStack stack = handler.getCellWrapper().getStackInSlot(slot);
+            ItemStack stack = handler.getCellHandler().getStackInSlot(slot);
             //One at a time.
             for (int i = 0; i < stack.getCount(); i++) {
                 //Fluid caps.
@@ -98,7 +98,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                     LazyOptional<IFluidHandlerItem> tempHandler = ihandler.getContainer().copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
                     if (tempHandler.map(temp -> {
                         temp.drain(this.inputWrapper.fill(fluid, SIMULATE), EXECUTE);
-                        if (handler.getOutputWrapper().insertItem(0,temp.getContainer(), true) != ItemStack.EMPTY) return false;
+                        if (handler.getOutputHandler().insertItem(0,temp.getContainer(), true) != ItemStack.EMPTY) return false;
                         return true;
                     }).orElse(false)) {
                         ihandler.drain(this.inputWrapper.fill(fluid, EXECUTE), EXECUTE);
@@ -110,8 +110,8 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                 if (changedBucket != null) {
                     changedBucket.copy();
                     changedBucket.setCount(1);
-                    handler.getCellWrapper().extractItem(slot,1,false);
-                    handler.getOutputWrapper().insertItem(0, changedBucket, false);
+                    handler.getCellHandler().extractItem(slot,1,false);
+                    handler.getOutputHandler().insertItem(0, changedBucket, false);
                 } else {
                     break;
                 }

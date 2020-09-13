@@ -28,6 +28,9 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
         return hadFirstTick;
     }
 
+    /**
+     * Override this to do any initialization that requires the World and/or BlockState reference.
+     */
     public void onFirstTick() {
         //NOOP
     }

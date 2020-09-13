@@ -2,16 +2,12 @@ package muramasa.antimatter.capability;
 
 import muramasa.antimatter.Ref;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected final long capacity;
-    protected final LazyOptional<IEnergyHandler> handler = LazyOptional.of(() -> this);
 
     protected long energy;
     protected int voltageIn, voltageOut, amperageIn, amperageOut;
@@ -46,6 +42,22 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
             energy -= toExtract;
         }
         return toExtract;
+    }
+
+    public void setOutputAmperage(int amperageOut) {
+        this.amperageOut = amperageOut;
+    }
+
+    public void setInputAmperage(int amperageIn) {
+        this.amperageIn = amperageIn;
+    }
+
+    public void setOutputVoltage(int voltageOut) {
+        this.voltageOut = voltageOut;
+    }
+
+    public void setInputVoltage(int voltageIn) {
+        this.voltageIn = voltageIn;
     }
 
     @Override
@@ -96,22 +108,24 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     /** Forge IEnergyStorage Implementations **/
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return (int) insert(maxReceive, simulate);
+        long receive = insert(maxReceive, simulate);
+        return receive > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) receive;
     }
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        return (int) extract(maxExtract, simulate);
+        long extract = extract(maxExtract, simulate);
+        return extract > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) extract;
     }
 
     @Override
     public int getEnergyStored() {
-        return (int) getEnergy();
+        return this.energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.energy;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return (int) getCapacity();
+        return this.capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.capacity;
     }
 
     @Override
@@ -127,11 +141,6 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     @Override
     public boolean connects(Dir direction) {
         return true;
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        return AntimatterCaps.ENERGY_HANDLER_CAPABILITY.orEmpty(cap, this.handler);
     }
 
     @Override

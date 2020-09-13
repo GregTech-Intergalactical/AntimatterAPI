@@ -1,18 +1,17 @@
 package muramasa.antimatter.capability;
 
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nullable;
 
 public class AntimatterCaps {
-
-    @CapabilityInject(IEnergyHandler.class)
-    public static final Capability<IEnergyHandler> ENERGY_HANDLER_CAPABILITY;
 
     @CapabilityInject(IInteractHandler.class)
     public static final Capability<IInteractHandler> INTERACTABLE_HANDLER_CAPABILITY;
@@ -27,26 +26,17 @@ public class AntimatterCaps {
     public static final Capability<?> RECIPE_HANDLER_CAPABILITY;
 
     static {
-        ENERGY_HANDLER_CAPABILITY = null;
         INTERACTABLE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
         COVERABLE_HANDLER_CAPABILITY = null;
         COMPONENT_HANDLER_CAPABILITY = null;
         RECIPE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
     }
 
+    public static <T extends ICapabilityProvider> LazyOptional<EnergyHandler> getCustomEnergyHandler(T type) {
+        return type.getCapability(CapabilityEnergy.ENERGY).filter(IEnergyHandler.class::isInstance).cast();
+    }
+
     public static void register() {
-
-        CapabilityManager.INSTANCE.register(IEnergyHandler.class, new Capability.IStorage<IEnergyHandler>() {
-            @Override
-            public INBT writeNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side) {
-                return instance.serializeNBT();
-            }
-
-            @Override
-            public void readNBT(Capability<IEnergyHandler> capability, IEnergyHandler instance, Direction side, INBT nbt) {
-                instance.deserializeNBT((CompoundNBT) nbt);
-            }
-        }, () -> new EnergyHandler(0, 0, 0, 0, 0, 0));
 
         CapabilityManager.INSTANCE.register(IInteractHandler.class, new Capability.IStorage<IInteractHandler>() {
             @Nullable
