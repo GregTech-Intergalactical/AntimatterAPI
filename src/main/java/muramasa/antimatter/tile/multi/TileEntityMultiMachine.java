@@ -2,6 +2,7 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
@@ -21,8 +22,12 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -252,15 +257,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         return MachineState.INVALID_STRUCTURE;
     }
 
-    //TODO
-//    @Override
-//    public boolean hasCapability(Capability<?> capability, @Nullable Direction side) {
-//        return capability == GTCapabilities.COMPONENT || super.hasCapability(capability, side);
-//    }
-//
-//    @Nullable
-//    @Override
-//    public <T> T getCapability(Capability<T> capability, @Nullable Direction side) {
-//        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
-//    }
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) {
+            return LazyOptional.of(() -> componentHandler.get()).cast();
+        }
+        return super.getCapability(cap, side);
+    }
 }
