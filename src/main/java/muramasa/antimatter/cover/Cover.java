@@ -140,17 +140,4 @@ public abstract class Cover implements IAntimatterObject {
     public void serialize(CompoundNBT nbt) {
         //Write to the NBT at root level
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Cover)) return false;
-        Cover cover = (Cover) o;
-        return cover.getId().equals(getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getId().hashCode();
-    }
 }
