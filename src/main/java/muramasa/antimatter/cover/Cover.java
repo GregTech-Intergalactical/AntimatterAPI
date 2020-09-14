@@ -106,11 +106,11 @@ public abstract class Cover implements IAntimatterObject {
     }
 
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(Ref.ID, "block/machine/cover/" + getId())};
+        return new Texture[]{new Texture(getDomain(), "block/machine/cover/" + getId())};
     }
 
     public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(Ref.ID + ":machine/cover/" + getId());
+        return new ModelResourceLocation(getDomain() + ":machine/cover/" + getId());
     }
 
     //The default cover model
@@ -139,5 +139,18 @@ public abstract class Cover implements IAntimatterObject {
 
     public void serialize(CompoundNBT nbt) {
         //Write to the NBT at root level
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cover)) return false;
+        Cover cover = (Cover) o;
+        return cover.getId().equals(getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }
