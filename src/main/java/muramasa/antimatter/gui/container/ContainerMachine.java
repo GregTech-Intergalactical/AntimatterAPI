@@ -6,10 +6,8 @@ import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.TileEntityRecipeMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraftforge.items.SlotItemHandler;
 

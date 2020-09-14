@@ -17,11 +17,7 @@ public enum MachineState implements IAntimatterObject {
     NO_POWER(2, "No Power", true, false, false), // No power to carry out operation
     POWER_LOSS(2, "Power Loss", false, false, false); // ACTIVE, but there is a power loss with no gain
 
-    public static final MachineState[] VALUES;
-
-    static {
-        VALUES = values();
-    }
+    public static final MachineState[] VALUES = values();
 
     private final int overlayId;
     private final String displayName;

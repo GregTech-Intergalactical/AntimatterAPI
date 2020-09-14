@@ -25,10 +25,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -55,11 +52,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
     public LazyOptional<MachineEnergyHandler<?>> energyHandler;
+    public LazyOptional<MachineRecipeHandler<?>> recipeHandler;
     public LazyOptional<MachineCoverHandler<?>> coverHandler;
     public LazyOptional<MachineInteractHandler<?>> interactHandler;
-
-    @OnlyIn(Dist.CLIENT)
-    protected float clientProgress;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -68,6 +63,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.itemHandler = type.has(ITEM) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
         this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
         this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyOptional.empty();
+        this.recipeHandler = type.has(RECIPE) ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
         this.interactHandler = LazyOptional.empty();/*type.getFlags().contains()  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();*/
     }
@@ -93,19 +89,21 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     @Override
-    public void onRemove() {
-        coverHandler.ifPresent(MachineCoverHandler::onRemove);
-        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
-        itemHandler.ifPresent(MachineItemHandler::onRemove);
-        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
-    }
-
-    @Override
     public void onServerUpdate() {
         itemHandler.ifPresent(MachineItemHandler::onServerUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onServerUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
+        this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);
+    }
+
+    @Override
+    public void onRemove() {
+        coverHandler.ifPresent(MachineCoverHandler::onRemove);
+        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
+        itemHandler.ifPresent(MachineItemHandler::onRemove);
+        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+        recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
     }
 
     @Override
@@ -191,11 +189,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public float getClientProgress() {
-        return clientProgress;
-    }
-
     @Nonnull
     @Override
     public IModelData getModelData() {
@@ -240,7 +233,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         super.read(tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
         this.machineState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)];
-        System.out.println(this.machineState);
         itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
     }

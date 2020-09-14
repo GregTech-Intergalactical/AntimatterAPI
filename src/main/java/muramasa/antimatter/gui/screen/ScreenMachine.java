@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
@@ -14,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.ModList;
 
+// TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
 public class ScreenMachine<T extends ContainerMachine> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
 
     protected T container;
@@ -68,7 +70,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     }
 
     protected void drawProgress(float partialTicks, int mouseX, int mouseY) {
-        int progressTime = (int)(20 * container.getTile().getClientProgress());
+        int progressTime = (int) (20 * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
         drawTexture(gui, guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
     }
 
