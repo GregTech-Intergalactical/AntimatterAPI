@@ -59,7 +59,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyOptional<MachineInteractHandler<?>> interactHandler;
 
     @OnlyIn(Dist.CLIENT)
-    private float clientProgress;
+    protected float clientProgress;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());

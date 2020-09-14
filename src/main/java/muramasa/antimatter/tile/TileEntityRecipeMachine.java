@@ -40,7 +40,7 @@ public class TileEntityRecipeMachine extends TileEntityMachine {
         @Override
         public void set(int index, int value) {
             if (index == 0) {
-                currentProgress = Float.intBitsToFloat(value);
+                clientProgress = Float.intBitsToFloat(value);
             }
         }
 
