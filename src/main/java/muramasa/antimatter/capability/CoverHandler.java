@@ -18,7 +18,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -143,7 +142,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.COVERABLE;
     }
 }

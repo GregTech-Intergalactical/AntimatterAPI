@@ -2,9 +2,7 @@ package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Set;

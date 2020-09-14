@@ -6,5 +6,5 @@ public interface ICapabilityHost {
 
     void update(CompoundNBT tag);
 
-    CompoundNBT getCapabilityTag(String cap);
+    CompoundNBT getCapabilityTag(CapabilityType cap);
 }

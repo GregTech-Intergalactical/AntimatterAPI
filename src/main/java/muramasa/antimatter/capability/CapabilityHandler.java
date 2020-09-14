@@ -32,6 +32,10 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
     }
 
     public void init() {
+        if (handler != null) {
+            throw new NoSuchElementException("Handler already initialized");
+        }
+
         if (canInit()) {
             if (capability == null) {
                 throw new NoSuchElementException("No Capability setup");
@@ -46,9 +50,18 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
             // For the capabilities which exist on the both side, we should send the initialization tag which was used on the server.
             // That tag will provide correct data for the initialization of capability on the client side in the constructor.
             if (side == SYNC && tile.isClientSide()) {
-                Antimatter.NETWORK.sendToServer(new CapabilityPacket(handler.getCapability().getName(), tile.getPos()));
+                Antimatter.NETWORK.sendToServer(new CapabilityPacket(handler.getCapabilityType(), tile.getPos()));
             }
+
+            // For less memory usage, not store useless staff
+            flush();
         }
+    }
+
+    protected void flush() {
+        tile = null;
+        side = null;
+        capability= null;
     }
 
     public void read(CompoundNBT tag) {
@@ -104,13 +117,13 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
         }
     }
 
-    public boolean equals(String name) {
-        return handler != null && handler.getCapability().getName().equals(name);
+    public boolean equals(CapabilityType type) {
+        return handler != null && handler.getCapabilityType() == type;
     }
 
     public CompoundNBT getOrCreateTag(String key) {
         CompoundNBT nbt = new CompoundNBT();
-        if (tag != null) nbt.put(key, tag);
+        ifPresentOrElse(h -> nbt.put(key, h.serialize()), () ->  { if (tag != null) nbt.put(key, tag); });
         return nbt;
     }
 }

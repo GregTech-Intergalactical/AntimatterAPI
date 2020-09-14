@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CapabilityType;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.ICapabilityHost;
 import muramasa.antimatter.capability.pipe.PipeCapabilityHandler;
@@ -140,9 +141,9 @@ public class TileEntityPipe extends TileEntityTickable implements ICapabilityHos
     }
 
     @Override
-    public CompoundNBT getCapabilityTag(String cap) {
-        if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_COVER);
-        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_CONFIG);
+    public CompoundNBT getCapabilityTag(CapabilityType type) {
+        if (coverHandler.equals(type)) return coverHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_COVER);
+        else if (interactHandler.equals(type)) return interactHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_CONFIG);
         return new CompoundNBT();
     }
 

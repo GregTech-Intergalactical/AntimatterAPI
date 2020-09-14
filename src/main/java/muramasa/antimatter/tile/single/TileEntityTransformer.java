@@ -55,7 +55,9 @@ public class TileEntityTransformer extends TileEntityMachine {
                         h.setOutputVoltage(h.getInputVoltage());
                         h.setInputVoltage(temp);
                         h.onReset();
-                        player.sendMessage(new StringTextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
+                        if (player.getEntityWorld().isRemote()) {
+                            player.sendMessage(new StringTextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"));
+                        }
                     });
                     return true;
                 }

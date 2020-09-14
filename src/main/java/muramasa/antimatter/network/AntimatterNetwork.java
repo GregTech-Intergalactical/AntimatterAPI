@@ -36,6 +36,7 @@ public class AntimatterNetwork {
         handler.registerMessage(currMessageId++, FluidStackPacket.class, FluidStackPacket::encode, FluidStackPacket::decode, FluidStackPacket::handle);
         handler.registerMessage(currMessageId++, CapabilityPacket.class, CapabilityPacket::encode, CapabilityPacket::decode, CapabilityPacket::handle);
         handler.registerMessage(currMessageId++, CompoundPacket.class, CompoundPacket::encode, CompoundPacket::decode, CompoundPacket::handle);
+        handler.registerMessage(currMessageId++, MachineStatePacket.class, MachineStatePacket::encode, MachineStatePacket::decode, MachineStatePacket::handle);
     }
 
     public void sendToServer(Object msg) {

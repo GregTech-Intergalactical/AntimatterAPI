@@ -8,7 +8,6 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.capabilities.Capability;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
@@ -178,7 +177,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.ENERGY_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.ENERGY;
     }
 }

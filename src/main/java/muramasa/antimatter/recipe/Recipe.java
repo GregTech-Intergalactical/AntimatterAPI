@@ -3,9 +3,7 @@ package muramasa.antimatter.recipe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
