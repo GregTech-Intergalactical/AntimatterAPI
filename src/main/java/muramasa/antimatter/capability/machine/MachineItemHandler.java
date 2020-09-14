@@ -4,10 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.TagInput;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
@@ -449,7 +446,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     @Override
-    public Capability<?> getCapability() {
-        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    public CapabilityType getCapabilityType() {
+        return CapabilityType.ITEM;
     }
 }
