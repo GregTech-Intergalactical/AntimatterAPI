@@ -80,11 +80,24 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return LOOKUP.get(new RecipeInput(items, fluids));
     }
 
-    public Recipe find(long tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
-        Recipe r = find(items, fluids);
-        return r.getPower() <= tier ? r : null;
+    @Nullable
+    public Recipe find(long tier, LazyOptional<MachineItemHandler<?>> itemHandler, LazyOptional<MachineFluidHandler<?>> fluidHandler) {
+        Recipe r = find(itemHandler.map(MachineItemHandler::getInputs).orElse(new ItemStack[0]), fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
+        return r != null && r.getPower() <= tier ? r : null;
     }
 
+    @Nullable
+    public Recipe find(Tier tier, LazyOptional<MachineItemHandler<?>> itemHandler, LazyOptional<MachineFluidHandler<?>> fluidHandler) {
+        return find(tier.getVoltage(), itemHandler, fluidHandler);
+    }
+
+    @Nullable
+    public Recipe find(long tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
+        Recipe r = find(items, fluids);
+        return r != null && r.getPower() <= tier ? r : null;
+    }
+
+    @Nullable
     public Recipe find(Tier tier, @Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
         return find(tier.getVoltage(), items, fluids);
     }

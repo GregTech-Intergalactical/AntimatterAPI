@@ -27,6 +27,8 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -49,16 +51,15 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected Tier tier;
     protected MachineState machineState;
 
-    /** Client Data **/
-    protected float clientProgress = 0; //TODO look into receiveClientEvent
-    protected float maxProgress = 0; //TODO look into receiveClientEvent
-
     /** Capabilities **/
     public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
     public LazyOptional<MachineEnergyHandler<?>> energyHandler;
     public LazyOptional<MachineCoverHandler<?>> coverHandler;
     public LazyOptional<MachineInteractHandler<?>> interactHandler;
+
+    @OnlyIn(Dist.CLIENT)
+    private float clientProgress;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -190,12 +191,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public float getClientProgress() {
-            return clientProgress;
-    }
-
-    public void setClientProgress(float prog) {
-        clientProgress = prog;
+        return clientProgress;
     }
 
     @Nonnull
