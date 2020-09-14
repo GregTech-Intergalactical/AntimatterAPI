@@ -111,8 +111,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         itemHandler.init();
         fluidHandler.init();
         energyHandler.init();
-        recipeHandler.init();
         interactHandler.init();
+        recipeHandler.init();
     }
 
     @Nullable

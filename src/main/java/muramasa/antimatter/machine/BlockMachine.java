@@ -100,10 +100,10 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        if (!world.isRemote) { //Only try opening containers server side
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile != null) {
-                if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null) {
+            if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
+            if (!world.isRemote) { //Only try opening containers server side
                 if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider && hand == Hand.MAIN_HAND) {
                     NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
                     return ActionResultType.SUCCESS;
