@@ -210,7 +210,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public void toggleMachine() {
         //setMachineState(getDefaultMachineState());
-        //recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
+        recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
         setMachineState(getMachineState() == MachineState.DISABLED ? getDefaultMachineState() : MachineState.DISABLED);
     }
 
