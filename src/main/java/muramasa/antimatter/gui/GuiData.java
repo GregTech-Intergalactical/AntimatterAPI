@@ -10,6 +10,8 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
+import static muramasa.antimatter.gui.ButtonType.*;
+
 //GuiData with a type parameter T representing a GUI-able type,
 //e.g. machine o r cover.
 public class GuiData {
@@ -101,17 +103,32 @@ public class GuiData {
     }
 
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body));
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));
         return this;
     }
 
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body, text));
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_BODY, x, y, w, h, text, body));
         return this;
     }
 
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), x, y, w, h, body, overlay));
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), OVERLAY_ON_BODY, x, y, w, h, body, overlay));
+        return this;
+    }
+
+    public GuiData addSwitch(int x, int y, int w, int h, ButtonBody on, ButtonBody off) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), DOUBLE_SWITCH_BODY, x, y, w, h, on, off));
+        return this;
+    }
+
+    public GuiData addSwitch(int x, int y, int w, int h, ButtonOverlay body) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), SINGLE_SWITCH_BODY, x, y, w, h, body));
+        return this;
+    }
+
+    public GuiData addSwitch(int x, int y, int w, int h, ButtonOverlay body, String text) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_SWITCH, x, y, w, h, text, body));
         return this;
     }
 

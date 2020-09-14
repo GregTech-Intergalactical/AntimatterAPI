@@ -1,37 +1,39 @@
 package muramasa.antimatter.gui;
 
+import javax.swing.*;
+
 public class ButtonData {
 
     private int id;
+    private ButtonType type;
     private int x;
     private int y;
     private int w;
     private int h;
-    private ButtonBody body;
-    private ButtonOverlay overlay;
-    private String text = "";
+    private ButtonOverlay[] data;
+    private String text;
 
-    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body) {
+    public ButtonData(int id, ButtonType type, int x, int y, int w, int h, String text, ButtonOverlay... data) {
         this.id = id;
+        this.type = type;
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
-        this.body = body;
-    }
-
-    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body, String text) {
-        this(id, x, y, w, h, body);
         this.text = text;
+        this.data = data;
     }
 
-    public ButtonData(int id, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
-        this(id, x, y, w, h, body);
-        this.overlay = overlay;
+    public ButtonData(int id, ButtonType type, int x, int y, int w, int h, ButtonOverlay... data) {
+        this(id, type, x, y, w, h, "", data);
     }
 
     public int getId() {
         return id;
+    }
+
+    public ButtonType getType() {
+        return type;
     }
 
     public int getX() {
@@ -50,15 +52,15 @@ public class ButtonData {
         return h;
     }
 
-    public ButtonBody getBody() {
-        return body;
-    }
-
-    public ButtonOverlay getOverlay() {
-        return overlay;
-    }
-
     public String getText() {
         return text;
+    }
+
+    public ButtonOverlay getOverlay(int i) {
+        return data[i];
+    }
+
+    public ButtonBody getBody(int i) {
+        return (ButtonBody) data[i];
     }
 }
