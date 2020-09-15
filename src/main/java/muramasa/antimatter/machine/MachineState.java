@@ -11,11 +11,11 @@ public enum MachineState implements IAntimatterObject {
     IDLE(0, "Idle", true, false, true), // Ready/Idle - No operations are being performed
     DISABLED(0, "Disabled", false, false, true), // Powered but stopped on command either via Redstone or Cover
     ACTIVE(1, "Active", true, false, true), // Operating, subjected to recipe checking
-    INVALID_STRUCTURE(2, "Structure Invalid", false, false, true), // Multiblock structure check has failed
-    INVALID_TIER(2, "Recipe Tier Invalid", true, false, false), // Machine tier did not meet recipe's tier requirement
-    OUTPUT_FULL(2, "Output Full", false, true, false), // Output is full
-    NO_POWER(2, "No Power", true, false, false), // No power to carry out operation
-    POWER_LOSS(2, "Power Loss", false, false, false); // ACTIVE, but there is a power loss with no gain
+    INVALID_STRUCTURE(2, "Structure is Invalid", false, false, true), // Multiblock structure check has failed
+    INVALID_TIER(2, "Recipe Tier is Invalid", true, false, false), // Machine tier did not meet recipe's tier requirement
+    OUTPUT_FULL(2, "Output Slots are Full", false, true, false), // Output is full
+    NO_POWER(2, "No Power", false, false, false), // No power to carry out operation
+    POWER_LOSS(2, "Power Loss", true, false, false); // ACTIVE, but there is a power loss with no gain
 
     public static final MachineState[] VALUES = values();
 

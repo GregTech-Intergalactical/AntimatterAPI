@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -19,11 +20,11 @@ public interface IComponentHandler {
 
     TileEntity getTile();
 
-    LazyOptional<MachineItemHandler<?>> getItemHandler();
+    LazyHolder<MachineItemHandler<?>> getItemHandler();
 
-    LazyOptional<MachineFluidHandler<?>> getFluidHandler();
+    LazyHolder<MachineFluidHandler<?>> getFluidHandler();
 
-    LazyOptional<MachineEnergyHandler<?>> getEnergyHandler();
+    LazyHolder<MachineEnergyHandler<?>> getEnergyHandler();
 
     void onStructureFormed(TileEntityMultiMachine tile);
 

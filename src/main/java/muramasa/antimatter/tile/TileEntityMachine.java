@@ -15,6 +15,7 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -48,24 +49,24 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected Tier tier;
     protected MachineState machineState;
 
-    /** Capabilities **/
-    public LazyOptional<MachineItemHandler<?>> itemHandler;
-    public LazyOptional<MachineFluidHandler<?>> fluidHandler;
-    public LazyOptional<MachineEnergyHandler<?>> energyHandler;
-    public LazyOptional<MachineRecipeHandler<?>> recipeHandler;
-    public LazyOptional<MachineCoverHandler<?>> coverHandler;
-    public LazyOptional<MachineInteractHandler<?>> interactHandler;
+    /** Handlers **/
+    public LazyHolder<MachineItemHandler<?>> itemHandler;
+    public LazyHolder<MachineFluidHandler<?>> fluidHandler;
+    public LazyHolder<MachineEnergyHandler<?>> energyHandler;
+    public LazyHolder<MachineRecipeHandler<?>> recipeHandler;
+    public LazyHolder<MachineCoverHandler<?>> coverHandler;
+    public LazyHolder<MachineInteractHandler<?>> interactHandler;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
         this.type = type;
         this.machineState = getDefaultMachineState();
-        this.itemHandler = type.has(ITEM) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
-        this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
-        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyOptional.empty();
-        this.recipeHandler = type.has(RECIPE) ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
-        this.coverHandler = type.has(COVERABLE) ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
-        this.interactHandler = LazyOptional.empty();/*type.getFlags().contains()  ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();*/
+        this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MachineItemHandler<>(this)) : LazyHolder.empty();
+        this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MachineFluidHandler<>(this)) : LazyHolder.empty();
+        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyHolder.empty();
+        this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
+        this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
+        this.interactHandler = LazyHolder.empty();
     }
 
     @Override
@@ -73,6 +74,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         if (isServerSide()) {
             this.itemHandler.ifPresent(MachineItemHandler::init);
             this.energyHandler.ifPresent(MachineEnergyHandler::init);
+            this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
     }
 
@@ -108,12 +110,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        coverHandler.ifPresent(h -> h.onMachineEvent(event, data));
-        itemHandler.ifPresent(h -> h.onMachineEvent(event, data));
-        energyHandler.ifPresent(h -> h.onMachineEvent(event, data));
-        fluidHandler.ifPresent(h -> h.onMachineEvent(event, data));
-
-        //TODO: Put this in the actual handlers when a change occurs.
+        coverHandler.ifPresent(c -> c.onMachineEvent(event, data));
+        itemHandler.ifPresent(i -> i.onMachineEvent(event, data));
+        energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
+        fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
+        recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
     }
 
     /** Getters **/
@@ -212,11 +213,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == ITEM_HANDLER_CAPABILITY) return itemHandler.map(ih -> ih.getHandlerForSide(side)).cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY) return fluidHandler.map(fh -> fh.getWrapperForSide(side)).cast();
-        else if (cap == CapabilityEnergy.ENERGY) return energyHandler.cast();
-        else if (cap == COVERABLE_HANDLER_CAPABILITY) return coverHandler.cast();
-        else if (cap == INTERACTABLE_HANDLER_CAPABILITY) return interactHandler.cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getWrapperForSide(side)).transform().cast();
+        else if (cap == CapabilityEnergy.ENERGY && energyHandler.isPresent()) return energyHandler.transform().cast();
+        else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
+        else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return interactHandler.transform().cast();
         return super.getCapability(cap, side);
     }
 
@@ -232,7 +233,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void read(CompoundNBT tag) {
         super.read(tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
-        this.machineState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)];
+        setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
         itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
     }

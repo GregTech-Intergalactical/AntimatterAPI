@@ -23,9 +23,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
         // tile.setClientProgress(0);
-        if (tile.getMachineType().has(MachineFlag.RECIPE)) {
-            trackIntArray(((TileEntityRecipeMachine) tile).getProgressData());
-        }
+        tile.recipeHandler.ifPresent(r -> trackIntArray(r.getProgressData()));
     }
 
     public TileEntityMachine getTile() {

@@ -28,7 +28,7 @@ public class AntimatterCaps {
     static {
         INTERACTABLE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
         COVERABLE_HANDLER_CAPABILITY = null;
-        COMPONENT_HANDLER_CAPABILITY = null;
+        COMPONENT_HANDLER_CAPABILITY = null; // Fixme: Optimize
         RECIPE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
     }
 

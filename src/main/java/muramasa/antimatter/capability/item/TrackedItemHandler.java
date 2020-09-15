@@ -2,7 +2,10 @@ package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nonnull;
 
 public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHandler {
 
@@ -13,6 +16,11 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
         super(size);
         this.tile = tile;
         this.contentEvent = contentEvent;
+    }
+
+    @Override
+    public int getStackLimit(int slot, @Nonnull ItemStack stack) {
+        return super.getStackLimit(slot, stack);
     }
 
     @Override
