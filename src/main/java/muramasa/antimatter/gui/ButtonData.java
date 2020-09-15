@@ -6,10 +6,7 @@ public class ButtonData {
 
     private int id;
     private ButtonType type;
-    private int x;
-    private int y;
-    private int w;
-    private int h;
+    private int x, y, w, h;
     private ButtonOverlay[] data;
     private String text;
 
