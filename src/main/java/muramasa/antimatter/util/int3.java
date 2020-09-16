@@ -22,6 +22,15 @@ public class int3 extends BlockPos.Mutable {
         this.z = z;
     }
 
+    public int3(int x, int y, int z, Direction side) {
+        this(x, y, z);
+        this.side = side;
+    }
+
+    public int3(Direction side) {
+        this.side = side;
+    }
+
     public int3(BlockPos pos, Direction side) {
         this.x = pos.getX();
         this.y = pos.getY();
