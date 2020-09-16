@@ -1,6 +1,5 @@
 package muramasa.antimatter.machine;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
@@ -42,6 +41,8 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -101,10 +102,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
-                if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
-                if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider && hand == Hand.MAIN_HAND) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
-                    return ActionResultType.SUCCESS;
+                // if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
+                ItemStack stack = player.getHeldItem(hand);
+                if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> !FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true).success).orElse(true)) {
+                    if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider && hand == Hand.MAIN_HAND) {
+                        NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tile, tile.getPos());
+                        return ActionResultType.SUCCESS;
+                    }
                 }
             }
         }

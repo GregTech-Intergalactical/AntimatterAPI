@@ -214,7 +214,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getWrapperForSide(side)).transform().cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getTankFromSide(side)).transform().cast();
         else if (cap == CapabilityEnergy.ENERGY && energyHandler.isPresent()) return energyHandler.transform().cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
         else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return interactHandler.transform().cast();

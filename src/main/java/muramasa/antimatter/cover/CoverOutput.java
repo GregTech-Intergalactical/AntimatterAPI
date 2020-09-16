@@ -33,7 +33,7 @@ public class CoverOutput extends Cover {
 
     @Override
     public void onMachineEvent(CoverInstance instance, TileEntityMachine tile, IMachineEvent event) {
-        //TODO: Refactor?
+        //TODO: Refactor? <- YES!
         if (event == MachineEvent.ITEMS_OUTPUTTED && instance.getNbt().getBoolean(KEY_OUTPUT)) {
             Direction outputDir = tile.getOutputFacing();
             TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
@@ -46,7 +46,7 @@ public class CoverOutput extends Cover {
             TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
             if (adjTile == null) return;
             adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
-                tile.fluidHandler.ifPresent(h -> Utils.transferFluids(h.getOutputWrapper(), adjHandler));
+                tile.fluidHandler.ifPresent(h -> Utils.transferFluids(h.getOutputTanks(), adjHandler));
             });
         }
     }
