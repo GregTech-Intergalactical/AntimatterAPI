@@ -39,7 +39,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         super.init();
         ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
         for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container, playerInventory, loc, button));
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, loc, button));
         }
     }
 
