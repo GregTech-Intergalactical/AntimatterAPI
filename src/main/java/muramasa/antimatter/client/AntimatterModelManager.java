@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
+import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.dynamic.DynamicModel;
@@ -32,6 +33,17 @@ public class AntimatterModelManager {
 
     public static final AntimatterModelLoader LOADER_MAIN = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "main"));
     public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
+    public static final DynamicModelLoader LOADER_MACHINE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "machine")) {
+        @Override
+        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+            return new DynamicModel((DynamicModel) super.read(context, json)) {
+                @Override
+                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+                    return new MachineBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                }
+            };
+        }
+    };
     public static final DynamicModelLoader LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
         @Override
         public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {

@@ -21,6 +21,8 @@ import java.util.Objects;
 
 public class CoverInstance<T extends TileEntity> implements INamedContainerProvider {
 
+    public static final CoverInstance<?>[] EMPTY_COVER_ARRAY = new CoverInstance[0];
+
     private Cover cover;
     private CompoundNBT nbt;
     private T tile;

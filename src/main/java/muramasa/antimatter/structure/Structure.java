@@ -57,7 +57,7 @@ public class Structure {
         StructureResult result = new StructureResult(this);
         Tuple<int3, StructureElement> element;
         int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
-        int3 working = new int3();
+        int3 working = new int3(tile.getFacing());
         int elementSize = elements.size();
         for (int i = 0; i < elementSize; i++) {
             element = elements.get(i);

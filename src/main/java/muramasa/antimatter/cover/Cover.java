@@ -106,11 +106,11 @@ public abstract class Cover implements IAntimatterObject {
     }
 
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(Ref.ID, "block/machine/cover/" + getId())};
+        return new Texture[]{new Texture(getDomain(), "block/machine/cover/" + getId())};
     }
 
     public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(Ref.ID + ":machine/cover/" + getId());
+        return new ModelResourceLocation(getDomain() + ":machine/cover/" + getId());
     }
 
     //The default cover model

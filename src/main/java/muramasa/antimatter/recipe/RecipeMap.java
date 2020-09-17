@@ -212,7 +212,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (r == null) {
             r = LOOKUP_TAG.find(new RecipeInput(items,fluids));
         }
-     //   Antimatter.LOGGER.info("Time to lookup: (µs) " + ((System.nanoTime()-currentTime)));
+     //   Antimatter.LOGGER.info("Time to lookup: " + ((System.nanoTime()-currentTime)));
         return r;
     }
 

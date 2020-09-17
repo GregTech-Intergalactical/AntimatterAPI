@@ -45,6 +45,7 @@ public class Antimatter extends AntimatterMod {
 
         eventBus.addListener(ClientHandler::onItemColorHandler);
         eventBus.addListener(ClientHandler::onBlockColorHandler);
+        eventBus.addListener(ClientHandler::onModelRegistry);
 
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::commonSetup);
