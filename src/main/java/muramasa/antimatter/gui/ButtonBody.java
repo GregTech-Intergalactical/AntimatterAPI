@@ -5,6 +5,8 @@ public class ButtonBody extends ButtonOverlay {
     public static ButtonBody GREY = new ButtonBody("grey", 0, 0, 16, 0, 16, 16);
     public static ButtonBody BLUE = new ButtonBody("blue", 32, 0, 16, 0, 16, 16);
     public static ButtonBody NO_HOVER = new ButtonBody("no_hover", 64, 0, 0, 0, 16, 16);
+    public static ButtonBody ON = new ButtonBody("on", 113, 1, -16, 0, 14, 14);
+    public static ButtonBody OFF = new ButtonBody("off", 81, 1, 16, 0, 14, 14);
     public static ButtonBody APAD_LEFT = new ButtonBody("apad_left", 1, 49, 0, 16, 14, 14);    // «
     public static ButtonBody PAD_LEFT = new ButtonBody("pad_left", 17, 49, 0, 16, 14, 14);     // ‹
     public static ButtonBody PAD_RIGHT = new ButtonBody("pad_right", 33, 49, 0, 16, 14, 14);   // »

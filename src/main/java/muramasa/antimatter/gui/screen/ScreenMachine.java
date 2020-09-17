@@ -5,10 +5,13 @@ import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.ButtonWidget;
+import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
+import net.minecraft.client.gui.widget.button.AbstractButton;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -36,11 +39,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         super.init();
         ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
         for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
-            addButton(new ButtonWidget(loc, guiLeft + button.getX(), guiTop + button.getY(), button.getW(), button.getH(), button.getBody(), button.getOverlay(), button.getText(), b -> {
-                int shiftHold = playerInventory.player.isShiftKeyDown() ? 1 : 0;
-                container.getTile().onGuiEvent(GuiEvent.BUTTON_PRESSED, button.getId(), shiftHold);
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.BUTTON_PRESSED, container.getTile().getPos(), button.getId(), shiftHold));
-            }));
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, loc, button));
         }
     }
 

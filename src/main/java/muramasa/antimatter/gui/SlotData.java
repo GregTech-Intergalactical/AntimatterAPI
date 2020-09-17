@@ -3,8 +3,7 @@ package muramasa.antimatter.gui;
 public class SlotData {
 
     private SlotType type;
-    private int x;
-    private int y;
+    private int x, y;
     private int data = -1;
 
     public SlotData(SlotType type, int x, int y) {

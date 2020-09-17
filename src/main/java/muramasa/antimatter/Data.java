@@ -11,10 +11,7 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.container.*;
-import muramasa.antimatter.gui.screen.ScreenBasicMachine;
-import muramasa.antimatter.gui.screen.ScreenCover;
-import muramasa.antimatter.gui.screen.ScreenHatch;
-import muramasa.antimatter.gui.screen.ScreenMultiMachine;
+import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.types.Machine;
@@ -198,6 +195,20 @@ public class Data {
         @ParametersAreNonnullByDefault
         public ScreenBasicMachine<ContainerMachine> create(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
             return new ScreenBasicMachine<>(container, inv, name);
+        }
+    };
+
+    public static MenuHandlerMachine<ContainerMachine, ScreenSteamMachine<ContainerMachine>> STEAM_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenSteamMachine<ContainerMachine>>(Ref.ID, "container_steam") {
+        @Nullable
+        @Override
+        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+            return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine) tile, playerInv, this, windowId) : null;
+        }
+
+        @Override
+        @ParametersAreNonnullByDefault
+        public ScreenSteamMachine<ContainerMachine> create(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
+            return new ScreenSteamMachine<>(container, inv, name);
         }
     };
 
