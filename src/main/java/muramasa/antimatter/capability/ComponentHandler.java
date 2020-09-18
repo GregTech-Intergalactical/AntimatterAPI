@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
@@ -13,11 +14,14 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.Set;
 
 public class ComponentHandler implements IComponentHandler {
 
     protected String componentId;
     protected TileEntityBase componentTile;
+
+    protected Set<TileEntityMultiMachine> controllers = new ObjectOpenHashSet<>();
 
     public ComponentHandler(String componentId, TileEntityBase componentTile) {
         this.componentId = componentId;
@@ -56,12 +60,12 @@ public class ComponentHandler implements IComponentHandler {
 
     @Override
     public void onStructureFormed(@Nonnull TileEntityMultiMachine controllerTile) {
-
+        this.controllers.add(controllerTile);
     }
 
     @Override
     public void onStructureInvalidated(@Nonnull TileEntityMultiMachine controllerTile) {
-
+        this.controllers.add(controllerTile);
     }
 
     @Override
@@ -80,6 +84,7 @@ public class ComponentHandler implements IComponentHandler {
 //        }
 //        return null;
         //TODO support multiple controllers
+        if (this.controllers.size() != 0) return Optional.of(this.controllers.iterator().next());
         BlockPos controllerPos = StructureCache.get(getTile().getWorld(), getTile().getPos());
         if (controllerPos != null) {
             TileEntity tile = getTile().getWorld().getTileEntity(getTile().getPos());

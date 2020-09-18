@@ -242,6 +242,7 @@ public class Utils {
     }
 
     public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
+        if (a == null && b == null) return true;
         if (a == null || b == null) return false;
         int matchCount = 0;
         for (FluidStack fluidStack : a) {

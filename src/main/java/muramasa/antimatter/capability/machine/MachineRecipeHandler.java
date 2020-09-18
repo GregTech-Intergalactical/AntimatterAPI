@@ -35,17 +35,20 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
 
+    private boolean forceRecipeCheck = false;
+
     public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
         if (tag != null) deserialize(tag);
     }
 
     public void onUpdate() {
+        if (activeRecipe == null && forceRecipeCheck) checkRecipe();
+
         if (tile.getMachineState() != IDLE) tickMachineLoop();
     }
 
     protected void tickMachineLoop() {
-
         //To avoid a feedback loop caused by events firing from inside the recipe handler
         //(such as consuming resources for a recipe and/or generator check so we dont overflow tick recipes.
         if (tickingRecipe) return;
@@ -161,6 +164,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return true;
     }
 
+    //Schedules a check next tick for a possible recipe.
+    public void scheduleCheck() {
+        forceRecipeCheck = true;
+    }
+
     public void addOutputs() {
         tile.itemHandler.ifPresent(h -> {
             h.addOutputs(activeRecipe.getOutputItems());
@@ -172,7 +180,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public boolean canRecipeContinue() {
         if (tile.itemHandler.isPresent() && !tile.itemHandler.get().consumeInputs(activeRecipe,true)) //!Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
             return false;
-        if (tile.fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
+        if (tile.fluidHandler.isPresent() && (activeRecipe.hasInputFluids() && (!Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))))
             return false;
         return true;
     }
@@ -218,6 +226,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void resetRecipe() {
         activeRecipe = null;
         overclock = 0;
+        curProgress = 0;
+        maxProgress = 0;
     }
 
     /**

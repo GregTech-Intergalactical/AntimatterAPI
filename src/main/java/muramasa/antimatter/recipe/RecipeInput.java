@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 //Reminder: A simplified version of a HashMap get
 //if (e.hash == hash && ((k = e.key) == key || key.equals(k))) return e.value;
@@ -21,6 +22,8 @@ public class RecipeInput {
 
     protected int itemHash;
     protected int fluidHash;
+
+    protected long bitfilter;
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
         rootFluids = fluids;
@@ -43,10 +46,16 @@ public class RecipeInput {
                 fluidHash += this.fluids[i].hashCode();
             }
         }
+        this.bitfilter = ~0L;
     }
 
     public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
         this(items, fluids, Collections.emptySet());
+    }
+
+    public void clearJunk(Set<ItemWrapper> filter) {
+        if (items == null || filter == null) return;
+        this.items = Arrays.stream(items).filter(filter::contains).collect(Collectors.toList()).toArray(new ItemWrapper[0]);
     }
 
     public List<ItemWrapper> trimAllTags(Optional<Set<ResourceLocation>> filter) {
@@ -90,6 +99,8 @@ public class RecipeInput {
         itemHash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
 
         if (items != null && items.length == 0) items = null;
+
+        this.bitfilter = bitFilter;
     }
 
     @Override
@@ -100,7 +111,8 @@ public class RecipeInput {
             if (other.items == null) {
                 return false;
             }
-            for (ItemWrapper item : items) {
+            for (int i = 0; ((bitfilter & (1 << i)) != 0) && i < items.length; i++) {
+                ItemWrapper item = items[i];
                 if (!other.items[other.itemMap.get(item.hashCode())].equals(item)) return false;
             }
         } else if (other.items != null) {

@@ -24,6 +24,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.Tesseract;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
@@ -45,6 +46,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     protected T tile;
     protected ITickingController controller;
+    //Machine GUI wrappers. If a machine (e.g. multiblock) wants to extend getInputWrapper() these need to be a part of the combined inventory.
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
 
@@ -78,32 +80,32 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     /** Handler Access **/
-    public IItemHandler getInputWrapper() {
+    public IItemHandlerModifiable getInputWrapper() {
         return inputWrapper;
     }
 
-    public IItemHandler getOutputWrapper() {
+    public IItemHandlerModifiable getOutputWrapper() {
         return outputWrapper;
     }
 
-    public IItemHandler getCellWrapper() {
+    public IItemHandlerModifiable getCellWrapper() {
         return cellWrapper;
     }
 
-    public IItemHandler getChargeWrapper() {
+    public IItemHandlerModifiable getChargeWrapper() {
         return chargeWrapper;
     }
 
     public int getInputCount() {
-        return inputWrapper.getSlots();
+        return getInputWrapper().getSlots();
     }
 
     public int getOutputCount() {
-        return outputWrapper.getSlots();
+        return getOutputWrapper().getSlots();
     }
 
     public int getCellCount() {
-        return cellWrapper.getSlots();
+        return getCellWrapper().getSlots();
     }
 
     public ItemStack[] getInputs() {
@@ -115,22 +117,22 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     public ItemStack getCellInput() {
-        return cellWrapper.getStackInSlot(0);
+        return getCellWrapper().getStackInSlot(0);
     }
 
     public ItemStack getCellOutput() {
-        return cellWrapper.getStackInSlot(1);
+        return getCellWrapper().getStackInSlot(1);
     }
 
     public IItemHandler getHandlerForSide(Direction side) {
-        return side != tile.getOutputFacing() ? inputWrapper : outputWrapper;
+        return side != tile.getOutputFacing() ? getInputWrapper() : getOutputWrapper();
     }
 
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
-        for (int i = 0; i < inputWrapper.getSlots(); i++) {
-            if (!inputWrapper.getStackInSlot(i).isEmpty()) list.add(inputWrapper.getStackInSlot(i).copy());
+        for (int i = 0; i < getInputWrapper().getSlots(); i++) {
+            if (!getInputWrapper().getStackInSlot(i).isEmpty()) list.add(getInputWrapper().getStackInSlot(i).copy());
         }
         return list;
     }
@@ -150,8 +152,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     /** Gets a list of non empty output Items **/
     public List<ItemStack> getOutputList() {
         List<ItemStack> list = new ObjectArrayList<>();
-        for (int i = 0; i < outputWrapper.getSlots(); i++) {
-            ItemStack item = outputWrapper.getStackInSlot(i);
+        for (int i = 0; i < getOutputWrapper().getSlots(); i++) {
+            ItemStack item = getOutputWrapper().getStackInSlot(i);
             if (!item.isEmpty()) list.add(item.copy());
         }
         return list;
@@ -162,14 +164,15 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         Set<Integer> skipSlots = new HashSet<>();
         if (recipe.getInputItems() != null && recipe.getInputItems().length > 0) {
             for (ItemStack input : recipe.getInputItems()) {
-                for (int i = 0; i < inputWrapper.getSlots(); i++) {
-                    ItemStack item = inputWrapper.getStackInSlot(i);
+                IItemHandler wrap = getInputWrapper();
+                for (int i = 0; i < wrap.getSlots(); i++) {
+                    ItemStack item = wrap.getStackInSlot(i);
                     if (Utils.equals(input, item) && !Utils.hasNoConsumeTag(input) && !skipSlots.contains(i)) {
-                        inputWrapper.extractItem(i, input.getCount(), simulate);
+                        wrap.extractItem(i, input.getCount(), simulate);
                         skipSlots.add(i);
                         break;
                     }
-                    if (i == inputWrapper.getSlots()-1) {
+                    if (i == wrap.getSlots()-1) {
                         success = false;
                     }
                 }
@@ -178,14 +181,15 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
         if (recipe.getTagInputs() != null && recipe.getTagInputs().length > 0) {
             for (TagInput input : recipe.getTagInputs()) {
-                for (int i = 0; i < inputWrapper.getSlots(); i++) {
-                    ItemStack item = inputWrapper.getStackInSlot(i);
+                IItemHandler wrap = getInputWrapper();
+                for (int i = 0; i < wrap.getSlots(); i++) {
+                    ItemStack item = wrap.getStackInSlot(i);
                     if (input.tag.contains(item.getItem()) && !skipSlots.contains(i) /*&& !Utils.hasNoConsumeTag(input)*/) {
-                        inputWrapper.extractItem(i, input.count, simulate);
+                        wrap.extractItem(i, input.count, simulate);
                         skipSlots.add(i);
                         break;
                     }
-                    if (i == inputWrapper.getSlots()-1) {
+                    if (i == wrap.getSlots()-1) {
                         success = false;
                     }
                 }
@@ -196,10 +200,10 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     public void addOutputs(ItemStack... outputs) {
-        if (outputWrapper == null || outputs == null || outputs.length == 0) return;
+        if (getOutputWrapper() == null || outputs == null || outputs.length == 0) return;
         for (ItemStack output : outputs) {
-            for (int i = 0; i < outputWrapper.getSlots(); i++) {
-                ItemStack result = outputWrapper.insertItem(i, output.copy(), false);
+            for (int i = 0; i < getOutputWrapper().getSlots(); i++) {
+                ItemStack result = getOutputWrapper().insertItem(i, output.copy(), false);
                 if (result.isEmpty()) break;
             }
         }
@@ -214,8 +218,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
         for (ItemStack stack : a) {
-            for (int i = 0; i < outputWrapper.getSlots(); i++) {
-                ItemStack item = outputWrapper.getStackInSlot(i);
+            for (int i = 0; i < getOutputWrapper().getSlots(); i++) {
+                ItemStack item = getOutputWrapper().getStackInSlot(i);
                 if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= item.getMaxStackSize())) {
                     matchCount++;
                     break;
@@ -229,14 +233,14 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         List<ItemStack> notConsumed = new ObjectArrayList<>();
         ItemStack result;
         for (ItemStack input : inputs) {
-            for (int i = 0; i < inputWrapper.getSlots(); i++) {
-                if (Utils.equals(input, inputWrapper.getStackInSlot(i))) {
-                    result = inputWrapper.extractItem(i, input.getCount(), false);
+            for (int i = 0; i < getInputWrapper().getSlots(); i++) {
+                if (Utils.equals(input, getInputWrapper().getStackInSlot(i))) {
+                    result = getInputWrapper().extractItem(i, input.getCount(), false);
                     if (!result.isEmpty()) {
                         if (result.getCount() == input.getCount()) break;
                         else notConsumed.add(Utils.ca(input.getCount() - result.getCount(), input));
                     }
-                } else if (i == inputWrapper.getSlots() - 1) {
+                } else if (i == getInputWrapper().getSlots() - 1) {
                     notConsumed.add(input);
                 }
             }
@@ -248,11 +252,11 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         List<ItemStack> notExported = new ObjectArrayList<>();
         ItemStack result;
         for (int i = 0; i < outputs.length; i++) {
-            for (int j = 0; j < outputWrapper.getSlots(); j++) {
-                result = outputWrapper.insertItem(j, outputs[i].copy(), false);
+            for (int j = 0; j < getOutputWrapper().getSlots(); j++) {
+                result = getOutputWrapper().insertItem(j, outputs[i].copy(), false);
                 if (result.isEmpty()) break;
                 else outputs[i] = result;
-                if (j == outputWrapper.getSlots() - 1) notExported.add(result);
+                if (j == getOutputWrapper().getSlots() - 1) notExported.add(result);
             }
         }
         return notExported.toArray(new ItemStack[0]);
@@ -352,7 +356,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
                }
            }
         }
-        if (chargeWrapper != null) {
+        if (getChargeWrapper() != null) {
             chargeWrapper.setSize(tag.contains(Ref.TAG_MACHINE_CHARGE_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_CHARGE_SIZE) : cellWrapper.getSlots());
             ListNBT chargeTagList = tag.getList(Ref.TAG_MACHINE_CHARGE_ITEM, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < chargeTagList.size(); i++) {
