@@ -1,10 +1,8 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.network.packets.GuiEventPacket;
@@ -15,6 +13,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import static muramasa.antimatter.gui.ButtonBody.OFF;
 import static muramasa.antimatter.gui.ButtonBody.ON;
+import static muramasa.antimatter.gui.event.GuiEvent.*;
 
 public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachine<T> {
 
@@ -44,12 +43,12 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
         ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
         if (container.getTile().has(MachineFlag.ITEM)) {
             item = new SwitchWidjet(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
+                Antimatter.NETWORK.sendToServer(new GuiEventPacket(ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
             });
         }
         if (container.getTile().has(MachineFlag.FLUID)) {
             fluid = new SwitchWidjet(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
+                Antimatter.NETWORK.sendToServer(new GuiEventPacket(FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
             });
         }
         if (item != null || fluid != null) {

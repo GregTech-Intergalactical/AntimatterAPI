@@ -1,7 +1,5 @@
 package muramasa.antimatter.capability;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -22,20 +20,21 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICapabilityHandler {
 
-    private T tile;
-    protected Object2ObjectMap<Direction, CoverInstance<T>> covers = new Object2ObjectOpenHashMap<>();
+    protected T tile;
+    protected EnumMap<Direction, CoverInstance<T>> covers = new EnumMap<>(Direction.class);
     protected List<String> validCovers = new ObjectArrayList<>();
 
     public CoverHandler(T tile, Cover... validCovers) {
         this.tile = tile;
-        this.validCovers.add(Data.COVERNONE.getId());
-        Arrays.stream(validCovers).forEach(c -> this.validCovers.add(c.getId()));
-        Arrays.stream(Ref.DIRS).forEach(d -> covers.put(d, new CoverInstance<>(Data.COVERNONE, tile)));
+        this.validCovers.add(Data.COVER_NONE.getId());
+        for (Cover c : validCovers) this.validCovers.add(c.getId());
+        for (Direction d : Ref.DIRS) covers.put(d, new CoverInstance<>(Data.COVER_NONE, tile));
     }
 
     @Override
@@ -73,12 +72,16 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
 
     @Override
     public void onUpdate() {
-        covers.forEach((s, c) -> c.getCover().onUpdate(c, s));
+        for (Map.Entry<Direction, CoverInstance<T>> e : covers.entrySet()) {
+            e.getValue().onUpdate(e.getKey());
+        }
     }
 
     @Override
     public void onRemove() {
-        covers.forEach((s, c) -> c.onRemove(s));
+        for (Map.Entry<Direction, CoverInstance<T>> e : covers.entrySet()) {
+            e.getValue().onRemove(e.getKey());
+        }
     }
 
     @Override
@@ -96,7 +99,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
     @Override
     public boolean removeCover(PlayerEntity player, Direction side) {
         System.out.println(get(side).getId());
-        if (get(side).isEmpty() || !set(side, Data.COVERNONE)) return false;
+        if (get(side).isEmpty() || !set(side, Data.COVER_NONE)) return false;
         if (!player.isCreative()) player.dropItem(get(side).getCover().getDroppedStack(), false);
         player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
         return true;
@@ -109,23 +112,25 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
 
     @Override
     public boolean isValid(@Nonnull Direction side, @Nonnull Cover replacement) {
-        return (get(side).isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
+        return (get(side).isEmpty() || replacement.isEqual(Data.COVER_NONE)) && validCovers.contains(replacement.getId());
     }
 
     /** NBT **/
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
-        byte[] sides = new byte[1];
-        covers.forEach((s, c) -> {
-            if (!c.isEmpty()) { //Don't store EMPTY covers unnecessarily
-                sides[0] |= (1 << s.getIndex());
-                CompoundNBT nbt = c.serialize();
-                nbt.putString(Ref.TAG_MACHINE_COVER_ID, c.getId());
-                tag.put(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(s.getIndex())), nbt);
+        byte side = 0;
+        for (Map.Entry<Direction, CoverInstance<T>> e : covers.entrySet()) {
+            CoverInstance<?> instance = e.getValue();
+            if (!instance.isEmpty()) {
+                int dir = e.getKey().getIndex();
+                side |= (1 << dir);
+                CompoundNBT nbt = instance.serialize();
+                nbt.putString(Ref.TAG_MACHINE_COVER_ID, instance.getId());
+                tag.put(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(dir)), nbt);
             }
-        });
-        tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
+        }
+        tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, side);
         return tag;
     }
 
@@ -137,7 +142,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
                 CompoundNBT nbt = tag.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
                 covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(nbt);
             } else {
-                covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
+                covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVER_NONE, tile));
             }
         }
     }

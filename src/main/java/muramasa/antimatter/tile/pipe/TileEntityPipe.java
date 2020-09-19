@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.ICapabilityHost;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.pipe.PipeCapabilityHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeInteractHandler;
@@ -29,7 +30,7 @@ import java.util.List;
 
 import static muramasa.antimatter.capability.CapabilitySide.SYNC;
 
-public class TileEntityPipe extends TileEntityTickable implements ICapabilityHost, ITickHost {
+public class TileEntityPipe extends TileEntityTickable implements ICapabilityHost, ITickHost, IGuiHandler {
 
     /** Pipe Data **/
     protected PipeType<?> type;

@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICapabilityHandler;
@@ -47,7 +48,7 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
             } else if (type == CROWBAR) {
                 return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, side)).orElse(false);
             } else if (type == SCREWDRIVER) {
-                CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(side)).orElse(COVER_EMPTY);
+                CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(side)).orElse(new CoverInstance<>(COVER_NONE, tile));
                 return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
             }
             return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);

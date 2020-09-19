@@ -3,9 +3,12 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICapabilityHandler;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTankWrapper;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.recipe.Recipe;
@@ -36,7 +39,7 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ICapabilityHandler, ITickHost {
+public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, IGuiHandler, ICapabilityHandler, ITickHost {
 
     protected T tile;
     protected ITickingController controller;
@@ -132,6 +135,17 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                     if (tile.itemHandler.get().getCellCount() > 0 && data[0] instanceof Integer) {
                         insertFromCell((Integer) data[0]);
                     }
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onGuiEvent(IGuiEvent event, int...data) {
+        if (event instanceof GuiEvent) {
+            switch ((GuiEvent)event) {
+                case FLUID_EJECT:
+                    // TODO: Finish ejection
                     break;
             }
         }

@@ -125,6 +125,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
             checkStructure();
             recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
         }*/
+        super.onGuiEvent(event, data);
     }
 
     /** Returns list of items across all input hatches. Merges equal filters empty **/

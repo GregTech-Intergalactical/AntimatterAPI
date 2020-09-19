@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -153,6 +154,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         fluidHandler.ifPresent(h -> h.onMachineEvent(event, data));
 
         //TODO: Put this in the actual handlers when a change occurs.
+    }
+
+    @Override
+    public void onGuiEvent(IGuiEvent event, int... data) {
+        coverHandler.ifPresent(h -> h.onGuiEvent(event, data));
+        itemHandler.ifPresent(h -> h.onGuiEvent(event, data));
+        fluidHandler.ifPresent(h -> h.onGuiEvent(event, data));
     }
 
     /** Getters **/

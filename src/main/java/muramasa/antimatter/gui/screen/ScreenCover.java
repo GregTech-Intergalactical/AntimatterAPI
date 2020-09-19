@@ -1,13 +1,13 @@
 package muramasa.antimatter.gui.screen;
 
-import muramasa.antimatter.cover.CoverTiered;
+import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+
 //A screen showing the GUI for the cover.
 public class ScreenCover<T extends ContainerCover> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
 
@@ -18,11 +18,7 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     public ScreenCover(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        if (container.getCover().getCover() instanceof CoverTiered) {
-            this.gui = container.getCover().getCover().getGui().getTexture((((CoverTiered)container.getCover().getCover()).getTier()),"cover");
-        } else {
-            this.gui = container.getCover().getCover().getGui().getTexture(Tier.LV,"cover");
-        }
+        this.gui = container.getInstance().getCover().getGui().getTexture("cover");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {
@@ -30,8 +26,23 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     }
 
     @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        drawTitle(mouseX, mouseY);
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawTexture(gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        drawTexture(container.getInstance().getCover().getItem().getRegistryName(), guiLeft, guiTop, 0, 8, 32, 32);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        ResourceLocation loc = container.getInstance().getCover().getGui().getButtonLocation();
+        for (ButtonData button : container.getInstance().getCover().getGui().getButtons()) {
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getInstance().getTile(), playerInventory, loc, button));
+        }
     }
 }

@@ -7,6 +7,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -41,7 +42,7 @@ public class CoveredBakedModel extends DynamicBakedModel {
     public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile == null) return super.getModelData(world, pos, state, data);
-        CoverInstance<?>[] covers = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.getAll()).orElse(CoverInstance.EMPTY_COVER_ARRAY);
+        CoverInstance<?>[] covers = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(ICoverHandler::getAll).orElse(CoverInstance.EMPTY_COVER_ARRAY);
         if (covers.length > 0) data.setData(AntimatterProperties.MACHINE_COVER, covers);
         return super.getModelData(world, pos, state, data);
     }

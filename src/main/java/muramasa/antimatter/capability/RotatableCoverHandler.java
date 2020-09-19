@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class RotatableCoverHandler<T extends TileEntity> extends CoverHandler<T> {
 
@@ -16,7 +17,9 @@ public class RotatableCoverHandler<T extends TileEntity> extends CoverHandler<T>
 
     @Override
     public void onUpdate() {
-        covers.forEach((s, c) -> c.getCover().onUpdate(c, Utils.rotateFacingAlt(s, getTileFacing())));
+        for (Map.Entry<Direction, CoverInstance<T>> e : covers.entrySet()) {
+            e.getValue().onUpdate(Utils.rotateFacingAlt(e.getKey(), getTileFacing()));
+        }
     }
 
     @Override

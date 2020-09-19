@@ -1,12 +1,11 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
-import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.RotatableCoverHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -19,13 +18,13 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 
-public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableCoverHandler<T> implements IMachineHandler, ICapabilityHandler {
+public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableCoverHandler<T> implements IMachineHandler, IGuiHandler, ICapabilityHandler {
 
     protected Direction output = Direction.SOUTH;
 
     public MachineCoverHandler(T tile, CompoundNBT tag) {
         super(tile, tile.getValidCovers());
-        covers.put(getTile().getFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, getTile()));
+        covers.put(getTile().getFacing().getOpposite(), new CoverInstance<>(Data.COVER_OUTPUT, tile));
         if (tag != null) deserialize(tag);
     }
 
@@ -34,8 +33,8 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
     }
 
     public boolean setOutputFacing(Direction side) {
-        if (set(side, Data.COVEROUTPUT)) {
-            if (covers.get(output).isEqual(Data.COVEROUTPUT)) covers.put(output, new CoverInstance<>(Data.COVERNONE));
+        if (set(side, Data.COVER_OUTPUT)) {
+            if (covers.get(output).isEqual(Data.COVER_OUTPUT)) covers.put(output, new CoverInstance<>(Data.COVER_NONE, tile));
             output = Utils.rotateFacing(side, getTileFacing());
             return true;
         }
@@ -58,7 +57,12 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        covers.forEach((s, c) -> c.onMachineEvent(getTile(), event));
+        for (CoverInstance<T> i : covers.values()) i.onMachineEvent(getTile(), event, data);
+    }
+
+    @Override
+    public void onGuiEvent(IGuiEvent event, int...data) {
+        for (CoverInstance<T> i : covers.values()) i.onGuiEvent(getTile(), event, data);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
     }
 
     // TODO: Block if covers are exist
-    // TODO: use parsedSide when working properl
+    // TODO: use parsedSide when working properly
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         if (type == getTool() && hand == Hand.MAIN_HAND) {

@@ -26,8 +26,8 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     private boolean removed;
     private IItemHandler handler;
 
-    private CoverInstance[] covers = new CoverInstance[] {
-        Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
+    private Cover[] covers = new Cover[] {
+        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
     };
 
     private ItemTileWrapper(TileEntity tile, IItemHandler handler) {
@@ -57,13 +57,13 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
                 // What if tile is recreate cap ?
             }
         } else {
-            covers[side.getIndex()] = Data.COVER_EMPTY;
+            covers[side.getIndex()] = Data.COVER_NONE;
         }
     }
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = new CoverInstance(cover, this.tile);
+        covers[side.getIndex()] = cover;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()].getCover() instanceof CoverOutput;
+        return covers[direction.getIndex()] instanceof CoverOutput;
     }
 
     @Override
@@ -160,7 +160,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     }
 
     private boolean isItemAvailable(Object item, int dir) {
-        if (covers[dir].getCover() instanceof CoverTintable) return false;
+        if (covers[dir] instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(item);
     }
@@ -182,6 +182,6 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     }
 
     private Set<?> getFiltered(int index) {
-        return covers[index].getCover() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].getCover()).getFilter() : ObjectSets.EMPTY_SET;
+        return covers[index] instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index]).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

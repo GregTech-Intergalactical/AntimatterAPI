@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IWorldPosCallable;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class ContainerCover extends AntimatterContainer {
@@ -22,12 +23,12 @@ public class ContainerCover extends AntimatterContainer {
         this.onEntity = Objects.requireNonNull(c.getTile());
     }
 
-    public CoverInstance<?> getCover() {
+    public CoverInstance<?> getInstance() {
         return c;
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
         return isWithinUsableDistance(IWorldPosCallable.of(onEntity.getWorld(), onEntity.getPos()), playerIn, onEntity.getBlockState().getBlock());
     }
 }

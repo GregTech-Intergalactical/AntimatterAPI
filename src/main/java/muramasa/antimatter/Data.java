@@ -178,11 +178,8 @@ public class Data {
 
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
-    public static Cover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
-    public static Cover COVEROUTPUT = new CoverOutput();
-
-    public static CoverInstance<?> COVER_EMPTY = new CoverInstance<>(COVERNONE);
-    public static CoverInstance<?> COVER_OUTPUT = new CoverInstance<>(COVEROUTPUT);
+    public static Cover COVER_NONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
+    public static Cover COVER_OUTPUT = new CoverOutput();
 
     public static MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>>(Ref.ID, "container_basic") {
         @Nullable

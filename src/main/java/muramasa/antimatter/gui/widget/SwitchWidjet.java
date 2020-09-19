@@ -5,6 +5,7 @@ import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.AbstractButton;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;

@@ -1,17 +1,10 @@
 package muramasa.antimatter.gui.screen;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
-import muramasa.antimatter.gui.widget.ButtonWidget;
-import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.widget.button.AbstractButton;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;

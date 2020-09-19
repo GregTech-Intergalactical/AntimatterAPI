@@ -1,18 +1,20 @@
 package muramasa.antimatter.gui;
 
-import javax.swing.*;
+import muramasa.antimatter.gui.event.IGuiEvent;
 
 public class ButtonData {
 
     private int id;
     private ButtonType type;
+    private IGuiEvent event;
     private int x, y, w, h;
     private ButtonOverlay[] data;
     private String text;
 
-    public ButtonData(int id, ButtonType type, int x, int y, int w, int h, String text, ButtonOverlay... data) {
+    public ButtonData(int id, ButtonType type, IGuiEvent event, int x, int y, int w, int h, String text, ButtonOverlay... data) {
         this.id = id;
         this.type = type;
+        this.event = event;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -21,8 +23,8 @@ public class ButtonData {
         this.data = data;
     }
 
-    public ButtonData(int id, ButtonType type, int x, int y, int w, int h, ButtonOverlay... data) {
-        this(id, type, x, y, w, h, "", data);
+    public ButtonData(int id, ButtonType type, IGuiEvent event, int x, int y, int w, int h, ButtonOverlay... data) {
+        this(id, type, event, x, y, w, h, "", data);
     }
 
     public int getId() {
@@ -31,6 +33,10 @@ public class ButtonData {
 
     public ButtonType getType() {
         return type;
+    }
+
+    public IGuiEvent getEvent() {
+        return event;
     }
 
     public int getX() {

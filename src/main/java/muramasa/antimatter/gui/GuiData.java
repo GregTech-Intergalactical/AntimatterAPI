@@ -2,6 +2,8 @@ package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -56,11 +58,11 @@ public class GuiData {
     //Type represents what type of texture this data is representing.
     //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
     public ResourceLocation getTexture(Tier tier, String type) {
-        if (hasSlots(tier) && type.equals("machine")) {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
-        } else {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
-        }
+        return hasSlots(tier) ? new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png") : getTexture(type);
+    }
+
+    public ResourceLocation getTexture(String type) {
+        return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
     }
 
     public ResourceLocation getLoc() {
@@ -102,33 +104,33 @@ public class GuiData {
         return this;
     }
 
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));
+    public GuiData addButton(IGuiEvent event, int x, int y, int w, int h, ButtonBody body) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, event, x, y, w, h, body));
         return this;
     }
 
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_BODY, x, y, w, h, text, body));
+    public GuiData addButton(IGuiEvent event, int x, int y, int w, int h, ButtonBody body, String text) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_BODY, event, x, y, w, h, text, body));
         return this;
     }
 
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), OVERLAY_ON_BODY, x, y, w, h, body, overlay));
+    public GuiData addButton(IGuiEvent event, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), OVERLAY_ON_BODY, event, x, y, w, h, body, overlay));
         return this;
     }
 
-    public GuiData addSwitch(int x, int y, int w, int h, ButtonBody on, ButtonBody off) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), DOUBLE_SWITCH_BODY, x, y, w, h, on, off));
+    public GuiData addSwitch(IGuiEvent event, int x, int y, int w, int h, ButtonBody on, ButtonBody off) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), DOUBLE_SWITCH_BODY, event, x, y, w, h, on, off));
         return this;
     }
 
-    public GuiData addSwitch(int x, int y, int w, int h, ButtonOverlay body) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), SINGLE_SWITCH_BODY, x, y, w, h, body));
+    public GuiData addSwitch(IGuiEvent event, int x, int y, int w, int h, ButtonOverlay body) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), SINGLE_SWITCH_BODY, event, x, y, w, h, body));
         return this;
     }
 
-    public GuiData addSwitch(int x, int y, int w, int h, ButtonOverlay body, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_SWITCH, x, y, w, h, text, body));
+    public GuiData addSwitch(IGuiEvent event, int x, int y, int w, int h, ButtonOverlay body, String text) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_SWITCH, event, x, y, w, h, text, body));
         return this;
     }
 

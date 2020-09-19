@@ -4,10 +4,9 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICapabilityHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.TagInput;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
@@ -18,7 +17,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -34,14 +32,13 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static muramasa.antimatter.machine.MachineFlag.ENERGY;
 import static muramasa.antimatter.machine.MachineFlag.FLUID;
 
-public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, ICapabilityHandler, ITickHost {
+public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, IGuiHandler, ICapabilityHandler, ITickHost {
 
     protected T tile;
     protected ITickingController controller;
@@ -74,6 +71,17 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         if (tile.isServerSide()) {
             Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
             Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        }
+    }
+
+    @Override
+    public void onGuiEvent(IGuiEvent event, int... data) {
+        if (event instanceof GuiEvent) {
+            switch ((GuiEvent)event) {
+                case ITEM_EJECT:
+                    // TODO: Finish ejection
+                    break;
+            }
         }
     }
 
