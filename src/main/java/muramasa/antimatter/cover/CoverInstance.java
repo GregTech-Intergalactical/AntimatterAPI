@@ -1,8 +1,9 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -17,27 +18,19 @@ import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class CoverInstance<T extends TileEntity> implements INamedContainerProvider {
 
     public static final CoverInstance<?>[] EMPTY_COVER_ARRAY = new CoverInstance[0];
 
-    private Cover cover;
-    private CompoundNBT nbt;
-    private T tile;
+    private final Cover cover;
+    private final T tile;
+    private CompoundNBT tag;
 
     public CoverInstance(Cover cover, T tile) {
-        this.cover = Objects.requireNonNull(cover);
-        this.tile = tile;
-        this.nbt = new CompoundNBT();
-    }
-
-    //This allows you to instantiate a non-stateful cover, like COVER_EMPTY.
-    //Using state with this is a runtime error.
-    public CoverInstance(Cover cover) {
-        this.nbt = new CompoundNBT();
         this.cover = cover;
+        this.tile = tile;
+        this.tag = new CompoundNBT();
     }
 
     //Automatically calls onPlace.
@@ -63,8 +56,12 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
         cover.onUpdate(this, side);
     }
 
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
-        cover.onMachineEvent(this, tile, event);
+    public void onMachineEvent(T tile, IMachineEvent event, Object... data) {
+        cover.onMachineEvent(this, tile, event, data);
+    }
+
+    public void onGuiEvent(T tile, IGuiEvent event, int... data) {
+        cover.onGuiEvent(this, tile, event, data);
     }
 
     public boolean openGui(PlayerEntity player, Direction side) {
@@ -88,11 +85,11 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
     }
 
     public boolean isEmpty() {
-        return cover == Data.COVERNONE;
+        return cover == Data.COVER_NONE;
     }
 
     public boolean shouldRender() {
-        return isEmpty() || cover == Data.COVEROUTPUT;
+        return isEmpty() || cover == Data.COVER_OUTPUT;
     }
 
     //Gets the backing cover.
@@ -105,6 +102,7 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
         return tile;
     }
 
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return new StringTextComponent("TODO");//TranslationTextComponent(cover.getId());
@@ -113,21 +111,14 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
     @Nullable
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
-        return cover.gui != null && cover.gui.getMenuHandler() != null ? cover.gui.getMenuHandler().getMenu(this, inv, windowId) : null;
+        return cover.getGui() != null && cover.getGui().getMenuHandler() != null ? cover.getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
     public CompoundNBT serialize() {
-        //Do final things before saving. Optional as state should usually be set during runtime
-        cover.serialize(nbt);
-        return nbt;
+        return tag;
     }
 
-    public void deserialize(CompoundNBT nbt) {
-        cover.deserialize(nbt);
-    }
-
-    public CompoundNBT getNbt() {
-        if (this.nbt == null) this.nbt = new CompoundNBT();
-        return this.nbt;
+    public void deserialize(CompoundNBT tag) {
+        this.tag = tag;
     }
 }
