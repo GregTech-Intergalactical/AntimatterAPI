@@ -14,8 +14,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class SwitchWidjet extends AbstractButton {
 
     private ResourceLocation res;
-    private ButtonBody on, off;
-    private ButtonOverlay body;
+    private ButtonOverlay on, off;
+    private ButtonOverlay body, overlay;
     private boolean state;
 
     protected final SwitchWidjet.ISwitchable onSwitch;
@@ -35,6 +35,23 @@ public class SwitchWidjet extends AbstractButton {
         this.onSwitch = onSwitch;
     }
 
+    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, ISwitchable onSwitch) {
+        super(x, y, w, h, "");
+        this.res = res;
+        this.body = body;
+        this.overlay = overlay;
+        this.onSwitch = onSwitch;
+    }
+
+    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay on, ButtonOverlay off, ISwitchable onSwitch) {
+        super(x, y, w, h, "");
+        this.res = res;
+        this.body = body;
+        this.on = on;
+        this.off = off;
+        this.onSwitch = onSwitch;
+    }
+
     public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
         super(x, y, w, h, text);
         this.res = res;
@@ -48,7 +65,7 @@ public class SwitchWidjet extends AbstractButton {
         minecraft.getTextureManager().bindTexture(res);
         RenderSystem.disableDepthTest();
         if (body == null) {
-            ButtonBody body = isSwitched() ? on : off;
+            ButtonBody body = (ButtonBody) (isSwitched() ? on : off);
             int xTex = body.getX();
             int yTex = body.getY();
             if (isHovered()) {
@@ -56,6 +73,21 @@ public class SwitchWidjet extends AbstractButton {
                 yTex += body.getY2();
             }
             ScreenWidget.blit(x, y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+        } else if (body instanceof ButtonBody) {
+            ButtonBody main = (ButtonBody) body;
+            int xTex = main.getX();
+            int yTex = main.getY();
+            if (isHovered()) {
+                xTex += main.getX2();
+                yTex += main.getY2();
+            }
+            ScreenWidget.blit(x, y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+            if (overlay != null) {
+                ScreenWidget.blit(x, y, width, height, overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
+            } else {
+                ButtonOverlay overlay = (isSwitched() ? on : off);
+                ScreenWidget.blit(x, y, width, height, overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
+            }
         } else {
             int xTex = body.getX();
             int yTex = body.getY();

@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -24,7 +25,8 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
 
     public MachineCoverHandler(T tile, CompoundNBT tag) {
         super(tile, tile.getValidCovers());
-        covers.put(getTile().getFacing().getOpposite(), new CoverInstance<>(Data.COVER_OUTPUT, tile));
+        Direction side = getTile().getFacing().getOpposite();
+        covers.put(side, new CoverInstance<>(Data.COVER_OUTPUT, tile, side));
         if (tag != null) deserialize(tag);
     }
 
@@ -34,7 +36,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
 
     public boolean setOutputFacing(Direction side) {
         if (set(side, Data.COVER_OUTPUT)) {
-            if (covers.get(output).isEqual(Data.COVER_OUTPUT)) covers.put(output, new CoverInstance<>(Data.COVER_NONE, tile));
+            if (covers.get(output).isEqual(Data.COVER_OUTPUT)) covers.put(output, new CoverInstance<>(Data.COVER_NONE, tile, side));
             output = Utils.rotateFacing(side, getTileFacing());
             return true;
         }
@@ -57,12 +59,19 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        for (CoverInstance<T> i : covers.values()) i.onMachineEvent(getTile(), event, data);
+        for (CoverInstance<T> i : covers.values()) i.onMachineEvent(event, data);
     }
 
     @Override
     public void onGuiEvent(IGuiEvent event, int...data) {
-        for (CoverInstance<T> i : covers.values()) i.onGuiEvent(getTile(), event, data);
+        if (event instanceof GuiEvent) {
+            switch ((GuiEvent) event) {
+                case COVER_BUTTON:
+                case COVER_SWITCH:
+                    covers.get(Ref.DIRS[data[3]]).onGuiEvent(event, data);
+                    break;
+            }
+        }
     }
 
     @Override

@@ -36,6 +36,7 @@ public class GuiData {
     protected Object2ObjectMap<String, List<SlotData>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
     protected List<ButtonData> BUTTON_LIST = new ObjectArrayList<>();
+    protected List<TextData> TEXT_LIST = new ObjectArrayList<>();
 
     public GuiData(String domain, String id) {
         this.loc = new ResourceLocation(domain, id);
@@ -104,32 +105,42 @@ public class GuiData {
         return this;
     }
 
-    public GuiData addButton(IGuiEvent event, int x, int y, int w, int h, ButtonBody body) {
+    public GuiData addButton(int x, int y, int w, int h, IGuiEvent event, ButtonBody body) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, event, x, y, w, h, body));
         return this;
     }
 
-    public GuiData addButton(IGuiEvent event, int x, int y, int w, int h, ButtonBody body, String text) {
+    public GuiData addButton(int x, int y, int w, int h, IGuiEvent event, ButtonBody body, String text) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_BODY, event, x, y, w, h, text, body));
         return this;
     }
 
-    public GuiData addButton(IGuiEvent event, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
+    public GuiData addButton(int x, int y, int w, int h, IGuiEvent event, ButtonBody body, ButtonOverlay overlay) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), OVERLAY_ON_BODY, event, x, y, w, h, body, overlay));
         return this;
     }
 
-    public GuiData addSwitch(IGuiEvent event, int x, int y, int w, int h, ButtonBody on, ButtonBody off) {
+    public GuiData addSwitch(int x, int y, int w, int h, IGuiEvent event, ButtonBody on, ButtonBody off) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), DOUBLE_SWITCH_BODY, event, x, y, w, h, on, off));
         return this;
     }
 
-    public GuiData addSwitch(IGuiEvent event, int x, int y, int w, int h, ButtonOverlay body) {
+    public GuiData addSwitch(int x, int y, int w, int h, IGuiEvent event, ButtonOverlay body) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), SINGLE_SWITCH_BODY, event, x, y, w, h, body));
         return this;
     }
 
-    public GuiData addSwitch(IGuiEvent event, int x, int y, int w, int h, ButtonOverlay body, String text) {
+    public GuiData addSwitch(int x, int y, int w, int h, IGuiEvent event, ButtonBody body, ButtonOverlay overlay) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), OVERLAY_ON_SWITCH, event, x, y, w, h, body, overlay));
+        return this;
+    }
+
+    public GuiData addSwitch(int x, int y, int w, int h, IGuiEvent event, ButtonBody body, ButtonOverlay on, ButtonOverlay off) {
+        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), DOUBLE_OVERLAY_ON_BODY, event, x, y, w, h, body, on, off));
+        return this;
+    }
+
+    public GuiData addSwitch(int x, int y, int w, int h, IGuiEvent event, ButtonOverlay body, String text) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_SWITCH, event, x, y, w, h, text, body));
         return this;
     }
@@ -145,6 +156,24 @@ public class GuiData {
     public ResourceLocation getButtonLocation() {
         if (buttonLoc == null) buttonLoc = new ResourceLocation(loc.getNamespace(), "textures/gui/button/gui_buttons.png");
         return buttonLoc;
+    }
+
+    public GuiData addText(String text, int x, int y, int color) {
+        TEXT_LIST.add(new TextData(text, x, y, color));
+        return this;
+    }
+
+    public GuiData addText(String text, int x, int y) {
+        TEXT_LIST.add(new TextData(text, x, y));
+        return this;
+    }
+
+    public List<TextData> getText() {
+        return TEXT_LIST;
+    }
+
+    public boolean hasText() {
+        return !TEXT_LIST.isEmpty();
     }
 
     /** Adds a slot for ANY **/

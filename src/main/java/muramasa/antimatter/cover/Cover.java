@@ -34,7 +34,7 @@ public abstract class Cover implements IAntimatterObject {
 
     public Cover() {
         gui = new GuiData(this, Data.COVER_MENU_HANDLER);
-        gui.setEnablePlayerSlots(true);
+        gui.setEnablePlayerSlots(false);
     }
 
     public void setGui(GuiData setGui) {

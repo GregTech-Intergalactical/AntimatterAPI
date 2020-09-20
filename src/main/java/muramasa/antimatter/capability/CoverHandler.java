@@ -34,7 +34,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
         this.tile = tile;
         this.validCovers.add(Data.COVER_NONE.getId());
         for (Cover c : validCovers) this.validCovers.add(c.getId());
-        for (Direction d : Ref.DIRS) covers.put(d, new CoverInstance<>(Data.COVER_NONE, tile));
+        for (Direction d : Ref.DIRS) covers.put(d, new CoverInstance<>(Data.COVER_NONE, tile, d));
     }
 
     @Override
@@ -140,9 +140,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 CompoundNBT nbt = tag.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(nbt);
+                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile, Ref.DIRS[i])).deserialize(nbt);
             } else {
-                covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVER_NONE, tile));
+                covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVER_NONE, tile, Ref.DIRS[i]));
             }
         }
     }

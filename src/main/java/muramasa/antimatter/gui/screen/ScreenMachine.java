@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.ButtonData;
+import muramasa.antimatter.gui.TextData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,9 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
         for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
             addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, loc, button));
+        }
+        for (TextData text : container.getTile().getMachineType().getGui().getText()) {
+            Minecraft.getInstance().fontRenderer.drawString(text.getText(), text.getX(), text.getY(), text.getColor());
         }
     }
 

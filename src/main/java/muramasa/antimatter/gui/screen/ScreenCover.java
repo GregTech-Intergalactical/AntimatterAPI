@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.gui.ButtonData;
+import muramasa.antimatter.gui.TextData;
 import muramasa.antimatter.gui.container.ContainerCover;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
@@ -22,7 +23,7 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     }
 
     protected void drawTitle(int mouseX, int mouseY) {
-        Minecraft.getInstance().fontRenderer.drawString(name, getCenteredStringX(name), 4, 0x404040);
+        Minecraft.getInstance().fontRenderer.drawString(name, 32, 4, 0x404040);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawTexture(gui, guiLeft, guiTop, 0, 0, xSize, ySize);
-        drawTexture(container.getInstance().getCover().getItem().getRegistryName(), guiLeft, guiTop, 0, 8, 32, 32);
+        drawTexture(container.getInstance().getCover().getItem().getRegistryName(), guiLeft, guiTop, 0, 4, 32, 32);
     }
 
     @Override
@@ -42,7 +43,10 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
         super.init();
         ResourceLocation loc = container.getInstance().getCover().getGui().getButtonLocation();
         for (ButtonData button : container.getInstance().getCover().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getInstance().getTile(), playerInventory, loc, button));
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getInstance(), playerInventory, loc, button));
+        }
+        for (TextData text : container.getInstance().getCover().getGui().getText()) {
+            Minecraft.getInstance().fontRenderer.drawString(text.getText(), text.getX(), text.getY(), text.getColor());
         }
     }
 }

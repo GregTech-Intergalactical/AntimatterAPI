@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -19,23 +20,20 @@ import net.minecraft.util.text.StringTextComponent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverInstance<T extends TileEntity> implements INamedContainerProvider {
+public class CoverInstance<T extends TileEntity> implements INamedContainerProvider, IGuiHandler {
 
     public static final CoverInstance<?>[] EMPTY_COVER_ARRAY = new CoverInstance[0];
 
     private final Cover cover;
     private final T tile;
+    private final Direction side;
     private CompoundNBT tag;
 
-    public CoverInstance(Cover cover, T tile) {
+    public CoverInstance(Cover cover, T tile, Direction side) {
         this.cover = cover;
         this.tile = tile;
+        this.side = side;
         this.tag = new CompoundNBT();
-    }
-
-    //Automatically calls onPlace.
-    public CoverInstance(Cover cover, T tile, Direction side) {
-        this(cover, tile);
     }
 
     /** Events **/
@@ -56,11 +54,11 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
         cover.onUpdate(this, side);
     }
 
-    public void onMachineEvent(T tile, IMachineEvent event, Object... data) {
+    public void onMachineEvent(IMachineEvent event, Object... data) {
         cover.onMachineEvent(this, tile, event, data);
     }
 
-    public void onGuiEvent(T tile, IGuiEvent event, int... data) {
+    public void onGuiEvent(IGuiEvent event, int... data) {
         cover.onGuiEvent(this, tile, event, data);
     }
 
@@ -100,6 +98,10 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
 
     public T getTile() {
         return tile;
+    }
+
+    public Direction getSide() {
+        return side;
     }
 
     @Nonnull
