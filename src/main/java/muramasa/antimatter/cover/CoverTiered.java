@@ -10,7 +10,6 @@ public abstract class CoverTiered extends Cover {
     protected Tier tier;
 
     public CoverTiered() {
-        super();
         for (Tier t : Tier.getStandard()) {
             CoverTiered tier = getTiered(t);
             AntimatterAPI.register(Cover.class, tier.getId(), tier);
@@ -18,7 +17,6 @@ public abstract class CoverTiered extends Cover {
     }
 
     protected CoverTiered(Tier tier) {
-        super();
         this.tier = tier;
     }
 
