@@ -68,6 +68,13 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
             if (onStructureFormed()) {
                 StructureCache.add(world, pos, result.positions);
                 this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
+                //Handlers.
+                this.itemHandler.ifPresent(handle -> {
+                    ((MultiMachineItemHandler)handle).onStructureBuild();
+                });
+                this.energyHandler.ifPresent(handle -> {
+                    ((MultiMachineEnergyHandler)handle).onStructureBuild();
+                });
                 setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
                 return true;
@@ -80,6 +87,8 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public void invalidateStructure() {
         result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this))));
+        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
+        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
         result = Optional.empty();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");
@@ -113,19 +122,11 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     /** Events **/
     public boolean onStructureFormed() {
-        this.itemHandler.ifPresent(handle -> {
-            ((MultiMachineItemHandler)handle).onStructureBuild();
-        });
-        this.energyHandler.ifPresent(handle -> {
-            ((MultiMachineEnergyHandler)handle).onStructureBuild();
-        });
         return true;
     }
 
     public void onStructureInvalidated() {
         //NOOP
-        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
-        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
     }
 
     @Override

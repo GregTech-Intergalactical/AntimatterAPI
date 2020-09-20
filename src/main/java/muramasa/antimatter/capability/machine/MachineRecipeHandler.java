@@ -30,12 +30,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected int curProgress, maxProgress;
     protected int overclock;
 
+    //20 seconds per check.
+    static final int WAIT_TIME = 20*20;
+    protected int tickTimer = 0;
+
     //Consuming resources can call into the recipe handler, causing a loop.
     //For instance, consuming fluid in the fluid handlers calls back into the MachineRecipeHandler, deadlocking.
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
 
-    private boolean forceRecipeCheck = false;
 
     public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
@@ -43,8 +46,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void onUpdate() {
-        if (activeRecipe == null && forceRecipeCheck) checkRecipe();
-
+        if (activeRecipe == null && tickTimer >= WAIT_TIME) {
+            tickTimer = 0;
+            checkRecipe();
+        } else if (activeRecipe == null) {
+            tickTimer++;
+        }
         if (tile.getMachineState() != IDLE) tickMachineLoop();
     }
 
@@ -166,7 +173,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     //Schedules a check next tick for a possible recipe.
     public void scheduleCheck() {
-        forceRecipeCheck = true;
+        tickTimer = WAIT_TIME;
     }
 
     public void addOutputs() {
@@ -272,7 +279,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                         this.tile.setMachineState(ACTIVE);
                     break;
                 case ENERGY_DRAINED:
-                    if (activeRecipe == null) checkRecipe();
                     if (tile.has(GENERATOR) && activeRecipe != null) this.tile.setMachineState(NO_POWER);
                 default:
                     break;

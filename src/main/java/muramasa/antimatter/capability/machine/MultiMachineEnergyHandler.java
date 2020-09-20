@@ -25,12 +25,8 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     public void onStructureBuild() {
-        IEnergyHandler[] inputs = tile.getComponents("hatch_energy").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> t.getEnergyHandler().get()).toArray(IEnergyHandler[]::new);
-
-        IEnergyHandler[] outputs = tile.getComponents("hatch_dynamo").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> t.getEnergyHandler().get()).toArray(IEnergyHandler[]::new);
-
-        this.inputs = inputs;
-        this.outputs = outputs;
+        cacheInputs();
+        cacheOutputs();
 
         //Amps in, amps out etc for this handler does not matter.
         //all handlers should be of same voltage.
@@ -39,8 +35,15 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
             this.voltage_in = handler.getInputVoltage();
             this.voltage_out = handler.getOutputVoltage();
         }
-        this.cachedCapacity = super.getEnergy() + Arrays.stream(inputs).mapToLong(IGTNode::getCapacity).sum() + Arrays.stream(outputs).mapToLong(IGTNode::getCapacity).sum();
+        this.cachedCapacity = super.getCapacity() + Arrays.stream(inputs).mapToLong(IGTNode::getCapacity).sum() + Arrays.stream(outputs).mapToLong(IGTNode::getCapacity).sum();
+    }
 
+    private void cacheInputs() {
+        this.inputs = tile.getComponents("hatch_energy").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> t.getEnergyHandler().get()).toArray(IEnergyHandler[]::new);
+    }
+
+    private void cacheOutputs() {
+        this.outputs = tile.getComponents("hatch_dynamo").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> t.getEnergyHandler().get()).toArray(IEnergyHandler[]::new);
     }
 
     private IEnergyHandler anyHandler() {
@@ -55,13 +58,13 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
 
     public void invalidate() {
         this.cachedCapacity = super.getCapacity();
-        this.inputs = new IEnergyHandler[0];
-        this.outputs = new IEnergyHandler[0];
+        this.inputs = null;
+        this.outputs = null;
     }
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        if (outputs == null) onStructureBuild();
+        if (outputs == null) cacheOutputs();
         long inserted = super.insert(maxReceive, simulate);
         if (inserted == 0 && outputs != null) {
             for (IEnergyHandler handler : outputs) {
@@ -95,7 +98,7 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
 
     @Override
     public long extract(long maxReceive, boolean simulate) {
-        if (inputs == null) onStructureBuild();
+        if (inputs == null) cacheInputs();
         long extracted = super.extract(maxReceive, simulate);
         if (extracted == 0 && inputs != null) {
             for (IEnergyHandler handler : inputs) {

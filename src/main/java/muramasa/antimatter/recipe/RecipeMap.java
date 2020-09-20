@@ -12,147 +12,15 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
-
-    protected static class RecipeTagMap {
-        //First, match the non-tagged items.
-        private final Object2ObjectMap<RecipeInput, Int2ObjectMap<Recipe>> LOOKUP_TAG;
-        //Tags present, others are ignored.
-        private final Set<ResourceLocation> tagsPresent = new ObjectOpenHashSet<>();
-        private final Set<ItemWrapper> itemsPresent = new ObjectOpenHashSet<>();
-        public RecipeTagMap() {
-            this.LOOKUP_TAG = new Object2ObjectLinkedOpenHashMap<>();
-        }
-
-        public Recipe find(RecipeInput input) {
-            //Items that do not have tags present in the map are split to a separate list.
-            List<ItemWrapper> tagged = input.trimAllTags(Optional.of(tagsPresent));
-            //Remove items that don't exist at all in the map.
-            input.clearJunk(this.itemsPresent);
-
-            Int2ObjectMap<Recipe> possibleResults = LOOKUP_TAG.get(input);
-            if (possibleResults == null) {
-                Int2ObjectMap<Recipe> res = recursiveNonTag(input, 0,0);
-                if (res == null) return null;
-                possibleResults = res;
-            }
-            //otherwise lambda sad :'(
-            Int2ObjectMap<Recipe> finalPossibleResults = possibleResults;
-            return recursiveHash(input,tagged.stream().map(t -> t.item.getItem().getTags()).collect(Collectors.toList()), 0,0,0, v -> {
-               int hash = (int)(v ^ (v >>> 32));
-               Recipe r = finalPossibleResults.get(hash);
-               return r;
-           });
-        }
-
-        private Int2ObjectMap<Recipe> recursiveNonTag(RecipeInput input, long bitmap, int elem) {
-            if (elem > input.rootItems.length-1) return null;
-            input.rehash(bitmap);
-            if (Long.bitCount(bitmap) == input.rootItems.length) {
-                return null;
-            }
-            Int2ObjectMap<Recipe> possibleMap = LOOKUP_TAG.get(input);
-            if (possibleMap != null) {
-                return possibleMap;
-            }
-            Int2ObjectMap<Recipe> r = recursiveNonTag(input, bitmap & (1 << (elem)), elem+1);
-            if (r != null) {
-                return r;
-            }
-            return recursiveNonTag(input, bitmap, elem+1);
-        }
-
-        /**
-         * Recursively finds a recipe.
-         * @param input the input recipe.
-         * @param arrayList all the items tags.
-         * @param element current element in the list.
-         * @param acc accumulated hash.
-         * @param whichNonTagged bitmap of items to ignore tags at current level.
-         * @param func a function to apply at the end, to callback into recipe map.
-         * @return a found recipe.
-         */
-        Recipe recursiveHash(RecipeInput input, List<Set<ResourceLocation>> arrayList, int element, long acc, long whichNonTagged, Function<Long, Recipe> func) {
-            if (element > arrayList.size()) {
-                return null;
-            }
-            for (int i = element; i < arrayList.size(); i++) {
-                Set<ResourceLocation> tags = arrayList.get(i);
-                for (ResourceLocation r : tags) {
-                    if (!this.tagsPresent.contains(r)) {
-                        continue;
-                    }
-                    Recipe ok = recursiveHash(input,arrayList, element + 1, acc + r.hashCode(),whichNonTagged, func);
-                    if (ok != null) {
-                        return ok;
-                    }
-                }
-            }
-            Recipe ok = recursiveHash(input,arrayList, element + 1, acc, whichNonTagged | element, func);
-            if (ok != null) {
-                return ok;
-            }
-            if (element >= arrayList.size() - 1) {
-                return func.apply(acc);
-            } else {
-                input.rehash(whichNonTagged);
-                Int2ObjectMap<Recipe> map = this.LOOKUP_TAG.get(input);
-                if (map != null) {
-                    return map.get((int)acc);
-                }
-            }
-            return null;
-        }
-
-        public void add(Recipe recipe) {
-            RecipeInput input = new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags());
-            /*
-            Sanity check, no input item can match the tag inputs, or it is undefined behaviour. Tags.length > 0 here.
-             */
-            if (recipe.getInputItems() != null) {
-                for (ItemWrapper inputItem : input.items) {
-                    for (TagInput tag : recipe.getTagInputs()) {
-                        if (tag.tag.contains(inputItem.item.getItem())) {
-                            Utils.onInvalidData("INVALID RECIPE! Item added that is also a part of the tags of the recipe.");
-                            return;
-                        }
-                    }
-                }
-            }
-            long code = 0;
-            for (TagInput wr : recipe.getTagInputs()) {
-                code += wr.tag.getId().hashCode();
-                tagsPresent.add(wr.tag.getId());
-            }
-            if (recipe.getInputItems() != null) {
-                for (ItemStack wr : recipe.getInputItems()) {
-                    itemsPresent.add(new ItemWrapper(wr));
-                }
-            }
-            code = code ^ (code >>> 32);
-            int finalCode = (int)code;
-            LOOKUP_TAG.compute(input, (k, v) -> {
-                if (v == null) {
-                    v = new Int2ObjectOpenHashMap<>();
-                }
-                Recipe error = v.put(finalCode, recipe);
-                if (error != null) {
-                    throw new RuntimeException("duplicate recipe");
-                }
-                return v;
-            });
-        }
-    }
 
     private final Object2ObjectMap<RecipeInput, Recipe> LOOKUP;
     private final RecipeTagMap LOOKUP_TAG;
@@ -216,7 +84,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         } else {
             mergedInput = recipe.getInputItems();
         }
-        if (mergedInput != null && LOOKUP_TAG.find(new RecipeInputFlat(mergedInput, recipe.getInputFluids())) != null) {
+        if (mergedInput != null && LOOKUP_TAG.find(new RecipeTagMap.TagMapInput(mergedInput, recipe.getInputFluids())) != null) {
             Utils.onInvalidData("Duplicate recipe detected via TAGS!: " + recipe);
             return;
         }
@@ -247,19 +115,18 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
-        //See time to lookup.
-      //  long currentTime = System.nanoTime();
+        //some checks.
         if ((items == null || items.length == 0) && (fluids == null || fluids.length == 0)) return null;
-        //merge stacks here
-        items = uniqueItems(items);
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
-        //easy, flat input lookup.
+        //merge stacks here, just combine identical stacks into one larger to simplify lookup. Stacks are copied here in case a change is made.
+        items = uniqueItems(items);
+        //easy, flat input lookup. recipes without tags are detected here. If a recipe has exactly the input as above the recipe is found here.
         Recipe r = LOOKUP.get(new RecipeInput(items, fluids));
 
         if (r == null) {
-            r = LOOKUP_TAG.find(new RecipeInput(items,fluids));
+            //otherwise, fall back to complicated lookup.
+            r = LOOKUP_TAG.find(new RecipeTagMap.TagMapInput(items,fluids));
         }
-     //   Antimatter.LOGGER.info("Time to lookup: " + ((System.nanoTime()-currentTime)));
         return r;
     }
 
