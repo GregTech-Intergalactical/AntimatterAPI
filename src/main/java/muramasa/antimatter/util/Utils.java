@@ -20,6 +20,7 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -556,7 +557,7 @@ public class Utils {
             }
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        return rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() : result;
+        return /*rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() :*/ result;
     }
 
     //TODO replace with doRaytrace in block?
@@ -661,6 +662,25 @@ public class Utils {
             }
         }
         return set;
+    }
+
+
+    public static ModelRotation getModelRotation(Direction dir) {
+        switch (dir) {
+            case DOWN:
+                return ModelRotation.getModelRotation(90,0);
+            case UP:
+                return ModelRotation.getModelRotation(-90,0);
+            case NORTH:
+                return ModelRotation.getModelRotation(0,0);
+            case SOUTH:
+                return ModelRotation.getModelRotation(0,180);
+            case EAST:
+                return ModelRotation.getModelRotation(0,90);
+            case WEST:
+                return ModelRotation.getModelRotation(0,270);
+        }
+        return null;
     }
 
     public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
