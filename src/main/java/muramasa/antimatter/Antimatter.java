@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -51,6 +52,7 @@ public class Antimatter extends AntimatterMod {
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
 
+
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
@@ -60,6 +62,7 @@ public class Antimatter extends AntimatterMod {
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterTextureStitcher::onTextureStitch);
         AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }

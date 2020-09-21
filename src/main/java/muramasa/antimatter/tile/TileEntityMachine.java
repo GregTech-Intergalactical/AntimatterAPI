@@ -246,7 +246,10 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType());
-        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getAll()));
+        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE, getMachineType().getBaseTexture(getMachineTier()));
+
+        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getCoverFunction()));
+
         return builder.build();
     }
 
