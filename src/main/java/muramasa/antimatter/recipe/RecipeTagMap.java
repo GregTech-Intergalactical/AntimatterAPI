@@ -92,21 +92,31 @@ public class RecipeTagMap {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof RecipeInput)) return false;
-            if (obj instanceof TagMapInput) {
-                TagMapInput inp = (TagMapInput) obj;
-                //Compare optional taggedItems, that is in the recursive part items are also tested as if they
-                //do not have a tag, to ensure no recipe is missed.
-                if (taggedItems != null && inp.items != null && bitfilter != 0) {
-                    for (int i = 0; ((bitfilter & (1 << i)) != 0) && i < taggedItems.length; i++) {
-                        ItemWrapper item = taggedItems[i];
-                        if (!inp.items[inp.itemMap.get(item.hashCode())].equals(item)) return false;
-                    }
+        protected boolean itemEquals(RecipeInput other) {
+            //How many non-tagged items are matched. This has to be equal to other.items.length,or 0 if it is null.
+            int correctAmount = 0;
+            int len = other.items == null ? 0 : other.items.length;
+
+            //First, try regular items.
+            if (items != null && other.items != null && correctAmount < len) {
+                for (ItemWrapper item : this.items) {
+                    if (other.items[other.itemMap.get(item.hashCode())].equals(item)) correctAmount++;
                 }
-                return accumulatedTagHash == inp.accumulatedTagHash && super.equals(obj);
             }
-            return super.equals(obj);
+            if (correctAmount < len && taggedItems != null && other.items != null && bitfilter != 0) {
+                for (int i = 0; ((bitfilter & (1 << i)) != 0) && i < taggedItems.length; i++) {
+                    ItemWrapper item = taggedItems[i];
+                    if (other.items[other.itemMap.get(item.hashCode())].equals(item)) correctAmount++;
+                }
+            }
+
+            if (other instanceof TagMapInput) {
+                TagMapInput tm = (TagMapInput) other;
+                //Make sure tags match.
+                return accumulatedTagHash == tm.accumulatedTagHash && correctAmount >= len;
+            } else {
+                return correctAmount >= len;
+            }
         }
     }
     //First, match the non-tagged items.
@@ -122,8 +132,8 @@ public class RecipeTagMap {
 
     public Recipe find(TagMapInput input) {
         //Items that do not have tags present in the map are split to a separate list.
-        List<ItemWrapper> tagged = input.prepare(tagsPresent, itemsPresent);
         //Remove items that don't exist at all in the map.
+        List<ItemWrapper> tagged = input.prepare(tagsPresent, itemsPresent);
 
         return recursiveHash(input,tagged.stream().map(t -> t.item.getItem().getTags()).collect(Collectors.toList()), 0,0,0);
     }

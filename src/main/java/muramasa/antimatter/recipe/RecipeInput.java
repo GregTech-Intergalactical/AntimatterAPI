@@ -61,21 +61,20 @@ public class RecipeInput {
         this(items, fluids, Collections.emptySet());
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof RecipeInput)) return false;
-        RecipeInput other = (RecipeInput) obj;
+    protected boolean itemEquals(RecipeInput other) {
         if (items != null) {
-            if (other.items == null) {
-                if (taggedItems == null && bitfilter == 0) return false;
-            } else {
-                for (ItemWrapper item : items) {
+            if (other.items == null || other.items.length != this.items.length) {
+                return false;
+            }else {
+                for (ItemWrapper item : this.items) {
                     if (!other.items[other.itemMap.get(item.hashCode())].equals(item)) return false;
                 }
             }
-        } else if (other.items != null) {
-            return false;
         }
+        return true;
+    }
+
+    protected boolean fluidEquals(RecipeInput other) {
         if (fluids != null) {
             if (other.fluids == null) {
                 return false;
@@ -86,6 +85,14 @@ public class RecipeInput {
         } else return other.fluids == null;
 
         return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RecipeInput)) return false;
+        RecipeInput other = (RecipeInput) obj;
+
+        return itemEquals(other) && fluidEquals(other);
     }
 
     @Override

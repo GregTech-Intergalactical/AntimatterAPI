@@ -9,6 +9,8 @@ import tesseract.util.Dir;
 
 import java.util.Arrays;
 
+import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
+
 public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMultiMachine> {
 
     protected IEnergyHandler[] inputs;//= new IEnergyHandler[0];
@@ -21,7 +23,7 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     public MultiMachineEnergyHandler(TileEntityMachine tile, CompoundNBT tag) {
-        super((TileEntityMultiMachine)tile, tag);
+        super((TileEntityMultiMachine)tile, tag,0,0, 0, 0,0,0);
     }
 
     public void onStructureBuild() {
