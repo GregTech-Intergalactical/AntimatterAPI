@@ -93,6 +93,10 @@ public class FluidTanks implements IFluidHandler {
         return this.tanks[tank];
     }
 
+    public FluidStack[] getFluids() {
+        return Arrays.stream(this.tanks).map(FluidTank::getFluid).toArray(FluidStack[]::new);
+    }
+
     @Override
     public int getTanks() {
         return this.tanks.length;

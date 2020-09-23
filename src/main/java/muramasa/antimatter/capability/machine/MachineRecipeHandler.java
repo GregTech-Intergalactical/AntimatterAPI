@@ -15,6 +15,7 @@ import net.minecraft.util.IntArray;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import static muramasa.antimatter.machine.MachineState.*;
 
@@ -101,7 +102,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 // this.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
             });
             tile.fluidHandler.ifPresent(h -> {
-                h.addOutputs(activeRecipe.getOutputFluids());
+                for (FluidStack stack : activeRecipe.getOutputFluids()) {
+                    h.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+                }
                 // this.onMachineEvent(MachineEvent.FLUIDS_OUTPUTTED);
             });
             if (!canOutput()) {

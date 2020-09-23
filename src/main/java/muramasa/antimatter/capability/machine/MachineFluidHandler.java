@@ -17,7 +17,9 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
@@ -26,8 +28,9 @@ import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
@@ -37,7 +40,7 @@ import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIM
 public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ITickHost {
 
     protected final T tile;
-    protected final FluidTanks inputTanks, outputTanks;
+    protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
     protected final int[] priority = new int[]{0, 0, 0, 0, 0, 0}; // TODO
 
     protected int capacity, pressure;
@@ -50,26 +53,20 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
         int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
         if (inputCount > 0) {
-            this.inputTanks = FluidTanks.create(tile, ContentEvent.FLUID_INPUT_CHANGED, builder -> {
+            tanks.put(FluidDirection.INPUT, FluidTanks.create(tile, ContentEvent.FLUID_INPUT_CHANGED, b -> {
                 for (int i = 0; i < inputCount; i++) {
-                    builder.tank(capacity);
+                    b.tank(capacity);
                 }
-                return builder;
-            });
-        }
-        else {
-            this.inputTanks = null;
+                return b;
+            }));
         }
         if (outputCount > 0) {
-            this.outputTanks = FluidTanks.create(tile, ContentEvent.FLUID_OUTPUT_CHANGED, builder -> {
+            tanks.put(FluidDirection.OUTPUT, FluidTanks.create(tile, ContentEvent.FLUID_OUTPUT_CHANGED, b -> {
                 for (int i = 0; i < outputCount; i++) {
-                    builder.tank(capacity);
+                    b.tank(capacity);
                 }
-                return builder;
-            });
-        }
-        else {
-            this.outputTanks = null;
+                return b;
+            }));
         }
     }
 
@@ -99,45 +96,41 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         }
     }
 
-    //TODO IN THIS METHOD: Slot 0 is hardcoded for output, refactor this.
-    protected void insertFromCell(int slot) {
-        // MachineItemHandler handler = tile.itemHandler;
-        tile.itemHandler.ifPresent(handler -> {
-            ItemStack stack = handler.getCellHandler().getStackInSlot(slot);
-            //One at a time.
-            for (int i = 0; i < stack.getCount(); i++) {
-                //Fluid caps.
-                LazyOptional<IFluidHandlerItem> fhandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
-                //First, validate that an empty item can be
-                ItemStack changedBucket = fhandler.map(ihandler -> {
-                    FluidStack fluid = ihandler.getFluidInTank(0);
-                    if (!checkValidFluid(fluid)) {
-                        //I know it is not supposed to be null but i dont know how to do it otherwise, dont want a lazyoptional return, like Empty.
-                        return null;
-                    }
-                    //tempHandler - essentially simulate draining a copy and see if it fits in output, otherwise dont drain it.
-                    LazyOptional<IFluidHandlerItem> tempHandler = ihandler.getContainer().copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
-                    if (tempHandler.map(temp -> {
-                        temp.drain(this.inputWrapper.fill(fluid, SIMULATE), EXECUTE);
-                        if (handler.getOutputHandler().insertItem(0,temp.getContainer(), true) != ItemStack.EMPTY) return false;
-                        return true;
-                    }).orElse(false)) {
-                        ihandler.drain(this.inputWrapper.fill(fluid, EXECUTE), EXECUTE);
-                        return ihandler.getContainer();
-                    }
-                    return null;
-                }).orElse(null);
-                //changedBucket - a changed bucket.
-                if (changedBucket != null) {
-                    changedBucket.copy();
-                    changedBucket.setCount(1);
-                    handler.getCellHandler().extractItem(slot,1,false);
-                    handler.getOutputHandler().insertItem(0, changedBucket, false);
-                } else {
-                    break;
-                }
-            }
-        });
+    public int getTanks() {
+        return this.tanks.values().stream().mapToInt(FluidTanks::getTanks).sum();
+    }
+
+    public int fill(int cellSlot, int maxFill, IFluidHandler.FluidAction action) {
+        if (this.tanks.containsKey(FluidDirection.INPUT)) {
+            tile.itemHandler.ifPresent(ih -> {
+                ItemStack cell = ih.getCellHandler().getStackInSlot(cellSlot);
+                cell.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh -> FluidUtil.tryFluidTransfer(this.tanks.get(FluidDirection.INPUT), cfh, maxFill, action == EXECUTE));
+            });
+        }
+        return 0;
+    }
+
+    public int fill(FluidStack stack, IFluidHandler.FluidAction action) {
+        if (this.tanks.containsKey(FluidDirection.INPUT)) {
+            return this.tanks.get(FluidDirection.INPUT).fill(stack, action);
+        }
+        return 0;
+    }
+
+    @Nonnull
+    public FluidStack drain(FluidStack stack, IFluidHandler.FluidAction action) {
+        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
+            return this.tanks.get(FluidDirection.OUTPUT).drain(stack, action);
+        }
+        return FluidStack.EMPTY;
+    }
+
+    @Nonnull
+    public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
+        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
+            return this.tanks.get(FluidDirection.OUTPUT).drain(maxDrain, action);
+        }
+        return FluidStack.EMPTY;
     }
 
     protected boolean checkValidFluid(FluidStack fluid) {
@@ -156,114 +149,35 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             switch ((ContentEvent)event) {
                 case ITEM_CELL_CHANGED:
                     if (tile.itemHandler.map(MachineItemHandler::getCellCount).orElse(0) > 0 && data[0] instanceof Integer) {
-                        insertFromCell((Integer) data[0]);
+                        fill((Integer) data[0], 1000, EXECUTE);
                     }
                     break;
             }
         }
     }
 
+    @Nullable
     public FluidTanks getInputTanks() {
-        return inputTanks;
+        return this.tanks.get(FluidDirection.INPUT);
     }
 
+    @Nullable
     public FluidTanks getOutputTanks() {
-        return outputTanks;
+        return this.tanks.get(FluidDirection.OUTPUT);
     }
 
     /** Helpers **/
     public FluidStack[] getInputs() {
-        return getInputList().toArray(new FluidStack[0]);
+        return getInputTanks().getFluids();
     }
 
     public FluidStack[] getOutputs() {
-        return getOutputList().toArray(new FluidStack[0]);
+        return getOutputTanks().getFluids();
     }
 
+    // TODO temporary
     public FluidTanks getTankFromSide(Direction side) {
-        return inputTanks != null ? inputTanks : outputTanks;
-    }
-
-    /** Returns raw FluidStacks from all inputs, including nulls **/
-    @Nullable
-    public FluidStack[] getInputsRaw() {
-        if (inputWrapper == null || inputWrapper.getTanks() == 0) return null;
-        FluidStack[] inputs = new FluidStack[inputWrapper.getTanks()];
-        for (int i = 0; i < inputs.length; i++) {
-            inputs[i] = inputWrapper.getFluidInTank(i);
-        }
-        return inputs;
-    }
-
-    /** Returns raw FluidStacks from all outputs, including nulls **/
-    @Nullable
-    public FluidStack[] getOutputsRaw() {
-        if (outputWrapper == null || outputWrapper.getTanks() == 0) return null;
-        FluidStack[] outputs = new FluidStack[outputWrapper.getTanks()];
-        for (int i = 0; i < outputs.length; i++) {
-            outputs[i] = outputWrapper.getFluidInTank(i);
-        }
-        return outputs;
-    }
-
-    /** Directly sets inputs. Only to be used for special cases like fluid syncing **/
-    public void setInputs(FluidStack[] inputs) {
-        if (inputWrapper == null || inputs.length != inputWrapper.getTanks()) return;
-        for (int i = 0; i < inputs.length; i++) {
-            inputWrapper.setFluidToTank(i, inputs[i]);
-        }
-    }
-
-    /** Directly sets outputs. Only to be used for special cases like fluid syncing **/
-    public void setOutputs(FluidStack[] outputs) {
-        if (outputWrapper == null || outputs.length != outputWrapper.getTanks()) return;
-        for (int i = 0; i < outputs.length; i++) {
-            outputWrapper.setFluidToTank(i, outputs[i]);
-        }
-    }
-
-    /** Returns list of input fluids, filtering nulls **/
-    public List<FluidStack> getInputList() {
-        if (inputWrapper == null) return Collections.emptyList();
-        List<FluidStack> list = new ObjectArrayList<>();
-        for (int i = 0; i < inputWrapper.getTanks(); i++) {
-            FluidStack stack = inputWrapper.getFluidInTank(i);
-            if (stack != FluidStack.EMPTY) list.add(stack);
-        }
-        return list;
-    }
-
-    /** Returns list of output fluids, filtering nulls **/
-    public List<FluidStack> getOutputList() {
-        if (outputWrapper == null) return Collections.emptyList();
-        List<FluidStack> list = new ObjectArrayList<>();
-        for (int i = 0; i < outputWrapper.getTanks(); i++) {
-            FluidStack stack = outputWrapper.getFluidInTank(i);
-            if (stack != FluidStack.EMPTY) list.add(stack);
-        }
-        return list;
-    }
-
-    //TODO called by Basic machines, should they use consumeAndReturn?
-    public void consumeInputs(FluidStack... inputs) {
-        if (inputWrapper == null) return;
-        for (FluidStack input : inputs) {
-            inputWrapper.drain(input, EXECUTE);
-        }
-    }
-
-    public void addInputs(FluidStack... inputs) {
-        if (inputWrapper == null) return;
-        for (FluidStack input : inputs) {
-            inputWrapper.fill(input, EXECUTE);
-        }
-    }
-
-    public void addOutputs(FluidStack... outputs) {
-        if (outputWrapper == null || outputs == null || outputs.length == 0) return;
-        for (FluidStack output : outputs) {
-            outputWrapper.fill(output, EXECUTE);
-        }
+        return side == Direction.UP && this.tanks.containsKey(FluidDirection.INPUT) ? this.tanks.get(FluidDirection.INPUT) : this.tanks.getOrDefault(FluidDirection.OUTPUT, null);
     }
 
     public boolean canOutputsFit(FluidStack[] outputs) {
@@ -272,19 +186,24 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     public int getSpaceForOutputs(FluidStack[] outputs) {
         int matchCount = 0;
-        if (outputWrapper == null) return matchCount;
-        for (FluidStack output : outputs) {
-            if (outputWrapper.fill(output, SIMULATE) == output.getAmount()) matchCount++;
+        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
+            for (FluidStack output : outputs) {
+                if (fill(output, SIMULATE) == output.getAmount()) {
+                    matchCount++;
+                }
+            }
         }
         return matchCount;
     }
 
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
-        if (inputWrapper == null) return new FluidStack[0];
+        if (!this.tanks.containsKey(FluidDirection.INPUT)) {
+            return new FluidStack[0];
+        }
         List<FluidStack> notConsumed = new ObjectArrayList<>();
         FluidStack result;
         for (FluidStack input : inputs) {
-            result = inputWrapper.drain(input, EXECUTE);
+            result = drain(input, EXECUTE);
             if (result != FluidStack.EMPTY) {
                 if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
                     notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
@@ -297,82 +216,41 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {
-        if (outputWrapper == null) return new FluidStack[0];
+        if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
+            return new FluidStack[0];
+        }
         List<FluidStack> notExported = new ObjectArrayList<>();
         int result;
         for (int i = 0; i < outputs.length; i++) {
-            result = outputWrapper.fill(outputs[i], EXECUTE);
+            result = fill(outputs[i], EXECUTE);
             if (result == 0) notExported.add(outputs[i]); //Valid space was not found
             else outputs[i] = Utils.ca(result, outputs[i]); //Fluid was partially exported
         }
         return notExported.toArray(new FluidStack[0]);
     }
 
-    /** NBT **/
-    @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
-        if (inputWrapper != null) {
-            ListNBT list = new ListNBT();
-            for (int i = 0; i < inputWrapper.getTanks(); i++) {
-                if (inputWrapper.getFluidInTank(i) == FluidStack.EMPTY) continue;
-                list.add(inputWrapper.writeToNBT(i, new CompoundNBT()));
-            }
-            tag.put(Ref.TAG_MACHINE_INPUT_FLUID, list);
-        }
-        if (outputWrapper != null) {
-            ListNBT list = new ListNBT();
-            for (int i = 0; i < outputWrapper.getTanks(); i++) {
-                if (outputWrapper.getFluidInTank(i) == FluidStack.EMPTY) continue;
-                list.add(outputWrapper.writeToNBT(i, new CompoundNBT()));
-            }
-            tag.put(Ref.TAG_MACHINE_OUTPUT_FLUID, list);
-        }
-        return tag;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        if (inputWrapper != null) {
-            ListNBT list = nbt.getList(Ref.TAG_MACHINE_INPUT_FLUID, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++) {
-                if (i < inputWrapper.getTanks()) {
-                    inputWrapper.setFluidToTank(i, FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
-                }
-            }
-        }
-        if (outputWrapper != null) {
-            ListNBT list = nbt.getList(Ref.TAG_MACHINE_OUTPUT_FLUID, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++) {
-                if (i < outputWrapper.getTanks()) {
-                    outputWrapper.setFluidToTank(i, FluidStack.loadFluidStackFromNBT(list.getCompound(i)));
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (inputWrapper != null) {
+        if (this.tanks.containsKey(FluidDirection.INPUT)) {
             builder.append("Inputs:\n");
-            for (int i = 0; i < inputWrapper.getTanks(); i++) {
-                FluidStack stack = inputWrapper.getFluidInTank(i);
+            for (int i = 0; i < getInputTanks().getTanks(); i++) {
+                FluidStack stack = getInputTanks().getFluidInTank(i);
                 if (stack != FluidStack.EMPTY) {
                     builder.append(stack.getFluid().getRegistryName()).append(" - ").append(stack.getAmount());
-                    if (i != inputWrapper.getTanks() - 1) {
+                    if (i != getInputTanks().getTanks() - 1) {
                         builder.append("\n");
                     }
                 }
             }
         }
-        if (outputWrapper != null) {
+        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
             builder.append("Outputs:\n");
-            for (int i = 0; i < outputWrapper.getTanks(); i++) {
-                FluidStack stack = outputWrapper.getFluidInTank(i);
+            for (int i = 0; i < getOutputTanks().getTanks(); i++) {
+                FluidStack stack = getOutputTanks().getFluidInTank(i);
                 if (stack != FluidStack.EMPTY) {
                     builder.append(stack.getFluid().getRegistryName()).append(" - ").append(stack.getAmount());
-                    if (i != outputWrapper.getTanks() - 1) {
+                    if (i != getOutputTanks().getTanks() - 1) {
                         builder.append("\n");
                     }
                 }
@@ -384,33 +262,31 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     /** Tesseract IFluidNode Implementations **/
     @Override
     public int insert(FluidData data, boolean simulate) {
-        if (inputTanks == null) {
-            return 0;
-        }
-        FluidStack stack = (FluidStack) data.getStack();
-        return inputTanks.fill(stack, simulate ? SIMULATE : EXECUTE);
+        return fill((FluidStack) data.getStack(), simulate ? SIMULATE : EXECUTE);
     }
 
     @Nullable
     @Override
     public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
-        if (outputTanks == null) {
+        if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
             return null;
         }
-        FluidStack stack = outputTanks.getFluidInTank(tank);
+        FluidStack stack = getOutputTanks().getFluidInTank(tank);
         /*
         if (fluid.getAmount() > amount) {
             fluid = fluid.copy();
             fluid.setAmount(amount);
         }
          */
-        FluidStack drained = outputTanks.drain(stack, simulate ? SIMULATE : EXECUTE);
+        FluidStack drained = drain(stack, simulate ? SIMULATE : EXECUTE);
         return drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
     }
 
+    // TODO needed? Weird semantics
     @Override
     public int getAvailableTank(Dir direction) {
-        return outputWrapper.getAvailableTank(direction.getIndex());
+        return 0;
+        // return outputWrapper.getAvailableTank(direction.getIndex());
     }
 
     @Override
@@ -425,12 +301,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public boolean canOutput() {
-        return outputTanks != null;
+        return this.tanks.containsKey(FluidDirection.OUTPUT);
     }
 
     @Override
     public boolean canInput() {
-        return inputTanks != null;
+        return this.tanks.containsKey(FluidDirection.INPUT);
     }
 
     @Override
@@ -438,11 +314,13 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
+    // TODO needed? Weird semantics
     @Override
     public boolean canInput(Object fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
-        return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && inputWrapper.getFirstValidTank(fluid) != -1;
+        return true;
+        // return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && inputWrapper.getFirstValidTank(fluid) != -1;
     }
 
     @Override
@@ -455,6 +333,13 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
         }
+    }
+
+    enum FluidDirection {
+
+        INPUT,
+        OUTPUT
+
     }
 
 }

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+/*
 public class FluidStackPacket {
 
     private Fluid[] inputFluids, outputFluids;
@@ -110,3 +111,4 @@ public class FluidStackPacket {
         ctx.get().setPacketHandled(true);
     }
 }
+ */

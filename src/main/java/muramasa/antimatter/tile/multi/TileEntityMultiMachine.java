@@ -126,7 +126,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         if (!has(MachineFlag.FLUID)) return new FluidStack[0];
         List<FluidStack> all = new ObjectArrayList<>();
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
-            hatch.getFluidHandler().ifPresent(h -> Utils.mergeFluids(all, h.getInputList()));
+            hatch.getFluidHandler().ifPresent(h -> Utils.mergeFluids(all, Arrays.asList(h.getInputs())));
         }
         System.out.println(all.toString());
         return all.toArray(new FluidStack[0]);
