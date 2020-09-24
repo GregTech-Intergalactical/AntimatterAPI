@@ -46,6 +46,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     protected FluidTankWrapper inputWrapper, outputWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
     protected int capacity, pressure;
+    protected boolean isEject;
 
     public MachineFluidHandler(T tile, CompoundNBT tag, int capacity, int pressure) {
         this.tile = tile;
@@ -146,6 +147,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             switch ((GuiEvent)event) {
                 case FLUID_EJECT:
                     // TODO: Finish ejection
+                    isEject = data[0] != 0;
                     break;
             }
         }
@@ -296,10 +298,15 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return notExported.toArray(new FluidStack[0]);
     }
 
+    public boolean isEjecting() {
+        return isEject;
+    }
+
     /** NBT **/
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
+        tag.putBoolean(Ref.TAG_MACHINE_EJECT_FLUID, isEject);
         if (inputWrapper != null) {
             ListNBT list = new ListNBT();
             for (int i = 0; i < inputWrapper.getTanks(); i++) {
@@ -321,6 +328,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public void deserialize(CompoundNBT tag) {
+        isEject = tag.getBoolean(Ref.TAG_MACHINE_EJECT_FLUID);
         if (inputWrapper != null) {
             ListNBT list = tag.getList(Ref.TAG_MACHINE_INPUT_FLUID, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {

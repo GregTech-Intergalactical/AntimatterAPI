@@ -74,11 +74,13 @@ public class Ref {
     public static final String TAG_MACHINE_AMPERAGE_OUT = "ao";
     public static final String TAG_MACHINE_INPUT_FLUID = "if";
     public static final String TAG_MACHINE_OUTPUT_FLUID = "of";
+    public static final String TAG_MACHINE_EJECT_FLUID = "ej";
     public static final String TAG_MACHINE_SLOT_SIZE = "sz";
     public static final String TAG_MACHINE_INPUT_ITEM = "ii";
     public static final String TAG_MACHINE_INPUT_SIZE = "is";
     public static final String TAG_MACHINE_OUTPUT_ITEM = "oi";
     public static final String TAG_MACHINE_OUTPUT_SIZE = "os";
+    public static final String TAG_MACHINE_EJECT_ITEM = "ei";
     public static final String TAG_MACHINE_CELL_ITEM = "ci";
     public static final String TAG_MACHINE_CELL_SIZE = "cs";
     public static final String TAG_MACHINE_CHARGE_ITEM = "cg";

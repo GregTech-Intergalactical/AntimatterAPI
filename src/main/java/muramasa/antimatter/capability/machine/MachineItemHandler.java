@@ -44,6 +44,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     protected ITickingController controller;
     protected ItemStackWrapper inputWrapper, outputWrapper, cellWrapper, chargeWrapper;
     protected int[] priority = new int[]{0, 0, 0, 0, 0, 0};
+    protected boolean isEject;
 
     public MachineItemHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
@@ -80,6 +81,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             switch ((GuiEvent)event) {
                 case ITEM_EJECT:
                     // TODO: Finish ejection
+                    isEject = data[0] != 0;
                     break;
             }
         }
@@ -266,10 +268,15 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return notExported.toArray(new ItemStack[0]);
     }
 
+    public boolean isEjecting() {
+        return isEject;
+    }
+
     /** NBT **/
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
+        tag.putBoolean(Ref.TAG_MACHINE_EJECT_ITEM, isEject);
         if (inputWrapper != null) {
             ListNBT list = new ListNBT();
             for (int i = 0; i < inputWrapper.getSlots(); i++) {
@@ -327,6 +334,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Override
     public void deserialize(CompoundNBT tag) {
+        isEject = tag.getBoolean(Ref.TAG_MACHINE_EJECT_ITEM);
         if (inputWrapper != null) {
             inputWrapper.setSize(tag.contains(Ref.TAG_MACHINE_INPUT_SIZE, Constants.NBT.TAG_INT) ? tag.getInt(Ref.TAG_MACHINE_INPUT_SIZE) : inputWrapper.getSlots());
             ListNBT inputTagList = tag.getList(Ref.TAG_MACHINE_INPUT_ITEM, Constants.NBT.TAG_COMPOUND);

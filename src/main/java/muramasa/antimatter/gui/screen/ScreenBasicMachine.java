@@ -1,8 +1,11 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.network.packets.GuiEventPacket;
@@ -40,19 +43,14 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     @Override
     protected void init() {
         super.init();
-        ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
         if (container.getTile().has(MachineFlag.ITEM)) {
-            item = new SwitchWidjet(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
-            });
+            item = new SwitchWidjet(container.getTile().itemHandler.map(MachineItemHandler::isEjecting).orElse(false), gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, getSwitchable(ITEM_EJECT));
         }
         if (container.getTile().has(MachineFlag.FLUID)) {
-            fluid = new SwitchWidjet(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
-            });
+            fluid = new SwitchWidjet(container.getTile().fluidHandler.map(MachineFluidHandler::isEjecting).orElse(false), gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, getSwitchable(FLUID_EJECT));
         }
         if (item != null || fluid != null) {
-            addButton(new SwitchWidjet(loc, guiLeft + 9, guiTop + 64, 14, 14, ON, OFF, (b, s) -> {
+            addButton(new SwitchWidjet(false, data.getButtonLocation(), guiLeft + 9, guiTop + 64, 14, 14, ON, OFF, (b, s) -> {
                 if (s) {
                     if (item != null) addButton(item);
                     if (fluid != null) addButton(fluid);

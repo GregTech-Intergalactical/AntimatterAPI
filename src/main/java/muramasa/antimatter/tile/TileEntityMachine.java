@@ -243,7 +243,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public float getClientProgress() {
-            return clientProgress;
+        return clientProgress;
     }
 
     public void setClientProgress(float prog) {

@@ -20,31 +20,35 @@ public class SwitchWidjet extends AbstractButton {
 
     protected final SwitchWidjet.ISwitchable onSwitch;
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
+    public SwitchWidjet(boolean state, ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
         super(x, y, w, h, "");
+        this.state = state;
         this.res = res;
         this.on = on;
         this.off = off;
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch) {
+    public SwitchWidjet(boolean state, ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch) {
         super(x, y, w, h, "");
+        this.state = state;
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, ISwitchable onSwitch) {
+    public SwitchWidjet(boolean state, ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, ISwitchable onSwitch) {
         super(x, y, w, h, "");
+        this.state = state;
         this.res = res;
         this.body = body;
         this.overlay = overlay;
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay on, ButtonOverlay off, ISwitchable onSwitch) {
+    public SwitchWidjet(boolean state, ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay on, ButtonOverlay off, ISwitchable onSwitch) {
         super(x, y, w, h, "");
+        this.state = state;
         this.res = res;
         this.body = body;
         this.on = on;
@@ -52,8 +56,9 @@ public class SwitchWidjet extends AbstractButton {
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
+    public SwitchWidjet(boolean state, ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
         super(x, y, w, h, text);
+        this.state = state;
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;

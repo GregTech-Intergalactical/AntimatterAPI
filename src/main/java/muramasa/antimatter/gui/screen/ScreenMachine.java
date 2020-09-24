@@ -1,9 +1,16 @@
 package muramasa.antimatter.gui.screen;
 
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.ButtonData;
+import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.TextData;
 import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.widget.ButtonWidget;
+import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.entity.player.PlayerInventory;
@@ -15,13 +22,15 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
 
     protected T container;
     protected String name;
+    protected GuiData data;
     protected ResourceLocation gui;
 
     public ScreenMachine(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
-        gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
+        this.data = container.getTile().getMachineType().getGui();
+        gui = data.getTexture(container.getTile().getMachineTier(), "machine");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {
@@ -31,11 +40,10 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     @Override
     protected void init() {
         super.init();
-        ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
-        for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, loc, button));
+        for (ButtonData button : data.getButtons()) {
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, data.getButtonLocation(), button));
         }
-        for (TextData text : container.getTile().getMachineType().getGui().getText()) {
+        for (TextData text : data.getText()) {
             Minecraft.getInstance().fontRenderer.drawString(text.getText(), text.getX(), text.getY(), text.getColor());
         }
     }
@@ -78,5 +86,20 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
             return true;
         }
         return false;
+    }
+
+    protected ButtonWidget.IPressable getPressable(GuiEvent event) {
+        return (b) -> {
+            container.getTile().onGuiEvent(event);
+            Antimatter.NETWORK.sendToServer(new GuiEventPacket(event, container.getTile().getPos()));
+        };
+    }
+
+    protected SwitchWidjet.ISwitchable getSwitchable(GuiEvent event) {
+        return (b, s) -> {
+            int switchOn = s ? 1 : 0;
+            container.getTile().onGuiEvent(event, switchOn);
+            Antimatter.NETWORK.sendToServer(new GuiEventPacket(event, container.getTile().getPos(), switchOn));
+        };
     }
 }
