@@ -131,7 +131,7 @@ public abstract class Cover implements IAntimatterObject,ITextureProvider {
 
     //The default cover model
     public static ResourceLocation getBasicModel() {
-        return new ResourceLocation(Ref.ID + ":block/machine/cover/basic");
+        return new ResourceLocation(Ref.ID + ":block/cover/basic");
     }
 
     // TODO: refactor this if/when covers will be singletons
