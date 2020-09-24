@@ -10,6 +10,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public interface ICoverHandler<T extends TileEntity> {
 
@@ -23,6 +24,10 @@ public interface ICoverHandler<T extends TileEntity> {
     Direction getTileFacing();
 
     T getTile();
+    //Returns a lambda that, given a direction returns the given Cover.
+    default Function<Direction, CoverInstance> getCoverFunction() {
+        return this::get;
+    }
 
     /** Events **/
     void onRemove();
