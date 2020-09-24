@@ -72,9 +72,9 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     }
 
     @Override
-    public int insert(ItemData data, boolean simulate) {
-        ItemStack stack = (ItemStack) data.getStack();
-        int slot = getFirstValidSlot(stack.getItem());
+    public int insert(ItemData<ItemStack> data, boolean simulate) {
+        ItemStack stack = data.getStack();
+        int slot = getFirstValidSlot(stack);
         if (slot == -1) {
             return 0;
         }
@@ -150,7 +150,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     }
 
     @Override
-    public boolean canInput(Object item, Dir direction) {
+    public boolean canInput(ItemStack item, Dir direction) {
         return isItemAvailable(item, direction.getIndex()) && getFirstValidSlot(item) != -1;
     }
 
@@ -159,21 +159,21 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
         return true;
     }
 
-    private boolean isItemAvailable(Object item, int dir) {
+    private boolean isItemAvailable(ItemStack item, int dir) {
         if (covers[dir] instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(item);
     }
 
     // Fast way to find available slot for item
-    private int getFirstValidSlot(Object item) {
+    private int getFirstValidSlot(ItemStack item) {
         int slot = -1;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (stack.isEmpty()) {
                 slot = i;
             } else {
-                if (stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()){
+                if (stack.isItemEqual(item) && stack.getMaxStackSize() > stack.getCount()){
                     return i;
                 }
             }

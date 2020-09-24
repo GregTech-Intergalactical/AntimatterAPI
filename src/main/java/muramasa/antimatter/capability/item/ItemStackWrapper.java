@@ -99,20 +99,20 @@ public class ItemStackWrapper implements IItemHandler, IItemHandlerModifiable {
         handler.setSize(size);
     }
 
-    public boolean isItemAvailable(Object item, int dir) {
+    public boolean isItemAvailable(ItemStack item, int dir) {
         Set<?> filtered = filter[dir];
-        return filtered.isEmpty() || filtered.contains(item);
+        return filtered.isEmpty() || filtered.contains(item.getItem());
     }
 
     // Fast way to find available slot for item
-    public int getFirstValidSlot(Object item) {
+    public int getFirstValidSlot(ItemStack item) {
         int slot = -1;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (stack.isEmpty()) {
                 slot = i;
             } else {
-                if (stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
+                if (stack.isItemEqual(item) && stack.getMaxStackSize() > stack.getCount()) {
                     return i;
                 }
             }

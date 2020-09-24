@@ -379,9 +379,9 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     /** Tesseract IFluidNode Implementations **/
     @Override
-    public int insert(FluidData data, boolean simulate) {
-        FluidStack stack = (FluidStack) data.getStack();
-        return inputWrapper.getFirstValidTank(stack.getFluid()) != -1 ? inputWrapper.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
+    public int insert(FluidData<FluidStack> data, boolean simulate) {
+        FluidStack stack = data.getStack();
+        return inputWrapper.getFirstValidTank(stack) != -1 ? inputWrapper.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
     }
 
     @Nullable
@@ -428,7 +428,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     @Override
-    public boolean canInput(Object fluid, Dir direction) {
+    public boolean canInput(FluidStack fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && inputWrapper.getFirstValidTank(fluid) != -1;

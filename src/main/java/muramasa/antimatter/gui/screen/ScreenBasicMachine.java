@@ -1,22 +1,19 @@
 package muramasa.antimatter.gui.screen;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import static muramasa.antimatter.gui.ButtonBody.OFF;
 import static muramasa.antimatter.gui.ButtonBody.ON;
-import static muramasa.antimatter.gui.event.GuiEvent.*;
+import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
+import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 
 public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachine<T> {
 

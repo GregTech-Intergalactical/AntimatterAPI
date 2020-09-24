@@ -72,9 +72,9 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
     }
 
     @Override
-    public int insert(FluidData data, boolean simulate) {
-        FluidStack stack = (FluidStack) data.getStack();
-        return getFirstValidTank(stack.getFluid()) != -1 ? handler.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
+    public int insert(FluidData<FluidStack> data, boolean simulate) {
+        FluidStack stack = data.getStack();
+        return getFirstValidTank(stack) != -1 ? handler.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
     }
 
     @Nullable
@@ -136,7 +136,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
     }
 
     @Override
-    public boolean canInput(Object fluid, Dir direction) {
+    public boolean canInput(FluidStack fluid, Dir direction) {
         return isFluidAvailable(fluid, direction.getIndex()) && getFirstValidTank(fluid) != -1;
     }
 
@@ -145,21 +145,21 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
         return true;
     }
 
-    private boolean isFluidAvailable(Object fluid, int dir) {
+    private boolean isFluidAvailable(FluidStack fluid, int dir) {
         if (covers[dir] instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(fluid);
     }
 
     // Fast way to find available tank for fluid
-    private int getFirstValidTank(Object fluid) {
+    private int getFirstValidTank(FluidStack fluid) {
         int tank = -1;
         for (int i = 0; i < handler.getTanks(); i++) {
             FluidStack stack = handler.getFluidInTank(i);
             if (stack.isEmpty()) {
                 tank = i;
             } else {
-                if (stack.getFluid().equals(fluid) && handler.getTankCapacity(i) > stack.getAmount()) {
+                if (stack.isFluidEqual(fluid) && handler.getTankCapacity(i) > stack.getAmount()) {
                     return i;
                 }
             }

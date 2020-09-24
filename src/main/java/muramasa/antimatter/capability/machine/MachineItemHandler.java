@@ -387,9 +387,9 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(ItemData data, boolean simulate) {
-        ItemStack stack = (ItemStack) data.getStack();
-        int slot = inputWrapper.getFirstValidSlot(stack.getItem());
+    public int insert(ItemData<ItemStack> data, boolean simulate) {
+        ItemStack stack = data.getStack();
+        int slot = inputWrapper.getFirstValidSlot(stack);
         if (slot == -1) {
             return 0;
         }
@@ -450,7 +450,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     @Override
-    public boolean canInput(Object item, Dir direction) {
+    public boolean canInput(ItemStack item, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return inputWrapper.isItemAvailable(item, direction.getIndex()) && inputWrapper.getFirstValidSlot(item) != -1;

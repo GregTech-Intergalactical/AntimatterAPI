@@ -73,7 +73,7 @@ public class FluidTankWrapper implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        int tank = getFirstValidTank(resource.getFluid());
+        int tank = getFirstValidTank(resource);
         return tank != -1 ? getTank(tank).fill(resource, action) : 0;
     }
 
@@ -96,20 +96,20 @@ public class FluidTankWrapper implements IFluidHandler {
         return dirty;
     }
 
-    public boolean isFluidAvailable(Object fluid, int dir) {
+    public boolean isFluidAvailable(FluidStack fluid, int dir) {
         Set<?> filtered = filter[dir];
-        return filtered.isEmpty() || filtered.contains(fluid);
+        return filtered.isEmpty() || filtered.contains(fluid.getFluid());
     }
 
     // Fast way to find available tank for fluid
-    public int getFirstValidTank(Object fluid) {
+    public int getFirstValidTank(FluidStack fluid) {
         int tank = -1;
         for (int i = 0; i < getTanks(); i++) {
             FluidStack stack = getFluidInTank(i);
             if (stack.isEmpty()) {
                 tank = i;
             } else {
-                if (stack.getFluid().equals(fluid) && getTankCapacity(i) > stack.getAmount()) {
+                if (stack.isFluidEqual(fluid) && getTankCapacity(i) > stack.getAmount()) {
                     return i;
                 }
             }
