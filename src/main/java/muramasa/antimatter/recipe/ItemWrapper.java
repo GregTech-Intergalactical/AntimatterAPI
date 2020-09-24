@@ -8,8 +8,8 @@ import java.util.Set;
 public class ItemWrapper {
 
     public ItemStack item;
-    private boolean count, nbt;
-    private int hash;
+    protected boolean count, nbt;
+    protected int hash;
 
     public ItemWrapper(ItemStack item, Set<RecipeTag> tags) {
         this.item = item;
@@ -29,7 +29,12 @@ public class ItemWrapper {
     public boolean equals(Object obj) {
         if (!(obj instanceof ItemWrapper)) return false;
         ItemWrapper other = (ItemWrapper) obj;
-        return (!count || other.item.getCount() > item.getCount()) && (ItemStack.areItemsEqual(item, other.item) && (!nbt || ItemStack.areItemStackTagsEqual(item, other.item)));
+        //TODO: this might be a bad way to do it but i'm not sure which equals() is called when the Set<ItemWrapper> checks for equality.
+        //TODO: This can be removed if the set doesn't use this comparison (see RecipeTagMap.itemsPresent)
+        if (other instanceof RecipeTagMap.TagItemWrapper) {
+            return (ItemStack.areItemsEqual(item, other.item) && (!nbt || ItemStack.areItemStackTagsEqual(item, other.item)));
+        }
+        return (!count || other.item.getCount() >= item.getCount()) && (ItemStack.areItemsEqual(item, other.item) && (!nbt || ItemStack.areItemStackTagsEqual(item, other.item)));
     }
 
     @Override

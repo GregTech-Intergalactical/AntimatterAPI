@@ -3,11 +3,8 @@ package muramasa.antimatter.tile.multi;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
+import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.ControllerComponentHandler;
-import muramasa.antimatter.capability.machine.ControllerInteractHandler;
-import muramasa.antimatter.capability.machine.MultiMachineRecipeHandler;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -49,12 +46,16 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         componentHandler.setup(ControllerComponentHandler::new);
         interactHandler.setup(ControllerInteractHandler::new);
         recipeHandler.setup(MultiMachineRecipeHandler::new);
+        itemHandler.setup(MultiMachineItemHandler::new);
+        energyHandler.setup(MultiMachineEnergyHandler::new);
     }
 
     @Override
     public void onFirstTick() {
         super.onFirstTick();
         componentHandler.init();
+        if (!isStructureValid()) checkStructure();
+        recipeHandler.ifPresent(MachineRecipeHandler::scheduleCheck);
     }
 
     public boolean checkStructure() {
@@ -67,6 +68,13 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
             if (onStructureFormed()) {
                 StructureCache.add(world, pos, result.positions);
                 this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
+                //Handlers.
+                this.itemHandler.ifPresent(handle -> {
+                    ((MultiMachineItemHandler)handle).onStructureBuild();
+                });
+                this.energyHandler.ifPresent(handle -> {
+                    ((MultiMachineEnergyHandler)handle).onStructureBuild();
+                });
                 setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
                 return true;
@@ -79,6 +87,8 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public void invalidateStructure() {
         result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this))));
+        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
+        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
         result = Optional.empty();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");
@@ -197,7 +207,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
-        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
+        for (IComponentHandler hatch : getComponents("hatch_item_output")) {
             if (hatch.getItemHandler().isPresent()) {
                 items = hatch.getItemHandler().get().exportAndReturnOutputs(items.clone()); //WHY CLONE?!!?
                 if (items.length == 0) break;
@@ -222,7 +232,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     public boolean canItemsFit(ItemStack[] items) {
         if (items == null) return true;
         int matchCount = 0;
-        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
+        for (IComponentHandler hatch : getComponents("hatch_item_output")) {
             if (hatch.getItemHandler().isPresent()) {
                 matchCount += hatch.getItemHandler().get().getSpaceForOutputs(items);
             }

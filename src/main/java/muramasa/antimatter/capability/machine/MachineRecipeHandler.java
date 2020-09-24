@@ -30,10 +30,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected int curProgress, maxProgress;
     protected int overclock;
 
+    //20 seconds per check.
+    static final int WAIT_TIME = 20*20;
+    protected int tickTimer = 0;
+
     //Consuming resources can call into the recipe handler, causing a loop.
     //For instance, consuming fluid in the fluid handlers calls back into the MachineRecipeHandler, deadlocking.
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
+
 
     public MachineRecipeHandler(T tile, CompoundNBT tag) {
         this.tile = tile;
@@ -41,11 +46,16 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void onUpdate() {
+        if (activeRecipe == null && tickTimer >= WAIT_TIME) {
+            tickTimer = 0;
+            checkRecipe();
+        } else if (activeRecipe == null) {
+            tickTimer++;
+        }
         if (tile.getMachineState() != IDLE) tickMachineLoop();
     }
 
     protected void tickMachineLoop() {
-
         //To avoid a feedback loop caused by events firing from inside the recipe handler
         //(such as consuming resources for a recipe and/or generator check so we dont overflow tick recipes.
         if (tickingRecipe) return;
@@ -161,6 +171,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return true;
     }
 
+    //Schedules a check next tick for a possible recipe.
+    public void scheduleCheck() {
+        tickTimer = WAIT_TIME;
+    }
+
     public void addOutputs() {
         tile.itemHandler.ifPresent(h -> {
             h.addOutputs(activeRecipe.getOutputItems());
@@ -172,7 +187,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public boolean canRecipeContinue() {
         if (tile.itemHandler.isPresent() && !tile.itemHandler.get().consumeInputs(activeRecipe,true)) //!Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
             return false;
-        if (tile.fluidHandler.isPresent() && !Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))
+        if (tile.fluidHandler.isPresent() && (activeRecipe.hasInputFluids() && (!Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))))
             return false;
         return true;
     }
@@ -218,6 +233,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void resetRecipe() {
         activeRecipe = null;
         overclock = 0;
+        curProgress = 0;
+        maxProgress = 0;
     }
 
     /**
@@ -262,7 +279,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                         this.tile.setMachineState(ACTIVE);
                     break;
                 case ENERGY_DRAINED:
-                    if (activeRecipe == null) checkRecipe();
                     if (tile.has(GENERATOR) && activeRecipe != null) this.tile.setMachineState(NO_POWER);
                 default:
                     break;
