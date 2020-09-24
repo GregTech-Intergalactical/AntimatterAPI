@@ -8,6 +8,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -29,6 +30,11 @@ public class CoverOutput extends Cover {
         instance.serialize().putBoolean(Ref.KEY_COVER_OUTPUT, false);
     }
 
+    @Override
+    public ResourceLocation getModel() {
+        return getBasicModel();
+    }
+  
     @Override
     public void onMachineEvent(CoverInstance<?> instance, TileEntity tile, IMachineEvent event, Object... data) {
         //TODO: Refactor?

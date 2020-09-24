@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -52,6 +53,16 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
                         break;
                     case FLUID_INPUT_CHANGED:
                         //TODO
+                        break;
+                }
+            });
+        } else if (event instanceof MachineEvent) {
+            componentHandler.flatMap(ComponentHandler::getFirstController).ifPresent(controller -> {
+                switch ((MachineEvent)event) {
+                    //Forward energy event to controller.
+                    case ENERGY_DRAINED:
+                    case ENERGY_INPUTTED:
+                        controller.onMachineEvent(event, data);
                         break;
                 }
             });

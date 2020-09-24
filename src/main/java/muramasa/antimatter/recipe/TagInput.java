@@ -11,4 +11,8 @@ public class TagInput {
         this.tag = tag;
         this.count = count;
     }
+
+    public static TagInput of(Tag<Item> item, int count) {
+        return new TagInput(item, count);
+    }
 }

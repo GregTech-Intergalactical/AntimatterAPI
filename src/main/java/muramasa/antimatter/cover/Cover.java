@@ -8,11 +8,12 @@ import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -20,14 +21,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 //The base Cover class. All cover classes extend from this.
-public abstract class Cover implements IAntimatterObject {
+public abstract class Cover implements IAntimatterObject,ITextureProvider {
 
     private GuiData gui;
     private Item item;
@@ -108,17 +113,28 @@ public abstract class Cover implements IAntimatterObject {
         return getId().equals(Data.COVER_NONE.getId());
     }
 
-    public Texture[] getTextures() {
-        return new Texture[]{new Texture(getDomain(), "block/machine/cover/" + getId())};
+    public void setTextures(BiConsumer<String,Texture> texer) {
+        texer.accept("overlay",new Texture(getDomain(), "block/cover/" + getRenderId()));
     }
 
-    public ModelResourceLocation getModel() {
-        return new ModelResourceLocation(getDomain() + ":machine/cover/" + getId());
+    public Texture[] getTextures() {
+        List<Texture> l = new ArrayList<>();
+        setTextures((name,tex) -> l.add(tex));
+        return l.toArray(new Texture[0]);
+    }
+
+    public ResourceLocation getModel() {
+        return new ResourceLocation(getDomain() + ":block/cover/" + getRenderId());
+    }
+
+    //Useful for using the same model for multiple tiers where id is dependent on tier.
+    protected String getRenderId() {
+        return getId();
     }
 
     //The default cover model
-    public static ModelResourceLocation getBasicModel() {
-        return new ModelResourceLocation(Ref.ID + ":block/cover/basic");
+    public static ResourceLocation getBasicModel() {
+        return new ResourceLocation(Ref.ID + ":block/cover/basic");
     }
 
     public Item getItem() {
