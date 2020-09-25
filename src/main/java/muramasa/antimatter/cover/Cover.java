@@ -59,34 +59,34 @@ public abstract class Cover implements IAntimatterObject,ITextureProvider {
     /**
      * Fires once per Side. Return defines whether or not to consume the interaction.
      */
-    public boolean onInteract(CoverInstance<?> instance, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(CoverInstance<?> cover, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         //Do not consume behaviour per default.
         return false;
     }
 
-    public void onPlace(CoverInstance<?> instance, Direction side) {
+    public void onPlace(CoverInstance<?> cover, Direction side) {
         //NOOP
     }
 
-    public void onRemove(CoverInstance<?> instance, Direction side) {
+    public void onRemove(CoverInstance<?> cover, Direction side) {
         //NOOP
     }
 
-    public void onUpdate(CoverInstance<?> instance, Direction side) {
+    public void onUpdate(CoverInstance<?> cover, Direction side) {
         //NOOP
     }
 
-    public void onMachineEvent(CoverInstance<?> instance, TileEntity tile, IMachineEvent event, Object... data) {
+    public void onMachineEvent(CoverInstance<?> cover, TileEntity tile, IMachineEvent event, Object... data) {
         //NOOP
     }
 
-    public void onGuiEvent(CoverInstance<?> instance, TileEntity tile, IGuiEvent event, int... data) {
+    public void onGuiEvent(CoverInstance<?> cover, TileEntity tile, IGuiEvent event, int... data) {
         //NOOP
     }
 
-    public boolean openGui(CoverInstance<?> instance, PlayerEntity player, Direction side) {
-        NetworkHooks.openGui((ServerPlayerEntity) player, instance, packetBuffer -> {
-            packetBuffer.writeBlockPos(instance.getTile().getPos());
+    public boolean openGui(CoverInstance<?> cover, PlayerEntity player, Direction side) {
+        NetworkHooks.openGui((ServerPlayerEntity) player, cover, packetBuffer -> {
+            packetBuffer.writeBlockPos(cover.getTile().getPos());
             packetBuffer.writeInt(side.getIndex());
         });
         player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 2.0f);

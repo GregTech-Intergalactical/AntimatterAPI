@@ -121,12 +121,12 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
         CompoundNBT tag = new CompoundNBT();
         byte side = 0;
         for (Map.Entry<Direction, CoverInstance<T>> e : covers.entrySet()) {
-            CoverInstance<?> instance = e.getValue();
-            if (!instance.isEmpty()) {
+            CoverInstance<?> cover = e.getValue();
+            if (!cover.isEmpty()) {
                 int dir = e.getKey().getIndex();
                 side |= (1 << dir);
-                CompoundNBT nbt = instance.serialize();
-                nbt.putString(Ref.TAG_MACHINE_COVER_ID, instance.getId());
+                CompoundNBT nbt = cover.serialize();
+                nbt.putString(Ref.TAG_MACHINE_COVER_ID, cover.getId());
                 tag.put(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(dir)), nbt);
             }
         }

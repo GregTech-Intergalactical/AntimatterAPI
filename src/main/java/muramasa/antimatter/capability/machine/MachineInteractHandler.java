@@ -48,8 +48,8 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
             } else if (type == CROWBAR) {
                 return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, side)).orElse(false);
             } else if (type == SCREWDRIVER) {
-                CoverInstance<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(side)).orElse(new CoverInstance<>(COVER_NONE, tile, side));
-                return !player.getEntityWorld().isRemote() && !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, side);
+                CoverInstance<?> cover = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(side)).orElse(new CoverInstance<>(COVER_NONE, tile, side));
+                return !player.getEntityWorld().isRemote() && !cover.isEmpty() && cover.getCover().hasGui() && cover.openGui(player, side);
             }
             return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
         }

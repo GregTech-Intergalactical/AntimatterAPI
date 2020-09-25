@@ -24,8 +24,9 @@ public interface ICoverHandler<T extends TileEntity> {
     Direction getTileFacing();
 
     T getTile();
+
     //Returns a lambda that, given a direction returns the given Cover.
-    default Function<Direction, CoverInstance> getCoverFunction() {
+    default Function<Direction, CoverInstance<?>> getCoverFunction() {
         return this::get;
     }
 

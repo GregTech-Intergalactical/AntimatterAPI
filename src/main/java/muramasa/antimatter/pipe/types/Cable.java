@@ -5,10 +5,8 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
-import muramasa.antimatter.tesseract.ITileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,22 +21,13 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
         super(domain, material);
         this.loss = loss;
         this.tier = tier;
+        setWrapper(EnergyTileWrapper::new);
         setTile(() -> new TileEntityCable(this));
     }
 
     @Override
     public String getId() {
         return "cable";
-    }
-
-    @Override
-    public String getTypeName() {
-        return "energy";
-    }
-
-    @Override
-    public ITileWrapper getTileWrapper(TileEntity tile) {
-        return EnergyTileWrapper.of(tile);
     }
 
     @Override

@@ -4,10 +4,8 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockFluidPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
-import muramasa.antimatter.tesseract.ITileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,22 +20,13 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         super(domain, material);
         this.maxTemp = maxTemp;
         this.gasProof = gasProof;
+        setWrapper(FluidTileWrapper::new);
         setTile(() -> new TileEntityFluidPipe(this));
     }
 
     @Override
     public String getId() {
         return "fluid";
-    }
-
-    @Override
-    public String getTypeName() {
-        return "fluid";
-    }
-
-    @Override
-    public ITileWrapper getTileWrapper(TileEntity tile) {
-        return FluidTileWrapper.of(tile);
     }
 
     @Override

@@ -105,6 +105,8 @@ public class Ref {
     public static final String KEY_ITEM_ENERGY = "ie";
     public static final String KEY_ITEM_DISCHARGE_MODE = "dm";
 
+    public static final String TAG_COVER_ITEM = "fi";
+    public static final String TAG_COVER_FLUID = "ff";
     public static final String KEY_COVER_OUTPUT = "ct";
 
     /** Model Cache IDs **/

@@ -23,7 +23,7 @@ public class ContainerCover extends AntimatterContainer {
         this.onEntity = Objects.requireNonNull(c.getTile());
     }
 
-    public CoverInstance<?> getInstance() {
+    public CoverInstance<?> getCover() {
         return c;
     }
 

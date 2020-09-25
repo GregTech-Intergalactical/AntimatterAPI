@@ -1,11 +1,10 @@
 package muramasa.antimatter.tesseract;
 
-import it.unimi.dsi.fastutil.objects.ObjectSets;
-import muramasa.antimatter.Data;
-import muramasa.antimatter.cover.*;
+import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverOutput;
+import muramasa.antimatter.cover.CoverTintable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -20,55 +19,20 @@ import java.util.Set;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
+public class FluidTileWrapper extends TileWrapper<IFluidHandler> implements IFluidNode<FluidStack> {
 
-    private TileEntity tile;
-    private boolean removed;
-    private IFluidHandler handler;
-
-    private Cover[] covers = new Cover[] {
-        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
-    };
-
-    private FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
-        this.tile = tile;
-        this.handler = handler;
-    }
-
-    @Nullable
-    public static FluidTileWrapper of(TileEntity tile) {
-        LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-        if (capability.isPresent()) {
-            FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
-            capability.addListener(x -> node.onRemove(null));
-            Tesseract.FLUID.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
-            return node;
-        }
-        return null;
+    public FluidTileWrapper(TileEntity tile) {
+        super(tile, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
     }
 
     @Override
-    public void onRemove(@Nullable Direction side) {
-        if (side == null) {
-            if (tile.isRemoved()) {
-                Tesseract.FLUID.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
-                removed = true;
-            } else {
-                // What if tile is recreate cap ?
-            }
-        } else {
-            covers[side.getIndex()] = Data.COVER_NONE;
-        }
+    public void onInit() {
+        Tesseract.FLUID.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = cover;
-    }
-
-    @Override
-    public boolean isRemoved() {
-        return removed;
+    public void onRemove() {
+        Tesseract.FLUID.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
     }
 
     @Override
@@ -91,7 +55,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
 
     @Override
     public int getAvailableTank(Dir direction) {
-        Set<?> filtered = getFiltered(direction.getIndex());
+        Set<?> filtered = getFilterAt(direction.getIndex());
         if (filtered.isEmpty()) {
             for (int i = 0; i < handler.getTanks(); i++) {
                 FluidStack stack = handler.getFluidInTank(i);
@@ -132,7 +96,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()] instanceof CoverOutput;
+        return getCoverAt(direction.getIndex()) instanceof CoverOutput;
     }
 
     @Override
@@ -146,9 +110,9 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
     }
 
     private boolean isFluidAvailable(FluidStack fluid, int dir) {
-        if (covers[dir] instanceof CoverTintable) return false;
-        Set<?> filtered = getFiltered(dir);
-        return filtered.isEmpty() || filtered.contains(fluid);
+        if (getCoverAt(dir) instanceof CoverTintable) return false;
+        Set<?> filtered = getFilterAt(dir);
+        return filtered.isEmpty() || filtered.contains(fluid.getFluid());
     }
 
     // Fast way to find available tank for fluid
@@ -165,9 +129,5 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
             }
         }
         return tank;
-    }
-
-    private Set<?> getFiltered(int index) {
-        return covers[index] instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index]).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

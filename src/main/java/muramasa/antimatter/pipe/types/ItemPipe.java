@@ -3,11 +3,9 @@ package muramasa.antimatter.pipe.types;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.tesseract.ITileWrapper;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityItemPipe;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,22 +16,13 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
     public ItemPipe(String domain, Material material) {
         super(domain, material);
+        setWrapper(ItemTileWrapper::new);
         setTile(() -> new TileEntityItemPipe(this));
     }
 
     @Override
     public String getId() {
         return "item";
-    }
-
-    @Override
-    public String getTypeName() {
-        return "item";
-    }
-
-    @Override
-    public ITileWrapper getTileWrapper(TileEntity tile) {
-        return ItemTileWrapper.of(tile);
     }
 
     @Override

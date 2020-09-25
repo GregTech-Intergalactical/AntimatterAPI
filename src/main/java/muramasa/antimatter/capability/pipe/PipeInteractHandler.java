@@ -51,7 +51,7 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
             if (isTarget) {
                 if (tile.canConnect(side.getIndex())) {
                     interaction = Connectivity.set(interaction, side.getIndex());
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side));
                 } else {
                     interaction = Connectivity.clear(interaction, side.getIndex());
                     PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
@@ -70,7 +70,7 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
             if (Connectivity.has(interaction, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()].getCover());
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, covers[side.getIndex()]);
                 } else {
                     interaction = Connectivity.clear(interaction, side.getIndex());
                 }
@@ -84,7 +84,7 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
         TileEntity neighbor = Utils.getTile(tile.getWorld(), tile.getPos().offset(side));
         if (Utils.isForeignTile(neighbor)) {
             interaction = Connectivity.set(interaction, side.getIndex());
-            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side).getCover());
+            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, neighbor, tile.getCover(side));
         } else {
             interaction = Connectivity.clear(interaction, side.getIndex());
         }

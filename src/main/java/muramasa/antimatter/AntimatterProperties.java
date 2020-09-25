@@ -19,7 +19,7 @@ public class AntimatterProperties {
     public static final ModelProperty<Machine<?>> MACHINE_TYPE = new ModelProperty<>();
     public static final ModelProperty<Direction> MACHINE_FACING = new ModelProperty<>();
     public static final ModelProperty<Texture> MACHINE_TEXTURE = new ModelProperty<>();
-    public static final ModelProperty<Function<Direction, CoverInstance>> MACHINE_COVER = new ModelProperty<>();
+    public static final ModelProperty<Function<Direction, CoverInstance<?>>> MACHINE_COVER = new ModelProperty<>();
 
     /** Block Pipe Properties **/
     //public static PropertyBool PIPE_INSULATED = PropertyBool.create("insulated");

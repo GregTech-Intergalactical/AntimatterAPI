@@ -19,7 +19,7 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     public ScreenCover(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        this.gui = container.getInstance().getCover().getGui().getTexture("cover");
+        this.gui = container.getCover().getCover().getGui().getTexture("cover");
     }
 
     protected void drawTitle(int mouseX, int mouseY) {
@@ -35,17 +35,17 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawTexture(gui, guiLeft, guiTop, 0, 0, xSize, ySize);
-        drawTexture(container.getInstance().getCover().getItem().getRegistryName(), guiLeft, guiTop, 0, 4, 32, 32);
+        drawTexture(container.getCover().getCover().getItem().getRegistryName(), guiLeft, guiTop, 0, 4, 32, 32);
     }
 
     @Override
     protected void init() {
         super.init();
-        ResourceLocation loc = container.getInstance().getCover().getGui().getButtonLocation();
-        for (ButtonData button : container.getInstance().getCover().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getInstance(), playerInventory, loc, button));
+        ResourceLocation loc = container.getCover().getCover().getGui().getButtonLocation();
+        for (ButtonData button : container.getCover().getCover().getGui().getButtons()) {
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getCover(), playerInventory, loc, button));
         }
-        for (TextData text : container.getInstance().getCover().getGui().getText()) {
+        for (TextData text : container.getCover().getCover().getGui().getText()) {
             Minecraft.getInstance().fontRenderer.drawString(text.getText(), text.getX(), text.getY(), text.getColor());
         }
     }

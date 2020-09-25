@@ -6,7 +6,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
-import muramasa.antimatter.tesseract.ITileWrapper;
+import muramasa.antimatter.tesseract.TileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -26,6 +27,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
     protected TileEntityType<?> tileType;
     protected Function<PipeType<?>, Supplier<? extends TileEntityPipe>> tileFunc = p -> () -> new TileEntityPipe(this);
+    protected Function<TileEntity, TileWrapper<?>> wrapFunc = (t) -> null;
 
     public PipeType(String domain, Material material) {
         this.domain = domain;
@@ -50,9 +52,10 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
     @Override
     public abstract String getId();
 
-    public abstract String getTypeName();
-
-    public abstract ITileWrapper getTileWrapper(TileEntity tile);
+    @Nullable
+    public TileWrapper<?> getWrapper(TileEntity tile) {
+        return wrapFunc.apply(tile);
+    }
 
     public Material getMaterial() {
         return material;
@@ -68,6 +71,11 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
 
     public T sizes(PipeSize... sizes) {
         this.sizes = ImmutableSet.copyOf(sizes);
+        return (T) this;
+    }
+
+    public T setWrapper(Function<TileEntity, TileWrapper<?>> func) {
+        this.wrapFunc = func;
         return (T) this;
     }
 

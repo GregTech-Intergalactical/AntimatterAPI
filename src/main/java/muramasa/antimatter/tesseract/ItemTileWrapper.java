@@ -3,7 +3,6 @@ package muramasa.antimatter.tesseract;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectSets;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -20,55 +19,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
+public class ItemTileWrapper extends TileWrapper<IItemHandler> implements IItemNode<ItemStack> {
 
-    private TileEntity tile;
-    private boolean removed;
-    private IItemHandler handler;
-
-    private Cover[] covers = new Cover[] {
-        Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE, Data.COVER_NONE
-    };
-
-    private ItemTileWrapper(TileEntity tile, IItemHandler handler) {
-        this.tile = tile;
-        this.handler = handler;
-    }
-
-    @Nullable
-    public static ItemTileWrapper of(TileEntity tile) {
-        LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-        if (capability.isPresent()) {
-            ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
-            capability.addListener(o -> node.onRemove(null));
-            Tesseract.ITEM.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
-            return node;
-        }
-        return null;
+    public ItemTileWrapper(TileEntity tile) {
+        super(tile, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
     }
 
     @Override
-    public void onRemove(@Nullable Direction side) {
-        if (side == null) {
-            if (tile.isRemoved()) {
-                Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
-                removed = true;
-            } else {
-                // What if tile is recreate cap ?
-            }
-        } else {
-            covers[side.getIndex()] = Data.COVER_NONE;
-        }
+    public void onInit() {
+        Tesseract.ITEM.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), this);
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = cover;
-    }
-
-    @Override
-    public boolean isRemoved() {
-        return removed;
+    public void onRemove() {
+        Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
     }
 
     @Override
@@ -98,7 +62,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     @Nonnull
     @Override
     public IntList getAvailableSlots(Dir direction) {
-        Set<?> filtered = getFiltered(direction.getIndex());
+        Set<?> filtered = getFilterAt(direction.getIndex());
         int size = handler.getSlots();
         IntList slots = new IntArrayList(size);
         if (filtered.isEmpty()) {
@@ -146,7 +110,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()] instanceof CoverOutput;
+        return getCoverAt(direction.getIndex()) instanceof CoverOutput;
     }
 
     @Override
@@ -160,9 +124,9 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     }
 
     private boolean isItemAvailable(ItemStack item, int dir) {
-        if (covers[dir] instanceof CoverTintable) return false;
-        Set<?> filtered = getFiltered(dir);
-        return filtered.isEmpty() || filtered.contains(item);
+        if (getCoverAt(dir) instanceof CoverTintable) return false;
+        Set<?> filtered = getFilterAt(dir);
+        return filtered.isEmpty() || filtered.contains(item.getItem());
     }
 
     // Fast way to find available slot for item
@@ -179,9 +143,5 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
             }
         }
         return slot;
-    }
-
-    private Set<?> getFiltered(int index) {
-        return covers[index] instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index]).getFilter() : ObjectSets.EMPTY_SET;
     }
 }

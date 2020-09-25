@@ -8,7 +8,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -25,22 +24,17 @@ public class CoverOutput extends Cover {
     }
 
     @Override
-    public void onPlace(CoverInstance<?> instance, Direction side) {
-        super.onPlace(instance, side);
-        instance.serialize().putBoolean(Ref.KEY_COVER_OUTPUT, false);
+    public void onPlace(CoverInstance<?> cover, Direction side) {
+        super.onPlace(cover, side);
+        cover.getTag().putBoolean(Ref.KEY_COVER_OUTPUT, false);
     }
 
     @Override
-    public ResourceLocation getModel() {
-        return getBasicModel();
-    }
-  
-    @Override
-    public void onMachineEvent(CoverInstance<?> instance, TileEntity tile, IMachineEvent event, Object... data) {
+    public void onMachineEvent(CoverInstance<?> cover, TileEntity tile, IMachineEvent event, Object... data) {
         //TODO: Refactor?
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            if (event == MachineEvent.ITEMS_OUTPUTTED && instance.serialize().getBoolean(Ref.KEY_COVER_OUTPUT)) {
+            if (event == MachineEvent.ITEMS_OUTPUTTED && cover.getTag().getBoolean(Ref.KEY_COVER_OUTPUT)) {
                 Direction outputDir = machine.getOutputFacing();
                 TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
                 if (adjTile == null) return;
