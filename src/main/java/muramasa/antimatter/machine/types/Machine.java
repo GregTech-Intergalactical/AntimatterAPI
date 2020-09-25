@@ -37,6 +37,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
@@ -210,6 +211,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public GuiData getGui() {
         return guiData;
+    }
+
+    public boolean hasGui() {
+        return has(GUI);
     }
 
     public ItemGroup getGroup() {

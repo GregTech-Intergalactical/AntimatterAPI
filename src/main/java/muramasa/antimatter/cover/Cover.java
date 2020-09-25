@@ -101,6 +101,10 @@ public abstract class Cover implements IAntimatterObject,ITextureProvider {
         return getGui() != null && getGui().getMenuHandler() != null;
     }
 
+    public boolean hasFilter() {
+        return false;
+    }
+
     public List<BakedQuad> onRender(IBakedModel baked, List<BakedQuad> quads, int side) {
         return quads;
     }

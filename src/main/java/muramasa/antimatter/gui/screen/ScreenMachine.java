@@ -1,7 +1,10 @@
 package muramasa.antimatter.gui.screen;
 
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMaps;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.machine.MachineInteractHandler;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.TextData;
@@ -40,8 +43,9 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     @Override
     protected void init() {
         super.init();
+        Int2BooleanMap cache = container.getTile().interactHandler.map(MachineInteractHandler::getButtonCache).orElse(Int2BooleanMaps.EMPTY_MAP);
         for (ButtonData button : data.getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, data.getButtonLocation(), button));
+            addButton(button.getType().getButtonSupplier().get(cache.get(button.getId()), guiLeft, guiTop, container.getTile(), playerInventory, data.getButtonLocation(), button));
         }
         for (TextData text : data.getText()) {
             Minecraft.getInstance().fontRenderer.drawString(text.getText(), text.getX(), text.getY(), text.getColor());

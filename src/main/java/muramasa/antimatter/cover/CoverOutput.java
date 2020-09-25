@@ -26,7 +26,7 @@ public class CoverOutput extends Cover {
     @Override
     public void onPlace(CoverInstance<?> cover, Direction side) {
         super.onPlace(cover, side);
-        cover.getTag().putBoolean(Ref.KEY_COVER_OUTPUT, false);
+        cover.getOrCreateTag().putBoolean(Ref.KEY_COVER_OUTPUT, false);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CoverOutput extends Cover {
         //TODO: Refactor?
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;
-            if (event == MachineEvent.ITEMS_OUTPUTTED && cover.getTag().getBoolean(Ref.KEY_COVER_OUTPUT)) {
+            if (event == MachineEvent.ITEMS_OUTPUTTED && cover.getOrCreateTag().getBoolean(Ref.KEY_COVER_OUTPUT)) {
                 Direction outputDir = machine.getOutputFacing();
                 TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
                 if (adjTile == null) return;

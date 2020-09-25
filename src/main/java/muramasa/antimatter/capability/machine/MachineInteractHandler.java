@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
-import muramasa.antimatter.Data;
+import it.unimi.dsi.fastutil.ints.Int2BooleanLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMaps;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICapabilityHandler;
@@ -14,19 +16,30 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.LongNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 
 import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.machine.MachineFlag.GUI;
 
 public class MachineInteractHandler<T extends TileEntityMachine> extends InteractHandler<T> implements ICapabilityHandler {
 
+    protected Int2BooleanMap buttonCache;
+
     public MachineInteractHandler(T tile, CompoundNBT tag) {
         super(tile);
+        if (tile.getMachineType().hasGui()) {
+            int size = tile.getMachineType().getGui().getButtons().size();
+            if (size > 0) buttonCache = new Int2BooleanLinkedOpenHashMap(size);
+        }
         if (tag != null) deserialize(tag);
     }
 
@@ -56,16 +69,34 @@ public class MachineInteractHandler<T extends TileEntityMachine> extends Interac
         return true;
     }
 
+    public Int2BooleanMap getButtonCache() {
+        return buttonCache != null ? buttonCache : Int2BooleanMaps.EMPTY_MAP;
+    }
+
     @Override
     public CompoundNBT serialize() {
         CompoundNBT tag = new CompoundNBT();
         if (getTile().getMachineState() != null) tag.putInt(Ref.TAG_MACHINE_STATE, getTile().getMachineState().ordinal());
+        if (buttonCache != null) {
+            ListNBT list = new ListNBT();
+            for (Int2BooleanMap.Entry e : buttonCache.int2BooleanEntrySet()) {
+                list.add(LongNBT.valueOf((long) e.getIntKey() << 32 | (e.getBooleanValue() ? 1 : 0)));
+            }
+            tag.put(Ref.TAG_MACHINE_BUTTON, list);
+        }
         return tag;
     }
 
     @Override
     public void deserialize(CompoundNBT tag) {
         getTile().setMachineState(MachineState.VALUES[tag.getInt(Ref.TAG_MACHINE_STATE)]);// TODO saving state needed? if recipe is saved, serverUpdate should handle it.
+        if (buttonCache != null) {
+            ListNBT list = tag.getList(Ref.TAG_MACHINE_BUTTON, Constants.NBT.TAG_LONG);
+            for (INBT nbt : list) {
+                long pack = ((LongNBT) nbt).getLong();
+                buttonCache.put((int) (pack >> 32), (int) (pack) != 0);
+            }
+        }
     }
 
     @Override

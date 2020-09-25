@@ -43,7 +43,8 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
         super.init();
         ResourceLocation loc = container.getCover().getCover().getGui().getButtonLocation();
         for (ButtonData button : container.getCover().getCover().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getCover(), playerInventory, loc, button));
+            boolean state = container.getCover().getButtonsCache().get(button.getId());
+            addButton(button.getType().getButtonSupplier().get(state, guiLeft, guiTop, container.getCover(), playerInventory, loc, button));
         }
         for (TextData text : container.getCover().getCover().getGui().getText()) {
             Minecraft.getInstance().fontRenderer.drawString(text.getText(), text.getX(), text.getY(), text.getColor());

@@ -68,7 +68,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends RotatableC
             switch ((GuiEvent) event) {
                 case COVER_BUTTON:
                 case COVER_SWITCH:
-                    covers.get(Ref.DIRS[data[3]]).onGuiEvent(event, data);
+                    covers.get(Ref.DIRS[data[2]]).onGuiEvent(event, data);
                     break;
             }
         }

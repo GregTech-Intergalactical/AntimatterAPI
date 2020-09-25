@@ -1,9 +1,14 @@
 package muramasa.antimatter.tile;
 
+import it.unimi.dsi.fastutil.ints.Int2BooleanLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.*;
+import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.ICapabilityHost;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -270,7 +275,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nullable
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
-        return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+        return getMachineType().hasGui() ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
     @Nonnull
