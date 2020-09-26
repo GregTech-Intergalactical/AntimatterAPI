@@ -13,18 +13,36 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.RecipeMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+
+import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 
 @JeiPlugin
 public class AntimatterJEIPlugin implements IModPlugin {
 
+    protected static class RegistryValue {
+        RecipeMap map;
+        GuiData gui;
+        Tier tier;
+        String machine;
+
+        public RegistryValue(RecipeMap map, GuiData gui, Tier tier, String machine) {
+            this.map = map;
+            this.gui = gui;
+            this.tier = tier;
+            this.machine = machine;
+        }
+    }
+
     private static IJeiRuntime runtime;
-    private static Object2ObjectMap<String, Tuple<RecipeMap, GuiData>> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
+    private static Object2ObjectMap<String, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public AntimatterJEIPlugin() {
         Antimatter.LOGGER.debug("AntimatterJEIPlugin created");
@@ -35,8 +53,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return new ResourceLocation(Ref.ID, "jei");
     }
 
-    public static void registerCategory(RecipeMap map, GuiData gui) {
-        REGISTRY.put(map.getId(), new Tuple<>(map, gui));
+    public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, String itemModel) {
+        REGISTRY.put(map.getId(), new RegistryValue(map,gui,tier,itemModel));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
 //    @Nullable
@@ -55,8 +73,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
         Set<String> registeredMachineCats = new ObjectOpenHashSet<>();
         //TODO redo JEI categories to revolve around maps instead of machines
-/*
-        for (Machine type : MachineFlag.RECIPE.getTypes()) {
+
+      /*  for (Machine type : MachineFlag.RECIPE.getTypes()) {
             if (registeredMachineCats.contains(type.getRecipeMap().getId())) continue;
             if (type.hasFlag(BASIC)) {
                 if (REGISTRY.containsKey(type.getRecipeMap().getId())) continue;
@@ -76,16 +94,23 @@ public class AntimatterJEIPlugin implements IModPlugin {
         }
  */
         REGISTRY.forEach((id, tuple) -> {
-            if (!registeredMachineCats.contains(tuple.getA().getId())) registry.addRecipeCategories(new RecipeMapCategory(tuple.getA(), tuple.getB(), Tier.LV));
+            if (!registeredMachineCats.contains(tuple.map.getId())) registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.machine));
         });
     }
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         REGISTRY.forEach((id, tuple) -> {
-            registration.addRecipes(tuple.getA().getRecipes(true), new ResourceLocation(Ref.ID, id));
+            registration.addRecipes(tuple.map.getRecipes(true), new ResourceLocation(Ref.ID, id));
         });
     }
-//
+
+    /*@Override
+    public void registerIngredients(IModIngredientRegistration registration) {
+        registration.register(RecipeMapCategory.TagType, Collections.emptyList(), null, new TaggedItemRenderer());
+    }*/
+
+
+    //
 //    @Override
 //    public void register(IModRegistry registry) {
 //        for (Machine type : MachineFlag.RECIPE.getTypes()) {
@@ -101,14 +126,14 @@ public class AntimatterJEIPlugin implements IModPlugin {
 //        }
 //    }
 //
-//    public static void showCategory(Machine... types) {
-//        if (runtime != null) {
-//            List<String> list = new LinkedList<>();
-//            for (int i = 0; i < types.length; i++) {
-//                if (!types[i].hasFlag(RECIPE)) continue;
-//                list.add(types[i].getRecipeMap().getId());
-//            }
-//            runtime.getRecipesGui().showCategories(list);
-//        }
-//    }
+    public static void showCategory(Machine... types) {
+        if (runtime != null) {
+            List<ResourceLocation> list = new LinkedList<>();
+            for (int i = 0; i < types.length; i++) {
+                if (!types[i].has(RECIPE)) continue;
+                list.add(new ResourceLocation(Ref.ID, types[i].getRecipeMap().getId()));
+            }
+            runtime.getRecipesGui().showCategories(list);
+        }
+    }
 }

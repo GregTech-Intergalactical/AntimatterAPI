@@ -120,7 +120,7 @@ public class RecipeTagMap {
         }
     }
     //First, match the non-tagged items.
-    private final Object2ObjectMap<TagMapInput, Recipe> LOOKUP_TAG = new Object2ObjectLinkedOpenHashMap<>();
+    public final Object2ObjectMap<RecipeInput, Recipe> LOOKUP_TAG = new Object2ObjectLinkedOpenHashMap<>();
     //Tags present, others are ignored.
     private final Set<ResourceLocation> tagsPresent = new ObjectOpenHashSet<>();
     //Set of items present.
@@ -128,6 +128,10 @@ public class RecipeTagMap {
 
     public RecipeTagMap() {
 
+    }
+
+    public Collection<Recipe> getRecipes() {
+        return LOOKUP_TAG.values();
     }
 
     public Recipe find(TagMapInput input) {
@@ -138,15 +142,19 @@ public class RecipeTagMap {
         return recursiveHash(input,tagged.stream().map(t -> t.item.getItem().getTags()).collect(Collectors.toList()), 0,0,0);
     }
 
-    /**
-     * Recursively finds a recipe.
-     * @param input the input recipe.
-     * @param arrayList all the items tags.
-     * @param element current element in the list.
-     * @param acc accumulated hash.
-     * @param whichNonTagged bitmap of items to ignore tags at current level.
-     * @return a found recipe.
-     */
+    public Recipe find(RecipeInput input) {
+        return LOOKUP_TAG.get(input);
+    }
+
+        /**
+         * Recursively finds a recipe.
+         * @param input the input recipe.
+         * @param arrayList all the items tags.
+         * @param element current element in the list.
+         * @param acc accumulated hash.
+         * @param whichNonTagged bitmap of items to ignore tags at current level.
+         * @return a found recipe.
+         */
     Recipe recursiveHash(TagMapInput input, List<Set<ResourceLocation>> arrayList, int element, long acc, long whichNonTagged) {
         if (element > arrayList.size()) {
             return null;
@@ -170,6 +178,10 @@ public class RecipeTagMap {
         input.rehash(whichNonTagged);
         input.setTagHash(acc);
         return LOOKUP_TAG.get(input);
+    }
+
+    public void addDefault(Recipe recipe) {
+        LOOKUP_TAG.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags()), recipe);
     }
 
     public void add(Recipe recipe) {

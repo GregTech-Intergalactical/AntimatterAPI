@@ -8,6 +8,9 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
@@ -38,6 +41,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.machine.MachineFlag.STEAM;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
 public final class AntimatterAPI {
@@ -226,10 +230,20 @@ public final class AntimatterAPI {
     }
 
     /** JEI Registry Section **/
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
-            //AntimatterJEIPlugin.registerCategory(map, gui);
+            AntimatterJEIPlugin.registerCategory(map, gui,tier, model);
         }
+    }
+
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine) {
+        if (ModList.get().isLoaded(Ref.MOD_JEI)) {
+            AntimatterJEIPlugin.registerCategory(map, gui, machine.has(STEAM) ? Tier.BRONZE : Tier.LV, machine.getId());
+        }
+    }
+
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
+       registerJEICategory(map,gui,Tier.LV, null);
     }
 
     /** Attempts to do smart interaction with a compatible Tile/Block **/

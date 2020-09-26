@@ -7,15 +7,17 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
+import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
+import muramasa.antimatter.integration.jei.renderer.RecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,13 +30,42 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private final String id;
     private final B builder;
 
-    public RecipeMap(String categoryId, B builder) {
+    private IRecipeInfoRenderer infoRenderer;
+    @Nullable
+    private Tier guiTier;
+    //Data allows you to set related data to the map, e.g. which tier the gui displays.
+    public RecipeMap(String categoryId, B builder, Object ...data) {
         this.id = "gt.recipe_map." + categoryId;
         this.builder = builder;
         this.builder.setMap(this);
         LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
         LOOKUP_TAG = new RecipeTagMap();
+        initMap(data);
         AntimatterAPI.register(RecipeMap.class, this);
+    }
+    @Nullable
+    public Tier getGuiTier() {
+        return guiTier;
+    }
+
+    @Nonnull
+    public IRecipeInfoRenderer getInfoRenderer() {
+        return infoRenderer;
+    }
+
+    private void initMap(Object[] data) {
+        for (Object obj : data) {
+            if (obj instanceof Tier) {
+                guiTier = (Tier) obj;
+            }
+            if (obj instanceof IRecipeInfoRenderer) {
+                this.infoRenderer = (IRecipeInfoRenderer) obj;
+            }
+        }
+        if (this.infoRenderer == null) {
+            //Default.
+            this.infoRenderer = RecipeInfoRenderer.INSTANCE;
+        }
     }
 
     @Override
@@ -60,8 +91,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public Collection<Recipe> getRecipes(boolean filterHidden) {
-        if (filterHidden) return LOOKUP.values().stream().filter(r -> !r.isHidden()).collect(Collectors.toList());
-        return LOOKUP.values();
+        if (filterHidden) return LOOKUP_TAG.LOOKUP_TAG.values().stream().filter(r -> !r.isHidden()).collect(Collectors.toList());
+        return LOOKUP_TAG.getRecipes();
     }
 
     void add(Recipe recipe) {
@@ -90,7 +121,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         if (recipe.hasTags()) {
             LOOKUP_TAG.add(recipe);
-        } else LOOKUP.put(new RecipeInput(recipe.getInputItems(), recipe.getInputFluids(), recipe.getTags()), recipe);
+        } else LOOKUP_TAG.addDefault(recipe);
     }
 
     @Nullable
@@ -121,7 +152,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         //merge stacks here, just combine identical stacks into one larger to simplify lookup. Stacks are copied here in case a change is made.
         items = uniqueItems(items);
         //easy, flat input lookup. recipes without tags are detected here. If a recipe has exactly the input as above the recipe is found here.
-        Recipe r = LOOKUP.get(new RecipeInput(items, fluids));
+        Recipe r = LOOKUP_TAG.find(new RecipeInput(items, fluids));
 
         if (r == null) {
             //otherwise, fall back to complicated lookup.

@@ -6,6 +6,7 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.Minecraft;
@@ -76,8 +77,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (!ModList.get().isLoaded("jei") || !container.getTile().has(MachineFlag.RECIPE)) return false;
         if (isInGui((xSize / 2) - 10, 24, 20, 18, mouseX, mouseY)) {
-            //TODO
-            //GregTechJEIPlugin.showCategory(container.getTile().getMachineType());
+            AntimatterJEIPlugin.showCategory(container.getTile().getMachineType());
             return true;
         }
         return false;
