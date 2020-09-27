@@ -212,7 +212,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         boolean shouldRun = tile.energyHandler.map(h -> h.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()),true) > 0).orElse(false);
         if (!shouldRun) return false;
-        long toConsume = (long) ((double)tile.getMachineTier().getVoltage() /(double)(activeRecipe.getPower() /(double) Objects.requireNonNull(activeRecipe.getInputFluids())[0].getAmount()));
+        long toConsume = (long) ((double)tile.getMachineTier().getVoltage() / (activeRecipe.getPower() /(double) Objects.requireNonNull(activeRecipe.getInputFluids())[0].getAmount()));
         if (tile.fluidHandler.map(h -> {
             int amount = h.inputWrapper.drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == toConsume) {

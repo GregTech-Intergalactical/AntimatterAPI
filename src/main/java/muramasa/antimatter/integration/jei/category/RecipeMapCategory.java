@@ -93,18 +93,14 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     @Override
     public void setIngredients(Recipe recipe, IIngredients ingredients) {
         tagsToRender.clear();
-        if (recipe.hasInputItems() || recipe.hasTags()) {
-            List<Ingredient> inputs = new ObjectArrayList<>((recipe.getInputItems() != null ? recipe.getInputItems().length : 0) + (recipe.hasTags() ? recipe.getTagInputs().length : 0));
-            if (recipe.hasTags()) {
-                Arrays.stream(recipe.getTagInputs()).forEach(t -> {
-                    Ingredient i = AntimatterIngredient.fromTag(t.tag,t.count);
-                    //Add to map, make sure that tooltip is shown properly.
-                    tagsToRender.put(inputs.size(), t.tag.getId());
-                    inputs.add(i);
-                });
-            }
-            if (recipe.hasInputItems()) {
-                Arrays.stream(recipe.getInputItems()).map(AntimatterIngredient::fromStack).forEach(inputs::add);
+        if (recipe.hasInputItems()) {
+            List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
+            for (AntimatterIngredient ing : recipe.getInputItems()) {
+                ResourceLocation rl = ing.getTagResource();
+                if (rl != null) {
+                    tagsToRender.put(inputs.size(), rl);
+                }
+                inputs.add(ing);
             }
             ingredients.setInputIngredients(inputs);
         }
@@ -128,7 +124,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public void draw(@Nonnull Recipe recipe, double mouseX, double mouseY) {
         if (progressBar != null)
             progressBar.draw(gui.getDir().getPos().x + gui.getArea().x, gui.getDir().getPos().y + gui.getArea().y);
-        infoRenderer.render(recipe, Minecraft.getInstance().fontRenderer, gui.getArea().x + JEI_OFFSET_X + gui.getArea().w, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z);
+        infoRenderer.render(recipe, Minecraft.getInstance().fontRenderer, JEI_OFFSET_X + gui.getArea().w, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z);
     }
 
     @Override
@@ -139,7 +135,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         int groupIndex = 0, slotCount;
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
         int inputItems = 0, inputFluids = 0;
-        if (recipe.hasInputItems() || recipe.hasTags()) {
+        if (recipe.hasInputItems()) {
             slots = gui.getSlots(SlotType.IT_IN, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {

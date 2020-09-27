@@ -3,18 +3,18 @@ package muramasa.antimatter.recipe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class Recipe {
-    private ItemStack[] itemsInput, itemsOutput;
-    private TagInput[] tagInputs;
+    private ItemStack[] itemsOutput;
+    private List<AntimatterIngredient> itemsInput;
 
     private FluidStack[] fluidsInput, fluidsOutput;
     private int duration, special;
@@ -23,7 +23,7 @@ public class Recipe {
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
+    public Recipe(List<AntimatterIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
         this.itemsInput = stacksInput;
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -32,29 +32,22 @@ public class Recipe {
         this.fluidsInput = fluidsInput;
         this.fluidsOutput = fluidsOutput;
     }
-    //TODO(merge these)
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, TagInput[] inputTags, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
-        this.itemsInput = stacksInput;
-        this.itemsOutput = stacksOutput;
-        this.duration = duration;
-        this.power = power;
-        this.special = special;
-        this.fluidsInput = fluidsInput;
-        this.fluidsOutput = fluidsOutput;
 
-        this.tagInputs = inputTags;
-    }
-
-    public boolean hasTags() {
-        return tagInputs != null && tagInputs.length > 0;
-    }
-
-    public TagInput[] getTagInputs() {
-        return tagInputs;
+    public int getTagHash() {
+        long hash = this.itemsInput.stream().filter(t -> t.tag != null).mapToLong(t -> t.tag.getId().hashCode()).sum();
+        return (int) (hash ^(hash >>> 32));
     }
 
     public void addChances(int[] chances) {
         this.chances = chances;
+    }
+
+    public Stream<AntimatterIngredient> getTaggedInput() {
+        return this.itemsInput.stream().filter(t -> t.tag != null);
+    }
+
+    public Stream<AntimatterIngredient> getStandardInput() {
+        return this.itemsInput.stream().filter(t -> t.tag == null);
     }
 
     public void setHidden(boolean hidden) {
@@ -66,7 +59,7 @@ public class Recipe {
     }
 
     public boolean hasInputItems() {
-        return itemsInput != null && itemsInput.length > 0;
+        return itemsInput != null && itemsInput.size() > 0;
     }
 
     public boolean hasOutputItems() {
@@ -87,8 +80,8 @@ public class Recipe {
     }
 
     @Nullable
-    public ItemStack[] getInputItems() {
-        return hasInputItems() ? itemsInput.clone() : null;
+    public List<AntimatterIngredient> getInputItems() {
+        return hasInputItems() ? itemsInput : null;
     }
 
     @Nullable
@@ -153,9 +146,9 @@ public class Recipe {
         StringBuilder builder = new StringBuilder();
         if (itemsInput != null) {
             builder.append("\nInput Items: { ");
-            for (int i = 0; i < itemsInput.length; i++) {
-                builder.append(itemsInput[i].getDisplayName().getFormattedText() + " x" + itemsInput[i].getCount());
-                if (i != itemsInput.length - 1) builder.append(", ");
+            for (int i = 0; i < itemsInput.size(); i++) {
+                builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName().getFormattedText() + " x" + itemsInput.get(i).getMatchingStacks()[0].getCount());
+                if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");
         }

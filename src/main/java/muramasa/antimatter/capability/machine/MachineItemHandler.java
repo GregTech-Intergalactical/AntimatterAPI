@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICapabilityHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.TagInput;
 import muramasa.antimatter.capability.item.ItemStackWrapper;
@@ -162,29 +163,12 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     public boolean consumeInputs(Recipe recipe, boolean simulate) {
         boolean success = true;
         Set<Integer> skipSlots = new HashSet<>();
-        if (recipe.getInputItems() != null && recipe.getInputItems().length > 0) {
-            for (ItemStack input : recipe.getInputItems()) {
+        if (recipe.getInputItems() != null && recipe.getInputItems().size() > 0) {
+            for (AntimatterIngredient input : recipe.getInputItems()) {
                 IItemHandler wrap = getInputWrapper();
                 for (int i = 0; i < wrap.getSlots(); i++) {
                     ItemStack item = wrap.getStackInSlot(i);
-                    if (Utils.equals(input, item) && !Utils.hasNoConsumeTag(input) && !skipSlots.contains(i)) {
-                        wrap.extractItem(i, input.getCount(), simulate);
-                        skipSlots.add(i);
-                        break;
-                    }
-                    if (i == wrap.getSlots()-1) {
-                        success = false;
-                    }
-                }
-            }
-        }
-
-        if (recipe.getTagInputs() != null && recipe.getTagInputs().length > 0) {
-            for (TagInput input : recipe.getTagInputs()) {
-                IItemHandler wrap = getInputWrapper();
-                for (int i = 0; i < wrap.getSlots(); i++) {
-                    ItemStack item = wrap.getStackInSlot(i);
-                    if (input.tag.contains(item.getItem()) && !skipSlots.contains(i) /*&& !Utils.hasNoConsumeTag(input)*/) {
+                    if (input.test(item) && /*!Utils.hasNoConsumeTag(input) && */!skipSlots.contains(i)) {
                         wrap.extractItem(i, input.count, simulate);
                         skipSlots.add(i);
                         break;
@@ -195,6 +179,22 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
                 }
             }
         }
+        success = success && recipe.getTaggedInput().mapToInt(input -> {
+            int failed = 0;
+            IItemHandler wrap = getInputWrapper();
+            for (int i = 0; i < wrap.getSlots(); i++) {
+                ItemStack item = wrap.getStackInSlot(i);
+                if (input.test(item) && !skipSlots.contains(i) /*&& !Utils.hasNoConsumeTag(input)*/) {
+                    wrap.extractItem(i, input.count, simulate);
+                    skipSlots.add(i);
+                    break;
+                }
+                if (i == wrap.getSlots() - 1) {
+                    failed++;
+                }
+            }
+            return failed;
+        }).sum() > 0;
         if (!simulate) tile.markDirty();
         return success;
     }

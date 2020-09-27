@@ -1,10 +1,15 @@
 package muramasa.antimatter.recipe;
 
+import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,66 +17,104 @@ import java.util.stream.Collectors;
 //if (e.hash == hash && ((k = e.key) == key || key.equals(k))) return e.value;
 public class RecipeInput {
 
-    protected ItemWrapper[] items;
-    //Includes possible tagged inputs as well.
-    public ItemWrapper[] taggedItems;
-    public ItemStack[] rootItems;
-    protected Int2IntOpenHashMap itemMap = new Int2IntOpenHashMap();
+
+    protected Set<AntimatterIngredient> items;
+    protected AntimatterIngredient[] taggedItems;
+    public List<Set<ResourceLocation>> allInputTags;
 
     public FluidStack[] rootFluids;
-    protected FluidWrapper[] fluids;
-    protected Int2IntOpenHashMap fluidMap = new Int2IntOpenHashMap();
+    protected Set<FluidWrapper> fluids;
 
     protected int itemHash;
     protected int fluidHash;
-    //temporary hash, tagged items that are treated as untagged.
     protected int tagHash;
+    protected long accumulatedTagHash = 0;
 
     protected long bitfilter = ~0L;
 
-    public RecipeInput(ItemStack[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
-        if (items != null && items.length > 64) {
+    public int special = 0;
+
+    //Called from Recipe.
+    public RecipeInput(@Nullable List<AntimatterIngredient> items, @Nullable FluidStack[] fluids, Set<RecipeTag> tags) {
+        if (items != null && items.size() > 64) {
             throw new RuntimeException("time to add support for arbitrary size bitmaps");
         }
         rootFluids = fluids;
-        rootItems = items;
+        if (items != null) {
+            this.items = items.stream().filter(t -> t.tag == null).collect(Collectors.toSet());
+            this.taggedItems = items.stream().filter(t -> t.tag != null).toArray(AntimatterIngredient[]::new);
+        }
+        initHash(this.items, fluids, tags);
+    }
+
+    private void initHash(Collection<AntimatterIngredient> items, FluidStack[] fluids, Set<RecipeTag> tags) {
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
-        if (items != null && items.length > 0) {
-            this.items = new ItemWrapper[items.length];
-            for (int i = 0; i < items.length; i++) {
-                this.items[i] = new ItemWrapper(items[i], tags);
-                itemMap.put(this.items[i].hashCode(), i);
-                tempHash += this.items[i].hashCode();
+        if (items != null && items.size() > 0) {
+            this.items = new ObjectLinkedOpenHashSet<>(items.size());
+            for (AntimatterIngredient item : items) {
+                this.items.add(item);
+                tempHash += item.hashCode();
             }
         }
 
         //Ensure this one isn't changed.
         itemHash = (int) (tempHash ^ (tempHash >>> 32));
         if (fluids != null && fluids.length > 0) {
-            this.fluids = new FluidWrapper[fluids.length];
-            for (int i = 0; i < fluids.length; i++) {
-                this.fluids[i] = new FluidWrapper(fluids[i], tags);
-                fluidMap.put(this.fluids[i].hashCode(), i);
-                fluidHash += this.fluids[i].hashCode();
+            this.fluids = new ObjectOpenHashSet<>();
+            for (FluidStack fluid : fluids) {
+                FluidWrapper fw = new FluidWrapper(fluid, tags);
+                this.fluids.add(fw);
+                fluidHash += fw.hashCode();
             }
         }
     }
 
-    public RecipeInput(ItemStack[] items, FluidStack[] fluids) {
+    public RecipeInput(AntimatterIngredient[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
+        this(Arrays.asList(items), fluids, tags);
+    }
+
+    public RecipeInput(List<AntimatterIngredient> items, FluidStack[] fluids) {
         this(items, fluids, Collections.emptySet());
     }
 
-    protected boolean itemEquals(RecipeInput other) {
-        if (items != null) {
-            if (other.items == null || other.items.length != this.items.length) {
-                return false;
-            }else {
-                for (ItemWrapper item : this.items) {
-                    if (!other.items[other.itemMap.get(item.hashCode())].equals(item)) return false;
+    public RecipeInput(ItemStack[] stacks, FluidStack[] fluids, Set<RecipeTag> tags, Set<ResourceLocation> filter, Set<AntimatterIngredient> itemFilter) {
+        List<AntimatterIngredient> withTag = new ArrayList<>(stacks == null ? 0 : stacks.length);
+        List<AntimatterIngredient> withoutTag = new ArrayList<>(stacks == null ? 0 : stacks.length);
+
+        this.allInputTags = new LinkedList<>();
+        if (stacks != null) {
+            for (ItemStack stack : stacks) {
+                Set<ResourceLocation> itemTags = stack.getItem().getTags();
+                if (!itemTags.isEmpty() && (filter == null || itemTags.stream().anyMatch(filter::contains))) {
+                    allInputTags.add(stack.getItem().getTags());
+                    withTag.add(AntimatterIngredient.fromStack(stack));
+                } else {
+                    withoutTag.add(AntimatterIngredient.fromStack(stack));
                 }
             }
         }
-        return true;
+        this.items = withoutTag.stream().filter(itemFilter::contains).collect(Collectors.toSet());
+        initHash(this.items, fluids, tags);
+        this.taggedItems = withTag.toArray(new AntimatterIngredient[0]);
+    }
+
+    protected boolean itemEquals(RecipeInput other) {
+        //How many non-tagged items are matched. This has to be equal to other.items.length,or 0 if it is null.
+        int correctAmount = 0;
+        int len = other.items == null ? 0 : other.items.size();
+        //First, try regular items.
+        if (items != null && other.items != null && correctAmount < len) {
+            for (AntimatterIngredient item : this.items) {
+                if (other.items.contains(item)) correctAmount++;
+            }
+        }
+        //Otherwise, try the tagged items treated as non-tagged.
+        if (correctAmount < len && taggedItems != null && bitfilter != 0) {
+            for (int i = 0; ((bitfilter & (1 << i)) != 0) && i < taggedItems.length; i++) {
+                if (other.items.contains(taggedItems[i])) correctAmount++;
+            }
+        }
+        return accumulatedTagHash == other.accumulatedTagHash && correctAmount >= len;
     }
 
     protected boolean fluidEquals(RecipeInput other) {
@@ -79,24 +122,38 @@ public class RecipeInput {
             if (other.fluids == null) {
                 return false;
             }
-            for (FluidWrapper fluid : fluids) {
-                if (!other.fluids[other.fluidMap.get(fluid.hashCode())].equals(fluid)) return false;
-            }
-        } else return other.fluids == null;
-
+            return other.fluids.containsAll(this.fluids);
+        }
         return true;
+    }
+
+    //Rehash!
+    public void rehash(long bitfilter) {
+        long tempHash = 0; //long hash used to handle many inputs with nbt hashes
+        if (taggedItems != null && taggedItems.length > 0 && bitfilter != 0) {
+            for (int i = 0; i < taggedItems.length; i++) {
+                if ((bitfilter & (1 << i)) > 0) tempHash += this.taggedItems[i].hashCode();
+            }
+        }
+        tagHash = (int) (tempHash ^ (tempHash >>> 32)); //int version of the hash for the actual comparision
+        this.bitfilter = bitfilter;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof RecipeInput)) return false;
         RecipeInput other = (RecipeInput) obj;
-
+        if (other.special != this.special) return false;
         return itemEquals(other) && fluidEquals(other);
     }
 
     @Override
     public int hashCode() {
-        return itemHash + fluidHash + tagHash;
+        return combineHash(combineHash(combineHash(itemHash,fluidHash),tagHash),Integer.hashCode(special));
+    }
+
+    private int combineHash(int hash1, int hash2) {
+        hash1 ^= hash2 + 0x9e3779b9 + (hash1 << 6) + (hash2 >> 2);
+        return hash1;
     }
 }

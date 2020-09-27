@@ -11,6 +11,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -240,6 +241,20 @@ public class Utils {
             }
         }
         return matchCount >= a.length;
+    }
+
+    public static boolean doItemsMatchAndSizeValid(List<AntimatterIngredient> a, ItemStack[] b) {
+        if (a == null || b == null) return false;
+        int matchCount = 0;
+        for (AntimatterIngredient stack : a) {
+            for (ItemStack itemStack : b) {
+                if (stack.test(itemStack)) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        return matchCount >= a.size();
     }
 
     public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
@@ -1045,7 +1060,7 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static Recipe getEmptyRecipe() {
-        return new Recipe(new ItemStack[0], new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
+        return new Recipe(Collections.EMPTY_LIST, new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
     }
 
     /**
