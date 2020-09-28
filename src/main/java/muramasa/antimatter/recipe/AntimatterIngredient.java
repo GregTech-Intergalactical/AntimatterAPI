@@ -30,6 +30,10 @@ public class AntimatterIngredient extends Ingredient {
         super(itemLists);
         this.count = count;
         tag = null;
+        //Ensure all the matching stacks have the proper count, for rendering.
+        for (ItemStack stack : this.getMatchingStacks()) {
+            stack.setCount(count);
+        }
     }
     @Nullable
     public ResourceLocation getTagResource() {
@@ -64,9 +68,11 @@ public class AntimatterIngredient extends Ingredient {
 
     @Override
     public int hashCode() {
+        //Hash == tag if present.
         if (this.tag != null) return this.tag.getId().hashCode();
+        //For single stack, just return the item.
         if (this.getMatchingStacks().length == 1) return itemHash(this.getMatchingStacks()[0]);
-        //TODO: Support multiple item inputs.
+        //TODO: Support multiple item inputs. This is not done.
         return itemHash(this.getMatchingStacks()[whichStackToHash]);
     }
 
@@ -81,15 +87,16 @@ public class AntimatterIngredient extends Ingredient {
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
         if (p_test_1_ == null) return false;
+        if (tag != null) return p_test_1_.getItem().getTags().contains(tag.getId()) && p_test_1_.getCount() >= count;
         return super.test(p_test_1_) && p_test_1_.getCount() >= count;
     }
-
+    //Creates a single antimatteringredient from a single stack.
     public static AntimatterIngredient fromStack(ItemStack stack) {
        AntimatterIngredient ing = new AntimatterIngredient(Stream.of(new SingleItemList(stack)), stack.getCount());
        ing.tag = null;
        return ing;
     }
-
+    //Convert a list of stacks into a list of ingredients, 1:1.
     public static List<AntimatterIngredient> fromStacksList(ItemStack... stacks) {
         return Arrays.stream(stacks).map(AntimatterIngredient::fromStack).collect(Collectors.toList());
     }
@@ -103,11 +110,5 @@ public class AntimatterIngredient extends Ingredient {
 
     public static AntimatterIngredient fromTag(Tag<Item> tagIn, int count) {
         return new AntimatterIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
-    }
-
-    public static AntimatterIngredient fromItemListStream(Stream<? extends Ingredient.IItemList> stream, int count) {
-        AntimatterIngredient ingredient = new AntimatterIngredient(stream, count);
-        if (ingredient.hasNoMatchingItems()) return null;
-        return ingredient;
     }
 }

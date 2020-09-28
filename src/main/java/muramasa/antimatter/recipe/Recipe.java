@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -147,7 +146,11 @@ public class Recipe {
         if (itemsInput != null) {
             builder.append("\nInput Items: { ");
             for (int i = 0; i < itemsInput.size(); i++) {
-                builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName().getFormattedText() + " x" + itemsInput.get(i).getMatchingStacks()[0].getCount());
+                if (itemsInput.get(i).tag != null) {
+                    builder.append("Tag input: ").append(itemsInput.get(i).tag.getId());
+                } else {
+                    builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName().getFormattedText()).append(" x").append(itemsInput.get(i).getMatchingStacks()[0].getCount());
+                }
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");
@@ -184,6 +187,7 @@ public class Recipe {
             }
             builder.append(" }\n");
         }
+        builder.append("Special: ").append(special).append("\n");
         return builder.toString();
     }
 }

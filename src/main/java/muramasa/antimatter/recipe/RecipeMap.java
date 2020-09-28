@@ -2,9 +2,11 @@ package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
@@ -13,7 +15,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -25,24 +26,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
-
-    private final Object2ObjectMap<RecipeInput, Recipe> LOOKUP;
-    //private final RecipeTagMap LOOKUP_TAG;
-
     private final String id;
     private final B builder;
 
     private IRecipeInfoRenderer infoRenderer;
 
-    //First, match the non-tagged items.
-    public final Object2ObjectMap<RecipeInput, Recipe> LOOKUP_TAG = new Object2ObjectOpenHashMap<>();
-
-    protected final Object2ObjectMap<ItemWrapper, List<Ingredient>> itemLookup = new Object2ObjectLinkedOpenHashMap<>();
+    //Lookup.
+    public final Object2ObjectMap<RecipeInput, Recipe> LOOKUP = new Object2ObjectOpenHashMap<>();
     //Tags present, others are ignored.
     private final Set<ResourceLocation> tagsPresent = new ObjectOpenHashSet<>();
     //Set of items present.
     private final Set<AntimatterIngredient> itemsPresent = new ObjectOpenHashSet<>();
-
     @Nullable
     private Tier guiTier;
     //Data allows you to set related data to the map, e.g. which tier the gui displays.
@@ -50,7 +44,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.id = "gt.recipe_map." + categoryId;
         this.builder = builder;
         this.builder.setMap(this);
-        LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
         initMap(data);
         AntimatterAPI.register(RecipeMap.class, this);
     }
@@ -102,8 +95,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public Collection<Recipe> getRecipes(boolean filterHidden) {
-        if (filterHidden) return LOOKUP_TAG.values().stream().filter(r -> !r.isHidden()).collect(Collectors.toList());
-        return LOOKUP_TAG.values();
+        if (filterHidden) return LOOKUP.values().stream().filter(r -> !r.isHidden()).collect(Collectors.toList());
+        return LOOKUP.values();
     }
 
     void add(Recipe recipe) {
@@ -124,11 +117,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (recipe.hasInputItems()) {
             recipe.getStandardInput().forEach(t -> Arrays.stream(t.getMatchingStacks()).forEach(stack -> itemsPresent.add(AntimatterIngredient.fromStack(stack))));
         }
-        input.accumulatedTagHash = code;
-        if (LOOKUP_TAG.get(input) != null) {
-            Utils.onInvalidData("INVALID RECIPE! Other recipe matched");
+        input.setAccumulatedTagHash(code);
+        Recipe r;
+        if ((r = LOOKUP.get(input)) != null) {
+            Utils.onInvalidData("INVALID RECIPE! Other recipe matched during RecipeMap.add. Input :\n" + input + "\n Recipe matched : " + r);
         } else {
-            LOOKUP_TAG.put(input, recipe);
+            LOOKUP.put(input, recipe);
         }
     }
 
@@ -157,10 +151,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         //some checks.
         if ((items == null || items.length == 0) && (fluids == null || fluids.length == 0)) return null;
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))) return null;
-        //merge stacks here, just combine identical stacks into one larger to simplify lookup. Stacks are copied here in case a change is made.
-        items = uniqueItems(items);
-        //easy, flat input lookup. recipes without tags are detected here. If a recipe has exactly the input as above the recipe is found here.
-        RecipeInput input = new RecipeInput(items,fluids,Collections.emptySet(), this.tagsPresent, this.itemsPresent);
+        //Create an input. Merge the input stacks.
+        RecipeInput input = new RecipeInput(uniqueItems(items),fluids,Collections.emptySet(), this.tagsPresent, this.itemsPresent);
 
         return find(input);
     }
@@ -207,9 +199,15 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (ok != null) {
             return ok;
         }
-        input.rehash(whichNonTagged);
-        input.accumulatedTagHash = acc;
-        return LOOKUP_TAG.get(input);
+        if (whichNonTagged != 0) input.rehash(whichNonTagged);
+        input.setAccumulatedTagHash(acc);
+        return LOOKUP.get(input);
+    }
+
+    public void reset() {
+        this.LOOKUP.clear();
+        this.itemsPresent.clear();
+        this.tagsPresent.clear();
     }
 
     /** Test **/

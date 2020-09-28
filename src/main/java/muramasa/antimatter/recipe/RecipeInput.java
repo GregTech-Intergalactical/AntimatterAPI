@@ -1,8 +1,5 @@
 package muramasa.antimatter.recipe;
 
-import com.mojang.datafixers.util.Either;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
@@ -24,11 +21,12 @@ public class RecipeInput {
 
     public FluidStack[] rootFluids;
     protected Set<FluidWrapper> fluids;
-
-    protected int itemHash;
-    protected int fluidHash;
+    //Static item + fluid hash.
+    protected int staticHash;
+    //Combination of staticHash and possible Accumulated tags.
+    protected int hash;
+    //The items selected as non-tagged get their hash put here.
     protected int tagHash;
-    protected long accumulatedTagHash = 0;
 
     protected long bitfilter = ~0L;
 
@@ -58,15 +56,22 @@ public class RecipeInput {
         }
 
         //Ensure this one isn't changed.
-        itemHash = (int) (tempHash ^ (tempHash >>> 32));
+        long itemHash = (int) (tempHash ^ (tempHash >>> 32));
+        long fluidHash = 0;
         if (fluids != null && fluids.length > 0) {
             this.fluids = new ObjectOpenHashSet<>();
             for (FluidStack fluid : fluids) {
                 FluidWrapper fw = new FluidWrapper(fluid, tags);
                 this.fluids.add(fw);
-                fluidHash += fw.hashCode();
+                 fluidHash += fw.hashCode();
             }
         }
+        staticHash = combineHash((int)itemHash,(int)(fluidHash^(fluidHash >>> 32)));
+        if (hash == 0) hash = staticHash;
+    }
+
+    public void setAccumulatedTagHash(long hash) {
+        this.hash = combineHash(this.staticHash, (int)(hash ^(hash >>> 32)));
     }
 
     public RecipeInput(AntimatterIngredient[] items, FluidStack[] fluids, Set<RecipeTag> tags) {
@@ -114,7 +119,7 @@ public class RecipeInput {
                 if (other.items.contains(taggedItems[i])) correctAmount++;
             }
         }
-        return accumulatedTagHash == other.accumulatedTagHash && correctAmount >= len;
+        return correctAmount >= len;
     }
 
     protected boolean fluidEquals(RecipeInput other) {
@@ -149,11 +154,42 @@ public class RecipeInput {
 
     @Override
     public int hashCode() {
-        return combineHash(combineHash(combineHash(itemHash,fluidHash),tagHash),Integer.hashCode(special));
+        return combineHash(combineHash(hash,tagHash),Integer.hashCode(special));
     }
 
     private int combineHash(int hash1, int hash2) {
         hash1 ^= hash2 + 0x9e3779b9 + (hash1 << 6) + (hash2 >> 2);
         return hash1;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        if (items != null && items.size() > 0) {
+            builder.append("\nInput Items (default): { ");
+            for (AntimatterIngredient item : items) {
+                builder.append(item.getMatchingStacks()[0].getDisplayName().getFormattedText()).append(" x").append(item.getMatchingStacks()[0].getCount());
+                builder.append(", ");
+            }
+            builder.append(" }\n");
+        }
+        if (taggedItems != null && taggedItems.length > 0) {
+            builder.append("\nInput Items (tag): { ");
+            for (AntimatterIngredient item : taggedItems) {
+                builder.append(item.getMatchingStacks()[0].getDisplayName().getFormattedText()).append(" x").append(item.getMatchingStacks()[0].getCount());
+                builder.append(", ");
+            }
+            builder.append(" }\n");
+        }
+        if (fluids != null && fluids.size() > 0) {
+            builder.append("\nInput Fluids: { ");
+            for (FluidWrapper fluid : fluids) {
+                builder.append(fluid.fluid.getDisplayName().getFormattedText()).append(" x").append(fluid.fluid.getAmount());
+                builder.append(", ");
+            }
+            builder.append(" }\n");
+        }
+        builder.append("Special: ").append(special).append("\n");
+        return builder.toString();
     }
 }

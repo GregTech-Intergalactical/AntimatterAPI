@@ -52,7 +52,6 @@ public class Antimatter extends AntimatterMod {
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
 
-
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
@@ -69,11 +68,10 @@ public class Antimatter extends AntimatterMod {
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
+        AntimatterAPI.init();
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
-
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
     }
