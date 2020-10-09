@@ -124,7 +124,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public void draw(@Nonnull Recipe recipe, double mouseX, double mouseY) {
         if (progressBar != null)
             progressBar.draw(gui.getDir().getPos().x + gui.getArea().x, gui.getDir().getPos().y + gui.getArea().y);
-        infoRenderer.render(recipe, Minecraft.getInstance().fontRenderer, JEI_OFFSET_X + gui.getArea().w, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z);
+        infoRenderer.render(recipe, Minecraft.getInstance().fontRenderer, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z/2);
     }
 
     @Override
