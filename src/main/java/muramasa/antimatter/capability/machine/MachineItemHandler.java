@@ -161,25 +161,10 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     public boolean consumeInputs(Recipe recipe, boolean simulate) {
-        boolean success = true;
         Set<Integer> skipSlots = new HashSet<>();
-        if (recipe.getInputItems() != null && recipe.getInputItems().size() > 0) {
-            for (AntimatterIngredient input : recipe.getInputItems()) {
-                IItemHandler wrap = getInputWrapper();
-                for (int i = 0; i < wrap.getSlots(); i++) {
-                    ItemStack item = wrap.getStackInSlot(i);
-                    if (input.test(item) && /*!Utils.hasNoConsumeTag(input) && */!skipSlots.contains(i)) {
-                        wrap.extractItem(i, input.count, simulate);
-                        skipSlots.add(i);
-                        break;
-                    }
-                    if (i == wrap.getSlots()-1) {
-                        success = false;
-                    }
-                }
-            }
-        }
-        success = success && recipe.getTaggedInput().mapToInt(input -> {
+        List<AntimatterIngredient> items = recipe.getInputItems();
+        if (items == null) return true;
+        boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
             IItemHandler wrap = getInputWrapper();
             for (int i = 0; i < wrap.getSlots(); i++) {
@@ -194,7 +179,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
                 }
             }
             return failed;
-        }).sum() > 0;
+        }).sum() == 0;
         if (!simulate) tile.markDirty();
         return success;
     }

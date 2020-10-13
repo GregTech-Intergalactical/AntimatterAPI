@@ -105,7 +105,7 @@ public class CapabilityHandler<T extends TileEntityBase, H extends ICapabilityHa
     }
 
     public boolean equals(String name) {
-        return handler != null && handler.getCapability().getName().equals(name);
+        return handler != null && (handler.getCapability() == null ? "".equals(name) : handler.getCapability().getName().equals(name));
     }
 
     public CompoundNBT getOrCreateTag(String key) {

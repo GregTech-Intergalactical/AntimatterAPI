@@ -1,5 +1,6 @@
 package muramasa.antimatter.recipe;
 
+import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -17,14 +18,18 @@ import java.util.stream.Stream;
 
 public class AntimatterIngredient extends Ingredient {
 
-    public final int count;
+    protected static AntimatterIngredient TAG_HASHER = new AntimatterIngredient(Stream.empty(),0);
+    @Nullable
+    //Not actually used in real recipes but used in lookup to avoid allocations.
+    protected ItemStack item;
+    public int count;
     @Nullable
     protected ItemTags.Wrapper tag;
-
     @Nullable
     protected Set<AntimatterIngredient> multipleItems;
-
     public int whichStackToHash = 0;
+
+    protected boolean nonConsume = false;
 
     protected AntimatterIngredient(Stream<? extends IItemList> itemLists, int count) {
         super(itemLists);
@@ -45,8 +50,21 @@ public class AntimatterIngredient extends Ingredient {
         this.tag = new ItemTags.Wrapper(tag.getId());
     }
 
+    public static AntimatterIngredient getHashable(ResourceLocation rl, int count) {
+        TAG_HASHER.tag = new ItemTags.Wrapper(rl);
+        TAG_HASHER.count = count;
+        return TAG_HASHER;
+    }
+
+    public static AntimatterIngredient getHashable(ItemStack rl) {
+        TAG_HASHER.tag = null;
+        TAG_HASHER.item = rl;
+        TAG_HASHER.count = rl.getCount();
+        return TAG_HASHER;
+    }
+
     private boolean checkCount(AntimatterIngredient other) {
-        return other.count >= this.count;
+        return this.count >= other.count;
     }
 
     @Override
@@ -59,6 +77,13 @@ public class AntimatterIngredient extends Ingredient {
                 if (ai.tag != null) return this.tag.getId().equals(ai.tag.getId()) && checkCount(ai);
                 else return false;
             }
+            if (this.item != null) {
+                if (ai.item != null) {
+                    return Utils.equals(this.item,ai.item);
+                } else {
+                    return ing.test(this.item);
+                }
+            }
         }
         for (ItemStack stack : this.getMatchingStacks()) {
             if (ing.test(stack)) return true;
@@ -70,8 +95,12 @@ public class AntimatterIngredient extends Ingredient {
     public int hashCode() {
         //Hash == tag if present.
         if (this.tag != null) return this.tag.getId().hashCode();
+        if (this.item != null) return itemHash(this.item);
+        if (this.getMatchingStacks().length == 0) {
+            return Integer.hashCode(0);
+        }
         //For single stack, just return the item.
-        if (this.getMatchingStacks().length == 1) return itemHash(this.getMatchingStacks()[0]);
+        if (this.getMatchingStacks().length == 1) return itemHash(item != null ? item : this.getMatchingStacks()[0]);
         //TODO: Support multiple item inputs. This is not done.
         return itemHash(this.getMatchingStacks()[whichStackToHash]);
     }
@@ -92,9 +121,11 @@ public class AntimatterIngredient extends Ingredient {
     }
     //Creates a single antimatteringredient from a single stack.
     public static AntimatterIngredient fromStack(ItemStack stack) {
-       AntimatterIngredient ing = new AntimatterIngredient(Stream.of(new SingleItemList(stack)), stack.getCount());
-       ing.tag = null;
-       return ing;
+        int count = stack.getCount() == 0 ? 1 : stack.getCount();
+        AntimatterIngredient ing = new AntimatterIngredient(Stream.of(new SingleItemList(stack)), count);
+        if (stack.getCount() == 0) ing.nonConsume = true;
+        ing.tag = null;
+        return ing;
     }
     //Convert a list of stacks into a list of ingredients, 1:1.
     public static List<AntimatterIngredient> fromStacksList(ItemStack... stacks) {
@@ -111,4 +142,6 @@ public class AntimatterIngredient extends Ingredient {
     public static AntimatterIngredient fromTag(Tag<Item> tagIn, int count) {
         return new AntimatterIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
     }
+
+
 }

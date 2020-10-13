@@ -134,6 +134,7 @@ public class RecipeBuilder {
 
     public void clear() {
         itemsInput = itemsOutput = null;
+        ingredientInput = null;
         fluidsInput = fluidsOutput = null;
         tagInputs = null;
         chances = null;
