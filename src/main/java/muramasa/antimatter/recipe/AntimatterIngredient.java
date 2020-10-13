@@ -143,5 +143,19 @@ public class AntimatterIngredient extends Ingredient {
         return new AntimatterIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
     }
 
+    //UTILITY FUNCTIONS
+    public static AntimatterIngredient of(Tag<Item> tagIn, int count) {
+        return fromTag(tagIn,count);
+    }
 
+    public static AntimatterIngredient of(ItemStack stack) {
+        return fromStack(stack);
+    }
+    public static AntimatterIngredient of(Item item, int count) {
+        return fromStack(new ItemStack(item,count));
+    }
+    //DEFAULT BEHAVIOUR: 1-1, not MANY-1. Use specific method for that.
+    public static List<AntimatterIngredient> of(ItemStack... stack) {
+        return fromStacksList(stack);
+    }
 }

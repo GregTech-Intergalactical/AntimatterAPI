@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -109,7 +108,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return LOOKUP.values().stream().flatMap(t -> t.getRecipes(filterHidden)).collect(Collectors.toSet());
     }
 
-    //Adds a recipe to a map of fluids -> recipe.
+    //Adds a recipe to a map of fluids -> recipe. This just adds the recipe and errors if one is present.
     void addRecipeToMap(Map<RecipeFluids, Recipe> map, Recipe recipe) {
         RecipeFluids input = new RecipeFluids(recipe);
         Recipe old = map.putIfAbsent(input, recipe);
@@ -118,16 +117,21 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
     }
 
+    /**
+     * Adds a recipe to this map. If the recipe is empty or collides with another recipe it is not added.
+     * @param recipe the recipe to add.
+     */
     void add(Recipe recipe) {
         if (recipe == null) return;
-        Branch map = LOOKUP.computeIfAbsent(recipe.getSpecialValue(), t -> new Branch());
+      //  Branch map = LOOKUP.computeIfAbsent(recipe.getSpecialValue(), t -> new Branch());
+        Branch map = LOOKUP.computeIfAbsent(0, t -> new Branch());
         recipe.getTaggedInput().forEach(t -> tagsPresent.add(t.getTagResource()));
-        if (recipe.getInputItems() == null) {
+        if (!recipe.hasInputItems() || recipe.getInputItems().size() == 0) {
             //If a recipe doesn't have items it maps to the null key.
             map.NODES.compute(null, (k, v) -> {
                 if (v == null) {
                     v = Either.left(new Object2ObjectOpenHashMap<>());
-                } else {
+                } else if (v.right().isPresent()) {
                     //Shouldn't happen.
                     Utils.onInvalidData("RECIPE COLLISION (NO ITEMS, ONLY FLUIDS)!");
                     return v;
@@ -135,7 +139,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 v.left().ifPresent(t -> addRecipeToMap(t, recipe));
                 return v;
             });
-        } else {
+            //inputitems are not null
+        } else if(recipe.getInputItems().size() > 0 || (recipe.getInputFluids() != null && recipe.getInputFluids().length > 0)) {
             for (AntimatterIngredient ai : recipe.getInputItems()) {
                 if (ai.getMatchingStacks().length == 0) {
                     Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT" + (ai.tag != null ? " TAG: " + ai.tag : ""));
@@ -148,6 +153,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 return;
             }
             recurseItemTreeAdd(recipe, recipe.getInputItems(), map, 0, 0);
+        } else {
+            Utils.onInvalidData("EMPTY RECIPE - NOT ADDED");
         }
     }
 
@@ -172,17 +179,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     Utils.onInvalidData("COULD NOT ADD RECIPE!");
                     return null;
                 }
-                //not using ifPresent
                 addRecipeToMap(rec, recipe);
                 return v;
             } else if (v == null) {
-                //Not at the end, create a new branch.
+                //Not at the end, create a new branch to continue.
                 Branch traverse = new Branch();
                 v = Either.right(traverse);
             }
             return v;
         });
-        //Success.
+        //Success. We are at the end, so we added recipe.
         if (count == ingredients.size() - 1) return;
         if (r == null) return;
 
@@ -194,6 +200,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         r.right().ifPresent(m -> recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1));
     }
 
+    /**
+     * Recursively finds a recipe, top level. call this to find a recipe
+     * @param input the fluids part
+     * @param items the items part
+     * @param map the root branch to search from.
+     * @return a recipe
+     */
     Recipe recurseItemTreeFind(RecipeFluids input, ItemWrapper[] items, @Nonnull Branch map) {
         for (int i = 0; i < items.length; i++) {
             Recipe r = recurseItemTreeFind(input, items, map, i, 0, (1 << i));
@@ -201,7 +214,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         return null;
     }
-
+    /**
+     * Recursively finds a recipe
+     * @param input the fluids part
+     * @param items the items part
+     * @param map the current branch of the tree
+     * @param index the index of the wrapper to get
+     * @param count how deep we are in recursion, < items.length
+     * @param skip bitmap of items to skip, i.e. which items are used in the recursion.
+     * @return a recipe
+     */
     Recipe recurseItemTreeFind(RecipeFluids input, ItemWrapper[] items, @Nonnull Branch map, int index, int count, long skip) {
         if (count == items.length) return null;
         ItemWrapper wr = items[index];
@@ -259,7 +281,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     continue loop;
                 }
             }
-            //Add a copy here
+            //Add a copy here or it might mutate the stack.
             list.add(item.copy());
         }
         return list.toArray(new ItemStack[0]);
@@ -267,17 +289,21 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids, int special) {
-        long current = System.nanoTime();
+       // long current = System.nanoTime();
         //First, check if items and fluids are valid.
         if ((items == null || items.length == 0) && (fluids == null || fluids.length == 0)) return null;
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids)))
             return null;
-
-        //TODO: Somehow bake this check into regular recursion.
-        Branch rootMap = LOOKUP.get(special);
+        if (items != null && items.length > Long.SIZE) {
+            Utils.onInvalidData("ERROR! TOO LARGE INPUT IN RECIPEMAP, time to fix a real bitmap");
+            return null;
+        }
+        //Branch rootMap = LOOKUP.get(special);
+        Branch rootMap = LOOKUP.get(0);
         if (rootMap == null) return null;
 
         if (items == null) {
+            //No items, check root level only.
             Either<Map<RecipeFluids, Recipe>, Branch> r = rootMap.NODES.get(null);
             if (r != null && r.left().isPresent()) {
                 return r.left().get().get(new RecipeFluids(fluids, null));
@@ -286,8 +312,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             }
         } else {
             Recipe r = recurseItemTreeFind(new RecipeFluids(fluids, null), Arrays.stream(uniqueItems(items)).map(t -> new ItemWrapper(t, tagsPresent, null)).toArray(ItemWrapper[]::new), rootMap);
-            current = System.nanoTime() - current;
-            Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
+            //current = System.nanoTime() - current;
+            //Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
             return r;
         }
     }
