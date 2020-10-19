@@ -9,6 +9,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -80,6 +81,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         if (registry != ForgeRegistries.BLOCKS) return;
         tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
+    }
+
+    public void registerJei() {
+        if (this.guiData != null && recipeMap != null) {
+            AntimatterAPI.registerJEICategory(this.recipeMap,this.guiData, this);
+        }
     }
 
     protected void addData(Object... data) {
@@ -175,12 +182,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addFlags(flags);
     }
 
-    public void setTiers(Tier... tiers) {
+    public T setTiers(Tier... tiers) {
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
+        return (T) this;
     }
 
     public void setGUI(MenuHandler<?, ?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
+
+        registerJei();
     }
 
     public void setStructure(Function<StructureBuilder, Structure> func) {

@@ -7,6 +7,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -29,6 +30,11 @@ public class CoverOutput extends Cover {
     public void onPlace(CoverInstance<?> instance, Direction side) {
         super.onPlace(instance, side);
         instance.getNbt().putBoolean(KEY_OUTPUT, false);
+    }
+
+    @Override
+    public ResourceLocation getModel() {
+        return getBasicModel();
     }
 
     @Override

@@ -19,8 +19,8 @@ public class ScreenHatch<T extends ContainerMachine> extends ScreenMachine<T> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         List<SlotData> list = container.getTile().getMachineType().getGui().getSlots(container.getTile().getMachineTier());
         for (SlotData slot : list) {
             if (slot.getType() == SlotType.IT_IN || slot.getType() == SlotType.IT_OUT) {
@@ -32,5 +32,10 @@ public class ScreenHatch<T extends ContainerMachine> extends ScreenMachine<T> {
         if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {
             drawTexture(gui, guiLeft + 7, guiTop + 15, xSize, 36, 18, 54);
         }
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 }

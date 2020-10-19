@@ -20,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -65,6 +66,10 @@ public class ClientHandler implements IProxyHandler {
         for (Block block : AntimatterAPI.all(Block.class)) {
             if (block instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) block)::getBlockColor, block);
         }
+    }
+
+    public static void onModelRegistry(ModelRegistryEvent e) {
+
     }
 
     @Override

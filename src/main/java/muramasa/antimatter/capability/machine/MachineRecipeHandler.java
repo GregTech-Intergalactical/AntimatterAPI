@@ -29,15 +29,38 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected int currentProgress, maxProgress;
     protected int overclock;
 
+    //20 seconds per check.
+    static final int WAIT_TIME = 20*20;
+    protected int tickTimer = 0;
+
+    //Consuming resources can call into the recipe handler, causing a loop.
+    //For instance, consuming fluid in the fluid handlers calls back into the MachineRecipeHandler, deadlocking.
+    //So just 'lock' during recipe ticking.
+    private boolean tickingRecipe = false;
+
+
+    public MachineRecipeHandler(T tile, CompoundNBT tag) {
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
         this.generator = tile.getMachineType().has(MachineFlag.GENERATOR);
     }
 
+    public void onUpdate() {
+        if (activeRecipe == null && tickTimer >= WAIT_TIME) {
+            tickTimer = 0;
+            checkRecipe();
+        } else if (activeRecipe == null) {
+            tickTimer++;
+        }
+        if (tile.getMachineState() != IDLE) tickMachineLoop();
     public IIntArray getProgressData() {
         return progress;
     }
 
+    protected void tickMachineLoop() {
+        //To avoid a feedback loop caused by events firing from inside the recipe handler
+        //(such as consuming resources for a recipe and/or generator check so we dont overflow tick recipes.
+        if (tickingRecipe) return;
     public void setClientProgress() {
         setClientProgress(Float.floatToRawIntBits(this.currentProgress / (float) this.maxProgress));
     }
@@ -79,13 +102,25 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return tile.getMachineType().getRecipeMap().find(tile.getMachineTier(), tile.itemHandler, tile.fluidHandler);
     }
 
-    protected MachineState tickRecipe() {
-        // tickingRecipe = true;
-        // onRecipeTick(); TODO: MachineEvent
-        if (this.activeRecipe == null) {
-            /*
-            if (tile.getMachineState() == null) {
-                return IDLE;
+    //called when a new recipe is found, to process overclocking
+    public void activateRecipe() {
+        //if (canOverclock)
+        curProgress = 0;
+        overclock = 0;
+        if (this.tile.getMachineTier().getVoltage() > activeRecipe.getPower()) {
+            int voltage = this.tile.getMachineTier().getVoltage();
+            int tier = 0;
+            //Dont use utils, because we allow overclocking from ulv.
+            for (int i = 0; i < Ref.V.length; i++) {
+                if (activeRecipe.getPower() <= Ref.V[i]) {
+                    tier = i;
+                    break;
+                }
+            }
+            int tempoverclock = (this.tile.getMachineTier().getVoltage() / Ref.V[tier]);
+            while (tempoverclock > 1) {
+                tempoverclock >>= 2;
+                overclock++;
             }
              */
             System.out.println("Check Recipe when active recipe is null");
@@ -133,6 +168,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     tile.setMachineState(INVALID_TIER);
                     return false;
                 }
+                if (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
+                    return false;
+                }
                 activateRecipe();
                 return true;
             }
@@ -163,28 +201,70 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         // onRecipeFound(); TODO: MachineEvent
     }
 
-    protected void consumeInputs() {
-        tile.energyHandler.ifPresent(e -> {
-            tile.itemHandler.ifPresent(i -> i.consumeInputs(this.activeRecipe, false));
-            if (generator) {
-                e.insert((long) (tile.getMachineType().getMachineEfficiency() * tile.getMachineTier().getVoltage()), false);
-            } else {
-                long extract = activeRecipe.getPower() * (1 << overclock);
-                if (e.extract(extract, true) >= extract) {
-                    e.extract(extract, false);
-                }
-            }
+    @Nullable
+    public Recipe getActiveRecipe() {
+        return activeRecipe;
+    }
+
+    public void consumeInputs() {
+        tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe,false));
+        tile.fluidHandler.ifPresent(h -> h.consumeInputs(activeRecipe.getInputFluids()));
+    }
+
+    public boolean canOutput() {
+        if (tile.itemHandler.isPresent() && activeRecipe.hasOutputItems() && !tile.itemHandler.get().canOutputsFit(activeRecipe.getOutputItems()))
+            return false;
+        if (tile.fluidHandler.isPresent() && activeRecipe.hasOutputFluids() && !tile.fluidHandler.get().canOutputsFit(activeRecipe.getOutputFluids()))
+            return false;
+        return true;
+    }
+
+    //Schedules a check next tick for a possible recipe.
+    public void scheduleCheck() {
+        tickTimer = WAIT_TIME;
+    }
+
+    public void addOutputs() {
+        tile.itemHandler.ifPresent(h -> {
+            h.addOutputs(activeRecipe.getOutputItems());
+            tile.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
         });
     }
 
-    protected boolean canOutput() {
-        boolean outputItemFit = (this.activeRecipe.hasOutputItems() && tile.itemHandler.map(i -> i.canOutputsFit(this.activeRecipe.getOutputItems())).orElse(false));
-        boolean outputFluidFit = (this.activeRecipe.hasOutputFluids() && tile.fluidHandler.map(f -> f.canOutputsFit(this.activeRecipe.getOutputFluids())).orElse(false));
-        return outputItemFit || outputFluidFit;
+    public boolean canRecipeContinue() {
+        if (tile.itemHandler.isPresent() && !tile.itemHandler.get().consumeInputs(activeRecipe,true)) //!Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))
+            return false;
+        if (tile.fluidHandler.isPresent() && (activeRecipe.hasInputFluids() && (!Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.get().getInputs()))))
+            return false;
+        return true;
     }
 
     protected boolean canRecipeContinue() {
         return tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true)).orElse(false) || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
+    }
+
+    protected boolean consumeGeneratorResources() {
+        if (!activeRecipe.hasInputFluids()) {
+            throw new RuntimeException("Missing fuel in active generator recipe!");
+        }
+        boolean shouldRun = tile.energyHandler.map(h -> h.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()),true) > 0).orElse(false);
+        if (!shouldRun) return false;
+        long toConsume = (long) ((double)tile.getMachineTier().getVoltage() / (activeRecipe.getPower() /(double) Objects.requireNonNull(activeRecipe.getInputFluids())[0].getAmount()));
+        if (tile.fluidHandler.map(h -> {
+            int amount = h.inputWrapper.drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            if (amount == toConsume) {
+                h.inputWrapper.drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.EXECUTE);
+                return true;
+            }
+            return false;
+        }).orElse(false)) {
+            //Input energy
+            tile.energyHandler.ifPresent(handler -> {
+                handler.insert((long)(tile.getMachineType().getMachineEfficiency()*(double)tile.getMachineTier().getVoltage()), false);
+            });
+            return true;
+        }
+        return false;
     }
 
     public void resetRecipe() {

@@ -21,7 +21,7 @@ public class TileEntityTickable extends TileEntityBase implements ITickableTileE
         } else {
             onClientUpdate();
         }
-        requestModelDataUpdate();
+        //requestModelDataUpdate();
     }
 
     public boolean hadFirstTick() {

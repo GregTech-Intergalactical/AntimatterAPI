@@ -28,6 +28,10 @@ public class ButtonWidget extends Button {
         this(res, x, y, w, h, body, overlay, "", onPress);
     }
 
+    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, Button.IPressable onPress) {
+        this(res, x, y, w, h, body, null, "", onPress);
+    }
+
     @Override
     public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         Minecraft minecraft = Minecraft.getInstance();

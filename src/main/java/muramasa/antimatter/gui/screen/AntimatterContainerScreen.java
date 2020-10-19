@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
@@ -82,4 +83,9 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
 //            }
 //        });
 //    }
+
+    protected void removeButton(Widget widget) {
+        buttons.removeIf(f -> f.equals(widget));
+        children.removeIf(f -> f.equals(widget));
+    }
 }

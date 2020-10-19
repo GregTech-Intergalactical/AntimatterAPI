@@ -6,21 +6,27 @@ import muramasa.antimatter.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class Recipe {
+    private final ItemStack[] itemsOutput;
+    @Nonnull
+    private final List<AntimatterIngredient> itemsInput;
 
-    private ItemStack[] itemsInput, itemsOutput;
-    private FluidStack[] fluidsInput, fluidsOutput;
-    private int duration, special;
-    private long power;
+    private final FluidStack[] fluidsInput;
+    private final FluidStack[] fluidsOutput;
+    private final int duration;
+    private final int special;
+    private final long power;
     private int[] chances;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
-    public Recipe(ItemStack[] stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
+    public Recipe(@Nonnull List<AntimatterIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
         this.itemsInput = stacksInput;
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -30,8 +36,21 @@ public class Recipe {
         this.fluidsOutput = fluidsOutput;
     }
 
+    public int getTagHash() {
+        long hash = this.itemsInput.stream().filter(t -> t.tag != null).mapToLong(t -> t.tag.getId().hashCode()).sum();
+        return (int) (hash ^(hash >>> 32));
+    }
+
     public void addChances(int[] chances) {
         this.chances = chances;
+    }
+
+    public Stream<AntimatterIngredient> getTaggedInput() {
+        return this.itemsInput.stream().filter(t -> t.tag != null);
+    }
+
+    public Stream<AntimatterIngredient> getStandardInput() {
+        return this.itemsInput.stream().filter(t -> t.tag == null);
     }
 
     public void setHidden(boolean hidden) {
@@ -43,7 +62,7 @@ public class Recipe {
     }
 
     public boolean hasInputItems() {
-        return itemsInput != null && itemsInput.length > 0;
+        return itemsInput.size() > 0;
     }
 
     public boolean hasOutputItems() {
@@ -64,8 +83,8 @@ public class Recipe {
     }
 
     @Nullable
-    public ItemStack[] getInputItems() {
-        return hasInputItems() ? itemsInput.clone() : null;
+    public List<AntimatterIngredient> getInputItems() {
+        return hasInputItems() ? itemsInput : null;
     }
 
     @Nullable
@@ -128,18 +147,22 @@ public class Recipe {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (itemsInput != null) {
+        if (itemsInput.size() > 0) {
             builder.append("\nInput Items: { ");
-            for (int i = 0; i < itemsInput.length; i++) {
-                builder.append(itemsInput[i].getDisplayName().getFormattedText() + " x" + itemsInput[i].getCount());
-                if (i != itemsInput.length - 1) builder.append(", ");
+            for (int i = 0; i < itemsInput.size(); i++) {
+                if (itemsInput.get(i).tag != null) {
+                    builder.append("Tag input: ").append(itemsInput.get(i).tag.getId());
+                } else {
+                    builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName().getFormattedText()).append(" x").append(itemsInput.get(i).getMatchingStacks()[0].getCount());
+                }
+                if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");
         }
         if (itemsOutput != null) {
             builder.append("Output Items: { ");
             for (int i = 0; i < itemsOutput.length; i++) {
-                builder.append(itemsOutput[i].getDisplayName().getFormattedText() + " x" + itemsOutput[i].getCount());
+                builder.append(itemsOutput[i].getDisplayName().getFormattedText()).append(" x").append(itemsOutput[i].getCount());
                 if (i != itemsOutput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");
@@ -147,7 +170,7 @@ public class Recipe {
         if (fluidsInput != null) {
             builder.append("Input Fluids: { ");
             for (int i = 0; i < fluidsInput.length; i++) {
-                builder.append(fluidsInput[i].getFluid().getRegistryName() + ": " + fluidsInput[i].getAmount()  + "mb");
+                builder.append(fluidsInput[i].getFluid().getRegistryName()).append(": ").append(fluidsInput[i].getAmount()).append("mb");
                 if (i != fluidsInput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");
@@ -155,7 +178,7 @@ public class Recipe {
         if (fluidsOutput != null) {
             builder.append("Output Fluids: { ");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(fluidsOutput[i].getFluid().getRegistryName() + ": " + fluidsOutput[i].getAmount() + "mb");
+                builder.append(fluidsOutput[i].getFluid().getRegistryName()).append(": ").append(fluidsOutput[i].getAmount()).append("mb");
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");
@@ -163,11 +186,12 @@ public class Recipe {
         if (chances != null) {
             builder.append("Chances: { ");
             for (int i = 0; i < chances.length; i++) {
-                builder.append(chances[i] + "%");
+                builder.append(chances[i]).append("%");
                 if (i != chances.length - 1) builder.append(", ");
             }
             builder.append(" }\n");
         }
+        builder.append("Special: ").append(special).append("\n");
         return builder.toString();
     }
 }

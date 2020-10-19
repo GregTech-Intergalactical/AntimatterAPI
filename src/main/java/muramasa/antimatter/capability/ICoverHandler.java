@@ -12,6 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
 
@@ -25,6 +26,10 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     Direction getTileFacing();
 
     T getTile();
+    //Returns a lambda that, given a direction returns the given Cover.
+    default Function<Direction, CoverInstance> getCoverFunction() {
+        return this::get;
+    }
 
     /** Events **/
     void onRemove();

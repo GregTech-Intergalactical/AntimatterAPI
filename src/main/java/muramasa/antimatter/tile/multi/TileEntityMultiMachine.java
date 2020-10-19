@@ -40,6 +40,14 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         super(type);
     }
 
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        componentHandler.init();
+        if (!isStructureValid()) checkStructure();
+        recipeHandler.ifPresent(MachineRecipeHandler::scheduleCheck);
+    }
+
     public boolean checkStructure() {
         if (!isServerSide()) return false;
         Structure structure = getMachineType().getStructure(getMachineTier());
@@ -50,6 +58,13 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
             if (onStructureFormed()) {
                 StructureCache.add(world, pos, result.positions);
                 this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
+                //Handlers.
+                this.itemHandler.ifPresent(handle -> {
+                    ((MultiMachineItemHandler)handle).onStructureBuild();
+                });
+                this.energyHandler.ifPresent(handle -> {
+                    ((MultiMachineEnergyHandler)handle).onStructureBuild();
+                });
                 setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
                 return true;
@@ -62,6 +77,8 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public void invalidateStructure() {
         result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this))));
+        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
+        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
         result = Optional.empty();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");
@@ -182,7 +199,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
-        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
+        for (IComponentHandler hatch : getComponents("hatch_item_output")) {
             if (hatch.getItemHandler().isPresent()) {
                 ItemStack[] finalItems = items;
                 items = hatch.getItemHandler().map(ih -> ih.exportAndReturnOutputs(finalItems.clone())).orElse(new ItemStack[0]); //WHY CLONE?!!?
@@ -209,7 +226,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     public boolean canItemsFit(ItemStack[] items) {
         if (items == null) return true;
         int matchCount = 0;
-        for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
+        for (IComponentHandler hatch : getComponents("hatch_item_output")) {
             if (hatch.getItemHandler().isPresent()) {
                 matchCount += hatch.getItemHandler().map(ih -> ih.getSpaceForOutputs(items)).orElse(0);
             }
@@ -245,15 +262,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         return MachineState.INVALID_STRUCTURE;
     }
 
-    //TODO
-//    @Override
-//    public boolean hasCapability(Capability<?> capability, @Nullable Direction side) {
-//        return capability == GTCapabilities.COMPONENT || super.hasCapability(capability, side);
-//    }
-//
-//    @Nullable
-//    @Override
-//    public <T> T getCapability(Capability<T> capability, @Nullable Direction side) {
-//        return capability == GTCapabilities.COMPONENT && componentHandler.isPresent() ? GTCapabilities.COMPONENT.cast(componentHandler.get()) : super.getCapability(capability, side);
-//    }
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) {
+            return LazyOptional.of(() -> componentHandler.get()).cast();
+        }
+        return super.getCapability(cap, side);
+    }
 }

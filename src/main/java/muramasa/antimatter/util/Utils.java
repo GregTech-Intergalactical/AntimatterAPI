@@ -11,6 +11,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -20,6 +21,7 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -242,7 +244,22 @@ public class Utils {
         return matchCount >= a.length;
     }
 
+    public static boolean doItemsMatchAndSizeValid(List<AntimatterIngredient> a, ItemStack[] b) {
+        if (a == null || b == null) return false;
+        int matchCount = 0;
+        for (AntimatterIngredient stack : a) {
+            for (ItemStack itemStack : b) {
+                if (stack.test(itemStack)) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        return matchCount >= a.size();
+    }
+
     public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
+        if (a == null && b == null) return true;
         if (a == null || b == null) return false;
         int matchCount = 0;
         for (FluidStack fluidStack : a) {
@@ -551,7 +568,7 @@ public class Utils {
             }
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        return rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() : result;
+        return /*rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() :*/ result;
     }
 
     //TODO replace with doRaytrace in block?
@@ -656,6 +673,25 @@ public class Utils {
             }
         }
         return set;
+    }
+
+
+    public static ModelRotation getModelRotation(Direction dir) {
+        switch (dir) {
+            case DOWN:
+                return ModelRotation.getModelRotation(90,0);
+            case UP:
+                return ModelRotation.getModelRotation(-90,0);
+            case NORTH:
+                return ModelRotation.getModelRotation(0,0);
+            case SOUTH:
+                return ModelRotation.getModelRotation(0,180);
+            case EAST:
+                return ModelRotation.getModelRotation(0,90);
+            case WEST:
+                return ModelRotation.getModelRotation(0,270);
+        }
+        return null;
     }
 
     public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
@@ -1020,7 +1056,7 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static Recipe getEmptyRecipe() {
-        return new Recipe(new ItemStack[0], new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
+        return new Recipe(Collections.EMPTY_LIST, new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
     }
 
     /**

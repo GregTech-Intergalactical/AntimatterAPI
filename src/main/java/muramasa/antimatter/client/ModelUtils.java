@@ -16,6 +16,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.QuadTransformer;
+import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.model.TransformationHelper;
 
@@ -47,6 +48,10 @@ public class ModelUtils {
         Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
         Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
         return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.isAmbientOcclusion(), baked.isGui3d(), baked.func_230044_c_(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
+    }
+
+    public static IBakedModel getBaked(ResourceLocation loc) {
+        return ModelLoader.instance().getBakedModel(loc, SimpleModelTransform.IDENTITY, ModelLoader.defaultTextureGetter());
     }
 
     public static IBakedModel getBakedFromState(BlockState state) {

@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -45,6 +46,7 @@ public class Antimatter extends AntimatterMod {
 
         eventBus.addListener(ClientHandler::onItemColorHandler);
         eventBus.addListener(ClientHandler::onBlockColorHandler);
+        eventBus.addListener(ClientHandler::onModelRegistry);
 
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::commonSetup);
@@ -59,17 +61,17 @@ public class Antimatter extends AntimatterMod {
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterTextureStitcher::onTextureStitch);
         AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
+        AntimatterAPI.init();
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
-
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
     }
