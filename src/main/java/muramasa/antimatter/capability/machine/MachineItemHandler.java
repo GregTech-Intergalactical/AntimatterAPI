@@ -10,7 +10,6 @@ import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.TagInput;
-import muramasa.antimatter.capability.item.ItemStackWrapper;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -108,19 +107,19 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     /** Handler Access **/
-    public TrackedItemHandler<T> getInputHandler() {
+    public IItemHandlerModifiable getInputHandler() {
         return inventories.get(ITEM_INPUT);
     }
 
-    public TrackedItemHandler<T> getOutputHandler() {
+    public IItemHandlerModifiable getOutputHandler() {
         return inventories.get(ITEM_OUTPUT);
     }
 
-    public TrackedItemHandler<T> getCellHandler() {
+    public IItemHandlerModifiable getCellHandler() {
         return inventories.get(FLUID_INPUT);
     }
 
-    public TrackedItemHandler<T> getChargeHandler() {
+    public IItemHandlerModifiable getChargeHandler() {
         return inventories.get(ENERGY);
     }
 
@@ -136,6 +135,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return getCellHandler().getSlots();
     }
 
+    @Nonnull
     public ItemStack[] getInputs() {
         return getInputList().toArray(new ItemStack[0]);
     }
@@ -152,14 +152,14 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return getCellHandler().getStackInSlot(1);
     }
 
-    public TrackedItemHandler<T> getHandlerForSide(Direction side) {
+    public IItemHandlerModifiable getHandlerForSide(Direction side) {
         return side != tile.getOutputFacing() ? getInputHandler() : getOutputHandler();
     }
 
     /** Gets a list of non empty input Items **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
-        TrackedItemHandler<T> inputs = getInputHandler();
+        IItemHandlerModifiable inputs = getInputHandler();
         for (int i = 0; i < inputs.getSlots(); i++) {
             if (!inputs.getStackInSlot(i).isEmpty()) {
                 list.add(inputs.getStackInSlot(i).copy());
@@ -172,7 +172,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     public List<IEnergyHandler> getChargeableItems() {
         List<IEnergyHandler> list = new ObjectArrayList<>();
         if (tile.isServerSide()) {
-            TrackedItemHandler<T> chargeables = getChargeHandler();
+            IItemHandlerModifiable chargeables = getChargeHandler();
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
@@ -186,7 +186,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     /** Gets a list of non empty output Items **/
     public List<ItemStack> getOutputList() {
         List<ItemStack> list = new ObjectArrayList<>();
-        TrackedItemHandler<T> outputs = getOutputHandler();
+        IItemHandlerModifiable outputs = getOutputHandler();
         for (int i = 0; i < outputs.getSlots(); i++) {
             ItemStack slot = outputs.getStackInSlot(i);
             if (!slot.isEmpty()) {
@@ -202,7 +202,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         if (items == null) return true;
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
-            IItemHandler wrap = getInputWrapper();
+            IItemHandler wrap = getInputHandler();
             for (int i = 0; i < wrap.getSlots(); i++) {
                 ItemStack item = wrap.getStackInSlot(i);
                 if (input.test(item) && !skipSlots.contains(i) /*&& !Utils.hasNoConsumeTag(input)*/) {
@@ -221,7 +221,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     public void addOutputs(ItemStack... outputs) {
-        TrackedItemHandler<T> outputHandler = getOutputHandler();
+        IItemHandlerModifiable outputHandler = getOutputHandler();
         if (outputHandler == null || outputs == null || outputs.length == 0) {
             return;
         }
@@ -237,7 +237,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     /** Helpers **/
     public boolean canOutputsFit(ItemStack[] a) {
-        TrackedItemHandler<T> outputHandler = getOutputHandler();
+        IItemHandlerModifiable outputHandler = getOutputHandler();
         boolean[] results = new boolean[a.length];
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < outputHandler.getSlots(); j++) {
@@ -255,7 +255,12 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public int getSpaceForOutputs(ItemStack[] a) {
         int matchCount = 0;
-        TrackedItemHandler<T> outputHandler = getOutputHandler();
+        //Here, cast to use stack limit
+        IItemHandlerModifiable handler = getOutputHandler();
+        if (!(handler instanceof TrackedItemHandler)) {
+            return 0;
+        }
+        TrackedItemHandler<T> outputHandler = (TrackedItemHandler<T>) handler;
         for (ItemStack stack : a) {
             for (int i = 0; i < outputHandler.getSlots(); i++) {
                 ItemStack item = outputHandler.getStackInSlot(i);
@@ -271,7 +276,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public ItemStack[] consumeAndReturnInputs(ItemStack... inputs) {
         List<ItemStack> notConsumed = new ObjectArrayList<>();
-        TrackedItemHandler<T> inputHandler = getInputHandler();
+        IItemHandlerModifiable inputHandler = getInputHandler();
         for (ItemStack input : inputs) {
             for (int i = 0; i < inputHandler.getSlots(); i++) {
                 if (Utils.equals(input, inputHandler.getStackInSlot(i))) {
@@ -293,7 +298,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public ItemStack[] exportAndReturnOutputs(ItemStack... outputs) {
         List<ItemStack> notExported = new ObjectArrayList<>();
-        TrackedItemHandler<T> outputHandler = getOutputHandler();
+        IItemHandlerModifiable outputHandler = getOutputHandler();
         for (int i = 0; i < outputs.length; i++) {
             for (int j = 0; j < outputHandler.getSlots(); j++) {
                 ItemStack result = outputHandler.insertItem(j, outputs[i].copy(), false);
@@ -314,7 +319,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     @Override
     public int insert(ItemData data, boolean simulate) {
         ItemStack stack = (ItemStack) data.getStack();
-        TrackedItemHandler<T> inputHandler = getInputHandler();
+        IItemHandlerModifiable inputHandler = getInputHandler();
         int slot = getFirstValidSlot(stack.getItem());
         if (slot != -1) {
             ItemStack inserted = inputHandler.insertItem(slot, stack, simulate);
@@ -392,7 +397,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     private int getFirstValidSlot(Object item) {
         int slot = -1;
-        TrackedItemHandler<T> inputHandler = getInputHandler();
+        IItemHandlerModifiable inputHandler = getInputHandler();
         for (int i = 0; i < inputHandler.getSlots(); i++) {
             ItemStack stack = inputHandler.getStackInSlot(i);
             if (stack.isEmpty()) {

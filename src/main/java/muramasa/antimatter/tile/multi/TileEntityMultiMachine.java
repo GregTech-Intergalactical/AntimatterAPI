@@ -2,10 +2,10 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.ControllerComponentHandler;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -19,9 +19,12 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,9 +46,11 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     @Override
     public void onFirstTick() {
         super.onFirstTick();
-        componentHandler.init();
-        if (!isStructureValid()) checkStructure();
-        recipeHandler.ifPresent(MachineRecipeHandler::scheduleCheck);
+        if (!isStructureValid()) {
+            if (checkStructure()) {
+                recipeHandler.ifPresent(MachineRecipeHandler::scheduleCheck);
+            }
+        }
     }
 
     public boolean checkStructure() {
@@ -266,7 +271,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) {
-            return LazyOptional.of(() -> componentHandler.get()).cast();
+            return componentHandler.cast();
         }
         return super.getCapability(cap, side);
     }

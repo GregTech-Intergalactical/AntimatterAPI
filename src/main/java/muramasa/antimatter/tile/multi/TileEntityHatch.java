@@ -48,12 +48,12 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
                 }
             });
         } else if (event instanceof MachineEvent) {
-            componentHandler.flatMap(ComponentHandler::getFirstController).ifPresent(controller -> {
+            componentHandler.map(ComponentHandler::getFirstController).ifPresent(controller -> {
                 switch ((MachineEvent)event) {
                     //Forward energy event to controller.
                     case ENERGY_DRAINED:
                     case ENERGY_INPUTTED:
-                        controller.onMachineEvent(event, data);
+                        controller.ifPresent(c -> c.onMachineEvent(event, data));
                         break;
                 }
             });

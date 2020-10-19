@@ -18,12 +18,12 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
 
     protected long cachedCapacity;
 
-    public MultiMachineEnergyHandler(TileEntityMachine tile, CompoundNBT tag, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
-        super((TileEntityMultiMachine)tile, tag, energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
+    public MultiMachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
+        super((TileEntityMultiMachine)tile, energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
     }
 
     public MultiMachineEnergyHandler(TileEntityMachine tile, CompoundNBT tag) {
-        super((TileEntityMultiMachine)tile, tag,0,0, 0, 0,0,0);
+        super((TileEntityMultiMachine)tile,0,0, 0, 0,0,0);
     }
 
     public void onStructureBuild() {
@@ -34,8 +34,8 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
         //all handlers should be of same voltage.
         IEnergyHandler handler = anyHandler();
         if (handler != null) {
-            this.voltage_in = handler.getInputVoltage();
-            this.voltage_out = handler.getOutputVoltage();
+            this.voltageIn = handler.getInputVoltage();
+            this.voltageOut = handler.getOutputVoltage();
         }
         this.cachedCapacity = super.getCapacity() + Arrays.stream(inputs).mapToLong(IGTNode::getCapacity).sum() + Arrays.stream(outputs).mapToLong(IGTNode::getCapacity).sum();
     }
