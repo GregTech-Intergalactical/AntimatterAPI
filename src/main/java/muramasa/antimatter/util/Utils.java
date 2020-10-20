@@ -21,6 +21,8 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.Vector3d;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -274,11 +276,12 @@ public class Utils {
     }
 
     public static void transferItems(IItemHandler from, IItemHandler to) {
-        for (int i = 0; i < to.getSlots(); i++) {
-            if (i >= from.getSlots()) break;
+        for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
-                ItemHandlerHelper.insertItem(to, from.extractItem(i, from.getStackInSlot(i).getCount(), false), false);
+                ItemHandlerHelper.insertItem(to, toInsert, false);
+                from.extractItem(i, from.getStackInSlot(i).getCount(), false);
+                break;
             }
         }
     }
@@ -569,6 +572,15 @@ public class Utils {
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
         return /*rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() :*/ result;
+    }
+
+    public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy){
+        ModelRotation r = Utils.getModelRotation(rotateBy);
+        return r.getRotation().rotateTransform(toRotate);
+    }
+
+    public static Direction coverRotateFacingInverse(Direction toRotate, Direction rotateBy){
+        return coverRotateFacing(rotateBy, toRotate);
     }
 
     //TODO replace with doRaytrace in block?

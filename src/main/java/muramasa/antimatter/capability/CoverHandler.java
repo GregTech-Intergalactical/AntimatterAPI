@@ -18,6 +18,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -43,10 +45,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public boolean set(Direction side, @Nonnull Cover newCover) {
-        if (getTileFacing() == side || !isValid(side, newCover)) return false;
         covers.get(side).onRemove(side);
         covers.put(side, new CoverInstance<>(newCover, getTile(), side)); //Emplace newCover, calls onPlace!
-
         //TODO add newCover.onPlace and newCover.onRemove to customize sounds
         tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
         Utils.markTileForRenderUpdate(getTile());
@@ -99,8 +99,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     @Override
     public boolean removeCover(PlayerEntity player, Direction side) {
         System.out.println(get(side).getId());
+        Cover oldCover = get(side).getCover();
         if (get(side).isEmpty() || !set(side, Data.COVERNONE)) return false;
-        if (!player.isCreative()) player.dropItem(get(side).getCover().getDroppedStack(), false);
+        if (!player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
         player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
         return true;
     }
@@ -128,6 +129,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             }
         });
         tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
+        tag.putInt(Ref.TAG_MACHINE_COVER_FACING, getTileFacing().getIndex());
         return tag;
     }
 
@@ -137,10 +139,16 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(cover);
+                CoverInstance<T> c = new CoverInstance<>(AntimatterAPI.get(Cover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile);
+                c.deserialize(cover);
+                covers.put(Ref.DIRS[i], c);
             } else {
                 covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }
+        }
+        World w = tile.getWorld();
+        if (w != null && w.isRemote) {
+            Utils.markTileForRenderUpdate(this.tile);
         }
     }
 

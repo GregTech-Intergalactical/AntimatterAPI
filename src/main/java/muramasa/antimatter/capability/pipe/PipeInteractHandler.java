@@ -11,6 +11,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -121,26 +122,16 @@ public class PipeInteractHandler<T extends TileEntityPipe> extends InteractHandl
         return getTile() instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
     }
 
-    /*
-    @Override
-    public CompoundNBT serialize() {
+    public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interaction);
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
     }
 
-    @Override
-    public void deserialize(CompoundNBT tag) {
+    public void deserializeNBT(CompoundNBT tag) {
         interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
         connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         onLoad();
     }
-
-    @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY;
-    }
-
-     */
 }

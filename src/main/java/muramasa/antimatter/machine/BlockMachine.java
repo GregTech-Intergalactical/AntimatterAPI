@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
@@ -91,7 +92,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return getType().getTileType().create();
+         TileEntityMachine machine = (TileEntityMachine)getType().getTileType().create();
+         machine.ofState(state);
+         return machine;
     }
 
     @Override
@@ -106,7 +109,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
                 AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
-                // if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
+                if (AntimatterAPI.onInteract(tile, player, hand, hit.getFace())) return ActionResultType.SUCCESS;
                 ItemStack stack = player.getHeldItem(hand);
                 if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> !FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true).success).orElse(true)) {
                     if (getType().has(MachineFlag.GUI) && tile instanceof INamedContainerProvider && hand == Hand.MAIN_HAND) {
@@ -179,12 +182,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             if (((TileEntityMachine) tile).coverHandler.isPresent()) {
                 CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.orElse(null);
                 return config.set(new int[] {
-                    h.get(UP).shouldRender() ? getModelId(facing, UP, machineState) : 0,
-                    h.get(DOWN).shouldRender() ? getModelId(facing, DOWN, machineState) : 0,
-                    h.get(NORTH).shouldRender() ? getModelId(facing, NORTH, machineState) : 0,
-                    h.get(SOUTH).shouldRender() ? getModelId(facing, SOUTH, machineState) : 0,
-                    h.get(WEST).shouldRender() ? getModelId(facing, WEST, machineState) : 0,
-                    h.get(EAST).shouldRender() ? getModelId(facing, EAST, machineState) : 0
+                    h.get(Utils.coverRotateFacing(UP,facing)).shouldRender() ? getModelId(facing, UP, machineState) : 0,
+                    h.get(Utils.coverRotateFacing(DOWN,facing)).shouldRender() ? getModelId(facing, DOWN, machineState) : 0,
+                    h.get(Utils.coverRotateFacing(NORTH,facing)).shouldRender() ? getModelId(facing, NORTH, machineState) : 0,
+                    h.get(Utils.coverRotateFacing(SOUTH,facing)).shouldRender() ? getModelId(facing, SOUTH, machineState) : 0,
+                    h.get(Utils.coverRotateFacing(WEST,facing)).shouldRender() ? getModelId(facing, WEST, machineState) : 0,
+                    h.get(Utils.coverRotateFacing(EAST,facing)).shouldRender() ? getModelId(facing, EAST, machineState) : 0
                 });
             } else {
                 return config.set(new int[] {

@@ -341,7 +341,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     @Override
     public IntList getAvailableSlots(Dir direction) {
         if (canOutput(direction)) {
-            return new IntArrayList(IntStream.rangeClosed(0, getHandlerForSide(tile.getOutputFacing()).getSlots()).iterator());
+            return new IntArrayList(IntStream.range(0, getHandlerForSide(tile.getOutputFacing()).getSlots()).iterator());
         }
         return new IntArrayList();
     }

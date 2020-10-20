@@ -2,6 +2,7 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
@@ -17,6 +18,8 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -39,6 +42,7 @@ import java.util.List;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
+import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
@@ -66,7 +70,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyHolder.empty();
         this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
-        this.interactHandler = LazyHolder.empty();
+        this.interactHandler = LazyHolder.of(() -> new MachineInteractHandler<>(this));
     }
 
     @Override
@@ -76,6 +80,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             this.energyHandler.ifPresent(MachineEnergyHandler::init);
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
+    }
+
+    public void ofState(@Nonnull BlockState state) {
+        Block block = state.getBlock();
+        this.tier = ((BlockMachine)block).getTier();
+        this.type = ((BlockMachine)block).getType();
     }
 
     @Nullable
@@ -110,20 +120,28 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        coverHandler.ifPresent(c -> c.onMachineEvent(event, data));
-        itemHandler.ifPresent(i -> i.onMachineEvent(event, data));
-        energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
-        fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
-        recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
+        if (!this.getWorld().isRemote) {
+            coverHandler.ifPresent(c -> c.onMachineEvent(event, data));
+            itemHandler.ifPresent(i -> i.onMachineEvent(event, data));
+            energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
+            fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
+            recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
+        }
     }
 
     /** Getters **/
     public Machine<?> getMachineType() {
-        return type != null ? type : ((BlockMachine) getBlockState().getBlock()).getType();
+        if (type != null) return type;
+        Block block = getBlockState().getBlock();
+        if (!(block instanceof BlockMachine)) return Data.MACHINE_INVALID;
+        return ((BlockMachine) block).getType();
     }
 
     public Tier getMachineTier() {
-        return tier != null ? tier : ((BlockMachine) getBlockState().getBlock()).getTier();
+        if (tier != null) return tier;
+        Block block = getBlockState().getBlock();
+        if (!(block instanceof BlockMachine)) return Tier.LV;
+        return ((BlockMachine) block).getTier();
     }
 
     public boolean has(MachineFlag flag) {
@@ -131,7 +149,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public Direction getFacing() {
-        return getBlockState().get(BlockStateProperties.HORIZONTAL_FACING);
+        if (this.world == null) return Direction.NORTH;
+        BlockState state = getBlockState();
+        if (state == AIR.getDefaultState()) {
+            return Direction.NORTH;
+        }
+        return state.get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     // TODO: Finish
@@ -177,8 +200,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public void setMachineState(MachineState newState) {
         if (this.machineState != newState) {
-            Utils.markTileForRenderUpdate(this);
             this.machineState = newState;
+            if (hadFirstTick()) {
+                sidedSync(true);
+            }
+        }
+    }
+
+    public void sidedSync(boolean renderUpdate) {
+        if (!this.getWorld().isRemote) {
+            this.markDirty();
+            Utils.markTileForNBTSync(this);
+        } else if(renderUpdate) {
+            Utils.markTileForRenderUpdate(this);
         }
     }
 
@@ -216,7 +250,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(ih -> ih.getOutputHandler()).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getTankFromSide(side)).transform().cast();
         else if (cap == CapabilityEnergy.ENERGY && energyHandler.isPresent()) return energyHandler.transform().cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
@@ -239,6 +273,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
         itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+        coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
     }
 
     @Override
@@ -248,6 +283,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
+        coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
         return tag;
     }
 

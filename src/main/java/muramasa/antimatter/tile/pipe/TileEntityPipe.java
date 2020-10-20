@@ -14,6 +14,7 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -130,6 +131,35 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
         return LazyOptional.empty();
     }
 
+    @Override
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
+    }
+
+    @Nonnull
+    @Override
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag); //TODO get tile data tag
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
+        interactHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_CONFIG, h.serializeNBT()));
+        return tag;
+    }
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.pos, 3, this.getUpdateTag());
+    }
+
+    @Nonnull
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = super.getUpdateTag();
+        this.write(tag);
+        return tag;
+    }
     /*
     @Override
     public CompoundNBT getCapabilityTag(String cap) {

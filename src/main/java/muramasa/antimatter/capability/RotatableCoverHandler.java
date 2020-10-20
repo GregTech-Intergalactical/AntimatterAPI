@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
-
+//TODO: Delete
 public class RotatableCoverHandler<T extends TileEntity> extends CoverHandler<T> {
 
     public RotatableCoverHandler(T tile, Cover... covers) {
@@ -16,16 +16,16 @@ public class RotatableCoverHandler<T extends TileEntity> extends CoverHandler<T>
 
     @Override
     public void onUpdate() {
-        covers.forEach((s, c) -> c.getCover().onUpdate(c, Utils.rotateFacingAlt(s, getTileFacing())));
+        covers.forEach((s, c) -> c.getCover().onUpdate(c, Utils.coverRotateFacing(getTileFacing(),s)));
     }
 
     @Override
     public boolean set(Direction side, @Nonnull Cover newCover) {
-        return super.set(Utils.rotateFacing(side, getTileFacing()), newCover);
+        return super.set(Utils.coverRotateFacing(side,getTileFacing()), newCover);
     }
 
     @Override
     public CoverInstance<T> get(Direction side) {
-        return super.get(Utils.rotateFacing(side, getTileFacing()));
+        return super.get(Utils.coverRotateFacing(side,getTileFacing()));
     }
 }
