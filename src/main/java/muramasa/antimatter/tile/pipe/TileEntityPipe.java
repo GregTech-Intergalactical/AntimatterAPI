@@ -5,28 +5,26 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
-import muramasa.antimatter.capability.pipe.PipeInteractHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
+import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-
-import static muramasa.antimatter.capability.CapabilitySide.SYNC;
 
 public class TileEntityPipe extends TileEntityTickable implements ITickHost {
 
@@ -36,17 +34,18 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
 
     /** Capabilities **/
     public final LazyOptional<PipeCoverHandler<?>> coverHandler;
-    public final LazyOptional<PipeInteractHandler<?>> interactHandler;
 
     /** Tesseract **/
     private ITickingController controller;
     private Direction direction; // when cap not initialized yet, it will help to store preset direction
 
+    /** Connection data **/
+    private byte connection, interaction;
+
     public TileEntityPipe(PipeType<?> type) {
         super(type.getTileType());
         this.type = type;
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        this.interactHandler = LazyOptional.of(() -> new PipeInteractHandler<>(this));
     }
 
     @Override
@@ -54,8 +53,25 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
         // Work when direction was set before handler initialization
         // setConnection() might be called from the BlockPipe when tick not called yet.
         if (direction != null) {
-            interactHandler.ifPresent(h -> h.setConnection(direction));
+            setConnection(direction);
             direction = null;
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        CoverInstance<?>[] covers = this.getAllCovers();
+        if (covers.length == 0) return;
+        for (Direction side : Ref.DIRS) {
+            if (Connectivity.has(interaction, side.getIndex())) {
+                TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
+                if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
+                    PipeCache.update(this.getPipeType(), this.getWorld(), side, neighbor, covers[side.getIndex()].getCover());
+                } else {
+                    interaction = Connectivity.clear(interaction, side.getIndex());
+                }
+            }
         }
     }
 
@@ -69,7 +85,14 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
     @Override
     public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
-        interactHandler.ifPresent(PipeInteractHandler::onRemove);
+        for (Direction side : Ref.DIRS) {
+            if (Connectivity.has(interaction, side.getIndex())) {
+                TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
+                if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
+                    PipeCache.remove(this.getPipeType(), this.getWorld(), side, neighbor);
+                }
+            }
+        }
     }
 
     public PipeType<?> getPipeType() {
@@ -81,34 +104,51 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
     }
 
     public void setConnection(Direction side) {
-        interactHandler.ifPresent(ih -> ih.setConnection(side));
-        // interactHandler.ifPresentOrElse(h -> h.setConnection(side), () -> direction = side);
+        connection = Connectivity.set(connection, side.getIndex());
         refreshConnection();
     }
 
     public void toggleConnection(Direction side) {
-        interactHandler.ifPresent(ih -> ih.toggleConnection(side));
-        // interactHandler.ifPresentOrElse(h -> h.toggleConnection(side), () -> direction = side);
+        connection = Connectivity.toggle(connection, side.getIndex());
         refreshConnection();
     }
 
     public void clearConnection(Direction side) {
-        interactHandler.ifPresent(ih -> ih.clearConnection(side));
-        // interactHandler.ifPresentOrElse(h -> h.clearConnection(side), () -> direction = side);
+        connection = Connectivity.clear(connection, side.getIndex());
         refreshConnection();
     }
 
-    public void changeConnection(Direction side) {
-        interactHandler.ifPresent(ih -> ih.onChange(side));
-        // interactHandler.ifPresentOrElse(h -> h.onChange(side), () -> direction = side);
+    public void setInteract(Direction side) {
+        interaction = Connectivity.set(interaction, side.getIndex());
+        refreshConnection();
     }
 
-    public void refreshConnection() {
-        Utils.markTileForRenderUpdate(this);
+    public void toggleInteract(Direction side) {
+        interaction = Connectivity.toggle(interaction, side.getIndex());
+        refreshConnection();
+    }
+
+    public void clearInteract(Direction side) {
+        interaction = Connectivity.clear(interaction, side.getIndex());
+        refreshConnection();
     }
 
     public boolean canConnect(int side) {
-        return interactHandler.map(h -> h.canConnect(side)).orElse(false);
+        return Connectivity.has(connection, side);
+    }
+
+    public void changeConnection(Direction side) {
+        TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
+        if (Utils.isForeignTile(neighbor)) {
+            setInteract(side);
+            PipeCache.update(this.getPipeType(), this.getWorld(), side, neighbor, this.getCover(side).getCover());
+        } else {
+            clearInteract(side);
+        }
+    }
+
+    public void refreshConnection() {
+        sidedSync(true);
     }
 
     public Cover[] getValidCovers() {
@@ -127,39 +167,31 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY) return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? coverHandler.cast() : super.getCapability(cap, side);
-        else if (cap == AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY) return interactHandler.<LazyOptional<T>>map(h -> LazyOptional.of(() -> h).cast()).orElseGet(() -> super.getCapability(cap));
         return LazyOptional.empty();
     }
 
     @Override
     public void read(CompoundNBT tag) {
-        super.read(tag);
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
-        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
+        super.read(tag); //TODO get tile data tag
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
+        interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
+        byte oldConnection = connection;
+        connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
+        if (connection != oldConnection && (world == null ? false : world.isRemote)) {
+            Utils.markTileForRenderUpdate(this);
+        }
     }
 
     @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        super.write(tag); //TODO get tile data tag
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
-        interactHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_CONFIG, h.serializeNBT()));
+        super.write(tag);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+        tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interaction);
+        tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
     }
 
-    @Nullable
-    @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, 3, this.getUpdateTag());
-    }
-
-    @Nonnull
-    @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = super.getUpdateTag();
-        this.write(tag);
-        return tag;
-    }
     /*
     @Override
     public CompoundNBT getCapabilityTag(String cap) {

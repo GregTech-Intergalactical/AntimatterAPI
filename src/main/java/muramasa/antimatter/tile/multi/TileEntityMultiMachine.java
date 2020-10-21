@@ -16,6 +16,7 @@ import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static muramasa.antimatter.machine.MachineFlag.*;
+
 public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
@@ -41,6 +44,8 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
+        this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
+        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MultiMachineEnergyHandler(this)) : LazyHolder.empty();
     }
 
     @Override

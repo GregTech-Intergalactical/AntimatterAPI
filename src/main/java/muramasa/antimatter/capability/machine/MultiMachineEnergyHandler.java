@@ -22,7 +22,7 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
         super((TileEntityMultiMachine)tile, energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
     }
 
-    public MultiMachineEnergyHandler(TileEntityMachine tile, CompoundNBT tag) {
+    public MultiMachineEnergyHandler(TileEntityMachine tile) {
         super((TileEntityMultiMachine)tile,0,0, 0, 0,0,0);
     }
 
@@ -80,7 +80,7 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
 
     @Override
     public long getEnergy() {
-        return super.getEnergy() + Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum();
+        return super.getEnergy() +(inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum());
     }
 
     @Override

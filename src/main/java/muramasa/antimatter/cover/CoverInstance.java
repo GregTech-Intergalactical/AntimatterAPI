@@ -88,10 +88,10 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
     }
 
     public boolean isEmpty() {
-        return cover == Data.COVERNONE;
+        return cover == Data.COVERNONE || cover.isEqual(Data.COVERNONE);
     }
 
-    public boolean shouldRender() {
+    public boolean skipRender() {
         return isEmpty(); //|| cover == Data.COVEROUTPUT;
     }
 

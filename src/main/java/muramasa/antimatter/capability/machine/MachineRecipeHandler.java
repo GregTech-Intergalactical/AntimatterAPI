@@ -161,7 +161,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         } else if (!canOutput()) {
             return OUTPUT_FULL;
         } else {
-            if (!consumeResourceForRecipe()) return IDLE;
+            if (!consumeResourceForRecipe()) {
+                if (currentProgress == 0) {
+                    //Cannot start a recipe :(
+                    activeRecipe = null;
+                }
+                return IDLE;
+            }
             if (currentProgress == 0) this.consumeInputs();
             this.currentProgress++;
             setClientProgress();
@@ -291,7 +297,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         } else if (event instanceof MachineEvent) {
             switch ((MachineEvent) event) {
                 case ENERGY_INPUTTED:
-                    if (tile.getMachineState() == IDLE || tile.getMachineState() == POWER_LOSS) {
+                    if (tile.getMachineState() == IDLE && activeRecipe != null) {
                         tile.setMachineState(POWER_LOSS);
                     }
                     break;

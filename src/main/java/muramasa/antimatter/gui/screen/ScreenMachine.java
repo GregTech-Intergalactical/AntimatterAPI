@@ -31,7 +31,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         this.container = container;
         this.name = name.getString();
         gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
-        container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
+        if (container.getTile().isClientSide()) container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
     }
 
     protected void drawTitle(int mouseX, int mouseY) {

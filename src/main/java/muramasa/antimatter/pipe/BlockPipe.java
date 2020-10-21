@@ -16,7 +16,9 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -38,12 +40,15 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
+import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static muramasa.antimatter.Data.WIRE_CUTTER;
+import static muramasa.antimatter.Data.WRENCH;
 
 public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
@@ -189,12 +194,38 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         }
     }
 
+    private AntimatterToolType getTool(TileEntity tile) {
+        return tile instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
+    }
+
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile != null) {
-            if (AntimatterAPI.onInteract(tile, player, hand, Utils.getInteractSide(hit))) return ActionResultType.SUCCESS;
+        TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(pos);
+        AntimatterToolType type = Utils.getToolType(player);
+        Direction side = Utils.getInteractSide(hit);
+
+        if (type == getTool(tile) && hand == Hand.MAIN_HAND) {
+            boolean isTarget = false;
+            TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
+            if (target instanceof TileEntityPipe) {
+                ((TileEntityPipe) target).toggleConnection(side.getOpposite());
+            } else {
+                isTarget = tile.isServerSide() && Utils.isForeignTile(target); // Check that entity is not GT one
+            }
+            tile.toggleConnection(side);
+
+            // If some target in front of, then create wrapper
+            if (isTarget) {
+                if (tile.canConnect(side.getIndex())) {
+                    tile.setInteract(side);
+                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
+                } else {
+                    tile.clearInteract(side);
+                    PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
+                }
+            }
+            return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
     }

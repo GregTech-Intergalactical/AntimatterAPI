@@ -113,6 +113,14 @@ public class Utils {
         return -1;
     }
 
+    public static ItemStack extractAny(IItemHandler handler) {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.extractItem(i,64, false);
+            if (!stack.isEmpty()) return stack;
+        }
+        return ItemStack.EMPTY;
+    }
+
     /** Returns the index of a fluid in a list, or -1 if not found **/
     public static int contains(List<FluidStack> list, FluidStack fluid) {
         int size = list.size();

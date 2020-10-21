@@ -59,7 +59,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyHolder<MachineEnergyHandler<?>> energyHandler;
     public LazyHolder<MachineRecipeHandler<?>> recipeHandler;
     public LazyHolder<MachineCoverHandler<?>> coverHandler;
-    public LazyHolder<MachineInteractHandler<?>> interactHandler;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -70,7 +69,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyHolder.empty();
         this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
-        this.interactHandler = LazyHolder.of(() -> new MachineInteractHandler<>(this));
     }
 
     @Override
@@ -86,18 +84,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         Block block = state.getBlock();
         this.tier = ((BlockMachine)block).getTier();
         this.type = ((BlockMachine)block).getType();
-    }
-
-    @Nullable
-    @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, 3, this.getUpdateTag());
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        super.onDataPacket(net, pkt);
-        handleUpdateTag(pkt.getNbtCompound());
     }
 
     @Override
@@ -157,8 +143,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return state.get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
-    // TODO: Finish
     public boolean setFacing(Direction side) {
+        //TODO: Move covers as well?
+        if (side == getFacing() || side.getAxis() == Direction.Axis.Y) return false;
+        boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
+        if (isEmpty) {
+            getWorld().setBlockState(getPos(), getBlockState().with(BlockStateProperties.HORIZONTAL_FACING, side));
+            return true;
+        }
         return false;
     }
 
@@ -207,15 +199,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
     }
 
-    public void sidedSync(boolean renderUpdate) {
-        if (!this.getWorld().isRemote) {
-            this.markDirty();
-            Utils.markTileForNBTSync(this);
-        } else if(renderUpdate) {
-            Utils.markTileForRenderUpdate(this);
-        }
-    }
-
     public Cover[] getValidCovers() { //TODO fix me
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
@@ -254,16 +237,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getTankFromSide(side)).transform().cast();
         else if (cap == CapabilityEnergy.ENERGY && energyHandler.isPresent()) return energyHandler.transform().cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
-        else if (cap == INTERACTABLE_HANDLER_CAPABILITY && interactHandler.isPresent()) return interactHandler.transform().cast();
         return super.getCapability(cap, side);
-    }
-
-    @Nonnull
-    @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = super.getUpdateTag();
-        this.write(tag);
-        return tag;
     }
 
     @Override

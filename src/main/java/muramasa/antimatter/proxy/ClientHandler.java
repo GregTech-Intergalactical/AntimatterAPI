@@ -9,6 +9,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
@@ -40,6 +41,7 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), h));
         AntimatterAPI.runLaterClient(() -> {
             AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {

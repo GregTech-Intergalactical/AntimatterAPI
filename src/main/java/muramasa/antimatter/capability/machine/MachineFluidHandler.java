@@ -168,11 +168,13 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     /** Helpers **/
     public FluidStack[] getInputs() {
-        return getInputTanks().getFluids();
+        FluidTanks tanks = getInputTanks();
+        return tanks == null ? new FluidStack[0] : tanks.getFluids();
     }
 
     public FluidStack[] getOutputs() {
-        return getOutputTanks().getFluids();
+        FluidTanks tanks = getOutputTanks();
+        return tanks == null ? new FluidStack[0] : tanks.getFluids();
     }
 
     // TODO temporary

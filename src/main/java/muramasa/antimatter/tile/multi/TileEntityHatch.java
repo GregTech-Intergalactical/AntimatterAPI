@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
+//TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
 public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     private final LazyOptional<HatchComponentHandler> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));

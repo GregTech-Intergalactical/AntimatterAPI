@@ -16,10 +16,9 @@ public class MultiMachineItemHandler extends MachineItemHandler<TileEntityMultiM
 
     Optional<IItemHandlerModifiable> inputs = Optional.empty();
     Optional<IItemHandlerModifiable> outputs = Optional.empty();
-    public MultiMachineItemHandler(TileEntityMachine tile, CompoundNBT tag) {
+    public MultiMachineItemHandler(TileEntityMachine tile) {
         //TODO: Won't work otherwise, requires TEM tile as argument to this constructor. Not sure why! Feel free to fix, this works thoguh
         super((TileEntityMultiMachine)tile);
-        if (tag != null) deserializeNBT(tag);
     }
 
     @Override

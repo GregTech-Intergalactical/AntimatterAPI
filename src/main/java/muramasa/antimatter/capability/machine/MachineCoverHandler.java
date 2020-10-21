@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.RotatableCoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -18,22 +17,24 @@ import javax.annotation.Nonnull;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandler<T> implements IMachineHandler {
 
-    protected Direction output = Direction.SOUTH;
+    protected Direction output;
 
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         // if (tag != null) deserialize(tag);
         covers.put(getTileFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, getTile()));
+        output = getTileFacing().getOpposite();
     }
 
     public Direction getOutputFacing() {
-        return Utils.rotateFacingAlt(output, getTileFacing());
+        return output;
     }
 
     public boolean setOutputFacing(Direction side) {
+        if (side == output) return true;
         if (set(side, Data.COVEROUTPUT)) {
-            if (covers.get(output).isEqual(Data.COVEROUTPUT)) covers.put(output, new CoverInstance<>(Data.COVERNONE));
-            output = Utils.rotateFacing(side, getTileFacing());
+            if (covers.get(output).isEqual(Data.COVEROUTPUT)) set(output, Data.COVERNONE);
+            output = side;
             return true;
         }
         return false;
