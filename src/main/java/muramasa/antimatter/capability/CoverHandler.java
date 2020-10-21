@@ -129,7 +129,6 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             }
         });
         tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
-        tag.putInt(Ref.TAG_MACHINE_COVER_FACING, getTileFacing().getIndex());
         return tag;
     }
 
