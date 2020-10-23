@@ -2,6 +2,7 @@ package muramasa.antimatter;
 
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.dynamic.ModelConfig;
+import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
@@ -17,8 +18,9 @@ public class AntimatterProperties {
 
     /** Block Machine Properties **/
     public static final ModelProperty<Machine<?>> MACHINE_TYPE = new ModelProperty<>();
-    public static final ModelProperty<Direction> MACHINE_FACING = new ModelProperty<>();
+    public static final ModelProperty<MachineState> MACHINE_STATE = new ModelProperty<>();
     public static final ModelProperty<Texture> MACHINE_TEXTURE = new ModelProperty<>();
+    public static final ModelProperty<Texture> MULTI_MACHINE_TEXTURE = new ModelProperty<>();
     public static final ModelProperty<Function<Direction, CoverInstance>> MACHINE_COVER = new ModelProperty<>();
 
     /** Block Pipe Properties **/

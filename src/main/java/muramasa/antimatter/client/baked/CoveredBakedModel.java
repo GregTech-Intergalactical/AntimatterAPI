@@ -54,6 +54,11 @@ public class CoveredBakedModel extends DynamicBakedModel {
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         //if (MODEL_CACHE.isEmpty()) buildCoverCache(state, rand, data);
         List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
+        quads = attachCoverQuads(quads, state, data);
+        return quads;
+    }
+
+    protected List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, IModelData data) {
         Function<Direction, CoverInstance> covers = data.getData(AntimatterProperties.MACHINE_COVER);
         Texture tex = data.getData(AntimatterProperties.MACHINE_TEXTURE);
         if (covers == null) return quads;

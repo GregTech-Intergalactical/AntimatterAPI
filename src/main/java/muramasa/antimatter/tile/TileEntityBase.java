@@ -66,6 +66,7 @@ public abstract class TileEntityBase extends TileEntity {
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
         handleUpdateTag(pkt.getNbtCompound());
+        sidedSync(true);
     }
 
     @Nonnull

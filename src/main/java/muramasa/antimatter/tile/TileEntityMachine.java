@@ -16,8 +16,8 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.LazyHolder;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,8 +25,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
@@ -39,6 +37,8 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -60,6 +60,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyHolder<MachineRecipeHandler<?>> recipeHandler;
     public LazyHolder<MachineCoverHandler<?>> coverHandler;
 
+    /** Texture **/
+    protected Texture multiTexture = new Texture("");
+
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
         this.type = type;
@@ -69,6 +72,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyHolder.empty();
         this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
+    }
+
+    public Optional<Texture> getMultiTexture() {
+        return multiTexture.getPath().equals("") ? Optional.empty() : Optional.of(multiTexture);
+    }
+
+    public void setMultiTexture(Texture tex) {
+        multiTexture = tex;
+        sidedSync(true);
+    }
+
+    public void resetMultiTexture() {
+        setMultiTexture(new Texture(""));
     }
 
     @Override
@@ -211,7 +227,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType());
-        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE, getMachineType().getBaseTexture(getMachineTier()));
+        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,getMachineType().getBaseTexture(getMachineTier()))
+                .withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
+        getMultiTexture().ifPresent(t -> builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE, t));
 
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getCoverFunction()));
 
@@ -233,7 +251,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(ih -> ih.getOutputHandler()).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(MachineItemHandler::getOutputHandler).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getTankFromSide(side)).transform().cast();
         else if (cap == CapabilityEnergy.ENERGY && energyHandler.isPresent()) return energyHandler.transform().cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
@@ -248,6 +266,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
+
+        if (tag.contains("TEST")) {
+            String s = tag.getString("TEST");
+            if (s.equals("") && multiTexture != null) {
+                multiTexture = new Texture("");
+            } else {
+                multiTexture = new Texture(s);
+            }
+        } else if (multiTexture != null) {
+            multiTexture = new Texture("");;
+        }
     }
 
     @Override
@@ -259,6 +288,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
         return tag;
+    }
+
+    @Nonnull
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT nbt = super.getUpdateTag();
+        if (multiTexture != null)
+            nbt.putString("TEST", multiTexture.getPath().equals("") ? "" : multiTexture.toString());
+
+        return nbt;
     }
 
     /*

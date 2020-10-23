@@ -11,6 +11,10 @@ public class Texture extends ResourceLocation {
         super(domain, path);
     }
 
+    public Texture(String name) {
+        super(name);
+    }
+
     public Material asMaterial() {
         return ModelUtils.getBlockMaterial(this);
     }

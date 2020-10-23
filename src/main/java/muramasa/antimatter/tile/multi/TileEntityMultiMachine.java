@@ -15,11 +15,13 @@ import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -46,6 +48,12 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         super(type);
         this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MultiMachineEnergyHandler(this)) : LazyHolder.empty();
+    }
+
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        invalidateStructure();
     }
 
     @Override
@@ -77,6 +85,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
                 });
                 setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
+                setTileTextures();
                 return true;
             }
         }
@@ -85,8 +94,33 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         return false;
     }
 
+    protected void setTileTextures() {
+        this.result.ifPresent(t -> t.components.forEach((k, v) -> v.forEach(tile -> {
+            TileEntity optionalTile = tile.getTile();
+            if (optionalTile instanceof TileEntityMachine) {
+                ((TileEntityMachine)optionalTile).setMultiTexture(this.getMachineType().getBaseTexture(tier));
+            }
+        })));
+    }
+
+    @Override
+    public boolean setFacing(Direction side) {
+        boolean ok = super.setFacing(side);
+        if (ok) {
+            checkStructure();
+        }
+        return ok;
+    }
+
     public void invalidateStructure() {
-        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this))));
+        if (removed) return;
+        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+            c.onStructureInvalidated(this);
+            if (c.getTile() instanceof TileEntityMachine) {
+                TileEntityMachine m = (TileEntityMachine) c.getTile();
+                m.resetMultiTexture();
+            }
+        })));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
         result = Optional.empty();
