@@ -100,7 +100,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public Recipe findRecipe() {
-        return tile.getMachineType().getRecipeMap().find(tile.getMachineTier(), tile.itemHandler, tile.fluidHandler);
+        return tile.getMachineType().getRecipeMap().find(tile.getPowerLevel(), tile.itemHandler, tile.fluidHandler);
     }
 
     //called when a new recipe is found, to process overclocking
@@ -109,8 +109,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         currentProgress = 0;
         maxProgress = activeRecipe.getDuration();
         overclock = 0;
-        if (this.tile.getMachineTier().getVoltage() > activeRecipe.getPower()) {
-            int voltage = this.tile.getMachineTier().getVoltage();
+        if (this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
+            int voltage = this.tile.getPowerLevel().getVoltage();
             int tier = 0;
             //Dont use utils, because we allow overclocking from ulv.
             for (int i = 0; i < Ref.V.length; i++) {
@@ -119,7 +119,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     break;
                 }
             }
-            int tempoverclock = (this.tile.getMachineTier().getVoltage() / Ref.V[tier]);
+            int tempoverclock = (this.tile.getPowerLevel().getVoltage() / Ref.V[tier]);
             while (tempoverclock > 1) {
                 tempoverclock >>= 2;
                 overclock++;

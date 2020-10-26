@@ -2,6 +2,7 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -64,6 +65,10 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
 
         public ItemStack asStack() {
             return asStack(1);
+        }
+
+        public AntimatterIngredient asIngredient() {
+            return AntimatterIngredient.of(asStack(1));
         }
     }
 }

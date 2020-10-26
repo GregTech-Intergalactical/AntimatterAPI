@@ -146,6 +146,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return ((BlockMachine) block).getTier();
     }
 
+    //Returns the tier level for recipes.
+    public Tier getPowerLevel() {
+        return getMachineTier();
+    }
+
     public boolean has(MachineFlag flag) {
         return getMachineType().has(flag);
     }

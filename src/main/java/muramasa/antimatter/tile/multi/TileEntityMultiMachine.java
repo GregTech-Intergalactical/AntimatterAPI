@@ -9,6 +9,7 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.IComponent;
@@ -57,13 +58,16 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     @Override
+    public Tier getPowerLevel() {
+        return energyHandler.map(t -> ((MultiMachineEnergyHandler)t).getAccumulatedPower()).orElse(super.getPowerLevel());
+    }
+
+    @Override
     public void onFirstTick() {
-        super.onFirstTick();
         if (!isStructureValid()) {
-            if (checkStructure()) {
-                recipeHandler.ifPresent(MachineRecipeHandler::scheduleCheck);
-            }
+            checkStructure();
         }
+        super.onFirstTick();
     }
 
     public boolean checkStructure() {

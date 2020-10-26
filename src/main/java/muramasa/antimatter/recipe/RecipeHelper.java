@@ -3,12 +3,21 @@ package muramasa.antimatter.recipe;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.tool.AntimatterToolType;
+import net.minecraft.advancements.criterion.InventoryChangeTrigger;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class RecipeHelper {
@@ -124,11 +133,14 @@ public class RecipeHelper {
 //        GameRegistry.addSmelting(input, Unifier.get(output), xp);
     }
 
-    public static void addSmelting(ItemStack input, ItemStack output) {
-        addSmelting(input, output, 1.0f);
+    public static void addSmelting(AntimatterIngredient input, ItemStack output) {
+        CookingRecipeBuilder.smeltingRecipe(input, output.getItem(), 0.35F, 200).addCriterion(
+                "has_"+input.toString(), InventoryChangeTrigger.Instance.forItems(Arrays.stream(input.getMatchingStacks()).map(ItemStack::getItem).toArray(Item[]::new))
+        ).build(DynamicResourcePack::addRecipe, new ResourceLocation(Ref.ID, input.toString() + "_" + output.getItem().toString()));
     }
 
     public static void removeSmelting(ItemStack output) {
+
         //TODO
 //        ItemStack recipeResult;
 //        Map<ItemStack,ItemStack> recipes = FurnaceRecipes.instance().getSmeltingList();

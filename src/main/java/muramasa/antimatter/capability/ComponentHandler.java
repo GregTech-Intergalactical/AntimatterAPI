@@ -66,7 +66,7 @@ public class ComponentHandler implements IComponentHandler {
 
     @Override
     public void onStructureInvalidated(@Nonnull TileEntityMultiMachine controllerTile) {
-        this.controllers.add(controllerTile);
+        this.controllers.remove(controllerTile);
     }
 
     @Override

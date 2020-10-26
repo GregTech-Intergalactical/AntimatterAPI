@@ -1,8 +1,10 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
@@ -80,7 +82,7 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
 
     @Override
     public long getEnergy() {
-        return super.getEnergy() +(inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum());
+        return super.getEnergy() +(inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum()));
     }
 
     @Override
@@ -110,5 +112,10 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
             }
         }
         return extracted;
+    }
+
+    public Tier getAccumulatedPower() {
+        if (inputs == null) return Tier.ULV;
+        return Tier.getTier((int)(Arrays.stream(inputs).mapToLong(t -> t.getInputVoltage()*t.getInputAmperage()).sum()));
     }
 }

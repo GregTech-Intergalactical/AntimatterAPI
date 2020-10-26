@@ -129,7 +129,11 @@ public class AntimatterIngredient extends Ingredient {
     }
     //Convert a list of stacks into a list of ingredients, 1:1.
     public static List<AntimatterIngredient> fromStacksList(ItemStack... stacks) {
-        return Arrays.stream(stacks).map(AntimatterIngredient::fromStack).collect(Collectors.toList());
+        return fromStacksList(Arrays.asList(stacks));
+    }
+
+    public static List<AntimatterIngredient> fromStacksList(List<ItemStack> stacks) {
+        return stacks.stream().map(AntimatterIngredient::fromStack).collect(Collectors.toList());
     }
 
     public static AntimatterIngredient fromStacks(ItemStack... stacks) {
@@ -141,6 +145,19 @@ public class AntimatterIngredient extends Ingredient {
 
     public static AntimatterIngredient fromTag(Tag<Item> tagIn, int count) {
         return new AntimatterIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
+    }
+
+    @Override
+    public String toString() {
+        if (tag != null) return tag.getId().toString();
+        if (item != null) {
+            return item.getItem().toString();
+        } else {
+            for(ItemStack stack : getMatchingStacks()) {
+                return stack.getItem().toString();
+            }
+        }
+        return "INVALID";
     }
 
     //UTILITY FUNCTIONS
