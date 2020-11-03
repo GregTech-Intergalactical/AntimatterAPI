@@ -57,9 +57,12 @@ public class Ref {
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_NO_CONSUME = "nc";
 
+    public static final String KEY_MACHINE_TIER = "t";
+    public static final String KEY_MACHINE_ITEMS = "it";
+    public static final String KEY_MACHINE_STATE = "s";
+
     public static final String KEY_MACHINE_TINT = "mc";
     public static final String KEY_MACHINE_TEXTURE = "mt";
-    public static final String KEY_MACHINE_ITEMS = "it";
     public static final String KEY_MACHINE_FLUIDS = "fl";
     public static final String KEY_MACHINE_ENERGY = "en";
     public static final String KEY_MACHINE_RECIPE = "re";

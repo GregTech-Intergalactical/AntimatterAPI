@@ -1,11 +1,13 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.Minecraft;
@@ -17,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.ModList;
 
+// TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
 public class ScreenMachine<T extends ContainerMachine> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
 
     protected T container;
@@ -28,6 +31,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         this.container = container;
         this.name = name.getString();
         gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
+        if (container.getTile().isClientSide()) container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
     }
 
     protected void drawTitle(int mouseX, int mouseY) {
@@ -67,7 +71,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     }
 
     protected void drawProgress(float partialTicks, int mouseX, int mouseY) {
-        int progressTime = (int)(20 * container.getTile().getClientProgress());
+        int progressTime = (int) (20 * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
         drawTexture(gui, guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
     }
 
@@ -76,8 +80,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (!ModList.get().isLoaded("jei") || !container.getTile().has(MachineFlag.RECIPE)) return false;
         if (isInGui((xSize / 2) - 10, 24, 20, 18, mouseX, mouseY)) {
-            //TODO
-            //GregTechJEIPlugin.showCategory(container.getTile().getMachineType());
+            AntimatterJEIPlugin.showCategory(container.getTile().getMachineType());
             return true;
         }
         return false;

@@ -8,9 +8,13 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.loader.AntimatterRecipeLoader;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -25,6 +29,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -38,6 +43,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.machine.MachineFlag.STEAM;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
 public final class AntimatterAPI {
@@ -48,11 +54,16 @@ public final class AntimatterAPI {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
+    private static final AntimatterRecipeLoader RECIPE_LOADER = new AntimatterRecipeLoader();
 
     private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
     private static boolean replacementsFound = false;
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
+
+    public static void init() {
+        MinecraftForge.EVENT_BUS.register(RECIPE_LOADER);
+    }
 
     /** Internal Registry Section **/
 
@@ -225,11 +236,22 @@ public final class AntimatterAPI {
             }).orElse(originalItem);
     }
 
+
     /** JEI Registry Section **/
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model) {
         if (ModList.get().isLoaded(Ref.MOD_JEI)) {
-            //AntimatterJEIPlugin.registerCategory(map, gui);
+            AntimatterJEIPlugin.registerCategory(map, gui,tier, model);
         }
+    }
+
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine) {
+        if (ModList.get().isLoaded(Ref.MOD_JEI)) {
+            AntimatterJEIPlugin.registerCategory(map, gui, machine.has(STEAM) ? Tier.BRONZE : Tier.LV, machine.getId());
+        }
+    }
+
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
+       registerJEICategory(map,gui,Tier.LV, null);
     }
 
     /** Attempts to do smart interaction with a compatible Tile/Block **/
@@ -237,6 +259,10 @@ public final class AntimatterAPI {
         boolean result = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
         result = tile.getCapability(AntimatterCaps.INTERACTABLE_HANDLER_CAPABILITY, side).map(h -> h.onInteract(player, hand, side, Utils.getToolType(player))).orElse(false);
         return result;
+    }
+
+    public static AntimatterRecipeLoader getRecipeRegistrate() {
+        return RECIPE_LOADER;
     }
 
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {

@@ -6,6 +6,7 @@ import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
+import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -23,6 +24,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
@@ -33,6 +35,9 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Consumer;
+
+import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
+import static muramasa.antimatter.Data.WRENCH;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -96,6 +101,12 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
         onGenericFillItemGroup(group, list, maxEnergy);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
+        AntimatterToolType type = Utils.getToolType(player);
+        return (type == WRENCH || type == ELECTRIC_WRENCH) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic);
     }
 
     /*

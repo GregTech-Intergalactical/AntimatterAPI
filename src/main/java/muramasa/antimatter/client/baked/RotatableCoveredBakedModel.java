@@ -23,7 +23,7 @@ public class RotatableCoveredBakedModel extends CoveredBakedModel {
 
     @Override
     public List<BakedQuad> getCoverQuads(BlockState state, CoverInstance<?> instance, int dir, Texture baseTex, IModelData data){
-        return super.getCoverQuads(state,instance,Utils.rotateFacing(Ref.DIRS[dir],state.get(BlockStateProperties.HORIZONTAL_FACING)).getIndex(), baseTex, data);
+        return super.getCoverQuads(state,instance,dir, baseTex, data);
         //return MODEL_CACHE.get(instance.getCover())[Utils.rotateFacing(Ref.DIRS[dir], state.get(BlockStateProperties.HORIZONTAL_FACING)).getIndex()];
     }
 }

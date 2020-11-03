@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -79,6 +80,12 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
         //TODO replace consumeTag with flag system
         if (count == 0) return Utils.addNoConsumeTag(new ItemStack(this, 1));
         return new ItemStack(this, count);
+    }
+
+    public AntimatterIngredient getIngredient(int count) {
+        //TODO replace consumeTag with flag system
+        if (count == 0) return AntimatterIngredient.fromStack(Utils.addNoConsumeTag(new ItemStack(this, 1)));
+        return AntimatterIngredient.fromStack(new ItemStack(this, count));
     }
 
     @Override

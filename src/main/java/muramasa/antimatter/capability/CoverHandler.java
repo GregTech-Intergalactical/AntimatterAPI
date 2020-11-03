@@ -18,14 +18,19 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICapabilityHandler {
+public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
+
+    private final LazyOptional<ICoverHandler<T>> handler = LazyOptional.of(() -> this);
 
     private T tile;
     protected Object2ObjectMap<Direction, CoverInstance<T>> covers = new Object2ObjectOpenHashMap<>();
@@ -40,10 +45,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
 
     @Override
     public boolean set(Direction side, @Nonnull Cover newCover) {
-        if (getTileFacing() == side || !isValid(side, newCover)) return false;
         covers.get(side).onRemove(side);
         covers.put(side, new CoverInstance<>(newCover, getTile(), side)); //Emplace newCover, calls onPlace!
-
         //TODO add newCover.onPlace and newCover.onRemove to customize sounds
         tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
         Utils.markTileForRenderUpdate(getTile());
@@ -96,8 +99,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
     @Override
     public boolean removeCover(PlayerEntity player, Direction side) {
         System.out.println(get(side).getId());
+        Cover oldCover = get(side).getCover();
         if (get(side).isEmpty() || !set(side, Data.COVERNONE)) return false;
-        if (!player.isCreative()) player.dropItem(get(side).getCover().getDroppedStack(), false);
+        if (!player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
         player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
         return true;
     }
@@ -112,9 +116,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
         return (get(side).isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
     }
 
-    /** NBT **/
     @Override
-    public CompoundNBT serialize() {
+    public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         byte[] sides = new byte[1];
         covers.forEach((s, c) -> {
@@ -130,20 +133,28 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T>, ICa
     }
 
     @Override
-    public void deserialize(CompoundNBT tag) {
-        byte sides = tag.getByte(Ref.TAG_MACHINE_COVER_SIDE);
+    public void deserializeNBT(CompoundNBT nbt) {
+        byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
-                CompoundNBT nbt = tag.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                covers.put(Ref.DIRS[i], new CoverInstance<>(AntimatterAPI.get(Cover.class, nbt.getString(Ref.TAG_MACHINE_COVER_ID)), tile)).deserialize(nbt);
+                CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
+                CoverInstance<T> c = new CoverInstance<>(AntimatterAPI.get(Cover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile);
+                c.deserialize(cover);
+                covers.put(Ref.DIRS[i], c);
             } else {
                 covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
             }
         }
+        World w = tile.getWorld();
+        if (w != null && w.isRemote) {
+            Utils.markTileForRenderUpdate(this.tile);
+        }
     }
 
+    @Nonnull
     @Override
-    public Capability<?> getCapability() {
-        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        return handler.cast();
     }
+
 }

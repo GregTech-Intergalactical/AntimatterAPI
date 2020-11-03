@@ -1,28 +1,18 @@
 package muramasa.antimatter.tile.single;
 
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MachineInteractHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.StringTextComponent;
+import muramasa.antimatter.util.LazyHolder;
 import tesseract.util.Dir;
 
-import javax.annotation.Nullable;
 import java.util.List;
-
-import static muramasa.antimatter.Data.ELECTRIC_SCREWDRIVER;
-import static muramasa.antimatter.Data.SCREWDRIVER;
 
 public class TileEntityInfiniteStorage extends TileEntityMachine {
 
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
-        int amperage = maxAmps + 1;
-        energyHandler.setup((tile, tag) -> new MachineEnergyHandler<TileEntityMachine>(tile, tag, Long.MAX_VALUE, Long.MAX_VALUE, 0, tile.getMachineTier().getVoltage(), 0, 1) {
+        this.energyHandler = LazyHolder.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;
@@ -38,6 +28,8 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return true;
             }
         });
+        // TODO
+        /*
         interactHandler.setup((tile, tag) -> new MachineInteractHandler<TileEntityMachine>(tile, tag) {
             @Override
             public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
@@ -54,6 +46,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
                 return super.onInteract(player, hand, side, type);
             }
         });
+         */
     }
 
     @Override

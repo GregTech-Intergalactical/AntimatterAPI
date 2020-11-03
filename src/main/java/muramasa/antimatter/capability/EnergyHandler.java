@@ -1,20 +1,24 @@
 package muramasa.antimatter.capability;
 
+import muramasa.antimatter.Ref;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
-    protected long energy, capacity;
-    protected int voltage_in, voltage_out, amperage_in, amperage_out;
+    protected final long capacity;
 
-    public EnergyHandler(long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
+    protected long energy;
+    protected int voltageIn, voltageOut, amperageIn, amperageOut;
+
+    public EnergyHandler(long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         this.energy = energy;
         this.capacity = capacity;
-        this.voltage_in = voltage_in;
-        this.voltage_out = voltage_out;
-        this.amperage_in = amperage_in;
-        this.amperage_out = amperage_out;
+        this.voltageIn = voltageIn;
+        this.voltageOut = voltageOut;
+        this.amperageIn = amperageIn;
+        this.amperageOut = amperageOut;
     }
 
     /** Tesseract IGTNode Implementations **/
@@ -23,19 +27,36 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
        // if (!canInput()) return 0;
 
         long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
-        if (!simulate) energy += toInsert;
-
+        if (!simulate) {
+            energy += toInsert;
+        }
         return toInsert;
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
         //if (!canOutput()) return 0;
-
         long toExtract = Math.max(Math.min(energy, maxExtract), 0);
-        if (!simulate) energy -= toExtract;
-
+        if (!simulate) {
+            energy -= toExtract;
+        }
         return toExtract;
+    }
+
+    public void setOutputAmperage(int amperageOut) {
+        this.amperageOut = amperageOut;
+    }
+
+    public void setInputAmperage(int amperageIn) {
+        this.amperageIn = amperageIn;
+    }
+
+    public void setOutputVoltage(int voltageOut) {
+        this.voltageOut = voltageOut;
+    }
+
+    public void setInputVoltage(int voltageIn) {
+        this.voltageIn = voltageIn;
     }
 
     @Override
@@ -50,27 +71,27 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public int getInputAmperage() {
-        return amperage_in;
+        return amperageIn;
     }
 
     @Override
     public int getOutputAmperage() {
-        return amperage_out;
+        return amperageOut;
     }
 
     @Override
     public int getInputVoltage() {
-        return voltage_in;
+        return voltageIn;
     }
 
     @Override
     public int getOutputVoltage() {
-        return voltage_out;
+        return voltageOut;
     }
 
     @Override
     public boolean canInput() {
-        return voltage_in > 0;
+        return voltageIn > 0;
     }
 
     @Override
@@ -80,28 +101,30 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public boolean canOutput() {
-        return voltage_out > 0;
+        return voltageOut > 0;
     }
 
     /** Forge IEnergyStorage Implementations **/
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return (int) insert(maxReceive, simulate);
+        long receive = insert(maxReceive, simulate);
+        return receive > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) receive;
     }
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        return (int) extract(maxExtract, simulate);
+        long extract = extract(maxExtract, simulate);
+        return extract > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) extract;
     }
 
     @Override
     public int getEnergyStored() {
-        return (int) getEnergy();
+        return this.energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.energy;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return (int) getCapacity();
+        return this.capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.capacity;
     }
 
     @Override
@@ -118,4 +141,25 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     public boolean connects(Dir direction) {
         return true;
     }
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putLong(Ref.TAG_MACHINE_ENERGY, this.energy);
+        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_IN, this.voltageIn);
+        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_OUT, this.voltageOut);
+        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_IN, this.amperageIn);
+        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_OUT, this.amperageOut);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        this.energy = nbt.getLong(Ref.TAG_MACHINE_ENERGY);
+        this.voltageIn = nbt.getInt(Ref.TAG_MACHINE_VOLTAGE_IN);
+        this.voltageOut = nbt.getInt(Ref.TAG_MACHINE_VOLTAGE_OUT);
+        this.amperageIn = nbt.getInt(Ref.TAG_MACHINE_AMPERAGE_IN);
+        this.amperageOut = nbt.getInt(Ref.TAG_MACHINE_AMPERAGE_OUT);
+    }
+
 }

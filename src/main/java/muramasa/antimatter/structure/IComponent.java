@@ -1,9 +1,9 @@
 package muramasa.antimatter.structure;
 
-import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.IComponentHandler;
+import net.minecraftforge.common.util.LazyOptional;
 
 public interface IComponent {
 
-    MachineCapabilityHandler<? extends IComponentHandler> getComponentHandler();
+    LazyOptional<? extends IComponentHandler> getComponentHandler();
 }

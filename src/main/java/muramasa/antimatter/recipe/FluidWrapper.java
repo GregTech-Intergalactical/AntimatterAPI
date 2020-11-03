@@ -29,7 +29,7 @@ public class FluidWrapper {
     public boolean equals(Object obj) {
         if (!(obj instanceof FluidWrapper)) return false;
         FluidWrapper other = (FluidWrapper) obj;
-        return (!count || other.fluid.getAmount() >= fluid.getAmount()) || (!nbt || FluidStack.areFluidStackTagsEqual(fluid, other.fluid));
+        return ((fluid.getFluid() == other.fluid.getFluid()) && !count || other.fluid.getAmount() >= fluid.getAmount()) || (!nbt || FluidStack.areFluidStackTagsEqual(fluid, other.fluid));
     }
 
     @Override

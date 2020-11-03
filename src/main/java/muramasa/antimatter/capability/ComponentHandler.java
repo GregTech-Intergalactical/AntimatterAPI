@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.capability.machine.MachineCapabilityHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -9,8 +8,10 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -42,20 +43,20 @@ public class ComponentHandler implements IComponentHandler {
 
     @Nonnull
     @Override
-    public MachineCapabilityHandler<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : new MachineCapabilityHandler<>(null);
+    public LazyHolder<MachineItemHandler<?>> getItemHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : LazyHolder.empty();
     }
 
     @Nonnull
     @Override
-    public MachineCapabilityHandler<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : new MachineCapabilityHandler<>(null);
+    public LazyHolder<MachineFluidHandler<?>> getFluidHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : LazyHolder.empty();
     }
 
     @Nonnull
     @Override
-    public MachineCapabilityHandler<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : new MachineCapabilityHandler<>(null);
+    public LazyHolder<MachineEnergyHandler<?>> getEnergyHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : LazyHolder.empty();
     }
 
     @Override

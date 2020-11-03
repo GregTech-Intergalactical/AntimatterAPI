@@ -1,19 +1,18 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceLists;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.Set;
+import java.util.*;
 
 public class RecipeBuilder {
 
     private RecipeMap recipeMap;
-    private ItemStack[] itemsInput, itemsOutput;
-    private TagInput[] tagInputs;
+    private ItemStack[] itemsOutput;
+    private List<AntimatterIngredient> ingredientInput;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int[] chances;
     private int duration, special;
@@ -22,10 +21,6 @@ public class RecipeBuilder {
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
     public Recipe add() {
-        if (itemsInput != null && !Utils.areItemsValid(itemsInput)) {
-            Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT ITEMS INVALID!");
-            return Utils.getEmptyRecipe();
-        }
         if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
             return Utils.getEmptyRecipe();
@@ -38,7 +33,14 @@ public class RecipeBuilder {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }
-
+        if (ingredientInput != null) {
+            for (AntimatterIngredient ai : ingredientInput) {
+                if (ai.getMatchingStacks().length == 0) {
+                    Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT ITEMS INVALID!");
+                    return Utils.getEmptyRecipe();
+                }
+            }
+        }
         if (/*AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION && */itemsOutput != null) {
             for (int i = 0; i < itemsOutput.length; i++) {
                 itemsOutput[i] = Unifier.get(itemsOutput[i]);
@@ -47,10 +49,11 @@ public class RecipeBuilder {
 
         //TODO validate item/fluid inputs/outputs do not exceed machine gui values
         //TODO get a recipe build method to machine type so it can be overriden?
+        //otherwise we get NPEs everywhere :S so keep this non-null
+        if (ingredientInput == null) ingredientInput = Collections.emptyList();
         Recipe recipe = new Recipe(
-            itemsInput != null ? itemsInput.clone() : null,
+            ingredientInput,
             itemsOutput != null ? itemsOutput.clone() : null,
-            tagInputs,
             fluidsInput != null ? fluidsInput.clone() : null,
             fluidsOutput != null ? fluidsOutput.clone() : null,
             duration, power, special
@@ -79,13 +82,13 @@ public class RecipeBuilder {
         return add(duration, 0, 0);
     }
 
-    public RecipeBuilder ii(ItemStack... stacks) {
-        itemsInput = stacks;
+    public RecipeBuilder ii(AntimatterIngredient... stacks) {
+        ingredientInput = Arrays.asList(stacks);
         return this;
     }
 
-    public RecipeBuilder it(TagInput... stacks) {
-        tagInputs = stacks;
+    public RecipeBuilder ii(List<AntimatterIngredient> stacks) {
+        ingredientInput = stacks;
         return this;
     }
 
@@ -121,9 +124,9 @@ public class RecipeBuilder {
     }
 
     public void clear() {
-        itemsInput = itemsOutput = null;
+        itemsOutput = null;
+        ingredientInput = null;
         fluidsInput = fluidsOutput = null;
-        tagInputs = null;
         chances = null;
         duration = special = 0;
         power = 0;

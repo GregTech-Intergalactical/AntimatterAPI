@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.multi;
 
-import muramasa.antimatter.capability.machine.MultiMachineRecipeHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.util.Utils;
@@ -10,6 +9,8 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
 
     public TileEntityBasicMultiMachine(Machine<?> type) {
         super(type);
+        // TODO
+        /*
         recipeHandler.setup((tile, tag) -> new MultiMachineRecipeHandler<TileEntityMultiMachine>(tile, tag) {
             @Override
             public Recipe findRecipe() { //TODO support fluids?
@@ -41,5 +42,6 @@ public class TileEntityBasicMultiMachine extends TileEntityMultiMachine {
                 return true;
             }
         });
+         */
     }
 }

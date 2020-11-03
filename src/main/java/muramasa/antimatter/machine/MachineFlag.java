@@ -8,29 +8,38 @@ import java.util.*;
 
 public enum MachineFlag {
 
-    BASIC(), //
-    STEAM(),
-    MULTI(), //Has structure
-    HATCH(),
-    ITEM(), //Can store items
-    FLUID(),
-    ENERGY(), //Needs power
-    RECIPE(), //Has a recipe map
-    GUI(),
-    GENERATOR(), //Has a recipe map and converts applicable recipes to power.
-    COVERABLE(),
-    CONFIGURABLE();
+    BASIC, //
+    STEAM,
+    MULTI, //Has structure
+    HATCH,
+    FAKE_INPUTS,
+    ITEM, //Can store items
+    ITEM_INPUT,
+    ITEM_OUTPUT,
+    FLUID_INPUT,
+    FLUID_OUTPUT,
+    FLUID,
+    ENERGY, //Needs power
+    RECIPE, //Has a recipe map
+    GUI,
+    GENERATOR, //Has a recipe map and converts applicable recipes to power.
+    COVERABLE,
+    CONFIGURABLE;
 
-    public static MachineFlag[] VALUES;
+    public static final MachineFlag[] VALUES;
 
     static {
         VALUES = values();
     }
 
-    private Set<Machine<?>> types = new ObjectOpenHashSet<>();
+    private final Set<Machine<?>> types = new ObjectOpenHashSet<>();
 
-    public void add(Machine<?>... machines) {
-        types.addAll(Arrays.asList(machines));
+    public void add(Machine<?> machine) {
+        this.types.add(machine);
+    }
+
+    public void remove(Machine<?> machine) {
+        this.types.remove(machine);
     }
 
     public Set<Machine<?>> getTypes() {
@@ -44,4 +53,5 @@ public enum MachineFlag {
         }
         return types;
     }
+
 }

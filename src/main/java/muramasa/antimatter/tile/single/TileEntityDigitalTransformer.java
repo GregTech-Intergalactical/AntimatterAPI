@@ -83,7 +83,7 @@ public class TileEntityDigitalTransformer extends TileEntityTransformer {
                     h.setOutputVoltage(amperage);
                 }
 
-                h.onReset();
+                h.refresh();
             });
         }
     }

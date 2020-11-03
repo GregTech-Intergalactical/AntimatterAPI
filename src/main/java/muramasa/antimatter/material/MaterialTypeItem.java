@@ -1,7 +1,7 @@
 package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.recipe.TagInput;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -32,11 +32,20 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return new ItemStack(get(material), count);
     }
 
+    public AntimatterIngredient getIngredient(Material material, int count) {
+        if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
+        return AntimatterIngredient.fromStack(new ItemStack(get(material), count));
+    }
+
     public Tag<Item> getMaterialTag(Material m) {
         return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
-    public TagInput getMaterialTag(Material m, int count) {
-        return new TagInput(getMaterialTag(m),count);
+    public AntimatterIngredient getMaterialIngredient(Material m, int count) {
+        return AntimatterIngredient.of(Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId())),count);
+    }
+
+    public AntimatterIngredient getMaterialIngredient(Material m) {
+        return getMaterialIngredient(m,1);
     }
 }

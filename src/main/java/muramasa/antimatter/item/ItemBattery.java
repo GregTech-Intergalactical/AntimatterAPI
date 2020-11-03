@@ -1,6 +1,8 @@
 package muramasa.antimatter.item;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.util.ITooltipFlag;
@@ -17,6 +19,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
+
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -37,7 +41,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (this.isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
-            ItemEnergyHandler.setStackEnergy(stack, this.cap);
+            AntimatterCaps.getCustomEnergyHandler(stack).ifPresent(e -> e.insert(this.cap, false));
             items.add(new ItemStack(this));
             items.add(stack);
         }
@@ -51,7 +55,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return ItemEnergyHandler.getEnergyFromStack(stack) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
+        return AntimatterCaps.getCustomEnergyHandler(stack).map(EnergyHandler::getEnergy).orElse(0L) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
     }
 
     @Override
@@ -65,7 +69,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (tag == null) {
             return 1D;
         }
-        return 1D - ItemEnergyHandler.getEnergyFromStack(stack) / (double) cap;
+        return 1D - AntimatterCaps.getCustomEnergyHandler(stack).map(EnergyHandler::getEnergy).orElse(0L) / (double) cap;
     }
 
     @Override

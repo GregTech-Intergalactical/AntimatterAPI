@@ -25,7 +25,7 @@ public class ComponentElement extends StructureElement {
         TileEntity tile = machine.getWorld().getTileEntity(pos);
         if (tile instanceof IComponent) {
             if (((IComponent) tile).getComponentHandler().isPresent()) {
-                IComponentHandler component = ((IComponent) tile).getComponentHandler().get();
+                IComponentHandler component = ((IComponent) tile).getComponentHandler().orElse(null);
                 for (int i = 0; i < objects.length; i++) {
                     if (objects[i].getId().equals(component.getId())) {
                         result.addComponent(elementId, component);

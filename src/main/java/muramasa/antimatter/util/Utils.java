@@ -11,6 +11,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -20,6 +21,8 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.Vector3d;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,6 +51,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -107,6 +111,14 @@ public class Utils {
             if (equals(list.get(i), item)) return i;
         }
         return -1;
+    }
+
+    public static ItemStack extractAny(IItemHandler handler) {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.extractItem(i,64, false);
+            if (!stack.isEmpty()) return stack;
+        }
+        return ItemStack.EMPTY;
     }
 
     /** Returns the index of a fluid in a list, or -1 if not found **/
@@ -242,6 +254,20 @@ public class Utils {
         return matchCount >= a.length;
     }
 
+    public static boolean doItemsMatchAndSizeValid(List<AntimatterIngredient> a, ItemStack[] b) {
+        if (a == null || b == null) return false;
+        int matchCount = 0;
+        for (AntimatterIngredient stack : a) {
+            for (ItemStack itemStack : b) {
+                if (stack.test(itemStack)) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        return matchCount >= a.size();
+    }
+
     public static boolean doFluidsMatchAndSizeValid(FluidStack[] a, FluidStack[] b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
@@ -258,11 +284,12 @@ public class Utils {
     }
 
     public static void transferItems(IItemHandler from, IItemHandler to) {
-        for (int i = 0; i < to.getSlots(); i++) {
-            if (i >= from.getSlots()) break;
+        for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
-                ItemHandlerHelper.insertItem(to, from.extractItem(i, from.getStackInSlot(i).getCount(), false), false);
+                ItemHandlerHelper.insertItem(to, toInsert, false);
+                from.extractItem(i, from.getStackInSlot(i).getCount(), false);
+                break;
             }
         }
     }
@@ -498,14 +525,9 @@ public class Utils {
     /** Sends block update to clients **/
     public static void markTileForRenderUpdate(TileEntity tile) {
         BlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (!tile.getWorld().isRemote) {
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
-            tile.markDirty();
-        } else {
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 2);
+        if (tile.getWorld().isRemote) {
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, Constants.BlockFlags.RERENDER_MAIN_THREAD);
             ModelDataManager.requestModelDataRefresh(tile);
-            tile.markDirty();
         }
     }
 
@@ -558,6 +580,15 @@ public class Utils {
         }
 //        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
         return /*rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() :*/ result;
+    }
+
+    public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy){
+        ModelRotation r = Utils.getModelRotation(rotateBy);
+        return r.getRotation().rotateTransform(toRotate);
+    }
+
+    public static Direction coverRotateFacingInverse(Direction toRotate, Direction rotateBy){
+        return coverRotateFacing(rotateBy, toRotate);
     }
 
     //TODO replace with doRaytrace in block?
@@ -1045,7 +1076,7 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static Recipe getEmptyRecipe() {
-        return new Recipe(new ItemStack[0], new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
+        return new Recipe(Collections.EMPTY_LIST, new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
     }
 
     /**

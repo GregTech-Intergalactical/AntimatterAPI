@@ -3,11 +3,13 @@ package muramasa.antimatter.machine.types;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -21,6 +23,7 @@ import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -33,6 +36,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -76,13 +80,23 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
-        tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> new BlockMachine(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
+        tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
+    }
+
+    protected Block getBlock(Machine<T> type, Tier tier) {
+        return new BlockMachine(type, tier);
+    }
+
+    public void registerJei() {
+        if (this.guiData != null && recipeMap != null) {
+            AntimatterAPI.registerJEICategory(this.recipeMap,this.guiData, this);
+        }
     }
 
     protected void addData(Object... data) {
         List<Tier> tiers = new ObjectArrayList<>();
-        List<MachineFlag> flags = new ObjectArrayList<>();
+        Set<MachineFlag> flags = new ObjectOpenHashSet<>();
         for (Object o : data) {
             if (o instanceof RecipeMap) {
                 recipeMap = (RecipeMap<?>) o;
@@ -169,7 +183,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public void setFlags(MachineFlag... flags) {
-        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.getTypes().remove(this));
+        Arrays.stream(MachineFlag.VALUES).forEach(f -> f.remove(this));
         addFlags(flags);
     }
 
@@ -180,6 +194,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public void setGUI(MenuHandler<?, ?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
+
+        registerJei();
     }
 
     public void setStructure(Function<StructureBuilder, Structure> func) {

@@ -5,14 +5,16 @@ import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-public interface ICoverHandler<T extends TileEntity> {
+public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
 
     /** Getters/Setters **/
     boolean set(Direction side, Cover cover);
