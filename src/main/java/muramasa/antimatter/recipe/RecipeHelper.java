@@ -139,6 +139,10 @@ public class RecipeHelper {
         ).build(DynamicResourcePack::addRecipe, new ResourceLocation(Ref.ID, input.toString() + "_" + output.getItem().toString()));
     }
 
+    public static void addSmelting(AntimatterIngredient input, ItemStack output) {
+        addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(ItemStack.EMPTY.getItem()));
+    }
+
     public static void removeSmelting(ItemStack output) {
 
         //TODO

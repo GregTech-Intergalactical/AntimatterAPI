@@ -53,6 +53,9 @@ public class Ref {
     public static boolean debugOreVein = false;
     public static boolean debugSmallOres = false;
     public static boolean debugStones = false;
+    /** Texture related keys. **/
+
+    public static final String KEY_MULTI_TEXTURE = "kmt";
 
     /** NBT Tags & Keys **/
     public static final String KEY_STACK_NO_CONSUME = "nc";

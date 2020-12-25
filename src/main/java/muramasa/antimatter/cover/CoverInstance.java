@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -22,6 +23,10 @@ import java.util.Objects;
 public class CoverInstance<T extends TileEntity> implements INamedContainerProvider {
 
     public static final CoverInstance<?>[] EMPTY_COVER_ARRAY = new CoverInstance[0];
+
+    /** The dyntexturer for covers. **/
+    public final DynamicTexturer<Cover, Cover.DynamicKey> coverTexturer = new DynamicTexturer<>(Data.COVER_DYNAMIC_TEXTURER);
+
 
     private Cover cover;
     private CompoundNBT nbt;
@@ -92,7 +97,7 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
     }
 
     public boolean skipRender() {
-        return isEmpty(); //|| cover == Data.COVEROUTPUT;
+        return isEmpty();
     }
 
     //Gets the backing cover.
@@ -107,7 +112,7 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
 
     @Override
     public ITextComponent getDisplayName() {
-        return new StringTextComponent("TODO");//TranslationTextComponent(cover.getId());
+        return new StringTextComponent("TODO");
     }
 
     @Nullable

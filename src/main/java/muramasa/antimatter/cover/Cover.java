@@ -3,11 +3,11 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -28,15 +28,21 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 //The base Cover class. All cover classes extend from this.
-public abstract class Cover implements IAntimatterObject,ITextureProvider {
+public abstract class Cover implements IAntimatterObject, ITextureProvider, IDynamicModelProvider {
+
+
 
     protected GuiData gui;
     @Nullable
     private Item item;
+
+    @Override
+    public ResourceLocation getModel(Direction dir, Direction facing) {
+        return getModel();
+    }
 
     public Cover() {
         this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
@@ -52,6 +58,7 @@ public abstract class Cover implements IAntimatterObject,ITextureProvider {
     }
 
     public abstract String getId();
+
     public ItemStack getDroppedStack() {
         return item == null ? ItemStack.EMPTY : new ItemStack(getItem(), 1);
     }
@@ -155,5 +162,33 @@ public abstract class Cover implements IAntimatterObject,ITextureProvider {
 
     public void serialize(CompoundNBT nbt) {
         //Write to the NBT at root level
+    }
+
+    /**
+     * The key used to build dynamic textures for covers.
+     */
+    public static class DynamicKey {
+        public final Direction facing;
+        public final Texture machineTexture;
+
+        public DynamicKey(Direction facing, Texture tex) {
+            this.facing = facing;
+            this.machineTexture = tex;
+        }
+
+        @Override
+        public int hashCode() {
+            return facing.hashCode() + machineTexture.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DynamicKey) {
+                DynamicKey k = (DynamicKey) o;
+                return k.facing == this.facing && k.machineTexture.equals(this.machineTexture);
+            } else {
+                return false;
+            }
+        }
     }
 }

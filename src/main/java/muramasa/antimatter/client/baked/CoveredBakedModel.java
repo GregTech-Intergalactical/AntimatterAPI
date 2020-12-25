@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
@@ -16,6 +17,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -30,7 +32,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
 
 public class CoveredBakedModel extends DynamicBakedModel {
 
@@ -45,27 +46,29 @@ public class CoveredBakedModel extends DynamicBakedModel {
     public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile == null) return super.getModelData(world, pos, state, data);
-        tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).ifPresent(t -> data.setData(AntimatterProperties.MACHINE_COVER,t.getCoverFunction()));//map(h -> h.getAll()).orElse(CoverInstance.EMPTY_COVER_ARRAY);
+        tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).ifPresent(t -> data.setData(AntimatterProperties.MACHINE_TILE,(TileEntityMachine)tile));//map(h -> h.getAll()).orElse(CoverInstance.EMPTY_COVER_ARRAY);
         //if (covers.length > 0) data.setData(AntimatterProperties.MACHINE_COVER, covers);
         return super.getModelData(world, pos, state, data);
     }
 
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        //if (MODEL_CACHE.isEmpty()) buildCoverCache(state, rand, data);
         List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
-        quads = attachCoverQuads(quads, state, data);
+        quads = attachCoverQuads(quads, state, side, data);
         return quads;
     }
 
-    protected List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, IModelData data) {
-        Function<Direction, CoverInstance> covers = data.getData(AntimatterProperties.MACHINE_COVER);
-        Texture tex = data.getData(AntimatterProperties.MACHINE_TEXTURE);
+    protected List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, Direction side, IModelData data) {
+        MachineCoverHandler<TileEntityMachine> covers = data.getData(AntimatterProperties.MACHINE_TILE).coverHandler.orElse(null);
         if (covers == null) return quads;
+        Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE) : data.getData(AntimatterProperties.MACHINE_TEXTURE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
-            CoverInstance<?> c = covers.apply(Ref.DIRS[i]);
+            CoverInstance<?> c = covers.get(Ref.DIRS[i]);
             if (c.isEmpty()) continue;
-            quads.addAll(getCoverQuads(state, c, i, tex, data));
+            List<BakedQuad> quad = c.coverTexturer.getQuads(state,c.getCover(),new Cover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex), i, data);
+            assert quad.size() == 0 || quad.get(0).getFace() == Ref.DIRS[i];
+
+            quads.addAll(quad);
         }
         return quads;
     }

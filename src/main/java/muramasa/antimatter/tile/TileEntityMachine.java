@@ -1,11 +1,16 @@
 package muramasa.antimatter.tile;
 
+import com.mojang.datafixers.util.Either;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
+import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.client.dynamic.DynamicTextureProvider;
+import muramasa.antimatter.client.dynamic.DynamicTexturer;
+import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.gui.SlotType;
@@ -18,8 +23,10 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.LazyHolder;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -27,7 +34,10 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -38,7 +48,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -46,7 +55,7 @@ import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler {
+public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -58,10 +67,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyHolder<MachineFluidHandler<?>> fluidHandler;
     public LazyHolder<MachineEnergyHandler<?>> energyHandler;
     public LazyHolder<MachineRecipeHandler<?>> recipeHandler;
-    public LazyHolder<MachineCoverHandler<?>> coverHandler;
+    public LazyHolder<MachineCoverHandler<TileEntityMachine>> coverHandler;
 
-    /** Texture **/
-    protected Texture multiTexture = new Texture("");
+    /** Texture related areas. **/
+    public final DynamicTexturer<TileEntityMachine, DynamicKey> multiTexturer = new DynamicTexturer<>(Data.TILE_DYNAMIC_TEXTURER);
+    protected Optional<Texture> multiTexture = Optional.empty();
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -75,16 +85,20 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public Optional<Texture> getMultiTexture() {
-        return multiTexture.getPath().equals("") ? Optional.empty() : Optional.of(multiTexture);
+        return multiTexture;
     }
 
-    public void setMultiTexture(Texture tex) {
-        multiTexture = tex;
+    /**
+     * Sets the multi-block texture to render this block as.
+     * @param tex texture to use, null to reset.
+     */
+    public void setMultiTexture(@Nullable Texture tex) {
+        multiTexture = tex == null ? Optional.empty() : Optional.of(tex);
         sidedSync(true);
     }
 
     public void resetMultiTexture() {
-        setMultiTexture(new Texture(""));
+        setMultiTexture(null);
     }
 
     @Override
@@ -236,7 +250,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
                 .withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
         getMultiTexture().ifPresent(t -> builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE, t));
 
-        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_COVER, machineCoverHandler.getCoverFunction()));
+        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
 
         return builder.build();
     }
@@ -272,16 +286,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
 
-        if (tag.contains("TEST")) {
-            String s = tag.getString("TEST");
-            if (s.equals("") && multiTexture != null) {
-                multiTexture = new Texture("");
-            } else {
-                multiTexture = new Texture(s);
-            }
-        } else if (multiTexture != null) {
-            multiTexture = new Texture("");;
+        if (tag.contains(Ref.KEY_MULTI_TEXTURE)) {
+            String value = tag.getString(Ref.KEY_MULTI_TEXTURE);
+            setMultiTexture(value.isEmpty() ? null : new Texture(tag.getString(Ref.KEY_MULTI_TEXTURE)));
         }
+
     }
 
     @Override
@@ -299,9 +308,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT nbt = super.getUpdateTag();
-        if (multiTexture != null)
-            nbt.putString("TEST", multiTexture.getPath().equals("") ? "" : multiTexture.toString());
-
+        multiTexture.ifPresent(t -> nbt.putString(Ref.KEY_MULTI_TEXTURE,t.toString()));
         return nbt;
     }
 
@@ -369,6 +376,53 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             }
             info.add(builder.toString());
         });
+        multiTexture.ifPresent(mt -> info.add("Rendering using texture " + mt.toString() + "."));
         return info;
+    }
+
+    @Override
+    public ResourceLocation getModel(Direction dir, Direction facing) {
+        return this.getMachineType().getOverlayModel(Utils.coverRotateFacing(dir, facing));
+    }
+
+
+    @Override
+    public String getId() {
+        return this.getMachineType().getId();
+    }
+
+    /**
+     * The key used to build dynamic textures.
+     */
+    public static class DynamicKey {
+        public final ResourceLocation model;
+        public final Texture tex;
+        public Direction facing;
+        public final MachineState state;
+
+        public DynamicKey(ResourceLocation model, Texture tex, Direction dir, MachineState state) {
+            this.model = model;
+            this.tex = tex;
+            this.facing = dir;
+            this.state = state;
+        }
+
+        public void setDir(Direction dir) {
+            this.facing = dir;
+        }
+
+        @Override
+        public int hashCode() {
+            return tex.hashCode() + facing.hashCode() + state.hashCode() + model.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DynamicKey) {
+                DynamicKey key = (DynamicKey) o;
+                return key.state == state && key.facing == facing && tex.equals(key.tex) && model.equals(key.model);
+            }
+            return false;
+        }
     }
 }

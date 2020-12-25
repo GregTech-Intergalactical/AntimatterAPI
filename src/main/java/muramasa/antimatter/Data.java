@@ -1,8 +1,11 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.datafixers.util.Either;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
+import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.client.dynamic.DynamicTextureProvider;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.cover.CoverNone;
@@ -29,13 +32,19 @@ import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.behaviour.*;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.UseAction;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -110,7 +119,8 @@ public class Data {
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         ORE_SMALL.set((m, s) -> {
-            if (m == null || s == null || !ORE_SMALL.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ORE_SMALL, m, s);
+            if (m == null || s == null || !ORE_SMALL.allowGen(m))
+                return MaterialTypeBlock.getEmptyBlockAndLog(ORE_SMALL, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, ORE_SMALL.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
@@ -184,6 +194,27 @@ public class Data {
     public static CoverInstance<?> COVER_EMPTY = new CoverInstance<>(COVERNONE);
     public static CoverInstance<?> COVER_OUTPUT = new CoverInstance<>(COVEROUTPUT);
 
+    /**
+     * Dynamic texture implementations.
+     **/
+    public static final DynamicTextureProvider<Cover, Cover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<Cover, Cover.DynamicKey>(t -> {
+        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), Utils.getModelRotation(t.currentDir), t.source.getModel());/*new SimpleModelTransform(new TransformationMatrix(null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true), null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true)))/Ä,c);*/
+        return b.getQuads(t.state, null, t.rand, t.data);
+    }, t -> {
+        t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
+        t.source.setTextures((name, texture) -> t.model.textures.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
+    });
+
+    public static final DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey>(t -> {
+        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), new SimpleModelTransform(Utils.getModelRotation(t.state.get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse()), new ResourceLocation(t.source.getId()));
+        assert b != null;
+        return b.getQuads(t.state, null, t.rand, t.data);
+    }, t -> {
+        t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE))));
+        t.model.textures.put("overlay", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(t.data.getData(AntimatterProperties.MACHINE_STATE))[
+                Direction.rotateFace(Utils.getModelRotation(t.source.getBlockState().get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse().getMatrix(), t.dir).getIndex()])));
+    });
+
     public static MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>>(Ref.ID, "container_basic") {
         @Nullable
         @Override
@@ -215,13 +246,13 @@ public class Data {
     public static MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return new ContainerCover((CoverInstance<?>) tile,  playerInv, this, windowId);
+            return new ContainerCover((CoverInstance<?>) tile, playerInv, this, windowId);
         }
 
         @Override
         @ParametersAreNonnullByDefault
         public ScreenCover<ContainerCover> create(ContainerCover container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenCover<>(container,inv,name);
+            return new ScreenCover<>(container, inv, name);
         }
     };
 
