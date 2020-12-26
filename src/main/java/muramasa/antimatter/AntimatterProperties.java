@@ -1,17 +1,12 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.cover.CoverInstance;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
-
-import java.util.function.Function;
 
 public class AntimatterProperties {
 

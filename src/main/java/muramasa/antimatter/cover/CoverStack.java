@@ -20,9 +20,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class CoverInstance<T extends TileEntity> implements INamedContainerProvider {
+public class CoverStack<T extends TileEntity> implements INamedContainerProvider {
 
-    public static final CoverInstance<?>[] EMPTY_COVER_ARRAY = new CoverInstance[0];
+    public static final CoverStack<?>[] EMPTY_COVER_ARRAY = new CoverStack[0];
 
     /** The dyntexturer for covers. **/
     public final DynamicTexturer<Cover, Cover.DynamicKey> coverTexturer = new DynamicTexturer<>(Data.COVER_DYNAMIC_TEXTURER);
@@ -32,7 +32,7 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
     private CompoundNBT nbt;
     private T tile;
 
-    public CoverInstance(Cover cover, T tile) {
+    public CoverStack(Cover cover, T tile) {
         this.cover = Objects.requireNonNull(cover);
         this.tile = tile;
         this.nbt = new CompoundNBT();
@@ -40,13 +40,13 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
 
     //This allows you to instantiate a non-stateful cover, like COVER_EMPTY.
     //Using state with this is a runtime error.
-    public CoverInstance(Cover cover) {
+    public CoverStack(Cover cover) {
         this.nbt = new CompoundNBT();
         this.cover = cover;
     }
 
     //Automatically calls onPlace.
-    public CoverInstance(Cover cover, T tile, Direction side) {
+    public CoverStack(Cover cover, T tile, Direction side) {
         this(cover, tile);
     }
 
@@ -84,7 +84,7 @@ public class CoverInstance<T extends TileEntity> implements INamedContainerProvi
         return this.cover.getId().equals(cover.getId());
     }
 
-    public boolean isEqual(CoverInstance<T> cover) {
+    public boolean isEqual(CoverStack<T> cover) {
         return this.cover.getId().equals(cover.cover.getId());
     }
 

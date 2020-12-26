@@ -7,7 +7,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +18,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -33,20 +32,20 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     private final LazyOptional<ICoverHandler<T>> handler = LazyOptional.of(() -> this);
 
     private T tile;
-    protected Object2ObjectMap<Direction, CoverInstance<T>> covers = new Object2ObjectOpenHashMap<>();
+    protected Object2ObjectMap<Direction, CoverStack<T>> covers = new Object2ObjectOpenHashMap<>();
     protected List<String> validCovers = new ObjectArrayList<>();
 
     public CoverHandler(T tile, Cover... validCovers) {
         this.tile = tile;
         this.validCovers.add(Data.COVERNONE.getId());
         Arrays.stream(validCovers).forEach(c -> this.validCovers.add(c.getId()));
-        Arrays.stream(Ref.DIRS).forEach(d -> covers.put(d, new CoverInstance<>(Data.COVERNONE, tile)));
+        Arrays.stream(Ref.DIRS).forEach(d -> covers.put(d, new CoverStack<>(Data.COVERNONE, tile)));
     }
 
     @Override
     public boolean set(Direction side, @Nonnull Cover newCover) {
         covers.get(side).onRemove(side);
-        covers.put(side, new CoverInstance<>(newCover, getTile(), side)); //Emplace newCover, calls onPlace!
+        covers.put(side, new CoverStack<>(newCover, getTile(), side)); //Emplace newCover, calls onPlace!
         //TODO add newCover.onPlace and newCover.onRemove to customize sounds
         tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
         Utils.markTileForRenderUpdate(getTile());
@@ -55,12 +54,12 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public CoverInstance<T> get(Direction side) {
+    public CoverStack<T> get(Direction side) {
         return covers.get(side); //Should never return null, as COVER_NONE is inserted for every direction
     }
 
-    public CoverInstance<?>[] getAll() {
-        return covers.values().toArray(new CoverInstance[0]);
+    public CoverStack<?>[] getAll() {
+        return covers.values().toArray(new CoverStack[0]);
     }
 
     @Override
@@ -138,11 +137,11 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                CoverInstance<T> c = new CoverInstance<>(AntimatterAPI.get(Cover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile);
+                CoverStack<T> c = new CoverStack<>(AntimatterAPI.get(Cover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile);
                 c.deserialize(cover);
                 covers.put(Ref.DIRS[i], c);
             } else {
-                covers.put(Ref.DIRS[i], new CoverInstance<>(Data.COVERNONE, this.tile));
+                covers.put(Ref.DIRS[i], new CoverStack<>(Data.COVERNONE, this.tile));
             }
         }
         World w = tile.getWorld();

@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -40,7 +40,7 @@ public class MachineBakedModel extends RotatableCoveredBakedModel {
                 MachineCoverHandler<TileEntityMachine> covers = t.coverHandler.orElse(null);
                 for (int i = 0; i < Ref.DIRS.length; i++) {
                     Direction d = Ref.DIRS[i];
-                    CoverInstance<TileEntityMachine> c = covers == null ? null : covers.get(Ref.DIRS[i]);
+                    CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(Ref.DIRS[i]);
                     if (c == null || c.skipRender()) {
                         TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get(BlockStateProperties.HORIZONTAL_FACING), data.getData(AntimatterProperties.MACHINE_STATE));
 

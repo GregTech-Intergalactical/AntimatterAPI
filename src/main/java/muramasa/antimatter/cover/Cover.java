@@ -66,29 +66,29 @@ public abstract class Cover implements IAntimatterObject, ITextureProvider, IDyn
     /**
      * Fires once per Side. Return defines whether or not to consume the interaction.
      **/
-    public boolean onInteract(CoverInstance<?> instance, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(CoverStack<?> instance, PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         //Do not consume behaviour per default.
         return false;
     }
 
-    public void onPlace(CoverInstance<?> instance, Direction side) {
+    public void onPlace(CoverStack<?> instance, Direction side) {
 
     }
 
-    public void onRemove(CoverInstance<?> instance, Direction side) {
+    public void onRemove(CoverStack<?> instance, Direction side) {
 
     }
 
     //Called on update of the world.
-    public void onUpdate(CoverInstance<?> instance, Direction side) {
+    public void onUpdate(CoverStack<?> instance, Direction side) {
 
     }
 
-    public void onMachineEvent(CoverInstance<?> instance, TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event) {
         //NOOP
     }
 
-    public boolean openGui(CoverInstance<?> instance, PlayerEntity player, Direction side) {
+    public boolean openGui(CoverStack<?> instance, PlayerEntity player, Direction side) {
         NetworkHooks.openGui((ServerPlayerEntity) player, instance, packetBuffer -> {
             packetBuffer.writeBlockPos(instance.getTile().getPos());
             packetBuffer.writeInt(side.getIndex());

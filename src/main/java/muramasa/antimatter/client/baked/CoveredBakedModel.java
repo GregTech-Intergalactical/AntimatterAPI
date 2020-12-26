@@ -10,7 +10,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -63,7 +63,7 @@ public class CoveredBakedModel extends DynamicBakedModel {
         if (covers == null) return quads;
         Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE) : data.getData(AntimatterProperties.MACHINE_TEXTURE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
-            CoverInstance<?> c = covers.get(Ref.DIRS[i]);
+            CoverStack<?> c = covers.get(Ref.DIRS[i]);
             if (c.isEmpty()) continue;
             List<BakedQuad> quad = c.coverTexturer.getQuads(state,c.getCover(),new Cover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex), i, data);
             assert quad.size() == 0 || quad.get(0).getFace() == Ref.DIRS[i];
@@ -73,7 +73,7 @@ public class CoveredBakedModel extends DynamicBakedModel {
         return quads;
     }
 
-    public List<BakedQuad> getCoverQuads(BlockState state, CoverInstance<?> instance, int dir, Texture baseTex, IModelData data) {
+    public List<BakedQuad> getCoverQuads(BlockState state, CoverStack<?> instance, int dir, Texture baseTex, IModelData data) {
         return MODEL_CACHE.compute(instance.getCover().getModel(), (k,v) -> {
             if (v == null) v = new Object2ObjectOpenHashMap<>();
             v.compute(baseTex, (k1,v1) -> {

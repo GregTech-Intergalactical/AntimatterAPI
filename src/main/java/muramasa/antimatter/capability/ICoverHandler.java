@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,15 +19,15 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     /** Getters/Setters **/
     boolean set(Direction side, Cover cover);
 
-    CoverInstance<T> get(Direction side);
+    CoverStack<T> get(Direction side);
 
-    CoverInstance<?>[] getAll();
+    CoverStack<?>[] getAll();
 
     Direction getTileFacing();
 
     T getTile();
     //Returns a lambda that, given a direction returns the given Cover.
-    default Function<Direction, CoverInstance> getCoverFunction() {
+    default Function<Direction, CoverStack> getCoverFunction() {
         return this::get;
     }
 

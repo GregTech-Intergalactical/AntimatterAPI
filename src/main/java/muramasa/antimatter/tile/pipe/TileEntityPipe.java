@@ -6,7 +6,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
@@ -61,7 +61,7 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
     @Override
     public void onLoad() {
         super.onLoad();
-        CoverInstance<?>[] covers = this.getAllCovers();
+        CoverStack<?>[] covers = this.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
             if (Connectivity.has(interaction, side.getIndex())) {
@@ -155,11 +155,11 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
-    public CoverInstance<?>[] getAllCovers() {
-        return coverHandler.map(CoverHandler::getAll).orElse(new CoverInstance[0]);
+    public CoverStack<?>[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new CoverStack[0]);
     }
 
-    public CoverInstance<?> getCover(Direction side) {
+    public CoverStack<?> getCover(Direction side) {
         return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 

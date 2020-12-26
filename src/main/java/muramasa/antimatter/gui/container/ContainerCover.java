@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.container;
 
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,10 +11,10 @@ import java.util.Objects;
 
 public class ContainerCover extends AntimatterContainer {
     protected TileEntity onEntity;
-    private CoverInstance<?> c;
+    private CoverStack<?> c;
     private MenuHandlerCover<?, ?> m;
 
-    public ContainerCover(CoverInstance<?> on, PlayerInventory playerInv, MenuHandlerCover<?, ?> menuHandler, int windowId) {
+    public ContainerCover(CoverStack<?> on, PlayerInventory playerInv, MenuHandlerCover<?, ?> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
         this.c =  on;
         this.m = menuHandler;
@@ -22,7 +22,7 @@ public class ContainerCover extends AntimatterContainer {
         this.onEntity = Objects.requireNonNull(c.getTile());
     }
 
-    public CoverInstance<?> getCover() {
+    public CoverStack<?> getCover() {
         return c;
     }
 

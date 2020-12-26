@@ -1,18 +1,15 @@
 package muramasa.antimatter.tile;
 
-import com.mojang.datafixers.util.Either;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
-import muramasa.antimatter.client.ModelUtils;
-import muramasa.antimatter.client.dynamic.DynamicTextureProvider;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
@@ -26,7 +23,6 @@ import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -36,8 +32,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -238,7 +232,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
     }
 
-    public CoverInstance<?> getCover(Direction side) {
+    public CoverStack<?> getCover(Direction side) {
         return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 

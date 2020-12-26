@@ -27,7 +27,7 @@ public class CoverOutput extends Cover {
     }
 
     @Override
-    public void onPlace(CoverInstance<?> instance, Direction side) {
+    public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
         instance.getNbt().putBoolean(KEY_OUTPUT, false);
     }
@@ -38,7 +38,7 @@ public class CoverOutput extends Cover {
     }
 
     @Override
-    public void onMachineEvent(CoverInstance instance, TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverStack instance, TileEntityMachine tile, IMachineEvent event) {
         //TODO: Refactor? <- YES!
         if (event == MachineEvent.ITEMS_OUTPUTTED && instance.getNbt().getBoolean(KEY_OUTPUT)) {
             Direction outputDir = tile.getOutputFacing();

@@ -4,7 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -22,7 +22,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         // if (tag != null) deserialize(tag);
-        covers.put(getTileFacing().getOpposite(), new CoverInstance<>(Data.COVEROUTPUT, getTile()));
+        covers.put(getTileFacing().getOpposite(), new CoverStack<>(Data.COVEROUTPUT, getTile()));
         output = getTileFacing().getOpposite();
     }
 

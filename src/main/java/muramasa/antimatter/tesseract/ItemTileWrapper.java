@@ -26,7 +26,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     private boolean removed;
     private IItemHandler handler;
 
-    private CoverInstance[] covers = new CoverInstance[] {
+    private CoverStack[] covers = new CoverStack[] {
         Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
     };
 
@@ -63,7 +63,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = new CoverInstance(cover, this.tile);
+        covers[side.getIndex()] = new CoverStack(cover, this.tile);
     }
 
     @Override

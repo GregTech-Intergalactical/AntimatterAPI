@@ -7,7 +7,7 @@ import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.dynamic.DynamicTextureProvider;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverInstance;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -191,8 +191,8 @@ public class Data {
     public static Cover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static Cover COVEROUTPUT = new CoverOutput();
 
-    public static CoverInstance<?> COVER_EMPTY = new CoverInstance<>(COVERNONE);
-    public static CoverInstance<?> COVER_OUTPUT = new CoverInstance<>(COVEROUTPUT);
+    public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
+    public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);
 
     /**
      * Dynamic texture implementations.
@@ -246,7 +246,7 @@ public class Data {
     public static MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return new ContainerCover((CoverInstance<?>) tile, playerInv, this, windowId);
+            return new ContainerCover((CoverStack<?>) tile, playerInv, this, windowId);
         }
 
         @Override

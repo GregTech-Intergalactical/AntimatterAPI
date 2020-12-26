@@ -26,7 +26,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
     private boolean removed;
     private IFluidHandler handler;
 
-    private CoverInstance[] covers = new CoverInstance[] {
+    private CoverStack[] covers = new CoverStack[] {
         Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
     };
 
@@ -63,7 +63,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
 
     @Override
     public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = new CoverInstance(cover, this.tile);
+        covers[side.getIndex()] = new CoverStack(cover, this.tile);
     }
 
     @Override
