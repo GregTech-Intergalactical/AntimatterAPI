@@ -31,6 +31,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected final IIntArray progress = new IntArray(1);
 
     protected Recipe activeRecipe;
+    protected boolean consumedResources;
     protected int currentProgress, maxProgress;
     protected int overclock;
 
@@ -108,6 +109,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void activateRecipe() {
         //if (canOverclock)
         currentProgress = 0;
+        consumedResources = false;
         maxProgress = activeRecipe.getDuration();
         overclock = 0;
         if (this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
@@ -165,26 +167,25 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (!consumeResourceForRecipe()) {
                 if (currentProgress == 0 && tile.getMachineState() == IDLE) {
                     //Cannot start a recipe :(
-                    activeRecipe = null;
+                    resetRecipe();
                     return IDLE;
                 } else {
                     //TODO: Hard-mode here?
-                    onRecipeFailure();
+                    recipeFailure();
                 }
                 return POWER_LOSS;
             } else {
             }
-            if (currentProgress == 0) this.consumeInputs();
+            if (currentProgress == 0 && !consumedResources) this.consumeInputs();
             this.currentProgress++;
             setClientProgress();
             return ACTIVE;//tile.getMachineState();
         }
     }
 
-    private void onRecipeFailure() {
+    private void recipeFailure() {
         currentProgress = 0;
-        setClientProgress();
-        //Play sound?
+        setClientProgress(0);
     }
 
     public boolean consumeResourceForRecipe() {
@@ -232,6 +233,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void consumeInputs() {
         tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe,false));
         tile.fluidHandler.ifPresent(h -> h.consumeAndReturnInputs(activeRecipe.getInputFluids()));
+        consumedResources = true;
     }
 
     public boolean canOutput() {
@@ -290,6 +292,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public void resetRecipe() {
         this.activeRecipe = null;
+        this.consumedResources = false;
         this.currentProgress = 0;
         this.overclock = 0;
         setClientProgress(0);
