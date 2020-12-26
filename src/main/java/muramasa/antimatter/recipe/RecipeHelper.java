@@ -6,19 +6,15 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.MaterialItem;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RecipeHelper {

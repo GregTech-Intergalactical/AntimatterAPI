@@ -7,6 +7,7 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,12 +31,20 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawTooltipInArea(container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
+
+      //  if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
+            //Draw ERROR since we got no power
+      //  }
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         drawProgress(partialTicks, mouseX, mouseY);
+        //Draw error.
+        if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
+            drawTexture(gui, guiLeft + (xSize / 2) - 4, guiTop + 45, xSize, 55, 8, 8);
+        }
     }
 
     @Override

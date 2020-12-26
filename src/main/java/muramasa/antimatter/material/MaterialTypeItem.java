@@ -1,7 +1,7 @@
 package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.recipe.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

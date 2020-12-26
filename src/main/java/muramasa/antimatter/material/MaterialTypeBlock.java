@@ -2,7 +2,7 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.recipe.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;

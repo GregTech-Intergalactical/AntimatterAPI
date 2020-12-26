@@ -74,6 +74,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void onServerUpdate() {
         if (activeRecipe == null && tickTimer >= WAIT_TIME) {
             tickTimer = 0;
+            //Convert from power_loss to idle.
             checkRecipe();
         } else if (activeRecipe == null) {
             tickTimer++;
@@ -89,7 +90,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 break;
             default:
                 MachineState state = tickRecipe();
-                if (state != ACTIVE) {
+                if (state != ACTIVE && state != POWER_LOSS) {
                     tile.setMachineState(IDLE);
                 } else {
                     tile.setMachineState(state);
@@ -162,24 +163,35 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             return OUTPUT_FULL;
         } else {
             if (!consumeResourceForRecipe()) {
-                if (currentProgress == 0) {
+                if (currentProgress == 0 && tile.getMachineState() == IDLE) {
                     //Cannot start a recipe :(
                     activeRecipe = null;
+                    return IDLE;
+                } else {
+                    //TODO: Hard-mode here?
+                    onRecipeFailure();
                 }
-                return IDLE;
+                return POWER_LOSS;
+            } else {
             }
             if (currentProgress == 0) this.consumeInputs();
             this.currentProgress++;
             setClientProgress();
-            return tile.getMachineState();
+            return ACTIVE;//tile.getMachineState();
         }
+    }
+
+    private void onRecipeFailure() {
+        currentProgress = 0;
+        setClientProgress();
+        //Play sound?
     }
 
     public boolean consumeResourceForRecipe() {
         if (tile.energyHandler.isPresent()) {
             if (!generator) {
-                if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), true) >= activeRecipe.getPower() * (1 << overclock)) {
-                    tile.energyHandler.get().extract((activeRecipe.getPower() * (1 << overclock)), false);
+                if (tile.energyHandler.get().extract((activeRecipe.getPower() * (1L << overclock)), true) >= activeRecipe.getPower() * (1L << overclock)) {
+                    tile.energyHandler.get().extract((activeRecipe.getPower() * (1L << overclock)), false);
                     return true;
                 }
             } else {

@@ -9,8 +9,6 @@ import java.util.Set;
 
 public class Unifier {
 
-    private static Set<ItemWrapper> UNIFICATION_BLACKLIST = new ObjectOpenHashSet<>();
-
     private static Object2ObjectOpenHashMap<Fluid, Fluid> FLUID_DICT = new Object2ObjectOpenHashMap<>();
 
     static {

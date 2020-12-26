@@ -167,6 +167,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     /** Helpers **/
+    @Nonnull
     public FluidStack[] getInputs() {
         FluidTanks tanks = getInputTanks();
         return tanks == null ? new FluidStack[0] : tanks.getFluids();

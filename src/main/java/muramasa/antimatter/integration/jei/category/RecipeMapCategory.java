@@ -20,7 +20,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.recipe.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.util.Utils;
@@ -96,7 +96,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
             for (AntimatterIngredient ing : recipe.getInputItems()) {
-                ResourceLocation rl = ing.getTagResource();
+                ResourceLocation rl = ing.getTag();
                 if (rl != null) {
                     tagsToRender.put(inputs.size(), rl);
                 }

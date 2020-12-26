@@ -3,6 +3,8 @@ package muramasa.antimatter.recipe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -36,21 +38,8 @@ public class Recipe {
         this.fluidsOutput = fluidsOutput;
     }
 
-    public int getTagHash() {
-        long hash = this.itemsInput.stream().filter(t -> t.tag != null).mapToLong(t -> t.tag.getId().hashCode()).sum();
-        return (int) (hash ^(hash >>> 32));
-    }
-
     public void addChances(int[] chances) {
         this.chances = chances;
-    }
-
-    public Stream<AntimatterIngredient> getTaggedInput() {
-        return this.itemsInput.stream().filter(t -> t.tag != null);
-    }
-
-    public Stream<AntimatterIngredient> getStandardInput() {
-        return this.itemsInput.stream().filter(t -> t.tag == null);
     }
 
     public void setHidden(boolean hidden) {
@@ -150,11 +139,7 @@ public class Recipe {
         if (itemsInput.size() > 0) {
             builder.append("\nInput Items: { ");
             for (int i = 0; i < itemsInput.size(); i++) {
-                if (itemsInput.get(i).tag != null) {
-                    builder.append("Tag input: ").append(itemsInput.get(i).tag.getId());
-                } else {
-                    builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName().getFormattedText()).append(" x").append(itemsInput.get(i).getMatchingStacks()[0].getCount());
-                }
+                builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName().getFormattedText()).append(" x").append(itemsInput.get(i).getMatchingStacks()[0].getCount());
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");

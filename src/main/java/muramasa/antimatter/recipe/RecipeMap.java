@@ -6,18 +6,20 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.RecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.StackIngredient;
+import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
@@ -30,6 +32,47 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
+
+    protected static class IngredientWrapper {
+
+        protected AntimatterIngredient stack;
+        protected AntimatterIngredient[] tags;
+        @Nullable
+        public final ItemStack source;
+
+        public IngredientWrapper(@Nonnull ItemStack stack) {
+            this.source = stack;
+            this.stack = AntimatterIngredient.fromStack(stack);
+            this.tags = stack.getItem().getTags().stream().map(t -> AntimatterIngredient.fromTag(new ItemTags.Wrapper(t), stack.getCount())).toArray(AntimatterIngredient[]::new);
+        }
+
+        public IngredientWrapper(AntimatterIngredient ingredient) {
+            this.source = null;
+            if (ingredient instanceof StackIngredient) stack = ingredient;
+            if (ingredient instanceof TagIngredient) tags = new AntimatterIngredient[]{ingredient};
+        }
+
+        public Either<Map<RecipeFluids, Recipe>, RecipeMap.Branch> computePaths(RecipeMap.Branch choices) {
+            Either<Map<RecipeFluids, Recipe>, RecipeMap.Branch> output;
+            if (stack != null) {
+                output = choices.NODES.get(stack);
+                if (output != null) {
+                    return output;
+                }
+            }
+            if (tags != null) {
+                for (AntimatterIngredient tag : tags) {
+                    output = choices.NODES.get(tag);
+                    if (output != null) {
+                        return output;
+                    }
+                }
+            }
+            return null;
+        }
+
+    }
+
 
     protected static class Branch {
 
@@ -51,8 +94,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     //List of special -> Branch, where Branch represent a node, either another traversal or a recipe.
     protected final Int2ObjectMap<Branch> LOOKUP = new Int2ObjectOpenHashMap<>();
-    //Tags present, others are ignored.
-    private final Set<ResourceLocation> tagsPresent = new ObjectOpenHashSet<>();
     @Nullable
     private Tier guiTier;
 
@@ -127,7 +168,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (recipe == null) return;
       //  Branch map = LOOKUP.computeIfAbsent(recipe.getSpecialValue(), t -> new Branch());
         Branch map = LOOKUP.computeIfAbsent(0, t -> new Branch());
-        recipe.getTaggedInput().forEach(t -> tagsPresent.add(t.getTagResource()));
         if (!recipe.hasInputItems() || recipe.getInputItems().size() == 0) {
             //If a recipe doesn't have items it maps to the null key.
             map.NODES.compute(null, (k, v) -> {
@@ -145,11 +185,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         } else if(recipe.getInputItems().size() > 0 || (recipe.getInputFluids() != null && recipe.getInputFluids().length > 0)) {
             for (AntimatterIngredient ai : recipe.getInputItems()) {
                 if (ai.getMatchingStacks().length == 0) {
-                    Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT" + (ai.tag != null ? " TAG: " + ai.tag : ""));
+                    Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT");
                     return;
                 }
             }
-            Recipe r = recurseItemTreeFind(new RecipeFluids(recipe.getInputFluids(), recipe.getTags()), recipe.getInputItems().stream().map(t -> new ItemWrapper(t, t.count, recipe.getTags())).toArray(ItemWrapper[]::new), map);
+            Recipe r = recurseItemTreeFind(new RecipeFluids(recipe.getInputFluids(), recipe.getTags()), recipe.getInputItems().stream().map(IngredientWrapper::new).toArray(IngredientWrapper[]::new), map);
             if (r != null) {
                 Utils.onInvalidData("RECIPE COLLISION!");
                 return;
@@ -209,9 +249,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param map the root branch to search from.
      * @return a recipe
      */
-    Recipe recurseItemTreeFind(RecipeFluids input, ItemWrapper[] items, @Nonnull Branch map) {
+    Recipe recurseItemTreeFind(RecipeFluids input, IngredientWrapper[] items, @Nonnull Branch map) {
         for (int i = 0; i < items.length; i++) {
-            Recipe r = recurseItemTreeFind(input, items, map, i, 0, (1 << i));
+            Recipe r = recurseItemTreeFind(input, items, map, i, 0, (1L << i));
             if (r != null) return r;
         }
         return null;
@@ -226,39 +266,24 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param skip bitmap of items to skip, i.e. which items are used in the recursion.
      * @return a recipe
      */
-    Recipe recurseItemTreeFind(RecipeFluids input, ItemWrapper[] items, @Nonnull Branch map, int index, int count, long skip) {
+    Recipe recurseItemTreeFind(RecipeFluids input, IngredientWrapper[] items, @Nonnull Branch map, int index, int count, long skip) {
         if (count == items.length) return null;
-        ItemWrapper wr = items[index];
-        Either<Map<RecipeFluids, Recipe>, Branch> next = null;
-        if (wr.item != null) {
-            next = map.NODES.get(AntimatterIngredient.getHashable(wr.item));
-            if (next != null) {
-                Recipe r = getRecipe(input, items, index, count, skip, next);
-                if (r != null) return r;
-            }
+        IngredientWrapper wr = items[index];
+        Either<Map<RecipeFluids, Recipe>, Branch> next = wr.computePaths(map);
+        if (next != null) {
+            return getRecipe(input,items,index,count,skip,next);
         }
-        if (wr.possibleTags != null) {
-            for (Iterator<ResourceLocation> rl = wr.possibleTags.listIterator(); next == null && rl.hasNext(); ) {
-                next = map.NODES.get(AntimatterIngredient.getHashable(rl.next(), wr.count));
-                if (next != null) {
-                    //         foundAny = true;
-                    Recipe r = getRecipe(input, items, index, count, skip, next);
-                    if (r != null) return r;
-                }
-            }
-        }
-        //  if (!foundAny) state.setToSkip(index);
         return null;
     }
 
     @Nullable
-    private Recipe getRecipe(@Nonnull RecipeFluids input, @Nonnull ItemWrapper[] items, int index, int count, long skip, @Nonnull Either<Map<RecipeFluids, Recipe>, Branch> next) {
+    private Recipe getRecipe(@Nonnull RecipeFluids input, @Nonnull IngredientWrapper[] items, int index, int count, long skip, @Nonnull Either<Map<RecipeFluids, Recipe>, Branch> next) {
         return next.map(recipeMap -> recipeMap.get(input), branch -> {
             //Here, loop over all other items that are not currently part of the chain.
             int counter = (index + 1) % items.length;
             while (counter != index/*&& !state.shouldSkip(counter)*/) {
-                if (((skip & (1 << counter)) == 0)) {
-                    Recipe found = recurseItemTreeFind(input, items, branch, counter, count + 1, skip | (1 << counter));
+                if (((skip & (1L << counter)) == 0)) {
+                    Recipe found = recurseItemTreeFind(input, items, branch, counter, count + 1, skip | (1L << counter));
                     if (found != null) return found;
                 }
                 counter = (counter + 1) % items.length;
@@ -313,10 +338,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 return null;
             }
         } else {
-            Recipe r = recurseItemTreeFind(new RecipeFluids(fluids, null), Arrays.stream(uniqueItems(items)).map(t -> new ItemWrapper(t, tagsPresent, null)).toArray(ItemWrapper[]::new), rootMap);
             //current = System.nanoTime() - current;
             //Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
-            return r;
+            return recurseItemTreeFind(new RecipeFluids(fluids, null), Arrays.stream(uniqueItems(items)).map(IngredientWrapper::new).toArray(IngredientWrapper[]::new), rootMap);
         }
     }
 
@@ -348,7 +372,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     public void reset() {
         this.LOOKUP.clear();
-        this.tagsPresent.clear();
     }
 
 }
