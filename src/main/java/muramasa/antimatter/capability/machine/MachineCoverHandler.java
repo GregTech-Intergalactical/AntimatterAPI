@@ -32,6 +32,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
 
     public boolean setOutputFacing(Direction side) {
         if (side == output) return true;
+        if (!get(side).isEmpty()) return false;
         if (set(side, Data.COVEROUTPUT)) {
             if (covers.get(output).isEqual(Data.COVEROUTPUT)) set(output, Data.COVERNONE);
             output = side;
