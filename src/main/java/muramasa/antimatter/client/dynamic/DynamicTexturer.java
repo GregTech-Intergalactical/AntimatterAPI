@@ -16,12 +16,17 @@ public class DynamicTexturer<T extends IDynamicModelProvider,U> {
         this.provider = provider;
     }
 
-    public List<BakedQuad> getQuads(BlockState state, T t, U key, int dir, IModelData data) {
-        if (key.equals(previousKey)) return cache[dir];
+    public List<BakedQuad> getQuads(List<BakedQuad> currentList, BlockState state, T t, U key, int dir, IModelData data) {
+        if (key.equals(previousKey)) {
+            currentList.addAll(cache[dir]);
+            return currentList;
+        }
         List<BakedQuad>[] quads = this.provider.getQuads(state,t,key,data);
         this.previousKey = key;
         this.cache = quads;
-        return quads[dir];
+        currentList.addAll(quads[dir]);
+
+        return currentList;
     }
 
 }

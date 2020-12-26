@@ -9,8 +9,10 @@ import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ModelConfig {
 
@@ -44,12 +46,24 @@ public class ModelConfig {
 
     public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         IBakedModel[] baked;
-        for (int i = 0; i < config.length; i++) {
-            baked = bakedConfigs.get(config[i]);
-            if (baked != null) {
-                addBaked(quads, baked, state, side, rand, data);
-                if (i == 0) setModelIndex(config[i]);
+        if (side == null) {
+            for (int i = 0; i < config.length; i++) {
+                baked = bakedConfigs.get(config[i]);
+                if (baked != null) {
+                    addBaked(quads, baked, state, null, rand, data);
+                    if (i == 0) setModelIndex(config[i]);
+                }
             }
+        } else {
+            List<BakedQuad> generalQuads = new ArrayList<>();
+            for (int i = 0; i < config.length; i++) {
+                baked = bakedConfigs.get(config[i]);
+                if (baked != null) {
+                    addBaked(generalQuads, baked, state, null, rand, data);
+                    if (i == 0) setModelIndex(config[i]);
+                }
+            }
+            quads.addAll(generalQuads.stream().filter(t -> t.getFace() == side).collect(Collectors.toList()));
         }
         return quads;
     }

@@ -23,42 +23,33 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class MachineBakedModel extends RotatableCoveredBakedModel {
+public class MachineBakedModel extends CoveredBakedModel {
 
     public MachineBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
         super(bakedTuple);
     }
 
-    @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads,BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         BlockMachine bm = (BlockMachine) state.getBlock();
-        List<BakedQuad> retValue = new ArrayList<>();
         if (data.hasProperty(AntimatterProperties.MACHINE_TEXTURE)) {
             Texture tex = data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE);
             if (tex != null) {
                 TileEntityMachine t = data.getData(AntimatterProperties.MACHINE_TILE);
                 MachineCoverHandler<TileEntityMachine> covers = t.coverHandler.orElse(null);
-                for (int i = 0; i < Ref.DIRS.length; i++) {
-                    Direction d = Ref.DIRS[i];
-                    CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(Ref.DIRS[i]);
-                    if (c == null || c.skipRender()) {
-                        TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get(BlockStateProperties.HORIZONTAL_FACING), data.getData(AntimatterProperties.MACHINE_STATE));
-
-                        List<BakedQuad> quads = t.multiTexturer.getQuads(state, t, key, i, data);
-                        assert quads.size() == 0 || quads.get(0).getFace() == Ref.DIRS[i];
-                        retValue.addAll(t.multiTexturer.getQuads(state, t, key, i, data));
-                    }
+                CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(side);
+                if (c == null || c.skipRender()) {
+                    TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get(BlockStateProperties.HORIZONTAL_FACING), data.getData(AntimatterProperties.MACHINE_STATE));
+                    quads = t.multiTexturer.getQuads(quads, state, t, key, side.getIndex(), data);
+                    assert quads.size() == 0 || quads.get(0).getFace() == side;
                 }
-                if (covers != null) retValue = attachCoverQuads(retValue, state, side, data);
-                return retValue;
             }
         }
-        return super.getBlockQuads(state, side, rand, data);
+        return quads;
     }
 
-    @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
-        return super.getModelData(world, pos, state, data);
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+        List<BakedQuad> quads = super.attachQuadsForSide(state, side, rand, data);
+        return attachMultiQuads(quads,state,side,rand,data);
     }
 }

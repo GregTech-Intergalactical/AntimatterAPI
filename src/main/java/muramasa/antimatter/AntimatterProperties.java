@@ -16,6 +16,7 @@ public class AntimatterProperties {
     /** Block Machine Properties **/
     public static final ModelProperty<Machine<?>> MACHINE_TYPE = new ModelProperty<>();
     public static final ModelProperty<MachineState> MACHINE_STATE = new ModelProperty<>();
+    //TODO: Probably converge these two into one somehow.
     public static final ModelProperty<Texture> MACHINE_TEXTURE = new ModelProperty<>();
     public static final ModelProperty<Texture> MULTI_MACHINE_TEXTURE = new ModelProperty<>();
     public static final ModelProperty<TileEntityMachine> MACHINE_TILE = new ModelProperty<>();

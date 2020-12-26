@@ -77,14 +77,6 @@ public class ComponentHandler implements IComponentHandler {
     @Nonnull
     @Override
     public Optional<TileEntityMultiMachine> getFirstController() {
-//        int size = controllers.size();
-//        TileEntity tile;
-//        for (int i = 0; i < size; i++) {
-//            tile = Utils.getTile(componentTile.getWorld(), controllers.get(i));
-//            if (tile instanceof TileEntityMultiMachine) return (TileEntityMultiMachine) tile;
-//        }
-//        return null;
-        //TODO support multiple controllers
         if (this.controllers.size() != 0) return Optional.of(this.controllers.iterator().next());
         BlockPos controllerPos = StructureCache.get(getTile().getWorld(), getTile().getPos());
         if (controllerPos != null) {

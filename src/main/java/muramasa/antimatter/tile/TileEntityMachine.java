@@ -214,8 +214,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public void toggleMachine() {
-        //setMachineState(getDefaultMachineState());
-        //recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
         setMachineState(getMachineState() == MachineState.DISABLED ? getDefaultMachineState() : MachineState.DISABLED);
     }
 
@@ -302,7 +300,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT nbt = super.getUpdateTag();
-        multiTexture.ifPresent(t -> nbt.putString(Ref.KEY_MULTI_TEXTURE,t.toString()));
+        if (multiTexture.isPresent()) {
+            multiTexture.ifPresent(t -> nbt.putString(Ref.KEY_MULTI_TEXTURE,t.toString()));
+        } else {
+            nbt.putString(Ref.KEY_MULTI_TEXTURE,"");
+        }
         return nbt;
     }
 
