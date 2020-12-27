@@ -138,7 +138,7 @@ public class RecipeHelper {
     }
 
     public static void addSmelting(AntimatterIngredient input, ItemStack output) {
-        addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(ItemStack.EMPTY.getItem()));
+        addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(input.getMatchingStacks()[0].getItem()));
     }
 
     public static void removeSmelting(ItemStack output) {

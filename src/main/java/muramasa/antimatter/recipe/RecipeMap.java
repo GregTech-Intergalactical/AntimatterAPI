@@ -18,8 +18,11 @@ import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
@@ -28,6 +31,8 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,48 +40,96 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     protected static class IngredientWrapper {
 
-        protected AntimatterIngredient stack;
-        protected AntimatterIngredient[] tags;
-        @Nullable
-        public final ItemStack source;
+        public ItemStack source;
+        public Set<ResourceLocation> tags;
+
+        public ResourceLocation tagToHash;
+
+        protected AntimatterIngredient ing;
 
         public IngredientWrapper(@Nonnull ItemStack stack) {
             this.source = stack;
-            this.stack = AntimatterIngredient.fromStack(stack);
-            this.tags = stack.getItem().getTags().stream().map(t -> AntimatterIngredient.fromTag(new ItemTags.Wrapper(t), stack.getCount())).toArray(AntimatterIngredient[]::new);
+            this.tags = stack.getItem().getTags();//stack.getItem().getTags().stream().map(t -> AntimatterIngredient.fromTag(new ItemTags.Wrapper(t), stack.getCount())).toArray(AntimatterIngredient[]::new);
         }
 
         public IngredientWrapper(AntimatterIngredient ingredient) {
             this.source = null;
-            if (ingredient instanceof StackIngredient) stack = ingredient;
-            if (ingredient instanceof TagIngredient) tags = new AntimatterIngredient[]{ingredient};
+            this.ing = ingredient;
         }
 
-        public Either<Map<RecipeFluids, Recipe>, RecipeMap.Branch> computePaths(RecipeMap.Branch choices) {
-            Either<Map<RecipeFluids, Recipe>, RecipeMap.Branch> output;
-            if (stack != null) {
-                output = choices.NODES.get(stack);
-                if (output != null) {
-                    return output;
+        public Recipe computePaths(RecipeMap.Branch choices, Function<Either<Map<RecipeFluids, Recipe>, Branch>, Recipe> callback) {
+            Recipe r;
+            tagToHash = null;
+            Either<Map<RecipeFluids, Recipe>, RecipeMap.Branch> output = choices.NODES.get(this);
+            if (output != null) {
+                r = callback.apply(output);
+                if (r != null) {
+                    return r;
                 }
             }
             if (tags != null) {
-                for (AntimatterIngredient tag : tags) {
+                for (ResourceLocation tag : tags) {
+                    tagToHash = tag;
                     output = choices.NODES.get(tag);
                     if (output != null) {
-                        return output;
+                        r = callback.apply(output);
+                        if (r != null) {
+                            return r;
+                        }
                     }
                 }
             }
             return null;
         }
 
+        @Override
+        public int hashCode() {
+            if (tagToHash != null) return tagToHash.hashCode();
+            if (source != null) {
+                return AntimatterIngredient.itemHash(source);
+            } else {
+                return ing.hashCode();
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof IngredientWrapper)) return false;
+            return testIngredient(((IngredientWrapper) o).ing) && this.count() >= ((IngredientWrapper) o).count();
+        }
+
+        public int count() {
+            return source != null ? source.getCount() : ing.count;
+        }
+
+        protected boolean testIngredient(AntimatterIngredient toCompare) {
+            if (tagToHash != null) {
+                /* Compare with the hash. */
+                return toCompare.testTag(tagToHash);
+            } else if (source != null) {
+                return toCompare.test(source);
+            } else if (ing != null) {
+                if (ing instanceof StackIngredient) {
+                    return toCompare.test(((StackIngredient) ing).getStack());
+                }
+                if (ing instanceof TagIngredient) {
+                    return toCompare.testTag(((TagIngredient)ing).getTag());
+                } else {
+                    for (ItemStack stack : ing.getMatchingStacks()) {
+                        if (toCompare.test(stack)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
     }
 
 
     protected static class Branch {
 
-        private final Object2ObjectMap<AntimatterIngredient, Either<Map<RecipeFluids, Recipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
+        private final Object2ObjectMap<IngredientWrapper, Either<Map<RecipeFluids, Recipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
             Stream<Recipe> stream = NODES.values().stream().flatMap(t -> t.map(
@@ -207,7 +260,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         //Loop through NUMBER_OF_INGREDIENTS times.
         AntimatterIngredient current = ingredients.get(index);
-        Either<Map<RecipeFluids, Recipe>, Branch> r = map.NODES.compute(current, (k, v) -> {
+        Either<Map<RecipeFluids, Recipe>, Branch> r = map.NODES.compute(new IngredientWrapper(current), (k, v) -> {
             //Reached the end, so add the recipe. Create a leaf.
             if (count == ingredients.size() - 1) {
                 Map<RecipeFluids, Recipe> rec;
@@ -269,16 +322,15 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     Recipe recurseItemTreeFind(RecipeFluids input, IngredientWrapper[] items, @Nonnull Branch map, int index, int count, long skip) {
         if (count == items.length) return null;
         IngredientWrapper wr = items[index];
-        Either<Map<RecipeFluids, Recipe>, Branch> next = wr.computePaths(map);
-        if (next != null) {
-            return getRecipe(input,items,index,count,skip,next);
-        }
-        return null;
+        return wr.computePaths(map, b -> getRecipe(input,items,index,count,skip,b));
     }
 
     @Nullable
     private Recipe getRecipe(@Nonnull RecipeFluids input, @Nonnull IngredientWrapper[] items, int index, int count, long skip, @Nonnull Either<Map<RecipeFluids, Recipe>, Branch> next) {
-        return next.map(recipeMap -> recipeMap.get(input), branch -> {
+        return next.map(recipeMap -> {
+            Recipe r = recipeMap.get(input);
+            return r == null ? recipeMap.get(null) : r;
+        }, branch -> {
             //Here, loop over all other items that are not currently part of the chain.
             int counter = (index + 1) % items.length;
             while (counter != index/*&& !state.shouldSkip(counter)*/) {
@@ -319,12 +371,14 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
        // long current = System.nanoTime();
         //First, check if items and fluids are valid.
         if ((items == null || items.length == 0) && (fluids == null || fluids.length == 0)) return null;
-        if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) || ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids)))
+        if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) /*|| ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))*/)
             return null;
         if (items != null && items.length > Long.SIZE) {
             Utils.onInvalidData("ERROR! TOO LARGE INPUT IN RECIPEMAP, time to fix a real bitmap");
             return null;
         }
+        //Filter out empty fluids.
+        fluids = fluids == null ? null : Arrays.stream(fluids).filter(t -> !t.isEmpty() || !(t.getFluid() == Fluids.EMPTY)).toArray(FluidStack[]::new);
         //Branch rootMap = LOOKUP.get(special);
         Branch rootMap = LOOKUP.get(0);
         if (rootMap == null) return null;

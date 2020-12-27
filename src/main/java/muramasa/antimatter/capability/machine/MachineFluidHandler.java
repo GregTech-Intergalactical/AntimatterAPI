@@ -117,6 +117,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return 0;
     }
 
+    public int fillOutput(FluidStack stack, IFluidHandler.FluidAction action) {
+        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
+            return this.tanks.get(FluidDirection.OUTPUT).fill(stack, action);
+        }
+        return 0;
+    }
     @Nonnull
     public FluidStack drain(FluidStack stack, IFluidHandler.FluidAction action) {
         if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
@@ -199,20 +205,33 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return matchCount;
     }
 
+    public void addOutputs(FluidStack... fluids) {
+        if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
+            return;
+        }
+        if (fluids != null) {
+            for (FluidStack input : fluids) {
+                fillOutput(input,EXECUTE);
+            }
+        }
+    }
+
     public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
         if (!this.tanks.containsKey(FluidDirection.INPUT)) {
             return new FluidStack[0];
         }
         List<FluidStack> notConsumed = new ObjectArrayList<>();
         FluidStack result;
-        for (FluidStack input : inputs) {
-            result = drain(input, EXECUTE);
-            if (result != FluidStack.EMPTY) {
-                if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
-                    notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
+        if (inputs != null) {
+            for (FluidStack input : inputs) {
+                result = drain(input, EXECUTE);
+                if (result != FluidStack.EMPTY) {
+                    if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
+                        notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
+                    }
+                } else {
+                    notConsumed.add(input); //Fluid not present in input tanks
                 }
-            } else {
-                notConsumed.add(input); //Fluid not present in input tanks
             }
         }
         return notConsumed.toArray(new FluidStack[0]);

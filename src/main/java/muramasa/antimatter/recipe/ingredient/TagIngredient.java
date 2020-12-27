@@ -17,14 +17,13 @@ public class TagIngredient extends AntimatterIngredient{
         this.tag = tag;
     }
 
-    @Override
     public ResourceLocation getTag() {
         return tag.getId();
     }
 
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
-        return (p_test_1_ != null && p_test_1_.getItem().getTags().contains(tag.getId())) || super.test(p_test_1_);
+        return (p_test_1_ != null && p_test_1_.getItem().getTags().contains(tag.getId()) && p_test_1_.getCount() <= count) || super.test(p_test_1_);
     }
 
     @Override
@@ -35,12 +34,12 @@ public class TagIngredient extends AntimatterIngredient{
             return false;
         }
         if (o instanceof TagIngredient) {
-            return ((TagIngredient)o).tag.getId().equals(this.tag.getId());
+            return ((TagIngredient)o).tag.getId().equals(this.tag.getId()) && this.count >= ((TagIngredient)o).count;
         }
         if (o instanceof Ingredient) {
             for (ItemStack stack : ((Ingredient)o).getMatchingStacks()) {
                 if (stack.getItem().getTags().contains(tag.getId())) {
-                    return true;
+                    return this.count >= stack.getCount();
                 }
             }
         }
@@ -50,5 +49,10 @@ public class TagIngredient extends AntimatterIngredient{
     @Override
     public int hashCode() {
         return tag == null ? 0 : tag.getId().hashCode();
+    }
+
+    @Override
+    public boolean testTag(ResourceLocation tag) {
+        return tag.equals(this.tag.getId());
     }
 }

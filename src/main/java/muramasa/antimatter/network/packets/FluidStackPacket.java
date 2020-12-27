@@ -1,5 +1,6 @@
 package muramasa.antimatter.network.packets;
 
+import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.Minecraft;
@@ -12,9 +13,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
-/*
+
 public class FluidStackPacket {
 
     private Fluid[] inputFluids, outputFluids;
@@ -96,14 +98,20 @@ public class FluidStackPacket {
                         for (int i = 0; i < inputs.length; i++) {
                             inputs[i] = new FluidStack(msg.inputFluids[i], msg.inputAmounts[i]);
                         }
-                        h.setInputs(inputs);
+                        FluidTanks tanks = h.getInputTanks();
+                        for (int i = 0; i < Math.min(inputs.length, tanks.getTanks()); i++) {
+                            tanks.getTank(i).setFluid(inputs[i]);
+                        }
                     }
                     if (msg.outputFluids != null) {
                         FluidStack[] outputs = new FluidStack[msg.outputFluids.length];
                         for (int i = 0; i < outputs.length; i++) {
                             outputs[i] = new FluidStack(msg.outputFluids[i], msg.outputAmounts[i]);
                         }
-                        h.setOutputs(outputs);
+                        FluidTanks tanks = h.getOutputTanks();
+                        for (int i = 0; i < Math.min(outputs.length, tanks.getTanks()); i++) {
+                            tanks.getTank(i).setFluid(outputs[i]);
+                        }
                     }
                 });
             }
@@ -111,4 +119,3 @@ public class FluidStackPacket {
         ctx.get().setPacketHandled(true);
     }
 }
- */

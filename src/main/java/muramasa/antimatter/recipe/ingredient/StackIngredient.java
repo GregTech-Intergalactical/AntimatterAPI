@@ -3,7 +3,9 @@ package muramasa.antimatter.recipe.ingredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class StackIngredient extends AntimatterIngredient {
@@ -19,22 +21,22 @@ public class StackIngredient extends AntimatterIngredient {
     }
 
     @Override
-    public int hashCode() {
-        return itemHash(stack);
+    public boolean testTag(ResourceLocation tag) {
+        return stack.getItem().getTags().contains(tag);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (stack == null) return super.equals(o);
-        if (o instanceof StackIngredient) {
-            return ItemStack.areItemStacksEqual(stack,((StackIngredient)o).stack);
-        }
-        if (o instanceof TagIngredient) {
-            return stack.getItem().getTags().contains(((TagIngredient)o).tag.getId());
-        }
-        if (o instanceof Ingredient) {
-            return ((Ingredient)o).test(stack);
-        }
-        return false;
+    public boolean test(@Nullable ItemStack p_test_1_) {
+        if (p_test_1_ == null) return false;
+        return AntimatterIngredient.compareItems(stack,p_test_1_) && count <= p_test_1_.getCount();
+    }
+
+    public ItemStack getStack() {
+        return stack;
+    }
+
+    @Override
+    public int hashCode() {
+        return itemHash(stack);
     }
 }

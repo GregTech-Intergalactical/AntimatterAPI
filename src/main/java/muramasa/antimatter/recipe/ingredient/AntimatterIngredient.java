@@ -24,13 +24,10 @@ public abstract class AntimatterIngredient extends Ingredient {
             stack.setCount(count);
         }
     }
-    //Returns a tag, if present.
-    @Nullable
-    public ResourceLocation getTag() {
-        return null;
-    }
 
-    protected int itemHash(ItemStack item) {
+    public abstract boolean testTag(ResourceLocation tag);
+
+    public static int itemHash(ItemStack item) {
         if (item == null) return itemHash(ItemStack.EMPTY);
         boolean nbt = item.hasTag();
         long tempHash = 1;
@@ -85,5 +82,24 @@ public abstract class AntimatterIngredient extends Ingredient {
     @Override
     public String toString() {
         return Arrays.stream(getMatchingStacks()).map(t -> t.getItem().toString()).collect(Collectors.joining());
+    }
+
+    //Compares items, ignoring count.
+    public static boolean compareItems(ItemStack stackA, ItemStack stackB) {
+        if (stackA.isEmpty() && stackB.isEmpty()) {
+            return true;
+        } else {
+            return !stackA.isEmpty() && !stackB.isEmpty() && compareStacks(stackA, stackB);
+        }
+    }
+
+    private static boolean compareStacks(ItemStack stackA, ItemStack stackB) {
+        if (stackA.getItem() != stackB.getItem()) {
+            return false;
+        } else if (stackA.getTag() == null && stackB.getTag() != null) {
+            return false;
+        } else {
+            return (stackA.getTag() == null || stackA.getTag().equals(stackB.getTag())) && stackA.areCapsCompatible(stackB);
+        }
     }
 }

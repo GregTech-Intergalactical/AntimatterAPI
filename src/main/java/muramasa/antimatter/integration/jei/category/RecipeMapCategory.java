@@ -23,6 +23,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.block.Block;
@@ -96,9 +97,11 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
             for (AntimatterIngredient ing : recipe.getInputItems()) {
-                ResourceLocation rl = ing.getTag();
-                if (rl != null) {
-                    tagsToRender.put(inputs.size(), rl);
+                if (ing instanceof TagIngredient) {
+                    ResourceLocation rl = ((TagIngredient) ing).getTag();
+                    if (rl != null) {
+                        tagsToRender.put(inputs.size(), rl);
+                    }
                 }
                 inputs.add(ing);
             }
@@ -174,7 +177,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 FluidStack[] fluids = recipe.getInputFluids();
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
-                    fluidGroup.init(groupIndex, true, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, 1000, false, null);
+                    fluidGroup.init(groupIndex, true, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, fluids[s].getAmount(), false, null);
                     fluidGroup.set(groupIndex++, fluids[s]);
                     inputFluids++;
                 }

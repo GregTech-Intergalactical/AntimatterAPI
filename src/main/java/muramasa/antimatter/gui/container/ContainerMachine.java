@@ -8,9 +8,13 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class ContainerMachine extends AntimatterContainer {
@@ -30,26 +34,6 @@ public abstract class ContainerMachine extends AntimatterContainer {
         return tile;
     }
 
-    /*@Override
-    public void detectAndSendChanges() {
-        //int curState = tile.getMachineState().ordinal();
-        super.detectAndSendChanges();
-        tile.fluidHandler.ifPresent(h -> {
-            if ((h.getInputWrapper() != null && h.getInputWrapper().dirty) || (h.getOutputWrapper() != null && h.getOutputWrapper().dirty)) {
-                if (h.getInputWrapper() != null) h.getInputWrapper().dirty = false;
-                if (h.getOutputWrapper() != null) h.getOutputWrapper().dirty = false;
-                GregTechNetwork.syncMachineTanks(tile);
-            }
-        });
-    }*/
-
-  /*  @Override
-    public void updateProgressBar(int id, int data) {
-        super.updateProgressBar(id, data);
-        if (id == GuiEvent.MACHINE_STATE.ordinal()) {
-            tile.setMachineState(MachineState.VALUES[data]);
-        }
-    }*/
 
     protected void addSlots(TileEntityMachine tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
