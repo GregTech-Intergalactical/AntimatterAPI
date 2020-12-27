@@ -13,6 +13,7 @@ import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
@@ -139,7 +140,10 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     }
                     //Has gui?
                     if (getType().has(MachineFlag.GUI) ) {
-                        NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
+                        NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
+                            extra.writeBlockPos(pos);
+                            tile.fluidHandler.ifPresent(fh -> FluidStackPacket.encode(new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs()), extra));
+                        });
                         return ActionResultType.SUCCESS;
                     }
                     //Otherwise, interact with fluids

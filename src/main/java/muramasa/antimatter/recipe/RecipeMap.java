@@ -70,7 +70,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             if (tags != null) {
                 for (ResourceLocation tag : tags) {
                     tagToHash = tag;
-                    output = choices.NODES.get(tag);
+                    output = choices.NODES.get(this);
                     if (output != null) {
                         r = callback.apply(output);
                         if (r != null) {

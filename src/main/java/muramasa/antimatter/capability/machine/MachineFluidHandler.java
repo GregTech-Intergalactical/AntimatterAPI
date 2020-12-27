@@ -46,6 +46,21 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     protected int capacity, pressure;
     protected ITickingController controller;
 
+    /** For GUI **/
+    protected boolean dirty;
+
+    protected void markDirty() {
+        dirty = true;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void markSynced() {
+        dirty = false;
+    }
+
     public MachineFluidHandler(T tile, int capacity, int pressure) {
         this.tile = tile;
         this.capacity = capacity;
@@ -158,6 +173,10 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                         fill((Integer) data[0], 1000, EXECUTE);
                     }
                     break;
+                case FLUID_INPUT_CHANGED:
+                case FLUID_OUTPUT_CHANGED:
+                    this.markDirty();
+                    break;
             }
         }
     }
@@ -197,7 +216,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         int matchCount = 0;
         if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
             for (FluidStack output : outputs) {
-                if (fill(output, SIMULATE) == output.getAmount()) {
+                if (fillOutput(output, SIMULATE) == output.getAmount()) {
                     matchCount++;
                 }
             }
@@ -302,6 +321,20 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
          */
         FluidStack drained = drain(stack, simulate ? SIMULATE : EXECUTE);
         return drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
+    }
+
+    public void deserializeNBT(CompoundNBT nbt) {
+        tanks.forEach((k,v) -> {
+            v.deserializeNBT(nbt.getList(k.name(),Constants.NBT.TAG_COMPOUND));
+        });
+    }
+
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        tanks.forEach((k,v) -> {
+            nbt.put(k.name(), v.serializeNBT());
+        });
+        return nbt;
     }
 
     // TODO needed? Weird semantics

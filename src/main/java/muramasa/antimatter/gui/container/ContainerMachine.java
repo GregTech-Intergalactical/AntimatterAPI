@@ -2,24 +2,29 @@ package muramasa.antimatter.gui.container;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.util.IWorldPosCallable;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class ContainerMachine extends AntimatterContainer {
 
     protected final TileEntityMachine tile;
+    protected List<ServerPlayerEntity> listeners = new ArrayList<>();
 
     public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine<?, ?> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
@@ -33,6 +38,32 @@ public abstract class ContainerMachine extends AntimatterContainer {
     public TileEntityMachine getTile() {
         return tile;
     }
+
+    @Override
+    public void addListener(IContainerListener listener) {
+        super.addListener(listener);
+        if (listener instanceof ServerPlayerEntity) listeners.add((ServerPlayerEntity)listener);
+    }
+
+    @Override
+    public void removeListener(IContainerListener listener) {
+        super.removeListener(listener);
+        if (listener instanceof ServerPlayerEntity) listeners.remove(listener);
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        tile.fluidHandler.ifPresent(fh -> {
+            if (!fh.isDirty()) return;
+
+            FluidStackPacket pkt = new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs());
+            listeners.forEach(t -> Antimatter.NETWORK.sendTo(pkt,t));
+
+            fh.markSynced();
+        });
+    }
+
 
 
     protected void addSlots(TileEntityMachine tile) {

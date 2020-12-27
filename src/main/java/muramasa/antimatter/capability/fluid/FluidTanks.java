@@ -4,6 +4,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -147,6 +150,22 @@ public class FluidTanks implements IFluidHandler {
             return getTank(tank).drain(stack, action);
         }
         return FluidStack.EMPTY;
+    }
+
+    public ListNBT serializeNBT() {
+        ListNBT nbt = new ListNBT();
+        Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().writeToNBT(new CompoundNBT())));
+        return nbt;
+    }
+
+    public void deserializeNBT(ListNBT nbt) {
+        int i = 0;
+        for (INBT tank : nbt) {
+            if (tank instanceof CompoundNBT) {
+                CompoundNBT cnbt = (CompoundNBT) tank;
+                tanks[i++].setFluid(FluidStack.loadFluidStackFromNBT(cnbt));
+            }
+        }
     }
 
     @Nonnull

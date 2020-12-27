@@ -1,8 +1,11 @@
 package muramasa.antimatter.gui.screen;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.ButtonData;
+import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.ButtonWidget;
@@ -14,10 +17,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static muramasa.antimatter.gui.SlotType.FL_IN;
+import static muramasa.antimatter.gui.SlotType.FL_OUT;
 
 // TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
 public class ScreenMachine<T extends ContainerMachine> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
@@ -38,6 +51,8 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         Minecraft.getInstance().fontRenderer.drawString(name, getCenteredStringX(name), 4, 0x404040);
     }
 
+
+
     @Override
     protected void init() {
         super.init();
@@ -55,10 +70,62 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         }
         if (container.getTile().has(MachineFlag.FLUID)) {
             //TODO
-            //drawContainedFluids(mouseX, mouseY);
+            container.getTile().fluidHandler.ifPresent(t -> {
+                int[] index = new int[]{0};
+                FluidStack[] inputs = t.getInputs();
+                container.getTile().getMachineType().getGui().getSlots(FL_IN).forEach(sl -> {
+                    renderFluid(inputs[index[0]++], sl,mouseX,mouseY);
+                });
+                index[0] = 0;
+                FluidStack[] outputs = t.getOutputs();
+                container.getTile().getMachineType().getGui().getSlots(FL_OUT).forEach(sl -> {
+                    renderFluid(outputs[index[0]++], sl, mouseX,mouseY);
+                });
+            });
         }
     }
 
+
+
+    public void renderFluid(FluidStack fluid, SlotData slot, int mouseX, int mouseY) {
+        int x = slot.getX();
+        int y = slot.getY();
+        if (fluid.isEmpty()) return;
+        RenderSystem.enableBlend();
+        RenderSystem.enableAlphaTest();
+        ResourceLocation stillLocation = fluid.getFluid().getAttributes().getStillTexture(fluid);
+        int color = fluid.getFluid().getAttributes().getColor();
+        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(stillLocation);
+        ResourceLocation spriteLocation = sprite.getName();
+        minecraft.getTextureManager().bindTexture(new ResourceLocation(spriteLocation.getNamespace(), "textures/" + spriteLocation.getPath() + ".png"));
+        float r = (color >> 16 & 0xFF) / 255.0F;
+        float g = (color >> 8 & 0xFF) / 255.0F;
+        float b = (color & 0xFF) / 255.0F;
+        RenderSystem.color4f(r,g,b,0.6f);
+        blit(/*guiLeft +*/ x, /*guiTop +*/ y, 0, 16, 16, sprite);
+        RenderSystem.color4f(1,1,1,1);
+        RenderSystem.disableAlphaTest();
+        RenderSystem.disableBlend();
+
+        if (this.isSlotSelected(slot.getX(), slot.getY(), mouseX, mouseY)) {
+            RenderSystem.disableDepthTest();
+            int j1 = x;
+            int k1 = y;
+            RenderSystem.colorMask(true, true, true, false);
+            int slotColor = -2130706433;
+            this.fillGradient(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.enableDepthTest();
+            List<String> str = new ArrayList<>();
+            str.add(fluid.getDisplayName().getFormattedText());
+            str.add("Amount: " + fluid.getAmount());
+            this.renderTooltip(str, mouseX-guiLeft,mouseY-guiTop);
+        }
+    }
+
+    private boolean isSlotSelected(int x, int y, double mouseX, double mouseY) {
+        return this.isPointInRegion(x, y, 16, 16, mouseX, mouseY);
+    }
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);

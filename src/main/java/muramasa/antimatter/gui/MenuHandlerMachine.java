@@ -1,7 +1,9 @@
 package muramasa.antimatter.gui;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.screen.ScreenMachine;
+import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerInventory;
@@ -17,6 +19,11 @@ public abstract class MenuHandlerMachine<T extends ContainerMachine, U extends S
     @Override
     public T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data) {
         TileEntity tile = Utils.getTileFromBuf(data);
+        try {
+            FluidStackPacket.decode(data).executePacket();
+        } catch (Exception ex) {
+            Antimatter.LOGGER.info("no packet");
+        }
         return tile instanceof TileEntityMachine ? getMenu(tile, inv, windowId) : null;
     }
 }

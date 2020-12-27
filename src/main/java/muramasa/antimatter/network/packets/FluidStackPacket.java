@@ -21,11 +21,13 @@ public class FluidStackPacket {
 
     private Fluid[] inputFluids, outputFluids;
     private int[] inputAmounts, outputAmounts;
+    private BlockPos pos;
 
     private FluidStackPacket() {
     }
 
-    public FluidStackPacket(@Nullable FluidStack[] inputs, @Nullable FluidStack[] outputs) {
+    public FluidStackPacket(BlockPos pos, @Nullable FluidStack[] inputs, @Nullable FluidStack[] outputs) {
+        this.pos = pos;
         if (inputs != null) {
             inputFluids = new Fluid[inputs.length];
             inputAmounts = new int[inputs.length];
@@ -45,6 +47,7 @@ public class FluidStackPacket {
     }
 
     public static void encode(FluidStackPacket msg, PacketBuffer buf) {
+        buf.writeBlockPos(msg.pos);
         buf.writeInt(msg.inputFluids != null ? msg.inputFluids.length : 0);
         buf.writeInt(msg.outputFluids != null ? msg.outputFluids.length : 0);
         if (msg.inputFluids != null) {
@@ -63,6 +66,7 @@ public class FluidStackPacket {
 
     public static FluidStackPacket decode(PacketBuffer buf) {
         FluidStackPacket packet = new FluidStackPacket();
+        packet.pos = buf.readBlockPos();
         int inputCount = buf.readInt();
         int outputCount = buf.readInt();
         if (inputCount > 0) {
@@ -85,37 +89,36 @@ public class FluidStackPacket {
     }
 
     public static void handle(final FluidStackPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            RayTraceResult trace = Minecraft.getInstance().objectMouseOver;
-            if (trace == null) return;
-            BlockPos pos = new BlockPos(trace.getHitVec());
-            TileEntity tile = Utils.getTile(Minecraft.getInstance().world, pos);
-            if (tile instanceof TileEntityMachine) {
-                TileEntityMachine machine = (TileEntityMachine) tile;
-                machine.fluidHandler.ifPresent(h -> {
-                    if (msg.inputFluids != null) {
-                        FluidStack[] inputs = new FluidStack[msg.inputFluids.length];
-                        for (int i = 0; i < inputs.length; i++) {
-                            inputs[i] = new FluidStack(msg.inputFluids[i], msg.inputAmounts[i]);
-                        }
-                        FluidTanks tanks = h.getInputTanks();
-                        for (int i = 0; i < Math.min(inputs.length, tanks.getTanks()); i++) {
-                            tanks.getTank(i).setFluid(inputs[i]);
-                        }
-                    }
-                    if (msg.outputFluids != null) {
-                        FluidStack[] outputs = new FluidStack[msg.outputFluids.length];
-                        for (int i = 0; i < outputs.length; i++) {
-                            outputs[i] = new FluidStack(msg.outputFluids[i], msg.outputAmounts[i]);
-                        }
-                        FluidTanks tanks = h.getOutputTanks();
-                        for (int i = 0; i < Math.min(outputs.length, tanks.getTanks()); i++) {
-                            tanks.getTank(i).setFluid(outputs[i]);
-                        }
-                    }
-                });
-            }
-        });
+        ctx.get().enqueueWork(msg::executePacket);
         ctx.get().setPacketHandled(true);
+    }
+
+    public void executePacket() {
+        TileEntity tile = Utils.getTile(Minecraft.getInstance().world, this.pos);
+        if (tile instanceof TileEntityMachine) {
+            TileEntityMachine machine = (TileEntityMachine) tile;
+            machine.fluidHandler.ifPresent(h -> {
+                if (this.inputFluids != null) {
+                    FluidStack[] inputs = new FluidStack[this.inputFluids.length];
+                    for (int i = 0; i < inputs.length; i++) {
+                        inputs[i] = new FluidStack(this.inputFluids[i], this.inputAmounts[i]);
+                    }
+                    FluidTanks tanks = h.getInputTanks();
+                    for (int i = 0; i < Math.min(inputs.length, tanks.getTanks()); i++) {
+                        tanks.getTank(i).setFluid(inputs[i]);
+                    }
+                }
+                if (this.outputFluids != null) {
+                    FluidStack[] outputs = new FluidStack[this.outputFluids.length];
+                    for (int i = 0; i < outputs.length; i++) {
+                        outputs[i] = new FluidStack(this.outputFluids[i], this.outputAmounts[i]);
+                    }
+                    FluidTanks tanks = h.getOutputTanks();
+                    for (int i = 0; i < Math.min(outputs.length, tanks.getTanks()); i++) {
+                        tanks.getTank(i).setFluid(outputs[i]);
+                    }
+                }
+            });
+        }
     }
 }

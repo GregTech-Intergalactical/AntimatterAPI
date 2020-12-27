@@ -18,10 +18,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
-
 import java.util.Objects;
 
-import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineState.*;
 
 public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler {
@@ -77,8 +75,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             tickTimer = 0;
             //Convert from power_loss to idle.
             checkRecipe();
-        } else if (activeRecipe == null) {
+        } else if (activeRecipe == null || tile.getMachineState() == POWER_LOSS) {
             tickTimer++;
+        } else if (tile.getMachineState() == POWER_LOSS && tickTimer >= WAIT_TIME) {
+            tile.setMachineState(IDLE);
+            tickTimer = 0;
         }
         if (tickingRecipe || activeRecipe == null) return;
         tickingRecipe = true;
@@ -232,6 +233,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void consumeInputs() {
+        if (!tile.hadFirstTick()) return;
         if (activeRecipe.hasInputItems()) {
             tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe,false));
         }
@@ -318,7 +320,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             switch ((MachineEvent) event) {
                 case ENERGY_INPUTTED:
                     if (tile.getMachineState() == IDLE && activeRecipe != null) {
-                        tile.setMachineState(POWER_LOSS);
+                        tile.setMachineState(NO_POWER);
                     }
                     break;
                 case ENERGY_DRAINED:

@@ -1,6 +1,8 @@
 package muramasa.antimatter.integration.jei.category;
 
 import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -54,11 +56,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     protected Tier guiTier;
     private final IRecipeInfoRenderer infoRenderer;
 
-
-    private final Int2ObjectMap<ResourceLocation> tagsToRender;
-
     public RecipeMapCategory(RecipeMap<?> map, GuiData gui, Tier defaultTier, String blockItemModel) {
-        tagsToRender = new Int2ObjectOpenHashMap<>();
         id = map.getId();
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getFormattedText();
@@ -93,14 +91,13 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
     @Override
     public void setIngredients(Recipe recipe, IIngredients ingredients) {
-        tagsToRender.clear();
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
             for (AntimatterIngredient ing : recipe.getInputItems()) {
                 if (ing instanceof TagIngredient) {
                     ResourceLocation rl = ((TagIngredient) ing).getTag();
                     if (rl != null) {
-                        tagsToRender.put(inputs.size(), rl);
+                        recipe.tagsToRender.putIfAbsent(inputs.size(), rl);
                     }
                 }
                 inputs.add(ing);
@@ -200,9 +197,10 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 //        final int finalInputFluids = inputFluids;
         itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
             ResourceLocation rl;
-            if ((rl = tagsToRender.get(index)) != null) {
+            if ((rl = recipe.tagsToRender.get(index)) != null) {
                 tooltip.add(TextFormatting.GOLD + "Accepts any " + rl);
             }
+
             if (input && Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
@@ -226,4 +224,6 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public static void setGuiHelper(IGuiHelper helper) {
         guiHelper = helper;
     }
+
+
 }
