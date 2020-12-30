@@ -68,8 +68,8 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         cover.onUpdate(this, side);
     }
 
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event) {
-        cover.onMachineEvent(this, tile, event);
+    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event, int ...data) {
+        cover.onMachineEvent(this, tile, event, data);
     }
 
     public boolean openGui(PlayerEntity player, Direction side) {

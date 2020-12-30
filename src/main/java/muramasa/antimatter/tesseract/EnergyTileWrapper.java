@@ -109,6 +109,11 @@ public class EnergyTileWrapper implements IGTNode, ITileWrapper {
     }
 
     @Override
+    public boolean canInput(Dir dir) {
+        return canInput();
+    }
+
+    @Override
     public boolean canOutput(Dir direction) {
         return false;
     }

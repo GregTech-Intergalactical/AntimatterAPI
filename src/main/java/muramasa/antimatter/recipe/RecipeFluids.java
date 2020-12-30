@@ -8,7 +8,6 @@ import java.util.*;
 
 public class RecipeFluids {
     private int hash;
-    public FluidStack[] rootFluids;
     public Set<FluidWrapper> fluids = new ObjectOpenHashSet<>();
 
     public RecipeFluids(@Nullable FluidStack[] fluids, Set<RecipeTag> tags) {

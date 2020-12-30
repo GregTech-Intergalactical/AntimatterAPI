@@ -95,6 +95,11 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
+    public boolean canInput(Dir direction) {
+        return canInput();
+    }
+
+    @Override
     public boolean canOutput(Dir direction) {
         return canOutput();
     }

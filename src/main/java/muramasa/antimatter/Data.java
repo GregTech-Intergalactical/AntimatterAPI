@@ -6,10 +6,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.dynamic.DynamicTextureProvider;
-import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverStack;
-import muramasa.antimatter.cover.CoverNone;
-import muramasa.antimatter.cover.CoverOutput;
+import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
@@ -190,6 +187,13 @@ public class Data {
 
     public static Cover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static Cover COVEROUTPUT = new CoverOutput();
+    public static Cover COVERINPUT = new CoverInput();
+    public static Cover COVERMUFFLER = new CoverMuffler();
+    public static Cover COVERDYNAMO = new CoverDynamo("dynamo");
+    public static Cover COVERENERGY = new CoverEnergy();
+    public static Cover COVERBUFFERONE = new CoverDynamo("buffer_one");
+    public static Cover COVERBUFFERFOUR = new CoverDynamo("buffer_four");
+    public static Cover COVERBUFFERNINE = new CoverDynamo("buffer_nine");
 
     public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
     public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);
@@ -198,7 +202,7 @@ public class Data {
      * Dynamic texture implementations.
      **/
     public static final DynamicTextureProvider<Cover, Cover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<Cover, Cover.DynamicKey>(t -> {
-        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), Utils.getModelRotation(t.currentDir), t.source.getModel());/*new SimpleModelTransform(new TransformationMatrix(null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true), null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true)))/Ä,c);*/
+        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), Utils.getModelRotation(t.currentDir), t.source.getModel(t.currentDir, Direction.NORTH));/*new SimpleModelTransform(new TransformationMatrix(null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true), null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true)))/Ä,c);*/
         return b.getQuads(t.state, null, t.rand, t.data);
     }, t -> {
         t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));

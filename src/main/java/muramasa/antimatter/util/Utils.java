@@ -175,7 +175,12 @@ public class Utils {
     public static boolean hasNoConsumeTag(ItemStack stack) {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
-    
+
+    public static boolean hasNoConsumeTag(AntimatterIngredient stack) {
+        return stack.noConsume();
+    }
+
+
     public static boolean hasNoConsumeTag(FluidStack stack) {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
@@ -580,13 +585,10 @@ public class Utils {
         return /*rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() :*/ result;
     }
 
-    public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy){
-        ModelRotation r = Utils.getModelRotation(rotateBy);
-        return r.getRotation().rotateTransform(toRotate);
-    }
 
-    public static Direction coverRotateFacingInverse(Direction toRotate, Direction rotateBy){
-        return coverRotateFacing(rotateBy, toRotate);
+    public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy){
+        ModelRotation r = Utils.getModelRotationCover(rotateBy);
+        return r.getRotation().rotateTransform(toRotate);
     }
 
     //TODO replace with doRaytrace in block?
@@ -708,6 +710,25 @@ public class Utils {
                 return ModelRotation.getModelRotation(0,90);
             case WEST:
                 return ModelRotation.getModelRotation(0,270);
+        }
+        return null;
+    }
+    //All these getRotations, coverRotateFacings. Honestly look into them. I just made
+    //something that works but it is really confusing... Some values here are inverted but it works?
+    public static ModelRotation getModelRotationCover(Direction dir) {
+        switch (dir) {
+            case DOWN:
+                return ModelRotation.getModelRotation(90,0);
+            case UP:
+                return ModelRotation.getModelRotation(-90,0);
+            case NORTH:
+                return ModelRotation.getModelRotation(0,0);
+            case SOUTH:
+                return ModelRotation.getModelRotation(0,180);
+            case EAST:
+                return ModelRotation.getModelRotation(0,270);
+            case WEST:
+                return ModelRotation.getModelRotation(0,90);
         }
         return null;
     }
@@ -1074,7 +1095,7 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static Recipe getEmptyRecipe() {
-        return new Recipe(Collections.EMPTY_LIST, new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0);
+        return new Recipe(Collections.EMPTY_LIST, new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0,1);
     }
 
     /**

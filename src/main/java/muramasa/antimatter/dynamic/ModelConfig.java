@@ -1,9 +1,12 @@
 package muramasa.antimatter.dynamic;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.machine.MachineState;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -55,15 +58,10 @@ public class ModelConfig {
                 }
             }
         } else {
-            List<BakedQuad> generalQuads = new ArrayList<>();
-            for (int i = 0; i < config.length; i++) {
-                baked = bakedConfigs.get(config[i]);
-                if (baked != null) {
-                    addBaked(generalQuads, baked, state, null, rand, data);
-                    if (i == 0) setModelIndex(config[i]);
-                }
+            baked = bakedConfigs.get(config[side.getIndex()]);
+            if (baked != null) {
+                addBaked(quads, baked, state, null, rand, data);
             }
-            quads.addAll(generalQuads.stream().filter(t -> t.getFace() == side).collect(Collectors.toList()));
         }
         return quads;
     }

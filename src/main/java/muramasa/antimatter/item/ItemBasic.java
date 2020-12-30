@@ -82,12 +82,6 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
         return new ItemStack(this, count);
     }
 
-    public AntimatterIngredient getIngredient(int count) {
-        //TODO replace consumeTag with flag system
-        if (count == 0) return AntimatterIngredient.fromStack(Utils.addNoConsumeTag(new ItemStack(this, 1)));
-        return AntimatterIngredient.fromStack(new ItemStack(this, count));
-    }
-
     @Override
     public Texture[] getTextures() {
         return new Texture[]{new Texture(getRegistryName().getNamespace(), "item/basic/" + getId())};

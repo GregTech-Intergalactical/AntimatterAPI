@@ -201,7 +201,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 tooltip.add(TextFormatting.GOLD + "Accepts any " + rl);
             }
 
-            if (input && Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+            if (input && (Utils.hasNoConsumeTag(stack) || stack.getCount() == 0)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process.");
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
                 if (recipe.getChances()[chanceIndex] < 100) {

@@ -48,6 +48,7 @@ public abstract class TileEntityBase extends TileEntity {
     }
 
     public void sidedSync(boolean renderUpdate) {
+        if (this.getWorld() == null) return;
         if (!this.getWorld().isRemote) {
             this.markDirty();
             Utils.markTileForNBTSync(this);

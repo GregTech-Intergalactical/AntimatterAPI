@@ -16,6 +16,9 @@ public enum MachineFlag {
     ITEM, //Can store items
     ITEM_INPUT,
     ITEM_OUTPUT,
+    CELL,
+    CELL_INPUT,
+    CELL_OUTPUT,
     FLUID_INPUT,
     FLUID_OUTPUT,
     FLUID,

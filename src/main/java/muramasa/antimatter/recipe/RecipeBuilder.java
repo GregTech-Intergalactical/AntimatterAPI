@@ -17,6 +17,7 @@ public class RecipeBuilder {
     private int[] chances;
     private int duration, special;
     private long power;
+    private int amps;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
@@ -56,7 +57,7 @@ public class RecipeBuilder {
             itemsOutput != null ? itemsOutput.clone() : null,
             fluidsInput != null ? fluidsInput.clone() : null,
             fluidsOutput != null ? fluidsOutput.clone() : null,
-            duration, power, special
+            duration, power, special,amps
         );
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
@@ -68,11 +69,17 @@ public class RecipeBuilder {
     }
 
     public Recipe add(long duration, long power, long special) {
+        return add(duration,power,special,1);
+    }
+
+    public Recipe add(long duration, long power, long special, int amps) {
         this.duration = (int)duration;
         this.power = power;
         this.special = (int)special;
+        this.amps = amps;
         return add();
     }
+
 
     public Recipe add(long duration, long power) {
         return add(duration, power, 0);

@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.Cover;
@@ -14,28 +15,38 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+
+import static muramasa.antimatter.Data.COVERNONE;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandler<T> implements IMachineHandler {
 
-    protected Direction output;
-
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
-        // if (tag != null) deserialize(tag);
-        covers.put(getTileFacing().getOpposite(), new CoverStack<>(Data.COVEROUTPUT, getTile()));
-        output = getTileFacing().getOpposite();
+        Arrays.stream(Ref.DIRS).forEach(d -> {
+            Direction facing = getTileFacing();
+            Direction newDir = Utils.coverRotateFacing(d, facing);
+            //Don't use set(), it calls onPlace which might call into Tesseract.
+            CoverStack<T> cover = new CoverStack<>(tile.getMachineType().defaultCover(newDir), tile);
+            covers.put(d, cover);
+            buildLookup(COVERNONE, cover.getCover(), d);
+        });
     }
 
     public Direction getOutputFacing() {
-        return output;
+        return lookupSingle(getTile().getMachineType().getOutputCover().getClass());
     }
 
     public boolean setOutputFacing(Direction side) {
-        if (side == output) return true;
+        Direction dir = getOutputFacing();
+        //dir == null means no output cover.
+        if (dir == null) return false;
+        //get this machines output cover type.
+        Cover toPlace = getTile().getMachineType().getOutputCover();
+        if (side == dir) return true;
         if (!get(side).isEmpty()) return false;
-        if (set(side, Data.COVEROUTPUT)) {
-            if (covers.get(output).isEqual(Data.COVEROUTPUT)) set(output, Data.COVERNONE);
-            output = side;
+        if (set(side, toPlace)) {
+            if (get(dir).isEqual(toPlace)) set(dir, Data.COVERNONE);
             return true;
         }
         return false;
@@ -43,7 +54,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
 
     @Override
     public boolean set(Direction side, @Nonnull Cover newCover) {
-        if (getTileFacing() == side) return false;
+        if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
 
         boolean ok = super.set(side, newCover);
         if (ok) {
@@ -65,7 +76,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     @Override
     public boolean isValid(@Nonnull Direction side, @Nonnull Cover replacement) {
         if (!validCovers.contains(replacement.getId())) return false;
-        if (Utils.rotateFacing(side, getTileFacing()) == output) return false;
+        if (side == getOutputFacing()) return false;
         return (get(side).isEmpty() && !replacement.isEmpty()) || super.isValid(side, replacement);
     }
 

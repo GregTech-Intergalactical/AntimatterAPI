@@ -1,6 +1,8 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -10,15 +12,16 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.api.IRefreshable;
+import tesseract.api.gt.IGTNode;
 
-public class CoverOutput extends Cover {
+public class CoverOutput extends CoverInput {
 
     //TODO: Store output state in Cover or Machine?
     static String KEY_OUTPUT = "out";
 
     public CoverOutput() {
         super();
-        AntimatterAPI.register(Cover.class, getId(), this);
     }
 
     @Override
@@ -30,16 +33,22 @@ public class CoverOutput extends Cover {
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
         instance.getNbt().putBoolean(KEY_OUTPUT, false);
+        refresh(instance);
     }
 
     @Override
-    public ResourceLocation getModel() {
-        return getBasicModel();
+    public void onRemove(CoverStack<?> instance, Direction side) {
+        super.onRemove(instance,side);
+        refresh(instance);
     }
 
     @Override
-    public void onMachineEvent(CoverStack instance, TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event, int... data) {
         //TODO: Refactor? <- YES!
+        if (event == GuiEvent.ITEM_EJECT) {
+            instance.getNbt().putBoolean(KEY_OUTPUT, !instance.getNbt().getBoolean(KEY_OUTPUT));
+            return;
+        }
         if (event == MachineEvent.ITEMS_OUTPUTTED && instance.getNbt().getBoolean(KEY_OUTPUT)) {
             Direction outputDir = tile.getOutputFacing();
             TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));

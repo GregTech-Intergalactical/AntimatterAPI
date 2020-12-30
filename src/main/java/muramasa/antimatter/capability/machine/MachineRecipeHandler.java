@@ -35,6 +35,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     //20 seconds per check.
     static final int WAIT_TIME = 20*20;
+    static final int WAIT_TIME_POWER_LOSS = 20*5;
     protected int tickTimer = 0;
 
     //Consuming resources can call into the recipe handler, causing a loop.
@@ -71,20 +72,25 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void onServerUpdate() {
+        //First, a few timer related tasks that ensure the machine can recover from certain situations.
         if (activeRecipe == null && tickTimer >= WAIT_TIME) {
             tickTimer = 0;
             //Convert from power_loss to idle.
             checkRecipe();
-        } else if (activeRecipe == null || tile.getMachineState() == POWER_LOSS) {
-            tickTimer++;
-        } else if (tile.getMachineState() == POWER_LOSS && tickTimer >= WAIT_TIME) {
-            tile.setMachineState(IDLE);
+        }
+        else if (tile.getMachineState() == POWER_LOSS && tickTimer >= WAIT_TIME_POWER_LOSS) {
+            tile.setMachineState(NO_POWER);
             tickTimer = 0;
+        }
+        else if (activeRecipe == null || tile.getMachineState() == POWER_LOSS) {
+            tickTimer++;
+            return;
         }
         if (tickingRecipe || activeRecipe == null) return;
         tickingRecipe = true;
         switch (tile.getMachineState()) {
             case IDLE:
+            case POWER_LOSS:
                 break;
             case ACTIVE:
             case OUTPUT_FULL:
@@ -92,7 +98,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 break;
             default:
                 MachineState state = tickRecipe();
-                if (state != ACTIVE && state != POWER_LOSS) {
+                if (state != ACTIVE) {
                     tile.setMachineState(IDLE);
                 } else {
                     tile.setMachineState(state);
@@ -114,7 +120,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         maxProgress = activeRecipe.getDuration();
         overclock = 0;
         if (this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
-            int voltage = this.tile.getPowerLevel().getVoltage();
+            long voltage = this.activeRecipe.getPower();
             int tier = 0;
             //Dont use utils, because we allow overclocking from ulv.
             for (int i = 0; i < Ref.V.length; i++) {
@@ -129,6 +135,25 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 overclock++;
             }
         }
+        maxProgress = Math.max(1, maxProgress >>= overclock);
+    }
+
+    protected void addOutputs() {
+        if (activeRecipe.hasOutputItems()) {
+            tile.itemHandler.ifPresent(h -> {
+                h.addOutputs(activeRecipe.getOutputItems());
+                // this.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
+            });
+        }
+        if (activeRecipe.hasOutputFluids()) {
+            tile.fluidHandler.ifPresent(h -> {
+                for (FluidStack stack : activeRecipe.getOutputFluids()) {
+                    h.addOutputs(stack);
+                    // h.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+                }
+                // this.onMachineEvent(MachineEvent.FLUIDS_OUTPUTTED);
+            });
+        }
     }
 
     protected MachineState tickRecipe() {
@@ -136,27 +161,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             System.out.println("Check Recipe when active recipe is null");
             return tile.getMachineState();
         } else if (this.currentProgress == this.maxProgress) {
-            this.currentProgress = 0;
-            System.out.println("Finishing recipe");
-            if (activeRecipe.hasOutputItems()) {
-                tile.itemHandler.ifPresent(h -> {
-                    h.addOutputs(activeRecipe.getOutputItems());
-                    // this.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
-                });
-            }
-            if (activeRecipe.hasOutputFluids()) {
-                tile.fluidHandler.ifPresent(h -> {
-                    for (FluidStack stack : activeRecipe.getOutputFluids()) {
-                        h.addOutputs(stack);
-                       // h.fill(stack, IFluidHandler.FluidAction.EXECUTE);
-                    }
-                    // this.onMachineEvent(MachineEvent.FLUIDS_OUTPUTTED);
-                });
-            }
             if (!canOutput()) {
                 setClientProgress(0);
                 return OUTPUT_FULL;
-            } else if (!canRecipeContinue()) {
+            }
+            addOutputs();
+            if (!canRecipeContinue()) {
                 this.resetRecipe();
                 return IDLE;
             } else {
@@ -210,7 +220,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         if (tile.getMachineState().allowRecipeCheck()) {
             if ((activeRecipe = findRecipe()) != null) {
-                if (activeRecipe.getPower() > tile.getMaxInputVoltage() && !this.generator) {
+                if (activeRecipe.getPower()/ activeRecipe.getAmps() > tile.getMaxInputVoltage() && !this.generator) {
                     tile.setMachineState(INVALID_TIER);
                     return false;
                 }
@@ -254,12 +264,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         tickTimer = WAIT_TIME;
     }
 
-    public void addOutputs() {
-        tile.itemHandler.ifPresent(h -> {
-            h.addOutputs(activeRecipe.getOutputItems());
-            tile.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
-        });
-    }
     /*
     public boolean canRecipeContinue() {
         if (tile.itemHandler.isPresent() && !tile.itemHandler.get().consumeInputs(activeRecipe,true)) //!Utils.doItemsMatchAndSizeValid(activeRecipe.getInputItems(), tile.itemHandler.get().getInputs()))

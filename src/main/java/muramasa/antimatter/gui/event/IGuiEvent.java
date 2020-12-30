@@ -1,5 +1,7 @@
 package muramasa.antimatter.gui.event;
 
-public interface IGuiEvent {
+import muramasa.antimatter.machine.event.IMachineEvent;
+
+public interface IGuiEvent extends IMachineEvent {
     
 }

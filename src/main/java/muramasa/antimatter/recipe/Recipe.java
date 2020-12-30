@@ -25,6 +25,7 @@ public class Recipe {
     private final int duration;
     private final int special;
     private final long power;
+    private final int amps;
     private int[] chances;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
@@ -33,14 +34,19 @@ public class Recipe {
     public final Int2ObjectMap<ResourceLocation> tagsToRender = new Int2ObjectOpenHashMap<>();
 
 
-    public Recipe(@Nonnull List<AntimatterIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special) {
+    public Recipe(@Nonnull List<AntimatterIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
         this.itemsOutput = stacksOutput;
         this.duration = duration;
         this.power = power;
         this.special = special;
         this.fluidsInput = fluidsInput;
+        this.amps = amps;
         this.fluidsOutput = fluidsOutput;
+    }
+
+    public int getAmps() {
+        return amps;
     }
 
     public void addChances(int[] chances) {

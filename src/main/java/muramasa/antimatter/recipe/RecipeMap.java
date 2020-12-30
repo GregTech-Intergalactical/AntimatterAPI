@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
-
+    //A fairly complicated and ugly class, but necessary since you cannot create ingredients on the fly.
     protected static class IngredientWrapper {
 
         public ItemStack source;
@@ -237,7 +237,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             //inputitems are not null
         } else if(recipe.getInputItems().size() > 0 || (recipe.getInputFluids() != null && recipe.getInputFluids().length > 0)) {
             for (AntimatterIngredient ai : recipe.getInputItems()) {
-                if (ai.getMatchingStacks().length == 0) {
+                if (ai.hasNoMatchingItems()) {
                     Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT");
                     return;
                 }
@@ -383,11 +383,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         Branch rootMap = LOOKUP.get(0);
         if (rootMap == null) return null;
 
-        if (items == null) {
+        if (items == null || items.length == 0) {
             //No items, check root level only.
             Either<Map<RecipeFluids, Recipe>, Branch> r = rootMap.NODES.get(null);
-            if (r != null && r.left().isPresent()) {
-                return r.left().get().get(new RecipeFluids(fluids, null));
+            if (r != null) {
+                FluidStack[] finalFluids = fluids;
+                return r.left().map(t -> t.get(new RecipeFluids(finalFluids, null))).orElse(null);
             } else {
                 return null;
             }

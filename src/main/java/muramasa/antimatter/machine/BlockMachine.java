@@ -217,17 +217,17 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             if (((TileEntityMachine) tile).coverHandler.isPresent()) {
                 CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.orElse(null);
                 return config.set(new int[] {
-                    h.get(Utils.coverRotateFacing(UP,facing)).skipRender() ? getModelId(facing, UP, machineState) : 0,
-                    h.get(Utils.coverRotateFacing(DOWN,facing)).skipRender() ? getModelId(facing, DOWN, machineState) : 0,
-                    h.get(Utils.coverRotateFacing(NORTH,facing)).skipRender() ? getModelId(facing, NORTH, machineState) : 0,
-                    h.get(Utils.coverRotateFacing(SOUTH,facing)).skipRender() ? getModelId(facing, SOUTH, machineState) : 0,
-                    h.get(Utils.coverRotateFacing(WEST,facing)).skipRender() ? getModelId(facing, WEST, machineState) : 0,
-                    h.get(Utils.coverRotateFacing(EAST,facing)).skipRender() ? getModelId(facing, EAST, machineState) : 0
+                    h.get(DOWN).skipRender() ? getModelId(facing, DOWN, machineState) : 0,
+                    h.get(UP).skipRender() ? getModelId(facing, UP, machineState) : 0,
+                    h.get(NORTH).skipRender() ? getModelId(facing, Utils.coverRotateFacing(NORTH,facing), machineState) : 0,
+                    h.get(SOUTH).skipRender() ? getModelId(facing, Utils.coverRotateFacing(SOUTH,facing), machineState) : 0,
+                    h.get(WEST).skipRender() ? getModelId(facing, Utils.coverRotateFacing(WEST,facing), machineState) : 0,
+                    h.get(EAST).skipRender() ? getModelId(facing, Utils.coverRotateFacing(EAST,facing), machineState) : 0
                 });
             } else {
                 return config.set(new int[] {
-                    getModelId(facing, UP, machineState),
                     getModelId(facing, DOWN, machineState),
+                    getModelId(facing, UP, machineState),
                     getModelId(facing, NORTH, machineState),
                     getModelId(facing, SOUTH, machineState),
                     getModelId(facing, WEST, machineState),

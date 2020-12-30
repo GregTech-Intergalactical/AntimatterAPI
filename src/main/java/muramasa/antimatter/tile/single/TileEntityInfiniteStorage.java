@@ -4,11 +4,22 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.LazyHolder;
+import net.minecraft.util.Direction;
+import tesseract.api.IRefreshable;
 import tesseract.util.Dir;
 
 import java.util.List;
 
 public class TileEntityInfiniteStorage extends TileEntityMachine {
+
+    @Override
+    public boolean setFacing(Direction side) {
+        boolean ok = super.setFacing(side);
+        if (ok) {
+            energyHandler.ifPresent(IRefreshable::refreshNet);
+        }
+        return ok;
+    }
 
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
@@ -47,6 +58,8 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
             }
         });
          */
+
+
     }
 
     @Override

@@ -11,6 +11,7 @@ import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -36,7 +37,6 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
+import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
@@ -73,7 +74,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.machineState = getDefaultMachineState();
         this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MachineItemHandler<>(this)) : LazyHolder.empty();
         this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MachineFluidHandler<>(this)) : LazyHolder.empty();
-        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.has(GENERATOR))) : LazyHolder.empty();
+        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.amps(),type.has(GENERATOR))) : LazyHolder.empty();
         this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
     }
@@ -99,6 +100,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public void onFirstTick() {
         if (isServerSide()) {
             this.itemHandler.ifPresent(MachineItemHandler::init);
+            this.fluidHandler.ifPresent(MachineFluidHandler::init);
             this.energyHandler.ifPresent(MachineEnergyHandler::init);
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
@@ -156,7 +158,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     //Returns the tier level for recipes.
     public Tier getPowerLevel() {
-        return getMachineTier();
+        return Tier.getTier(type.amps()*getMachineTier().getVoltage());
     }
 
     public boolean has(MachineFlag flag) {
@@ -181,6 +183,15 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onGuiEvent(IGuiEvent event, int... data) {
+        if (event == ITEM_EJECT) {
+            coverHandler.ifPresent(ch -> {
+                ch.get(ch.getOutputFacing()).onMachineEvent(this, event, data);
+            });
+        }
     }
 
     // TODO: Fix
@@ -264,7 +275,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(MachineItemHandler::getOutputHandler).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getTankFromSide(side)).transform().cast();
-        else if (cap == CapabilityEnergy.ENERGY && energyHandler.isPresent()) return energyHandler.transform().cast();
+        else if (cap == ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.transform().cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
         return super.getCapability(cap, side);
     }

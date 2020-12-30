@@ -10,9 +10,15 @@ public abstract class CoverTiered extends Cover {
     protected Tier tier;
 
     public CoverTiered() {
+        super();
+        register();
+    }
+    @Override
+    protected void register() {
         Arrays.stream(Tier.getStandard()).forEach(t -> {
             CoverTiered tier = getTiered(t);
             AntimatterAPI.register(Cover.class, tier.getId(), tier);
+            AntimatterAPI.register(getClass(), tier.getId(), tier);
         });
     }
 

@@ -91,7 +91,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public void init() {
-        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        registerNet();
     }
 
     public void onUpdate() {
@@ -101,13 +101,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public void onRemove() {
-        Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+        deregisterNet();
     }
 
     public void onReset() {
         if (tile.isServerSide()) {
-            Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
-            Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+            refreshNet();
         }
     }
 
@@ -118,8 +117,14 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     public int fill(int cellSlot, int maxFill, IFluidHandler.FluidAction action) {
         if (this.tanks.containsKey(FluidDirection.INPUT)) {
             tile.itemHandler.ifPresent(ih -> {
-                ItemStack cell = ih.getCellHandler().getStackInSlot(cellSlot);
-                cell.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh -> FluidUtil.tryFluidTransfer(this.tanks.get(FluidDirection.INPUT), cfh, maxFill, action == EXECUTE));
+                ItemStack cell = ih.getCellInputHandler().getStackInSlot(cellSlot);
+                cell.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh ->{
+                    FluidStack stack = FluidUtil.tryFluidTransfer(this.tanks.get(FluidDirection.INPUT), cfh, maxFill, action == EXECUTE);
+                    if (!stack.isEmpty()) {
+                        ih.getCellOutputHandler().insertItem(cellSlot, cfh.getContainer(), false);
+                        ih.getCellInputHandler().extractItem(cellSlot, cell.getCount(), false);
+                    }
+                });
             });
         }
         return 0;
@@ -388,6 +393,18 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
             controller = newController;
         }
+    }
+
+    @Override
+    public void registerNet() {
+        if (tile.getWorld() == null) return;
+        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    }
+
+    @Override
+    public void deregisterNet() {
+        if (tile.getWorld() == null) return;
+        Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     enum FluidDirection {

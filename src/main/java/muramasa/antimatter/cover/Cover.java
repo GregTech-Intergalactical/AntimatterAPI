@@ -33,18 +33,30 @@ import java.util.function.BiConsumer;
 //The base Cover class. All cover classes extend from this.
 public abstract class Cover implements IAntimatterObject, ITextureProvider, IDynamicModelProvider {
 
-
-
     protected GuiData gui;
     @Nullable
     private Item item;
+    //For multi-covers.
+    @Nullable
+    protected String id;
 
     @Override
     public ResourceLocation getModel(Direction dir, Direction facing) {
-        return getModel();
+        return new ResourceLocation(getDomain() + ":block/cover/" + getRenderId());
     }
 
     public Cover() {
+        this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
+        gui.setEnablePlayerSlots(true);
+    }
+
+    protected void register() {
+        AntimatterAPI.register(Cover.class, this);
+        AntimatterAPI.register(getClass(), this);
+    }
+    //Extra constructor for multicovers. TODO?
+    protected Cover(String id) {
+        this.id = id;
         this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
         gui.setEnablePlayerSlots(true);
     }
@@ -74,7 +86,7 @@ public abstract class Cover implements IAntimatterObject, ITextureProvider, IDyn
     public void onPlace(CoverStack<?> instance, Direction side) {
 
     }
-
+    //Called right after the cover being removed from the tile.
     public void onRemove(CoverStack<?> instance, Direction side) {
 
     }
@@ -84,7 +96,7 @@ public abstract class Cover implements IAntimatterObject, ITextureProvider, IDyn
 
     }
 
-    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event) {
+    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event, int... data) {
         //NOOP
     }
 
@@ -125,10 +137,6 @@ public abstract class Cover implements IAntimatterObject, ITextureProvider, IDyn
         List<Texture> l = new ArrayList<>();
         setTextures((name,tex) -> l.add(tex));
         return l.toArray(new Texture[0]);
-    }
-
-    public ResourceLocation getModel() {
-        return new ResourceLocation(getDomain() + ":block/cover/" + getRenderId());
     }
 
     //Useful for using the same model for multiple tiers where id is dependent on tier.

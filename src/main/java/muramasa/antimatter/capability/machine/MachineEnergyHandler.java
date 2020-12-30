@@ -29,12 +29,17 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     public MachineEnergyHandler(T tile, boolean isGenerator) {
-        this(tile, 0L, tile.getMachineTier().getVoltage() * (isGenerator ? 40L : 66L), isGenerator ? 0 : tile.getMachineTier().getVoltage(), isGenerator ? tile.getMachineTier().getVoltage() : 0, isGenerator ? 0 : 1, isGenerator ? 1 : 0);
+        this(tile,1,isGenerator);
+    }
+
+    public MachineEnergyHandler(T tile, int amps, boolean isGenerator) {
+        this(tile, 0L, tile.getMachineTier().getVoltage() * (isGenerator ? 40L : 66L), isGenerator ? 0 : tile.getMachineTier().getVoltage(), isGenerator ? tile.getMachineTier().getVoltage() : 0, isGenerator ? 0 : amps, isGenerator ? amps : 0);
     }
 
     @Override
     public void init() {
-        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).orElse(cachedItems);
+        registerNet();
     }
 
     public void onServerUpdate() {
@@ -45,13 +50,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     public void onRemove() {
         if (tile.isServerSide()) {
-            Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+            deregisterNet();
         }
-    }
-
-    public void refresh() {
-        Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
-        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }
 
     @Override
@@ -130,4 +130,15 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         }
     }
 
+    @Override
+    public void registerNet() {
+        if (tile.getWorld() == null) return;
+        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    }
+
+    @Override
+    public void deregisterNet() {
+        if (tile.getWorld() == null) return;
+        Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+    }
 }

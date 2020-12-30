@@ -1,8 +1,10 @@
 package muramasa.antimatter.recipe.ingredient;
 
+import muramasa.antimatter.Ref;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 
@@ -25,15 +27,38 @@ public abstract class AntimatterIngredient extends Ingredient {
         }
     }
 
+    public AntimatterIngredient setNonConsume() {
+        nonConsume = true;
+        for (ItemStack stack : getMatchingStacks()) {
+            stack.getOrCreateTag().putBoolean(Ref.KEY_STACK_NO_CONSUME,true);
+        }
+        return this;
+    }
+
+    public boolean noConsume() {
+        return nonConsume;
+    }
+
     public abstract boolean testTag(ResourceLocation tag);
 
     public static int itemHash(ItemStack item) {
         if (item == null) return itemHash(ItemStack.EMPTY);
         boolean nbt = item.hasTag();
         long tempHash = 1;
+
         tempHash = 31 * tempHash + item.getItem().getRegistryName().toString().hashCode();
-        if (nbt) tempHash = 31 * tempHash + item.getTag().hashCode();
+        if (nbt && item.getTag() != null) {
+            CompoundNBT newNbt = filterTags(item.getTag());
+            if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();
+        }
         return (int) (tempHash ^ (tempHash >>> 32));
+    }
+
+    protected static CompoundNBT filterTags(CompoundNBT nbt) {
+        if (nbt == null) return new CompoundNBT();
+        CompoundNBT newNbt = nbt.copy();
+        newNbt.remove(Ref.KEY_STACK_NO_CONSUME);
+        return newNbt;
     }
 
     //Creates a single antimatteringredient from a single stack.
@@ -99,7 +124,7 @@ public abstract class AntimatterIngredient extends Ingredient {
         } else if (stackA.getTag() == null && stackB.getTag() != null) {
             return false;
         } else {
-            return (stackA.getTag() == null || stackA.getTag().equals(stackB.getTag())) && stackA.areCapsCompatible(stackB);
+            return (stackA.getTag() == null || filterTags(stackA.getTag()).equals(filterTags(stackB.getTag()))) && stackA.areCapsCompatible(stackB);
         }
     }
 }

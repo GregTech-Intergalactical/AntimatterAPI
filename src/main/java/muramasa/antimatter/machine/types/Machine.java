@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine.types;
 
+import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -7,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -41,6 +43,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.Data.COVERNONE;
+import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
@@ -50,6 +54,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
+    //Assuming facing = north.
+    protected Cover[] DEFAULT_COVERS = new Cover[]{COVERNONE,COVERNONE,COVERNONE,COVEROUTPUT,COVERNONE,COVERNONE};
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -67,7 +73,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /** Energy data **/
     protected float efficiency = 1;
+    //How many amps this machine requires.
+    protected int amps = 1;
 
+    /** Behaviours **/
+    protected boolean allowFrontCovers = false;
+    protected Cover outputCover = COVEROUTPUT;
     //TODO get valid covers
 
     public Machine(String domain, String id, Object... data) {
@@ -75,6 +86,45 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.domain = domain;
         this.id = id;
         AntimatterAPI.register(Machine.class, this);
+    }
+
+    public T amps(int amps) {
+        this.amps = amps;
+        return (T) this;
+    }
+
+    public T frontCovers() {
+        allowFrontCovers = true;
+        return (T) this;
+    }
+
+    public void setOutputCover(Cover cover) {
+        this.outputCover = cover;
+    }
+
+    public Cover getOutputCover() {
+        return outputCover;
+    }
+
+    public boolean allowsFrontCovers() {
+        return allowFrontCovers;
+    }
+
+    public T covers(Cover... covers) {
+        if (covers.length == 1) {
+            this.DEFAULT_COVERS = new Cover[]{covers[0],covers[0],covers[0],covers[0],covers[0],covers[0]};
+        } else {
+            this.DEFAULT_COVERS = covers;
+        }
+        return (T) this;
+    }
+
+    public Cover defaultCover(Direction dir) {
+        return DEFAULT_COVERS[dir.getIndex()];
+    }
+
+    public int amps() {
+        return amps;
     }
 
     @Override
@@ -106,6 +156,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             if (o instanceof MachineFlag) flags.add((MachineFlag) o);
             if (o instanceof Texture) baseTexture = (Texture) o;
             if (o instanceof ItemGroup) group = (ItemGroup) o;
+            if (o instanceof Cover) {
+                covers(COVERNONE,COVERNONE,((Cover)o),COVERNONE,COVERNONE,COVERNONE);
+                setOutputCover((Cover) o);
+            }
             //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());

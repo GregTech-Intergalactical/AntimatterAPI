@@ -3,6 +3,10 @@ package muramasa.antimatter.tile.multi;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -17,7 +21,8 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 
 //TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
-public class TileEntityHatch extends TileEntityMachine implements IComponent {
+public class
+TileEntityHatch extends TileEntityMachine implements IComponent {
 
     private final LazyOptional<HatchComponentHandler> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));
 

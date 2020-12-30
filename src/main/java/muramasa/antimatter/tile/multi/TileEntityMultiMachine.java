@@ -169,6 +169,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     @Override
     public void onGuiEvent(IGuiEvent event, int... data) {
+        super.onGuiEvent(event,data);
         /*if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
             recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
