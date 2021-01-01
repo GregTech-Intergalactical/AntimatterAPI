@@ -286,23 +286,23 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static void transferItems(IItemHandler from, IItemHandler to) {
+    public static void transferItems(IItemHandler from, IItemHandler to, boolean once) {
         for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
                 ItemHandlerHelper.insertItem(to, toInsert, false);
                 from.extractItem(i, from.getStackInSlot(i).getCount(), false);
-                break;
+                if (once) break;
             }
         }
     }
 
-    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile) {
+    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile, boolean once) {
         LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         from.ifPresent(first -> {
             to.ifPresent(second -> {
-                transferItems(first,second);
+                transferItems(first,second, once);
             });
         });
     }

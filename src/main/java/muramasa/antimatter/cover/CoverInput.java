@@ -9,7 +9,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.api.IRefreshable;
 
 //Behaves like CoverOutput in terms of refresh but no event handler.
-public class CoverInput extends Cover {
+public class CoverInput extends Cover implements IRefreshableCover{
 
     public CoverInput() {
         register();
@@ -36,7 +36,7 @@ public class CoverInput extends Cover {
         refresh(instance);
     }
 
-    protected void refresh(CoverStack<?> instance) {
+    public void refresh(CoverStack<?> instance) {
         instance.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(t -> {
             if (t instanceof IRefreshable) {
                 ((IRefreshable)t).refreshNet();

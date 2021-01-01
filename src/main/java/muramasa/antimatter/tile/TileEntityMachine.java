@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static muramasa.antimatter.capability.AntimatterCaps.*;
+import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraft.block.Blocks.AIR;
@@ -187,7 +188,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onGuiEvent(IGuiEvent event, int... data) {
-        if (event == ITEM_EJECT) {
+        if (event == ITEM_EJECT || event == FLUID_EJECT) {
             coverHandler.ifPresent(ch -> {
                 ch.get(ch.getOutputFacing()).onMachineEvent(this, event, data);
             });
@@ -274,7 +275,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(MachineItemHandler::getOutputHandler).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.map(fh -> fh.getTankFromSide(side)).transform().cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.transform().cast();
         else if (cap == ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.transform().cast();
         else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
         return super.getCapability(cap, side);

@@ -5,6 +5,8 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -142,6 +144,14 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     if (getType().has(MachineFlag.GUI) ) {
                         NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
                             extra.writeBlockPos(pos);
+                            tile.coverHandler.ifPresent(ch -> {
+                                CoverStack<?> cover = ch.get(ch.getOutputFacing());
+                                if (cover.getCover().isEqual(COVEROUTPUT)) {
+                                    CoverOutput cov = (CoverOutput) cover.getCover();
+                                    extra.writeBoolean(cov.shouldOutputFluids(cover));
+                                    extra.writeBoolean(cov.shouldOutputItems(cover));
+                                }
+                            });
                             tile.fluidHandler.ifPresent(fh -> FluidStackPacket.encode(new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs()), extra));
                         });
                         return ActionResultType.SUCCESS;

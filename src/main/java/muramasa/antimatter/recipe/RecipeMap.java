@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -368,8 +369,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids, int special) {
-       // long current = System.nanoTime();
+        long current = System.nanoTime();
         //First, check if items and fluids are valid.
+
         if ((items == null || items.length == 0) && (fluids == null || fluids.length == 0)) return null;
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) /*|| ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))*/)
             return null;
@@ -393,9 +395,10 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 return null;
             }
         } else {
-            //current = System.nanoTime() - current;
-            //Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
-            return recurseItemTreeFind(new RecipeFluids(fluids, null), Arrays.stream(uniqueItems(items)).map(IngredientWrapper::new).toArray(IngredientWrapper[]::new), rootMap);
+            current = System.nanoTime() - current;
+            Recipe r = recurseItemTreeFind(new RecipeFluids(fluids, null), Arrays.stream(uniqueItems(items)).map(IngredientWrapper::new).toArray(IngredientWrapper[]::new), rootMap);
+            Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
+            return r;
         }
     }
 

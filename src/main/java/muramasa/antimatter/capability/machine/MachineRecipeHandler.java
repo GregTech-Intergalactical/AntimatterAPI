@@ -26,7 +26,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     protected final T tile;
     protected final boolean generator;
-    protected final IIntArray progress = new IntArray(1);
+    /**
+     * Indices:
+     * 0 -> Progress of recipe
+     */
+    protected final IIntArray GUI_SYNC_DATA = new IntArray(1);
 
     protected Recipe activeRecipe;
     protected boolean consumedResources;
@@ -50,7 +54,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public IIntArray getProgressData() {
-        return progress;
+        return GUI_SYNC_DATA;
     }
 
     public void setClientProgress() {
@@ -58,12 +62,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public void setClientProgress(int value) {
-        this.progress.set(0, value);
+        this.GUI_SYNC_DATA.set(0, value);
     }
 
     @OnlyIn(Dist.CLIENT)
     public float getClientProgress() {
-        return Float.intBitsToFloat(this.progress.get(0));
+        return Float.intBitsToFloat(this.GUI_SYNC_DATA.get(0));
     }
 
     @Override
@@ -122,7 +126,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
             long voltage = this.activeRecipe.getPower();
             int tier = 0;
-            //Dont use utils, because we allow overclocking from ulv.
+            //Dont use utils, because we allow overclocking from ulv. (If we don't just change this).
             for (int i = 0; i < Ref.V.length; i++) {
                 if (voltage <= Ref.V[i]) {
                     tier = i;
@@ -142,7 +146,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (activeRecipe.hasOutputItems()) {
             tile.itemHandler.ifPresent(h -> {
                 h.addOutputs(activeRecipe.getOutputItems());
-                // this.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
+                tile.onMachineEvent(MachineEvent.ITEMS_OUTPUTTED);
             });
         }
         if (activeRecipe.hasOutputFluids()) {
@@ -151,7 +155,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     h.addOutputs(stack);
                     // h.fill(stack, IFluidHandler.FluidAction.EXECUTE);
                 }
-                // this.onMachineEvent(MachineEvent.FLUIDS_OUTPUTTED);
+                tile.onMachineEvent(MachineEvent.FLUIDS_OUTPUTTED);
             });
         }
     }

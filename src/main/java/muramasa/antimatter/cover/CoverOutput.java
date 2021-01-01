@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -10,15 +11,12 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import tesseract.api.IRefreshable;
-import tesseract.api.gt.IGTNode;
 
 public class CoverOutput extends CoverInput {
-
-    //TODO: Store output state in Cover or Machine?
-    static String KEY_OUTPUT = "out";
 
     public CoverOutput() {
         super();
@@ -32,37 +30,79 @@ public class CoverOutput extends CoverInput {
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
-        instance.getNbt().putBoolean(KEY_OUTPUT, false);
-        refresh(instance);
+        instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, false);
+        instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, false);
+  //      refresh(instance);
+    }
+
+    @Override
+    public void onUpdate(CoverStack<?> instance, Direction side) {
+        super.onUpdate(instance, side);
+        if (instance.getTile().getWorld().getGameTime() % 100 == 0) {
+            if (shouldOutputFluids(instance)) processFluidOutput(instance, (TileEntityMachine) instance.getTile());
+            if (shouldOutputItems(instance)) processItemOutput(instance, (TileEntityMachine) instance.getTile());
+        }
     }
 
     @Override
     public void onRemove(CoverStack<?> instance, Direction side) {
         super.onRemove(instance,side);
-        refresh(instance);
+        //refresh(instance);
+    }
+
+    public boolean shouldOutputItems(CoverStack<?> instance) {
+        return instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM);
+    }
+
+    public boolean shouldOutputFluids(CoverStack<?> instance) {
+        return instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_FLUID);
+    }
+
+    public void refresh(CoverStack<?> instance) {
+        super.refresh(instance);
+    }
+    //TODO: Not even sure if needed.
+    @OnlyIn(Dist.CLIENT)
+    public void setEjects(CoverStack<?> instance, boolean fluid,boolean item) {
+        instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, item);
+        instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, fluid);
+    }
+
+    protected void processItemOutput(CoverStack<?> instance, TileEntityMachine tile) {
+        Direction outputDir = tile.getOutputFacing();
+        TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
+        if (adjTile == null) return;
+        adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
+            tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler,false));
+        });
+    }
+
+    protected void processFluidOutput(CoverStack<?> instance, TileEntityMachine tile) {
+        Direction outputDir = tile.getOutputFacing();
+        TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
+        if (adjTile == null) return;
+        adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
+            tile.fluidHandler.ifPresent(h -> Utils.transferFluids(h.getOutputTanks(), adjHandler));
+        });
     }
 
     @Override
     public void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event, int... data) {
-        //TODO: Refactor? <- YES!
         if (event == GuiEvent.ITEM_EJECT) {
-            instance.getNbt().putBoolean(KEY_OUTPUT, !instance.getNbt().getBoolean(KEY_OUTPUT));
+            instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, !instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM));
+            processItemOutput(instance,tile);
             return;
         }
-        if (event == MachineEvent.ITEMS_OUTPUTTED && instance.getNbt().getBoolean(KEY_OUTPUT)) {
-            Direction outputDir = tile.getOutputFacing();
-            TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
-            if (adjTile == null) return;
-            adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
-                tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler));
-            });
-        } else if (event == MachineEvent.FLUIDS_OUTPUTTED) {
-            Direction outputDir = tile.getOutputFacing();
-            TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
-            if (adjTile == null) return;
-            adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
-                tile.fluidHandler.ifPresent(h -> Utils.transferFluids(h.getOutputTanks(), adjHandler));
-            });
+        if (event == GuiEvent.FLUID_EJECT) {
+            instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, !instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_FLUID));
+            processFluidOutput(instance,tile);
+            return;
+        }
+        //TODO: Tesseract stuff?
+        if (event == MachineEvent.ITEMS_OUTPUTTED && instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM)) {
+            processItemOutput(instance,tile);
+        } else if (event == MachineEvent.FLUIDS_OUTPUTTED && instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_FLUID)) {
+            processFluidOutput(instance,tile);
         }
     }
 }

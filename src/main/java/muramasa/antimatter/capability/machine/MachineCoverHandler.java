@@ -6,6 +6,7 @@ import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.IRefreshableCover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -13,11 +14,14 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import tesseract.api.IRefreshable;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-import static muramasa.antimatter.Data.COVERNONE;
+import static muramasa.antimatter.Data.*;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandler<T> implements IMachineHandler {
 
@@ -42,14 +46,24 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         //dir == null means no output cover.
         if (dir == null) return false;
         //get this machines output cover type.
-        Cover toPlace = getTile().getMachineType().getOutputCover();
+        //We cannot call onPlace etc since it stores tile related data, but still need to refresh network.
+        Cover cover = getTile().getMachineType().getOutputCover();
         if (side == dir) return true;
+        if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
         if (!get(side).isEmpty()) return false;
-        if (set(side, toPlace)) {
-            if (get(dir).isEqual(toPlace)) set(dir, Data.COVERNONE);
-            return true;
+        CoverStack<T> stack = get(dir);
+        covers.put(dir, new CoverStack<T>(COVERNONE, getTile()));
+        covers.put(side, stack);
+        if (cover instanceof IRefreshableCover) {
+            ((IRefreshableCover)cover).refresh(stack);
         }
-        return false;
+        buildLookup(COVERNONE,cover, side);
+        buildLookup(cover,COVERNONE, dir);
+        if (this.getTile().getWorld() != null) {
+            sync();
+            getTile().sidedSync(true);
+        }
+        return true;
     }
 
     @Override

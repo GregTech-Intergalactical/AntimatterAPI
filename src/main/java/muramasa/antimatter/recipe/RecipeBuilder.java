@@ -52,6 +52,7 @@ public class RecipeBuilder {
         //TODO get a recipe build method to machine type so it can be overriden?
         //otherwise we get NPEs everywhere :S so keep this non-null
         if (ingredientInput == null) ingredientInput = Collections.emptyList();
+        if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
             ingredientInput,
             itemsOutput != null ? itemsOutput.clone() : null,

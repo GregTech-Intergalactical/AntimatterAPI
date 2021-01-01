@@ -26,6 +26,8 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -136,6 +138,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     protected Block getBlock(Machine<T> type, Tier tier) {
         return new BlockMachine(type, tier);
+    }
+    //Call only after registration!
+    public Item getItem(Tier tier) {
+        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class,this.getId() + "_" + tier.getId()));
     }
 
     public void registerJei() {

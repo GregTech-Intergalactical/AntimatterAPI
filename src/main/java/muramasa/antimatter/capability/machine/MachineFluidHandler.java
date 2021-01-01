@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
@@ -12,15 +11,14 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.IntArray;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
@@ -37,7 +35,7 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ITickHost {
+public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, ITickHost, IFluidHandler {
 
     protected final T tile;
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
@@ -45,6 +43,8 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     protected int capacity, pressure;
     protected ITickingController controller;
+
+    protected final IIntArray GUI_SYNC_DATA = new IntArray(1);
 
     /** For GUI **/
     protected boolean dirty;
@@ -112,6 +112,31 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     public int getTanks() {
         return this.tanks.values().stream().mapToInt(FluidTanks::getTanks).sum();
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+        if (tank >= (getInputTanks() == null ? 0 : getInputTanks().getTanks())) {
+            return getOutputTanks().getFluidInTank(tank);
+        }
+        return getInputTanks().getFluidInTank(tank);
+    }
+
+    @Override
+    public int getTankCapacity(int tank) {
+        if (tank >= (getInputTanks() == null ? 0 : getInputTanks().getTanks())) {
+            return getOutputTanks().getTankCapacity(tank);
+        }
+        return getInputTanks().getTankCapacity(tank);
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+        if (tank >= (getInputTanks() == null ? 0 : getInputTanks().getTanks())) {
+            return getOutputTanks().isFluidValid(tank, stack);
+        }
+        return getInputTanks().isFluidValid(tank, stack);
     }
 
     public int fill(int cellSlot, int maxFill, IFluidHandler.FluidAction action) {
@@ -210,7 +235,8 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     // TODO temporary
     public FluidTanks getTankFromSide(Direction side) {
-        return side == Direction.UP && this.tanks.containsKey(FluidDirection.INPUT) ? this.tanks.get(FluidDirection.INPUT) : this.tanks.getOrDefault(FluidDirection.OUTPUT, null);
+        return this.tanks.get(FluidDirection.INPUT);
+        //return side == Direction.UP && this.tanks.containsKey(FluidDirection.INPUT) ? this.tanks.get(FluidDirection.INPUT) : this.tanks.getOrDefault(FluidDirection.OUTPUT, null);
     }
 
     public boolean canOutputsFit(FluidStack[] outputs) {

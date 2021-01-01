@@ -63,11 +63,15 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         old.onRemove(side);
         stack.onPlace(side);
         if (tile.getWorld() != null) {
-            tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
-            Utils.markTileForRenderUpdate(getTile());
-            tile.markDirty();
+            sync();
         }
         return true;
+    }
+
+    protected void sync() {
+        tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        Utils.markTileForRenderUpdate(getTile());
+        tile.markDirty();
     }
 
     protected void buildLookup(Cover oldCover, Cover newCover, Direction dir) {

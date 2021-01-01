@@ -186,7 +186,7 @@ public class Data {
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
     public static Cover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
-    public static Cover COVEROUTPUT = new CoverOutput();
+    public static CoverOutput COVEROUTPUT = new CoverOutput();
     public static Cover COVERINPUT = new CoverInput();
     public static Cover COVERMUFFLER = new CoverMuffler();
     public static Cover COVERDYNAMO = new CoverDynamo("dynamo");

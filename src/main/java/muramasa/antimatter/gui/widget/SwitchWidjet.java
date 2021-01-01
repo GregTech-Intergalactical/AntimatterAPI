@@ -27,11 +27,12 @@ public class SwitchWidjet extends AbstractButton {
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch) {
+    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
         super(x, y, w, h, "");
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
+        this.state = defaultState;
     }
 
     public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {

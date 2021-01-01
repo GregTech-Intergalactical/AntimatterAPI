@@ -9,6 +9,7 @@ public class RecipeInfoRenderer implements IRecipeInfoRenderer {
     public final static RecipeInfoRenderer INSTANCE = new RecipeInfoRenderer();
     @Override
     public void render(Recipe recipe, FontRenderer fontRenderer, int guiOffsetX, int guiOffsetY) {
+        if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
         String power = "Duration: " + recipe.getDuration() + " ticks";
         String euT = "EU/t: " + recipe.getPower();
         String amps = "Amps: " + recipe.getAmps();

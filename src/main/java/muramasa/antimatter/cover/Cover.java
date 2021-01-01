@@ -164,11 +164,11 @@ public abstract class Cover implements IAntimatterObject, ITextureProvider, IDyn
         this.item = item;
     }
 
-    public void deserialize(CompoundNBT nbt) {
+    public void deserialize(CoverStack<?> stack,CompoundNBT nbt) {
 
     }
 
-    public void serialize(CompoundNBT nbt) {
+    public void serialize(CoverStack<?> stack, CompoundNBT nbt) {
         //Write to the NBT at root level
     }
 

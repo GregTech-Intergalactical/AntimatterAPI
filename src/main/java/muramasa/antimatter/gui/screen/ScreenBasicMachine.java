@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui.screen;
 
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.ContainerMachine;
@@ -14,6 +15,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.gui.ButtonBody.OFF;
 import static muramasa.antimatter.gui.ButtonBody.ON;
 
@@ -32,9 +34,6 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawTooltipInArea(container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
 
-      //  if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
-            //Draw ERROR since we got no power
-      //  }
     }
 
     @Override
@@ -54,12 +53,12 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
         if (container.getTile().has(MachineFlag.ITEM)) {
             item = new SwitchWidjet(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
                 Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
-            });
+            }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
         }
         if (container.getTile().has(MachineFlag.FLUID)) {
             fluid = new SwitchWidjet(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
                 Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
-            });
+            },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
         }
         if (item != null || fluid != null) {
             addButton(new SwitchWidjet(loc, guiLeft + 9, guiTop + 64, 14, 14, ON, OFF, (b, s) -> {

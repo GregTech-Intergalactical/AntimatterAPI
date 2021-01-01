@@ -123,12 +123,13 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
 
     public CompoundNBT serialize() {
         //Do final things before saving. Optional as state should usually be set during runtime
-        cover.serialize(nbt);
+        cover.serialize(this,nbt);
         return nbt;
     }
 
     public void deserialize(CompoundNBT nbt) {
-        cover.deserialize(nbt);
+        this.nbt = nbt;
+        cover.deserialize(this,nbt);
     }
 
     public CompoundNBT getNbt() {

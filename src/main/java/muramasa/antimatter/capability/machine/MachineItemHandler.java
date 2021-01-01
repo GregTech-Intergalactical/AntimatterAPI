@@ -80,7 +80,6 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return nbt;
     }
 
-
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
         this.inventories.forEach((f, i) -> i.deserializeNBT(nbt.getCompound(f.name())));
