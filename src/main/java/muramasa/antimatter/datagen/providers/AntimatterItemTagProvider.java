@@ -5,6 +5,7 @@ import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
@@ -18,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
+import net.minecraftforge.common.extensions.IForgeTagBuilder;
 
 import java.util.Map;
 import java.util.Optional;
@@ -93,6 +95,7 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
             this.getBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
             this.getBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
+        this.getBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
     }
 
     @Override

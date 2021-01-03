@@ -10,6 +10,7 @@ import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class AntimatterItemModelBuilder extends ItemModelBuilder {
@@ -41,13 +42,28 @@ public class AntimatterItemModelBuilder extends ItemModelBuilder {
         return this;
     }
 
+    public AntimatterItemModelBuilder cell() {
+        this.loader = new ResourceLocation("antimatter", "cell");
+        return this;
+    }
+
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid) {
+        return bucketProperties(fluid, true, fluid.getAttributes().isLighterThanAir());
+    }
+
+    public AntimatterItemModelBuilder bucketProperties(Fluid fluid, boolean tint, boolean islighter) {
         property("fluid", fluid.getRegistryName().toString());
-        property("flipGas", fluid.getAttributes().isLighterThanAir());
-        property("applyTint", true);
+        property("flipGas", islighter);
+        property("applyTint", tint);
         // property("coverIsMask", false);
         return bucketLoader();
     }
+
+    public AntimatterItemModelBuilder tex(Consumer<Map<String,String>> texer) {
+        texer.accept(this.textures);
+        return this;
+    }
+
 
     @Override
     public JsonObject toJson() {

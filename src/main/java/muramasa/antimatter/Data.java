@@ -13,6 +13,7 @@ import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.container.*;
 import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.item.DebugScannerItem;
+import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.*;
@@ -47,10 +48,16 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
 
 public class Data {
+
+    //CELLS
+    public final static Set<ItemFluidCell> EMPTY_CELLS = new HashSet<>();
 
     //Item Types
     public static MaterialTypeItem<?> DUST = new MaterialTypeItem<>("dust", 2, true, Ref.U);
