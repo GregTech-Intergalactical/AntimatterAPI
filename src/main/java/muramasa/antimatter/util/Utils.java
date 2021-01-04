@@ -714,7 +714,8 @@ public class Utils {
         return null;
     }
     //All these getRotations, coverRotateFacings. Honestly look into them. I just made
-    //something that works but it is really confusing... Some values here are inverted but it works?
+    //something that works but it is really confusing... Some values here are inverted but it works? This is used
+    //for multitexturer while getModelRotation is used for all else.
     public static ModelRotation getModelRotationCover(Direction dir) {
         switch (dir) {
             case DOWN:

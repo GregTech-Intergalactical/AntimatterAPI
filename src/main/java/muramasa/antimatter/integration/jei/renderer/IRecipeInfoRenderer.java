@@ -18,4 +18,11 @@ public interface IRecipeInfoRenderer {
     default int stringWidth(String string, FontRenderer renderer) {
         return renderer.getStringWidth(string);
     }
+
+    public static final IRecipeInfoRenderer EMPTY_RENDERER = new IRecipeInfoRenderer() {
+        @Override
+        public void render(Recipe recipe, FontRenderer fontRenderer, int guiOffsetX, int guiOffsetY) {
+
+        }
+    };
 }

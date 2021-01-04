@@ -9,8 +9,8 @@ public class FuelInfoRenderer implements IRecipeInfoRenderer{
     public static final IRecipeInfoRenderer INSTANCE = new FuelInfoRenderer();
     @Override
     public void render(Recipe recipe, FontRenderer fontRenderer, int guiOffsetX, int guiOffsetY) {
-        String fuelPerMb =  "Fuel content(mb): "+(recipe.getPower() / Objects.requireNonNull(recipe.getInputFluids())[0].getAmount());
-        String fuelPerB =  "Fuel content(bb): "+(recipe.getPower() / Objects.requireNonNull(recipe.getInputFluids())[0].getAmount())*1000;
+        String fuelPerMb =  "Fuel content(mb): "+ ((double)recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids())[0].getAmount());
+        String fuelPerB =  "Fuel content(bb): "+ ((double)recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids())[0].getAmount()) *1000;
         renderString(fuelPerMb,fontRenderer, 5, 5,guiOffsetX,guiOffsetY);
         renderString(fuelPerB,fontRenderer, 5, 15,guiOffsetX,guiOffsetY);
     }

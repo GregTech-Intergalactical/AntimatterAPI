@@ -217,7 +217,7 @@ public class Data {
     });
 
     public static final DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey>(t -> {
-        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), new SimpleModelTransform(Utils.getModelRotation(t.state.get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse()), new ResourceLocation(t.source.getId()));
+        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), new SimpleModelTransform(Utils.getModelRotationCover(t.state.get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse()), new ResourceLocation(t.source.getId()));
         assert b != null;
         return b.getQuads(t.state, null, t.rand, t.data);
     }, t -> {

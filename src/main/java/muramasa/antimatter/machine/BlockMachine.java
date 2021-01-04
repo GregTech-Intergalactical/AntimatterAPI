@@ -164,7 +164,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 }
             }
         }
-        return ActionResultType.PASS;
+        return ActionResultType.CONSUME;
     }
 
     @Override

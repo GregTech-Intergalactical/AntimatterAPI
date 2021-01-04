@@ -39,6 +39,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //import mezz.jei.plugins.vanilla.ingredients.fluid.FluidStackRenderer;
 
@@ -102,7 +103,8 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 }
                 inputs.add(ing);
             }
-            ingredients.setInputIngredients(inputs);
+            //ingredients.setInputIngredients(inputs);
+            ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));
         }
         if (recipe.hasOutputItems()) {
             ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputItems()));
