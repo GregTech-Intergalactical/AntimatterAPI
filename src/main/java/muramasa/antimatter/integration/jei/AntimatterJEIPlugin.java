@@ -54,7 +54,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, String itemModel) {
-        REGISTRY.put(map.getId(), new RegistryValue(map,gui,tier,itemModel));//new Tuple<>(map, new Tuple<>(gui, tier)));
+        REGISTRY.put(map.getId(), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,itemModel));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
 //    @Nullable

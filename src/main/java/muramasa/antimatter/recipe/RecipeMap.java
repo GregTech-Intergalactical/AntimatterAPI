@@ -10,6 +10,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
+import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.RecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
@@ -145,7 +146,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private final String id;
     private final B builder;
     private IRecipeInfoRenderer infoRenderer = RecipeInfoRenderer.INSTANCE;
-
+    @Nullable
+    private GuiData GUI;
     //List of special -> Branch, where Branch represent a node, either another traversal or a recipe.
     protected final Int2ObjectMap<Branch> LOOKUP = new Int2ObjectOpenHashMap<>();
     @Nullable
@@ -178,7 +180,14 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             if (obj instanceof IRecipeInfoRenderer) {
                 this.infoRenderer = (IRecipeInfoRenderer) obj;
             }
+            if (obj instanceof GuiData) {
+                this.GUI = (GuiData) obj;
+            }
         }
+    }
+    @Nullable
+    public GuiData getGui() {
+        return GUI;
     }
 
     @Override

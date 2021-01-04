@@ -14,7 +14,6 @@ public class SteamRecipeInfoRenderer implements IRecipeInfoRenderer {
         String power = "Duration: " + recipe.getDuration() + " ticks";
         String euT = "Steam/t: ";
         renderString(power,fontRenderer, 5, 5,guiOffsetX,guiOffsetY);
-        renderString(euT,fontRenderer, 5, 15,guiOffsetX,guiOffsetY);
-        renderString(""+recipe.getPower(), fontRenderer, 5+stringWidth(euT, fontRenderer),15,guiOffsetX,guiOffsetY);
+        renderString(euT + " " + recipe.getPower() + "mb" ,fontRenderer, 5, 15,guiOffsetX,guiOffsetY);
     }
 }
