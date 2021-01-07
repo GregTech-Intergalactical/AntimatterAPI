@@ -107,7 +107,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));
         }
         if (recipe.hasOutputItems()) {
-            ingredients.setOutputs(VanillaTypes.ITEM, Arrays.asList(recipe.getOutputItems()));
+            ingredients.setOutputLists(VanillaTypes.ITEM, Arrays.stream(recipe.getOutputItems(false)).map(Collections::singletonList).collect(Collectors.toList()));
         }
         if (recipe.hasInputFluids()) {
             ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(recipe.getInputFluids()));
@@ -116,6 +116,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(recipe.getOutputFluids()));
         }
     }
+
 
     @Override
     public Class getRecipeClass(){
@@ -159,11 +160,11 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             slots = gui.getSlots(SlotType.IT_OUT, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
-                ItemStack[] stacks = recipe.getOutputItems();
-                slotCount = Math.min(slotCount, stacks.length);
+                List<List<ItemStack>> stacks = ingredients.getOutputs(VanillaTypes.ITEM);
+                slotCount = Math.min(slotCount, stacks.size());
                 for (int s = 0; s < slotCount; s++) {
                     itemGroup.init(groupIndex, false, slots.get(s).getX() - offsetX, slots.get(s).getY() - offsetY);
-                    itemGroup.set(groupIndex++, stacks[s]);
+                    itemGroup.set(groupIndex++, stacks.get(s));
                 }
             }
         }

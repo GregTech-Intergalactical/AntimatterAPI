@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -105,6 +106,11 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
                 ((TileEntityMachine)optionalTile).setMultiTexture(this.getMachineType().getBaseTexture(tier));
             }
         })));
+    }
+    //don't set the texture on the root machine!
+    @Override
+    public void setMultiTexture(@Nullable Texture tex) {
+
     }
 
     @Override

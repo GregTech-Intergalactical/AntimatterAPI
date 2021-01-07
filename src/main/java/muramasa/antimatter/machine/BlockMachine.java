@@ -248,7 +248,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         return config.set(new int[]{0});
     }
 
-    private int getModelId(Direction facing, Direction overlay, MachineState state) {
+    protected int getModelId(Direction facing, Direction overlay, MachineState state) {
         state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
         return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + (overlay.getIndex() + 1);
     }
@@ -271,7 +271,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         prov.state(block, builder);
     }
 
-    private void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
+    void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         Texture[] overlays = type.getOverlayTextures(state);
         for (Direction f : Arrays.asList(NORTH, WEST, SOUTH, EAST)) {
             for (Direction o : Ref.DIRS) {

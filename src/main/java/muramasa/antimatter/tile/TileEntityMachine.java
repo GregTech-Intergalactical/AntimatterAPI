@@ -364,6 +364,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public List<String> getInfo() {
         List<String> info = super.getInfo();
         info.add("Machine: " + getMachineType().getId() + " Tier: " + getMachineTier().getId());
+        info.add("State: " + getMachineState().getId());
         String slots = "";
         if (getMachineType().has(ITEM)) {
             int inputs = getMachineType().getGui().getSlots(SlotType.IT_IN, getMachineTier()).size();
@@ -385,6 +386,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
                 builder.append(h.get(side).getId()).append(" ");
             }
             info.add(builder.toString());
+        });
+        recipeHandler.ifPresent(rh -> {
+            rh.getInfo(info);
         });
         multiTexture.ifPresent(mt -> info.add("Rendering using texture " + mt.toString() + "."));
         return info;

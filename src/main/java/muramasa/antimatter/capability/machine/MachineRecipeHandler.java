@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
 
 import static muramasa.antimatter.machine.MachineState.*;
@@ -59,6 +60,17 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     public void setClientProgress() {
         setClientProgress(Float.floatToRawIntBits(this.currentProgress / (float) this.maxProgress));
+    }
+
+    public void getInfo(List<String> builder) {
+        if (activeRecipe != null) {
+            if (tile.getMachineState() != ACTIVE) {
+                builder.add("Active recipe but not running");
+            }
+            builder.add("Progress: " + currentProgress + "/" + maxProgress);
+        } else {
+            builder.add("No recipe active");
+        }
     }
 
     public void setClientProgress(int value) {

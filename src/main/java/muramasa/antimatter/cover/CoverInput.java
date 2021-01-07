@@ -33,7 +33,7 @@ public class CoverInput extends Cover implements IRefreshableCover{
     @Override
     public void onRemove(CoverStack<?> instance, Direction side) {
         super.onRemove(instance,side);
-        refresh(instance);
+   //     refresh(instance);
     }
 
     public void refresh(CoverStack<?> instance) {

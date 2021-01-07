@@ -72,8 +72,8 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
         long inserted = super.insert(maxReceive, simulate);
         if (inserted == 0 && outputs != null) {
             for (IEnergyHandler handler : outputs) {
-                inserted = handler.insert(maxReceive, simulate);
-                if (inserted > 0)
+                inserted += handler.insert(maxReceive-inserted, simulate);
+                if (inserted >= maxReceive)
                     return inserted;
             }
         }
@@ -106,8 +106,8 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
         long extracted = super.extract(maxReceive, simulate);
         if (extracted == 0 && inputs != null) {
             for (IEnergyHandler handler : inputs) {
-                extracted = handler.extract(maxReceive, simulate);
-                if (extracted > 0)
+                extracted += handler.extract(maxReceive-extracted, simulate);
+                if (extracted >= maxReceive)
                     return extracted;
             }
         }
@@ -116,6 +116,6 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
 
     public Tier getAccumulatedPower() {
         if (inputs == null) return Tier.ULV;
-        return Tier.getTier((int)(Arrays.stream(inputs).mapToLong(t -> t.getInputVoltage()*t.getInputAmperage()).sum()));
+        return Tier.getTier((int)(Arrays.stream(inputs).mapToLong(t -> (long) t.getInputVoltage() *t.getInputAmperage()).sum()));
     }
 }

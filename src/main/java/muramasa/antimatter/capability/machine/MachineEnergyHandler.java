@@ -127,6 +127,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
             tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
+            refreshNet();
         }
     }
 

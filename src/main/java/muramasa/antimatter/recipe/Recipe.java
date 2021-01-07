@@ -89,12 +89,16 @@ public class Recipe {
 
     @Nullable
     public ItemStack[] getOutputItems() {
+        return getOutputItems(true);
+    }
+
+    public ItemStack[] getOutputItems(boolean chance) {
         if (hasOutputItems()) {
             ItemStack[] outputs = itemsOutput.clone();
             if (chances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (Ref.RNG.nextInt(100) < chances[i]) {
+                    if (!chance || Ref.RNG.nextInt(100) < chances[i]) {
                         evaluated.add(outputs[i].copy());
                     }
                 }

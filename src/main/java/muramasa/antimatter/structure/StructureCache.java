@@ -27,7 +27,10 @@ public class StructureCache {
             StructureCache.DimensionEntry entry = LOOKUP.get(world.dimension.getType().getId());
             if (entry == null) return;
             BlockPos controllerPos = entry.get(pos);
-            if (controllerPos != null) invalidateController(world, controllerPos);
+            if (controllerPos != null) {
+                if (!controllerPos.equals(pos))
+                    invalidateController(world, controllerPos);
+            }
         });
     }
 
