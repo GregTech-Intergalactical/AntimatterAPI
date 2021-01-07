@@ -54,11 +54,11 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         CoverStack<T> stack = get(dir);
         covers.put(dir, new CoverStack<T>(COVERNONE, getTile()));
         covers.put(side, stack);
+        buildLookup(COVERNONE,cover, side);
+        buildLookup(cover,COVERNONE, dir);
         if (cover instanceof IRefreshableCover) {
             ((IRefreshableCover)cover).refresh(stack);
         }
-        buildLookup(COVERNONE,cover, side);
-        buildLookup(cover,COVERNONE, dir);
         if (this.getTile().getWorld() != null) {
             sync();
             getTile().sidedSync(true);
