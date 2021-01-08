@@ -8,7 +8,6 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraftforge.common.capabilities.Capability;
 import tesseract.Tesseract;
-import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
@@ -16,7 +15,7 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
-public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler, ITickHost {
+public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler{
 
     protected final T tile;
 
@@ -114,13 +113,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     public boolean connects(Dir direction) {
         // TODO: Finish connections when covers will be ready
         return tile.getFacing().getIndex() != direction.getIndex()/* && tile.getCover(Ref.DIRECTIONS[direction.getIndex()]).isEqual(Data.COVER_EMPTY)*/;
-    }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
-            controller = newController;
-        }
     }
 
     @Override

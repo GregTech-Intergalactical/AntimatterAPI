@@ -18,7 +18,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.graph.Connectivity;
 
@@ -26,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityPipe extends TileEntityTickable implements ITickHost {
+public class TileEntityPipe extends TileEntityTickable {
 
     /** Pipe Data **/
     protected PipeType<?> type;
@@ -36,7 +35,6 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
     public final LazyOptional<PipeCoverHandler<?>> coverHandler;
 
     /** Tesseract **/
-    private ITickingController controller;
     private Direction direction; // when cap not initialized yet, it will help to store preset direction
 
     /** Connection data **/
@@ -72,13 +70,6 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
                     interaction = Connectivity.clear(interaction, side.getIndex());
                 }
             }
-        }
-    }
-
-    @Override
-    public void onServerUpdate() {
-        if (controller != null) {
-            controller.tick();
         }
     }
 
@@ -230,12 +221,5 @@ public class TileEntityPipe extends TileEntityTickable implements ITickHost {
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;
-    }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
-            controller = newController;
-        }
     }
 }
