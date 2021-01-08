@@ -21,7 +21,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.Tesseract;
-import tesseract.api.ITickHost;
 import tesseract.api.ITickingController;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
@@ -37,7 +36,7 @@ import java.util.stream.IntStream;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, ITickHost, INBTSerializable<CompoundNBT> {
+public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, INBTSerializable<CompoundNBT> {
 
     protected final T tile;
     protected final EnumMap<MachineFlag, TrackedItemHandler<T>> inventories = new EnumMap<>(MachineFlag.class); // Use SlotType instead of MachineFlag?
@@ -391,13 +390,6 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     @Override
     public boolean connects(Dir direction) {
         return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
-    }
-
-    @Override
-    public void reset(ITickingController oldController, ITickingController newController) {
-        if (oldController == null || (controller == oldController && newController == null) || controller != oldController) {
-            controller = newController;
-        }
     }
 
     private int getFirstValidSlot(Object item) {
