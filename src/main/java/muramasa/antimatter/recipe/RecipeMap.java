@@ -361,11 +361,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     //In the case of split stacks, merge the items, 2 aluminium dust in separate stacks -> 1 stack with additive count.
     private ItemStack[] uniqueItems(ItemStack[] input) {
-        ObjectArrayList<ItemStack> list = new ObjectArrayList<>();
+        List<ItemStack> list = new ObjectArrayList<>();
         loop:
         for (ItemStack item : input) {
             for (ItemStack obj : list) {
-                if (Utils.equals(item, obj)) {
+                if (item.equals(obj, false)) {
                     obj.grow(item.getCount());
                     continue loop;
                 }

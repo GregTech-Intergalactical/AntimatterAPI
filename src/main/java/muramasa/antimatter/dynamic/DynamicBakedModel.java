@@ -16,6 +16,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -55,8 +56,13 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
         if (!hasConfig) return bakedDefault.getQuads(state, side, rand, data);
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
-        if (config == null || config.isInvalid()) return bakedDefault.getQuads(state, side, rand, data);
-        return config.getQuads(quads, bakedConfigs, state, side, rand, data);
+        if (config == null) return bakedDefault.getQuads(state, side, rand, data);
+        List<BakedQuad> configQuads = config.getQuads(new LinkedList<>(), bakedConfigs, state, side, rand, data);
+        if (Arrays.stream(config.config).anyMatch(t -> t == -1) || configQuads.size() == 0) {
+            quads.addAll(bakedDefault.getQuads(state,side,rand,data));
+        }
+        if (configQuads.size() > 0) quads.addAll(configQuads);
+        return quads;
     }
 
     @Override

@@ -58,9 +58,17 @@ public class ModelConfig {
                 }
             }
         } else {
-            baked = bakedConfigs.get(config[side.getIndex()]);
-            if (baked != null) {
-                addBaked(quads, baked, state, null, rand, data);
+            if (config.length < 6) {
+                for (int i = 0; i < config.length; i++) {
+                    baked = bakedConfigs.get(config[i]);
+                    if (baked != null) addBaked(quads, baked, state, side, rand, data);
+                }
+            } else {
+                //TODO: This might have to be fixed. Machine baking creates general quads using the model config as direction,
+                //TODO: but since it is a general quad side has to be null! But e.g. casings have face quads so need a relevant side.
+                //For now, assume that a 6 side config is machine and so use general quads.
+                baked = bakedConfigs.get(config[side.getIndex()]);
+                if (baked != null) addBaked(quads, baked, state, null, rand, data);
             }
         }
         return quads;
