@@ -360,7 +360,7 @@ public class Utils {
 
     public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         for (int i = 0; i < to.getTanks(); i++) {
-            if (i >= from.getTanks()) break;
+            //if (i >= from.getTanks()) break;
             FluidStack toInsert;
             if (cap > 0) {
                 FluidStack fluid = from.getFluidInTank(i).copy();
@@ -1096,7 +1096,15 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static Recipe getEmptyRecipe() {
-        return new Recipe(Collections.EMPTY_LIST, new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0,1);
+        return new Recipe(Collections.emptyList(), new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0,1);
+    }
+
+    public static Recipe getEmptyPoweredRecipe(int duration, long euT, int amps) {
+        return new Recipe(Collections.emptyList(), new ItemStack[0], new FluidStack[0], new FluidStack[0], duration, euT, 0, amps);
+    }
+
+    public static Recipe getFluidPoweredRecipe(FluidStack[] input, FluidStack[] output, int duration, long euT, int amps) {
+        return new Recipe(Collections.emptyList(), new ItemStack[0], input, output, duration, euT, 0, amps);
     }
 
     /**
