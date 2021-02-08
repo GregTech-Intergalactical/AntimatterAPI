@@ -50,6 +50,11 @@ public class CoverOutput extends CoverInput {
         //refresh(instance);
     }
 
+    public void manualOutput(CoverStack<?> instance) {
+        if (shouldOutputFluids(instance)) processFluidOutput(instance, (TileEntityMachine) instance.getTile());
+        if (shouldOutputItems(instance)) processItemOutput(instance, (TileEntityMachine) instance.getTile());
+    }
+
     public boolean shouldOutputItems(CoverStack<?> instance) {
         return instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM);
     }

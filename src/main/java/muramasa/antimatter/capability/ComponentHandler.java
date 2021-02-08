@@ -80,7 +80,7 @@ public class ComponentHandler implements IComponentHandler {
         if (this.controllers.size() != 0) return Optional.of(this.controllers.iterator().next());
         BlockPos controllerPos = StructureCache.get(getTile().getWorld(), getTile().getPos());
         if (controllerPos != null) {
-            TileEntity tile = getTile().getWorld().getTileEntity(getTile().getPos());
+            TileEntity tile = getTile().getWorld().getTileEntity(controllerPos);
             if (tile instanceof TileEntityMultiMachine) return Optional.of((TileEntityMultiMachine) tile);
         }
         return Optional.empty();

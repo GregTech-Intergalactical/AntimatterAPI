@@ -409,13 +409,13 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     @Override
-    public void registerNet() {
+    public void deregisterNet() {
         if (tile.getWorld() == null) return;
         Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
     @Override
-    public void deregisterNet() {
+    public void registerNet() {
         if (tile.getWorld() == null) return;
         Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
     }

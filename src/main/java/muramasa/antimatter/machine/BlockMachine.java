@@ -206,8 +206,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getType().has(BASIC)) {
-            tooltip.add(new TranslationTextComponent("machine.voltage.in").appendText(TextFormatting.GREEN + "" + getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")"));
-            tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(TextFormatting.BLUE + "" + (getTier().getVoltage() * 64)));
+            tooltip.add(new TranslationTextComponent("machine.voltage.in").appendText(": ").appendText(TextFormatting.GREEN + "" + getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")"));
+            tooltip.add(new TranslationTextComponent("machine.power.capacity").appendText(": ").appendText(TextFormatting.BLUE + "" + (getTier().getVoltage() * 64)));
         }
     }
 

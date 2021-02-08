@@ -68,19 +68,15 @@ TileEntityHatch extends TileEntityMachine implements IComponent {
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
+        super.onMachineEvent(event,data);
         if (event instanceof ContentEvent) {
             componentHandler.map(ComponentHandler::getFirstController).orElse(Optional.empty()).ifPresent(controller -> {
                 switch ((ContentEvent) event) {
                     case ITEM_INPUT_CHANGED:
-                        controller.onMachineEvent(event, data);
-                        break;
                     case ITEM_OUTPUT_CHANGED:
-                        controller.onMachineEvent(event, data);
                     case ITEM_CELL_CHANGED:
-                        //TODO handle cells
-                        break;
                     case FLUID_INPUT_CHANGED:
-                        //TODO
+                        controller.onMachineEvent(event, data);
                         break;
                 }
             });

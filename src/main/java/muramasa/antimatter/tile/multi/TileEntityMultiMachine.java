@@ -48,8 +48,9 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-        this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
+        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MultiMachineEnergyHandler(this)) : LazyHolder.empty();
+        this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MultiMachineFluidHandler(this)) : LazyHolder.empty();
     }
 
     @Override
@@ -88,6 +89,9 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
                 this.energyHandler.ifPresent(handle -> {
                     ((MultiMachineEnergyHandler)handle).onStructureBuild();
                 });
+                this.fluidHandler.ifPresent(handle -> {
+                    ((MultiMachineFluidHandler)handle).onStructureBuild();
+                });
                 setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
                 setTileTextures();
@@ -124,6 +128,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public void invalidateStructure() {
         if (removed) return;
+        StructureCache.remove(this.getWorld(), getPos());
         result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureInvalidated(this);
             if (c.getTile() instanceof TileEntityMachine) {
@@ -133,6 +138,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         })));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
+        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
         result = Optional.empty();
         resetMachine();
         System.out.println("INVALIDATED STRUCTURE");

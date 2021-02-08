@@ -73,6 +73,10 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
         if (inserted == 0 && outputs != null) {
             for (IEnergyHandler handler : outputs) {
                 inserted += handler.insert(maxReceive-inserted, simulate);
+                //Output voltage as a dynamo outputs energy.
+                if (!simulate && inserted > handler.getOutputVoltage()) {
+                    System.out.println("BOOM");
+                }
                 if (inserted >= maxReceive)
                     return inserted;
             }

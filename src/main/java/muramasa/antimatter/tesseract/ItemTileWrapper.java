@@ -170,7 +170,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
         int slot = -1;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
-            if (stack.isEmpty()) {
+            if (stack.isEmpty() && slot == -1) {
                 slot = i;
             } else {
                 if (stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()){

@@ -54,10 +54,10 @@ public class TileEntityPipe extends TileEntityTickable {
             setConnection(direction);
             direction = null;
         }
+        handleFirstTick();
     }
 
-    @Override
-    public void onLoad() {
+    public void handleFirstTick() {
         super.onLoad();
         CoverStack<?>[] covers = this.getAllCovers();
         if (covers.length == 0) return;

@@ -11,12 +11,14 @@ import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
@@ -53,6 +55,10 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
+    /** Open container. Allows for better syncing **/
+    @Nullable
+    protected Container openContainer;
+
     /** Machine Data **/
     protected Machine<?> type;
     protected Tier tier;
@@ -73,11 +79,19 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         super(type.getTileType());
         this.type = type;
         this.machineState = getDefaultMachineState();
-        this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MachineItemHandler<>(this)) : LazyHolder.empty();
+        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyHolder.of(() -> new MachineItemHandler<>(this)) : LazyHolder.empty();
         this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MachineFluidHandler<>(this)) : LazyHolder.empty();
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.amps(),type.has(GENERATOR))) : LazyHolder.empty();
         this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
+    }
+
+    public void setOpenContainer(ContainerMachine c) {
+        this.openContainer = c;
+    }
+
+    public void onContainerClose() {
+        this.openContainer = null;
     }
 
     public Optional<Texture> getMultiTexture() {
@@ -124,11 +138,13 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onRemove() {
-        coverHandler.ifPresent(MachineCoverHandler::onRemove);
-        fluidHandler.ifPresent(MachineFluidHandler::onRemove);
-        itemHandler.ifPresent(MachineItemHandler::onRemove);
-        energyHandler.ifPresent(MachineEnergyHandler::onRemove);
-        recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
+        if (isServerSide()) {
+            coverHandler.ifPresent(MachineCoverHandler::onRemove);
+            fluidHandler.ifPresent(MachineFluidHandler::onRemove);
+            itemHandler.ifPresent(MachineItemHandler::onRemove);
+            energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+            recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
+        }
     }
 
     @Override
@@ -139,6 +155,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
+            if (event instanceof ContentEvent && openContainer != null) {
+                openContainer.detectAndSendChanges();
+            }
         }
     }
 

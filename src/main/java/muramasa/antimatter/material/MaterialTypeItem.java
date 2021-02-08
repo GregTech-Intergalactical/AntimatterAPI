@@ -21,7 +21,8 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     public Item get(Material material) {
         Item replacement = AntimatterAPI.getReplacement(this, material);
         if (replacement == null) {
-            if (!allowItemGen(material)) Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
+            if (!allowItemGen(material))
+                Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
             else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         }
         return replacement;

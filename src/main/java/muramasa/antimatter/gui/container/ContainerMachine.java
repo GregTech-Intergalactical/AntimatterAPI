@@ -11,8 +11,10 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -33,6 +35,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
         // tile.setClientProgress(0);
         tile.recipeHandler.ifPresent(r -> trackIntArray(r.getProgressData()));
+        tile.setOpenContainer(this);
     }
 
     public TileEntityMachine getTile() {
@@ -43,6 +46,12 @@ public abstract class ContainerMachine extends AntimatterContainer {
     public void addListener(IContainerListener listener) {
         super.addListener(listener);
         if (listener instanceof ServerPlayerEntity) listeners.add((ServerPlayerEntity)listener);
+    }
+
+    @Override
+    public void onContainerClosed(PlayerEntity playerIn) {
+        super.onContainerClosed(playerIn);
+        tile.onContainerClose();
     }
 
     @Override

@@ -66,31 +66,19 @@ public class FluidTanks implements IFluidHandler {
         this.totalCapacity = Arrays.stream(tanks).mapToInt(FluidTank::getCapacity).sum();
     }
 
-    public int getFirstAvailableTank(FluidStack stack) {
+    public int getFirstAvailableTank(FluidStack stack, boolean drain) {
         int firstAvailable = -1;
         for (int i = 0; i < tanks.length; i++) {
             FluidTank tank = this.tanks[i];
             if (tank.isEmpty()) {
                 firstAvailable = i;
-            } else if (tank.fill(stack, FluidAction.SIMULATE) != 0) {
+            } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty()) || (!drain && tank.fill(stack, FluidAction.SIMULATE) != 0)) {
                 return i;
             }
         }
         return firstAvailable;
     }
 
-    public int getFirstAvailableTank(Fluid fluid, int amount) {
-        int firstAvailable = -1;
-        for (int i = 0; i < tanks.length; i++) {
-            FluidTank tank = this.tanks[i];
-            if (tank.isEmpty()) {
-                firstAvailable = i;
-            } else if (tank.fill(new FluidStack(fluid, amount), FluidAction.SIMULATE) != 0) {
-                return i;
-            }
-        }
-        return firstAvailable;
-    }
 
     public FluidTank getTank(int tank) {
         return this.tanks[tank];
@@ -98,6 +86,10 @@ public class FluidTanks implements IFluidHandler {
 
     public FluidStack[] getFluids() {
         return Arrays.stream(this.tanks).map(FluidTank::getFluid).toArray(FluidStack[]::new);
+    }
+
+    public FluidTank[] getBackingTanks() {
+        return tanks;
     }
 
     @Override
@@ -135,7 +127,7 @@ public class FluidTanks implements IFluidHandler {
 
     @Override
     public int fill(FluidStack stack, FluidAction action) {
-        int tank = getFirstAvailableTank(stack);
+        int tank = getFirstAvailableTank(stack, false);
         if (tank != -1) {
             return getTank(tank).fill(stack, action);
         }
@@ -145,7 +137,7 @@ public class FluidTanks implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(FluidStack stack, FluidAction action) {
-        int tank = getFirstAvailableTank(stack);
+        int tank = getFirstAvailableTank(stack, true);
         if (tank != -1) {
             return getTank(tank).drain(stack, action);
         }
@@ -170,8 +162,15 @@ public class FluidTanks implements IFluidHandler {
 
     @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, FluidAction action) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Please use drain(FluidStack, FluidAction) method instead!");
+    public FluidStack drain(int maxDrain, FluidAction action) {
+        for (int i = 0; i < getTanks(); i++) {
+            FluidTank tank = getTank(i);
+            FluidStack stack = tank.drain(maxDrain, FluidAction.SIMULATE);
+            if (!stack.isEmpty()) {
+                return stack;
+            }
+        }
+        return FluidStack.EMPTY;
     }
 
     public static class Builder<T extends TileEntityMachine> {

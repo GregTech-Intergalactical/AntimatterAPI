@@ -6,13 +6,24 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemBasic;
+import muramasa.antimatter.item.ItemBattery;
+import muramasa.antimatter.item.ItemCover;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
@@ -22,6 +33,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
 import net.minecraft.potion.Effect;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,6 +43,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -90,6 +103,13 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     protected void processTranslations(String domain, String locale) {
         if (!locale.startsWith("en")) return;
         AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(DebugScannerItem.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(Machine.class, domain).forEach(i -> {
+            Collection<Tier> tiers =  i.getTiers();
+            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpaced( i.getId() + "_" + t.getId())));
+        });
         AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
         AntimatterAPI.all(BlockOre.class, domain, o -> {
             if (o.getOreType() == ORE) add(o, String.join("", getLocalizedType(o.getMaterial()), " ", getLocalizedType(o.getStoneType()), " Ore"));
@@ -97,6 +117,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         });
 
         AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s)));
+        AntimatterAPI.all(BlockPipe.class, domain).forEach(s -> add(s, getLocalizedType(s)));
         AntimatterAPI.all(BlockStorage.class, domain).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
         AntimatterAPI.all(MaterialItem.class, domain).forEach(item -> {
             MaterialType<?> type = item.getType();
@@ -107,9 +128,20 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             else {
                 String[] split = getLocalizedMaterialType(type);
                 if (split.length > 1) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
-                else add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial())));
+                else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
             }
         });
+
+        customTranslations();
+    }
+
+    protected void customTranslations() {
+        add("machine.voltage.in", "Voltage in");
+        add("machine.power.capacity", "Capacity");
+        add("message.discharge.on", "Discharge enabled");
+        add("message.discharge.off", "Discharge disabled");
+        add("item.charge", "Energy");
+        add("item.reusable", "Reusable");
     }
 
     private void processAntimatterTranslations() {

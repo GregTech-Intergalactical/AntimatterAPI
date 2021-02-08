@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.Tesseract;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
@@ -27,6 +28,8 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -42,8 +45,9 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     protected int capacity, pressure;
     protected ITickingController controller;
-
-    protected final IIntArray GUI_SYNC_DATA = new IntArray(1);
+    //To protect against callbacks into fillingCell.
+    //TODO: Protect against these callback thingys. Dunno how.
+    private boolean fillingCell = false;
 
     /** For GUI **/
     protected boolean dirty;
@@ -97,6 +101,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (controller != null) {
             controller.tick();
         }
+        fillCell(0, 1000);
     }
 
     public void onRemove() {
@@ -116,49 +121,104 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
-        if (tank >= (getInputTanks() == null ? 0 : getInputTanks().getTanks())) {
-            return getOutputTanks().getFluidInTank(tank);
+         return getTank(tank).getFluid();
+    }
+
+    protected FluidTank getTank(int tank) {
+        if (getInputTanks() == null) {
+            if (getOutputTanks() != null) return getOutputTanks().getTank(tank);
+        } else if (getInputTanks() != null && getOutputTanks() != null){
+            if (tank > getInputTanks().getTanks()) return getOutputTanks().getTank(offsetTank(tank));
+        } else if (getOutputTanks() == null && getInputTanks() != null) {
+            return getInputTanks().getTank(tank);
         }
-        return getInputTanks().getFluidInTank(tank);
+        return null;
+    }
+
+    protected FluidTanks getTanks(int tank) {
+        if (getInputTanks() == null) {
+            return getOutputTanks();
+        } else if (getOutputTanks() == null) {
+            return getInputTanks();
+        } else {
+            if (tank > getInputTanks().getTanks()) return getOutputTanks();
+        }
+        return getInputTanks();
+    }
+
+    protected int offsetTank(int tank) {
+        if (getInputTanks() != null && tank > getInputTanks().getTanks()) return tank;
+        if (getInputTanks() != null) return tank - getInputTanks().getTanks();
+        return tank;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        if (tank >= (getInputTanks() == null ? 0 : getInputTanks().getTanks())) {
-            return getOutputTanks().getTankCapacity(tank);
-        }
-        return getInputTanks().getTankCapacity(tank);
+        return getTanks(tank).getTankCapacity(offsetTank(tank));
     }
 
     @Override
     public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-        if (tank >= (getInputTanks() == null ? 0 : getInputTanks().getTanks())) {
-            return getOutputTanks().isFluidValid(tank, stack);
-        }
-        return getInputTanks().isFluidValid(tank, stack);
+        return getTank(tank).isFluidValid(stack);
     }
 
-    public int fill(int cellSlot, int maxFill, IFluidHandler.FluidAction action) {
+
+    public FluidTanks getAllTanks() {
+        ArrayList<FluidTank> list = new ArrayList<>();
+        if (getInputTanks() != null) list.addAll(Arrays.asList(getInputTanks().getBackingTanks()));
+        if (getOutputTanks() != null) list.addAll(Arrays.asList(getOutputTanks().getBackingTanks()));
+        return new FluidTanks(list);
+    }
+
+    public int fillCell(int cellSlot, int maxFill) {
+        if (fillingCell) return 0;
+        fillingCell = true;
         if (this.tanks.containsKey(FluidDirection.INPUT)) {
             tile.itemHandler.ifPresent(ih -> {
+                if (ih.getCellInputHandler() == null) return;
                 ItemStack cell = ih.getCellInputHandler().getStackInSlot(cellSlot);
-                cell.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh ->{
-                    FluidStack stack = FluidUtil.tryFluidTransfer(this.tanks.get(FluidDirection.INPUT), cfh, maxFill, action == EXECUTE);
+                ItemStack toActOn = cell.copy();
+                toActOn.setCount(1);
+                toActOn.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh -> {
+                    ItemStack checkContainer = toActOn.copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> {
+                                if (t.getFluidInTank(0).isEmpty()) {
+                                    t.fill(FluidUtil.tryFluidTransfer(t,this.getAllTanks(), maxFill, false), EXECUTE);
+                                } else {
+                                    t.drain(maxFill, EXECUTE);
+                                }
+                                return t.getContainer();
+                            }).orElse(null/* throw exception */);
+                    if (!ih.getCellOutputHandler().insertItem(cellSlot,checkContainer,true).isEmpty()) return;
+
+                    FluidStack stack;
+                    if (cfh.getFluidInTank(0).isEmpty()) {
+                        stack = FluidUtil.tryFluidTransfer(cfh,this.getAllTanks(), maxFill, true);
+                    } else {
+                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(),cfh, maxFill, true);
+                    }
                     if (!stack.isEmpty()) {
-                        ih.getCellOutputHandler().insertItem(cellSlot, cfh.getContainer(), false);
-                        ih.getCellInputHandler().extractItem(cellSlot, cell.getCount(), false);
+                        ItemStack insert = cfh.getContainer();
+                        insert.setCount(1);
+                        ih.getCellOutputHandler().insertItem(cellSlot, insert, false);
+                        ih.getCellInputHandler().extractItem(cellSlot, 1, false);
                     }
                 });
             });
         }
+        fillingCell = false;
         return 0;
     }
 
     public int fill(FluidStack stack, IFluidHandler.FluidAction action) {
-        if (this.tanks.containsKey(FluidDirection.INPUT)) {
+        FluidTanks input = getInputTanks();
+        if (input != null && !empty(input)) {
             return this.tanks.get(FluidDirection.INPUT).fill(stack, action);
         }
         return 0;
+    }
+
+    protected boolean empty(FluidTanks tank) {
+        return tank.getTanks() == 0;
     }
 
     public int fillOutput(FluidStack stack, IFluidHandler.FluidAction action) {
@@ -199,10 +259,11 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             switch ((ContentEvent)event) {
                 case ITEM_CELL_CHANGED:
                     if (tile.itemHandler.map(MachineItemHandler::getCellCount).orElse(0) > 0 && data[0] instanceof Integer) {
-                        fill((Integer) data[0], 1000, EXECUTE);
+                        fillCell((Integer) data[0], 1000);
                     }
                     break;
                 case FLUID_INPUT_CHANGED:
+                    this.markDirty();
                 case FLUID_OUTPUT_CHANGED:
                     this.markDirty();
                     break;
@@ -230,12 +291,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     public FluidStack[] getOutputs() {
         FluidTanks tanks = getOutputTanks();
         return tanks == null ? new FluidStack[0] : tanks.getFluids();
-    }
-
-    // TODO temporary
-    public FluidTanks getTankFromSide(Direction side) {
-        return this.tanks.get(FluidDirection.INPUT);
-        //return side == Direction.UP && this.tanks.containsKey(FluidDirection.INPUT) ? this.tanks.get(FluidDirection.INPUT) : this.tanks.getOrDefault(FluidDirection.OUTPUT, null);
     }
 
     public boolean canOutputsFit(FluidStack[] outputs) {
@@ -342,14 +397,14 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
             return null;
         }
-        FluidStack stack = getOutputTanks().getFluidInTank(tank);
+        FluidTank t = getOutputTanks().getTank(tank);
         /*
         if (fluid.getAmount() > amount) {
             fluid = fluid.copy();
             fluid.setAmount(amount);
         }
          */
-        FluidStack drained = drain(stack, simulate ? SIMULATE : EXECUTE);
+        FluidStack drained = t.drain(amount, simulate ? SIMULATE : EXECUTE);
         return drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
     }
 
@@ -425,7 +480,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
     }
 
-    enum FluidDirection {
+    public enum FluidDirection {
 
         INPUT,
         OUTPUT
