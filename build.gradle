@@ -16,16 +16,15 @@ buildscript {
     }
 }
 
-apply plugin: "com.github.johnrengelman.shadow"
-
 repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
+//apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: "com.github.johnrengelman.shadow"
 
 version = '0.0.1'
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -46,6 +45,27 @@ sourceSets {
         }
     }
 }
+
+assemble.dependsOn shadowJar
+
+configurations {
+    deobf
+    embed
+    implementation.extendsFrom(embed)
+    compile.extendsFrom(embed)
+}
+shadowJar {
+    configurations = [project.configurations.embed]
+}
+
+// Deobfuscated jar; development purposes.
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+task deobfJar(type: ShadowJar) {
+    from sourceSets.main.output
+    configurations = [project.configurations.embed]
+    classifier "dev"
+}
+
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -112,25 +132,6 @@ minecraft {
     }
 }
 
-assemble.dependsOn shadowJar
-
-configurations {
-    deobf
-    embed
-    implementation.extendsFrom(embed)
-}
-
-shadowJar {
-    configurations = [project.configurations.embed]
-}
-
-// Deobfuscated jar; development purposes.
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-task deobfJar(type: ShadowJar, dependsOn: 'classes') {
-    from sourceSets.main.output
-    configurations = [project.configurations.embed]
-    classifier "dev"
-}
 
 // Sources jar; development purposes.
 task sourcesJar(type: Jar) {
@@ -140,37 +141,15 @@ task sourcesJar(type: Jar) {
 
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // that the dep is a ForgeGradle 'patcher' dependency. And       it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
-    implementation project(path: ':tesseract:forge', configuration: 'deobf')
+    compile (group: 'com.github.gregtech-intergalactical', name: 'tesseractforge', configuration: 'deobf')
+    //runtimeOnly (group: 'com.github.gregtech-intergalactical', name: 'tesseractforge')
 
-
-    if (local_dev_dependancies.toBoolean()) {
-        compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-        runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-    }
-    else {
-        compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-        runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-    }
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 }
 
@@ -179,12 +158,14 @@ dependencies {
 // This is the preferred method to reobfuscate your jar file
 //jar.finalizedBy('reobfJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-publish.dependsOn('reobfJar')
+//publish.dependsOn('reobfJar')
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
+        forge(MavenPublication) {
+            //artifactId = archivesBaseName
+            artifact deobfJar
+            artifact shadowJar
         }
     }
     repositories {
@@ -197,7 +178,6 @@ publishing {
 jar {
     zip64 true
 }
-
 artifacts {
     deobf deobfJar
 }
