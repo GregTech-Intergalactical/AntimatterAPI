@@ -12,7 +12,6 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
     }
 }
 
@@ -24,7 +23,6 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 //apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: "com.github.johnrengelman.shadow"
 
 version = '0.0.1'
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -46,7 +44,6 @@ sourceSets {
     }
 }
 
-assemble.dependsOn shadowJar
 
 configurations {
     deobf
@@ -54,16 +51,12 @@ configurations {
     implementation.extendsFrom(embed)
     compile.extendsFrom(embed)
 }
-shadowJar {
-    configurations = [project.configurations.embed]
-}
+
 
 // Deobfuscated jar; development purposes.
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-task deobfJar(type: ShadowJar) {
+task deobfJar(type: Jar) {
     from sourceSets.main.output
-    configurations = [project.configurations.embed]
-    classifier "dev"
+    classifier "deobf"
 }
 
 minecraft {
@@ -145,9 +138,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compile (group: 'com.github.gregtech-intergalactical', name: 'tesseractforge', configuration: 'deobf')
-    //runtimeOnly (group: 'com.github.gregtech-intergalactical', name: 'tesseractforge')
-
+    implementation project(path: ':tesseract')
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
@@ -165,7 +156,7 @@ publishing {
         forge(MavenPublication) {
             //artifactId = archivesBaseName
             artifact deobfJar
-            artifact shadowJar
+            artifact sourcesJar
         }
     }
     repositories {
@@ -178,6 +169,10 @@ publishing {
 jar {
     zip64 true
 }
+
 artifacts {
-    deobf deobfJar
+    archives sourcesJar
+    archives deobfJar
 }
+
+//jar.finalizedBy deobfJar

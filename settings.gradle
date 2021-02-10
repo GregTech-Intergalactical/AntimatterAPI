@@ -11,14 +11,3 @@ pluginManagement {
 
     }
 }
-
-includeBuild('tesseract/forge') {
-
-}
-
-//Not actually needed (i think) but it creates proper module dependency in Idea
-includeBuild('tesseract') {
-    dependencySubstitution {
-        substitute module('com.github.gregtech-intergalactical:tesseract') with project(':')
-    }
-}
