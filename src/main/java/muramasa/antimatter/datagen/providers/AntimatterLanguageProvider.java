@@ -9,6 +9,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.item.ItemBattery;
@@ -49,6 +50,7 @@ import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.util.Utils.*;
+import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpaced;
 
 public class AntimatterLanguageProvider implements IDataProvider, IAntimatterProvider {
 
@@ -118,6 +120,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
         AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s)));
         AntimatterAPI.all(BlockPipe.class, domain).forEach(s -> add(s, getLocalizedType(s)));
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(s -> add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId())));
         AntimatterAPI.all(BlockStorage.class, domain).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
         AntimatterAPI.all(MaterialItem.class, domain).forEach(item -> {
             MaterialType<?> type = item.getType();
@@ -138,6 +141,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     protected void customTranslations() {
         add("machine.voltage.in", "Voltage in");
         add("machine.power.capacity", "Capacity");
+        add("generic.amp", "Amperage");
+        add("generic.tier", "Tier");
+        add("generic.voltage", "Voltage");
         add("message.discharge.on", "Discharge enabled");
         add("message.discharge.off", "Discharge disabled");
         add("item.charge", "Energy");

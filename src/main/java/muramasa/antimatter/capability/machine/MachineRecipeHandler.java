@@ -336,7 +336,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (event instanceof ContentEvent) {
             switch ((ContentEvent) event) {
                 case FLUID_INPUT_CHANGED:
+                case FLUID_OUTPUT_CHANGED:
                 case ITEM_INPUT_CHANGED:
+                case ITEM_OUTPUT_CHANGED:
                     if (tile.getMachineState().allowRecipeCheck()) {
                         this.checkRecipe();
                     }

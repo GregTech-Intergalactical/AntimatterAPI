@@ -263,7 +263,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             }
             Recipe r = recurseItemTreeFind(new RecipeFluids(recipe.getInputFluids(), recipe.getTags()), recipe.getInputItems().stream().map(IngredientWrapper::new).toArray(IngredientWrapper[]::new), map);
             if (r != null) {
-                Utils.onInvalidData("RECIPE COLLISION!");
+                Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
                 return;
             }
             recurseItemTreeAdd(recipe, recipe.getInputItems(), map, 0, 0);

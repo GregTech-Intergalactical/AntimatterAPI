@@ -8,9 +8,14 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -25,7 +30,7 @@ public class BlockCable extends BlockPipe<Cable<?>> {
 
     protected boolean insulated;
 
-    public BlockCable(PipeType<?> type, PipeSize size, boolean insulated) {
+    public BlockCable(Cable<?> type, PipeSize size, boolean insulated) {
         super(insulated ? "cable" : "wire", type, size);
         this.insulated = insulated;
         String prefix = insulated ? "cable" : "wire";
@@ -80,7 +85,15 @@ public class BlockCable extends BlockPipe<Cable<?>> {
         return info;
     }
 
-//    @Override
+    @Override
+    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+
+        tooltip.add(new TranslationTextComponent("generic.amp").appendText(": ").appendText(TextFormatting.GREEN + "" + this.type.getAmps(this.size)));
+        tooltip.add(new TranslationTextComponent("generic.voltage").appendText(": ").appendText(TextFormatting.BLUE + "" + this.type.getTier().getVoltage()));
+    }
+
+    //    @Override
 //    public ITextComponent getDisplayName(ItemStack stack) {
 //        boolean ins = stack.getMetadata() > 7;
 //        PipeSize size = PipeSize.VALUES[ins ? stack.getMetadata() - 8 : stack.getMetadata()];

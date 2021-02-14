@@ -52,14 +52,14 @@ import static muramasa.antimatter.Data.WRENCH;
 
 public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
 
-    protected PipeType<?> type;
+    protected T type;
     protected PipeSize size;
 
     protected int modelId = 0;
     protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
     protected Texture[] faces = new Texture[] {new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
 
-    public BlockPipe(String prefix, PipeType<?> type, PipeSize size) {
+    public BlockPipe(String prefix, T type, PipeSize size) {
         super(type.getDomain(), prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON));
         this.type = type;
         this.size = size;

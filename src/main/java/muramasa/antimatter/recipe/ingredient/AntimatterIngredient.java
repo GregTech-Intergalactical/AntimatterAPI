@@ -1,5 +1,7 @@
 package muramasa.antimatter.recipe.ingredient;
 
+import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,12 +13,16 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AntimatterIngredient extends Ingredient {
     public int count;
     protected boolean nonConsume = false;
+    //Tags ot be filtered out from lookup.
+    protected static final Set<String> CUSTOM_TAGS = ImmutableSet.of(Ref.KEY_STACK_NO_CONSUME);
 
     protected AntimatterIngredient(Stream<? extends IItemList> itemLists, int count) {
         super(itemLists);
@@ -57,7 +63,7 @@ public abstract class AntimatterIngredient extends Ingredient {
     protected static CompoundNBT filterTags(CompoundNBT nbt) {
         if (nbt == null) return new CompoundNBT();
         CompoundNBT newNbt = nbt.copy();
-        newNbt.remove(Ref.KEY_STACK_NO_CONSUME);
+        CUSTOM_TAGS.forEach(newNbt::remove);
         return newNbt;
     }
 

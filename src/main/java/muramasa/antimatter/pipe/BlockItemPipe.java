@@ -13,7 +13,7 @@ import java.util.List;
 
 public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
 
-    public BlockItemPipe(PipeType<?> type, PipeSize size) {
+    public BlockItemPipe(ItemPipe<?> type, PipeSize size) {
         super(type.getId(), type, size);
     }
 
