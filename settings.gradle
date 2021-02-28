@@ -11,3 +11,8 @@ pluginManagement {
 
     }
 }
+
+
+include 'tesseract'
+
+project(':tesseract').setProjectDir(new File("tesseract"))
