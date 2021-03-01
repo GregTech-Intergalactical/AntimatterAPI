@@ -77,7 +77,7 @@ public class AntimatterConfig {
 
         public int AXE_TIMBER_MAX;
 
-        public boolean HARDCORE_CABLES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS;
+        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS;
 
     }
 
@@ -133,7 +133,7 @@ public class AntimatterConfig {
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
-                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
+                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
 
         public CommonConfig(Builder builder) {
 
@@ -245,6 +245,10 @@ public class AntimatterConfig {
                 .translation(Ref.ID + ".config.hardcore_cables")
                 .define("HARDCORE_CABLES", true);
 
+            HARDCORE_PIPES = builder.comment("Enable pipe blowing on overpressure - Default: false")
+                .translation(Ref.ID + ".config.hardcore_pipes")
+                .define("HARDCORE_PIPES", false);
+
             builder.push("Treefelling");
 
             SMARTER_TREE_DETECTION = builder.comment("Smart tree detection, instead of just going up in a column, it searches surrounding connected blocks too. Default: true")
@@ -310,6 +314,7 @@ public class AntimatterConfig {
         GAMEPLAY.EU_TO_FE_RATIO = COMMON_CONFIG.EU_TO_FE_RATIO.get();
         GAMEPLAY.PIPE_LEAK = COMMON_CONFIG.PIPE_LEAK.get();
         GAMEPLAY.HARDCORE_CABLES = COMMON_CONFIG.HARDCORE_CABLES.get();
+        GAMEPLAY.HARDCORE_PIPES = COMMON_CONFIG.HARDCORE_PIPES.get();
         GAMEPLAY.SMARTER_TREE_DETECTION = COMMON_CONFIG.SMARTER_TREE_DETECTION.get();
         GAMEPLAY.AXE_TIMBER = COMMON_CONFIG.AXE_TIMBER.get();
         GAMEPLAY.AXE_TIMBER_MAX = COMMON_CONFIG.AXE_TIMBER_MAX.get();
