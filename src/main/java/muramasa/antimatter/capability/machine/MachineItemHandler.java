@@ -7,11 +7,11 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
-import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -28,10 +28,7 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -195,11 +192,18 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         }
         return list;
     }
-
-    public boolean consumeInputs(Recipe recipe, boolean simulate) {
+    /**
+     * Consumes the inputs from the active recipe.
+     * @param recipe active recipe.
+     * @param simulate whether to execute or just return items.
+     * @return a list of consumed items, or an empty list if it failed during simulation.
+     */
+    public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
         Set<Integer> skipSlots = new HashSet<>();
         List<AntimatterIngredient> items = recipe.getInputItems();
-        if (items == null) return true;
+        if (items == null) return Collections.emptyList();
+        List<ItemStack> consumedItems = new ObjectArrayList<>();
+
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
             IItemHandler wrap = getInputHandler();
@@ -210,6 +214,9 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
                 ItemStack item = wrap.getStackInSlot(i);
                 if (input.test(item) && !skipSlots.contains(i) && item.getCount() >= input.count/*&& !Utils.hasNoConsumeTag(input)*/) {
                     wrap.extractItem(i, input.count, simulate);
+                    ItemStack cloned = item.copy();
+                    cloned.setCount(input.count);
+                    consumedItems.add(cloned);
                     skipSlots.add(i);
                     break;
                 }
@@ -221,9 +228,14 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         }).sum() == 0;
         //onSlotChanged should call dirty though, not sure if needed.
         if (!simulate && success && recipe.hasInputItems()) tile.markDirty();
-        return success;
+        if (simulate) return success ? consumedItems : Collections.emptyList();
+        return consumedItems;
     }
 
+    /**
+     * Fill the output slots with @outputs items.
+     * @param outputs the outputs to add.
+     */
     public void addOutputs(ItemStack... outputs) {
         IItemHandlerModifiable outputHandler = getOutputHandler();
         if (outputHandler == null || outputs == null || outputs.length == 0) {

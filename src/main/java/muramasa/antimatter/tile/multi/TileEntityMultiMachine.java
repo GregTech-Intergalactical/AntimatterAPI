@@ -233,16 +233,18 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
-    public void consumeFluids(FluidStack[] fluids) {
-        if (fluids == null) return;
+    public void consumeFluids(FluidStack[] inp) {
+        if (inp == null) return;
+        List<FluidStack> fluids = Arrays.asList(inp);
+        if (fluids.size() == 0) return;
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             if (hatch.getFluidHandler().isPresent()) {
-                FluidStack[] finalFluids = fluids;
-                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids.clone())).orElse(new FluidStack[0]);
-                if (fluids.length == 0) break;
+                List<FluidStack> finalFluids = fluids;
+                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids)).orElse(Collections.emptyList());
+                if (fluids.size() == 0) break;
             }
         }
-        if (fluids.length > 0) System.out.println("DID NOT CONSUME ALL: " + Arrays.toString(fluids));
+        if (fluids.size() > 0) System.out.println("DID NOT CONSUME ALL: " + Arrays.toString(fluids.toArray()));
     }
 
     /** Consumes energy from all energy hatches. Assumes enough energy is present in hatches **/

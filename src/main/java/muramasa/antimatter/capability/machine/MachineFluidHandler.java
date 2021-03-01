@@ -11,9 +11,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -21,17 +18,14 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.Tesseract;
+import tesseract.api.ITickingController;
 import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
-import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -319,10 +313,10 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             }
         }
     }
-
-    public FluidStack[] consumeAndReturnInputs(FluidStack... inputs) {
+    @Nonnull
+    public List<FluidStack> consumeAndReturnInputs(List<FluidStack> inputs) {
         if (!this.tanks.containsKey(FluidDirection.INPUT)) {
-            return new FluidStack[0];
+            return Collections.emptyList();
         }
         List<FluidStack> notConsumed = new ObjectArrayList<>();
         FluidStack result;
@@ -338,7 +332,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                 }
             }
         }
-        return notConsumed.toArray(new FluidStack[0]);
+        return notConsumed;
     }
 
     public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {

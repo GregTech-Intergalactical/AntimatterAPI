@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -11,6 +12,9 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,6 +54,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     //So just 'lock' during recipe ticking.
     private boolean tickingRecipe = false;
 
+    //Items used to find recipe
+    protected List<ItemStack> itemInputs = new ObjectArrayList<>();
+    protected List<FluidStack> fluidInputs = new ObjectArrayList<>();
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
@@ -130,10 +138,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return tile.getMachineType().getRecipeMap().find(tile.getPowerLevel(), tile.itemHandler, tile.fluidHandler);
     }
 
+
     //called when a new recipe is found, to process overclocking
-    public void activateRecipe() {
+    public void activateRecipe(boolean reset) {
         //if (canOverclock)
-        currentProgress = 0;
+        if (reset) currentProgress = 0;
         consumedResources = false;
         maxProgress = activeRecipe.getDuration();
         overclock = 0;
@@ -192,12 +201,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 this.resetRecipe();
                 return IDLE;
             } else {
-                activateRecipe();
+                activateRecipe(true);
                 return ACTIVE;
             }
-        } //else if (!canOutput()) {
-      //      return OUTPUT_FULL;
-        //}
+        }
         else {
             if (!consumeResourceForRecipe()) {
                 if ((currentProgress == 0 && tile.getMachineState() == IDLE) || generator) {
@@ -214,7 +221,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (currentProgress == 0 && !consumedResources) this.consumeInputs();
             this.currentProgress++;
             setClientProgress();
-            return ACTIVE;//tile.getMachineState();
+            return ACTIVE;
         }
     }
 
@@ -244,28 +251,39 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return ok;
     }
 
-    protected boolean checkRecipe() {
+    protected boolean hasLoadedInput() {
+        return itemInputs.size() > 0 || fluidInputs.size() > 0;
+    }
+
+    protected void checkRecipe() {
         if (activeRecipe != null) {
-            return true;
+            return;
+        }
+        //First lookup.
+        if (!this.tile.hadFirstTick() && hasLoadedInput()) {
+            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]));
+            if (activeRecipe == null) return;
+            activateRecipe(false);
+            tile.setMachineState(ACTIVE);
+            return;
         }
         if (tile.getMachineState().allowRecipeCheck()) {
             if ((activeRecipe = findRecipe()) != null) {
                 if (!validateRecipe(activeRecipe)) {
                     tile.setMachineState(INVALID_TIER);
                     activeRecipe = null;
-                    return false;
+                    return;
                 }
                 if (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
-                    return false;
+                    return;
                 }
-                activateRecipe();
+                activateRecipe(true);
                 tile.setMachineState(ACTIVE);
-                return true;
+                return;
             }
             setClientProgress(0);
         }
         tile.setMachineState(IDLE);
-        return false;
     }
 
     @Nullable
@@ -276,10 +294,14 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void consumeInputs() {
         if (!tile.hadFirstTick()) return;
         if (activeRecipe.hasInputItems()) {
-            tile.itemHandler.ifPresent(h -> h.consumeInputs(activeRecipe,false));
+            tile.itemHandler.ifPresent(h -> {
+                this.itemInputs = h.consumeInputs(activeRecipe,false);
+            });
         }
         if (activeRecipe.hasInputFluids()) {
-            tile.fluidHandler.ifPresent(h -> h.consumeAndReturnInputs(activeRecipe.getInputFluids()));
+            tile.fluidHandler.ifPresent(h -> {
+                this.fluidInputs = h.consumeAndReturnInputs(Arrays.asList(activeRecipe.getInputFluids()));
+            });
         }
         consumedResources = true;
     }
@@ -291,9 +313,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     protected boolean canRecipeContinue() {
-        return tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true)).orElse(false) || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
+        return tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false) || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
     }
-
+    /*
+      Helper to consume resources for a generator.
+     */
     protected boolean consumeGeneratorResources() {
         if (!activeRecipe.hasInputFluids()) {
             throw new RuntimeException("Missing fuel in active generator recipe!");
@@ -352,9 +376,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     }
                     break;
                 case ENERGY_DRAINED:
-                   // if (tile.getMachineState() == ACTIVE) {
-                   //     tile.setMachineState(POWER_LOSS);
-                   // }
                     if (generator && tile.getMachineState() == tile.getDefaultMachineState()) {
                         if (activeRecipe != null) tile.setMachineState(NO_POWER);
                         else checkRecipe();
@@ -364,4 +385,29 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
     }
 
+    /** NBT STUFF **/
+
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        ListNBT item = new ListNBT();
+        if (itemInputs.size() > 0) {
+            itemInputs.forEach(t -> item.add(t.serializeNBT()));
+        }
+        ListNBT fluid = new ListNBT();
+        if (itemInputs.size() > 0) {
+            itemInputs.forEach(t -> item.add(t.serializeNBT()));
+        }
+        nbt.put("I", item);
+        nbt.put("F", fluid);
+        nbt.putInt("P", currentProgress);
+        return nbt;
+    }
+
+    public void deserializeNBT(CompoundNBT nbt) {
+        itemInputs = new ObjectArrayList<>();
+        fluidInputs = new ObjectArrayList<>();
+        nbt.getList("I",10).forEach(t -> itemInputs.add(ItemStack.read((CompoundNBT) t)));
+        nbt.getList("F",10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundNBT) t)));
+        this.currentProgress = nbt.getInt("P");
+    }
 }

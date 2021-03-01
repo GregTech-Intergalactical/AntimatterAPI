@@ -309,6 +309,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+        recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
 
         if (tag.contains(Ref.KEY_MULTI_TEXTURE)) {
             String value = tag.getString(Ref.KEY_MULTI_TEXTURE);
@@ -326,9 +327,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
+        recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));
         return tag;
     }
 
+    //TODO: do not send multiTexture packets anymore. Instead, use dynamic models.
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
