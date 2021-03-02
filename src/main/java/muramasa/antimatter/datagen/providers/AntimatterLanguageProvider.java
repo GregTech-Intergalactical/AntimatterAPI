@@ -22,9 +22,14 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.pipe.types.Cable;
+import muramasa.antimatter.pipe.types.FluidPipe;
+import muramasa.antimatter.pipe.types.ItemPipe;
+import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.MaterialTool;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
@@ -38,6 +43,8 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.potion.Effect;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
 import java.io.BufferedWriter;
@@ -110,7 +117,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(Machine.class, domain).forEach(i -> {
             Collection<Tier> tiers =  i.getTiers();
-            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpaced( i.getId() + "_" + t.getId())));
+            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpacedRotated( i.getId() + "_" + t.getId())));
         });
         AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
         AntimatterAPI.all(BlockOre.class, domain, o -> {
@@ -118,9 +125,26 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             else add(o, String.join("", "Small ", getLocalizedType(o.getMaterial()), " ", getLocalizedType(o.getStoneType()), " Ore"));
         });
 
+        AntimatterAPI.all(IAntimatterTool.class, t -> {
+            add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+        });
+
         AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s)));
-        AntimatterAPI.all(BlockPipe.class, domain).forEach(s -> add(s, getLocalizedType(s)));
-        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(s -> add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId())));
+        AntimatterAPI.all(BlockPipe.class, domain).forEach(s -> {
+            String str = s.getSize().getId();
+            //hmmmm
+            if (str.equals("vtiny")) str = "very tiny";
+            String strd = s.getType().getId();
+            if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
+                strd = s.getType().getId() + " Pipe";
+            }
+            add(s,StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1)," ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId())," ",strd.substring(0, 1).toUpperCase() + strd.substring(1)));
+        });
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(s -> {
+            add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId()));
+            Item bucket = AntimatterAPI.get(Item.class, s.getId()+ "_bucket");
+            if (bucket != null) add(bucket, lowerUnderscoreToUpperSpaced(s.getId()) + " Bucket");
+        });
         AntimatterAPI.all(BlockStorage.class, domain).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
         AntimatterAPI.all(MaterialItem.class, domain).forEach(item -> {
             MaterialType<?> type = item.getType();
@@ -135,6 +159,10 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             }
         });
 
+        AntimatterAPI.all(RecipeMap.class, t -> {
+            String id = "jei.category." + t.getId();
+            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.','_'),2));
+        });
         customTranslations();
     }
 

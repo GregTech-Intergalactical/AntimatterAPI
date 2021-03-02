@@ -6,12 +6,15 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -47,9 +50,27 @@ public class MachineBakedModel extends CoveredBakedModel {
         return quads;
     }
 
+    @Nonnull
+    @Override
+    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+        data = super.getModelData(world, pos, state, data);
+        TileEntity tile = world.getTileEntity(pos);
+        if (!(tile instanceof TileEntityMachine)) return data;
+        TileEntityMachine machine = (TileEntityMachine) tile;
+
+        BlockPos cPos = StructureCache.get(machine.getWorld(), pos);
+        if (cPos == null) return data;
+        TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
+
+        data.setData(AntimatterProperties.MULTI_MACHINE_TEXTURE,mTile.getMachineType().getBaseTexture(mTile.getMachineTier()));
+        return data;
+    }
+
     @Override
     protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         List<BakedQuad> quads = super.attachQuadsForSide(state, side, rand, data);
         return attachMultiQuads(quads,state,side,rand,data);
     }
+
+
 }

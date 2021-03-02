@@ -83,6 +83,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
     }
 
+    public boolean hasRecipe() {
+        return activeRecipe != null;
+    }
+
     public void setClientProgress(int value) {
         this.GUI_SYNC_DATA.set(0, value);
     }

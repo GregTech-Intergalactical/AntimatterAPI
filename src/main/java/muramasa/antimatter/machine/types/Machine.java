@@ -37,6 +37,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import javax.crypto.Mac;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -215,6 +216,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public Texture[] getOverlayTextures(MachineState state) {
+        if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
         String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
         return new Texture[] {
             new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),

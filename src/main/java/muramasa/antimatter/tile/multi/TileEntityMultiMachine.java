@@ -16,20 +16,17 @@ import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
-import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -94,27 +91,15 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
                 });
                 setMachineState(MachineState.IDLE);
                 System.out.println("[Structure Debug] Valid Structure");
-                setTileTextures();
+                this.recipeHandler.ifPresent(t -> {
+                    if (t.hasRecipe()) setMachineState(MachineState.NO_POWER);
+                });
                 return true;
             }
         }
         this.result = Optional.empty();
         System.out.println("[Structure Debug] Invalid Structure" + result.getError());
         return false;
-    }
-
-    protected void setTileTextures() {
-        this.result.ifPresent(t -> t.components.forEach((k, v) -> v.forEach(tile -> {
-            TileEntity optionalTile = tile.getTile();
-            if (optionalTile instanceof TileEntityMachine) {
-                ((TileEntityMachine)optionalTile).setMultiTexture(this.getMachineType().getBaseTexture(tier));
-            }
-        })));
-    }
-    //don't set the texture on the root machine!
-    @Override
-    public void setMultiTexture(@Nullable Texture tex) {
-
     }
 
     @Override
@@ -131,10 +116,6 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         StructureCache.remove(this.getWorld(), getPos());
         result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureInvalidated(this);
-            if (c.getTile() instanceof TileEntityMachine) {
-                TileEntityMachine m = (TileEntityMachine) c.getTile();
-                m.resetMultiTexture();
-            }
         })));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());

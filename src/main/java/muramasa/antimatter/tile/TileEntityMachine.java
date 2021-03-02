@@ -94,23 +94,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.openContainer = null;
     }
 
-    public Optional<Texture> getMultiTexture() {
-        return multiTexture;
-    }
-
-    /**
-     * Sets the multi-block texture to render this block as.
-     * @param tex texture to use, null to reset.
-     */
-    public void setMultiTexture(@Nullable Texture tex) {
-        multiTexture = tex == null ? Optional.empty() : Optional.of(tex);
-        sidedSync(true);
-    }
-
-    public void resetMultiTexture() {
-        setMultiTexture(null);
-    }
-
     @Override
     public void onFirstTick() {
         if (isServerSide()) {
@@ -271,7 +254,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType());
         builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,getMachineType().getBaseTexture(getMachineTier()))
                 .withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
-        getMultiTexture().ifPresent(t -> builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE, t));
 
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
 
@@ -310,12 +292,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
         recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
-
-        if (tag.contains(Ref.KEY_MULTI_TEXTURE)) {
-            String value = tag.getString(Ref.KEY_MULTI_TEXTURE);
-            setMultiTexture(value.isEmpty() ? null : new Texture(tag.getString(Ref.KEY_MULTI_TEXTURE)));
-        }
-
     }
 
     @Override
@@ -329,19 +305,6 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));
         return tag;
-    }
-
-    //TODO: do not send multiTexture packets anymore. Instead, use dynamic models.
-    @Nonnull
-    @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT nbt = super.getUpdateTag();
-        if (multiTexture.isPresent()) {
-            multiTexture.ifPresent(t -> nbt.putString(Ref.KEY_MULTI_TEXTURE,t.toString()));
-        } else {
-            nbt.putString(Ref.KEY_MULTI_TEXTURE,"");
-        }
-        return nbt;
     }
 
     /*
@@ -412,7 +375,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         recipeHandler.ifPresent(rh -> {
             rh.getInfo(info);
         });
-        multiTexture.ifPresent(mt -> info.add("Rendering using texture " + mt.toString() + "."));
+        //multiTexture.ifPresent(mt -> info.add("Rendering using texture " + mt.toString() + "."));
         return info;
     }
 

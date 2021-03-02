@@ -932,6 +932,23 @@ public class Utils {
         return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string)), ' ');
     }
 
+    public static String lowerUnderscoreToUpperSpacedRotated(String string) {
+        String[] strings = StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string));
+        String[] newStrings = new String[strings.length];
+
+        newStrings[0] = strings[strings.length-1];
+        for (int i = 1; i < strings.length; i++) {
+            newStrings[i] = strings[i-1];
+        }
+        return StringUtils.join(newStrings, ' ');
+    }
+
+    public static String lowerUnderscoreToUpperSpaced(String string, int offset) {
+        String[] strings = StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string));
+        assert offset > strings.length;
+        return StringUtils.join(Arrays.copyOfRange(strings, offset, strings.length), ' ');
+    }
+
     public static String underscoreToUpperCamel(String string) {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string);
     }

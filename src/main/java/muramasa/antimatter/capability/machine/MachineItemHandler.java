@@ -207,13 +207,10 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
             IItemHandler wrap = getInputHandler();
-            if (Utils.hasNoConsumeTag(input)) {
-                return 0;
-            }
             for (int i = 0; i < wrap.getSlots(); i++) {
                 ItemStack item = wrap.getStackInSlot(i);
                 if (input.test(item) && !skipSlots.contains(i) && item.getCount() >= input.count/*&& !Utils.hasNoConsumeTag(input)*/) {
-                    wrap.extractItem(i, input.count, simulate);
+                    if (!Utils.hasNoConsumeTag(input)) wrap.extractItem(i, input.count, simulate);
                     ItemStack cloned = item.copy();
                     cloned.setCount(input.count);
                     consumedItems.add(cloned);
